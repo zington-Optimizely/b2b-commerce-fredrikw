@@ -1,0 +1,412 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Share Invoice</title>
+    <style>
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 100%;
+            font-weight: normal;
+        }
+
+        h2 {
+            font-size: 18px;
+            padding: 4px 2px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        q:before, q:after {
+            content: '';
+        }
+
+        body {
+            font-family: 'sourcesanspro';
+            font-size: 14px;
+            color: #252525;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .invoice-total > td {
+            border-top: 1px solid #DCDCDC;
+            font-weight: bold;
+        }
+
+        .main-block {
+            margin-bottom: 15px;
+        }
+
+        .general-information {
+            width: 65%;
+            position: relative;
+            float: left;
+            display: block;
+            vertical-align: top;
+        }
+
+        .order-details-top {
+            margin-bottom: 20px;
+            border: 1px solid #DCDCDC;
+            padding: 14px;
+            width: 100%;
+        }
+
+            .order-details-top > ul {
+                list-style: none;
+            }
+
+        .row:before, .row:after {
+            content: " ";
+            display: table;
+        }
+
+        .order-details-left {
+            width: 50%;
+            padding-left: 5px;
+            padding-right: 5px;
+            vertical-align: top;
+        }
+
+        .ship-info {
+            margin-bottom: 5px;
+        }
+
+        .order-details-right {
+            width: 50%;
+            padding-left: 5px;
+            padding-right: 5px;
+            vertical-align: top;
+        }
+
+        .bill-info {
+            margin-bottom: .8em;
+            margin: 0;
+            padding: 0;
+        }
+
+        .list-item {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .summary-block {
+            width: 35%;
+            padding-left: 5px;
+            vertical-align: top;
+        }
+
+        .order-subtotal {
+            border: 1px solid #DCDCDC;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .order-subtotal .oc-head {
+                padding-left: 5px;
+            }
+
+        .sub-amount, .sub-label {
+            padding-bottom: 3px;
+            padding-top: 3px;
+            padding-left: 5px;
+        }
+
+        .od-lbl {
+            width: auto;
+            padding-right: 5px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .od-data {
+            color: #252525;
+            margin-bottom: 0;
+        }
+
+        .oc-head {
+            margin-bottom: 4px;
+            padding-top: 0;
+            padding-bottom: 0;
+            font-weight: bold;
+        }
+
+            .oc-head > h3 {
+                font-weight: bold;
+            }
+
+        .sub-amount {
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .order-total {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+            .order-total .sub-label, .order-total .sub-amount {
+                padding-bottom: 15px;
+            }
+
+        .order-details {
+            border: 1px solid #DCDCDC;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-header > th {
+            background-color: #eeeeee;
+            padding: 8px 7px;
+        }
+
+        .product-line > td {
+            border-bottom: 1px solid #DCDCDC;
+            padding: 5px 7px;
+        }
+
+        .item-name > h3 {
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        .item-num > h3 {
+            margin-top: 6px;
+        }
+
+        .item-notes > h3 {
+            margin-top: 6px;
+            margin-bottom: 0;
+            font-style: italic;
+        }
+
+        .product-line {
+            vertical-align: top;
+        }
+
+        .item-subtotal {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2>@T("Invoice #") @Model.InvoiceNumber</h2>
+        <table class="main-block">
+            <tr>
+                <td class="general-information">
+                    <table class="order-details-top">
+                        <tr>
+                            <td class="order-details-left">
+                                <table>
+                                    <tr>
+                                        <td><h3 class="od-lbl">@T("Invoice Date"):</h3></td>
+                                        <td><h3 class="od-data">@Model.InvoiceDate.ToShortDateString()</h3></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h3 class="od-lbl">@T("Invoice Due Date"):</h3></td>
+                                        <td><h3 class="od-data">@Model.DueDate.ToShortDateString()</h3></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h3 class="od-lbl">@T("Terms"):</h3></td>
+                                        <td><h3 class="od-data">@Model.Terms</h3></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h3 class="od-lbl">@T("PO #"):</h3></td>
+                                        <td><h3 class="od-data">@Model.CustomerPO</h3></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h3 class="od-lbl">@T("Status"):</h3></td>
+                                        <td><h3 class="od-data">@Model.Status</h3></td>
+                                    </tr>
+                                </table>
+                                <div class="ship-info">
+                                    <div class="oc-head">
+                                        <h3>@T("Shipping Address")</h3>
+                                    </div>
+                                    <p class="list-item">@Model.STCompanyName</p>
+                                    <p class="list-item">@Model.STAddress1</p>
+                                    @if (!string.IsNullOrEmpty(Model.STAddress2))
+                                    {
+                                        <p class="list-item">@Model.STAddress2</p>
+                                    }
+                                    <p class="list-item">@Model.ShipToCity @(!string.IsNullOrEmpty(Model.ShipToCity) && !string.IsNullOrEmpty(Model.ShipToState) ? $", {Model.ShipToState} {Model.ShipToPostalCode}" : string.Empty)</p>
+                                    <p class="list-item">@Model.STCountry</p>
+                                </div>
+                            </td>
+                            <td class="order-details-right">
+                                <div class="bill-info">
+                                    <div class="oc-head">
+                                        <h3>@T("Billing Address")</h3>
+                                    </div>
+                                    <p class="list-item">@Model.BTCompanyName</p>
+                                    <p class="list-item">@Model.BTAddress1</p>
+                                    @if (!string.IsNullOrEmpty(Model.BTAddress2))
+                                    {
+                                        <p class="list-item">@Model.BTAddress2</p>
+                                    }
+                                    <p class="list-item">@Model.BillToCity @(!string.IsNullOrEmpty(Model.BillToCity) && !string.IsNullOrEmpty(Model.BillToState) ? $", {Model.BillToState} {Model.BillToPostalCode}" : string.Empty)</p>
+                                    <p class="list-item">@Model.BTCountry</p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.ShipCode))
+                                {
+                                    <div class="ship-method">
+                                        <div class="oc-head">
+                                            <h3>@T("Shipping Method")</h3>
+                                        </div>
+                                        <div>@Model.ShipCode</div>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Notes))
+                                {
+                                    <div class="notes">
+                                        <div class="oc-head">
+                                            <h3>@T("Order Notes")</h3>
+                                        </div>
+                                        <div>@Model.Notes</div>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="summary-block">
+                    <table class="order-subtotal">
+                        <tr>
+                            <td>
+                                <h3 class="oc-head">@T("Invoice Summary")</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sub-label">@T("Subtotal")</td>
+                            <td class="sub-amount">@Model.ProductTotalDisplay</td>
+                        </tr>
+                        <tr>
+                            <td class="sub-label">@T("Shipping & Handling")</td>
+                            <td class="sub-amount">@Model.ShippingAndHandlingDisplay</td>
+                        </tr>
+                        <tr>
+                            <td class="sub-label">@T("Misc. Charge")</td>
+                            <td class="sub-amount">@Model.OtherChargesDisplay</td>
+                        </tr>
+                        <tr>
+                            <td class="sub-label">@T("Discounts")</td>
+                            <td class="sub-amount">@Model.DiscountAmountDisplay</td>
+                        </tr>
+                        @if (Model.DiscountAmount > 0)
+                        {
+                            <tr class="promo-applied">
+                                <td class="sub-label">@T("Order Discount")</td>
+                                <td class="sub-amount">-@Model.DiscountAmountDisplay</td>
+                            </tr>
+                        }
+                        @if (Model.InvoiceHistoryTaxes.Count == 0)
+                        {
+                            <tr class="promo-applied">
+                                <td class="sub-label">@T("Taxes")</td>
+                                <td class="sub-amount">-@Model.TaxAmountDisplay</td>
+                            </tr>
+                        }
+                        @foreach (var invoiceHistoryTax in Model.InvoiceHistoryTaxes)
+                        {
+                            <tr class="sub-label">
+                                @if (string.IsNullOrEmpty(invoiceHistoryTax.TaxDescription))
+                                {
+                                    <td class="sub-label">@T("Taxes")</td>
+                                }
+                                else
+                                {
+                                    <td class="sub-label">@invoiceHistoryTax.TaxDescription</td>
+                                }
+                                <td class="sub-amount">@invoiceHistoryTax.TaxAmountDisplay</td>
+                            </tr>
+                        }
+                        <tr class="invoice-total">
+                            <td class="sub-label">@T("Invoice Total")</td>
+                            <td class="sub-amount">@Model.InvoiceTotalDisplay</td>
+                        </tr>
+                        <tr>
+                            <td class="sub-label">@T("Payments")</td>
+                            <td class="sub-amount">@((Model.InvoiceTotal - @Model.CurrentBalance).ToString("0.00"))</td>
+                        </tr>
+                        <tr class="order-total">
+                            <td class="sub-label">@T("Balance Due")</td>
+                            <td class="sub-amount">@Model.CurrentBalanceDisplay</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table class="order-details">
+            <tr class="products-header">
+                <th class="left">@T("Product")</th>
+                <th class="right">@T("Price")</th>
+                <th class="right">@T("QTY_quantity")</th>
+                <th class="right">@T("Discount")</th>
+                <th class="right">@T("Subtotal")</th>
+            </tr>
+            @foreach (var line in Model.InvoiceLines)
+            {
+                <tr class="product-line">
+                    <td>
+                        <div class="item-name">
+                            @if (!string.IsNullOrEmpty(line.ProductUri))
+                            {
+                                <h3>@line.ShortDescription</h3>
+                            }
+                            else
+                            {
+                                <h3>@line.ProductERPNumber</h3>
+                            }
+                        </div>
+                        <div class="item-num">
+                            <h3>@line.ProductERPNumber</h3>
+                            @if (!string.IsNullOrEmpty(line.ManufacturerItem))
+                            {
+                                <h3>@T("MFG #"):@line.ManufacturerItem</h3>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(line.Notes))
+                        {
+                            <div class="item-notes">
+                                <h3>@T("Line Notes"): @line.Notes</h3>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <div class="price right">
+                            <h3 class="price-sale">@line.UnitPriceDisplay</h3>
+                            <h3 class="selected-uom">@line.UnitOfMeasure</h3>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="item-qty right">
+                            <h3>@line.QtyInvoiced</h3>
+                        </div>
+                    </td>
+                    <td>
+                        @if (line.DiscountAmount > 0)
+                        {
+                            <div class="right">
+                                <h3>@line.DiscountAmountDisplay</h3>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <div class="right">
+                            <h3 class="item-subtotal">@line.LineTotalDisplay</h3>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>
+</html>
