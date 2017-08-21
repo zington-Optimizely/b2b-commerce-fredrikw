@@ -296,7 +296,7 @@ module insite.catalog {
                 this.spinnerService.show("productlist");
             }
 
-            expand = expand != null ? expand : ["pricing", "attributes", "facets"];
+            expand = expand ? expand : ["pricing", "attributes", "facets"];
             this.productService.getProducts(params, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection, params, expand); },
                 (error: any) => { this.getProductsFailed(error); });
@@ -383,10 +383,14 @@ module insite.catalog {
                 result.priceRange = this.products.priceRange;
             }
 
-            if ((expand && expand.length !== 3)) {
-                result.attributeTypeFacets = this.products.attributeTypeFacets;
-                result.categoryFacets = this.products.categoryFacets;
+            if (!expand || !expand.some(e => e === "pricing")) {
                 result.priceRange = this.products.priceRange;
+            }
+            if (!expand || !expand.some(e => e === "attributes")) {
+                result.attributeTypeFacets = this.products.attributeTypeFacets;
+            }
+            if (!expand || !expand.some(e => e === "facets")) {
+                result.categoryFacets = this.products.categoryFacets;
             }
 
             if (this.filterType !== "clear") {
@@ -688,7 +692,7 @@ module insite.catalog {
         }
 
         goToSearchCriteria(searchCriteria: string, includeSuggestions: boolean = true) {
-            this.$location.search("criteria", encodeURIComponent(searchCriteria));
+            this.$location.search("criteria", searchCriteria);
             if (!includeSuggestions) {
                 this.$location.search("includeSuggestions", "false");
             }

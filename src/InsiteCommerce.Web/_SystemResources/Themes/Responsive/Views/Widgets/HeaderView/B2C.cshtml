@@ -77,7 +77,7 @@
     <div role="top-panel">
         <div class="top-slide">
             <div id="searchPanel">
-                <isc-product-search id="narrowSearch" listen-for-data="true"></isc-product-search>
+                <isc-product-search id="narrowSearch"></isc-product-search>
             </div>
             <div id="userPanel">
                 <form>
@@ -299,6 +299,7 @@
                        k-options="vm.autocompleteOptions"
                        isc-enter="vm.onEnter()"
                        name="criteria"
+                       ng-blur="vm.startAutocomplete()"
                        onfocus="$(this).data('kendoAutoComplete').search()">
             </div>
             <div class="search-history">

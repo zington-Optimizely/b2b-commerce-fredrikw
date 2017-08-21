@@ -296,6 +296,7 @@
         protected setCustomerCompleted(session: SessionModel): void {
             session.shipTo = this.shipTo;
             const redirectFn = () => {
+                this.spinnerService.show();
                 this.sessionService.redirectAfterSelectCustomer(
                     session,
                     this.cart.canBypassCheckoutAddress,

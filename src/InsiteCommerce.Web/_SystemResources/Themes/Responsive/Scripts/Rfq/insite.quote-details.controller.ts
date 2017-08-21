@@ -198,6 +198,12 @@
         }
 
         protected applyQuoteFailed(error: any): void {
+            if (error && error.message) {
+                const form = this.getQuoteCalculatorForm();
+                if (form && form.length !== 0) {
+                    form.validate().showErrors({ "percent" : error.message });
+                }
+            }
         }
 
         changeCalculationMethod(): void {
@@ -232,8 +238,12 @@
             return true;
         }
 
+        protected getQuoteCalculatorForm(): ng.IAugmentedJQuery {
+            return angular.element("#rfqApplyOrderQuoteForm");
+        }
+
         protected validateQuoteCalculatorForm(): boolean {
-            const form = angular.element("#rfqApplyOrderQuoteForm");
+            const form = this.getQuoteCalculatorForm();
             if (form && form.length !== 0) {
                 const validator = form.validate({
                     errorLabelContainer: "#rfqApplyOrderQuoteFormError"

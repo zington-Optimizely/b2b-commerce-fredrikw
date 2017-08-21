@@ -12,12 +12,13 @@ module insite.account {
         isReadOnly = false;
         addressFields: AddressFieldCollectionModel;
 
-        static $inject = ["customerService", "websiteService", "sessionService"];
+        static $inject = ["customerService", "websiteService", "sessionService", "queryString"];
 
         constructor(
             protected customerService: customers.ICustomerService,
             protected websiteService: websites.IWebsiteService,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected queryString: common.IQueryStringService) {
             this.init();
         }
 
@@ -145,7 +146,15 @@ module insite.account {
                 shipTos.unshift((this.billTo as any) as ShipToModel); // add the actual billto to top of array
             }
 
-            if (selectedShipTo) {
+            const isNewShipTo = this.queryString.get("isNewShipTo");
+            if (isNewShipTo === "true") {
+                shipTos.forEach(shipTo => {
+                    if (shipTo.isNew) {
+                        this.shipTo = shipTo;
+                    }
+                });
+            }
+            else if (selectedShipTo) {
                 shipTos.forEach(shipTo => {
                     if (shipTo.id === selectedShipTo.id) {
                         this.shipTo = shipTo;

@@ -12,7 +12,6 @@ module insite.catalog {
 
     export class ProductSearchController {
         criteria: string;
-        listenForData: boolean;
         products: ProductAutocompleteItemModel[] = [];
         autocomplete: any;
         autocompleteOptions: AutoCompleteOptions;
@@ -24,6 +23,7 @@ module insite.catalog {
         searchHistoryEnabled: boolean;
         searchData: Array<any> = [];
         isVisibleSearchInput: boolean;
+        isFirstOpen = true;
 
         static $inject = ["$element", "$filter", "coreService", "searchService", "settingsService", "$state", "queryString", "$scope"];
 
@@ -100,7 +100,8 @@ module insite.catalog {
                 animation: false,
                 template: (suggestion: any) => { return this.getAutocompleteTemplate(suggestion); },
                 select: (event: kendo.ui.AutoCompleteSelectEvent) => { this.onAutocompleteSelect(event); },
-                dataBound: (event: kendo.ui.AutoCompleteDataBoundEvent) => { this.onAutocompleteDataBound(event); }
+                dataBound: (event: kendo.ui.AutoCompleteDataBoundEvent) => { this.onAutocompleteDataBound(event); },
+                open: (event: kendo.ui.AutoCompleteOpenEvent) => { this.onAutocompleteOpen(event); }
             };
         }
 
@@ -113,7 +114,7 @@ module insite.catalog {
                 list.append(this.$element.find(".clear-search-history"));
             }
 
-            this.disableSearch();
+            this.enableSearch();
 
             if (this.autocompleteCanceled) {
                 this.autocompleteCanceled = false;
@@ -174,10 +175,11 @@ module insite.catalog {
         }
 
         protected onAutocompleteSelect(event: kendo.ui.AutoCompleteSelectEvent): boolean {
-            this.enableSearch();
+            this.disableSearch();
 
             const dataItem = this.getAutocomplete().dataItem(event.item.index(".k-item"));
             if (!dataItem) {
+                this.enableSearch();
                 event.preventDefault();
                 return false;
             }
@@ -248,6 +250,20 @@ module insite.catalog {
             list.find(".header").on("click", () => {
                 return false;
             });
+        }
+
+        protected onAutocompleteOpen(event: kendo.ui.AutoCompleteOpenEvent): void {
+            if (!this.isFirstOpen) {
+                return;
+            }
+
+            this.isFirstOpen = false;
+
+            // need to re-open popup at first time for fixing position
+            setTimeout(() => {
+                this.getAutocomplete().popup.close();
+                this.getAutocomplete().popup.open();
+            }, 250);
         }
 
         protected getAutocompleteTemplate(suggestion: any): string {
@@ -344,6 +360,8 @@ module insite.catalog {
             this.stopAutocomplete();
 
             if (this.onlyOneProductInAutocomplete()) {
+                this.startAutocomplete();
+                this.enableSearch();
                 this.navigateToFirstProductInAutocomplete();
                 return;
             }
@@ -361,7 +379,7 @@ module insite.catalog {
         }
 
         protected isSearchEnabled(): boolean {
-            return this.preventActions;
+            return !this.preventActions;
         }
 
         private getSearchTerm(query?: string): string {
@@ -378,6 +396,10 @@ module insite.catalog {
 
         private stopAutocomplete(): void {
             this.autocompleteCanceled = true;
+        }
+
+        private startAutocomplete(): void {
+            this.autocompleteCanceled = false;
         }
 
         private onlyOneProductInAutocomplete(): boolean {
@@ -411,13 +433,9 @@ module insite.catalog {
             return null;
         }
 
-        clearCriteria() {
-            this.criteria = '';
-        }
-
         hideSearchArea() {
             this.isVisibleSearchInput = false;
-            this.clearCriteria();
+            this.clearSearchTerm();
         }
     }
 
