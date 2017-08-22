@@ -168,10 +168,6 @@
             width: auto;
             line-height: 1em;
             height: auto;
-
-            .item-subtotal {
-                min-width: 120px;
-            }
         }
 
 
@@ -191,10 +187,6 @@
 
         ul.cart-items {
             border-top: 1px solid #E0E0E0;
-        }
-
-        .item-list .item-details div.item-opt .item-subtotal {
-            min-width: 120px;
         }
     }
 }

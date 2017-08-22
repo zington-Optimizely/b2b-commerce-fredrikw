@@ -66,14 +66,11 @@
         setFile(arg): void {
             if (arg.files.length > 0) {
                 this.file = arg.files[0];
-                this.fileName = this.file.name;
+                this.$scope.$apply(() => { this.fileName = this.file.name; });
                 const fileExtension = this.getFileExtension(this.file.name);
                 this.badFile = ["xls", "xlsx", "csv"].indexOf(fileExtension) === -1;
                 this.uploadLimitExceeded = false;
-
-                setTimeout(() => {
-                    this.$scope.$apply();
-                });
+                this.$scope.$apply();
             }
         }
 
@@ -267,7 +264,7 @@
             const baseUnitOfMeasure = this.getBaseUnitOfMeasure(product);
             const currentUnitOfMeasure = this.getCurrentUnitOfMeasure(product);
 
-            if (product.trackInventory && !product.canBackOrder && !product.quoteRequired && baseUnitOfMeasure && currentUnitOfMeasure &&
+            if (!product.canBackOrder && !product.quoteRequired && baseUnitOfMeasure && currentUnitOfMeasure &&
                     product.qtyOrdered * baseUnitOfMeasure.qtyPerBaseUnitOfMeasure > product.qtyOnHand * currentUnitOfMeasure.qtyPerBaseUnitOfMeasure) {
                 const errorProduct = this.mapProductErrorInfo(index, UploadError.NotEnough, item.Name, product);
                 errorProduct.conversionRequested = currentUnitOfMeasure.qtyPerBaseUnitOfMeasure;
@@ -337,7 +334,7 @@
         }
 
         protected validateProduct(product: ProductDto): UploadError {
-            if (product.qtyOnHand === 0 && product.trackInventory && !product.canBackOrder) {
+            if (product.qtyOnHand === 0 && !product.canBackOrder) {
                 return UploadError.OutOfStock;
             }
 

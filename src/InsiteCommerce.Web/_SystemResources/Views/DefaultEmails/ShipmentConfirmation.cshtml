@@ -43,13 +43,15 @@
             <tr><th><b>Item Number</b></th><th><b>Description</b></th><th><b>Unit Of Measure</b></th><th><b>Qty Ordered</b></th><th><b>Qty Shipped</b></th></tr>
             [% for shipmentPackage in Model.ShipmentPackages -%]
             [% for shipmentPackageLine in shipmentPackage.ShipmentPackageLines -%]
+            [% if shipmentPackageLine.OrderLine != null -%]
             <tr>
-                <td valign="top"><span class="main">[[shipmentPackageLine.ErpNumber]]</span></td>
-                <td valign="top"><span class="main">[[shipmentPackageLine.Description]]</span></td>
-                <td valign="top"><span class="main">[[shipmentPackageLine.UnitOfMeasure]]</span></td>
-                <td valign="top"><span class="main">[[shipmentPackageLine.QtyOrdered]]</span></td>
+                <td valign="top"><span class="main">[[shipmentPackageLine.OrderLine.Product.ErpNumber]]</span></td>
+                <td valign="top"><span class="main">[[shipmentPackageLine.OrderLine.Description]]</span></td>
+                <td valign="top"><span class="main">[[shipmentPackageLine.OrderLine.UnitOfMeasure]]</span></td>
+                <td valign="top"><span class="main">[[shipmentPackageLine.OrderLine.QtyOrdered]]</span></td>
                 <td valign="top"><span class="main">[[shipmentPackageLine.QtyShipped]]</span></td>
             </tr>
+            [% endif -%]
             [% endfor -%]
             [% endfor -%]
         </table>

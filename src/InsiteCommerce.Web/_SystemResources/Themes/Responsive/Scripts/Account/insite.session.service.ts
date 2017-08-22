@@ -30,9 +30,8 @@ module insite.account {
 
         authRetryCount = 0;
         checkForSessionTimeout = false;
-        accountSettings: AccountSettingsModel;
 
-        static $inject = ["$http", "$rootScope", "$q", "$localStorage", "$window", "ipCookie", "accessToken", "$location", "httpWrapperService", "coreService", "settingsService"];
+        static $inject = ["$http", "$rootScope", "$q", "$localStorage", "$window", "ipCookie", "accessToken", "$location", "httpWrapperService", "coreService"];
 
         constructor(
             protected $http: ng.IHttpService,
@@ -44,24 +43,12 @@ module insite.account {
             protected accessToken: common.IAccessTokenService,
             protected $location: ng.ILocationService,
             protected httpWrapperService: core.HttpWrapperService,
-            protected coreService: core.ICoreService,
-            protected settingsService: core.ISettingsService) {
+            protected coreService: core.ICoreService) {
             this.init();
         }
 
         init(): void {
             this.$rootScope.$on("$stateChangeSuccess", () => { this.onStateChangeSuccess(); });
-            this.settingsService.getSettings().then(
-                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
-                (error: any) => { this.getSettingsFailed(error); }
-            );
-        }
-
-        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
-            this.accountSettings = settingsCollection.accountSettings;
-        }
-
-        protected getSettingsFailed(error: any): void {
         }
 
         protected onStateChangeSuccess(): void {
@@ -189,16 +176,15 @@ module insite.account {
         }
 
         setContext(context: CurrentContextModel): void {
-            const isRememberedUser = !!this.ipCookie("SetRememberedUserId");
             if (context.billToId) {
-                this.ipCookie("CurrentBillToId", context.billToId, { path: "/", expires: isRememberedUser ? this.accountSettings.daysToRetainUser : null });
-            } else if (!isRememberedUser) {
+                this.ipCookie("CurrentBillToId", context.billToId, { path: "/" });
+            } else {
                 this.ipCookie.remove("CurrentBillToId", { path: "/" });
             }
 
             if (context.shipToId) {
-                this.ipCookie("CurrentShipToId", context.shipToId, { path: "/", expires: isRememberedUser ? this.accountSettings.daysToRetainUser : null });
-            } else if (!isRememberedUser) {
+                this.ipCookie("CurrentShipToId", context.shipToId, { path: "/" });
+            } else {
                 this.ipCookie.remove("CurrentShipToId", { path: "/" });
             }
 
@@ -484,7 +470,7 @@ module insite.account {
             } else if (sessionModel.customLandingPage) {
                 returnUrl = sessionModel.customLandingPage;
             } else if (sessionModel.shipTo.isNew) {
-                returnUrl = `${addressesUrl}?isNewShipTo=true`;
+                returnUrl = addressesUrl;
             }
 
             if (returnUrl.toLowerCase() === checkoutAddressUrl.toLowerCase()) {

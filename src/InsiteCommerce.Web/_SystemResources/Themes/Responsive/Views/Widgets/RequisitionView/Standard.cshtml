@@ -45,7 +45,7 @@
                     </li>
                     <li class="row req-approve">
                         <div class="small-6 columns view-req">
-                            <a id="tst_view_requisition_{{::requisition.productId}}_{{::requisition.unitOfMeasure}}" class="btn secondary btn-view-requisitions" ng-click="vm.openRequisition(requisition.id);" href="javascript:void(0);">[% translate 'View Requisitions' %]</a>
+                            <a class="btn secondary btn-view-requisitions" ng-click="vm.openRequisition(requisition.id);" href="javascript:void(0);">[% translate 'View Requisitions' %]</a>
                         </div>
                         <div class="small-6 columns approve-req">
                             <label class="input-lbl rq-approve">
@@ -96,7 +96,7 @@
                                             <div class="item-qty">
                                                 <strong>[% translate 'QTY_quantity' %]:</strong> <span ng-bind="vm.requisition.qtyOrdered"></span>
                                             </div>
-                                            <div id="tst_popup_requisition_subtotal" class="item-subtotal" ng-bind="vm.requisition.pricing.extendedUnitNetPriceDisplay"></div>
+                                            <div class="item-subtotal" ng-bind="vm.requisition.pricing.extendedUnitNetPriceDisplay"></div>
                                         </div>
                                     </div>
                                     <div class="medium-9 large-9 columns item-code-notes" ng-if="vm.requisition.costCode || vm.requisition.notes">
@@ -128,11 +128,11 @@
                                 <th class="col-last-name">[% translate 'Last Name' %]</th>
                                 <th class="col-username">[% translate 'Username' %]</th>
                             </tr>
-                            <tr class="tst_popup_requisition_line" ng-repeat="requisitionLine in vm.requisition.requisitionLineCollection.requisitionLines">
+                            <tr ng-repeat="requisitionLine in vm.requisition.requisitionLineCollection.requisitionLines">
                                 <td class="col-qty-remove">
                                     <span class="sticky-first">
                                         <input name="qty" type="text" class="txt numerictextbox" ng-model="requisitionLine.qtyOrdered" ng-blur="vm.patchRequisitionLine(requisitionLine)" />
-                                        <a id="tst_popup_requisition_line_{{::$index}}_remove" class="btn tertiary btn-remove" href="javascript:void(0);" data-removerequisition="true" ng-click="vm.deleteRequisitionLine(requisitionLine)">X</a>
+                                        <a class="btn tertiary btn-remove" href="javascript:void(0);" data-removerequisition="true" ng-click="vm.deleteRequisitionLine(requisitionLine)">X</a>
                                     </span>
                                 </td>
                                 <td class="col-date" ng-bind="requisitionLine.orderDate | date:'shortDate'"></td>

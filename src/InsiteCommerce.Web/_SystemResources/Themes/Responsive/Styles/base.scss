@@ -1687,6 +1687,10 @@ body [role="main"] div.pbtm {
     }
 }
 
+.k-animation-container {
+    max-width: 220px;
+}
+
 #selectBillTo-list, #selectShipTo-list {
     &.k-list-container ul li {
         &.k-item {

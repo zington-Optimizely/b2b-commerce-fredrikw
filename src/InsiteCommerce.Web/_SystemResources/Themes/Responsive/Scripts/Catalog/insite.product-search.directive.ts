@@ -10,6 +10,7 @@
             replace: true,
             restrict: "E",
             scope: {
+                listenForData: "=",
                 isVisibleSearchInput: "="
             },
             templateUrl: "header_productSearch"
