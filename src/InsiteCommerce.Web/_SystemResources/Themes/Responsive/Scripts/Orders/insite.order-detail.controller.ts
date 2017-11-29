@@ -10,6 +10,8 @@
         validationMessage: string;
         showCancelationConfirmation = false;
         showInventoryAvailability = false;
+        requiresRealTimeInventory = false;
+        failedToGetRealTimeInventory = false;
         showPoNumber: boolean;
         showTermsCode: boolean;
         showOrderStatus: boolean;
@@ -54,6 +56,7 @@
             this.showPoNumber = settingsCollection.orderSettings.showPoNumber;
             this.showTermsCode = settingsCollection.orderSettings.showTermsCode;
             this.showOrderStatus = settingsCollection.orderSettings.showOrderStatus;
+            this.requiresRealTimeInventory = settingsCollection.productSettings.realTimeInventory;
         }
 
         protected getSettingsFailed(error: any): void {
@@ -129,6 +132,7 @@
             this.order = order;
             this.btFormat = this.formatCityCommaStateZip(this.order.billToCity, this.order.billToState, this.order.billToPostalCode);
             this.stFormat = this.formatCityCommaStateZip(this.order.shipToCity, this.order.shipToState, this.order.shipToPostalCode);
+            this.getRealTimeInventory();
         }
 
         protected getOrderFailed(error: any): void {
@@ -201,6 +205,21 @@
 
         showShareModal(entityId: string): void {
             this.coreService.displayModal(`#shareEntityPopupContainer_${entityId}`);
+        }
+
+        getRealTimeInventory(): void {
+            if (this.requiresRealTimeInventory) {
+                this.cartService.getRealTimeInventory({ cartLines: this.order.orderLines as any as CartLineModel[] } as CartModel).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getRealTimeInventoryFailed(error: any): void {
+            this.failedToGetRealTimeInventory = true;
         }
     }
 

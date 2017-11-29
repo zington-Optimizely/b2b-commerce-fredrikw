@@ -94,6 +94,14 @@ module insite.rfq {
             this.users = userCollection
                 .filter(user => user.userName !== this.session.userName)
                 .sort((user1, user2) => user1.userName.localeCompare(user2.userName));
+
+            this.users.forEach(user => {
+                if (user.firstName && user.lastName) {
+                    user.displayName = `${user.firstName} ${user.lastName}`;
+                } else {
+                    user.displayName = user.userName;
+                }
+            });
         }
 
         protected getAccountsFailed(result: any): void {

@@ -12,7 +12,7 @@
                             <select ng-model="vm.selectedUser" class="uom-selector billto-selector" name="users" id="users" autocomplete="off"
                                     data-rule-required="true" data-msg-required="[% siteMessage 'Rfq_UserIsRequired' %]">
                                 <option value="" ng-selected="selected">[% translate 'Select a User' %]</option>
-                                <option ng-repeat="user in vm.users" value="{{user.id}}" ng-bind="user.userName"></option>
+                                <option ng-repeat="user in vm.users" value="{{user.id}}" ng-bind="user.displayName"></option>
                             </select>
                             <span class="field-validation-valid" data-valmsg-for="users" data-valmsg-replace="true"></span>
                         </div>

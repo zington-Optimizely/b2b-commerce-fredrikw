@@ -48,13 +48,15 @@
                                 <tr id="tst_quoteLineCalculator_calculator_{{$index}}" ng-show="vm.showCalculator && vm.currentCalculatorLineIndex == {{$index}}">
                                     <td class="col-1">
                                         <select ng-model="vm.calculationMethod" class="tst_quoteLineCalculator_method"
-                                                ng-change="vm.changeCalculationMethod()"
                                                 ng-options="method.displayName for method in vm.quoteLine.pricingRfq.calculationMethods track by method.name"></select>
                                     </td>
                                     <td class="col-2">
                                         <input type="text" ng-model="priceBreak.percent" class="numerictextbox txt disc-percent tst_quoteLineCalculator_percent" autofocus="autofocus"
                                                name="percent"
-                                               id="percent1212" />
+                                               id="percent1212"
+                                               ng-class="{ 'input-validation-error': vm.invalidPercent && !vm.percentIsValid($index) }"
+                                               data-rule-max="{{ vm.calculationMethod.maximumDiscount > 0 ? (vm.calculationMethod.maximumDiscount * 1) : 'false' }}"
+                                               data-rule-min="{{ vm.calculationMethod.minimumMargin }}" />
                                         <span>%</span>
                                     </td>
                                     <td class="col-3">
@@ -115,12 +117,12 @@
                             </a>
                         </div>
 
-                        <div class="validation-summary-errors" ng-if="vm.priceRequired || vm.invalidPrice || vm.invalidQty">
+                        <div class="validation-summary-errors" ng-if="vm.priceRequired || vm.invalidPrice || vm.invalidPercent || vm.invalidQty">
                             <ul>
                                 <li ng-show="vm.priceRequired">
                                     <label class="error">{{::'[% siteMessage 'Field_Required' EscapeSingleQuotes %]'.replace('{0}', '[% translate 'Price' EscapeSingleQuotes %]')}}</label>
                                 </li>
-                                <li ng-show="vm.invalidPrice">
+                                <li ng-show="vm.invalidPrice || vm.invalidPercent">
                                     <label class="error">[% siteMessage 'Rfq_InvalidLinePrice' %]</label>
                                 </li>
                                 <li ng-show="vm.invalidQty">

@@ -20,7 +20,7 @@
                     <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
                 </div>
                 <div ng-if="vm.settings.showInventoryAvailability" class="availability">
-                    <isc-availability-message availability="vm.product.availability"></isc-availability-message>
+                    <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                 </div>
             </div>
             <div class="small-12 detail-image">

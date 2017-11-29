@@ -23,6 +23,7 @@ module insite.catalog {
         styleTraitFiltered: StyleTraitDto[] = [];
         showUnitError = false;
         failedToGetRealTimePrices = false;
+        failedToGetRealTimeInventory = false;
         productSubscription: ProductSubscriptionDto;
         addingToCart = false;
         languageId: System.Guid;
@@ -101,7 +102,7 @@ module insite.catalog {
 
         protected getProductCompleted(productModel: ProductModel): void {
             this.product = productModel.product;
-            this.product.qtyOrdered = 1;
+            this.product.qtyOrdered = this.product.minimumOrderQty || 1;
 
             if (this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
                 this.initConfigurationSelection(this.product.configurationDto.sections);
@@ -118,6 +119,7 @@ module insite.catalog {
             }
 
             this.getRealTimePrices();
+            this.getRealTimeInventory();
 
             setTimeout(() => {
                 ($(".easy-resp-tabs") as any).easyResponsiveTabs();
@@ -157,6 +159,33 @@ module insite.catalog {
 
         protected getProductRealTimePricesFailed(error: any): void {
             this.failedToGetRealTimePrices = true;
+        }
+
+        protected getRealTimeInventory(): void {
+            if (this.settings.realTimeInventory) {
+                const inventoryProducts = [this.product];
+                if (this.product.styledProducts != null && this.product.styledProducts.length > 0) {
+                    this.product.styledProducts.forEach((s) => {
+                        (s as any).id = s.productId;
+                        inventoryProducts.push(s as any);
+                    });
+                }
+
+                this.productService.getProductRealTimeInventory(inventoryProducts).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+            // product inventory is already updated
+            if (this.product.isStyleProductParent) {
+                this.parentProduct = angular.copy(this.product);
+            }
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
+            this.failedToGetRealTimeInventory = true;
         }
 
         protected initConfigurationSelection(sections: ConfigSectionDto[]): void {

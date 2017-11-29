@@ -50,8 +50,7 @@
             "queryString",
             "accessToken",
             "$timeout",
-            "$localStorage",
-            "$http"
+            "$localStorage"
         ];
 
         constructor(
@@ -141,15 +140,8 @@
         }
 
         protected generateAccessTokenOnSignInCompleted(accessTokenDto: common.IAccessTokenDto): void {
-            // TODO remove this hack after ISC-5832
-            this.$http.post("/admin/dummy", null, { "timeout": 1000 }).then(() => {
-                this.accessTokenString = accessTokenDto.accessToken;
-                this.signUserIn();
-            }, () => {
-                this.spinnerService.show();
-                this.accessTokenString = accessTokenDto.accessToken;
-                this.signUserIn();
-            });
+            this.accessTokenString = accessTokenDto.accessToken;
+            this.signUserIn();
         }
 
         protected generateAccessTokenOnSignInFailed(error: any): void {

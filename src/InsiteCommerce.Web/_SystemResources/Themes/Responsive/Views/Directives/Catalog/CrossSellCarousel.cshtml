@@ -64,7 +64,7 @@
 
                                     <div class="actions-block">
                                         <div class="item-qty" ng-if="::crossSellProduct.canAddToCart">
-                                            <input type="text" ng-model="crossSellProduct.qtyOrdered" ng-init="crossSellProduct.qtyOrdered = 1" class="qty numerictextbox tst_crossSellProduct_qtyOrdered" />
+                                            <input type="text" ng-model="crossSellProduct.qtyOrdered" ng-init="crossSellProduct.qtyOrdered = crossSellProduct.minimumOrderQty || 1" class="qty numerictextbox tst_crossSellProduct_qtyOrdered" />
                                         </div>
                                         <div class="action">
                                             <button class="btn primary btn-add-cart tst_crossSellProduct_addToCart" ng-click="vm.addToCart(crossSellProduct)" ng-if="::crossSellProduct.canAddToCart" ng-disabled="!crossSellProduct.qtyOrdered || crossSellProduct.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add to Cart' %]</button>

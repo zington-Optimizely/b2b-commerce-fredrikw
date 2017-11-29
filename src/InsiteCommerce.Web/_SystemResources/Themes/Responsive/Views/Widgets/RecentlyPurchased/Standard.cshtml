@@ -19,16 +19,16 @@
                         <a id="tst_recentlyPurchasedWidget_product_{{::productItem.product.id}}" ng-href="{{productItem.product.productDetailUrl}}" ng-bind="productItem.product.shortDescription"></a>
                     </td>
                     <td class="col-price">
-                        <isc-product-price product="productItem.product" id-key="rp-widget" hide-sale-price-label="true"></isc-product-price>
+                        <isc-product-price product="productItem.product" id-key="{{'rp-widget_' + vm.productItems.indexOf(productItem)}}" hide-sale-price-label="true"></isc-product-price>
                         <div class="d-block" ng-show="productItem.product.canShowPrice && !productItem.product.quoteRequired">
-                            <isc-quantity-break-pricing product-id="productItem.product.id" break-prices="productItem.product.pricing.unitRegularBreakPrices"></isc-quantity-break-pricing>
+                            <isc-quantity-break-pricing product-id="productItem.product.id" break-prices="productItem.product.pricing.unitRegularBreakPrices" block="{{'_' + vm.productItems.indexOf(productItem)}}"></isc-quantity-break-pricing>
                         </div>
                     </td>
                     <td class="col-actions">
                         <div ng-if="productItem.product.canEnterQuantity" class="item-qty">
                             <input id="tst_recentlyPurchasedWidget_product_{{::productItem.product.id}}_qty" type="text" name="qty" ng-model="productItem.product.qtyOrdered" class="qty numerictextbox"/>
                         </div>
-                        <a id="tst_recentlyPurchasedWidget_product_{{::productItem.product.id}}_addToCart" ng-if="productItem.product.canAddToCart" href="javascript:;" class="btn primary add-to-cart" ng-click="vm.addToCart(productItem.product)" ng-disabled="vm.addingToCart">[% translate 'Order_Verb' %]</a>
+                        <button id="tst_recentlyPurchasedWidget_product_{{::productItem.product.id}}_addToCart" ng-if="productItem.product.canAddToCart" href="javascript:;" class="btn primary add-to-cart" ng-click="vm.addToCart(productItem.product)" ng-disabled="vm.addingToCart">[% translate 'Order_Verb' %]</button>
                     </td>
                 </tr>
                 </tbody>
@@ -49,7 +49,7 @@
                         <div ng-if="productItem.product.canEnterQuantity" class="item-qty">
                             <input type="text" name="qty" ng-model="productItem.product.qtyOrdered" class="qty numerictextbox" />
                         </div>
-                        <a ng-if="productItem.product.canAddToCart" href="javascript:;" class="btn primary add-to-cart" ng-click="vm.addToCart(productItem.product)" ng-disabled="vm.addingToCart">[% translate 'Order_Verb' %]</a>
+                        <button ng-if="productItem.product.canAddToCart" class="btn primary add-to-cart" ng-click="vm.addToCart(productItem.product)" ng-disabled="vm.addingToCart">[% translate 'Order_Verb' %]</button>
                     </div>
                     <isc-product-price product="productItem.product" id-key="rp-widget" hide-sale-price-label="true"></isc-product-price>
                     <div class="d-block" ng-show="productItem.product.canShowPrice && !productItem.product.quoteRequired">

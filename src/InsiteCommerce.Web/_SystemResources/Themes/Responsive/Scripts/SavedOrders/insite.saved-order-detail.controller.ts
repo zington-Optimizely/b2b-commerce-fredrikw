@@ -6,6 +6,8 @@
         canAddToCart = false;
         canAddAllToCart = false;
         showInventoryAvailability = false;
+        requiresRealTimeInventory = false;
+        failedToGetRealTimeInventory = false;
 
         static $inject = ["cartService", "coreService", "spinnerService", "settingsService", "queryString"];
 
@@ -31,6 +33,7 @@
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.showInventoryAvailability = settingsCollection.productSettings.showInventoryAvailability;
+            this.requiresRealTimeInventory = settingsCollection.productSettings.realTimeInventory;
         }
 
         protected getSettingsFailed(error: any): void {
@@ -41,10 +44,26 @@
             this.cart = cart;
             this.canAddToCart = this.cart.cartLines.some(l => l.canAddToCart);
             this.canAddAllToCart = this.cart.cartLines.every(l => l.canAddToCart);
+            this.getRealTimeInventory();
         }
 
         protected getCartFailed(error: any): void {
             this.cartService.expand = "";
+        }
+
+        getRealTimeInventory(): void {
+            if (this.requiresRealTimeInventory) {
+                this.cartService.getRealTimeInventory(this.cart).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getRealTimeInventoryFailed(error: any): void {
+            this.failedToGetRealTimeInventory = true;
         }
 
         placeSavedOrder(cartUri: string): void {

@@ -20,7 +20,7 @@
 
             <isc-product-name product="cartLine" no-link="true"></isc-product-name>
             <div ng-show="includeInventory && !cartLine.quoteRequired" class="availability">
-                <isc-availability-message availability="cartLine.availability"></isc-availability-message>
+                <isc-availability-message availability="cartLine.availability" failed-to-get-real-time-inventory="failedToGetRealTimeInventory"></isc-availability-message>
             </div>
 
             <div class="row promo-applied" ng-repeat="promotion in promotions | filter: {orderLineId : cartLine.id}">

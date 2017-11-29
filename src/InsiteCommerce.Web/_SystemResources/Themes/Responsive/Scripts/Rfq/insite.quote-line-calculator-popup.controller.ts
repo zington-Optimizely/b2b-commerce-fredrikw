@@ -15,6 +15,7 @@ module insite.rfq {
         displayMaxQty = "0";
         priceRequired = false;
         invalidPrice = false;
+        invalidPercent = false;
         invalidQty = false;
 
         static $inject = ["$scope", "coreService", "rfqService"];
@@ -34,6 +35,7 @@ module insite.rfq {
             if (this.quoteLine && this.quoteLine.id !== data.id) {
                 this.priceRequired = false;
                 this.invalidPrice = false;
+                this.invalidPercent = false;
             }
             this.quoteLine = data;
             this.getCurentMaxQty();
@@ -78,19 +80,6 @@ module insite.rfq {
             this.currentCalculatorLineIndex = null;
         }
 
-        changeCalculationMethod(): void {
-            const field = $("#popup-quote-item [name='percent']");
-            if (this.calculationMethod.value === "List") {
-                field.rules("add", { min: 2 });
-            }
-            if (this.calculationMethod.value === "Customer") {
-                field.rules("add", { max: 10 });
-            }
-            if (this.calculationMethod.value === "Margin") {
-                field.rules("add", { max: 20 });
-            }
-        }
-
         applyBreakDiscount(index: number): void {
             const breakPrice = this.quoteLine.pricingRfq.priceBreaks[index];
             if (breakPrice.percent != null && breakPrice.percent > 0) {
@@ -109,6 +98,7 @@ module insite.rfq {
                     breakPrice.price = basePrice === 0 ? -1 : basePrice / (1 - breakPrice.percent / 100);
                 }
 
+                breakPrice.calculationMethod = this.calculationMethod.value;
                 breakPrice.price = parseFloat(breakPrice.price.toFixed(2));
 
                 this.validateQuoteLineCalculatorForm();
@@ -271,7 +261,7 @@ module insite.rfq {
         }
 
         priceIsValid(index: number): boolean {
-            if (!this.quoteLine.pricingRfq.priceBreaks[index].price || isNaN(this.quoteLine.pricingRfq.priceBreaks[index].price)) {
+            if (typeof (this.quoteLine.pricingRfq.priceBreaks[index].price) === "undefined" || this.quoteLine.pricingRfq.priceBreaks[index].price.toString() === "" || isNaN(this.quoteLine.pricingRfq.priceBreaks[index].price)) {
                 this.priceRequired = true;
                 return false;
             }
@@ -280,6 +270,17 @@ module insite.rfq {
                 this.invalidPrice = true;
                 return false;
             }
+            return true;
+        }
+
+        percentIsValid(index: number): boolean {
+            if (this.quoteLine.pricingRfq.priceBreaks[index].percent && this.quoteLine.pricingRfq.priceBreaks[index] && this.calculationMethod.maximumDiscount > 0
+                && this.quoteLine.pricingRfq.priceBreaks[index].percent * 1 > this.calculationMethod.maximumDiscount
+                || this.calculationMethod && this.quoteLine.pricingRfq.priceBreaks[index].percent * 1 < this.calculationMethod.minimumMargin) {
+                this.invalidPercent = true;
+                return false;
+            }
+
             return true;
         }
 
@@ -326,6 +327,7 @@ module insite.rfq {
         validateQuoteLineCalculatorForm(): boolean {
             this.priceRequired = false;
             this.invalidPrice = false;
+            this.invalidPercent = false;
             this.invalidQty = false;
 
             if (this.quoteLine) {
@@ -335,14 +337,14 @@ module insite.rfq {
                     }
 
                     this.priceIsValid(i);
-
+                    this.percentIsValid(i);
                     if (!this.quote.isJobQuote) {
                         this.startQtyIsValid(i);
                     }
                 }
             }
 
-            return !this.priceRequired && !this.invalidPrice && !this.invalidQty;
+            return !this.priceRequired && !this.invalidPrice && !this.invalidPercent && !this.invalidQty;
         }
 
         shouldShowPriceBreak(priceBreak): boolean {

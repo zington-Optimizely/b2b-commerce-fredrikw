@@ -1,6 +1,6 @@
 ﻿[% if Model.SalespersonsCount > 0 -%]
     <div ng-controller="MyQuotesController as vm" ng-cloak>
-        <form novalidate id="myQuotesForm">
+        <form novalidate id="myQuotesForm" ng-show="vm.quotes">
             <section class="accordion search-quotes">
                 <div>
                     <input type="checkbox" id="accord-1" class="accord-check" />

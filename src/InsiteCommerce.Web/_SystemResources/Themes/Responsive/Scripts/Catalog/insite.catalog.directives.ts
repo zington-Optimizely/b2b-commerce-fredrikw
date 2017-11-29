@@ -31,7 +31,8 @@
         .directive("iscAvailabilityMessage", () => ({
             restrict: "E",
             scope: {
-                availability: "="
+                availability: "=",
+                failedToGetRealTimeInventory: "="
             },
             templateUrl: "/PartialViews/Catalog-AvailabilityMessage"
         }))

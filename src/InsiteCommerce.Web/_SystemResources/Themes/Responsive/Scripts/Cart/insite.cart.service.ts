@@ -24,11 +24,13 @@ module insite.cart {
         updateLine(cartLine: CartLineModel, refresh: boolean): ng.IPromise<CartLineModel>;
         removeLine(cartLine: CartLineModel): ng.IPromise<CartLineModel>;
         getLoadedCurrentCart(): CartModel;
+        getRealTimeInventory(cart: CartModel): ng.IPromise<RealTimeInventoryModel>;
     }
 
     export class CartService implements ICartService {
         serviceUri = "/api/v1/carts";
         cartSettingsUri = "/api/v1/settings/cart";
+        realTimeInventoryUri = "/api/v1/realtimeinventory";
         cartLinesUri = "";
         currentCartLinesUri = "";
 
@@ -163,6 +165,7 @@ module insite.cart {
         }
 
         protected removeCartCompleted(response: ng.IHttpPromiseCallbackArg<CartLineModel>): void {
+            this.$rootScope.$broadcast("cartChanged");
         }
 
         protected removeCartFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
@@ -291,6 +294,50 @@ module insite.cart {
         }
 
         protected removeLineFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        getRealTimeInventory(cart: CartModel): ng.IPromise<RealTimeInventoryModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http.post(this.realTimeInventoryUri, this.getRealTimeInventoryParams(cart.cartLines)),
+                (response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>) => { this.getRealTimeInventoryCompleted(response, cart); },
+                this.getProductRealTimeInventoryFailed
+            );
+        }
+
+        protected getRealTimeInventoryParams(cartLines: CartLineModel[]): any {
+            var productIds = new Array<System.Guid>();
+            cartLines.forEach((cartLine) => {
+                if (productIds.indexOf(cartLine.productId) === -1) {
+                    productIds.push(cartLine.productId);
+                }
+            });
+            return {
+                productIds: productIds
+            };
+        }
+
+        protected getRealTimeInventoryCompleted(response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>, cart: CartModel): void {
+            cart.cartLines.forEach((cartLine: CartLineModel) => {
+                const productInventory = response.data.realTimeInventoryResults.find((productInventory: ProductInventoryDto) => productInventory.productId === cartLine.productId);
+                if (productInventory) {
+                    cartLine.qtyOnHand = productInventory.qtyOnHand;
+                    var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === cartLine.unitOfMeasure);
+                    if (inventoryAvailability) {
+                        cartLine.availability = inventoryAvailability.availability;
+                        if (!cart.hasInsufficientInventory && (cartLine.canBackOrder || cartLine.quoteRequired || (inventoryAvailability.availability as any).messageType == 2)) {
+                            cart.hasInsufficientInventory = true;
+                        }
+                    } else {
+                        cartLine.availability = { messageType: 0 };
+                    }
+                } else {
+                    cartLine.availability = { messageType: 0 };
+                }
+            });
+        }
+
+        protected getProductRealTimeInventoryFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
     }
 

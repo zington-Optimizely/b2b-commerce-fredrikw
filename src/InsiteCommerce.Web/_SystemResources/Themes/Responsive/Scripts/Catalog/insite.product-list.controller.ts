@@ -47,6 +47,7 @@ module insite.catalog {
         includeSuggestions: string;
         searchHistoryLimit: number;
         failedToGetRealTimePrices = false;
+        failedToGetRealTimeInventory = false;
         productFilterLoaded = false;
         filterType: string;
         addingToCart = false;
@@ -283,7 +284,7 @@ module insite.catalog {
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
-                getAllAttributeFacets: false
+                getAllAttributeFacets: true
             });
         }
 
@@ -296,7 +297,7 @@ module insite.catalog {
                 this.spinnerService.show("productlist");
             }
 
-            expand = expand != null ? expand : ["pricing", "attributes", "facets"];
+            expand = expand ? expand : ["pricing", "attributes", "facets"];
             this.productService.getProducts(params, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection, params, expand); },
                 (error: any) => { this.getProductsFailed(error); });
@@ -325,7 +326,7 @@ module insite.catalog {
 
             this.products = productCollection;
             this.products.products.forEach(product => {
-                product.qtyOrdered = 1;
+                product.qtyOrdered = product.minimumOrderQty || 1;
             });
 
             this.reloadCompareProducts();
@@ -352,6 +353,12 @@ module insite.catalog {
                     (error: any) => this.getProductRealTimePricesFailed(error));
             }
 
+            if (this.settings.realTimeInventory) {
+                this.productService.getProductRealTimeInventory(this.products.products).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            }
+
             this.imagesLoaded = 0;
             if (this.view === "grid") {
                 this.waitForDom();
@@ -371,9 +378,21 @@ module insite.catalog {
             this.failedToGetRealTimePrices = true;
         }
 
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
+            this.failedToGetRealTimeInventory = true;
+        }
+
         protected loadProductFilter(result: ProductCollectionModel, expand?: string[]): void {
             if (this.filterType === "attribute") {
-                result.attributeTypeFacets = this.products.attributeTypeFacets;
+                if (result.attributeTypeFacets.length > 0) {
+                    this.products.attributeTypeFacets = result.attributeTypeFacets;
+                } else {
+                    result.attributeTypeFacets = this.products.attributeTypeFacets;
+                }
+
                 result.categoryFacets = this.products.categoryFacets;
                 result.priceRange = this.products.priceRange;
             }
@@ -383,10 +402,14 @@ module insite.catalog {
                 result.priceRange = this.products.priceRange;
             }
 
-            if ((expand && expand.length !== 3)) {
-                result.attributeTypeFacets = this.products.attributeTypeFacets;
-                result.categoryFacets = this.products.categoryFacets;
+            if (!expand || !expand.some(e => e === "pricing")) {
                 result.priceRange = this.products.priceRange;
+            }
+            if (!expand || !expand.some(e => e === "attributes")) {
+                result.attributeTypeFacets = this.products.attributeTypeFacets;
+            }
+            if (!expand || !expand.some(e => e === "facets")) {
+                result.categoryFacets = this.products.categoryFacets;
             }
 
             if (this.filterType !== "clear") {
@@ -450,7 +473,6 @@ module insite.catalog {
                         facet.checked = true;
                     });
                 }
-
             }
 
             this.productFilterLoaded = true;
@@ -462,9 +484,6 @@ module insite.catalog {
         protected updateProductData(): void {
             this.storeHistory();
             this.$localStorage.set("productListSortType", this.products.pagination.sortType);
-            if (this.searchWithinTerms) {
-                this.includeSuggestions = "false";
-            }
 
             const params = {
                 categoryId: this.category ? this.category.id : (this.filterCategory ? this.filterCategory.categoryId : null),
@@ -688,7 +707,7 @@ module insite.catalog {
         }
 
         goToSearchCriteria(searchCriteria: string, includeSuggestions: boolean = true) {
-            this.$location.search("criteria", encodeURIComponent(searchCriteria));
+            this.$location.search("criteria", searchCriteria);
             if (!includeSuggestions) {
                 this.$location.search("includeSuggestions", "false");
             }

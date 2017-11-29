@@ -91,7 +91,8 @@
             const product = productCollection.products[0];
 
             if (this.validateProduct(product)) {
-                product.qtyOrdered = 1;
+                product.qtyOrdered = product.minimumOrderQty || 1;
+                this.selectedQty = product.qtyOrdered;
                 this.product = product;
                 this.errorMessage = "";
                 return true;
@@ -188,7 +189,7 @@
 
         protected addToCartAndClearInput(product: ProductDto): void {
             if (product.qtyOrdered === 0) {
-                product.qtyOrdered = 1;
+                product.qtyOrdered = product.minimumOrderQty || 1;
             }
 
             this.addLineFromProduct(product, null, null, true);

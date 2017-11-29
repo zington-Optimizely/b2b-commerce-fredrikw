@@ -16,6 +16,7 @@ module insite.order {
             expand: "",
             ponumber: "",
             ordernumber: "",
+            search: "",
             ordertotaloperator: "",
             ordertotal: "",
             status: [],
@@ -103,6 +104,7 @@ module insite.order {
             this.searchFilter.fromDate = "";
             this.searchFilter.ponumber = "";
             this.searchFilter.ordernumber = "";
+            this.searchFilter.search = "";
             this.searchFilter.ordertotaloperator = "";
             this.searchFilter.ordertotal = "";
             this.searchFilter.status = [];

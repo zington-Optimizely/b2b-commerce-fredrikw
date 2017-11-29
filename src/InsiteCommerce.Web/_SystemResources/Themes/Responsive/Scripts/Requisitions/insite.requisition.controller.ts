@@ -109,18 +109,23 @@
 
         protected deleteRequisitionLineCompleted(requisitionLine: RequisitionLineModel, requisition: RequisitionModel): void {
             this.getRequisitions();
-            for (let i = 0; i < this.requisition.requisitionLineCollection.requisitionLines.length; i++) {
-                if (this.requisition.requisitionLineCollection.requisitionLines[i].id === requisitionLine.id) {
-                    this.requisition.requisitionLineCollection.requisitionLines.splice(i, 1);
-                    break;
-                }
-            }
+
+            this.requisitionService.getRequisition(this.requisition.id).then(
+                (requisition: RequisitionModel) => { this.getRequisitionAfterDeleteCompleted(requisition); },
+                (error: any) => { this.getRequisitionAfterDeleteFailed(error); });
+        }
+
+        protected getRequisitionAfterDeleteCompleted(requisition: RequisitionModel): void {
+            this.requisition = requisition;
 
             if (this.requisition.requisitionLineCollection.requisitionLines.length === 0) {
                 this.message = this.deleteOrderLineMessage;
             } else {
                 this.message = this.deleteItemMessage;
             }
+        }
+
+        protected getRequisitionAfterDeleteFailed(error: any): void {
         }
 
         protected deleteRequisitionLineFailed(error: any): void {

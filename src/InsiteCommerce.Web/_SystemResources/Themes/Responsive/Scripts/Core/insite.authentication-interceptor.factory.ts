@@ -20,16 +20,19 @@ module insite.core {
                 config.headers.Authorization = `Bearer ${this.$window.localStorage.getItem("accessToken")}`;
             }
 
-            if (config.url.toLocaleLowerCase().indexOf("/partialviews/") === -1 && config.url.substr(0, 1) === "/"
-                && insiteMicrositeUriPrefix && insiteMicrositeUriPrefix.length > 0) {
-                let addMicrositeToUrl = insiteMicrositeUriPrefix.substr(1);
-                if (config.url.indexOf("?") === -1) {
-                    addMicrositeToUrl = `?microsite=${addMicrositeToUrl}`;
-                } else {
-                    addMicrositeToUrl = `&microsite=${addMicrositeToUrl}`;
-                }
+            if (config.url.substr(0, 1) === "/" && insiteMicrositeUriPrefix && insiteMicrositeUriPrefix.length > 0) {
+                if (config.url.toLocaleLowerCase().indexOf("/partialviews/") === -1) {
+                    let addMicrositeToUrl = insiteMicrositeUriPrefix.substr(1);
+                    if (config.url.indexOf("?") === -1) {
+                        addMicrositeToUrl = `?microsite=${addMicrositeToUrl}`;
+                    } else {
+                        addMicrositeToUrl = `&microsite=${addMicrositeToUrl}`;
+                    }
 
-                config.url += addMicrositeToUrl;
+                    config.url += addMicrositeToUrl;
+                } else {
+                    config.url = `${insiteMicrositeUriPrefix}${config.url}`;
+                }
             }
 
             return config;

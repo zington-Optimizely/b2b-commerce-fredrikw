@@ -99,7 +99,7 @@
             const products = productCollection.products;
             for (let index = 0; index < products.length; index++) {
                 const product = products[index];
-                product.qtyOrdered = 1;
+                product.qtyOrdered = product.minimumOrderQty || 1;
 
                 for (let index = 0; index < this.productItems.length; index++) {
                     let productItem = this.productItems[index];

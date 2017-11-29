@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="rating"></div>
                                             <div ng-if="vm.settings.showInventoryAvailability" class="availability">
-                                                <isc-availability-message availability="product.availability"></isc-availability-message>
+                                                <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                                             </div>
                                             <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
                                         </div>
@@ -187,7 +187,7 @@
                                             {{vm.attributeValueForSection(section, product)}}
                                         </td>
                                         <td class="attribute-column" ng-if="vm.settings.showInventoryAvailability">
-                                            <isc-availability-message availability="product.availability"></isc-availability-message>
+                                            <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                                         </td>
                                         <td class="price-column">
                                             <isc-product-price product="product" id-key="_tv"></isc-product-price>

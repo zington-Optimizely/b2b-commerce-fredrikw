@@ -12,7 +12,8 @@
                 promotions: "=",
                 inventoryCheck: "@",
                 includeInventory: "@",
-                includeQuoteRequired: "="
+                includeQuoteRequired: "=",
+                failedToGetRealTimeInventory: "="
             },
             controller: "CartLinesController",
             controllerAs: "vm",

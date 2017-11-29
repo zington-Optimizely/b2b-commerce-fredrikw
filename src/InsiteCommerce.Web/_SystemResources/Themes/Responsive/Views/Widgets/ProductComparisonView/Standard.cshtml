@@ -132,7 +132,7 @@
 
                         <div class="actions-block">
                             <div class="item-qty" ng-show="product.canAddToCart">
-                                <input type="text" ng-model="product.qtyOrdered" ng-init="product.qtyOrdered = 1" class="qty numerictextbox tst_productComparison_qtyOrdered" />
+                                <input type="text" ng-model="product.qtyOrdered" ng-init="product.qtyOrdered = product.minimumOrderQty || 1" class="qty numerictextbox tst_productComparison_qtyOrdered" />
                             </div>
                             <div class="action">
                                 <button class="btn primary btn-add-cart tst_productComparison_addToCart" ng-click="vm.addToCart({ product: product })" ng-if="product.canAddToCart" ng-disabled="!product.qtyOrdered || product.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add to Cart' %]</button>

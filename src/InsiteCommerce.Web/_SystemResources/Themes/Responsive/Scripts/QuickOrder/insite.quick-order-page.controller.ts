@@ -128,7 +128,7 @@
             }
 
             if (!productExists) {
-                product.qtyOrdered = 1;
+                product.qtyOrdered = product.minimumOrderQty || 1;
                 (product as any).uuid = guidHelper.generateGuid(); // tack on a guid to use as an id for the quantity break pricing tooltip
                 this.products.push(product);
             }
@@ -245,17 +245,24 @@
         protected getTotal(): number {
             let total = 0;
             let decimalSymbol = ".";
-
+            let delimiterSymbol = "";
             angular.forEach(this.products, product => {
                 if (!product.quoteRequired) {
-                    const fullPrice = product.pricing.extendedUnitNetPriceDisplay;
+                    let fullPrice = product.pricing.extendedUnitNetPriceDisplay;
                     // this code assumes decimal/thousands separators are either , or .
                     decimalSymbol = fullPrice[fullPrice.length - 3];
 
+                    let matches = fullPrice.substring(1, fullPrice.length - 3).match(/[\D]/g);
+                    if (matches && matches.length > 0) {
+                        delimiterSymbol = `${matches[0]}`;
+                    }
+
                     if (decimalSymbol === ".") {
-                        total += parseFloat(fullPrice.substring(1).replace(/,/g, ""));
+                        let regex = delimiterSymbol !== String.fromCharCode(160) ? /,/g : /\s/g;
+                        total += parseFloat(fullPrice.substring(1).replace(regex, ""));
                     } else {
-                        total += parseFloat(fullPrice.substring(1).replace(/\./g, "").replace(",", "."));
+                        let regex = delimiterSymbol !== String.fromCharCode(160) ? /\./g : /\s/g;
+                        total += parseFloat(fullPrice.substring(1).replace(regex, "").replace(",", "."));
                     }
                 }
             });
@@ -287,19 +294,35 @@
             return decimalSymbol;
         }
 
+        protected getDelimiterSymbol(): string {
+            let delimiterSymbol = ".";
+
+            const productsWithPricing = this.$filter("filter")(this.products, { quoteRequired: false });
+            if (productsWithPricing.length) {
+                const productPriceDisplay = productsWithPricing[0].pricing.extendedUnitNetPriceDisplay;
+                let matches = productPriceDisplay.substring(1, productPriceDisplay.length - 3).match(/[\D]/g);
+                if (matches && matches.length > 0) {
+                    delimiterSymbol = matches[0] !== String.fromCharCode(160) ? matches[0] : " ";
+                }
+            }
+
+            return delimiterSymbol;
+        }
+
         // returns the grand total of all lines prices, in the same currency format
         grandTotal(): string {
             const total = this.getTotal();
             const currencySymbol = this.getCurrencySymbol();
             const decimalSymbol = this.getDecimalSymbol();
+            const delimiterSymbol = this.getDelimiterSymbol();
 
             let formattedTotal = currencySymbol + total.toFixed(2);
 
             if (decimalSymbol === ".") {
-                formattedTotal = formattedTotal.replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                formattedTotal = formattedTotal.replace(/(\d)(?=(\d{3})+\.)/g, delimiterSymbol !== " " ? "$1," : "$1 ");
             } else {
                 formattedTotal = formattedTotal.replace(".", ",");
-                formattedTotal = formattedTotal.replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+                formattedTotal = formattedTotal.replace(/(\d)(?=(\d{3})+\,)/g, delimiterSymbol !== " " ? "$1." : "$1 ");
             }
 
             return formattedTotal;

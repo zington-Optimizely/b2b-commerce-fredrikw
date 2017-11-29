@@ -10,6 +10,7 @@
         wishListSettings: WishListSettingsModel;
         hasAnyWishListsLine: boolean;
         inProgress = false;
+        failedToGetRealTimeInventory = false;
 
         static $inject = ["$scope", "coreService", "wishListService", "productService", "cartService", "paginationService", "settingsService", "queryString"];
 
@@ -97,6 +98,14 @@
                     (pricingResult: RealTimePricingModel) => { this.handleRealTimePricesCompleted(pricingResult); },
                     (reason: any) => { this.handleRealtimePricesFailed(reason); });
             }
+
+            if (this.productSettings.realTimeInventory && this.selectedWishList.wishListLineCollection != null) {
+                const products = this.selectedWishList.wishListLineCollection.map(wishlistLine => this.mapWishlistLineToProduct(wishlistLine));
+
+                this.productService.getProductRealTimeInventory(products).then(
+                    (inventoryResult: RealTimeInventoryModel) => { this.handleRealTimeInventoryCompleted(inventoryResult); },
+                    (reason: any) => { this.handleRealtimeInventoryFailed(reason); });
+            }
         }
 
         protected getWishListFailed(error: any): void {
@@ -115,6 +124,35 @@
                     (p.pricing as any).failedToGetRealTimePrices = true;
                 }
             });
+        }
+
+        protected handleRealTimeInventoryCompleted(result: RealTimeInventoryModel): void {
+            this.selectedWishList.wishListLineCollection.forEach((line: WishListLineModel) => {
+                const productInventory = result.realTimeInventoryResults.find((productInventory: ProductInventoryDto) => line.productId === productInventory.productId);
+                if (productInventory) {
+                    var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === line.unitOfMeasure);
+                    if (inventoryAvailability) {
+                        line.availability = inventoryAvailability.availability;
+                    } else {
+                        line.availability = { messageType: 0 };
+                    }
+
+                    line.productUnitOfMeasures.forEach((productUnitOfMeasure: ProductUnitOfMeasureDto) => {
+                        var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === productUnitOfMeasure.unitOfMeasure);
+                        if (inventoryAvailability) {
+                            productUnitOfMeasure.availability = inventoryAvailability.availability;
+                        } else {
+                            productUnitOfMeasure.availability = { messageType: 0 };
+                        }
+                    });
+
+                    this.updateAvailability(line);
+                }
+            });
+        }
+
+        protected handleRealtimeInventoryFailed(reason: any): void {
+            this.failedToGetRealTimeInventory = true;
         }
 
         deleteWishList(): void {
@@ -258,7 +296,8 @@
                 productUnitOfMeasures: line.productUnitOfMeasures,
                 unitOfMeasure: line.unitOfMeasure,
                 selectedUnitOfMeasure: line.selectedUnitOfMeasure,
-                quoteRequired: line.quoteRequired
+                quoteRequired: line.quoteRequired,
+                pricing: line.pricing
             } as ProductDto;
         }
     }

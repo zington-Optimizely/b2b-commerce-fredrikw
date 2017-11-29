@@ -12,12 +12,15 @@ module insite.account {
         isReadOnly = false;
         addressFields: AddressFieldCollectionModel;
 
-        static $inject = ["customerService", "websiteService", "sessionService"];
+        static $inject = ["$location", "$localStorage", "customerService", "websiteService", "sessionService", "queryString"];
 
         constructor(
+            protected $location: ng.ILocaleService,
+            protected $localStorage: common.IWindowStorage,
             protected customerService: customers.ICustomerService,
             protected websiteService: websites.IWebsiteService,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected queryString: common.IQueryStringService) {
             this.init();
         }
 
@@ -86,7 +89,13 @@ module insite.account {
 
         protected addOrUpdateShipToCompleted(result: any): void {
             if (this.shipTo.isNew) {
-                this.getBillTo(result);
+                const isNewShipTo = this.queryString.get("isNewShipTo");
+                if (isNewShipTo === "true") {
+                    this.$localStorage.set("createdShipToId", result.id);
+                    (<any>this.$location).search("isNewShipTo", null);
+                } else {
+                    this.getBillTo(result);
+                }
             }
 
             (angular.element("#saveSuccess") as any).foundation("reveal", "open");
@@ -145,7 +154,25 @@ module insite.account {
                 shipTos.unshift((this.billTo as any) as ShipToModel); // add the actual billto to top of array
             }
 
-            if (selectedShipTo) {
+            const isNewShipTo = this.queryString.get("isNewShipTo");
+            const createdShipToId = this.$localStorage.get("createdShipToId");
+            if (createdShipToId) {
+                shipTos.forEach(shipTo => {
+                    if (shipTo.id === createdShipToId) {
+                        this.shipTo = shipTo;
+                    }
+                });
+
+                this.$localStorage.remove("createdShipToId");
+            }
+            else if (isNewShipTo === "true") {
+                shipTos.forEach(shipTo => {
+                    if (shipTo.isNew) {
+                        this.shipTo = shipTo;
+                    }
+                });
+            }
+            else if (selectedShipTo) {
                 shipTos.forEach(shipTo => {
                     if (shipTo.id === selectedShipTo.id) {
                         this.shipTo = shipTo;
@@ -175,9 +202,11 @@ module insite.account {
         }
 
         setStateRequiredRule(prefix: string, address: any): void {
-            const rule = "rule-required";
             const isRequired = address.country != null && address.country.states.length > 0;
-            angular.element(`#${prefix}state`).data(rule, isRequired);
+            setTimeout(() => {
+                $(`#${prefix}state`).rules("add", { required: isRequired });
+            }, 100);
+
         }
 
         checkSelectedShipTo(): void {
@@ -189,6 +218,7 @@ module insite.account {
 
             if (this.onlyOneCountryToSelect()) {
                 this.selectFirstCountryForAddress(this.shipTo);
+                this.setStateRequiredRule("st", this.shipTo);
             }
 
             this.updateAddressFormValidation();

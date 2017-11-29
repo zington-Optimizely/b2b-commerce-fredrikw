@@ -21,7 +21,7 @@
                             <div class="details-block">
                                 <isc-product-name product="wishListLine"></isc-product-name>
                                 <div ng-show="vm.productSettings.showInventoryAvailability" class="availability">
-                                    <isc-availability-message availability="wishListLine.availability"></isc-availability-message>
+                                    <isc-availability-message availability="wishListLine.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                                 </div>
                                 <div ng-show="wishListLine.canShowPrice && !wishListLine.pricing.failedToGetRealTimePrices">
                                     <isc-product-price product="wishListLine"></isc-product-price>

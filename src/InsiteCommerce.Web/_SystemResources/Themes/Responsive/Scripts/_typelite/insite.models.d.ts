@@ -1,6 +1,6 @@
-﻿
-
-
+﻿  
+ 
+ 
 
 
 
@@ -41,6 +41,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		passwordRequiresUppercase: boolean;
 		passwordRequiresLowercase: boolean;
 		passwordRequiresDigit: boolean;
+		daysToRetainUser: number;
 	}
 	interface AccountCollectionModel extends Insite.Core.WebApi.BaseModel {
 		accounts: Insite.Account.WebApi.V1.ApiModels.AccountModel[];
@@ -517,6 +518,14 @@ declare module Insite.Core.Plugins.PaymentGateway.Dtos {
 		expirationMonth: number;
 		expirationYear: number;
 		securityCode: string;
+		useBillingAddress: boolean;
+		address1: string;
+		city: string;
+		state: string;
+		stateAbbreviation: string;
+		country: string;
+		countryAbbreviation: string;
+		postalCode: string;
 	}
 }
 declare module Insite.Core.Plugins.Pricing {
@@ -619,6 +628,7 @@ declare module Insite.Catalog.Services.Dtos {
 		customerUnitOfMeasure: string;
 		canBackOrder: boolean;
 		trackInventory: boolean;
+		minimumOrderQty: number;
 		multipleSaleQty: number;
 		htmlContent: string;
 		productCode: string;
@@ -662,6 +672,7 @@ declare module Insite.Catalog.Services.Dtos {
 		canEnterQuantity: boolean;
 		canConfigure: boolean;
 		isStyleProductParent: boolean;
+		requiresRealTimeInventory: boolean;
 		numberInCart: number;
 		qtyOrdered: number;
 		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
@@ -943,6 +954,7 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		showSavingsAmount: boolean;
 		showSavingsPercent: boolean;
 		realTimePricing: boolean;
+		realTimeInventory: boolean;
 		storefrontAccess: string;
 	}
 }
@@ -1580,3 +1592,25 @@ declare module Insite.RealTimePricing.WebApi.V1.ApiModels {
 		realTimePricingResults: Insite.Core.Plugins.Pricing.ProductPriceDto[];
 	}
 }
+declare module Insite.RealTimeInventory.WebApi.V1.ApiModels {
+	interface RealTimeInventoryModel extends Insite.Core.WebApi.BaseModel {
+		realTimeInventoryResults: Insite.Core.Plugins.Inventory.ProductInventoryDto[];
+	}
+}
+declare module Insite.Core.Plugins.Inventory {
+	interface ProductInventoryDto {
+		productId: System.Guid;
+		qtyOnHand: number;
+		inventoryAvailabilityDtos: Insite.Core.Plugins.Inventory.InventoryAvailabilityDto[];
+		inventoryWarehousesDtos: Insite.Core.Plugins.Inventory.InventoryWarehousesDto[];
+	}
+	interface InventoryAvailabilityDto {
+		unitOfMeasure: string;
+		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
+	}
+	interface InventoryWarehousesDto {
+		unitOfMeasure: string;
+		warehouseDtos: Insite.Catalog.Services.Dtos.WarehouseDto[];
+	}
+}
+

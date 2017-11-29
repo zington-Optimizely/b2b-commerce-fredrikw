@@ -1,5 +1,6 @@
 ﻿module insite.cart {
     "use strict";
+    import StateModel = Insite.Websites.WebApi.V1.ApiModels.StateModel;
 
     export interface IReviewAndPayControllerAttributes extends ng.IAttributes {
         cartUrl: string;
@@ -9,6 +10,9 @@
         cart: CartModel;
         cartId: string;
         cartIdParam: string;
+        countries: CountryModel[];
+        creditCardBillingCountry: CountryModel;
+        creditCardBillingState: StateModel;
         promotions: PromotionModel[];
         promotionAppliedMessage: string;
         promotionErrorMessage: string;
@@ -31,7 +35,8 @@
             "$attrs",
             "settingsService",
             "queryString",
-            "$localStorage"
+            "$localStorage",
+            "websiteService"
         ];
 
         constructor(
@@ -45,7 +50,8 @@
             protected $attrs: IReviewAndPayControllerAttributes,
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService,
-            protected $localStorage: common.IWindowStorage) {
+            protected $localStorage: common.IWindowStorage,
+            protected websiteService: websites.IWebsiteService) {
             this.init();
         }
 
@@ -60,10 +66,19 @@
             $("#reviewAndPayForm").validate();
 
             this.$scope.$watch("vm.cart.paymentOptions.creditCard.expirationYear", (year: number) => { this.onExpirationYearChanged(year); });
+            this.$scope.$watch("vm.cart.paymentOptions.creditCard.useBillingAddress", (useBillingAddress: boolean) => { this.onUseBillingAddressChanged(useBillingAddress); });
+            this.$scope.$watch("vm.creditCardBillingCountry", (country: CountryModel) => { this.onCreditCardBillingCountryChanged(country); });
+            this.$scope.$watch("vm.creditCardBillingState", (state: StateModel) => { this.onCreditCardBillingStateChanged(state); });
+
+            this.onUseBillingAddressChanged(true);
 
             this.settingsService.getSettings().then(
                 (settings: core.SettingsCollection) => { this.getSettingsCompleted(settings); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.websiteService.getCountries("states").then(
+                (countryCollection: CountryCollectionModel) => { this.getCountriesCompleted(countryCollection); },
+                (error: any) => { this.getCountriesFailed(error); });
         }
 
         protected onCartChanged(event: ng.IAngularEvent): void {
@@ -79,11 +94,50 @@
             }
         }
 
+        protected onUseBillingAddressChanged(useBillingAddress: boolean): void {
+            if (!useBillingAddress) {
+                if (typeof (this.countries) !== "undefined" && this.countries.length === 1) {
+                    this.creditCardBillingCountry = this.countries[0];
+                }
+            }
+        }
+
+        protected onCreditCardBillingCountryChanged(country: CountryModel): void {
+            if (typeof (country) !== "undefined") {
+                if (country != null) {
+                    this.cart.paymentOptions.creditCard.country = country.name;
+                    this.cart.paymentOptions.creditCard.countryAbbreviation = country.abbreviation;
+                } else {
+                    this.cart.paymentOptions.creditCard.country = "";
+                    this.cart.paymentOptions.creditCard.countryAbbreviation = "";
+                }
+            }
+        }
+
+        protected onCreditCardBillingStateChanged(state: StateModel): void {
+            if (typeof (state) !== "undefined") {
+                if (state != null) {
+                    this.cart.paymentOptions.creditCard.state = state.name;
+                    this.cart.paymentOptions.creditCard.stateAbbreviation = state.abbreviation;
+                } else {
+                    this.cart.paymentOptions.creditCard.state = "";
+                    this.cart.paymentOptions.creditCard.stateAbbreviation = "";
+                }
+            } 
+        }
+
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.cartSettings = settingsCollection.cartSettings;
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected getCountriesCompleted(countryCollection: CountryCollectionModel) {
+            this.countries = countryCollection.countries;
+        }
+
+        protected getCountriesFailed(error: any): void {
         }
 
         getCart(isInit?: boolean): void {
@@ -145,7 +199,15 @@
                 cardNumber: this.cart.paymentOptions.creditCard.cardNumber,
                 expirationMonth: this.cart.paymentOptions.creditCard.expirationMonth,
                 expirationYear: this.cart.paymentOptions.creditCard.expirationYear,
-                securityCode: this.cart.paymentOptions.creditCard.securityCode
+                securityCode: this.cart.paymentOptions.creditCard.securityCode,
+                useBillingAddress: this.cart.paymentOptions.creditCard.useBillingAddress,
+                address1: this.cart.paymentOptions.creditCard.address1,
+                city: this.cart.paymentOptions.creditCard.city,
+                state: this.cart.paymentOptions.creditCard.state,
+                stateAbbreviation: this.cart.paymentOptions.creditCard.stateAbbreviation,
+                postalCode: this.cart.paymentOptions.creditCard.postalCode,
+                country: this.cart.paymentOptions.creditCard.country,
+                countryAbbreviation: this.cart.paymentOptions.creditCard.countryAbbreviation
             };
         }
 

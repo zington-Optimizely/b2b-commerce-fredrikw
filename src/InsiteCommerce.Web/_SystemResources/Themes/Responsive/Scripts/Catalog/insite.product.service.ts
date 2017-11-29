@@ -8,7 +8,9 @@ import ProductPriceModel = Insite.Catalog.WebApi.V1.ApiModels.ProductPriceModel;
 import CrossSellCollectionModel = Insite.Catalog.WebApi.V1.ApiModels.CrossSellCollectionModel;
 import ProductSettingsModel = Insite.Catalog.WebApi.V1.ApiModels.ProductSettingsModel;
 import RealTimePricingModel = Insite.RealTimePricing.WebApi.V1.ApiModels.RealTimePricingModel;
+import RealTimeInventoryModel = Insite.RealTimeInventory.WebApi.V1.ApiModels.RealTimeInventoryModel;
 import ProductPriceDto = Insite.Core.Plugins.Pricing.ProductPriceDto;
+import ProductInventoryDto = Insite.Core.Plugins.Inventory.ProductInventoryDto;
 import ProductUnitOfMeasureDto = Insite.Catalog.Services.Dtos.ProductUnitOfMeasureDto;
 
 module insite.catalog {
@@ -53,6 +55,7 @@ module insite.catalog {
         updateAvailability(product: ProductDto): void;
         getProductPrice(product: ProductDto, configuration?: string[]): ng.IPromise<ProductPriceModel>;
         getProductRealTimePrices(products: ProductDto[]): ng.IPromise<RealTimePricingModel>;
+        getProductRealTimeInventory(products: ProductDto[]): ng.IPromise<RealTimeInventoryModel>;
         getCatalogPage(path: string): ng.IPromise<CatalogPageModel>;
         getCategoryTree(startCategoryId?: string, maxDepth?: number): ng.IPromise<CategoryCollectionModel>;
         getCategory(categoryId?: string): ng.IPromise<CategoryModel>;
@@ -80,6 +83,7 @@ module insite.catalog {
         webCrossSellUri = "/api/v1/websites/current/crosssells";
         productSettingsUri = "/api/v1/settings/products";
         realTimePricingUri = "/api/v1/realtimepricing";
+        realTimeInventoryUri = "/api/v1/realtimeinventory";
 
         productSettings: ProductSettingsModel;
 
@@ -211,6 +215,62 @@ module insite.catalog {
         }
 
         protected getProductRealTimePriceFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        getProductRealTimeInventory(products: ProductDto[]): ng.IPromise<RealTimeInventoryModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http.post(this.realTimeInventoryUri, this.getProductRealTimeInventoryParams(products)),
+                (response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>) => { this.getProductRealTimeInventoryCompleted(response, products); },
+                this.getProductRealTimeInventoryFailed
+            );
+        }
+
+        protected getProductRealTimeInventoryParams(products: ProductDto[]): any {
+            var productIds = new Array<System.Guid>();
+            products.forEach((product) => {
+                if (productIds.indexOf(product.id) === -1) {
+                    productIds.push(product.id);
+                }
+            });
+            return {
+                productIds: productIds
+            };
+        }
+
+        protected getProductRealTimeInventoryCompleted(response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>, products: ProductDto[]): void {
+            response.data.realTimeInventoryResults.forEach((productInventory: ProductInventoryDto) => {
+                const product = products.find((p: ProductDto) => p.id === productInventory.productId);
+                if (product) {
+                    product.qtyOnHand = productInventory.qtyOnHand;
+
+                    var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === product.unitOfMeasure);
+                    if (inventoryAvailability) {
+                        product.availability = inventoryAvailability.availability;
+                    } else {
+                        product.availability = { messageType: 0 };
+                    }
+
+                    product.productUnitOfMeasures.forEach((productUnitOfMeasure: ProductUnitOfMeasureDto) => {
+                        var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === productUnitOfMeasure.unitOfMeasure);
+                        if (inventoryAvailability) {
+                            productUnitOfMeasure.availability = inventoryAvailability.availability;
+                        } else {
+                            productUnitOfMeasure.availability = { messageType: 0 };
+                        }
+                    });
+
+                    this.updateAvailability(product);
+                    if (product.canAddToCart && !product.canBackOrder && product.trackInventory && product.qtyOnHand <= 0) {
+                        product.canAddToCart = false;
+                        product.canEnterQuantity = product.canAddToCart;
+                        product.canViewDetails = !product.canAddToCart;
+                    }
+                }
+            });
+        }
+
+        protected getProductRealTimeInventoryFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
         getCatalogPage(path: string): ng.IPromise<CatalogPageModel> {

@@ -9,6 +9,8 @@ module insite.cart {
         settings: CartSettingsModel;
         showInventoryAvailability = false;
         productsCannotBePurchased = false;
+        requiresRealTimeInventory = false;
+        failedToGetRealTimeInventory = false;
 
         static $inject = ["$scope", "cartService", "promotionService", "settingsService", "coreService", "$localStorage"];
 
@@ -42,6 +44,7 @@ module insite.cart {
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.cartSettings;
             this.showInventoryAvailability = settingsCollection.productSettings.showInventoryAvailability;
+            this.requiresRealTimeInventory = settingsCollection.productSettings.realTimeInventory;
             this.getCart();
         }
 
@@ -71,6 +74,7 @@ module insite.cart {
                 this.productsCannotBePurchased = true;
             }
             this.displayCart(cart);
+            this.getRealTimeInventory();
         }
 
         protected getCartFailed(error: any): void {
@@ -91,6 +95,21 @@ module insite.cart {
         protected getCartPromotionsFailed(error: any): void {
         }
 
+        getRealTimeInventory(): void {
+            if (this.requiresRealTimeInventory) {
+                this.cartService.getRealTimeInventory(this.cart).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getRealTimeInventoryFailed(error: any): void {
+            this.failedToGetRealTimeInventory = true;
+        }
+
         emptyCart(emptySuccessUri: string): void {
             this.cartService.removeCart(this.cart).then(
                 () => { this.emptyCartCompleted(); },
@@ -98,7 +117,6 @@ module insite.cart {
         }
 
         protected emptyCartCompleted(): void {
-            this.init();
         }
 
         protected emptyCartFailed(error: any): void {

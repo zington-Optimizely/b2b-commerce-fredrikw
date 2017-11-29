@@ -20,7 +20,8 @@
             "cartService",
             "quotePastExpirationDatePopupService",
             "queryString",
-            "$scope"];
+            "$scope",
+            "$window"];
 
         constructor(
             protected $rootScope: ng.IScope,
@@ -29,7 +30,8 @@
             protected cartService: cart.ICartService,
             protected quotePastExpirationDatePopupService: rfq.QuotePastExpirationDatePopupService,
             protected queryString: common.IQueryStringService,
-            protected $scope: ng.IScope) {
+            protected $scope: ng.IScope,
+            protected $window: ng.IWindowService) {
             this.init();
         }
 
@@ -134,7 +136,7 @@
         }
 
         protected declineQuoteCompleted(quote: QuoteModel, returnUrl: string): void {
-            this.coreService.redirectToPath(returnUrl);
+            this.redirectToPathOrReturnBack(returnUrl);
         }
 
         protected declineQuoteFailed(error: any): void {
@@ -169,7 +171,7 @@
         }
 
         protected submitQuoteCompleted(quote: QuoteModel, url: string): void {
-            this.coreService.redirectToPath(url);
+            this.redirectToPathOrReturnBack(url);
         }
 
         protected submitQuoteFailed(error: any): void {
@@ -198,6 +200,21 @@
         }
 
         protected applyQuoteFailed(error: any): void {
+            if (error && error.message) {
+                const form = this.getQuoteCalculatorForm();
+                if (form && form.length !== 0) {
+                    form.validate().showErrors({ "percent" : error.message });
+                }
+            }
+        }
+
+        protected redirectToPathOrReturnBack(returnUrl: string): void {
+            // this will restore history state with filter and etc
+            if (this.coreService.getReferringPath() === returnUrl) {
+                this.$window.history.back();
+            } else {
+                this.coreService.redirectToPath(returnUrl);
+            }
         }
 
         changeCalculationMethod(): void {
@@ -232,8 +249,12 @@
             return true;
         }
 
+        protected getQuoteCalculatorForm(): ng.IAugmentedJQuery {
+            return angular.element("#rfqApplyOrderQuoteForm");
+        }
+
         protected validateQuoteCalculatorForm(): boolean {
-            const form = angular.element("#rfqApplyOrderQuoteForm");
+            const form = this.getQuoteCalculatorForm();
             if (form && form.length !== 0) {
                 const validator = form.validate({
                     errorLabelContainer: "#rfqApplyOrderQuoteFormError"

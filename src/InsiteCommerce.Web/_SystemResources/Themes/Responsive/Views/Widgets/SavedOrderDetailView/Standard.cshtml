@@ -28,7 +28,12 @@
         </div>
 
         <div class="row order-details">
-            <isc-cart-lines cart="vm.cart" include-inventory="true" include-quote-required="vm.showInventoryAvailability" class="large-12 columns item-list cart-items"></isc-cart-lines>
+            <isc-cart-lines cart="vm.cart"
+                            include-inventory="true"
+                            include-quote-required="vm.showInventoryAvailability"
+                            failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"
+                            class="large-12 columns item-list cart-items">
+            </isc-cart-lines>
         </div>
 
         <isc-cart-total-display cart="vm.cart" order-taxes="vm.cart.customerOrderTaxes"></isc-cart-total-display>

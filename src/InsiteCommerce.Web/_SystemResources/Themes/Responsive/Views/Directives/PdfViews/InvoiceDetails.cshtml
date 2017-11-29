@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Share Invoice</title>
+    <title>[% translate "Share Invoice" %]</title>
     <style>
         h1, h2, h3, h4, h5, h6 {
             font-size: 100%;
@@ -198,7 +198,7 @@
 
 <body>
     <div>
-        <h2>@T("Invoice #") @Model.InvoiceNumber</h2>
+        <h2>[% translate "Invoice #" %] [[Model.InvoiceNumber]]</h2>
         <table class="main-block">
             <tr>
                 <td class="general-information">
@@ -207,72 +207,75 @@
                             <td class="order-details-left">
                                 <table>
                                     <tr>
-                                        <td><h3 class="od-lbl">@T("Invoice Date"):</h3></td>
-                                        <td><h3 class="od-data">@Model.InvoiceDate.ToShortDateString()</h3></td>
+                                        <td><h3 class="od-lbl">[% translate "Invoice Date" %]:</h3></td>
+                                        <td><h3 class="od-data">[[Model.InvoiceDateDisplay]]</h3></td>
                                     </tr>
                                     <tr>
-                                        <td><h3 class="od-lbl">@T("Invoice Due Date"):</h3></td>
-                                        <td><h3 class="od-data">@Model.DueDate.ToShortDateString()</h3></td>
+                                        <td><h3 class="od-lbl">[% translate "Invoice Due Date" %]:</h3></td>
+                                        <td><h3 class="od-data">[[Model.DueDateDisplay]]</h3></td>
                                     </tr>
                                     <tr>
-                                        <td><h3 class="od-lbl">@T("Terms"):</h3></td>
-                                        <td><h3 class="od-data">@Model.Terms</h3></td>
+                                        <td><h3 class="od-lbl">[% translate "Terms" %]:</h3></td>
+                                        <td><h3 class="od-data">[[Model.Terms]]</h3></td>
                                     </tr>
                                     <tr>
-                                        <td><h3 class="od-lbl">@T("PO #"):</h3></td>
-                                        <td><h3 class="od-data">@Model.CustomerPO</h3></td>
+                                        <td><h3 class="od-lbl">[% translate "PO #" %]:</h3></td>
+                                        <td><h3 class="od-data">[[Model.CustomerPO]]</h3></td>
                                     </tr>
                                     <tr>
-                                        <td><h3 class="od-lbl">@T("Status"):</h3></td>
-                                        <td><h3 class="od-data">@Model.Status</h3></td>
+                                        <td><h3 class="od-lbl">[% translate "Status" %]:</h3></td>
+                                        <td><h3 class="od-data">[[Model.Status]]</h3></td>
                                     </tr>
                                 </table>
                                 <div class="ship-info">
                                     <div class="oc-head">
-                                        <h3>@T("Shipping Address")</h3>
+                                        <h3>[% translate "Shipping Address" %]</h3>
                                     </div>
-                                    <p class="list-item">@Model.STCompanyName</p>
-                                    <p class="list-item">@Model.STAddress1</p>
-                                    @if (!string.IsNullOrEmpty(Model.STAddress2))
-                                    {
-                                        <p class="list-item">@Model.STAddress2</p>
-                                    }
-                                    <p class="list-item">@Model.ShipToCity @(!string.IsNullOrEmpty(Model.ShipToCity) && !string.IsNullOrEmpty(Model.ShipToState) ? $", {Model.ShipToState} {Model.ShipToPostalCode}" : string.Empty)</p>
-                                    <p class="list-item">@Model.STCountry</p>
+                                    <p class="list-item">[[Model.STCompanyName]]</p>
+                                    <p class="list-item">[[Model.STAddress1]]</p>
+                                    [% if Model.STAddress2 != null and Model.STAddress2 != "" -%]
+                                        <p class="list-item">[[Model.STAddress2]]</p>
+                                    [% endif -%]
+                                    <p class="list-item">[[Model.ShipToCity]] 
+                                    [% if Model.ShipToCity != null and Model.ShipToCity != "" and Model.ShipToState != null and Model.ShipToState != "" -%]
+                                        , [[Model.ShipToState]] [[Model.ShipToPostalCode]]
+                                    [% endif -%]
+                                    </p>
+                                    <p class="list-item">[[Model.STCountry]]</p>
                                 </div>
                             </td>
                             <td class="order-details-right">
                                 <div class="bill-info">
                                     <div class="oc-head">
-                                        <h3>@T("Billing Address")</h3>
+                                        <h3>[% translate "Billing Address" %]</h3>
                                     </div>
-                                    <p class="list-item">@Model.BTCompanyName</p>
-                                    <p class="list-item">@Model.BTAddress1</p>
-                                    @if (!string.IsNullOrEmpty(Model.BTAddress2))
-                                    {
-                                        <p class="list-item">@Model.BTAddress2</p>
-                                    }
-                                    <p class="list-item">@Model.BillToCity @(!string.IsNullOrEmpty(Model.BillToCity) && !string.IsNullOrEmpty(Model.BillToState) ? $", {Model.BillToState} {Model.BillToPostalCode}" : string.Empty)</p>
-                                    <p class="list-item">@Model.BTCountry</p>
+                                    <p class="list-item">[[Model.BTCompanyName]]</p>
+                                    <p class="list-item">[[Model.BTAddress1]]</p>
+                                    [% if Model.BTAddress2 != null and Model.BTAddress2 != "" -%]
+                                        <p class="list-item">[[Model.BTAddress2]]</p>
+                                    [% endif -%]
+                                    <p class="list-item">[[Model.BillToCity]]
+                                    [% if Model.BillToCity != null and Model.BillToCity != "" and Model.BillToState != null and Model.BillToState != "" -%]
+                                        , [[Model.BillToState]] [[Model.BillToPostalCode]]
+                                    [% endif -%]
+                                    <p class="list-item">[[Model.BTCountry]]</p>
                                 </div>
-                                @if (!string.IsNullOrEmpty(Model.ShipCode))
-                                {
+                                [% if Model.ShipCode != null and Model.ShipCode != "" -%]
                                     <div class="ship-method">
                                         <div class="oc-head">
-                                            <h3>@T("Shipping Method")</h3>
+                                            <h3>[% translate "Shipping Method" %]</h3>
                                         </div>
-                                        <div>@Model.ShipCode</div>
+                                        <div>[[Model.ShipCode]]</div>
                                     </div>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.Notes))
-                                {
+                                [% endif -%]
+                                [% if Model.Notes != null and Model.Notes != "" -%]
                                     <div class="notes">
                                         <div class="oc-head">
-                                            <h3>@T("Order Notes")</h3>
+                                            <h3>[% translate "Order Notes" %]</h3>
                                         </div>
-                                        <div>@Model.Notes</div>
+                                        <div>[[Model.Notes]]</div>
                                     </div>
-                                }
+                                [% endif -%]
                             </td>
                         </tr>
                     </table>
@@ -281,64 +284,58 @@
                     <table class="order-subtotal">
                         <tr>
                             <td>
-                                <h3 class="oc-head">@T("Invoice Summary")</h3>
+                                <h3 class="oc-head">[% translate "Invoice Summary" %]</h3>
                             </td>
                         </tr>
                         <tr>
-                            <td class="sub-label">@T("Subtotal")</td>
-                            <td class="sub-amount">@Model.ProductTotalDisplay</td>
+                            <td class="sub-label">[% translate "Subtotal" %]</td>
+                            <td class="sub-amount">[[Model.ProductTotalDisplay]]</td>
                         </tr>
                         <tr>
-                            <td class="sub-label">@T("Shipping & Handling")</td>
-                            <td class="sub-amount">@Model.ShippingAndHandlingDisplay</td>
+                            <td class="sub-label">[% translate "Shipping & Handling" %]</td>
+                            <td class="sub-amount">[[Model.ShippingAndHandlingDisplay]]</td>
                         </tr>
                         <tr>
-                            <td class="sub-label">@T("Misc. Charge")</td>
-                            <td class="sub-amount">@Model.OtherChargesDisplay</td>
+                            <td class="sub-label">[% translate "Misc. Charge" %]</td>
+                            <td class="sub-amount">[[Model.OtherChargesDisplay]]</td>
                         </tr>
                         <tr>
-                            <td class="sub-label">@T("Discounts")</td>
-                            <td class="sub-amount">@Model.DiscountAmountDisplay</td>
+                            <td class="sub-label">[% translate "Discounts" %]</td>
+                            <td class="sub-amount">[[Model.DiscountAmountDisplay]]</td>
                         </tr>
-                        @if (Model.DiscountAmount > 0)
-                        {
+                        [% if Model.DiscountAmount > 0 -%]
                             <tr class="promo-applied">
-                                <td class="sub-label">@T("Order Discount")</td>
-                                <td class="sub-amount">-@Model.DiscountAmountDisplay</td>
+                                <td class="sub-label">[% translate "Order Discount" %]</td>
+                                <td class="sub-amount">-[[Model.DiscountAmountDisplay]]</td>
                             </tr>
-                        }
-                        @if (Model.InvoiceHistoryTaxes.Count == 0)
-                        {
-                            <tr class="promo-applied">
-                                <td class="sub-label">@T("Taxes")</td>
-                                <td class="sub-amount">-@Model.TaxAmountDisplay</td>
+                        [% endif -%]
+                        [% if Model.InvoiceHistoryTaxes.size == 0 -%]
+                            <tr>
+                                <td class="sub-label">[% translate "Taxes" %]</td>
+                                <td class="sub-amount">[[Model.TaxAmountDisplay]]</td>
                             </tr>
-                        }
-                        @foreach (var invoiceHistoryTax in Model.InvoiceHistoryTaxes)
-                        {
+                        [% endif -%]
+                        [% for invoiceHistoryTax in Model.InvoiceHistoryTaxes -%]
                             <tr class="sub-label">
-                                @if (string.IsNullOrEmpty(invoiceHistoryTax.TaxDescription))
-                                {
-                                    <td class="sub-label">@T("Taxes")</td>
-                                }
-                                else
-                                {
-                                    <td class="sub-label">@invoiceHistoryTax.TaxDescription</td>
-                                }
-                                <td class="sub-amount">@invoiceHistoryTax.TaxAmountDisplay</td>
+                                [% if invoiceHistoryTax.TaxDescription != null and invoiceHistory.TaxDescription != "" -%]
+                                    <td class="sub-label">[[invoiceHistoryTax.TaxDescription]]</td>
+                                [% else -%]
+                                    <td class="sub-label">[% translate "Taxes" %]</td>
+                                [% endif -%]
+                                <td class="sub-amount">[[invoiceHistoryTax.TaxAmountDisplay]]</td>
                             </tr>
-                        }
+                        [% endfor -%]
                         <tr class="invoice-total">
-                            <td class="sub-label">@T("Invoice Total")</td>
-                            <td class="sub-amount">@Model.InvoiceTotalDisplay</td>
+                            <td class="sub-label">[% translate "Invoice Total" %]</td>
+                            <td class="sub-amount">[[Model.InvoiceTotalDisplay]]</td>
                         </tr>
                         <tr>
-                            <td class="sub-label">@T("Payments")</td>
-                            <td class="sub-amount">@((Model.InvoiceTotal - @Model.CurrentBalance).ToString("0.00"))</td>
+                            <td class="sub-label">[% translate "Payments" %]</td>
+                            <td class="sub-amount">[[Model.PaymentTotalDisplay]]</td>
                         </tr>
                         <tr class="order-total">
-                            <td class="sub-label">@T("Balance Due")</td>
-                            <td class="sub-amount">@Model.CurrentBalanceDisplay</td>
+                            <td class="sub-label">[% translate "Balance Due" %]</td>
+                            <td class="sub-amount">[[Model.CurrentBalanceDisplay]]</td>
                         </tr>
                     </table>
                 </td>
@@ -346,66 +343,57 @@
         </table>
         <table class="order-details">
             <tr class="products-header">
-                <th class="left">@T("Product")</th>
-                <th class="right">@T("Price")</th>
-                <th class="right">@T("QTY_quantity")</th>
-                <th class="right">@T("Discount")</th>
-                <th class="right">@T("Subtotal")</th>
+                <th class="left">[% translate "Product" %]</th>
+                <th class="right">[% translate "Price" %]</th>
+                <th class="right">[% translate "QTY_quantity" %]</th>
+                <th class="right">[% translate "Discount" %]</th>
+                <th class="right">[% translate "Subtotal" %]</th>
             </tr>
-            @foreach (var line in Model.InvoiceLines)
-            {
+            [% for line in Model.InvoiceLines -%]
                 <tr class="product-line">
                     <td>
                         <div class="item-name">
-                            @if (!string.IsNullOrEmpty(line.ProductUri))
-                            {
-                                <h3>@line.ShortDescription</h3>
-                            }
-                            else
-                            {
-                                <h3>@line.ProductERPNumber</h3>
-                            }
+                            <h3>[[line.ShortDescription]]</h3>
                         </div>
                         <div class="item-num">
-                            <h3>@line.ProductERPNumber</h3>
-                            @if (!string.IsNullOrEmpty(line.ManufacturerItem))
-                            {
-                                <h3>@T("MFG #"):@line.ManufacturerItem</h3>
-                            }
+                            <h3>
+                                [[line.ProductErpNumber]]
+                                [% if line.ManufacturerItem != null and line.ManufacturerItem != "" -%]
+                                    [% translate "MFG #:" %] [[line.ManufacturerItem]]
+                                [% endif -%]
+                            </h3>
                         </div>
-                        @if (!string.IsNullOrEmpty(line.Notes))
-                        {
+                        [% if line.Notes != null and line.Notes != "" -%]
                             <div class="item-notes">
-                                <h3>@T("Line Notes"): @line.Notes</h3>
+                                <h3>[% translate "Line Notes" %]: [[line.Notes]]</h3>
                             </div>
-                        }
+                        [% endif -%]
                     </td>
                     <td>
                         <div class="price right">
-                            <h3 class="price-sale">@line.UnitPriceDisplay</h3>
-                            <h3 class="selected-uom">@line.UnitOfMeasure</h3>
+                            <h3 class="price-sale">[[line.UnitPriceDisplay]]</h3>
+                            <h3 class="selected-uom">[[line.UnitOfMeasure]]</h3>
                         </div>
                     </td>
                     <td>
                         <div class="item-qty right">
-                            <h3>@line.QtyInvoiced</h3>
+                            <h3>[[line.QtyInvoiced]]</h3>
                         </div>
                     </td>
                     <td>
-                        @if (line.DiscountAmount > 0)
-                        {
+                        [% if line.DiscountAmount > 0 -%]
                             <div class="right">
-                                <h3>@line.DiscountAmountDisplay</h3>
+                                <h3>[[line.DiscountAmountDisplay]]</h3>
                             </div>
-                        }
+                        [% endif -%]
                     </td>
                     <td>
                         <div class="right">
-                            <h3 class="item-subtotal">@line.LineTotalDisplay</h3>
+                            <h3 class="item-subtotal">[[line.LineTotalDisplay]]</h3>
                         </div>
                     </td>
                 </tr>
-            }
+            [% endfor -%]
         </table>
     </div>
 </body>

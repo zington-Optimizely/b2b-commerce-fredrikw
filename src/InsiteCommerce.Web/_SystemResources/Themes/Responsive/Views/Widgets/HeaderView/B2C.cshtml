@@ -17,13 +17,13 @@
             </span>
         </span>
     </li>
-    <li ng-cloak ng-show="::(vm.session && !vm.session.isAuthenticated && !vm.session.rememberMe)">
+    <li role="sign-in" ng-cloak ng-show="::(vm.session && !vm.session.isAuthenticated && !vm.session.rememberMe)">
         <a href="[% urlForPage 'SignInPage' %]" isc-redirect-to-sign-in return-to-url="true" class="btn tst_header_signInButton">
             <i ng-cloak class="social foundicon-torso"></i>
             <span class="sign-in-label">[% translate 'Sign In' %]</span>
         </a>
     </li>
-    <li ng-show="::vm.session.isAuthenticated || vm.session.rememberMe">
+    <li role="account-menu" ng-show="::vm.session.isAuthenticated || vm.session.rememberMe">
         <div class="sn-account">
             <ul>
                 <li class="has-sub">
@@ -42,7 +42,7 @@
         </div>
     </li>
     [% if Model.Drop.DisplayCart -%]
-    <li>
+    <li role="cart-link">
         <a id="tst_cartLink" ng-cloak class="btn" href="[% urlForPage 'CartPage' %]">
             <i ng-cloak class="social foundicon-cart"></i>
             <span class="cart-label">Cart</span>
@@ -77,7 +77,7 @@
     <div role="top-panel">
         <div class="top-slide">
             <div id="searchPanel">
-                <isc-product-search id="narrowSearch" listen-for-data="true"></isc-product-search>
+                <isc-product-search id="narrowSearch"></isc-product-search>
             </div>
             <div id="userPanel">
                 <form>
@@ -299,6 +299,7 @@
                        k-options="vm.autocompleteOptions"
                        isc-enter="vm.onEnter()"
                        name="criteria"
+                       ng-blur="vm.startAutocomplete()"
                        onfocus="$(this).data('kendoAutoComplete').search()">
             </div>
             <div class="search-history">

@@ -9,6 +9,7 @@
         expand: string;
         ponumber: string;
         ordernumber: string;
+        search: string;
         ordertotaloperator: string;
         ordertotal: string;
         status: string[];

@@ -55,7 +55,7 @@ module insite.catalog {
                 slideshow: false,
                 animationSpeed: 200,
                 itemWidth: 46,
-                itemMargin: 4.9,
+                itemMargin: 4.8,
                 move: 1,
                 customDirectionNav: $(`.${this.prefix}-carousel-control-nav`),
                 start: (slider: any) => { this.onSliderStart(slider); }
@@ -80,8 +80,8 @@ module insite.catalog {
         }
 
         protected reloadCarousel(): void {
-            const itemsNum = Math.floor(this.carouselWidth / (this.carousel.vars.itemWidth + this.carousel.vars.itemMargin));
-            this.showImageCarouselArrows(this.carousel.count >= itemsNum);
+            const itemsNum = Math.floor((this.carouselWidth + this.carousel.vars.itemMargin) / (this.carousel.vars.itemWidth + this.carousel.vars.itemMargin));
+            this.showImageCarouselArrows(this.carousel.count > itemsNum);
             const carouselWidth = (this.carousel.vars.itemWidth + this.carousel.vars.itemMargin) * this.carousel.count - this.carousel.vars.itemMargin;
             $(`#${this.prefix}-img-carousel-wrapper`).css("width", carouselWidth).css("max-width", this.carouselWidth).css("visibility", "visible").css("position", "relative");
 
