@@ -1426,6 +1426,16 @@ declare module Insite.Order.Services.Dtos {
 		trackingUrl: string;
 		trackingNumber: string;
 		packSlip: string;
+		shipmentPackageLines: Insite.Order.Services.Dtos.ShipmentPackageLineDto[];
+	}
+	interface ShipmentPackageLineDto {
+		id: System.Guid;
+		productName: string;
+		productDescription: string;
+		productCode: string;
+		qtyOrdered: number;
+		qtyShipped: number;
+		price: number;
 	}
 	interface OrderHistoryTaxDto {
 		taxCode: string;
