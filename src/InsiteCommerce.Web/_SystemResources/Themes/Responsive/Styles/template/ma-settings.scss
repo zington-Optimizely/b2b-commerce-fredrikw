@@ -35,6 +35,18 @@
     }
 }
 
+.change-email-modal {
+    .exclamation-triangle:after {
+        content: "\f071";
+        font-family: good-oatmeal-v2;
+        font-style: normal;
+        color: #CC2200;
+        font-size: 24px;
+        margin: 2px 13px 0 0;
+        float: left;
+    }
+}
+
 @media all and (min-width: 768px) {
     .ma-settings {
         .btns {

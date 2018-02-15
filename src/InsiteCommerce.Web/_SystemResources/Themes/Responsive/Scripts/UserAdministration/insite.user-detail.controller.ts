@@ -9,6 +9,8 @@
         protected userId: System.Guid;
 
         user: AccountModel = null;
+        currentUser: AccountModel = null;
+        settings: AccountSettingsModel;
         retrievalError = false;
         isSubmitted = false;
         isNewUser = true;
@@ -17,6 +19,7 @@
         changesSaved = false;
         activationEmailSent = false;
         userCreated = false;
+        initialUserProfileEmail: string;
 
         static $inject = ["$scope", "accountService", "coreService", "sessionService", "queryString", "spinnerService", "$rootScope", "$location"];
 
@@ -39,6 +42,8 @@
             }
 
             this.getAccount();
+            this.getCurrentAccount();
+            this.getAccountSettings();
         }
 
         protected getAccount(): void {
@@ -65,11 +70,38 @@
                 this.autoSendActivationEmail = true;
             }
 
+            this.initialUserProfileEmail = this.user.email;
             this.retrievalError = false;
         }
 
         protected getAccountFailed(error: any): void {
             this.retrievalError = true;
+        }
+
+        protected getCurrentAccount(): void {
+            this.accountService.getAccount().then(
+                (account: AccountModel) => { this.getCurrentAccountCompleted(account); },
+                (error: any) => { this.getCurrentAccountFailed(error); });
+        }
+
+        protected getCurrentAccountCompleted(account: AccountModel): void {
+            this.currentUser = account;
+        }
+
+        protected getCurrentAccountFailed(error: any): void {
+        }
+
+        protected getAccountSettings(): void {
+            this.accountService.getAccountSettings().then(
+                (accountSettings: AccountSettingsModel) => { this.getAccountSettingsCompleted(accountSettings); },
+                (error: any) => { this.getAccountSettingsFailed(error); });
+        }
+
+        protected getAccountSettingsCompleted(accountSettings: AccountSettingsModel): void {
+            this.settings = accountSettings;
+        }
+
+        protected getAccountSettingsFailed(error: any): void {
         }
 
         createUser(): void {
@@ -78,6 +110,10 @@
 
             if (!this.$scope.usersetupform.$valid) {
                 return;
+            }
+
+            if (this.settings.useEmailAsUserName) {
+                this.user.userName = this.user.email;
             }
 
             this.resetNotification();
@@ -114,6 +150,10 @@
                 return;
             }
 
+            if (this.settings.useEmailAsUserName) {
+                this.user.userName = this.user.email;
+            }
+
             this.resetNotification();
             this.spinnerService.show();
 
@@ -123,8 +163,13 @@
         }
 
         protected updateAccountCompleted(account: AccountModel): void {
+            if (this.settings.useEmailAsUserName && this.isCurrentUser() && this.user.email !== this.initialUserProfileEmail) {
+                this.signOut();
+            }
+
             this.changesSaved = true;
             this.user.activationStatus = account.activationStatus;
+            this.initialUserProfileEmail = account.email;
         }
 
         protected updateAccountFailed(error: any): void {
@@ -153,6 +198,19 @@
         protected sendAccountActivationEmailFailed(error: any): void {
         }
 
+        protected signOut(): void {
+            this.sessionService.signOut().then(
+                (signOutResult: string) => { this.signOutCompleted(signOutResult); },
+                (error: any) => { this.signOutFailed(error); });
+        }
+
+        protected signOutCompleted(signOutResult: string): void {
+            this.coreService.redirectToSignIn();
+        }
+
+        protected signOutFailed(error: any): void {
+        }
+
         displayModal(modalId: string): void {
             this.coreService.displayModal(`#${modalId}`);
         }
@@ -161,6 +219,10 @@
             this.changesSaved = false;
             this.activationEmailSent = false;
             this.userCreated = false;
+        }
+
+        isCurrentUser(): boolean {
+            return this.currentUser && this.currentUser.id === this.userId;
         }
     }
 

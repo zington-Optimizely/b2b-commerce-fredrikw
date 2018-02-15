@@ -42,6 +42,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		passwordRequiresLowercase: boolean;
 		passwordRequiresDigit: boolean;
 		daysToRetainUser: number;
+		useEmailAsUserName: boolean;
 	}
 	interface AccountCollectionModel extends Insite.Core.WebApi.BaseModel {
 		accounts: Insite.Account.WebApi.V1.ApiModels.AccountModel[];
