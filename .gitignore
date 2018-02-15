@@ -33,6 +33,7 @@ ipch/
 [Rr]elease*/
 Ankh.NoLoad
 src/.vs
+src/.idea
 
 #MonoDevelop
 *.pidb
@@ -84,3 +85,4 @@ src/InSiteCommerce.Web/App_Data/luceneindex/
 
 
 /src/InSiteCommerce.Web/App_Data/insiteidentity.pfx
+
