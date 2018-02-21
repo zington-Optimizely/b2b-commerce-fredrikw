@@ -110,9 +110,6 @@
                     <a href="[% urlForPage 'UserListPage' %]" class="btn secondary btn-cancel">[% translate 'Cancel' %]</a>
                     <button id="tst_userSetupView_save" type="submit" class="btn primary btn-save">{{vm.isNewUser ? "[% translate 'Create User' %]" : "[% translate 'Save Changes' %]"}}</button>
                 </div>
-                <div ng-if="vm.settings.useEmailAsUserName && vm.isCurrentUser()">
-                    <span class="warning-message"><i class="exclamation-triangle"></i>[% translate 'If you change your email address, you will be signed out of the website.' %]</span>
-                </div>
             </form>
         </div>
     </div>

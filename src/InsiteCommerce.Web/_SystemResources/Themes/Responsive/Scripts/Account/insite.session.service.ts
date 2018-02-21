@@ -409,6 +409,7 @@ module insite.account {
         }
 
         protected updateSessionCompleted(response: ng.IHttpPromiseCallbackArg<SessionModel>): void {
+            this.$rootScope.$broadcast("sessionUpdated", response.data);
         }
 
         protected updateSessionFailed(error: ng.IHttpPromiseCallbackArg<any>): void {

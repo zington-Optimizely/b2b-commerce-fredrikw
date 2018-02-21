@@ -983,6 +983,10 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		realTimeInventory: boolean;
 		inventoryIncludedWithPricing: boolean;
 		storefrontAccess: string;
+		displayAttributesInTabs: boolean;
+		attributesTabSortOrder: string;
+		displayDocumentsInTabs: boolean;
+		documentsTabSortOrder: string;
 	}
 }
 declare module Insite.Core.Plugins.Search.Dtos {
@@ -1041,6 +1045,7 @@ declare module Insite.Dashboard.WebApi.V1.ApiModels {
 		panelType: string;
 		order: number;
 		quickLinkOrder: number;
+		openInNewTab: boolean;
 	}
 }
 declare module Insite.Dealers.WebApi.V1.ApiModels {

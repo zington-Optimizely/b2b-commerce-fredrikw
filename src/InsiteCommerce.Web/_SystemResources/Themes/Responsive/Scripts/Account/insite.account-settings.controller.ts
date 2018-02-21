@@ -107,7 +107,7 @@
             this.newAccountEmail = account.email;
 
             if (this.settings.useEmailAsUserName) {
-                this.signOut();
+                this.updateSession();
             }
         }
 
@@ -116,17 +116,16 @@
             this.account.email = this.savedAccountEmail;
         }
 
-        protected signOut(): void {
-            this.sessionService.signOut().then(
-                (signOutResult: string) => { this.signOutCompleted(signOutResult); },
-                (error: any) => { this.signOutFailed(error); });
+        protected updateSession(): void {
+            this.sessionService.updateSession({} as SessionModel).then(
+                (session: SessionModel) => { this.updateSessionCompleted(session); },
+                (error: any) => { this.updateSessionFailed(error); });
         }
 
-        protected signOutCompleted(signOutResult: string): void {
-            this.coreService.redirectToSignIn();
+        protected updateSessionCompleted(session: SessionModel): void {   
         }
 
-        protected signOutFailed(error: any): void {
+        protected updateSessionFailed(error: any): void {
         }
     }
 

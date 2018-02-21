@@ -164,7 +164,7 @@
 
         protected updateAccountCompleted(account: AccountModel): void {
             if (this.settings.useEmailAsUserName && this.isCurrentUser() && this.user.email !== this.initialUserProfileEmail) {
-                this.signOut();
+                this.updateSession();
             }
 
             this.changesSaved = true;
@@ -176,6 +176,18 @@
             if (error.message) {
                 this.generalError = error.message;
             }
+        }
+
+        protected updateSession(): void {
+            this.sessionService.updateSession({} as SessionModel).then(
+                (session: SessionModel) => { this.updateSessionCompleted(session); },
+                (error: any) => { this.updateSessionFailed(error); });
+        }
+
+        protected updateSessionCompleted(session: SessionModel): void {
+        }
+
+        protected updateSessionFailed(error: any): void {
         }
 
         onSendActivationEmailClick(): void {
@@ -196,19 +208,6 @@
         }
 
         protected sendAccountActivationEmailFailed(error: any): void {
-        }
-
-        protected signOut(): void {
-            this.sessionService.signOut().then(
-                (signOutResult: string) => { this.signOutCompleted(signOutResult); },
-                (error: any) => { this.signOutFailed(error); });
-        }
-
-        protected signOutCompleted(signOutResult: string): void {
-            this.coreService.redirectToSignIn();
-        }
-
-        protected signOutFailed(error: any): void {
         }
 
         displayModal(modalId: string): void {
