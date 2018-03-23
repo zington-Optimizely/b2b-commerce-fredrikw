@@ -140,7 +140,7 @@ $tsConfigFile = "{
   },
   `"exclude`": [
     `"node_modules`",
-	`"bin`"
+    `"bin`"
   ]
 }"
 
