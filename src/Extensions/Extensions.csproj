@@ -132,6 +132,9 @@
     <Reference Include="Insite.QuickOrder, Version=4.4.2.39579, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Insite.Commerce.Public.4.4.2.39579\lib\net452\Insite.QuickOrder.dll</HintPath>
     </Reference>
+    <Reference Include="Insite.RealTimeInventory, Version=4.4.2.39579, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Insite.Commerce.Public.4.4.2.39579\lib\net452\Insite.RealTimeInventory.dll</HintPath>
+    </Reference>
     <Reference Include="Insite.RealTimePricing, Version=4.4.2.39579, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Insite.Commerce.Public.4.4.2.39579\lib\net452\Insite.RealTimePricing.dll</HintPath>
     </Reference>
