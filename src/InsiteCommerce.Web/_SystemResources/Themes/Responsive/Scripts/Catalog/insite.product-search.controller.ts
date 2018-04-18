@@ -301,7 +301,7 @@ module insite.catalog {
         }
 
         protected getAutocompleteContentTemplate(suggestion: any, pattern: string): string {
-            return `<div class="group-${suggestion.type}">${suggestion.title}</div>`;
+            return `<div class="group-${suggestion.type} tst_autocomplete_content_${suggestion.url.replace("/", "-")}">${suggestion.title}</div>`;
         }
 
         protected getAutocompleteProductTemplate(suggestion: any, pattern: string): string {
