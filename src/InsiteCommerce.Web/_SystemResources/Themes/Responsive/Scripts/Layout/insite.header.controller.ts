@@ -48,6 +48,22 @@
                     target.parents(".top-level-item").first().removeClass("hover");
                 }
             });
+
+            angular.element(".header-b2c .mega-nav .sub-item").hover((event) => {
+                const target = angular.element(event.target);
+                if (target.hasClass("sub-item")) {
+                    target.addClass("hover");
+                } else {
+                    target.parents(".sub-item").first().addClass("hover");
+                }
+            }, (event) => {
+                const target = angular.element(event.target);
+                if (target.hasClass("sub-item") && target.hasClass("hover")) {
+                    target.removeClass("hover");
+                } else {
+                    target.parents(".sub-item.hover").first().removeClass("hover");
+                }
+            });
         }
 
         protected onCartLoaded(cart: CartModel): void {
