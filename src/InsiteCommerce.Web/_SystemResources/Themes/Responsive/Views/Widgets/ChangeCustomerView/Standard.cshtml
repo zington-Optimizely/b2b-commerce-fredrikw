@@ -10,7 +10,7 @@
         <div class="select-step select-customer-step">
             <label>[% translate 'Select Bill To' %]</label>
             <input type="text" class="billto-selector tst_billto_selector" id="selectBillTo" name="selectedBillTo"
-                   ng-init="vm.billToOptionsPlaceholder = '[% translate 'Search or Select Bill To' %]'" ng-click="vm.totalBillTosCount && vm.openAutocomplete($event, '#selectBillTo')"
+                   ng-init="vm.billToOptionsPlaceholder = '[% translate 'Search or Select Bill To' EscapeSingleQuotes %]'" ng-click="vm.totalBillTosCount && vm.openAutocomplete($event, '#selectBillTo')"
                    ng-model="vm.billToSearch" kendo-auto-complete k-options="vm.billToOptions" />
             <span class="icon-arw-down-5" ng-click="vm.totalBillTosCount && vm.openAutocomplete($event, '#selectBillTo')"></span>
             <div ng-show="vm.noShipToAndCantCreate" class="messaging--error">
@@ -20,7 +20,7 @@
         <div class="select-step select-ship-step" ng-show="!vm.noShipToAndCantCreate && vm.billTo">
             <label>[% translate 'Select Ship To' %]</label>
             <input type="text"  class="shipto-selector tst_shipto_selector" id="selectShipTo" name="selectShipTo"
-                   ng-init="vm.shipToOptionsPlaceholder = '[% translate 'Search or Select Ship To' %]'" ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#selectShipTo')"
+                   ng-init="vm.shipToOptionsPlaceholder = '[% translate 'Search or Select Ship To' EscapeSingleQuotes %]'" ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#selectShipTo')"
                    ng-model="vm.shipToSearch" kendo-auto-complete k-options="vm.shipToOptions" />
             <span class="icon-arw-down-5" ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#selectShipTo')"></span>
         </div>

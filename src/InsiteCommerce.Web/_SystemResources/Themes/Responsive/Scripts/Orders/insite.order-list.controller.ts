@@ -108,7 +108,8 @@ module insite.order {
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
 
             if (lookBackDays > 0) {
-                const date = new Date(Date.now() - lookBackDays * 60 * 60 * 24 * 1000);
+                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+                const date = new Date(Date.now() - lookBackDays * 60 * 60 * 24 * 1000 - tzOffset);
                 this.searchFilter.fromDate = date.toISOString().split("T")[0];
             }
 

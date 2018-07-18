@@ -12,7 +12,7 @@
                     <div class="oui-browse">
                         <button id="buttonFileUpload" class="primary btn dark-blue" ng-click="vm.onButtonFileUploadClick()">[% translate 'Browse' %]</button>
                         <input id="hiddenFileUpload" style="display: none" type="file" onchange="angular.element(this).data('_scope').vm.setFile(this)">
-                        <span id="tst_listUpload_fileTitle" class="file-title" ng-bind="!vm.fileName ? '[% translate 'No file selected.' %]' : vm.fileName"></span>
+                        <span id="tst_listUpload_fileTitle" class="file-title" ng-bind="!vm.fileName ? '[% translate 'No file selected.' EscapeSingleQuotes %]' : vm.fileName"></span>
                     </div>
                     <div class="first-row-option">
                         <input id="firstRowCheckbox" type="checkbox" ng-model="vm.firstRowHeading"/><label for="firstRowCheckbox">[% translate 'First row is column headings' %]</label>

@@ -44,7 +44,7 @@
                     class="btn primary btn-place-saved-order"
                     ng-if="vm.canAddToCart"
                     ng-click="vm.placeSavedOrder('[% urlForPage 'CartPage' %]')"
-                    ng-bind="vm.canAddAllToCart ? '[% translate 'Place Saved Order' %]' : '[% translate 'Add All Available To Cart' %]'">
+                    ng-bind="vm.canAddAllToCart ? '[% translate 'Place Saved Order' EscapeSingleQuotes %]' : '[% translate 'Add All Available To Cart' EscapeSingleQuotes %]'">
             </button>
             <button ng-if="vm.canAddAllToList" type="button" class="btn primary" ng-click="vm.addAllToList()">[% translate 'Add All to List' %]</button>
             <button type="button" class="btn secondary btn-delete-saved-order" ng-click="vm.deleteSavedOrder('[% urlForPage 'SavedOrderListPage' %]')">[% translate 'Delete Saved Order' %]</button>

@@ -319,11 +319,25 @@
                 this.cart.shipTo = shipTo;
             }
 
-            this.updateSession(this.cart, continueUri, customerWasUpdated);
+            // If shipTo was updated for quote or jobQote then just update cart, otherwise update session
+            if (this.cartId) {
+                this.cartService.updateCart(this.cart).then(
+                    (cart: CartModel) => { this.updateCartCompleted(cart, continueUri); },
+                    (error: any) => { this.updateCartFailed(error); });
+            } else {
+                this.updateSession(this.cart, continueUri, customerWasUpdated);
+            }
         }
 
         protected addOrUpdateShipToFailed(error: any): void {
             this.continueCheckoutInProgress = false;
+        }
+
+        protected updateCartCompleted(cart: CartModel, continueUri: string): void {
+            this.getCartAfterChangeShipTo(cart, continueUri);
+        }
+
+        protected updateCartFailed(error: any): void {
         }
 
         protected getCartAfterChangeShipTo(cart: CartModel, continueUri: string): void {

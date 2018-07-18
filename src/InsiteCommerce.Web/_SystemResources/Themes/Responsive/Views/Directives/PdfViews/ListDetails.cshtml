@@ -2,10 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>[% translate "Share List" %]</title>
     <style type="text/css">
         h2, p, div {
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: Helvetica, Arial, Sans-Serif;
+            font-size: 16px;
+            color: #252525;
+        }
+
+        .logo-block {
+            padding-bottom: 20px;
         }
 
         .list-name {
@@ -14,15 +25,21 @@
 
         .list-description {
             text-align: justify;
+            letter-spacing: .08rem;
         }
 
         .item-updated {
             margin-top: 10px;
         }
 
+        a {
+            color: #000000;
+        }
+
         .item-updated, .line-added, .product-info, .sale-price-label {
             color: #686868;
-            font-size: 0.9rem;
+            padding: 5px 0;
+            font-size: 14px;
         }
 
         .line-nowrap {
@@ -74,6 +91,7 @@
 
         .qty-col {
             width: 10%;
+            padding-top: 5px;
         }
 
         .image-col, .price-col {
@@ -90,7 +108,7 @@
 
         h3 {
             margin: 6px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: normal;
         }
 
@@ -100,11 +118,12 @@
 
         .list-notes {
             background-color: #F2F2F2;
-            padding-bottom: 3px;
+            padding-bottom: 2px;
+            padding-top: 4px;
             margin-top: 3px;
         }
 
-        .image-col, .qty-col {
+        .image-col {
             padding-top: 6px;
         }
 
@@ -116,7 +135,7 @@
 <body>
     <div>
         [% if Model.LogoImagePath != null and Model.LogoImagePath != "" -%]
-        <div>
+        <div class="logo-block">
             <a href="[[Model.CurrentWebsiteUrl]]">
                 <img src="[[Model.LogoImagePath]]" />
             </a>
@@ -193,6 +212,7 @@
                                     <h3>
                                         [% if forloop.first -%]
                                             <img src="[[Model.CurrentWebsiteUrl]]/images/list-notes-icon.png"/>
+                                            &nbsp;
                                         [% endif -%]
                                         [[notesLine]]
                                     </h3>
@@ -232,7 +252,9 @@
                         [% endif -%]
                     </td>
                     <td class="qty-col show-border">
-                        <strong>[% translate 'QTY:' %]</strong> [[listLine.QtyOrderedDisplay]]
+                        <div>
+                            <strong>[% translate 'QTY:' %]</strong> [[listLine.QtyOrderedDisplay]]
+                        </div>
                     </td>
                 </tr>
             </table>

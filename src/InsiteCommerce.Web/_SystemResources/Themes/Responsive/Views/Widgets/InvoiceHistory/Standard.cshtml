@@ -31,7 +31,7 @@
             <li class="row" ng-repeat="invoice in vm.invoiceHistory.invoices">
                 <div class="columns small-6">
                     <div>
-                        <a ng-href="[% urlForPage 'InvoiceDetailPage' %]?invoiceNumber={{ invoice.invoiceNumber }}" ng-bind="'[% translate 'Invoice #' %]' + invoice.invoiceNumber"></a>
+                        <a ng-href="[% urlForPage 'InvoiceDetailPage' %]?invoiceNumber={{ invoice.invoiceNumber }}" ng-bind="'[% translate 'Invoice #' EscapeSingleQuotes %]' + invoice.invoiceNumber"></a>
                     </div>
                     <div ng-bind="invoice.invoiceDate | date:'shortDate'"></div>
                     <div>[% translate 'Due Date' %]: {{invoice.dueDate | date:'shortDate'}}</div>

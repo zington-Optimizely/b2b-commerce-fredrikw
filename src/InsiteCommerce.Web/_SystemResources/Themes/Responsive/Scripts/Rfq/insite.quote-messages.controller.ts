@@ -1,8 +1,10 @@
 ﻿module insite.rfq {
     "use strict";
+    import MessageParameter = Insite.Message.WebApi.V1.ApiModels.MessageParameter;
+    import QuoteModel = Insite.Rfq.WebApi.V1.ApiModels.QuoteModel;
 
     export class QuoteMessagesController {
-        quoteId: string;
+        quote: QuoteModel;
         rfqMessage: string;
 
         static $inject = ["$scope", "rfqService", "queryString"];
@@ -16,26 +18,25 @@
         }
 
         init(): void {
-            this.quoteId = this.getQuoteId();
-        }
-
-        protected getQuoteId(): string {
-            return this.queryString.get("quoteId");
+            
         }
 
         sendMessage(): any {
             const parameter = {
-                quoteId: this.quoteId as System.Guid,
-                message: this.rfqMessage
-            } as RfqMessageModel;
+                customerOrderId: (<any>this.$scope).quote.id as System.Guid,
+                message: this.rfqMessage,
+                toUserProfileName: (this.$scope as any).quote.initiatedByUserName,
+                subject: `Quote ${(this.$scope as any).quote.orderNumber} communication`,
+                process: "RFQ"
+            } as MessageParameter;
 
             this.rfqService.submitRfqMessage(parameter).then(
-                (rfqMessage: RfqMessageModel) => { this.submitRfqMessageCompleted(rfqMessage); },
+                (rfqMessage: MessageModel) => { this.submitRfqMessageCompleted(rfqMessage); },
                 (error: any) => { this.submitRfqMessageFailed(error); });
         }
 
-        protected submitRfqMessageCompleted(rfqMessage: RfqMessageModel): void {
-            (this.$scope as any).messageCollection.push(rfqMessage);
+        protected submitRfqMessageCompleted(rfqMessage: MessageModel): void {
+            (this.$scope as any).quote.messageCollection.push(rfqMessage);
             this.$scope.$broadcast("messagesloaded");
             this.rfqMessage = "";
         }

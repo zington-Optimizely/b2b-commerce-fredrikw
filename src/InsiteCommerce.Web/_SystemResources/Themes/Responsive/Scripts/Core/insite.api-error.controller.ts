@@ -17,7 +17,24 @@
             this.apiErrorPopupService.registerDisplayFunction((data: any) => {
                 const $popup = angular.element(".api-error-popup");
                 if ($popup.length > 0) {
-                    this.errorMessage = JSON.stringify(data, null, "<br/>");
+                    if (typeof (data) === "string") {
+                        this.errorMessage = data;
+                    }
+                    else if (data.message && Object.keys(data).length === 1) {
+                        this.errorMessage = data.message;
+                    } else {
+                        const lines = [];
+                        for (let key in data) {
+                            if (!data.hasOwnProperty(key)) {
+                                continue;
+                            }
+
+                            lines.push(`<b>${key}:</b> ${data[key]}`);
+                        }
+
+                        this.errorMessage = lines.join("<br/>");
+                    }
+
                     this.coreService.displayModal($popup);
                 }
             });

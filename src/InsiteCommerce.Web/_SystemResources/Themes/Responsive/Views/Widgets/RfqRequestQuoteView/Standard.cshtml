@@ -1,5 +1,5 @@
 ﻿<div ng-controller="RfqController as vm" ng-cloak>
-    <h1 ng-bind="!vm.isSalesRep ? '[% translate 'Request a Quote' %]' : '[% translate 'Create a Quote' %]'"></h1>
+    <h1 ng-bind="!vm.isSalesRep ? '[% translate 'Request a Quote' EscapeSingleQuotes %]' : '[% translate 'Create a Quote' EscapeSingleQuotes %]'"></h1>
     <div>
         <div class="row" ng-show="vm.cart.cartLines !== null && vm.cart.cartLines.length > 0">
             <form novalidate id="submitQuoteForm">
@@ -47,7 +47,7 @@
             <button ng-disabled="vm.disableSubmit"
                     type="button" class="btn primary btn-submit-quote-request"
                     ng-click="vm.submitQuote(vm.isSalesRep ? '[% urlForPage 'RfqQuoteDetailsPage' %]' : '[% urlForPage 'RfqConfirmationPage' %]')"
-                    ng-bind="!vm.isSalesRep ? '[% translate 'Submit Quote Request' %]' : '[% translate 'Create Quote Proposal' %]'"></button>
+                    ng-bind="!vm.isSalesRep ? '[% translate 'Submit Quote Request' EscapeSingleQuotes %]' : '[% translate 'Create Quote Proposal' EscapeSingleQuotes %]'"></button>
         </div>
 
         <div ng-show="vm.cart.cartLines === null || vm.cart.cartLines.length === 0">

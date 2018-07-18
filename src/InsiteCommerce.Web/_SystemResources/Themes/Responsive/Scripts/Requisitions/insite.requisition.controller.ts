@@ -42,6 +42,7 @@
         }
 
         getRequisitions(): void {
+            this.spinnerService.show();
             this.requisitionService.getRequisitions(this.pagination).then(
                 (requisitionCollection: RequisitionCollectionModel) => { this.getRequisitionsCompleted(requisitionCollection); },
                 (error: any) => { this.getRequisitionsFailed(error); });
@@ -55,9 +56,11 @@
                     requisition.isApproved = true;
                 }
             });
+            this.spinnerService.hide();
         }
 
         protected getRequisitionsFailed(error: any): void {
+            this.spinnerService.hide();
         }
 
         openRequisition(requisitionId: System.Guid): void {

@@ -1,6 +1,6 @@
 ﻿<div id="popup-create-list" class="reveal-modal popup-create-list" data-reveal data-reveal-init>
     <div class="modal-wrap">
-        <h2 ng-bind="vm.list ? '[% translate 'Edit Details' %]' : '[% translate 'Create List' %]'"></h2>
+        <h2 ng-bind="vm.list ? '[% translate 'Edit Details' EscapeSingleQuotes %]' : '[% translate 'Create List' EscapeSingleQuotes %]'"></h2>
         <div class="pop-content">
             <form name="vm.listForm" ng-submit="vm.list ? vm.updateWishList() : vm.createWishList()" novalidate>
                 <div class="row select-list">
@@ -30,11 +30,11 @@
                     <div id="error" class="error" ng-show="vm.listForm.$submitted && (vm.errorMessage || vm.listForm.listName.$error.required || vm.listForm.listName.$error.maxlength)">
                         <span ng-show="vm.errorMessage" class="field-validation-error" ng-bind="vm.errorMessage"></span>
                         <span ng-show="vm.listForm.listName.$error.required" class="field-validation-error">[% siteMessage 'Lists_List_Name_Required' %]</span>
-                        <span ng-show="vm.listForm.listName.$error.maxlength" class="field-validation-error">{{::'[% siteMessage 'Lists_List_Name_Too_Long' %]'.replace('{0}', 255)}}</span>
+                        <span ng-show="vm.listForm.listName.$error.maxlength" class="field-validation-error">{{::'[% siteMessage 'Lists_List_Name_Too_Long' EscapeSingleQuotes %]'.replace('{0}', 255)}}</span>
                     </div>
                     <div class="row btns">
                         <button ng-click="vm.closeModal()" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
-                        <button class="btn primary btn-add-wishlist" type="submit" ng-bind="vm.list ? '[% translate 'Save' %]' : '[% translate 'Create List' %]'"></button>
+                        <button class="btn primary btn-add-wishlist" type="submit" ng-bind="vm.list ? '[% translate 'Save' EscapeSingleQuotes %]' : '[% translate 'Create List' EscapeSingleQuotes %]'"></button>
                     </div>
                 </div>
             </form>

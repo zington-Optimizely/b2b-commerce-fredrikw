@@ -9,7 +9,7 @@
             <div class="clearfix"></div>
             <div class="qo-form">
                 <div class="qo-search-box">
-                    <input type="text" id="qo-search-widget" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' %]'" class="qo-searchbox"
+                    <input type="text" id="qo-search-widget" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]'" class="qo-searchbox"
                            kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.searchTerm" isc-enter="vm.onEnterKeyPressedInAutocomplete()" />
                     <span class="qo-msg error" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>
                 </div>

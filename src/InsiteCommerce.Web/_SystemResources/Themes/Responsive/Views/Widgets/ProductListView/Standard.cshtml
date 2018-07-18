@@ -57,7 +57,7 @@
 
                         <h3 class="results-count" ng-class="{ messaging: vm.noResults && vm.searchWithinTerms.length }">
                             <span class="result-num" ng-if="!vm.noResults">{{vm.products.pagination.totalItemCount}}</span>
-                            <span class="result-lbl" ng-if="!vm.noResults && vm.products">{{'[% translate 'Items_pager' %]'.toLowerCase()}}</span>
+                            <span class="result-lbl" ng-if="!vm.noResults && vm.products">{{'[% translate 'Items_pager' EscapeSingleQuotes %]'.toLowerCase()}}</span>
 
                             <span ng-if="vm.query && !(vm.searchCategory || vm.filterCategory.categoryId)" class="search-lbl">
                                 {{ vm.noResults ? "[% translate 'No results found for' %]" : "[% translate 'results for' %]" }} <strong id="tst_productList_query">{{vm.query}}</strong>
@@ -404,7 +404,7 @@
                                 <div class="f-wrap">
                                     <ul>
                                         <li id="tst_productList_categoryLeftNav_attributeValueFacet_{{attributeValue.attributeValueId}}"
-                                            ng-repeat="attributeValue in section.attributeValueFacets | orderBy : ['sortOrder','valueDisplay']"
+                                            ng-repeat="attributeValue in section.attributeValueFacets | orderBy : ['sortOrder','valueDisplay'] | limitTo: vm.getAttributeTypeAttributeValueLimit(section)"
                                             ng-class="{'f-selected' : vm.isAttributeValueFacetSelected(attributeValue)}"
                                             ng-click="vm.toggleFilter(attributeValue.attributeValueId)">
                                             <a href="javascript:;">
@@ -413,6 +413,12 @@
                                             </a>
                                         </li>
                                     </ul>
+                                    <a class="accord-show-more"
+                                       href="javascript:void(0);"
+                                       ng-show="vm.shouldShowMoreAttributeValues(section)"
+                                       ng-click="vm.showMoreAttributeValues(section)">
+                                        [% translate 'See More' %]
+                                    </a>
                                 </div>
                             </article>
                         </div>

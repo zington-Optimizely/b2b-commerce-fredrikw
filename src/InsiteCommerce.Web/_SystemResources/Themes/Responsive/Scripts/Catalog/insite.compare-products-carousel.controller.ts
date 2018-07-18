@@ -116,13 +116,12 @@
             const el = $(".top-carousel.isc-carousel");
             let width = el.innerWidth();
             let itemsNum: number;
+            let isItemsNumChanged = false;
 
             if (width > 700) {
-                width = width / 4;
                 itemsNum = 4;
                 this.showCarouselArrows(num > 4);
             } else if (width > 480) {
-                width = width / 3;
                 itemsNum = 3;
                 this.showCarouselArrows(num > 3);
             } else {
@@ -130,21 +129,39 @@
                 this.showCarouselArrows(num > 1);
             }
 
-            if (this.carousel && this.carousel.vars) {
+            if (this.carousel.vars.minItems !== itemsNum && this.carousel.vars.maxItems !== itemsNum) {
                 this.carousel.vars.minItems = itemsNum;
                 this.carousel.vars.maxItems = itemsNum;
-                this.carousel.vars.itemWidth = width;
-                this.carousel.vars.move = width > 480 ? 2 : 1;
-                $(".top-carousel.isc-carousel ul li").css("width", `${width}.px`);
+                this.carousel.doMath();
+                isItemsNumChanged = true;
             }
+
+            this.$timeout(() => {
+                if (isItemsNumChanged) {
+                    this.carousel.resize();
+                    if (num > itemsNum) {
+                        if (this.carousel.currentSlide > num - itemsNum) {
+                            this.carousel.flexAnimate(num - itemsNum);
+                        }
+                    } else {
+                        this.carousel.flexAnimate(0);
+                    }
+                }
+
+                this.equalizeCarouselDimensions();
+            }, 0);
+
             if (this.bottomCarousels) {
                 this.bottomCarousels.forEach(x => {
                     x.vars.minItems = itemsNum;
                     x.vars.maxItems = itemsNum;
-                    x.vars.itemWidth = width;
                     x.vars.move = width > 480 ? 2 : 1;
+                    x.doMath();
+                    this.$timeout(() => {
+                        x.resize();
+                    }, 0);
                 });
-                $(".pc-attr-carousel-container.isc-carousel ul li").css("width", `${width}.px`);
+                
             }
 
             this.equalizeCarouselDimensions();
@@ -217,10 +234,14 @@
 
         protected onWindowResize(): void {
             $(".top-carousel.isc-carousel").flexslider("pause");
-            $(".pc-attr-carousel-container.isc-carousel").flexslider("pause");
+            if ($(".pc-attr-carousel-container.isc-carousel")) {
+                $(".pc-attr-carousel-container.isc-carousel").flexslider("pause");
+            }
             this.reloadCarousel();
             $(".top-carousel.isc-carousel").flexslider("play");
-            $(".pc-attr-carousel-container.isc-carousel").flexslider("play");
+            if ($(".pc-attr-carousel-container.isc-carousel")) {
+                $(".pc-attr-carousel-container.isc-carousel").flexslider("play");
+            }
         }
 
         protected onAttributeTypeClick(event: JQueryEventObject): void {

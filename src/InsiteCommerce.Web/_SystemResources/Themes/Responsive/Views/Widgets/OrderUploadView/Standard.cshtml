@@ -34,7 +34,7 @@
                 <div class="oui-browse">
                     <button id="buttonFileUpload" class="primary btn dark-blue" ng-click="vm.onButtonFileUploadClick()">[% translate 'Browse' %]</button>
                     <input id="hiddenFileUpload" style="display: none" type="file" onchange="angular.element(this).data('_scope').vm.setFile(this)">
-                    <span id="tst_orderUpload_fileTitle" class="file-title" ng-bind="!vm.fileName ? '[% translate 'No file selected.' %]' : vm.fileName"></span>
+                    <span id="tst_orderUpload_fileTitle" class="file-title" ng-bind="!vm.fileName ? '[% translate 'No file selected.' EscapeSingleQuotes %]' : vm.fileName"></span>
                 </div>
                 <div class="first-row-option">
                     <input id="firstRowCheckbox" type="checkbox" ng-model="vm.firstRowHeading" /><label for="firstRowCheckbox">[% translate 'First row is column headings' %]</label>
@@ -107,7 +107,7 @@
         <div id="orderUploadingPopup" class="reveal-modal address-error-popup ma-order-upload" data-reveal data-options="close_on_background_click: false;" data-reveal-init>
             <div class="modal-wrap ou-modal">
                 <div class="loader"></div>
-                <h3>{{(!vm.uploadCancelled) ? "[% translate 'Uploading Order' %]" : "[% translate 'Cancelling Order' %]"}}</h3>
+                <h3>{{(!vm.uploadCancelled) ? "[% translate 'Uploading Order' EscapeSingleQuotes %]" : "[% translate 'Cancelling Order' EscapeSingleQuotes %]"}}</h3>
                 <button id="tst_orderUpload_cancelUpload" class="btn tertiary slim no-margin-bottom" ng-click="vm.cancelUpload()" ng-show="vm.allowCancel" ng-enable="!vm.uploadCancelled">[% translate 'Cancel Upload' %]</button>
             </div>
         </div>

@@ -82,7 +82,7 @@
                             <div class="icon-wrapper">
                                 <i class="icon-search"></i>
                             </div>
-                            <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Search by keyword or item #' %]'" class="qo-searchbox"
+                            <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Search by keyword or item #' EscapeSingleQuotes %]'" class="qo-searchbox"
                                    kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.addingSearchTerm" ng-change="vm.addingSearchTermChanged()" isc-enter="vm.onEnterKeyPressedInAutocomplete()" />
                         </div>
                         <p class="error">
@@ -280,7 +280,7 @@
         </div>
         <div id="popup-line-note" class="reveal-modal popup-line-note" data-reveal data-reveal-init>
             <div class="modal-wrap">
-                <h2 ng-bind="vm.editNote ? '[% translate 'Edit Note' %]' : '[% translate 'Add Note' %]'"></h2>
+                <h2 ng-bind="vm.editNote ? '[% translate 'Edit Note' EscapeSingleQuotes %]' : '[% translate 'Add Note' EscapeSingleQuotes %]'"></h2>
                 <div class="pop-content">
                     <form name="vm.noteForm">
                         <div class="row select-list">
@@ -300,7 +300,7 @@
                                 <button ng-if="vm.editNote" ng-click="vm.deleteNote()" class="btn tertiary" type="button">[% translate 'Delete Note' %]</button>
                                 <button ng-click="vm.closeModal('#popup-line-note')" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
                                 <button ng-click="vm.saveNote()" class="btn primary" type="button"
-                                        ng-bind="vm.editNote ? '[% translate 'Save' %]' : '[% translate 'Add Note' %]'"></button>
+                                        ng-bind="vm.editNote ? '[% translate 'Save' EscapeSingleQuotes %]' : '[% translate 'Add Note' EscapeSingleQuotes %]'"></button>
                             </div>
                         </div>
                     </form>

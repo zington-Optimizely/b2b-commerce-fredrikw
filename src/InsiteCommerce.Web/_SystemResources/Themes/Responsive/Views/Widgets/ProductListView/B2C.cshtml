@@ -37,7 +37,7 @@
 
                         <h3 class="results-count" ng-class="{ messaging: vm.noResults && vm.searchWithinTerms.length }">
                             <span class="result-num" ng-if="!vm.noResults">{{vm.products.pagination.totalItemCount}}</span>
-                            <span class="result-lbl" ng-if="!vm.noResults && vm.products">{{'[% translate 'Items_pager' %]'.toLowerCase()}}</span>
+                            <span class="result-lbl" ng-if="!vm.noResults && vm.products">{{'[% translate 'Items_pager' EscapeSingleQuotes %]'.toLowerCase()}}</span>
 
                             <span ng-if="vm.query && !(vm.searchCategory || vm.filterCategory.categoryId)" class="search-lbl">
                                 {{ vm.noResults ? "[% translate 'No results found for' %]" : "[% translate 'results for' %]" }} <strong>{{vm.query}}</strong>

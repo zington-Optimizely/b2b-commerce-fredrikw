@@ -37,6 +37,7 @@ module insite.catalog {
         topSellersMaxResults?: number;
         topSellersCategoryIds?: System.Guid[];
         applyPersonalization?: boolean;
+        includeAttributes?: string;
     }
 
     // parameters accepted by get getProduct
@@ -84,7 +85,7 @@ module insite.catalog {
          * @param productId Id of the product
          * @param expand Specifies which optional data to bring back. some valid values are ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing"]
          */
-        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean): ng.IPromise<ProductModel>;
+        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string): ng.IPromise<ProductModel>;
         getProductByParameters(parameters: IProductParameters): ng.IPromise<ProductModel>;
         getProductSettings(): ng.IPromise<ProductSettingsModel>;
         getCrossSells(productId: string): ng.IPromise<CrossSellCollectionModel>;
@@ -434,15 +435,15 @@ module insite.catalog {
             deferred.reject(error);
         }
 
-        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean): ng.IPromise<ProductModel> {
+        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string): ng.IPromise<ProductModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "GET", url: `${this.productServiceUri}${productId}`, params: this.getProductParams(categoryId, expand, addToRecentlyViewed, applyPersonalization) }),
+                this.$http({ method: "GET", url: `${this.productServiceUri}${productId}`, params: this.getProductParams(categoryId, expand, addToRecentlyViewed, applyPersonalization, includeAttributes) }),
                 this.getProductCompleted,
                 this.getProductFailed);
         }
 
-        protected getProductParams(categoryId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean): any {
+        protected getProductParams(categoryId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string): any {
             const params = {} as any;
 
             if (expand) {
@@ -456,6 +457,9 @@ module insite.catalog {
             }
             if (applyPersonalization) {
                 params.applyPersonalization = applyPersonalization;
+            }
+            if (includeAttributes) {
+                params.includeAttributes = includeAttributes;
             }
 
             return params;

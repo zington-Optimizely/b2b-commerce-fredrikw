@@ -179,7 +179,7 @@
                         <div class="medium-12 large-12 columns manage-subs password-requirements">
                             <h4>[% translate 'Password requirements' %]:</h4>
                             <div>
-                                <div class="pw-note">{{'[% translate 'Password must be at least {0} characters long' %]'.replace('{0}', vm.settings.passwordMinimumLength)}}</div>
+                                <div class="pw-note">{{'[% translate 'Password must be at least {0} characters long' EscapeSingleQuotes %]'.replace('{0}', vm.settings.passwordMinimumLength)}}</div>
                                 <div class="pw-note" ng-if="vm.settings.minRequiredDigits">[% translate 'Password must include at least one number' %]</div>
                                 <div class="pw-note" ng-if="vm.settings.minRequiredNonAlphanumericCharacters">[% translate 'Password must include at least one non alphanumeric character' %]</div>
                                 <div class="pw-note" ng-if="vm.settings.minRequiredUppercase">[% translate 'Password must include at least one uppercase character' %]</div>

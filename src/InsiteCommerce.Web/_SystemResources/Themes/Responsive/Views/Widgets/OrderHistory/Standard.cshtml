@@ -28,7 +28,7 @@
             <li class="row" ng-repeat="order in vm.orderHistory.orders">
                 <div class="columns small-6">
                     <div>
-                        <a ng-href="[% urlForPage 'OrderDetailPage' %]?ordernumber={{ order.webOrderNumber || order.erpOrderNumber }}" ng-bind="'[% translate 'Order #' %]' + (order.webOrderNumber || order.erpOrderNumber)"></a>
+                        <a ng-href="[% urlForPage 'OrderDetailPage' %]?ordernumber={{ order.webOrderNumber || order.erpOrderNumber }}" ng-bind="'[% translate 'Order #' EscapeSingleQuotes %]' + (order.webOrderNumber || order.erpOrderNumber)"></a>
                     </div>
                     <div ng-bind="order.orderDate | date:'shortDate'"></div>
                     <div ng-bind="order.statusDisplay"></div>

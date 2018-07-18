@@ -236,14 +236,14 @@
                 <label for="criteria">[% translate 'Search' %]</label>
 
                 <input ng-model="vm.criteria" type="text" class="isc-searchAutoComplete tst_header_searchInput"
-                       ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' %]';
+                       ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]';
                             vm.translations = [
-                                {key: 'category', text: '[% translate 'Categories' %]'},
-                                {key: 'content', text: '[% translate 'Content' %]'},
-                                {key: 'product', text: '[% translate 'Products' %]'},
-                                {key: 'manufacturerItemNumber', text: '[% translate 'MFG #' %]'},
-                                {key: 'partNumber', text: '[% translate 'Part #' %]'},
-                                {key: 'customerPartNumber', text: '[% translate 'My Part #' %]'}]"
+                                {key: 'category', text: '[% translate 'Categories' EscapeSingleQuotes %]'},
+                                {key: 'content', text: '[% translate 'Content' EscapeSingleQuotes %]'},
+                                {key: 'product', text: '[% translate 'Products' EscapeSingleQuotes %]'},
+                                {key: 'manufacturerItemNumber', text: '[% translate 'MFG #' EscapeSingleQuotes %]'},
+                                {key: 'partNumber', text: '[% translate 'Part #' EscapeSingleQuotes %]'},
+                                {key: 'customerPartNumber', text: '[% translate 'My Part #' EscapeSingleQuotes %]'}]"
                        kendo-auto-complete
                        k-options="vm.autocompleteOptions"
                        isc-enter="vm.onEnter()"

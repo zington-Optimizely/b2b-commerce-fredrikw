@@ -11,7 +11,7 @@
                     </div>
                     <div ng-show="vm.quote.isEditable">
                         <form novalidate id="updateExpirationDate">
-                            <h2>{{vm.quote.isJobQuote ? '[% translate 'Job Expiration Date' %]' : '[% translate 'Quote Expiration Date' %]'}}:</h2>
+                            <h2>{{vm.quote.isJobQuote ? '[% translate 'Job Expiration Date' EscapeSingleQuotes %]' : '[% translate 'Quote Expiration Date' EscapeSingleQuotes %]'}}:</h2>
                             <input type="text" id="expirationDate" name="expirationDate" class="datepicker q-ex-date"
                                    isc-pick-a-date="vm.quote.expirationDate"
                                    ng-class="{'error' : true}"
@@ -22,7 +22,7 @@
                         </form>
                     </div>
                     <div ng-show="vm.quote.expirationDate && !vm.quote.isEditable">
-                        <h2>{{vm.quote.isJobQuote ? '[% translate 'Job Expiration Date' %]' : '[% translate 'Quote Expiration Date' %]'}}: <span ng-bind="vm.quote.expirationDate | date:'shortDate'"></span></h2>
+                        <h2>{{vm.quote.isJobQuote ? '[% translate 'Job Expiration Date' EscapeSingleQuotes %]' : '[% translate 'Quote Expiration Date' EscapeSingleQuotes %]'}}: <span ng-bind="vm.quote.expirationDate | date:'shortDate'"></span></h2>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <isc-rfq-messages message-collection="vm.quote.messageCollection"></isc-rfq-messages>
+        <isc-rfq-messages quote="vm.quote"></isc-rfq-messages>
 
     </div>
 </div>

@@ -117,6 +117,8 @@ declare module Insite.Core.WebApi {
 		displayName: string;
 		sortType: string;
 	}
+	interface BaseParameter {
+	}
 }
 declare module System.Collections.Generic {
 	interface KeyValuePair<TKey, TValue> {
@@ -470,6 +472,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
 		isRestricted: boolean;
 		canAddToWishlist: boolean;
+		isActive: boolean;
 	}
 	interface CreditCardBillingAddressDto {
 		address1: string;
@@ -831,6 +834,7 @@ declare module Insite.Catalog.Services.Dtos {
 		label: string;
 		isFilter: boolean;
 		isComparable: boolean;
+		includeOnProduct: boolean;
 		isActive: boolean;
 		sortOrder: number;
 		attributeValues: Insite.Catalog.Services.Dtos.AttributeValueDto[];
@@ -1275,6 +1279,15 @@ declare module Insite.Message.WebApi.V1.ApiModels {
 		subject: string;
 		dateToDisplay: Date;
 		isRead: boolean;
+		displayName: string;
+	}
+	interface MessageParameter extends Insite.Core.WebApi.BaseParameter {
+		customerOrderId: System.Guid;
+		toUserProfileId: System.Guid;
+		subject: string;
+		message: string;
+		process: string;
+		toUserProfileName: string;
 	}
 }
 declare module Insite.Order.WebApi.V1.ApiModels {
@@ -1468,6 +1481,7 @@ declare module Insite.Order.Services.Dtos {
 	interface ShipmentPackageDto {
 		id: System.Guid;
 		shipmentDate: Date;
+		packageNumber: string;
 		carrier: string;
 		shipVia: string;
 		trackingUrl: string;
@@ -1483,6 +1497,7 @@ declare module Insite.Order.Services.Dtos {
 		qtyOrdered: number;
 		qtyShipped: number;
 		price: number;
+		orderLineId: System.Guid;
 	}
 	interface OrderHistoryTaxDto {
 		taxCode: string;
@@ -1600,6 +1615,7 @@ declare module Insite.Rfq.WebApi.V1.ApiModels {
 declare module Insite.WishLists.WebApi.V1.ApiModels {
 	interface WishListCollectionModel extends Insite.Core.WebApi.BaseModel {
 		wishListCollection: Insite.WishLists.WebApi.V1.ApiModels.WishListModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
 	}
 	interface WishListModel extends Insite.Core.WebApi.BaseModel {
 		wishListLinesUri: string;

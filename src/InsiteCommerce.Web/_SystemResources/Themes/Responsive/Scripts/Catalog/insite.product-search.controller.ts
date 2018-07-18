@@ -25,7 +25,7 @@ module insite.catalog {
         isVisibleSearchInput: boolean;
         isOneColumnSearchResult = true;
 
-        static $inject = ["$element", "$filter", "coreService", "searchService", "settingsService", "$state", "queryString", "$scope"];
+        static $inject = ["$element", "$filter", "coreService", "searchService", "settingsService", "$state", "queryString", "$scope", "$window"];
 
         constructor(
             protected $element: ng.IRootElementService,
@@ -35,7 +35,8 @@ module insite.catalog {
             protected settingsService: core.ISettingsService,
             protected $state: angular.ui.IStateService,
             protected queryString: common.IQueryStringService,
-            protected $scope: ng.IScope) {
+            protected $scope: ng.IScope,
+            protected $window: ng.IWindowService) {
             this.init();
         }
 
@@ -60,6 +61,10 @@ module insite.catalog {
                         this.$scope.$apply();
                     }
                 }
+            });
+
+            angular.element(window.document).bind("scroll", () => {
+                angular.element("input.isc-searchAutoComplete").blur();
             });
         }
 
@@ -372,12 +377,24 @@ module insite.catalog {
             if (this.onlyOneProductInAutocomplete()) {
                 this.startAutocomplete();
                 this.enableSearch();
+                this.addSearchResultEvent(searchTerm);
                 this.navigateToFirstProductInAutocomplete();
                 return;
             }
 
             this.criteria = searchTerm;
             this.redirectToSearchPage(searchTerm, includeSuggestions);
+        }
+
+        protected addSearchResultEvent(searchTerm: string): void{
+            if (this.$window.dataLayer && searchTerm) {
+                this.$window.dataLayer.push({
+                    'event': 'searchResults',
+                    'searchQuery': searchTerm,
+                    'correctedQuery': null,
+                    'numSearchResults': 1
+                });
+            }
         }
 
         protected disableSearch(): void {

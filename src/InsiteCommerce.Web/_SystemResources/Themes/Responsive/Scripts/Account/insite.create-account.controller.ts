@@ -62,8 +62,21 @@
 
         createAccount(): void {
             this.createError = "";
+            const trimRule = {
+                required: true,
+                normalizer: function(value) {
+                    return $.trim(value);
+                }
+            };
 
-            const valid = $("#createAccountForm").validate().form();
+            const valid = $("#createAccountForm").validate({
+                    rules: {
+                        "CreateNewAccountInfo.UserName": trimRule,
+                        "CreateNewAccountInfo.Password": trimRule,
+                        "CreateNewAccountInfo.ConfirmPassword": trimRule
+                    }
+                }
+            ).form();
             if (!valid) {
                 return;
             }

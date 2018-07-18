@@ -5,7 +5,7 @@
     <title>[% translate 'Share Order' %]</title>
     <style>
         h1, h2, h3, h4, h5, h6 {
-            font-size: 100%;
+            font-size: 16px;
             font-weight: normal;
         }
 
@@ -21,8 +21,8 @@
         }
 
         body {
-            font-family: 'sourcesanspro';
-            font-size: 14px;
+            font-family: Helvetica, Arial, Sans-Serif;
+            font-size: 16px;
             color: #252525;
         }
 
@@ -41,10 +41,11 @@
 
         .main-block {
             margin-bottom: 15px;
+            width: 100%;
         }
 
         .general-information {
-            width: 65%;
+            width: 100%;
             position: relative;
             float: left;
             display: block;
@@ -74,8 +75,17 @@
             vertical-align: top;
         }
 
+        .order-details-left table {
+            width: 100%;
+        }
+
+        .order-details-left table td {
+            padding: 5px 0;
+        }
+
         .ship-info {
             margin-bottom: 5px;
+            padding-top: 15px;
         }
 
         .order-details-right {
@@ -88,7 +98,7 @@
         .bill-info {
             margin-bottom: .8em;
             margin: 0;
-            padding: 0;
+            padding: 7px 0 0 0;
         }
 
         .notes {
@@ -96,8 +106,9 @@
         }
 
         .list-item {
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 16px;
         }
 
         .summary-block {
@@ -112,9 +123,14 @@
             border-collapse: collapse;
         }
 
-            .order-subtotal .oc-head {
-                padding-left: 5px;
-            }
+        .order-subtotal .subtotal-title {
+            padding-top: 20px;
+        }
+
+        .order-subtotal tr td {
+            padding: 5px;
+            font-size: 16px;
+        }
 
         .sub-amount, .sub-label {
             padding-bottom: 3px;
@@ -210,6 +226,11 @@
         .item-subtotal {
             font-weight: bold;
         }
+
+        .ship-method {
+            float: none;
+            padding-top: 10px;
+        }
     </style>
 </head>
 
@@ -281,6 +302,7 @@
                                     [% if Model.BillToCity != null and Model.BillToCity != "" and Model.BillToState != null and Model.BillToState != "" -%]
                                         , [[Model.BillToState]] [[Model.BillToPostalCode]]
                                     [% endif -%]
+                                    </p>
                                     <p class="list-item">[[Model.BTCountry]]</p>
                                 </div>
                                 [% if Model.ShipCode != null and Model.ShipCode != "" -%]
@@ -332,7 +354,7 @@
                 <td class="summary-block">
                     <table class="order-subtotal">
                         <tr>
-                            <td>
+                            <td class="subtotal-title" colspan="2">
                                 <h3 class="oc-head">[% translate "Order Summary" %]</h3>
                             </td>
                         </tr>

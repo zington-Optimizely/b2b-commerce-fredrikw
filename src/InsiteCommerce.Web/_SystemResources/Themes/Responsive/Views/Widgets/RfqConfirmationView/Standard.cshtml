@@ -1,5 +1,5 @@
 ﻿<div ng-controller="QuoteConfirmationController as vm" ng-cloak>
-    <h1>{{ vm.quote.isJobQuote ? '[% translate 'Job Quote' %]' : '[% translate 'Sales Quote' %]'}} <span ng-bind="vm.quote.statusDisplay"></span></h1>
+    <h1>{{ vm.quote.isJobQuote ? '[% translate 'Job Quote' EscapeSingleQuotes %]' : '[% translate 'Sales Quote' EscapeSingleQuotes %]'}} <span ng-bind="vm.quote.statusDisplay"></span></h1>
 
     <div class="btns hide-for-small">
         <a href="[% urlForPage 'RfqMyQuotesPage' %]" class="btn secondary btn-view-quotes">[% translate 'View My Quotes' %]</a>

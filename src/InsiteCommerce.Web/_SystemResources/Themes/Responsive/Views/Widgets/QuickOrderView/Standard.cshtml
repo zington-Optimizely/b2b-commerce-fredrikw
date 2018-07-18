@@ -7,7 +7,7 @@
                 [% siteMessage 'QuickOrder_Instructions' %]
             </p>
             <div class="qo-search-input">
-                <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' %]'" class="qo-searchbox"
+                <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]'" class="qo-searchbox"
                        kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.searchTerm" isc-enter="vm.onEnterKeyPressedInAutocomplete()" />
             </div>
             <span id="errorMessage" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>

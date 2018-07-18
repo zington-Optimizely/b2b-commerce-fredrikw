@@ -266,11 +266,21 @@
 
         .item-list .item-details,
         .item-list .item-code-notes {
-            padding-right: 1em !important;
+            padding: 0 0.9375em 0.9375em 0.9375em !important;
         }
 
         .btns .btn {
             margin-top: 1.3em;
+        }
+    }
+
+    .header {
+        .small-2.columns {
+            width: 20%;
+        }
+
+        .small-10.columns {
+            width: 80%;
         }
     }
 }

@@ -55,7 +55,7 @@
                     <div class="usersetup-form-activation-button" ng-if="vm.user.activationStatus != 'Activated'">
                         <label>[% translate 'Account Status' %]</label>
                         <a id="tst_userSetupView_sendActivationEmail" class="btn tertiary btn-assign" href="javascript:void(0);" ng-click="vm.onSendActivationEmailClick()">
-                            {{ (vm.activationEmailSent || vm.user.activationStatus == 'EmailSent') ? '[% translate 'Resend Activation Email' %]' : '[% translate 'Send Activation Email' %]' }}
+                            {{ (vm.activationEmailSent || vm.user.activationStatus == 'EmailSent') ? '[% translate 'Resend Activation Email' EscapeSingleQuotes %]' : '[% translate 'Send Activation Email' EscapeSingleQuotes %]' }}
                         </a>
                         <span id="tst_userSetupView_emailNotSentMessage" ng-if="!vm.activationEmailSent && vm.user.activationStatus == 'EmailNotSent'">[% siteMessage 'User_Admin_EmailNotSent' %]</span>
                         <span id="tst_userSetupView_emailSentMessage" ng-if="vm.activationEmailSent || vm.user.activationStatus == 'EmailSent'">[% siteMessage 'User_Admin_EmailSent' %]</span>
@@ -108,7 +108,7 @@
                 </div>
                 <div class="btns">
                     <a href="[% urlForPage 'UserListPage' %]" class="btn secondary btn-cancel">[% translate 'Cancel' %]</a>
-                    <button id="tst_userSetupView_save" type="submit" class="btn primary btn-save">{{vm.isNewUser ? "[% translate 'Create User' %]" : "[% translate 'Save Changes' %]"}}</button>
+                    <button id="tst_userSetupView_save" type="submit" class="btn primary btn-save">{{vm.isNewUser ? "[% translate 'Create User' EscapeSingleQuotes %]" : "[% translate 'Save Changes' EscapeSingleQuotes %]"}}</button>
                 </div>
             </form>
         </div>

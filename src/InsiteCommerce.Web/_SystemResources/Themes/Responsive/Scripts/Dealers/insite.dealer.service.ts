@@ -87,24 +87,19 @@ module insite.dealers {
                 return deferred.promise;
             }
 
-            const defaultLocationTimer = setTimeout(() => {
-                deferred.resolve(response);
-            }, 250);
-
             navigator.geolocation.getCurrentPosition(
-                (position: Position) => { this.getCurrentPositionCompleted(position, defaultLocationTimer, deferred); },
-                (error: any) => { this.getCurrentPositionFailed(error, defaultLocationTimer, deferred); });
+                (position: Position) => { this.getCurrentPositionCompleted(position, deferred); },
+                (error: any) => { this.getCurrentPositionFailed(error, deferred); },
+                { timeout: 5500 });
 
             return deferred.promise;
         }
 
-        protected getCurrentPositionCompleted(position: Position, defaultLocationTimer: number, getGeoLocationDeferred: ng.IDeferred<google.maps.LatLng>) {
-            clearTimeout(defaultLocationTimer);
+        protected getCurrentPositionCompleted(position: Position, getGeoLocationDeferred: ng.IDeferred<google.maps.LatLng>) {
             getGeoLocationDeferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
         }
 
-        protected getCurrentPositionFailed(error: any, defaultLocationTimer: number, getGeoLocationDeferred: ng.IDeferred<google.maps.LatLng>) {
-            clearTimeout(defaultLocationTimer);
+        protected getCurrentPositionFailed(error: any,getGeoLocationDeferred: ng.IDeferred<google.maps.LatLng>) {
             getGeoLocationDeferred.resolve(new google.maps.LatLng(0, 0));
         }
 

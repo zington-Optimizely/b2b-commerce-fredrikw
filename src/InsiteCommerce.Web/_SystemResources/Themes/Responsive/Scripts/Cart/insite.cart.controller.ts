@@ -56,7 +56,7 @@ module insite.cart {
         }
 
         protected getCart(): void {
-            this.cartService.expand = "cartlines,costcodes";
+            this.cartService.expand = "cartlines,costcodes,hiddenproducts";
             if (this.settings.showTaxAndShipping) {
                 this.cartService.expand += ",shipping,tax";
             }
@@ -72,7 +72,7 @@ module insite.cart {
 
         protected getCartCompleted(cart: CartModel): void {
             this.cartService.expand = "";
-            if (!cart.cartLines.some(o => o.isRestricted)) {
+            if (!cart.cartLines.some(o => o.isRestricted || !o.isActive)) {
                 this.$localStorage.remove("hasRestrictedProducts");
                 this.productsCannotBePurchased = false;
             } else {

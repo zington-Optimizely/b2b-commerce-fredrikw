@@ -5,13 +5,13 @@
     <div ng-if="vm.pagination.totalItemCount > 0">
         <h3 class="results-count">
             <span class="result-num" ng-bind="vm.pagination.totalItemCount"></span>
-            <span class="result-lbl">{{ '[% translate 'Requisitions' %]'.toLowerCase() }}</span>
+            <span class="result-lbl">{{ '[% translate 'Requisitions' EscapeSingleQuotes %]'.toLowerCase() }}</span>
         </h3>
         <p class="error" style="visibility: hidden">Error messaging.</p>
         <div class="btns">
             <a href="javascript:void(0);" ng-click="vm.addAllToCart();" class="btn primary btn-add-cart isc-addRequisitionToCart">[% translate 'Add to Cart' %]</a>
         </div>
-        <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getRequisitionCollection()"></isc-pager>
+        <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getRequisitions()"></isc-pager>
         <form name="requisitionForm">
             <div class="row order-details">
                 <ul class="large-12 columns item-list cart-items" ng-repeat="requisition in vm.requisitionCollection.requisitions">
@@ -57,7 +57,7 @@
             </div>
         </form>
         <div style="margin-top: 10px;">
-            <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getRequisitionCollection()"></isc-pager>
+            <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getRequisitions()"></isc-pager>
         </div>
         <div class="btns">
             <a href="javascript:void(0);" ng-click="vm.addAllToCart();" class="btn primary btn-add-cart isc-addRequisitionToCart">[% translate 'Add to Cart' %]</a>

@@ -166,6 +166,7 @@
             if (this.$localStorage.get("hasRestrictedProducts") === true.toString()) {
                 this.cartService.expand += ",restrictions";
             }
+            this.cartService.forceRecalculation = true;
             this.cartService.getCart(this.cartId).then(
                 (cart: CartModel) => {
                     this.getCartCompleted(cart, isInit);
@@ -177,6 +178,7 @@
 
         protected getCartCompleted(cart: CartModel, isInit: boolean): void {
             this.cartService.expand = "";
+            this.cartService.forceRecalculation = false;
             let paymentMethod: Insite.Cart.Services.Dtos.PaymentMethodDto;
             let transientCard: Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
 
@@ -301,6 +303,7 @@
 
         protected getCartFailed(error: any): void {
             this.cartService.expand = "";
+            this.cartService.forceRecalculation = false;
         }
 
         protected getCartPromotionsCompleted(promotionCollection: PromotionCollectionModel): void {
@@ -411,6 +414,10 @@
         }
 
         protected submitFailed(error: any): void {
+            if (this.isCloudPaymentGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
+                (<any>window).hpciStatusReset();
+            }
+            
             this.submitting = false;
             this.cart.paymentOptions.isPayPal = false;
             this.submitErrorMessage = error.message;

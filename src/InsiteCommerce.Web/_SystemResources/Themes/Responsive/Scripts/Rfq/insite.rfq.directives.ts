@@ -44,7 +44,7 @@
             replace: true,
             templateUrl: "/PartialViews/Rfq-RfqMessages",
             scope: {
-                messageCollection: "="
+                quote: "="
             },
             controller: "QuoteMessagesController",
             controllerAs: "vm"

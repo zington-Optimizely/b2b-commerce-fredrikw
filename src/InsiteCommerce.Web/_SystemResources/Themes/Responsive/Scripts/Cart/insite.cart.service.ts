@@ -11,6 +11,7 @@ module insite.cart {
         cartLoadCalled: boolean;
         expand: string;
         alsoPurchasedMaxResults: number;
+        forceRecalculation: boolean;
 
         getCarts(filter?: IQueryStringFilter, pagination?: PaginationModel): ng.IPromise<CartCollectionModel>;
         getCart(cartId?: string, suppressApiErrors?: boolean): ng.IPromise<CartModel>;
@@ -39,6 +40,7 @@ module insite.cart {
         cartLoadCalled = false;
         expand = "";
         alsoPurchasedMaxResults = 0;
+        forceRecalculation = false;
 
         currentCart: CartModel = null;
 
@@ -113,6 +115,10 @@ module insite.cart {
 
             if (this.alsoPurchasedMaxResults) {
                 params.alsoPurchasedMaxResults = this.alsoPurchasedMaxResults;
+            }
+
+            if (this.forceRecalculation) {
+                params.forceRecalculation = this.forceRecalculation;
             }
 
             return params;

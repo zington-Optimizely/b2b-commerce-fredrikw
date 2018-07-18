@@ -292,14 +292,14 @@
                     <i class="icon-close"></i>
                 </span>
                 <input ng-model="vm.criteria" type="search" class="isc-searchAutoComplete tst_header_searchInput" id="isc-searchAutoComplete-b2c"
-                       ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' %]';
+                       ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]';
                             vm.translations = [
-                                {key: 'category', text: '[% translate 'Categories' %]'},
-                                {key: 'content', text: '[% translate 'Content' %]'},
-                                {key: 'product', text: '[% translate 'Products' %]'},
-                                {key: 'manufacturerItemNumber', text: '[% translate 'MFG #' %]'},
+                                {key: 'category', text: '[% translate 'Categories' EscapeSingleQuotes %]'},
+                                {key: 'content', text: '[% translate 'Content' EscapeSingleQuotes %]'},
+                                {key: 'product', text: '[% translate 'Products' EscapeSingleQuotes %]'},
+                                {key: 'manufacturerItemNumber', text: '[% translate 'MFG #' EscapeSingleQuotes %]'},
                                 {key: 'partNumber', text: '[% translate 'Part #' %]'},
-                                {key: 'customerPartNumber', text: '[% translate 'My Part #' %]'}]"
+                                {key: 'customerPartNumber', text: '[% translate 'My Part #' EscapeSingleQuotes %]'}]"
                        kendo-auto-complete
                        k-options="vm.autocompleteOptions"
                        isc-enter="vm.onEnter()"

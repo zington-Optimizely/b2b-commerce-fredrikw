@@ -101,7 +101,7 @@
                                 <div id="error" class="error" ng-show="vm.saveListForm.$submitted && (vm.errorMessage || vm.saveListForm.listName.$error.required || vm.saveListForm.listName.$error.maxlength)">
                                     <span ng-show="vm.errorMessage" class="field-validation-error" ng-bind="vm.errorMessage"></span>
                                     <span ng-show="vm.saveListForm.listName.$error.required" class="field-validation-error">[% siteMessage 'Lists_List_Name_Required' %]</span>
-                                    <span ng-show="vm.saveListForm.listName.$error.maxlength" class="field-validation-error">{{::'[% siteMessage 'Lists_List_Name_Too_Long' %]'.replace('{0}', 255)}}</span>
+                                    <span ng-show="vm.saveListForm.listName.$error.maxlength" class="field-validation-error">{{::'[% siteMessage 'Lists_List_Name_Too_Long' EscapeSingleQuotes %]'.replace('{0}', 255)}}</span>
                                 </div>
                                 <div class="row btns">
                                     <button ng-click="vm.closeModal('#popup-save-list')" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>

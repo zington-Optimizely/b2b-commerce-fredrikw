@@ -2,6 +2,7 @@
 import QuoteCollectionModel = Insite.Rfq.WebApi.V1.ApiModels.QuoteCollectionModel;
 import QuoteLineModel = Insite.Rfq.WebApi.V1.ApiModels.QuoteLineModel;
 import RfqMessageModel = Insite.Rfq.WebApi.V1.ApiModels.MessageModel;
+import MessageParameter = Insite.Message.WebApi.V1.ApiModels.MessageParameter;
 
 module insite.rfq {
     "use strict";
@@ -14,12 +15,13 @@ module insite.rfq {
         updateQuote(quote: QuoteParameter): ng.IPromise<QuoteModel>;
         removeQuote(quoteId: string): ng.IPromise<QuoteModel>;
         updateQuoteLine(quoteLine: QuoteLineModel): ng.IPromise<QuoteLineModel>;
-        submitRfqMessage(rfqMessage: RfqMessageModel): ng.IPromise<RfqMessageModel>;
+        submitRfqMessage(rfqMessage: MessageParameter): ng.IPromise<MessageModel>;
     }
 
     export class RfqService implements IRfqService {
         expand: string;
         serviceUri = "/api/v1/quotes/";
+        messageUri = "/api/v1/messages/";
 
         static $inject = ["$http", "$q", "httpWrapperService"];
 
@@ -134,18 +136,16 @@ module insite.rfq {
         protected updateQuoteLineFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
-        submitRfqMessage(rfqMessage: RfqMessageModel): ng.IPromise<RfqMessageModel> {
-            const uri = `${this.serviceUri}${rfqMessage.quoteId}/messages/`;
-
+        submitRfqMessage(rfqMessage: MessageParameter): ng.IPromise<MessageModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "POST", url: uri, data: rfqMessage }),
+                this.$http({ method: "POST", url: this.messageUri, data: rfqMessage }),
                 this.submitRfqMessageCompleted,
                 this.submitRfqMessageFailed
             );
         }
 
-        protected submitRfqMessageCompleted(response: ng.IHttpPromiseCallbackArg<RfqMessageModel>): void {
+        protected submitRfqMessageCompleted(response: ng.IHttpPromiseCallbackArg<MessageModel>): void {
         }
 
         protected submitRfqMessageFailed(error: ng.IHttpPromiseCallbackArg<any>): void {

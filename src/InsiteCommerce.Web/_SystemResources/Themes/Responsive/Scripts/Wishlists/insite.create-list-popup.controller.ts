@@ -79,6 +79,9 @@
         }
 
         protected addWishListFailed(error: any): void {
+            if (error && error.message) {
+                this.errorMessage = error.message;
+            }
         }
 
         updateWishList(): void {

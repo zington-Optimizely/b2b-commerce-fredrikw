@@ -61,12 +61,15 @@
                            ng-disabled="!cart.canModifyOrder || cartLine.isPromotionItem || vm.isUpdateInProgress || cart.type == 'Job'" />
                 </div>
                 <div class="item-subtotal"><span ng-if="!cartLine.quoteRequired && !cart.cartNotPriced" ng-bind="cartLine.pricing.extendedUnitNetPriceDisplay"></span></div>
-                <div class="item-qty-message" ng-show="inventoryCheck || cartLine.isRestricted">
+                <div class="item-qty-message" ng-show="inventoryCheck || cartLine.isRestricted|| !cartLine.isActive">
                     <span ng-show="inventoryCheck && cartLine.hasInsufficientInventory" class="message-avail--avail">
                         {{'[% siteMessage 'Cart_ToManyQtyRequested' EscapeSingleQuotes %]'.replace('{0}', cartLine.qtyOnHand).replace('{1}', vm.getSumQtyPerUom(cartLine.productId, cart.cartLines))}}
                     </span>
                     <span ng-show="cartLine.isRestricted" class="message-avail--avail">
                         [% translate 'Restricted product' %]
+                    </span>
+                    <span ng-show="!cartLine.isActive" class="message-avail--avail">
+                        [% translate 'Inactive product' %]
                     </span>
                 </div>
             </div>

@@ -5,7 +5,7 @@
     <title>[% translate "Share Invoice" %]</title>
     <style>
         h1, h2, h3, h4, h5, h6 {
-            font-size: 100%;
+            font-size: 16px;
             font-weight: normal;
         }
 
@@ -21,8 +21,8 @@
         }
 
         body {
-            font-family: 'sourcesanspro';
-            font-size: 14px;
+            font-family: Helvetica, Arial, Sans-Serif;
+            font-size: 16px;
             color: #252525;
         }
 
@@ -41,10 +41,11 @@
 
         .main-block {
             margin-bottom: 15px;
+            width: 100%;
         }
 
         .general-information {
-            width: 65%;
+            width: 100%;
             position: relative;
             float: left;
             display: block;
@@ -58,9 +59,9 @@
             width: 100%;
         }
 
-            .order-details-top > ul {
-                list-style: none;
-            }
+        .order-details-top > ul {
+            list-style: none;
+        }
 
         .row:before, .row:after {
             content: " ";
@@ -74,8 +75,17 @@
             vertical-align: top;
         }
 
+        .order-details-left table {
+            width: 100%;
+        }
+
+        .order-details-left table td {
+            padding: 5px 0;
+        }
+
         .ship-info {
             margin-bottom: 5px;
+            padding-top: 15px;
         }
 
         .order-details-right {
@@ -88,12 +98,13 @@
         .bill-info {
             margin-bottom: .8em;
             margin: 0;
-            padding: 0;
+            padding: 7px 0 0 0;
         }
 
         .list-item {
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 16px;
         }
 
         .summary-block {
@@ -108,9 +119,14 @@
             border-collapse: collapse;
         }
 
-            .order-subtotal .oc-head {
-                padding-left: 5px;
-            }
+        .order-subtotal .subtotal-title {
+            padding-top: 20px;
+        }
+
+        .order-subtotal tr td {
+            padding: 5px;
+            font-size: 16px;
+        }
 
         .sub-amount, .sub-label {
             padding-bottom: 3px;
@@ -137,9 +153,9 @@
             font-weight: bold;
         }
 
-            .oc-head > h3 {
-                font-weight: bold;
-            }
+        .oc-head > h3 {
+            font-weight: bold;
+        }
 
         .sub-amount {
             text-align: right;
@@ -151,9 +167,9 @@
             font-size: 16px;
         }
 
-            .order-total .sub-label, .order-total .sub-amount {
-                padding-bottom: 15px;
-            }
+        .order-total .sub-label, .order-total .sub-amount {
+            padding-bottom: 15px;
+        }
 
         .order-details {
             border: 1px solid #DCDCDC;
@@ -193,6 +209,11 @@
         .item-subtotal {
             font-weight: bold;
         }
+
+        .ship-method {
+            float: none;
+            padding-top: 10px;
+        }
     </style>
 </head>
 
@@ -222,10 +243,12 @@
                                         <td><h3 class="od-lbl">[% translate "PO #" %]:</h3></td>
                                         <td><h3 class="od-data">[[Model.CustomerPO]]</h3></td>
                                     </tr>
+                                    [% if Model.Status != null and Model.Status != "" -%]
                                     <tr>
                                         <td><h3 class="od-lbl">[% translate "Status" %]:</h3></td>
                                         <td><h3 class="od-data">[[Model.Status]]</h3></td>
                                     </tr>
+                                    [% endif -%]
                                 </table>
                                 <div class="ship-info">
                                     <div class="oc-head">
@@ -258,6 +281,7 @@
                                     [% if Model.BillToCity != null and Model.BillToCity != "" and Model.BillToState != null and Model.BillToState != "" -%]
                                         , [[Model.BillToState]] [[Model.BillToPostalCode]]
                                     [% endif -%]
+                                    </p>
                                     <p class="list-item">[[Model.BTCountry]]</p>
                                 </div>
                                 [% if Model.ShipCode != null and Model.ShipCode != "" -%]
@@ -283,7 +307,7 @@
                 <td class="summary-block">
                     <table class="order-subtotal">
                         <tr>
-                            <td>
+                            <td class="subtotal-title" colspan="2">
                                 <h3 class="oc-head">[% translate "Invoice Summary" %]</h3>
                             </td>
                         </tr>

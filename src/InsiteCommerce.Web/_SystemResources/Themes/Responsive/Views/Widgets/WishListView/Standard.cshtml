@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="btns" ng-show="(vm.selectedWishList.canAddAllToCart || vm.selectedWishList.canAddToCart) && vm.selectedWishList.wishListLineCollection.length !== 0">
-            <button class="btn primary btn-add-cart" ng-click="vm.addAllToCart()" ng-disabled="!vm.allQtysIsValid() || vm.inProgress" ng-bind="vm.selectedWishList.canAddAllToCart ? '[% translate 'Add All To Cart' %]' : '[% translate 'Add All Available to Cart' %]'"></button>
+            <button class="btn primary btn-add-cart" ng-click="vm.addAllToCart()" ng-disabled="!vm.allQtysIsValid() || vm.inProgress" ng-bind="vm.selectedWishList.canAddAllToCart ? '[% translate 'Add All To Cart' EscapeSingleQuotes %]' : '[% translate 'Add All Available to Cart' EscapeSingleQuotes %]'"></button>
         </div>
     </div>
     <div class="search-no-results" ng-if="vm.wishListCount === 0">

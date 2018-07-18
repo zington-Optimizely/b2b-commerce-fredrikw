@@ -28,6 +28,12 @@
             font-size: 0.875em;
         }
 
+        .left-nav-2 .accord-show-more {
+            padding-left: 1.5em;
+            font-size: 0.875em;
+            font-weight: bold;
+        }
+
         .f-dropdown.content.open {
             right: -25px;
             left: inherit !important;
@@ -216,8 +222,6 @@
     .accordion .f-wrap {
         margin: auto;
         padding: 0;
-        overflow: auto;
-        max-height: 300px;
         width: 100%;
         display: block;
     }
@@ -852,8 +856,6 @@
             .actions-block {
                 float: right;
                 text-align: right;
-                width: 40%;
-                min-width: 174px;
                 margin: 0;
 
                 .um {
@@ -1136,6 +1138,10 @@
                         white-space: nowrap;
                     }
                 }
+
+                .um {
+                    display: initial;
+                }
             }
 
             .actions-block {
@@ -1144,6 +1150,8 @@
                 .um {
                     label, div {
                         margin-left: auto;
+                        display: inline-block;
+                        float: initial;
                     }
 
                     select {

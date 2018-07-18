@@ -19,7 +19,7 @@
                         </div>
                         <div class="search-product">
                             <label>[% translate 'Product #' %]</label>
-                            <input type="text" id="orders-page-search" class="search-product-autocomplete" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' %]'"
+                            <input type="text" id="orders-page-search" class="search-product-autocomplete" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]'"
                                    kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.searchFilter.productErpNumber" />
                         </div>
                     </div>

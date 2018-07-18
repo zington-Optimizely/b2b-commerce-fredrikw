@@ -192,6 +192,7 @@ module insite.catalog {
                 controlNav: false,
                 animationLoop: true,
                 slideshow: false,
+                touch: num > itemsNum,
                 itemWidth: this.getItemSize(),
                 minItems: this.getItemsNumber(),
                 maxItems: this.getItemsNumber(),
@@ -272,24 +273,40 @@ module insite.catalog {
             const el = $(`.csCarousel_${this.relatedProductType}`, this.carouselElement);
             let width = el.innerWidth();
             let itemsNum: number;
+            let isItemsNumChanged = false;
 
             if (width > 768) {
-                width = width / 4;
                 itemsNum = 4;
                 this.showCarouselArrows(num > 4);
             } else if (width > 480) {
-                width = width / 3;
                 itemsNum = 3;
                 this.showCarouselArrows(num > 3);
             } else {
                 itemsNum = 1;
                 this.showCarouselArrows(num > 1);
             }
-            this.carousel.vars.minItems = itemsNum;
-            this.carousel.vars.maxItems = itemsNum;
-            this.carousel.vars.itemWidth = width;
-            $(`.csCarousel_${this.relatedProductType} ul li`, this.carouselElement).css("width", `${width}.px`);
-            this.equalizeCarouselDimensions();
+
+            if (this.carousel.vars.minItems !== itemsNum && this.carousel.vars.maxItems !== itemsNum) {
+                this.carousel.vars.minItems = itemsNum;
+                this.carousel.vars.maxItems = itemsNum;
+                this.carousel.doMath();
+                isItemsNumChanged = true;
+            }
+
+            this.$timeout(() => {
+                if (isItemsNumChanged) {
+                    this.carousel.resize();
+                    if (num > itemsNum) {
+                        if (this.carousel.currentSlide > num - itemsNum) {
+                            this.carousel.flexAnimate(num - itemsNum);
+                        }
+                    } else {
+                        this.carousel.flexAnimate(0);
+                    }
+                }
+
+                this.equalizeCarouselDimensions();
+            }, 0);
         }
 
         protected equalizeCarouselDimensions(): void {

@@ -1686,6 +1686,12 @@ body [role="main"] div.pbtm {
     }
 }
 
+#qo-search-view-list, #qo-search-widget-list, #orders-page-search-list {
+    &.k-list-container .k-item div .shortDescription {
+        display: block;
+    }
+}
+
 #selectBillTo-list, #selectShipTo-list {
     &.k-list-container ul li {
         &.k-item {

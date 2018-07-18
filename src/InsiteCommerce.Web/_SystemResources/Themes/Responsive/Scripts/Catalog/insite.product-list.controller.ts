@@ -221,7 +221,8 @@ module insite.catalog {
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
-                applyPersonalization: true
+                applyPersonalization: true,
+                includeAttributes: "IncludeOnProduct"
             });
         }
 
@@ -253,7 +254,8 @@ module insite.catalog {
                 page: this.page,
                 attributeValueIds: this.attributeValueIds,
                 priceFilters: this.priceFilterMinimums,
-                includeSuggestions: this.includeSuggestions
+                includeSuggestions: this.includeSuggestions,
+                includeAttributes: "IncludeOnProduct"
             };
 
             if (this.isSearch) {
@@ -318,7 +320,8 @@ module insite.catalog {
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
                 getAllAttributeFacets: true,
-                applyPersonalization: true
+                applyPersonalization: true,
+                includeAttributes: "IncludeOnProduct"
             });
 
             this.$rootScope.$broadcast("categoryLoaded", this.category.id);
@@ -334,18 +337,14 @@ module insite.catalog {
             }
 
             expand = expand ? expand : ["pricing", "attributes", "facets"];
+
             this.productService.getProducts(params, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection, params, expand); },
                 (error: any) => { this.getProductsFailed(error); });
         }
 
         protected getProductsCompleted(productCollection: ProductCollectionModel, params: IProductCollectionParameters, expand?: string[]): void {
-            if (this.$window.dataLayer && productCollection.pagination) {
-                this.$window.dataLayer.push({
-                    'event': 'searchResults',
-                    'numSearchResults': productCollection.pagination.totalItemCount
-                });
-            }
+            this.addSearchResultEvent(params.query, productCollection);
 
             if (productCollection.searchTermRedirectUrl) {
                 // use replace to prevent back button from returning to this page
@@ -400,6 +399,17 @@ module insite.catalog {
             this.imagesLoaded = 0;
             if (this.view === "grid") {
                 this.waitForDom();
+            }
+        }
+
+        protected addSearchResultEvent(searchTerm: string, productCollection: ProductCollectionModel): void {
+            if (this.$window.dataLayer && productCollection.pagination && searchTerm) {
+                this.$window.dataLayer.push({
+                    'event': 'searchResults',
+                    'searchQuery': productCollection.originalQuery,
+                    'correctedQuery': productCollection.correctedQuery,
+                    'numSearchResults': productCollection.pagination.totalItemCount
+                });
             }
         }
 
@@ -522,7 +532,8 @@ module insite.catalog {
                 priceFilters: this.priceFilterMinimums,
                 includeSuggestions: this.includeSuggestions,
                 getAllAttributeFacets: this.filterType === "attribute",
-                applyPersonalization: true
+                applyPersonalization: true,
+                includeAttributes: "IncludeOnProduct"
             };
 
             this.getProductData(params, this.pageChanged ? ["pricing", "attributes"] : null);
