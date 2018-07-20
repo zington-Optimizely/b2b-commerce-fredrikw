@@ -35,11 +35,18 @@ module insite {
 
             // If access_token is included in the query string, set it in local storage, this is used for authenticated swagger calls
             const hash: any = this.queryString(this.$window.location.pathname.split("&"));
-            const accessToken = hash.access_token;
+            let accessToken = hash.access_token;
             if (accessToken) {
                 this.$localStorage.set("accessToken", accessToken);
                 const startHash = this.$window.location.pathname.indexOf("id_token");
                 this.$window.location.pathname = this.$window.location.pathname.substring(0, startHash);
+            }
+
+            if (!accessToken) {
+                const queryString: any = this.queryString(this.$window.location.search.replace(/^\?/, '').split("&"));
+                if (queryString.access_token) {
+                    this.$localStorage.set("accessToken", queryString.access_token);
+                }
             }
 
             this.$rootScope.firstPage = true;
