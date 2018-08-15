@@ -206,6 +206,12 @@ module insite.catalog {
 
         // updates the pricing with real time (external) prices. only id, selectedUnitOfMeasure, and qtyOrdered are used
         getProductRealTimePrices(products: ProductDto[]): ng.IPromise<RealTimePricingModel> {
+            if (!this.productSettings.canSeePrices) {
+                const deferred = this.$q.defer();
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+
             return this.httpWrapperService.executeHttpRequest(
                 this,
                 this.$http.post(this.realTimePricingUri, this.getProductRealTimePricesParams(products)),
@@ -239,6 +245,12 @@ module insite.catalog {
         }
 
         getProductRealTimePrice(product: ProductDto, configuration?: string[]): ng.IPromise<RealTimePricingModel> {
+            if (!this.productSettings.canSeePrices) {
+                const deferred = this.$q.defer();
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+
             return this.httpWrapperService.executeHttpRequest(
                 this,
                 this.$http.post(this.realTimePricingUri, this.getProductRealTimePriceParams(product, configuration)),
@@ -272,6 +284,12 @@ module insite.catalog {
         }
 
         getProductRealTimeInventory(products: ProductDto[]): ng.IPromise<RealTimeInventoryModel> {
+            if (!this.productSettings.showInventoryAvailability) {
+                const deferred = this.$q.defer();
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+
             return this.httpWrapperService.executeHttpRequest(
                 this,
                 this.$http.post(this.realTimeInventoryUri, this.getProductRealTimeInventoryParams(products)),

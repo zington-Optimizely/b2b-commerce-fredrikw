@@ -67,6 +67,7 @@
 
         protected getProductRealTimePricesFailed(error: any): void {
             this.failedToGetRealTimePrices = true;
+            this.quote.cartNotPriced = true;
         }
     }
 

@@ -103,7 +103,7 @@
                                                 </div>
                                             </div>
                                             <div class="rating"></div>
-                                            <div ng-if="vm.settings.showInventoryAvailability" class="availability">
+                                            <div class="availability">
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                                             </div>
                                             <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
@@ -122,6 +122,9 @@
                                                 </div>
                                                 <div ng-if="vm.failedToGetRealTimePrices">
                                                     <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
+                                                </div>
+                                                <div ng-if="!vm.settings.canSeePrices">
+                                                    <div>[% siteMessage 'Pricing_SignInForPrice' %]</div>
                                                 </div>
                                                 <div class="um-pack">
                                                     <div class="um">
@@ -200,6 +203,9 @@
                                             </div>
                                             <div ng-if="vm.failedToGetRealTimePrices">
                                                 <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
+                                            </div>
+                                            <div ng-if="!vm.settings.canSeePrices">
+                                                [% siteMessage 'Pricing_SignInForPrice' %]
                                             </div>
                                         </td>
                                         <td>

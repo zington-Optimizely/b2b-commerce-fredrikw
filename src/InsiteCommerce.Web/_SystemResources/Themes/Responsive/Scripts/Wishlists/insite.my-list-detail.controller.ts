@@ -15,6 +15,7 @@
         listTotal: number = 0;
         selectedListLines: WishListLineModel[];
         session: SessionModel;
+        failedToGetRealTimePrices = false;
         failedToGetRealTimeInventory = false;
         sortableOptions: any;
         sort: string = "custom";
@@ -450,11 +451,7 @@
         }
 
         protected handleRealtimePricesFailed(reason: any): void {
-            this.listModel.wishListLineCollection.forEach(p => {
-                if (p.pricing) {
-                    (p.pricing as any).failedToGetRealTimePrices = true;
-                }
-            });
+            this.failedToGetRealTimePrices = true;
 
             if (this.productSettings.inventoryIncludedWithPricing) {
                 this.failedToGetRealTimeInventory = true;

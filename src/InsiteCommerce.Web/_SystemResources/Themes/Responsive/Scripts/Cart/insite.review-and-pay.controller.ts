@@ -83,22 +83,12 @@
                 this.onCreditCardBillingStateChanged(state);
             });
 
-            this.onUseBillingAddressChanged(true);
-
             this.settingsService.getSettings().then(
                 (settings: core.SettingsCollection) => {
                     this.getSettingsCompleted(settings);
                 },
                 (error: any) => {
                     this.getSettingsFailed(error);
-                });
-
-            this.websiteService.getCountries("states").then(
-                (countryCollection: CountryCollectionModel) => {
-                    this.getCountriesCompleted(countryCollection);
-                },
-                (error: any) => {
-                    this.getCountriesFailed(error);
                 });
         }
 
@@ -116,11 +106,21 @@
         }
 
         protected onUseBillingAddressChanged(useBillingAddress: boolean): void {
-            if (!useBillingAddress) {
-                if (typeof (this.countries) !== "undefined" && this.countries.length === 1) {
-                    this.creditCardBillingCountry = this.countries[0];
-                }
+            if (typeof (useBillingAddress) === "undefined" || useBillingAddress) {
+                return;
             }
+
+            if (typeof (this.countries) !== "undefined") {
+                return;
+            }
+
+            this.websiteService.getCountries("states").then(
+                (countryCollection: CountryCollectionModel) => {
+                    this.getCountriesCompleted(countryCollection);
+                },
+                (error: any) => {
+                    this.getCountriesFailed(error);
+                });
         }
 
         protected onCreditCardBillingCountryChanged(country: CountryModel): void {
@@ -156,6 +156,7 @@
 
         protected getCountriesCompleted(countryCollection: CountryCollectionModel) {
             this.countries = countryCollection.countries;
+            this.creditCardBillingCountry = this.countries[0];
         }
 
         protected getCountriesFailed(error: any): void {
@@ -408,7 +409,6 @@
 
         protected submitCompleted(cart: CartModel, submitSuccessUri: string): void {
             this.cart.id = cart.id;
-            this.cartService.getCart();
             this.coreService.redirectToPath(`${submitSuccessUri}?cartid=${this.cart.id}`);
             this.spinnerService.hide();
         }

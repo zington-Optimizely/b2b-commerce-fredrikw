@@ -121,6 +121,9 @@
                             <div class="price" ng-if="product.pricing.failedToGetRealTimePrices">
                                 <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
                             </div>
+                            <div ng-if="product && !vm.productSettings.canSeePrices">
+                                <div>[% siteMessage 'Pricing_SignInForPrice' %]</div>
+                            </div>
 
                             <div class="um-pack" ng-if="product.canShowUnitOfMeasure">
                                 <div class="um">

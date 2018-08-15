@@ -83,7 +83,7 @@
                                                 </div>
                                             </div>
                                             <div class="rating"></div>
-                                            <div ng-if="vm.settings.showInventoryAvailability" class="availability">
+                                            <div class="availability">
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                                             </div>
                                             <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
@@ -97,6 +97,9 @@
 
                                                 <div class="d-block" ng-show="product.canShowPrice && !product.quoteRequired">
                                                     <isc-quantity-break-pricing product-id="product.id" break-prices="product.pricing.unitRegularBreakPrices"></isc-quantity-break-pricing>
+                                                </div>
+                                                <div ng-if="!vm.settings.canSeePrices">
+                                                    [% siteMessage 'Pricing_SignInForPrice' %]
                                                 </div>
                                                 <div class="um-pack">
                                                     <div class="um">
@@ -174,6 +177,9 @@
                                             <isc-quantity-break-pricing ng-show="product.canShowPrice && !product.quoteRequired"
                                                                         product-id="product.id + '_tv'" break-prices="product.pricing.unitRegularBreakPrices">
                                             </isc-quantity-break-pricing>
+                                            <div ng-if="!vm.settings.canSeePrices">
+                                                [% siteMessage 'Pricing_SignInForPrice' %]
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="um displayUnitOfMeasure isc-uomDisplay">{{product.unitOfMeasureDescription || product.unitOfMeasureDisplay}}</span>

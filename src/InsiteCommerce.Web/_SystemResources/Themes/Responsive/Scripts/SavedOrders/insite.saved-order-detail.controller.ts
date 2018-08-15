@@ -29,7 +29,7 @@
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
 
-            this.cartService.expand = "cartlines,costcodes";
+            this.cartService.expand = "cartlines,costcodes,hiddenproducts";
             this.cartService.getCart(this.queryString.get("cartid"), true).then(
                 (cart: CartModel) => { this.getCartCompleted(cart); },
                 (error: any) => { this.getCartFailed(error); });

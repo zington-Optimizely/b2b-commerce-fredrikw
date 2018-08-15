@@ -16,9 +16,12 @@
 
                 <isc-product-name product="quoteLine" no-link="true"></isc-product-name>
 
-                <div class="price">
+                <div class="price" ng-if="!vm.quote.cartNotPriced">
                     <isc-product-price product="quoteLine"></isc-product-price>
                     <isc-unit-of-measure-display product="quoteLine"></isc-unit-of-measure-display>
+                </div>
+                <div class="price" ng-if="vm.quote.cartNotPriced">
+                    <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
                 </div>
             </div>
 

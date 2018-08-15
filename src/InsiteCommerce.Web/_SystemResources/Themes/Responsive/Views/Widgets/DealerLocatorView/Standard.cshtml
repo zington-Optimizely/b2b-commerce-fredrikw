@@ -90,7 +90,7 @@
     <div class="dealer-win">
         <div class="dealer-deetz">
             <div class="dealer-name">
-                <a ng-href="{{'/DealerLocator/Dealer?dealerId=' + dealer.id}}" ng-bind="dealer.name"></a>
+                <a ng-href="[% urlForPage 'DealerPage' %]?dealerId={{dealer.id}}" ng-bind="dealer.name"></a>
             </div>
             <div class="dealer-addy">{{dealer.address1}}<br />{{dealer.address2}}<br ng-if="dealer.address2" />{{dealer.city}}, {{dealer.state}} {{dealer.postalCode}}<br />{{dealer.phone}}</div>
             <div class="dealer-hours-map" ng-if="dealer.htmlContent">

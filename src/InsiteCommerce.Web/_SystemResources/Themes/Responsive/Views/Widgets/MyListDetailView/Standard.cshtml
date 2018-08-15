@@ -66,7 +66,7 @@
         <div class="row list-info">
             <div class="medium-6 columns item-summary">
                 <span class="item-summary-count"><span ng-bind="vm.listModel.wishListLinesCount">x</span> [% translate 'items' %]</span>
-                <span class="item-list-total" ng-if="vm.listModel.wishListLinesCount > 0">[% translate 'List Total' %]: <span ng-bind="vm.listTotal | currency: vm.currencySymbol">$0,000.00</span></span>
+                <span class="item-list-total" ng-if="vm.listModel.wishListLinesCount > 0 && !vm.failedToGetRealTimePrices">[% translate 'List Total' %]: <span ng-bind="vm.listTotal | currency: vm.currencySymbol">$0,000.00</span></span>
             </div>
             <div class="medium-6 columns middle-btns">
                 <button ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" type="button" class="btn tertiary hide-for-small" ng-click="vm.toggleAddToListSection()">[% translate 'Add Items' %] <i ng-class="{ 'icon-arw-up-3': vm.isAddToListSectionVisible, 'icon-arw-down-3': !vm.isAddToListSectionVisible }"></i></button>
@@ -195,7 +195,7 @@
                         </div>
                         <div class="medium-6 columns item-pricing-and-actions">
                             <div class="item-pricing">
-                                <div ng-show="wishListLine.canShowPrice && !wishListLine.pricing.failedToGetRealTimePrices">
+                                <div ng-show="wishListLine.canShowPrice && !vm.failedToGetRealTimePrices">
                                     <isc-product-price product="wishListLine"></isc-product-price>
                                     <span class="selected-uom" ng-if="wishListLine.unitOfMeasureDescription || wishListLine.unitOfMeasureDisplay">/ {{wishListLine.unitOfMeasureDescription || wishListLine.unitOfMeasureDisplay}}</span>
                                     <isc-product-price-saving product="wishListLine" currency-symbol="wishListLine.currencySymbol"></isc-product-price-saving>
@@ -203,7 +203,7 @@
                                         <isc-quantity-break-pricing product-id="wishListLine.id" break-prices="wishListLine.pricing.unitRegularBreakPrices"></isc-quantity-break-pricing>
                                     </div>
                                 </div>
-                                <div ng-if="wishListLine.canShowPrice && wishListLine.pricing.failedToGetRealTimePrices">
+                                <div ng-if="wishListLine.canShowPrice && vm.failedToGetRealTimePrices">
                                     <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
                                 </div>
                                 <div class="product-info">

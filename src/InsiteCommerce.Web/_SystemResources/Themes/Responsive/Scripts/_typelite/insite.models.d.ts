@@ -1028,6 +1028,11 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		realTimeInventory: boolean;
 		inventoryIncludedWithPricing: boolean;
 		storefrontAccess: string;
+		canShowPriceFilters: boolean;
+		canSeeProducts: boolean;
+		canSeePrices: boolean;
+		canAddToCart: boolean;
+		pricingService: string;
 		displayAttributesInTabs: boolean;
 		attributesTabSortOrder: string;
 		displayDocumentsInTabs: boolean;

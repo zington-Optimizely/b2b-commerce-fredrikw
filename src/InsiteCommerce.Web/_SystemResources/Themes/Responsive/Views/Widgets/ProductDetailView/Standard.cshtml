@@ -19,7 +19,10 @@
                 <div class="item-price" ng-if="vm.failedToGetRealTimePrices">
                     <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
                 </div>
-                <div ng-if="vm.settings.showInventoryAvailability" class="availability">
+                <div ng-if="vm.product && !vm.settings.canSeePrices">
+                    <div>[% siteMessage 'Pricing_SignInForPrice' %]</div>
+                </div>
+                <div class="availability">
                     <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
                 </div>
             </div>
@@ -35,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                <isc-sorted-attribute-value-list ng-if="!vm.settings.displayAttributesInTabs && vm.product.attributeTypes.length > 0" attribute-types="vm.product.attributeTypes" class="attribute-list"></isc-sorted-attribute-value-list>
+                <isc-sorted-attribute-value-list ng-if="!vm.settings.displayAttributesInTabs && vm.product.attributeTypes.length > 0" attribute-types="vm.product.attributeTypes" maximum-number="5" class="attribute-list"></isc-sorted-attribute-value-list>
 
                 <div id="tst_productDetail_htmlContent" class="product-cm" ng-bind-html="vm.product.htmlContent|trusted"></div>
             </div>
@@ -128,7 +131,7 @@
                 <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayFirst' && vm.product.attributeTypes.length > 0">
                     <table class="info-tbl spec-attributes">
                         <tbody>
-                            <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name'] | limitTo: (maximumNumber || 100)" class="row">
+                            <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name']" class="row">
                                 <td class="col-label columns small-4" ng-bind="attributeType.label || attributeType.name"></td>
                                 <td class="col-value columns small-8"><isc-no-element ng-repeat="attributeValue in attributeType.attributeValues | orderBy  : ['sortOrder','valueDisplay']">{{attributeValue.valueDisplay}}{{$last ? '' : ', '}}</isc-no-element></td>
                             </tr>
@@ -147,7 +150,7 @@
                 <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayLast' && vm.product.attributeTypes.length > 0">
                     <table class="info-tbl spec-attributes">
                         <tbody>
-                        <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name'] | limitTo: (maximumNumber || 100)" class="row">
+                        <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name']" class="row">
                             <td class="col-label columns small-4" ng-bind="attributeType.label || attributeType.name"></td>
                             <td class="col-value columns small-8"><isc-no-element ng-repeat="attributeValue in attributeType.attributeValues | orderBy  : ['sortOrder','valueDisplay']">{{attributeValue.valueDisplay}}{{$last ? '' : ', '}}</isc-no-element></td>
                         </tr>

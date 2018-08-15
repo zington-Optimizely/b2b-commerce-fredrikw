@@ -12,13 +12,16 @@
                 </a>
             </div>
             <isc-product-name product="quoteLine" no-link="true"></isc-product-name>
-            <div class="price">
+            <div class="price" ng-if="!quote.cartNotPriced">
                 <isc-product-price product="quoteLine"></isc-product-price>
                 <isc-unit-of-measure-display product="quoteLine"></isc-unit-of-measure-display>
                 <isc-product-price-saving product="quoteLine" currency-symbol="quote.currencySymbol"></isc-product-price-saving>
                 <div class="quantity-pricing">
                     <isc-quantity-break-pricing product-id="quoteLine.id" break-prices="quoteLine.breakPrices"></isc-quantity-break-pricing>
                 </div>
+            </div>
+            <div class="price" ng-if="quote.cartNotPriced">
+                <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
             </div>
             <div class="wrap">
                 <div class="item-opt">

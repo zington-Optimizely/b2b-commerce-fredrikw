@@ -817,7 +817,9 @@
                                                                             [% if orderLine.RequiresQuote -%]
                                                                             <b class="req-quote" style="padding-right: 20px; padding-bottom: 10px; display: inline-block;">Requires Quote</b>
                                                                             [% else -%]
-                                                                            <span class="price">[[orderLine.UnitNetPriceDisplay]]</span>
+                                                                                [% if orderLine.UnitNetPrice > 0 -%]
+                                                                                <span class="price">[[orderLine.UnitNetPriceDisplay]]</span>
+                                                                                [% endif -%]
                                                                             [% endif -%]
                                                                             <em class="item-um" style="padding-right: 20px; padding-bottom: 10px; display: inline-block;">[[orderLine.Uom]]</em>
                                                                             <span class="qty" style="padding-right: 0; padding-bottom: 10px; display: inline-block; float: right;">
