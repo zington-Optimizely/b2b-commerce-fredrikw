@@ -1,21 +1,6 @@
 ﻿<div class="large-12 columns" ng-controller="ReviewAndPayController as vm" ng-cloak cart-url="[% urlForPage 'CartPage' %]">
     <input type="hidden" id="tst_reviewAndPayPage_pageIsReady" value="{{vm.pageIsReady}}"/>
 
-    [% if Model.Drop.IsCloudPaymentGateway -%]
-        <script>
-            var isCloudPaymentGateway = true;
-            
-            // These global javascript variables are required for the hosted pci iframe and javascript to work
-            var hpciCCFrameHost = "[[Model.Drop.HostedPciFrameHost]]";
-            var hpciCCFrameName = "ccframe";
-            var hpciCCFrameFullUrl = "[[Model.Drop.HostedPciFrameFullUrl]]";
-        </script>
-    [% else -%]
-        <script>
-            var isCloudPaymentGateway = false;
-        </script>
-    [% endif -%]
-
     <div class="checkout-head">
         <h1>[% translate 'Checkout' %]</h1>
         <div class="checkout-crumbs">
@@ -47,47 +32,60 @@
                             <div class="oc-head">
                                 <h4>[% translate 'Billing Information' %]</h4>
                                 <span>
-                                    <a ng-href="[% urlForPage 'CheckoutAddressPage' %]{{vm.cartIdParam}}" class="edit">
+                                    <a id="tst_reviewAndPayPage_editBillTo_link" ng-href="[% urlForPage 'CheckoutAddressPage' %]{{vm.cartIdParam}}" class="edit">
                                         [% translate 'Edit' %]
                                     </a>
                                 </span>
                             </div>
                             <isc-address-display address="vm.cart.billTo" show-email="true"></isc-address-display>
                         </div>
-                        <div class="large-4 columns ship-info">
+                        <div class="large-4 columns ship-info" ng-if="!vm.enableWarehousePickup || vm.session.fulfillmentMethod === 'Ship'">
                             <div class="oc-head">
                                 <h4>[% translate 'Shipping Information' %]</h4>
                                 <span>
-                                    <a ng-href="[% urlForPage 'CheckoutAddressPage' %]{{vm.cartIdParam}}" class="edit">[% translate 'Edit' %]</a>
+                                    <a id="tst_reviewAndPayPage_editShipTo_link" ng-href="[% urlForPage 'CheckoutAddressPage' %]{{vm.cartIdParam}}" class="edit">[% translate 'Edit' %]</a>
                                 </span>
                             </div>
                             <isc-address-display address="vm.cart.shipTo" show-email="true"></isc-address-display>
+                        </div>
+                        <div class="large-4 columns pick-up-info" ng-if="vm.enableWarehousePickup && vm.session.fulfillmentMethod === 'PickUp'">
+                            <div class="oc-head">
+                                <h4>[% translate 'Pick Up Location' %]</h4>
+                            </div>
+                            <isc-warehouse-info warehouse="vm.session.pickUpWarehouse"></isc-warehouse-info>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="ship-method">
-                <h3>[% translate 'Shipping Method' %]</h3>
-                <div>
-                    <div class="select-carrier" ng-show="vm.cart.carriers.length > 0">
-                        <label for="carrier">[% translate 'Select Carrier' %]</label>
-                        <select name="carrier" id="carrier"
-                                ng-model="vm.cart.carrier"
-                                ng-change="vm.updateCarrier()"
-                                ng-options="carrier.description for carrier in vm.cart.carriers"></select>
+                <div id="tst_reviewAndPayPage_shipToInfo" ng-if="!vm.enableWarehousePickup || vm.session.fulfillmentMethod === 'Ship'">
+                    <h3>[% translate 'Shipping Method' %]</h3>
+                    <div>
+                        <div class="select-carrier" ng-show="vm.cart.carriers.length > 0">
+                            <label for="carrier">[% translate 'Select Carrier' %]</label>
+                            <select name="carrier" id="carrier"
+                                    ng-model="vm.cart.carrier"
+                                    ng-change="vm.updateCarrier()"
+                                    ng-options="carrier.description for carrier in vm.cart.carriers"></select>
+                        </div>
+                        <div class="select-service" ng-show="vm.cart.carriers.length > 0">
+                            <label for="shippingService">[% translate 'Select Service' %]</label>
+                            <select id="shippingService" name="shippingService"
+                                    data-rule-required="true" data-msg-required="[% translate 'Shipping Service is required.' %]"
+                                    ng-model="vm.cart.shipVia"
+                                    ng-options="shipVia.description for shipVia in vm.cart.carrier.shipVias"
+                                    ng-change="vm.updateShipVia()">
+                                <option value="">[% translate 'Select Service' %]</option>
+                            </select>
+                            <span class="field-validation-valid" data-valmsg-for="shippingService" data-valmsg-replace="true"></span>
+                        </div>
+                        <p ng-hide="!vm.cart || vm.cart.carriers.length > 0">
+                            <span class="field-validation-error">[% siteMessage 'ReviewAndPay_NoCarriersFound' %]</span>
+                        </p>
                     </div>
-                    <div class="select-service" ng-show="vm.cart.carriers.length > 0">
-                        <label for="shippingService">[% translate 'Select Service' %]</label>
-                        <select id="shippingService" name="shippingService"
-                                data-rule-required="true" data-msg-required="[% translate 'Shipping Service is required.' %]"
-                                ng-model="vm.cart.shipVia"
-                                ng-options="shipVia.description for shipVia in vm.cart.carrier.shipVias"
-                                ng-change="vm.updateShipVia()">
-                            <option value="">[% translate 'Select Service' %]</option>
-                        </select>
-                        <span class="field-validation-valid" data-valmsg-for="shippingService" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="select-requested-delivery-date" ng-show="vm.cartSettings.canRequestDeliveryDate">
+                </div>
+                <div id="tst_reviewAndPayPage_pickupLocationInfo" ng-class="{'pick-up-date': vm.session.fulfillmentMethod === 'PickUp' && vm.enableWarehousePickup}">
+                    <div class="select-requested-delivery-date" ng-show="(vm.session.fulfillmentMethod === 'Ship' || !vm.enableWarehousePickup) && vm.cartSettings.canRequestDeliveryDate">
                         <label for="requestedDeliveryDate">[% translate 'Request Delivery Date' %]<em>([% translate 'optional' %])</em></label>
                         <span>[% siteMessage 'Checkout_RequestedDeliveryDateInformation' %]</span>
                         <div class="requested-delivery-date">
@@ -97,9 +95,16 @@
                                    ng-attr-max-date="vm.cartSettings.maximumDeliveryPeriod"/>
                         </div>
                     </div>
-                    <p ng-hide="!vm.cart || vm.cart.carriers.length > 0">
-                        <span class="field-validation-error">[% siteMessage 'ReviewAndPay_NoCarriersFound' %]</span>
-                    </p>
+                    <div id="tst_reviewAndPayPage_requestedPickupDate" class="select-requested-delivery-date" ng-show="vm.enableWarehousePickup && vm.session.fulfillmentMethod === 'PickUp' && vm.cartSettings.enableRequestPickUpDate">
+                        <label for="requestedPickupDate">[% translate 'Request Pick Up Date' %]<em>([% translate 'optional' %])</em></label>
+                        <span class="delivery-date-note">[% siteMessage 'Checkout_RequestedDeliveryDateInformation' %]</span>
+                        <div class="requested-delivery-date">
+                            <input type="text" id="requestedPickupDate" name="requestedPickupDate" class="datepicker"
+                                   isc-pick-a-date="vm.cart.requestedPickupDate"
+                                   ng-attr-min-date="true"
+                                   ng-attr-max-date="vm.cartSettings.maximumDeliveryPeriod" />
+                        </div>
+                    </div>
                     <div class="order-notes">
                         <label>[% translate 'Add Order Notes' %]<em>([% translate 'optional' %])</em>:</label>
                         <textarea ng-model="vm.cart.notes" cols="45" id="Notes" name="Notes" rows="5"></textarea>
@@ -174,36 +179,33 @@
                                        ng-model="vm.cart.paymentOptions.creditCard.cardHolderName">
                                 <span class="field-validation-valid" data-valmsg-for="cardHolderName" data-valmsg-replace="true"></span>
                             </div>
-                            [% if Model.Drop.IsCloudPaymentGateway -%]
-                                <iframe
-                                    id="ccframe"
-                                    name="ccframe"
-                                    src="[[Model.Drop.HostedPciFrameFullUrl]]"
-                                    style="width: 316.8px; height: 161.6px; margin: 0px; padding: 0px; border: 0px; display: block;"
-                                    scrolling="NO">
-                                    If you can see this, your browser doesn't support IFRAMES.
-                                </iframe>
-                                <div>
-                                    <label ng-if="vm.isInvalidCardNumber" class="error">[% translate 'Credit card number is invalid.' %]</label>
-                                    <label ng-if="vm.isInvalidSecurityCode" class="error">[% translate 'Security code is invalid.' %]</label>
-                                    <label ng-if="vm.isInvalidCardNumberOrSecurityCode" class="error">[% translate 'Credit card number or security code is invalid.' %]</label>
-                                </div>
-                            [% else -%]
                                 <div class="card-num">
                                     <label for="cardNumber">[% translate 'Card Number' %]</label>
+                                <span ng-if="vm.useTokenExGateway">
+                                    <div id="tokenExCardNumber" style="width: 100%; height: 37.8px;"></div>
+                                    <label ng-if="vm.isInvalidCardNumber" class="error">[% translate 'Credit card number is invalid.' %]</label>
+                                </span>
+                                <span ng-if="!vm.useTokenExGateway">
                                     <input id="cardNumber" name="cardNumber" maxlength="16" type="text" style="display: block;"
                                            data-rule-required="true" data-msg-required="[% translate 'Credit card number is required.' %]"
                                            data-rule-creditcard="true" data-msg-creditcard="[% translate 'Credit card number is invalid.' %]"
                                            ng-model="vm.cart.paymentOptions.creditCard.cardNumber">
                                     <span class="field-validation-valid" data-valmsg-for="cardNumber" data-valmsg-replace="true"></span>
+                                </span>
                                 </div>
                                 <div class="security-code">
                                     <label>[% translate 'Security Code' %]&nbsp;<a href="javascript:void(0);" data-reveal-id="whatsThisPopup">[% translate "What's This?" %]</a></label>
+                                <span ng-if="vm.useTokenExGateway">
+                                    <div id="tokenExSecurityCode" style="width: 100%; height: 37.8px;"></div>
+                                    <label ng-if="vm.isInvalidSecurityCode" class="error">[% translate 'Security code is invalid.' %]</label>
+                                </span>
+                                <span ng-if="!vm.useTokenExGateway">
                                     <input id="securityCode" name="securityCode" type="text" minlength="3" maxlength="4"
                                            data-rule-required="true" data-msg-required="[% translate 'Security code is required.' %]"
                                            data-rule-digits="true" data-msg-digits="[% translate 'Security code is invalid.' %]"
                                            ng-model="vm.cart.paymentOptions.creditCard.securityCode">
                                     <span class="field-validation-valid" data-valmsg-for="securityCode" data-valmsg-replace="true"></span>
+                                </span>
                                     <div id="whatsThisPopup" class="checkout-review-pay reveal-modal" data-reveal>
                                         <div class="modal-wrap">
                                             <img src="/Images/Default/security_code_sample.jpg" alt="Security Code Sample"/>
@@ -211,7 +213,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            [% endif -%]
                             <div class="exp-date">
                                 <label>[% translate 'Expiration Date' %]</label>
                                 <div class="row">
@@ -323,9 +324,12 @@
             <div ng-show="vm.cart.requiresApproval && !vm.cart.hasApprover" style="color: red;">
                 [% siteMessage 'OrderApproval_BuyerWithoutApprover' %]
             </div>
+            <div id="tst_reviewAndPayPage_availabilityErrorMessage" ng-show="vm.cart.hasInsufficientInventory" class="availability-error-message">
+                [% siteMessage 'ReviewAndPay_NotEnoughInventoryForPickup' %]
+            </div>
             <div class="btns">
                 <a id="tst_submitForApproval_button" href="" class="btn primary btn-submit-for-approval" ng-show="vm.cart.requiresApproval && vm.cart.hasApprover && !vm.submitting" ng-click="vm.submit('[% urlForPage 'OrderApprovalDetailPage' %]')">[% translate 'Submit for approval' %]</a>
-                <a id="tst_placeOrder_button" href="" class="btn primary btn-place-order" ng-hide="vm.cart.requiresApproval || vm.submitting" ng-click="vm.submit('[% urlForPage 'OrderConfirmationPage' %]', '[% urlForPage 'SignInPage' %]')">[% translate 'Place Order' %]</a>
+                <a id="tst_placeOrder_button" href="" class="btn primary btn-place-order" ng-hide="vm.cart.requiresApproval || vm.submitting" ng-click="!vm.cart.hasInsufficientInventory && vm.submit('[% urlForPage 'OrderConfirmationPage' %]', '[% urlForPage 'SignInPage' %]')" ng-class="{'disabled': vm.cart.hasInsufficientInventory}">[% translate 'Place Order' %]</a>
                 <div id="tst_submitErrorMessage" style="color: red;" ng-bind="vm.submitErrorMessage"></div>
             </div>
         </div>

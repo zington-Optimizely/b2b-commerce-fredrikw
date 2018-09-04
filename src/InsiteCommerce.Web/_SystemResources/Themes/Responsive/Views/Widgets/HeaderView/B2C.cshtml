@@ -4,6 +4,16 @@
 </a>
 [% endcapture %]
 
+[% capture DeliveryLabel %]
+<span ng-if="vm.session.fulfillmentMethod === 'Ship' && ((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)"
+      ng-bind="'[% translate 'Ship to' EscapeSingleQuotes %]' + ' ' + vm.session.shipTo.companyName + ', ' + vm.session.shipTo.fullAddress"></span>
+<span ng-if="(vm.session.fulfillmentMethod === 'Ship' || !vm.session.fulfillmentMethod)
+                              && ((!vm.session.isAuthenticated && !vm.session.rememberMe) || vm.session.isGuest)">[% translate 'Ship' %]</span>
+<span ng-if="vm.session.fulfillmentMethod === 'PickUp'"
+      ng-bind="'[% translate 'Pick up at' EscapeSingleQuotes %]' + ' ' + (vm.session.pickUpWarehouse ? 
+      (vm.session.pickUpWarehouse.description || vm.session.pickUpWarehouse.name) : '')"></span>
+[% endcapture %]
+
 [% capture B2CTopNavigation %]
 <ul role="user-nav" id="tst_userNav">
     <li role="search-input" ng-cloak>
@@ -21,6 +31,12 @@
         <a href="[% urlForPage 'SignInPage' %]" isc-redirect-to-sign-in return-to-url="true" class="btn tst_header_signInButton">
             <i ng-cloak class="social foundicon-torso"></i>
             <span class="sign-in-label">[% translate 'Sign In' %]</span>
+        </a>
+    </li>
+    <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup">
+        <a href="" id="tst_header_fulfillMethodLink" class="btn fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
+            <i class="foundicon-location"></i>
+            [[DeliveryLabel]]
         </a>
     </li>
     <li role="account-menu" ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
@@ -169,6 +185,12 @@
                         <span class="user-role" ng-if="::vm.session.userRoles" ng-bind="::('(' + vm.session.userRoles + ')')"></span>
                     </a>
                     <a class="ex fastClick"><i class="foundicon-remove"></i></a>
+                </li>
+                <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup">
+                    <a href="" id="tst_header_fulfillMethodLink" class="fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
+                        <i class="foundicon-location"></i>
+                        [[DeliveryLabel]]
+                    </a>
                 </li>
                 <li role="isettings-btn" ng-show="vm.languages.length > 1 || vm.currencies.length > 1">
                     <button class="btn tertiary isettings fastClick">

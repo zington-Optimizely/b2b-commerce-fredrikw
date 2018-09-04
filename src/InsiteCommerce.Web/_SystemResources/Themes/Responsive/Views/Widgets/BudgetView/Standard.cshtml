@@ -81,7 +81,10 @@
                                     <label for="budget-year">[% translate 'Budget Year End' %]:</label>
                                 </div>
                                 <div class="small-12 columns budget-year-ops budget-year-ops-2">
-                                    <input class="datepicker txt" type="text" id="FiscalYearEndDate" name="FiscalYearEndDate" value="{{vm.calendar.fiscalYearEndDate | date:'M/d/yyyy' }}" ng-class="{'input-validation-error': vm.errorPeriods.indexOf(period)>-1}" />
+                                    <div class="date-picker-calendar">
+                                        <i class="icon-calendar"></i>
+                                        <input class="datepicker txt" type="text" id="FiscalYearEndDate" name="FiscalYearEndDate" value="{{vm.calendar.fiscalYearEndDate | date:'M/d/yyyy' }}" ng-class="{'input-validation-error': vm.errorPeriods.indexOf(period)>-1}" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="row budget-year">
@@ -110,11 +113,14 @@
                             <tr ng-repeat="period in vm.calendar.budgetPeriods">
                                 <td class="col-period" ng-bind="$index+1"></td>
                                 <td class="col-startdate">
-                                    <input value="{{ vm.calendar.budgetPeriods[$index] | date:'M/d/yyyy' }}"
-                                           id="tst_budgetView_budgetPeriods_startDate{{$index + 1}}" name="tst_budgetView_budgetPeriods_startDate{{$index + 1}}"
-                                           data-mindate="{{ vm.getCalendarPeriodFromDate($index) | date:'M/d/yyyy' }}"
-                                           data-maxdate="{{ vm.getCalendarPeriodToDate($index) | date:'M/d/yyyy' }}"
-                                           type="text" class="datepicker txt startdate" ng-class="{ 'input-validation-error': vm.errorPeriods.indexOf(period) > -1 }" />
+                                    <div class="date-picker-calendar">
+                                        <i class="icon-calendar"></i>
+                                        <input value="{{ vm.calendar.budgetPeriods[$index] | date:'M/d/yyyy' }}"
+                                               id="tst_budgetView_budgetPeriods_startDate{{$index + 1}}" name="tst_budgetView_budgetPeriods_startDate{{$index + 1}}"
+                                               data-mindate="{{ vm.getCalendarPeriodFromDate($index) | date:'M/d/yyyy' }}"
+                                               data-maxdate="{{ vm.getCalendarPeriodToDate($index) | date:'M/d/yyyy' }}"
+                                               type="text" class="datepicker txt startdate" ng-class="{ 'input-validation-error': vm.errorPeriods.indexOf(period) > -1 }"/>
+                                    </div>
                                 </td>
                                 <td class="col-enddate">
                                     <input id="tst_budgetView_budgetPeriods_endDate{{$index + 1}}" value="{{vm.budgetEndPeriods[$index] | date:'M/d/yyyy' }}" type="text" class="txt enddate" disabled="disabled" />

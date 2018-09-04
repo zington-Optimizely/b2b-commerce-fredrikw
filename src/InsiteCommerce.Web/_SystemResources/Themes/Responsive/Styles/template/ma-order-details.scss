@@ -15,6 +15,11 @@
         .od-head, .bill-info, .ship-info, .ship-method, .delivery-date, .notes {
             margin-bottom: .8em;
         }
+
+        .pick-up-info .warehouse-info p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
     }
 
     .order-details-top .od-head {

@@ -113,6 +113,10 @@
             this.$scope.$on("UploadingItemsToListCompleted", () => this.getList());
             this.initializeAutocomplete();
             this.calculateListHeight();
+
+            this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected updateWishListInviteCompleted(wishList: WishListModel): void {
@@ -136,6 +140,10 @@
                     this.$interval.cancel(interval);
                 }
             }, 300);
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.getList();
         }
 
         updateBreadcrumbs(): void {

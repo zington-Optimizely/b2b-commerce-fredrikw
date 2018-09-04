@@ -50,6 +50,10 @@
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
@@ -58,6 +62,10 @@
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.getList();
         }
 
         updateBreadcrumbs(): void {

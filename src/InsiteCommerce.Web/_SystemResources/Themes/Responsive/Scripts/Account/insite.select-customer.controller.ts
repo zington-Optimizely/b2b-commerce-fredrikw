@@ -36,7 +36,12 @@
         shipToSearch: string;
         shipToOptions: any;
         shipToOptionsPlaceholder: string;
+        recipientAddressOptionsPlaceholder: string;
         noShipToAndCantCreate = false;
+        session: SessionModel;
+        fulfillmentMethod: string;
+        pickUpWarehouse: WarehouseModel;
+        enableWarehousePickup = false;
 
         static $inject = [
             "$scope",
@@ -105,6 +110,7 @@
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
             const requireSelectCustomerOnSignIn = settingsCollection.accountSettings.requireSelectCustomerOnSignIn;
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(requireSelectCustomerOnSignIn, session); },
@@ -117,6 +123,9 @@
         }
 
         protected getSessionCompleted(requireSelectCustomerOnSignIn: boolean, session: SessionModel) {
+            this.session = session;
+            this.fulfillmentMethod = session.fulfillmentMethod;
+            this.pickUpWarehouse = session.pickUpWarehouse;
             this.showIsDefaultCheckbox = !requireSelectCustomerOnSignIn && !session.hasDefaultCustomer;
         }
 
@@ -183,7 +192,7 @@
                 minLength: 0,
                 dataTextField: "label",
                 dataValueField: "id",
-                placeholder: this.shipToOptionsPlaceholder
+                placeholder: this.getShipToPlaceholder()
             };
 
             this.billToOptions.dataSource.read();
@@ -211,7 +220,7 @@
 
         protected onShipToAutocompleteRead(options: kendo.data.DataSourceTransportReadOptions, customerSettings: any): void {
             this.spinnerService.show();
-            this.customerService.getShipTos("excludeshowall,validation", this.shipToSearch, this.getDefaultPagination(), this.billTo.id).then(
+            this.customerService.getShipTos("excludeshowall,excludeonetime,validation", this.shipToSearch, this.getDefaultPagination(), this.billTo.id).then(
                 (shipToCollection: ShipToCollectionModel) => { this.getShipTosCompleted(options, customerSettings, shipToCollection); },
                 (error: any) => { this.getShipTosFailed(error); });
         }
@@ -298,12 +307,30 @@
                 return;
             }
 
-            this.sessionService.setCustomer(this.billTo.id, this.shipTo.id, this.useDefaultCustomer).then(
+            const currentContext = this.sessionService.getContext();
+            currentContext.fulfillmentMethod = this.fulfillmentMethod;
+            currentContext.pickUpWarehouseId = this.fulfillmentMethod === "Ship" ? null : (this.pickUpWarehouse ? this.pickUpWarehouse.id : currentContext.pickUpWarehouseId);
+            this.sessionService.setContext(currentContext);
+
+            const session: SessionModel = {
+                customerWasUpdated: false,
+                billTo: { id: this.billTo.id, isDefault: this.useDefaultCustomer },
+                shipTo: { id: this.shipTo.id },
+                fulfillmentMethod: this.fulfillmentMethod,
+                pickUpWarehouse: this.fulfillmentMethod === "PickUp" ? this.pickUpWarehouse : null
+            } as any;
+
+            this.sessionService.updateSession(session).then(
                 (session: SessionModel) => { this.setCustomerCompleted(session); },
                 (error: any) => { this.setCustomerFailed(error); });
         }
 
         protected setCustomerCompleted(session: SessionModel): void {
+            const currentContext = this.sessionService.getContext();
+            currentContext.shipToId = this.shipTo.id;
+            currentContext.billToId = this.billTo.id;
+            this.sessionService.setContext(currentContext);
+
             session.shipTo = this.shipTo;
             const redirectFn = () => {
                 this.spinnerService.show();
@@ -346,6 +373,16 @@
             if (this.useDefaultCustomer) {
                 this.coreService.displayModal(angular.element("#defaultCustomerChangedMessage"));
             }
+        }
+
+        onChangeDeliveryMethod() {
+
+            // Need this code because kendo autocomplete doesn't support dynamic placeholder changing
+            angular.element("#selectShipTo").attr("placeholder", this.getShipToPlaceholder());
+        }
+
+        protected getShipToPlaceholder(): string {
+            return this.enableWarehousePickup && this.fulfillmentMethod === 'PickUp' ? this.recipientAddressOptionsPlaceholder : this.shipToOptionsPlaceholder;
         }
     }
 

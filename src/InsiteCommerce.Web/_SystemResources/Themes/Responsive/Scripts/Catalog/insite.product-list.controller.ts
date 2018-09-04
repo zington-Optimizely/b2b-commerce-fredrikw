@@ -52,6 +52,9 @@ module insite.catalog {
         filterType: string;
         addingToCart = false;
         initialAttributeTypeFacets: AttributeTypeFacetDto[];
+        enableWarehousePickup: boolean;
+        session: SessionModel;
+        getPageDataCalled: boolean;
 
         static $inject = [
             "$scope",
@@ -69,7 +72,8 @@ module insite.catalog {
             "settingsService",
             "$stateParams",
             "queryString",
-            "$location"
+            "$location",
+            "sessionService"
         ];
 
         constructor(
@@ -88,7 +92,8 @@ module insite.catalog {
             protected settingsService: core.ISettingsService,
             protected $stateParams: IProductListStateParams,
             protected queryString: common.IQueryStringService,
-            protected $location: ng.ILocationService) {
+            protected $location: ng.ILocationService,
+            protected sessionService: account.ISessionService) {
             this.init();
         }
 
@@ -105,6 +110,10 @@ module insite.catalog {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
 
             const removeCompareProductsUpdated = this.$rootScope.$on("compareProductsUpdated", () => {
                 this.onCompareProductsUpdated();
@@ -129,13 +138,17 @@ module insite.catalog {
                 this.getFacets(newCategory.id);
             });
 
+            this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected getFacets(categoryId: string): void {
             const params = {
                 priceFilters: this.priceFilterMinimums,
                 categoryId: categoryId,
-                includeSuggestions: this.includeSuggestions
+                includeSuggestions: this.includeSuggestions,
+                includeAlternateInventory: !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp"
             };
 
             const expand = ["onlyfacets"];
@@ -192,13 +205,33 @@ module insite.catalog {
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.productSettings;
             this.searchHistoryLimit = settingsCollection.searchSettings ? settingsCollection.searchSettings.searchHistoryLimit : null;
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
             this.applySettings();
 
-            // moved here to prevent race condition, when products are returned, there is a dependency on the settings being loaded
-            this.getPageData();
+            this.getPageDataOnInit();
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.session = session;
+            this.getPageData();
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+            this.getPageDataOnInit();
+        }
+
+        protected getPageDataOnInit(): void {
+            if (this.session && this.settings && !this.getPageDataCalled) {
+                this.getPageDataCalled = true;
+                this.getPageData();
+            }
+        }
+
+        protected getSessionFailed(error: any): void {
         }
 
         protected getPageData(): void {
@@ -321,7 +354,8 @@ module insite.catalog {
                 includeSuggestions: this.includeSuggestions,
                 getAllAttributeFacets: true,
                 applyPersonalization: true,
-                includeAttributes: "IncludeOnProduct"
+                includeAttributes: "IncludeOnProduct",
+                includeAlternateInventory: !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp"
             });
 
             this.$rootScope.$broadcast("categoryLoaded", this.category.id);

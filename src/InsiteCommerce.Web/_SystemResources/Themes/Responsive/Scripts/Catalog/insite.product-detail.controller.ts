@@ -27,6 +27,9 @@ module insite.catalog {
         productSubscription: ProductSubscriptionDto;
         addingToCart = false;
         languageId: System.Guid;
+        enableWarehousePickup: boolean;
+        session: SessionModel;
+        initResolvePageCalled: boolean;
 
         static $inject = [
             "$scope",
@@ -60,13 +63,22 @@ module insite.catalog {
             this.$scope.$on("updateProductSubscription", (event: ng.IAngularEvent, productSubscription: ProductSubscriptionDto, product: ProductDto, cartLine: CartLineModel) => {
                 this.onUpdateProductSubscription(event, productSubscription, product, cartLine);
             });
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
+
+            this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.productSettings;
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
             const context = this.sessionService.getContext();
             this.languageId = context.languageId;
-            this.resolvePage();
+            this.resolvePageOnInit();
         }
 
         protected getSettingsFailed(error: any): void {
@@ -74,6 +86,26 @@ module insite.catalog {
 
         protected onUpdateProductSubscription(event: ng.IAngularEvent, productSubscription: ProductSubscriptionDto, product: ProductDto, cartLine: CartLineModel): void {
             this.productSubscription = productSubscription;
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+            this.resolvePageOnInit();
+        }
+
+        protected getSessionFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.session = session;
+            this.resolvePage();
+        }
+
+        protected resolvePageOnInit(): void {
+            if (this.session && this.settings && !this.initResolvePageCalled) {
+                this.initResolvePageCalled = true;
+                this.resolvePage();
+            }
         }
 
         protected resolvePage(): void {
@@ -95,7 +127,8 @@ module insite.catalog {
 
         protected getProductData(productId: string): void {
             const expand = ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing", "relatedproducts"];
-            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct").then(
+            let includeAlternateInventory = !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp";
+            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct", includeAlternateInventory).then(
                 (productModel: ProductModel) => { this.getProductCompleted(productModel); },
                 (error: any) => { this.getProductFailed(error); });
         }

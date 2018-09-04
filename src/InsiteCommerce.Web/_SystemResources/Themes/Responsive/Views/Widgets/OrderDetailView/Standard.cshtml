@@ -30,7 +30,7 @@
                                 <h3 class="od-lbl" ng-if="vm.showPoNumber && vm.order.customerPO">[% translate 'PO #' %]</h3>
                                 <h3 class="od-data" ng-if="vm.showPoNumber" ng-bind="vm.order.customerPO"></h3>
                             </div>
-                            <div class="ship-info">
+                            <div ng-if="vm.order.fulfillmentMethod === 'Ship' || !vm.order.fulfillmentMethod" class="ship-info">
                                 <div class="oc-head">
                                     <h3>[% translate 'Shipping Address' %]</h3>
                                 </div>
@@ -41,6 +41,17 @@
                                     <li ng-bind="vm.stFormat"></li>
                                     <li ng-bind="vm.order.stCountry"></li>
                                 </ul>
+                            </div>
+                            <div class="pick-up-info" ng-if="vm.order.fulfillmentMethod === 'PickUp'">
+                                <div class="oc-head">
+                                    <h3>[% translate 'Pick Up Location' %]</h3>
+                                </div>
+                                <div class="warehouse-info">
+                                    <h4 ng-bind="vm.order.stCompanyName"></h4>
+                                    <p ng-bind="vm.order.stAddress1"></p>
+                                    <p ng-bind="vm.order.stAddress2"></p>
+                                    <p ng-bind="vm.order.shipToCity + (vm.order.shipToCity ? ', ' : '') + vm.order.shipToState + ' ' + vm.order.shipToPostalCode"></p>
+                                </div>
                             </div>
                         </div>
                         <div class="large-6 columns">
@@ -56,7 +67,7 @@
                                     <li ng-bind="vm.order.btCountry"></li>
                                 </ul>
                             </div>
-                            <div ng-if="vm.order.shipCode" class="ship-method">
+                            <div ng-if="(vm.order.fulfillmentMethod === 'Ship' || !vm.order.fulfillmentMethod) && vm.order.shipCode" class="ship-method">
                                 <div class="oc-head">
                                     <h3>[% translate 'Shipping Method' %]</h3>
                                 </div>

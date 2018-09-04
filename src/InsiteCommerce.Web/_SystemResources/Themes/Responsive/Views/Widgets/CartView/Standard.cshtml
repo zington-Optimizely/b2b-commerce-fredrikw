@@ -21,10 +21,17 @@
 <div ng-controller="CartController as vm" ng-cloak ng-show="vm.cart">
     [[ContinueShoppingButton]]
     <div class="clearfix">
-        <h3 ng-if="vm.cart.cartLines.length > 0" class="results-count">
+        <h3 ng-if="vm.cart.cartLines.length > 0 && !vm.enableWarehousePickup" class="results-count">
             <span class="result-num" ng-bind="vm.cart.totalCountDisplay"></span> <span class="result-lbl">[% translate 'Items' %]</span>
         </h3>
         <div class="cart-left">
+            <div ng-show="vm.cart.hasInsufficientInventory && vm.fulfillmentMethod === 'PickUp'" class="messaging--error warn-message" id="tst_cartPage_hasInsufficientPickupInventory_message">
+                <i class="icon icon-warning"></i>[% siteMessage 'Cart_InsufficientPickupInventory' %]
+            </div>
+            <isc-delivery-method ng-if="vm.enableWarehousePickup && vm.cart.cartLines.length > 0" session="vm.session" fulfillment-method="vm.fulfillmentMethod" pick-up-warehouse="vm.pickUpWarehouse" update-session-on-change="true" prefix="cart" show-pick-up-title="true"></isc-delivery-method>
+            <h3 ng-if="vm.cart.cartLines.length > 0 && vm.enableWarehousePickup" class="results-count">
+                <span class="result-num" ng-bind="vm.cart.totalCountDisplay"></span> <span class="result-lbl">[% translate 'Items' %]</span>
+            </h3>
             <div id="tst_cartPage_cartIsEmpty" ng-if="vm.cart.cartLines.length == 0" class="cart-empty">
                 <h3>[% siteMessage 'Cart_NoOrderLines' %]</h3>
             </div>
@@ -35,7 +42,7 @@
                 <div ng-if="vm.cart.quoteRequiredCount > 0" class="quote-items-note messaging">
                     [% siteMessage 'Rfq_QuoteRequiredMsg' %]
                 </div>
-                <div ng-show="vm.cart.hasInsufficientInventory" class="messaging--error" id="tst_cartPage_hasInsufficientInventory_message">
+                <div ng-show="vm.cart.hasInsufficientInventory && vm.fulfillmentMethod === 'Ship'" class="messaging--error" id="tst_cartPage_hasInsufficientInventory_message">
                     [% siteMessage 'Cart_InsufficientInventoryAtCheckout' %]
                 </div>
                 <div ng-show="vm.cart.cartNotPriced" class="messaging--error">

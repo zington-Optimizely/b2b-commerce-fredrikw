@@ -52,14 +52,16 @@
         margin-top: 0;
     }
 
-    .order-bill-ship .bill-info {
-        float: left;
-        margin-bottom: 1em;
-    }
+    .order-bill-ship {
+        .bill-info, .ship-info, .pick-up-info {
+            float: left;
+            margin-bottom: 1em;
+        }
 
-    .order-bill-ship .ship-info {
-        float: left;
-        margin-bottom: 1em;
+        .pick-up-info p {
+            font-size: 0.875em;
+            line-height: 1.5em;
+        }
     }
 
     .promo-code span.field-validation-valid {
@@ -79,6 +81,14 @@
 
     .ship-method {
         margin-bottom: 1em;
+
+        .delivery-date-note {
+            font-style: italic;
+        }
+
+        .pick-up-date {
+            margin-top: 1.25em;
+        }
     }
 
     .payment-details {
@@ -163,6 +173,15 @@
         width: 25%;
         position: relative;
     }
+
+    .availability-error-message {
+        color: red;
+
+        a {
+            text-decoration: underline;
+            color: red;
+        }
+    }
 }
 
 @media all and (max-width: 767px) {
@@ -171,12 +190,10 @@
             display: none;
         }
 
-        .order-bill-ship .bill-info {
-            width: 100%;
-        }
-
-        .order-bill-ship .ship-info {
-            width: 100%;
+        .order-bill-ship {
+            .bill-info, .ship-info, .pick-up-info {
+                width: 100%;
+            }
         }
 
         .cart-items {

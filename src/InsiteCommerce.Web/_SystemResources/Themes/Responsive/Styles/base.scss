@@ -1459,6 +1459,58 @@ body [role="main"] div.pbtm {
     width: auto;
 }
 
+/* Fulfillment Method */
+
+.delivery-method-popup {
+    max-width: 450px !important;
+
+    .delivery-method h3 {
+        font-size: 1.5em;
+    }
+}
+
+.delivery-method {
+    h3 {
+        margin-top: 0;
+    }
+
+    .delivery-method-options {
+        display: inline-block;
+        margin-bottom: .7em;
+
+        .delivery-method-option {
+            float: left;
+            margin-right: 1em;
+
+            input[type="radio"] {
+                margin-right: .15em;
+            }
+
+            label {
+                margin-left: 0;
+                font-size: 1.1em;
+                font-weight: bold;
+            }
+        }
+    }
+
+    .warehouse-selection-link {
+        display: inline-block;
+        margin-top: 1em;
+    }
+}
+
+.warehouse-info {
+    h4 {
+        margin-top: 0;
+        margin-bottom: .2em;
+    }
+
+    p {
+        margin-bottom: 0;
+        line-height: 1.2;
+    }
+}
 
 /* Date Picker */
 
@@ -1867,6 +1919,20 @@ input + span.custom {
 
 input.datepicker {
     background-color: #fff !important; /* override Foundation's color on readonly inputs */
+}
+
+.date-picker-calendar {
+    display: inline-block;
+    position: relative;
+    min-width: 82px;
+
+    .icon-calendar {
+        position: absolute;
+        top: 7px;
+        right: 6px;
+        pointer-events: none;
+        font-size: 16px;
+    }
 }
 
 textarea {
@@ -2402,6 +2468,34 @@ header div.head-cm {
     }
 }
 
+/* Warehouse Menu */
+
+[role="secondary-nav"] [role="user-nav"] li[role="fulfillment-method"] {
+    width: auto;
+    border-right: 1px solid #ddd;
+
+    a {
+        display: block;
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        text-align: left;
+        padding: 0 1.25em;
+    }
+}
+
+@media all and (min-width: 768px) {
+    [role="user-nav"] li[role="fulfillment-method"] {
+        width: auto;
+
+        a {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+    }
+}
 
 /* Multi Language Menu */
 
@@ -4586,6 +4680,8 @@ nav [role="user-nav"] li[role="isettings-btn"] .flag-ind a {
 
 [role="secondary-nav"] .user-button:hover,
 [role="secondary-nav"] .user-button:focus,
+[role="secondary-nav"] .fulfillment-method:hover,
+[role="secondary-nav"] .fulfillment-method:focus,
 .topbar-user [role="secondary-nav"] .user-button,
 [role="secondary-nav"] a.search:hover,
 [role="secondary-nav"] a.search:focus,
@@ -6120,7 +6216,7 @@ a.ex:hover, a.ex:focus {
 .foundicon-location:before {
     font-family: 'good-oatmeal-v2';
     content: "\e615";
-    font-size: 1.5rem;
+    font-size: 1.15rem;
 }
 
 .foundicon-cart:before {
@@ -8143,6 +8239,9 @@ nav ul:not(.side-nav) li a {
     text-decoration: inherit;
 }
 
+.icon-calendar:before {
+    content: "\e953";
+}
 
 .icon-tbl-col:before {
     content: "\e650";

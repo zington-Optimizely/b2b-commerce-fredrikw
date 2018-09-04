@@ -201,7 +201,9 @@ module insite.account {
                 shipToId: this.ipCookie("CurrentShipToId"),
                 currencyId: this.ipCookie("CurrentCurrencyId"),
                 languageId: this.ipCookie("CurrentLanguageId"),
-                isRememberedUser: !!this.ipCookie("SetRememberedUserId")
+                isRememberedUser: !!this.ipCookie("SetRememberedUserId"),
+                fulfillmentMethod: this.ipCookie("CurrentFulfillmentMethod"),
+                pickUpWarehouseId: this.ipCookie("CurrentPickUpWarehouseId")
             };
 
             return context;
@@ -243,6 +245,18 @@ module insite.account {
             } else {
                 this.ipCookie.remove("CurrentLanguageId", { path: "/" });
             }
+
+            if (context.fulfillmentMethod) {
+                this.ipCookie("CurrentFulfillmentMethod", context.fulfillmentMethod, { path: "/", expires: isRememberedUser ? this.accountSettings.daysToRetainUser : null });
+            } else if (!isRememberedUser) {
+                this.ipCookie.remove("CurrentFulfillmentMethod", { path: "/" });
+            }
+
+            if (context.pickUpWarehouseId) {
+                this.ipCookie("CurrentPickUpWarehouseId", context.pickUpWarehouseId, { path: "/", expires: isRememberedUser ? this.accountSettings.daysToRetainUser : null });
+            } else if (!isRememberedUser) {
+                this.ipCookie.remove("CurrentPickUpWarehouseId", { path: "/" });
+            }
         }
 
         setContextFromSession(session: SessionModel): void {
@@ -252,7 +266,9 @@ module insite.account {
                 currencyId: session.currency.id,
                 billToId: session.billTo ? session.billTo.id : null,
                 shipToId: session.shipTo ? session.shipTo.id : null,
-                isRememberedUser: session.rememberMe
+                isRememberedUser: session.rememberMe,
+                fulfillmentMethod: session.fulfillmentMethod,
+                pickUpWarehouseId: session.pickUpWarehouse ? session.pickUpWarehouse.id : null
             };
 
             this.setContext(context);

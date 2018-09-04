@@ -4,6 +4,16 @@
     </a>
 [% endcapture %]
 
+[% capture DeliveryLabel %]
+    <span ng-if="vm.session.fulfillmentMethod === 'Ship' && ((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)"
+          ng-bind="'[% translate 'Ship to' EscapeSingleQuotes %]' + ' ' + vm.session.shipTo.companyName + ', ' + vm.session.shipTo.fullAddress"></span>
+    <span ng-if="(vm.session.fulfillmentMethod === 'Ship' || !vm.session.fulfillmentMethod)
+                                  && ((!vm.session.isAuthenticated && !vm.session.rememberMe) || vm.session.isGuest)">[% translate 'Ship' %]</span>
+    <span ng-if="vm.session.fulfillmentMethod === 'PickUp'"
+          ng-bind="'[% translate 'Pick up at' EscapeSingleQuotes %]' + ' ' + (vm.session.pickUpWarehouse ? 
+          (vm.session.pickUpWarehouse.description || vm.session.pickUpWarehouse.name) : '')"></span>
+[% endcapture %]
+
 <script type="text/javascript">
     var insite = insite || {};
     insite.navAdjustments = [];
@@ -120,6 +130,12 @@
                         <span class="user-role" ng-if="::vm.session.userRoles" ng-bind="::('(' + vm.session.userRoles + ')')"></span>
                     </a>
                     <a class="ex fastClick"><i class="foundicon-remove"></i></a>
+                </li>
+                <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup">
+                    <a href="" id="tst_header_fulfillmentMethodLink" class="fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
+                        <i class="foundicon-location"></i>
+                        [[DeliveryLabel]]
+                    </a>
                 </li>
                 <li role="isettings-btn" ng-show="vm.languages.length > 1 || vm.currencies.length > 1">
                     <button class="btn tertiary isettings fastClick">

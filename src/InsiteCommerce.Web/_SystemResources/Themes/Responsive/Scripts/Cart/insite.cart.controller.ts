@@ -13,8 +13,12 @@ module insite.cart {
         failedToGetRealTimeInventory = false;
         canAddAllToList = false;
         requisitionSubmitting = false;
+        enableWarehousePickup = false;
+        fulfillmentMethod: string;
+        pickUpWarehouse: WarehouseModel;
+        session: SessionModel;
 
-        static $inject = ["$scope", "cartService", "promotionService", "settingsService", "coreService", "$localStorage", "addToWishlistPopupService", "spinnerService"];
+        static $inject = ["$scope", "cartService", "promotionService", "settingsService", "coreService", "$localStorage", "addToWishlistPopupService", "spinnerService", "sessionService"];
 
         constructor(
             protected $scope: ICartScope,
@@ -24,7 +28,8 @@ module insite.cart {
             protected coreService: core.ICoreService,
             protected $localStorage: common.IWindowStorage,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
-            protected spinnerService: core.ISpinnerService) {
+            protected spinnerService: core.ISpinnerService,
+            protected sessionService: account.ISessionService) {
             this.init();
         }
 
@@ -39,6 +44,14 @@ module insite.cart {
             this.settingsService.getSettings().then(
                 (settings: core.SettingsCollection) => { this.getSettingsCompleted(settings); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
+
+            this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected onCartChanged(event: ng.IAngularEvent): void {
@@ -49,10 +62,25 @@ module insite.cart {
             this.settings = settingsCollection.cartSettings;
             this.showInventoryAvailability = settingsCollection.productSettings.showInventoryAvailability;
             this.requiresRealTimeInventory = settingsCollection.productSettings.realTimeInventory;
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
             this.getCart();
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+            this.fulfillmentMethod = session.fulfillmentMethod;
+            this.pickUpWarehouse = session.pickUpWarehouse;
+        }
+
+        protected getSessionFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.fulfillmentMethod = session.fulfillmentMethod;
+            this.getCart();
         }
 
         protected getCart(): void {

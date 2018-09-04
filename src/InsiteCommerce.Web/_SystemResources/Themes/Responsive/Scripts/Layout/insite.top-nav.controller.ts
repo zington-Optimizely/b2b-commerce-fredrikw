@@ -10,8 +10,9 @@
         currencies: any[];
         session: any;
         dashboardUrl: string;
+        accountSettings: AccountSettingsModel;
 
-        static $inject = ["$scope", "$window", "$attrs", "sessionService", "websiteService", "coreService"];
+        static $inject = ["$scope", "$window", "$attrs", "sessionService", "websiteService", "coreService", "settingsService", "deliveryMethodPopupService"];
 
         constructor(
             protected $scope: ng.IScope,
@@ -19,7 +20,9 @@
             protected $attrs: ITopNavControllerAttributes,
             protected sessionService: account.ISessionService,
             protected websiteService: websites.IWebsiteService,
-            protected coreService: core.ICoreService) {
+            protected coreService: core.ICoreService,
+            protected settingsService: core.ISettingsService,
+            protected deliveryMethodPopupService: account.IDeliveryMethodPopupService) {
             this.init();
         }
 
@@ -29,7 +32,8 @@
             // TODO ISC-2937 SPA kill all of the things that depend on broadcast for session and convert them to this, assuming we can properly cache this call
             // otherwise determine some method for a child to say "I expect my parent to have a session, and I want to use it" broadcast will not work for that
             this.getSession();
-
+            this.getSettings();
+            
             this.$scope.$on("sessionUpdated", (event, session) => {
                 this.onSessionUpdated(session);
             });
@@ -51,6 +55,19 @@
         }
 
         protected getSessionFailed(error: any): void {
+        }
+
+        protected getSettings(): void {
+            this.settingsService.getSettings().then(
+                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
+                (error: any) => { this.getSettingsFailed(error); });
+        }
+
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.accountSettings = settingsCollection.accountSettings;
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         protected getWebsite(expand: string): void {
@@ -161,6 +178,12 @@
         }
 
         protected updateSessionFailed(error: any): void {
+        }
+
+        protected openDeliveryMethodPopup() {
+            this.deliveryMethodPopupService.display({
+                session: this.session
+            });
         }
     }
 

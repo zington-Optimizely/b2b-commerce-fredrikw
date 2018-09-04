@@ -84,6 +84,11 @@
                 }
             });
 
+            this.$scope.$on("fulfillmentMethodChanged", () => {
+                this.products = null;
+                this.getCrossSells();
+            });
+
             this.$scope.$on("productLoaded", (event: ng.IAngularEvent, product: ProductDto) => {
                 if (!this.isProductLoaded()) {
                     this.parentProduct = product;

@@ -1,6 +1,11 @@
-﻿module insite.cart {
+﻿declare let TokenEx: any;
+
+module insite.cart {
     "use strict";
     import StateModel = Insite.Websites.WebApi.V1.ApiModels.StateModel;
+    import TokenExDto = insite.core.TokenExDto;
+    import WarehouseModel = Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
+    import SessionModel = Insite.Account.WebApi.V1.ApiModels.SessionModel;
 
     export interface IReviewAndPayControllerAttributes extends ng.IAttributes {
         cartUrl: string;
@@ -24,10 +29,12 @@
         pageIsReady = false;
         showQuoteRequiredProducts: boolean;
         submitSuccessUri: string;
-        isCloudPaymentGateway: boolean;
+        useTokenExGateway: boolean;
+        tokenExIframe: any;
         isInvalidCardNumber: boolean;
         isInvalidSecurityCode: boolean;
-        isInvalidCardNumberOrSecurityCode: boolean;
+        session: SessionModel;
+        enableWarehousePickup: boolean;
 
         static $inject = [
             "$scope",
@@ -41,7 +48,9 @@
             "settingsService",
             "queryString",
             "$localStorage",
-            "websiteService"
+            "websiteService",
+            "deliveryMethodPopupService",
+            "selectPickUpLocationPopupService"
         ];
 
         constructor(
@@ -56,7 +65,9 @@
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService,
             protected $localStorage: common.IWindowStorage,
-            protected websiteService: websites.IWebsiteService) {
+            protected websiteService: websites.IWebsiteService,
+            protected deliveryMethodPopupService: account.IDeliveryMethodPopupService,
+            protected selectPickUpLocationPopupService: account.ISelectPickUpLocationPopupService) {
             this.init();
         }
 
@@ -90,6 +101,14 @@
                 (error: any) => {
                     this.getSettingsFailed(error);
                 });
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
+
+            this.$scope.$on("sessionUpdated", (event, session) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected onCartChanged(event: ng.IAngularEvent): void {
@@ -149,6 +168,8 @@
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.cartSettings = settingsCollection.cartSettings;
+            this.useTokenExGateway = settingsCollection.websiteSettings.useTokenExGateway;
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
         }
 
         protected getSettingsFailed(error: any): void {
@@ -160,6 +181,18 @@
         }
 
         protected getCountriesFailed(error: any): void {
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+        }
+
+        protected getSessionFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.session = session;
+            this.getCart(true);
         }
 
         getCart(isInit?: boolean): void {
@@ -212,9 +245,9 @@
             this.setUpPayPal(isInit);
 
             setTimeout(() => {
-                this.setUpCloudPaymentGateway();
+                this.setUpTokenExGateway();
             }, 0, false);
- 
+
             this.promotionService.getCartPromotions(this.cart.id).then(
                 (promotionCollection: PromotionCollectionModel) => {
                     this.getCartPromotionsCompleted(promotionCollection);
@@ -377,14 +410,14 @@
             this.cart.requestedDeliveryDate = this.formatWithTimezone(this.cart.requestedDeliveryDate);
 
             this.spinnerService.show("mainLayout", true);
-            
+
             this.tokenizeCardInfoIfNeeded(submitSuccessUri);
         }
-        
+
         protected tokenizeCardInfoIfNeeded(submitSuccessUri: string) {
             this.submitSuccessUri = submitSuccessUri;
-            if (this.isCloudPaymentGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
-                (<any>window).sendHPCIMsg();
+            if (this.useTokenExGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
+                this.tokenExIframe.tokenize();
             } else {
                 this.submitCart();
             }
@@ -409,15 +442,14 @@
 
         protected submitCompleted(cart: CartModel, submitSuccessUri: string): void {
             this.cart.id = cart.id;
-            this.coreService.redirectToPath(`${submitSuccessUri}?cartid=${this.cart.id}`);
-            this.spinnerService.hide();
+            this.coreService.redirectToPathAndRefreshPage(`${submitSuccessUri}?cartid=${this.cart.id}`);
         }
 
         protected submitFailed(error: any): void {
-            if (this.isCloudPaymentGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
-                (<any>window).hpciStatusReset();
+            if (this.useTokenExGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
+                this.tokenExIframe.reset();
             }
-            
+
             this.submitting = false;
             this.cart.paymentOptions.isPayPal = false;
             this.submitErrorMessage = error.message;
@@ -480,10 +512,6 @@
         }
 
         protected validateReviewAndPayForm(): boolean {
-            if (!this.validatedCloudPaymentGateway()) {
-                return false;
-            } 
-            
             const valid = jQuery("#reviewAndPayForm").validate().form();
             if (!valid) {
                 jQuery("html, body").animate({
@@ -495,22 +523,6 @@
             return true;
         }
         
-        protected validatedCloudPaymentGateway(): boolean {
-            if (!this.isCloudPaymentGateway) {
-                return true;
-            } 
-            
-            if (!this.cart.showCreditCard || !this.cart.paymentMethod.isCreditCard) {
-                return true;
-            } 
-            
-            if (this.isInvalidCardNumber || this.isInvalidSecurityCode || this.isInvalidCardNumberOrSecurityCode) {
-                return false;
-            }
-           
-            return true;
-        }
-
         applyPromotion(): void {
             this.promotionAppliedMessage = "";
             this.promotionErrorMessage = "";
@@ -539,65 +551,129 @@
             this.getCart();
         }
 
-        setUpCloudPaymentGateway(): void {
-            this.isCloudPaymentGateway = (<any>window).isCloudPaymentGateway;
-            if (!this.isCloudPaymentGateway) {
+        setUpTokenExGateway(): void {
+            if (!this.useTokenExGateway) {
                 return;
             }
 
-            (<any>window).hpciNoConflict = "N";
-            (<any>window).hpciStatusReset();
-            (<any>window).receiveHPCIMsg();
-
-            (<any>window).hpciSiteSuccessHandlerV4 = (hpciMappedCCValue: string, hpciMappedCVVValue: string, hpciCCBINValue: string, hpciGtyTokenValue: string, hpciCCLast4Value: string, hpciGtyTokenAuthRespValue: string, hpciTokenRespEncrypt: string) => {
-                this.$scope.$apply(() => {
-                    if (!hpciMappedCCValue || !hpciMappedCVVValue) {
-                        if (!hpciMappedCCValue) {
-                            this.isInvalidCardNumber = true;
-                        } else {
-                            this.isInvalidSecurityCode = true;
-                        }
-                        
-                        (<any>window).hpciStatusReset();
-                        this.submitFailed({ message: ""});
-                        return;
+            this.settingsService.getTokenExConfig().then(
+                (tokenExDto: TokenExDto) => {
+                    this.getTokenExConfigCompleted(tokenExDto);
+                },
+                (error: any) => {
+                    this.getTokenExConfigFailed(error);
+                });  
+        }
+    
+        protected getTokenExConfigCompleted(tokenExDto: TokenExDto) {
+            this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", {
+                origin: tokenExDto.origin,
+                timestamp: tokenExDto.timestamp,
+                tokenExID: tokenExDto.tokenExId,
+                tokenScheme: tokenExDto.tokenScheme,
+                authenticationKey: tokenExDto.authenticationKey,
+                styles: {
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
+                    cvv: {
+                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                        focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                        error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
                     }
-                    
-                    this.cart.paymentOptions.creditCard.cardNumber = hpciMappedCCValue;
-                    this.cart.paymentOptions.creditCard.securityCode = hpciMappedCVVValue;
+                },
+                pci: true,
+                enableValidateOnBlur: true,
+                inputType: "text",
+                enablePrettyFormat: true,
+                cvv: true,
+                cvvContainerID: "tokenExSecurityCode",
+                cvvInputType: "Number",
+                debug: true
+            });
+            
+            this.tokenExIframe.load();
+            
+            this.tokenExIframe.on("tokenize", (data) => {
+                this.$scope.$apply(() => {
+                    this.cart.paymentOptions.creditCard.cardNumber = data.token;
+                    this.cart.paymentOptions.creditCard.securityCode = "CVV";
                     this.submitCart();
                 });
-            };
-
-            (<any>window).hpciSiteErrorHandler = (errorCode: string, errorMessage: string) => {
+            });
+            
+            this.tokenExIframe.on("validate", (data) => {
                 this.$scope.$apply(() => {
-                    this.isInvalidCardNumberOrSecurityCode = true;
-                    (<any>window).hpciStatusReset();
-                    this.submitFailed({ message: ""});
-                });
-            };
-
-            (<any>window).hpciCCPreliminarySuccessHandlerV2 = (hpciCCTypeValue: string, hpciCCBINValue: string, hpciCCValidValue: string, hpciCCLengthValue: number, hpciCCEnteredLengthValue: number) => {
-                this.$scope.$apply(() => {
-                    this.isInvalidCardNumberOrSecurityCode = false;
-                    if (hpciCCValidValue === "Y") {
+                    if (data.isValid) {
                         this.isInvalidCardNumber = false;
                     } else {
-                        this.isInvalidCardNumber = true;
+                        if (this.submitting) {
+                            this.isInvalidCardNumber = true;
+                        } else if (data.validator && data.validator !== "required") {
+                            this.isInvalidCardNumber = true;
+                        } 
                     }
-                });
-            };
-
-            (<any>window).hpciCVVPreliminarySuccessHandlerV2 = (hpciCVVLengthValue: number, hpciCVVValidValue: string) => {
-                this.$scope.$apply(() => {
-                    this.isInvalidCardNumberOrSecurityCode = false;
-                    if (hpciCVVValidValue === "Y") {
+                    
+                    if (data.isCvvValid) {
                         this.isInvalidSecurityCode = false;
                     } else {
-                        this.isInvalidSecurityCode = true;
+                        if (this.submitting) {
+                            this.isInvalidSecurityCode = true;
+                        } else if (data.cvvValidator && data.cvvValidator !== "required") {
+                            this.isInvalidSecurityCode = true;
+                        } 
+                    }
+                        
+                    if (this.submitting && (this.isInvalidCardNumber || this.isInvalidSecurityCode)) {
+                        this.submitting = false;
+                        this.spinnerService.hide();
                     }
                 });
-            };
+            });        
+            
+            this.tokenExIframe.on("error", (data) => {
+                this.$scope.$apply(() => {
+                    // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)
+                    // try to completely re-initialize the tokenex iframe
+                    this.setUpTokenExGateway();
+                });
+            });
+        }
+
+        protected getTokenExConfigFailed(error: any): void {
+        }
+
+        protected openDeliveryMethodPopup() {
+            this.deliveryMethodPopupService.display({
+                session: this.session
+            });
+        }
+
+        protected openWarehouseSelectionModal(): void {
+            this.selectPickUpLocationPopupService.display({
+                session: this.session,
+                updateSessionOnSelect: true,
+                selectedWarehouse: this.session.pickUpWarehouse,
+                onSelectWarehouse: (warehouse: WarehouseModel, onSessionUpdate?: Function) => this.updateSession(warehouse, onSessionUpdate)
+            });
+        }
+
+        updateSession(warehouse: WarehouseModel, onSessionUpdate?: Function): void {
+            const session = {} as SessionModel;
+            session.pickUpWarehouse = warehouse;
+            this.sessionService.updateSession(session).then(
+                (updatedSession: SessionModel) => { this.updateSessionCompleted(updatedSession, onSessionUpdate); },
+                (error: any) => { this.updateSessionFailed(error); });
+        }
+
+        protected updateSessionCompleted(session: SessionModel, onSessionUpdate?: Function): void {
+            this.session = session;
+            if (angular.isFunction(onSessionUpdate)) {
+                onSessionUpdate();
+            }
+        }
+
+        protected updateSessionFailed(error: any): void {
         }
     }
 

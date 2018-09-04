@@ -29,6 +29,9 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		requiresActivation: boolean;
 		setDefaultCustomer: boolean;
 		defaultCustomerId: System.Guid;
+		defaultFulfillmentMethod: string;
+		defaultWarehouseId: System.Guid;
+		defaultWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
 	}
 	interface AccountSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowCreateAccount: boolean;
@@ -43,6 +46,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		passwordRequiresDigit: boolean;
 		daysToRetainUser: number;
 		useEmailAsUserName: boolean;
+		enableWarehousePickup: boolean;
 	}
 	interface AccountCollectionModel extends Insite.Core.WebApi.BaseModel {
 		accounts: Insite.Account.WebApi.V1.ApiModels.AccountModel[];
@@ -79,6 +83,8 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		customerWasUpdated: boolean;
 		isGuest: boolean;
 		isRestrictedProductExistInCart: boolean;
+		pickUpWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
+		fulfillmentMethod: string;
 	}
 	interface AccountShipToCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
@@ -175,6 +181,7 @@ declare module Insite.Customers.WebApi.V1.ApiModels {
 	}
 	interface ShipToModel extends Insite.Customers.WebApi.V1.ApiModels.BaseAddressModel {
 		isNew: boolean;
+		oneTimeAddress: boolean;
 		label: string;
 		validation: Insite.Customers.Services.Dtos.CustomerValidationDto;
 		isDefault: boolean;
@@ -248,6 +255,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 	}
 	interface WebsiteSettingsModel extends Insite.Core.WebApi.BaseModel {
 		mobileAppEnabled: boolean;
+        useTokenExGateway: boolean;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;
@@ -429,6 +437,9 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		messages: string[];
 		creditCardBillingAddress: Insite.Cart.WebApi.V1.ApiModels.CreditCardBillingAddressDto;
 		alsoPurchasedProducts: Insite.Catalog.Services.Dtos.ProductDto[];
+		fulfillmentMethod: string;
+		requestedPickupDate: string;
+		requestedPickupDateDisplay: Date;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;
@@ -499,6 +510,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		showNewsletterSignup: boolean;
 		requiresPoNumber: boolean;
 		addToCartPopupTimeout: number;
+		enableRequestPickUpDate: boolean;
 	}
 }
 declare module Insite.Cart.Services.Dtos {
@@ -1016,6 +1028,8 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 	}
 	interface ProductSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowBackOrder: boolean;
+		allowBackOrderForDelivery: boolean;
+		allowBackOrderForPickup: boolean;
 		showInventoryAvailability: boolean;
 		showAddToCartConfirmationDialog: boolean;
 		enableProductComparisons: boolean;
@@ -1037,6 +1051,35 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		attributesTabSortOrder: string;
 		displayDocumentsInTabs: boolean;
 		documentsTabSortOrder: string;
+	}
+	interface WarehouseModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		address1: string;
+		address2: string;
+		city: string;
+		contactName: string;
+		country: string;
+		deactivateOn: Date;
+		description: string;
+		phone: string;
+		postalCode: string;
+		shipSite: string;
+		state: string;
+		isDefault: boolean;
+		alternateWarehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
+		latitude: number;
+		longitude: number;
+		hours: string;
+		distance: number;
+	}
+	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
+		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
+		distanceUnitOfMeasure: string;
+		defaultLatitude: number;
+		defaultLongitude: number;
+		defaultRadius: number;
 	}
 }
 declare module Insite.Core.Plugins.Search.Dtos {
@@ -1366,6 +1409,7 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		canAddAllToCart: boolean;
 		showTaxAndShipping: boolean;
 		shipViaDescription: string;
+		fulfillmentMethod: string;
 	}
 	interface OrderLineModel extends Insite.Core.WebApi.BaseModel {
 		id: string;

@@ -5,15 +5,18 @@
         cart: CartModel;
         session: any;
         isVisibleSearchInput = false;
+        accountSettings: AccountSettingsModel;
 
-        static $inject = ["$scope", "$timeout", "cartService", "sessionService", "$window"];
+        static $inject = ["$scope", "$timeout", "cartService", "sessionService", "$window", "settingsService", "deliveryMethodPopupService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected $timeout: ng.ITimeoutService,
             protected cartService: cart.ICartService,
             protected sessionService: account.ISessionService,
-            protected $window: ng.IWindowService) {
+            protected $window: ng.IWindowService,
+            protected settingsService: core.ISettingsService,
+            protected deliveryMethodPopupService: account.IDeliveryMethodPopupService) {
             this.init();
         }
 
@@ -30,6 +33,7 @@
             }, 20);
 
             this.getSession();
+            this.getSettings();
 
             // set min-width of the Search label
             angular.element(".header-b2c .header-zone.rt .sb-search").css("min-width", angular.element(".search-label").outerWidth());
@@ -95,6 +99,19 @@
         protected getSessionFailed(error: any): void {
         }
 
+        protected getSettings(): void {
+            this.settingsService.getSettings().then(
+                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
+                (error: any) => { this.getSettingsFailed(error); });
+        }
+
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.accountSettings = settingsCollection.accountSettings;
+        }
+
+        protected getSettingsFailed(error: any): void {
+        }
+
         protected openSearchInput(): void {
             this.isVisibleSearchInput = true;
             this.$timeout(() => {
@@ -117,6 +134,12 @@
 
         hideB2CNav($event: any): void {
             angular.element($event.target).mouseout();
+        }
+
+        protected openDeliveryMethodPopup() {
+            this.deliveryMethodPopupService.display({
+                session: this.session
+            });
         }
     }
 

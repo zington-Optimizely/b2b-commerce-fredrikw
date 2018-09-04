@@ -43,32 +43,53 @@
             </div>
             <isc-address-display address="vm.cart.billTo" show-email="true"></isc-address-display>
         </div>
-        <div class="large-4 columns ship-info">
+        <div class="large-4 columns ship-info" ng-if="vm.order.fulfillmentMethod === 'Ship' || !vm.order.fulfillmentMethod">
             <div class="oc-head">
                 <h3>[% translate 'Shipping Information' %]</h3>
             </div>
             <isc-address-display address="vm.cart.shipTo" show-email="true"></isc-address-display>
         </div>
-        <div class="large-4 columns ship-method">
+        <div id="tst_orderConfirmation_pickupLocationInfo" class="large-4 columns pick-up-info" ng-if="vm.order.fulfillmentMethod === 'PickUp'">
             <div class="oc-head">
-                <h3>[% translate 'Shipping Method' %]</h3>
+                <h3>[% translate 'Pick Up Location' %]</h3>
             </div>
-            <div class="oc-ship-meth">
-                <span ng-bind="vm.cart.carrier.description"></span>
-                <span ng-bind="vm.cart.shipVia.description"></span>
+            <div class="warehouse-info">
+                <h4 ng-bind="vm.order.stCompanyName"></h4>
+                <p ng-bind="vm.order.stAddress1"></p>
+                <p ng-bind="vm.order.stAddress2"></p>
+                <p ng-bind="vm.order.shipToCity + (vm.order.shipToCity ? ', ' : '') + vm.order.shipToState + ' ' + vm.order.shipToPostalCode"></p>
             </div>
-            <div class="oc-head" ng-if="vm.cart.creditCardBillingAddress">
-                <h3>[% translate 'Credit Card Billing Address' %]</h3>
+        </div>
+        <div class="large-4 columns ship-method">
+            <div ng-if="vm.order.fulfillmentMethod === 'Ship' || !vm.order.fulfillmentMethod">
+                <div class="oc-head">
+                    <h3>[% translate 'Shipping Method' %]</h3>
+                </div>
+                <div class="oc-ship-meth">
+                    <span ng-bind="vm.cart.carrier.description"></span>
+                    <span ng-bind="vm.cart.shipVia.description"></span>
+                </div>
+                <div class="oc-head" ng-if="vm.cart.creditCardBillingAddress">
+                    <h3>[% translate 'Credit Card Billing Address' %]</h3>
+                </div>
+                <div class="oc-cc-billing-address" ng-if="vm.cart.creditCardBillingAddress">
+                    <isc-address-display address="vm.creditCardBillingAddress" show-email="false"></isc-address-display>
+                </div>
             </div>
-            <div class="oc-cc-billing-address" ng-if="vm.cart.creditCardBillingAddress">
-                <isc-address-display address="vm.creditCardBillingAddress" show-email="false"></isc-address-display>
+            <div ng-show="vm.order.fulfillmentMethod === 'PickUp' && vm.cart.requestedPickupDateDisplay">
+                <div class="oc-head">
+                    <h3>[% translate 'Requested Pick Up Date' %]</h3>
+                </div>
+                <div class="oc-delivery-date">
+                    <span id="tst_orderConfirmation_requestedPickupDate" ng-bind="vm.cart.requestedPickupDateDisplay | date:'shortDate'"></span>
+                </div>
             </div>
             <div class="oc-order-notes" ng-if="vm.cart.notes.trim().length > 0">
                 <h4>[% translate 'Order Notes' %]:</h4>
                 <div ng-bind="vm.cart.notes"></div>
             </div>
         </div>
-        <div class="large-4 columns requested-delivery-date" ng-show="vm.cart.requestedDeliveryDateDisplay">
+        <div class="large-4 columns requested-delivery-date" ng-show="(!vm.order.fulfillmentMethod || vm.order.fulfillmentMethod === 'Ship') && vm.cart.requestedDeliveryDateDisplay">
             <div class="oc-head">
                 <h3>[% translate 'Requested Delivery Date' %]</h3>
             </div>

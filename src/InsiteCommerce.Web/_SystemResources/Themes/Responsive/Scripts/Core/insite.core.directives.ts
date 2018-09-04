@@ -3,7 +3,7 @@
 
     angular
         .module("insite")
-        // isc-enter calls a function when enter is hit on an element with ng-enter="functionname()"
+        // isc-enter calls a function when enter is hit on an element with isc-enter="functionname()"
         .directive("iscEnter", () => ({
             link: (scope, element, attrs: any) => {
                 element.bind("keydown keypress", event => {

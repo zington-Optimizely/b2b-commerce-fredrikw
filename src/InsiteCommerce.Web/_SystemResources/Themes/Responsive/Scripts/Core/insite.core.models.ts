@@ -8,5 +8,7 @@
         shipToId: System.Guid;
         pageUrl: string;
         isRememberedUser: boolean;
+        fulfillmentMethod: string;
+        pickUpWarehouseId: System.Guid;
     }
 }

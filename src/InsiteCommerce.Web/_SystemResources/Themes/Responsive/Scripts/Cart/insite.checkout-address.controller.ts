@@ -3,6 +3,10 @@
     import SessionService = insite.account.ISessionService;
     import ShipToModel = Insite.Customers.WebApi.V1.ApiModels.ShipToModel;
 
+    export interface ICheckoutAddressControllerAttributes extends ng.IAttributes {
+        reviewAndPayUrl: string;
+    }
+
     export class CheckoutAddressController {
         cart: CartModel;
         cartId: string;
@@ -17,6 +21,10 @@
         customerSettings: any;
         cartUri: string;
         initialShipToId: string;
+        session: SessionModel;
+        enableWarehousePickup: boolean;
+        editMode: boolean;
+        reviewAndPayUrl: string;
 
         static $inject = [
             "$scope",
@@ -31,7 +39,8 @@
             "$timeout",
             "$q",
             "sessionService",
-            "$localStorage"
+            "$localStorage",
+            "$attrs"
         ];
 
         constructor(
@@ -47,12 +56,16 @@
             protected $timeout: ng.ITimeoutService,
             protected $q: ng.IQService,
             protected sessionService: SessionService,
-            protected $localStorage: common.IWindowStorage) {
+            protected $localStorage: common.IWindowStorage,
+            protected $attrs: ICheckoutAddressControllerAttributes) {
             this.init();
         }
 
         init(): void {
             this.cartId = this.queryString.get("cartId");
+            this.reviewAndPayUrl = this.$attrs.reviewAndPayUrl;
+            const referringPath = this.coreService.getReferringPath();
+            this.editMode = referringPath && referringPath.toLowerCase().indexOf(this.reviewAndPayUrl.toLowerCase()) !== -1;
 
             this.websiteService.getAddressFields().then(
                 (model: AddressFieldCollectionModel) => { this.getAddressFieldsCompleted(model); });
@@ -64,13 +77,33 @@
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
+
+            this.$scope.$on("sessionUpdated", (event, session) => {
+                this.onSessionUpdated(session);
+            });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.customerSettings = settingsCollection.customerSettings;
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+        }
+
+        protected getSessionFailed(error: any): void {
+        }
+
+        protected onSessionUpdated(session: SessionModel): void {
+            this.session = session;
         }
 
         protected getAddressFieldsCompleted(addressFields: AddressFieldCollectionModel): void {
@@ -86,6 +119,7 @@
             this.cartService.expand = "";
             this.cart = cart;
             this.initialShipToId = this.cart.shipTo.id;
+            this.enableEditModeIfRequired();
 
             this.websiteService.getCountries("states").then(
                 (countryCollection: CountryCollectionModel) => { this.getCountriesCompleted(countryCollection); },
@@ -94,6 +128,20 @@
 
         protected getCartFailed(error: any): void {
             this.cartService.expand = "";
+        }
+
+        protected enableEditModeIfRequired(): void {
+            const customers = [this.cart.billTo, this.cart.shipTo];
+            for (let i = 0; i < customers.length; i++) {
+                if (customers[i] && customers[i].validation) {
+                    for (let property in customers[i].validation) {
+                        if (customers[i].validation[property].isRequired && !customers[i][property]) {
+                            this.editMode = true;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         protected getAccountCompleted(account: AccountModel): void {
@@ -254,7 +302,7 @@
                 if (!isRequired) {
                     address.state = null;
                 }
-                $(`#${prefix}state`).rules("add", { required: isRequired });
+                // TODO This does not work and throws a javascript error $(`#${prefix}state`).rules("add", { required: isRequired });
             }, 100);
         }
 
@@ -300,9 +348,13 @@
         }
 
         protected updateShipTo(continueUri: string, customerWasUpdated?: boolean): void {
-            const shipToMatches = this.cart.billTo.shipTos.filter(shipTo => { return shipTo.id === this.selectedShipTo.id; });
-            if (shipToMatches.length === 1) {
+            if (this.selectedShipTo.oneTimeAddress || this.selectedShipTo.isNew) {
                 this.cart.shipTo = this.selectedShipTo;
+            } else {
+                const shipToMatches = this.cart.billTo.shipTos.filter(shipTo => { return shipTo.id === this.selectedShipTo.id; });
+                if (shipToMatches.length === 1) {
+                    this.cart.shipTo = this.selectedShipTo;
+                }
             }
 
             if (this.cart.shipTo.id !== this.cart.billTo.id) {
@@ -319,7 +371,7 @@
                 this.cart.shipTo = shipTo;
             }
 
-            // If shipTo was updated for quote or jobQote then just update cart, otherwise update session
+            // If shipTo was updated for quote or jobQuote then just update cart, otherwise update session
             if (this.cartId) {
                 this.cartService.updateCart(this.cart).then(
                     (cart: CartModel) => { this.updateCartCompleted(cart, continueUri); },
@@ -428,6 +480,10 @@
             } else {
                 this.coreService.redirectToPathAndRefreshPage(continueUri);
             }
+        }
+
+        protected enableEditMode(): void {
+            this.editMode = true;
         }
     }
 

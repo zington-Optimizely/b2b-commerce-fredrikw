@@ -8,16 +8,38 @@
         initialBillTo: BillToModel;
         initialShipTo: ShipToModel;
         initialUseDefaultCustomer: boolean;
+        shipFulfillmentMethod = "Ship";
+        pickupFulfillmentMethod = "PickUp";
 
         init(): void {
+            this.useDefaultCustomer = false;
+            this.fulfillmentMethod = this.account.defaultFulfillmentMethod;
+            this.pickUpWarehouse = this.account.defaultWarehouse;
+            this.settingsService.getSettings().then(
+                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
+                (error: any) => { this.getSettingsFailed(error); });
+
             this.customerService.getBillTos("shiptos,state").then(
                 (billToCollection: BillToCollectionModel) => { this.getDefaultBillTosCompleted(billToCollection); },
                 (error: any) => { this.getDefaultBillTosFailed(error); });
+
+            this.$scope.$on("PickupWarehouseSelected", (event: ng.IAngularEvent, data: WarehouseModel) => {
+                this.pickUpWarehouse = data;
+            });
+        }
+
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
+            if (this.enableWarehousePickup && this.fulfillmentMethod === this.pickupFulfillmentMethod && this.pickUpWarehouse) {
+                this.useDefaultCustomer = true;
+            }
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         protected getDefaultBillTosCompleted(billToCollection: BillToCollectionModel): void {
             this.billTos = billToCollection.billTos;
-            this.useDefaultCustomer = false;
 
             if (this.billTos && this.billTos.length === 1) {
                 this.billTo = this.billTos[0];
@@ -58,7 +80,7 @@
         }
 
         setCustomer(): void {
-            if ((!this.billTo || !this.shipTo) && this.useDefaultCustomer) {
+            if ((!this.billTo || (!this.shipTo && this.fulfillmentMethod === this.shipFulfillmentMethod)) && this.useDefaultCustomer) {
                 return;
             }
 
@@ -67,6 +89,15 @@
 
             this.account.setDefaultCustomer = true;
             this.account.defaultCustomerId = this.useDefaultCustomer ? this.shipTo.id : null;
+            this.account.defaultFulfillmentMethod = this.fulfillmentMethod;
+            if (this.enableWarehousePickup && this.useDefaultCustomer && this.pickUpWarehouse && this.fulfillmentMethod === this.pickupFulfillmentMethod) {
+                this.account.defaultWarehouse = this.pickUpWarehouse;
+                this.account.defaultWarehouseId = this.pickUpWarehouse.id;
+            } else {
+                this.account.defaultWarehouse = null;
+                this.account.defaultWarehouseId = null;
+            }
+
             this.accountService.updateAccount(this.account, this.account.id).then(
                 (account: AccountModel) => { this.updateAccountCompleted(requestBillTo, requestShipTo, account); },
                 (error: any) => { this.updateAccountFailed(error); });
@@ -96,6 +127,14 @@
 
             if (!this.billTo || !this.shipTo) {
                 return false;
+            }
+
+            if (this.account.defaultFulfillmentMethod !== this.fulfillmentMethod) {
+                return true;
+            }
+
+            if (this.fulfillmentMethod === this.pickupFulfillmentMethod && this.pickUpWarehouse) {
+                return this.account.defaultWarehouseId !== this.pickUpWarehouse.id;
             }
 
             if (this.initialBillTo && this.initialShipTo) {

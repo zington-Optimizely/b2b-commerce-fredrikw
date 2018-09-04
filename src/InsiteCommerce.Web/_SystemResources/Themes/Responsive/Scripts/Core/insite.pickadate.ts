@@ -69,6 +69,11 @@ module insite.core {
                 element.pickadate("picker").set("min", scope.minDate ? scope.minDate : false);
                 element.pickadate("picker").set("max", scope.maxDate ? scope.maxDate : false);
 
+                // add calendar icon to the datepicker input
+                const calendarIcon = $("<i class='icon-calendar'></i>");
+                element.wrap("<div class='date-picker-calendar'></div>");
+                element.before(calendarIcon);
+
                 // this watch is needed to update the UI when the scope variable pickADate is updated external (initial values and clearing)
                 // override the default pickadate formatting with a regular angular filtered date
                 scope.$watch("iscPickADate", (newValue: string, oldValue, currentScope) => {

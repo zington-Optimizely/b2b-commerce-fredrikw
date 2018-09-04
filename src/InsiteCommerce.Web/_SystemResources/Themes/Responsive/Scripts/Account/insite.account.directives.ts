@@ -39,6 +39,14 @@
                 address: "="
             }
         }))
+        .directive("iscFullAddressDisplay", () => ({
+            restrict: "E",
+            replace: true,
+            templateUrl: "/PartialViews/Account-FullAddressDisplay",
+            scope: {
+                address: "="
+            }
+        }))
         .directive("iscSelectDefaultCustomer", () => ({
             restrict: "E",
             replace: true,
@@ -49,5 +57,13 @@
                 account: "="
             },
             bindToController: true
+        }))
+        .directive("iscWarehouseInfo", () => ({
+            restrict: "E",
+            replace: true,
+            templateUrl: "/PartialViews/Account-WarehouseInfo",
+            scope: {
+                warehouse: "="
+            }
         }));
 }

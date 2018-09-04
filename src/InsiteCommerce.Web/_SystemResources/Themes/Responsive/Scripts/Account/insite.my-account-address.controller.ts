@@ -45,7 +45,8 @@ module insite.account {
         }
 
         protected getSessionCompleted(session: SessionModel): void {
-            this.getBillTo(session.shipTo);
+            const shipTo = session.shipTo.oneTimeAddress ? null : session.shipTo;
+            this.getBillTo(shipTo);
         }
 
         protected getSessionFailed(error: any): void {
@@ -105,7 +106,7 @@ module insite.account {
         }
 
         getBillTo(selectedShipTo?: ShipToModel): void {
-            this.customerService.getBillTo("shiptos,validation,country,state").then(
+            this.customerService.getBillTo("shiptos,excludeonetime,validation,country,state").then(
                 (billTo: BillToModel) => { this.getBillToCompleted(billTo, selectedShipTo); },
                 (error: any) => { this.getBillToFailed(error); });
         }

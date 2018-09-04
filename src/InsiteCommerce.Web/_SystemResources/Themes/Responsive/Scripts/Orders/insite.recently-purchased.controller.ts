@@ -137,7 +137,7 @@
         }
 
         showUnitOfMeasureLabel(product: ProductDto): boolean {
-            return product.canShowUnitOfMeasure
+            return product && product.canShowUnitOfMeasure
                 && !!product.unitOfMeasureDisplay
                 && !product.quoteRequired;
         }
