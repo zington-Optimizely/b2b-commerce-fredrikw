@@ -33,7 +33,7 @@
             // otherwise determine some method for a child to say "I expect my parent to have a session, and I want to use it" broadcast will not work for that
             this.getSession();
             this.getSettings();
-            
+
             this.$scope.$on("sessionUpdated", (event, session) => {
                 this.onSessionUpdated(session);
             });

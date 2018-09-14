@@ -14,7 +14,7 @@ module insite.catalog {
         category: CategoryModel; // category if this is a category page
         attributeValues: AttributeValueFacetDto[] = []; // private list of attributes for the ui to display
         priceFilters: PriceFacetDto[] = []; // private list of price ranges for the ui to display
-        attributeTypeAttributeValueLimits: {} = {}; // dictionary of attribute types and the number of attribute values to show 
+        attributeTypeAttributeValueLimits: {} = {}; // dictionary of attribute types and the number of attribute values to show
         currencySymbol: string;
         searchWithinInput: string;
 

@@ -12,13 +12,14 @@ module insite.account {
         showPickUpTitle: boolean;
         updateSessionOnChange: boolean;
 
-        static $inject = ["$scope", "$rootScope", "sessionService", "selectPickUpLocationPopupService"];
+        static $inject = ["$scope", "$rootScope", "sessionService", "selectPickUpLocationPopupService", "spinnerService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected $rootScope: ng.IRootScopeService,
             protected sessionService: account.ISessionService,
-            protected selectPickUpLocationPopupService: ISelectPickUpLocationPopupService) {
+            protected selectPickUpLocationPopupService: ISelectPickUpLocationPopupService,
+            protected spinnerService: core.ISpinnerService) {
             this.init();
         }
 
@@ -66,6 +67,7 @@ module insite.account {
                 const session = {} as SessionModel;
                 session.fulfillmentMethod = this.fulfillmentMethod;
                 session.pickUpWarehouse = warehouse;
+                this.spinnerService.show();
                 this.sessionService.updateSession(session).then(
                     (updatedSession: SessionModel) => { this.updateSessionCompleted(updatedSession, onSessionUpdate); },
                     (error: any) => { this.updateSessionFailed(error); });

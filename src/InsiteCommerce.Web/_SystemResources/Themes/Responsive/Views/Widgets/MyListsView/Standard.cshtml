@@ -46,7 +46,7 @@
                 </div>
                 <div class="medium-3 columns item-controls">
                     <div>
-                        <button class="btn primary btn-add-cart" ng-click="vm.addAllToCart(wishList)" ng-disabled="!wishList.canAddAllToCart || !wishList.wishListLinesCount > 0 || vm.inProgress">[% translate 'Add List To Cart' %]</button>
+                        <button class="btn primary btn-add-cart" ng-click="vm.addAllToCart(wishList)" ng-disabled="!wishList.canAddToCart || !wishList.wishListLinesCount > 0 || vm.inProgress">[% translate 'Add List To Cart' %]</button>
                     </div>
                     <div>
                         <a ng-show="vm.listSettings.allowEditingOfWishLists && !wishList.isSharedList" href="javascript:void(0);" data-reveal-id="popup-delete-list" ng-click="vm.setWishList(wishList)">[% translate 'Delete List' %]</a>

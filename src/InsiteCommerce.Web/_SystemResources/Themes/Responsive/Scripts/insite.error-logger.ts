@@ -20,6 +20,6 @@
     };
 
     window.onerror = errorMessage => {
-        window.recordError(errorMessage);
+        window.recordError(errorMessage as any);
     };
 })();

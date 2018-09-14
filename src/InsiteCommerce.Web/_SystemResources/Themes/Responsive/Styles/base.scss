@@ -2434,7 +2434,7 @@ header div.head-cm {
     float: left;
 }
 
-@media all and (max-width: 768px) {
+@media all and (max-width: 767px) {
     .row.logo-row {
         float: left;
     }
@@ -7715,7 +7715,7 @@ nav ul:not(.side-nav) li a {
     }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
     header.header-b2c .head-row {
         .isc-nav-bar-b2c, .category-b2c {
             display: block;

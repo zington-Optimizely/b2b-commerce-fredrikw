@@ -19,7 +19,7 @@
                         failedFunction.call(caller, error);
                         (<any>deferred).reject(error.data, error.status);
                     });
-            return deferred.promise;
+            return deferred.promise as any;
         }
     }
 

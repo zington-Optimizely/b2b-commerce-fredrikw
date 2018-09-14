@@ -41,7 +41,7 @@
                 this.getGeoCodeFromLatLngCompleted(results, status, deferred);
             });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getGeoCodeFromLatLngCompleted(results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus, deferred: ng.IDeferred<{}>): void {
@@ -61,7 +61,7 @@
                 (response: ng.IHttpPromiseCallbackArg<WarehouseCollectionModel>) => { this.getWarehousesCompleted(response.data, deferred); },
                 (error: ng.IHttpPromiseCallbackArg<any>) => { this.getWarehousesFailed(error.data, deferred); });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getWarehousesParams(filter: IWarehouseFilter): any {
@@ -96,7 +96,7 @@
                 (response: ng.IHttpPromiseCallbackArg<WarehouseModel>) => { this.getWarehouseCompleted(response.data, deferred); },
                 (error: ng.IHttpPromiseCallbackArg<any>) => { this.getWarehouseFailed(error.data, deferred); });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getWarehouseCompleted(warehouse: WarehouseModel, deferred: ng.IDeferred<{}>): void {

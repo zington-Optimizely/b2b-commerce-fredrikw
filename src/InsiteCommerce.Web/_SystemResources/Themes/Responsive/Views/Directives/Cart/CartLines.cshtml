@@ -39,16 +39,16 @@
             <div class="price" ng-if="cart.cartNotPriced">
                 <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>
             </div>
-            <div class="item-opt" ng-if="!inventoryCheck || cartLine.quoteRequired || (inventoryCheck && (cartLine.availability.messageType != 2 || cartLine.canBackOrder))">
+            <div class="item-opt">
                 <div ng-if="showAddToList" class="actions-block wishlist-actions-block">
                     <a href="javascript:void(0);" class="btn secondary btn-add-list isc-addToWishlistPopup"
                        ng-click="vm.openWishListPopup(cartLine)" ng-if="::cartLine.canAddToWishlist">[% translate 'Add to List' %]</a>
                 </div>
-                <div class="item-qty" ng-if="!editable">
+                <div class="item-qty" ng-if="!editable || vm.isOutOfStockLine(inventoryCheck, cartLine)">
                     <strong>[% translate 'QTY_quantity' %]:</strong>
                     <span ng-bind="cartLine.qtyOrdered"></span>
                 </div>
-                <div class="item-qty" ng-if="editable">
+                <div class="item-qty" ng-if="editable && !vm.isOutOfStockLine(inventoryCheck, cartLine)">
                     <label for="cartLineQuantity_{{$index}}">[% translate 'QTY_quantity' %]:</label>
                     <input id="cartLineQuantity_{{$index}}"
                            type="text"
@@ -61,8 +61,8 @@
                            ng-disabled="!cart.canModifyOrder || cartLine.isPromotionItem || vm.isUpdateInProgress || cart.type == 'Job'" />
                 </div>
                 <div class="item-subtotal"><span ng-if="!cartLine.quoteRequired && !cart.cartNotPriced" ng-bind="cartLine.pricing.extendedUnitNetPriceDisplay"></span></div>
-                <div class="item-qty-message" ng-show="inventoryCheck || cartLine.isRestricted|| !cartLine.isActive">
-                    <span ng-show="inventoryCheck && cartLine.hasInsufficientInventory" class="message-avail--avail">
+                <div class="item-qty-message" ng-show="inventoryCheck || cartLine.isRestricted || !cartLine.isActive">
+                    <span ng-show="inventoryCheck && cartLine.hasInsufficientInventory && !vm.isOutOfStockLine(inventoryCheck, cartLine)" class="message-avail--avail">
                         {{'[% siteMessage 'Cart_ToManyQtyRequested' EscapeSingleQuotes %]'.replace('{0}', cartLine.qtyOnHand).replace('{1}', vm.getSumQtyPerUom(cartLine.productId, cart.cartLines))}}
                     </span>
                     <span ng-show="cartLine.isRestricted" class="message-avail--avail">

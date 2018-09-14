@@ -1,8 +1,10 @@
-module insite {
+﻿module insite {
     "use strict";
 
     export interface IContentPageStateParams extends angular.ui.IStateParamsService {
         path: string;
+        bypassFilters: boolean;
+        experimentMode: boolean;
     }
 
     export interface ISearchMicrositeStateParams extends angular.ui.IStateParamsService {
@@ -38,6 +40,14 @@ module insite {
             // turn off router on first page view because we render it server side. AppRunService will turn it back on.
             $urlRouterProvider.deferIntercept();
 
+            setTimeout(() => {
+                const cmsFrameService = angular.element("body").injector().get("cmsFrameService");
+                if (typeof (cmsFrameService) !== "undefined") {
+                    cmsFrameService.enableQuickReloads();
+                }
+            }, 100);
+
+
             // all pages are the same state and make requests for the partials on the server
             $stateProvider
                 .state("search", {
@@ -49,8 +59,17 @@ module insite {
                     templateUrl: (stateParams: ISearchMicrositeStateParams) => `/${stateParams.microsite}/search`
                 })
                 .state("content", {
-                    url: "*path",
-                    templateUrl: (stateParams: IContentPageStateParams) => stateParams.path
+                    url: "*path?stateChange&bypassFilters&experimentMode",
+                    templateUrl: (stateParams: IContentPageStateParams) => {
+                        let url = stateParams.path;
+                        if (typeof (stateParams.bypassFilters) !== "undefined") {
+                            url += `?bypassFilters=${stateParams.bypassFilters}`;
+                        }
+                        if (typeof (stateParams.experimentMode) !== "undefined") {
+                            url += (url.indexOf("?") >= 0 ? "&" : "?") + `experimentMode=${stateParams.experimentMode}`;
+                        }
+                        return url;
+                    }
                 });
 
             $locationProvider.html5Mode(true);

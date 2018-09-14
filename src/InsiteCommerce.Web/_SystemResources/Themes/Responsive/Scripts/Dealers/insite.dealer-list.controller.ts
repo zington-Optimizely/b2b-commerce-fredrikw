@@ -76,10 +76,6 @@
             this.locationKnown = true;
 
             const geocoderResult = geocoderResults[0];
-            if (typeof geocoderResult.formatted_address !== "undefined") {
-                this.addressSearchField = geocoderResult.formatted_address;
-            }
-
             const coords = new google.maps.LatLng(geocoderResult.geometry.location.lat(), geocoderResult.geometry.location.lng());
             this.getDealerCollection(coords);
         }
@@ -111,7 +107,6 @@
         protected getDealerCollectionCompleted(dealerCollection: DealerCollectionModel): void {
             this.dealers = dealerCollection.dealers;
             this.pagination = dealerCollection.pagination;
-            this.addressSearchField = dealerCollection.formattedAddress;
             this.distanceUnitOfMeasure = dealerCollection.distanceUnitOfMeasure === "Metric" ? 1 : 0;
 
             if (!this.center || this.center.lat() === 0 && this.center.lng() === 0) {
@@ -133,7 +128,7 @@
                 this.dealerService.getGeoLocation().then(deferred.resolve, deferred.reject);
             }
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getFilter(coords: google.maps.LatLng): IDealerFilter {
@@ -165,7 +160,7 @@
         }
 
         protected setHomeMarker(): void {
-            const marker = this.createMarker(this.center.lat(), this.center.lng(), "<span class='home-marker'></span>", false);
+            const marker = this.createMarker(this.center.lat(), this.center.lng(), "<span class='home-marker'></span>");
 
             google.maps.event.addListener(marker, "click", () => {
                 this.onHomeMarkerClick(marker);
@@ -201,14 +196,13 @@
             });
         }
 
-        protected createMarker(lat: number, lng: number, content: string, isDealerMarker = true): any {
+        protected createMarker(lat: number, lng: number, content: string): any {
             const markerOptions = {
                 position: new google.maps.LatLng(lat, lng),
                 map: this.$scope.map,
                 flat: true,
                 draggable: false,
-                content: content,
-                isDealerMarker: isDealerMarker
+                content: content
             };
             const marker = new RichMarker(markerOptions);
             this.markers.push(marker);
@@ -238,9 +232,7 @@
             if (this.$scope.map != null) {
                 const bounds = new google.maps.LatLngBounds();
                 for (let i = 0, markersLength = this.markers.length; i < markersLength; i++) {
-                    if (this.markers[i].isDealerMarker) {
-                        bounds.extend(this.markers[i].position);
-                    }
+                    bounds.extend(this.markers[i].position);
                 }
 
                 // Extends the bounds when we have only one marker to prevent zooming in too far.

@@ -19,7 +19,7 @@
         websiteSettings: WebsiteSettingsModel;
         wishListSettings: WishListSettingsModel;
     }
-    
+
     export class TokenExDto {
         tokenExId: string;
         origin: string;
@@ -64,15 +64,15 @@
                     this.httpWrapperService.executeHttpRequest(
                         this,
                         this.$http.get(`${this.settingsUri}?auth=${isAuthenticated}`),
-                        (response: ng.IHttpPromiseCallbackArg<ISettingsCollectionWrapper>) => { this.getSettingsCompleted(response, isAuthenticated, deferred); },
+                        (response: ng.IHttpPromiseCallbackArg<ISettingsCollectionWrapper>) => { this.getSettingsCompleted(response, isAuthenticated, deferred as any); },
                         this.getSettingsFailed
                     );
                 }
             }
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
-        
+
         protected getSettingsCompleted(response: ng.IHttpPromiseCallbackArg<ISettingsCollectionWrapper>, isAuthenticated: string, deferred: ng.IDeferred<SettingsCollection>): void {
             this.settingsCollections[isAuthenticated] = response.data.settingsCollection;
             deferred.resolve(this.settingsCollections[isAuthenticated]);
@@ -83,7 +83,7 @@
 
         protected getSettingsFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
-        
+
         getTokenExConfig(): ng.IPromise<TokenExDto> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
@@ -92,7 +92,7 @@
                 this.getTokenExConfigFailed
             );
         }
- 
+
         protected getTokenExConfigCompleted(response: ng.IHttpPromiseCallbackArg<TokenExDto>): void {
         }
 

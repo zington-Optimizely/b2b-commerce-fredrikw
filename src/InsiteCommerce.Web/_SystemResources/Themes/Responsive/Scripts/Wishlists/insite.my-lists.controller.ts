@@ -32,7 +32,7 @@
 
         init(): void {
             this.restoreHistory();
-            this.getWishLists();
+            this.getWishLists(false);
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
 
             this.settingsService.getSettings().then(
@@ -96,9 +96,12 @@
             }
         }
 
-        getWishLists(): void {
+        getWishLists(storeHistory: boolean = true): void {
             this.spinnerService.show();
-            this.updateHistory();
+            if (storeHistory) {
+                this.updateHistory();
+            }
+
             this.wishListService.getWishLists(this.sort, "top3products", null, this.pagination).then(
                 (wishListCollection: WishListCollectionModel) => { this.getWishListsCompleted(wishListCollection); },
                 (error: any) => { this.getWishListsFailed(error); });

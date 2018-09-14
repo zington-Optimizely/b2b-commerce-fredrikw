@@ -305,7 +305,7 @@ module insite.cart {
         protected addWishListToCartFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
             this.showCartError(error.data);
         }
-        
+
         updateLine(cartLine: CartLineModel, refresh: boolean): ng.IPromise<CartLineModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,

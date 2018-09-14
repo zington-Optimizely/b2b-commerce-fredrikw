@@ -104,7 +104,7 @@ module insite.catalog {
                     position: "top left",
                     origin: "bottom left"
                 },
-                animation: false,
+                animation: false as any,
                 template: (suggestion: any) => { return this.getAutocompleteTemplate(suggestion); },
                 select: (event: kendo.ui.AutoCompleteSelectEvent) => { this.onAutocompleteSelect(event); },
                 dataBound: (event: kendo.ui.AutoCompleteDataBoundEvent) => { this.onAutocompleteDataBound(event); },

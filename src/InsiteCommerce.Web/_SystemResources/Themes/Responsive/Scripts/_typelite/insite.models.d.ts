@@ -1,7 +1,7 @@
-﻿  
- 
- 
- 
+﻿
+
+
+
 
 
 
@@ -1792,4 +1792,3 @@ declare module Insite.Core.Plugins.Inventory {
 		warehouseDtos: Insite.Catalog.Services.Dtos.WarehouseDto[];
 	}
 }
-

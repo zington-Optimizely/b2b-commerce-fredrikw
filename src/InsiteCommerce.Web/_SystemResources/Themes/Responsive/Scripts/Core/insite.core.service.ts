@@ -25,8 +25,9 @@
         settingsUri = "/api/v1/settings";
         previousPath: string;
         saveState: boolean;
+        contextPersonaIds: string;
 
-        static $inject = ["$rootScope", "$http", "$filter", "$window", "$location", "$sessionStorage", "$timeout"];
+        static $inject = ["$rootScope", "$http", "$filter", "$window", "$location", "$sessionStorage", "$timeout", "$templateCache", "ipCookie", "$state", "$stateParams"];
 
         constructor(
             protected $rootScope: ng.IRootScopeService,
@@ -35,7 +36,12 @@
             protected $window: ng.IWindowService,
             protected $location: ng.ILocationService,
             protected $sessionStorage: common.IWindowStorage,
-            protected $timeout: ng.ITimeoutService) {
+            protected $timeout: ng.ITimeoutService,
+            protected $templateCache: ng.ITemplateCacheService,
+            protected ipCookie: any,
+            protected $state: any,
+            protected $stateParams: any
+        ) {
             this.init();
         }
 
@@ -56,6 +62,8 @@
             this.$rootScope.$on("$viewContentLoaded", (event) => {
                 this.onViewContentLoaded(event);
             });
+
+            this.contextPersonaIds = this.ipCookie("SetContextPersonaIds");
         }
 
         protected onStateChangeSuccess(event: ng.IAngularEvent, to: any, toParams: any, from: any, fromParams: any): void {
@@ -88,6 +96,12 @@
             this.hideNavMenuOnTouchDevices();
             this.closeAllModals();
             this.retainScrollPosition(newUrl, prevUrl);
+
+            const contextPersonaIds = this.ipCookie("SetContextPersonaIds");
+            if (this.contextPersonaIds !== contextPersonaIds) {
+                this.contextPersonaIds = contextPersonaIds;
+                this.$templateCache.removeAll();
+            }
         }
 
         protected setReferringPath(prevUrl: any): void {

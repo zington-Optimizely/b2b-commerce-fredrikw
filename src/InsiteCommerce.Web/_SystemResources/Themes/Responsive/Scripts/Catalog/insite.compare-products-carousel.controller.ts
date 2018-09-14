@@ -161,7 +161,7 @@
                         x.resize();
                     }, 0);
                 });
-                
+
             }
 
             this.equalizeCarouselDimensions();

@@ -122,7 +122,7 @@
                 (error: any) => { this.updateSessionFailed(error); });
         }
 
-        protected updateSessionCompleted(session: SessionModel): void {   
+        protected updateSessionCompleted(session: SessionModel): void {
         }
 
         protected updateSessionFailed(error: any): void {

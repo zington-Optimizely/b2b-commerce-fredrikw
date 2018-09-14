@@ -4,8 +4,8 @@
             <h2>[% translate 'Add to List' %]</h2>
             <div class="pop-content">
                 <div id="error" class="error" ng-show="vm.errorMessage || vm.showWishlistNameErrorMessage">
-                    <span ng-show="vm.errorMessage" class="field-validation-error">{{vm.errorMessage}}</span>
-                    <span ng-show="vm.showWishlistNameErrorMessage" class="field-validation-error">{{::'[% siteMessage 'Lists_Enter_New_Wishlist_Name' EscapeSingleQuotes %]'}}</span>
+                    <span id="tst_wishListPopup_errorMessage" ng-show="vm.errorMessage" class="field-validation-error">{{vm.errorMessage}}</span>
+                    <span id="tst_wishListPopup_enterListNameError" ng-show="vm.showWishlistNameErrorMessage" class="field-validation-error">{{::'[% siteMessage 'Lists_Enter_New_Wishlist_Name' EscapeSingleQuotes %]'}}</span>
                 </div>
                 <form ng-show="vm.allowMultipleWishLists && !vm.addToWishlistCompleted" id="addToWishListForm">
                     <div class="row select-list">

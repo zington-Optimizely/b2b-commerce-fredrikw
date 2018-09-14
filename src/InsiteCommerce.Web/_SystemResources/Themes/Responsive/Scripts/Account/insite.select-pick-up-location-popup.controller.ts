@@ -180,7 +180,7 @@
                 this.dealerService.getGeoLocation().then(deferred.resolve, deferred.reject);
             }
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getFilter(coords: google.maps.LatLng): IWarehouseFilter {

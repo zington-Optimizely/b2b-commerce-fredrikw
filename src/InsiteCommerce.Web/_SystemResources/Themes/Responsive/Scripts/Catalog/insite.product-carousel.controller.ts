@@ -59,7 +59,7 @@
 
             const isSearchPage = this.$stateParams.criteria || this.queryString.get("criteria");
             this.isCatalogPage = this.$attrs.isCatalogPage.toString().toLowerCase() === "true" && !isSearchPage;
-            
+
             this.enableDynamicRecommendations = this.$attrs.enableDynamicRecommendations.toString().toLowerCase() === "true";
             this.productCarouselElement = angular.element("[product-carousel-id='" + this.$attrs.productCarouselId + "']");
 
@@ -219,7 +219,16 @@
                 }
             });
 
-            if (this.productSettings.realTimePricing && this.products && this.products.length > 0) {
+            if (this.products && this.products.length > 0) {
+                this.getRealTimePrices();
+                if (!this.productSettings.inventoryIncludedWithPricing) {
+                    this.getRealTimeInventory();
+                }
+            }
+        }
+
+        protected getRealTimePrices(): void {
+            if (this.productSettings.realTimePricing) {
                 this.productService.getProductRealTimePrices(this.products).then(
                     (realTimePricing: RealTimePricingModel) => this.getProductRealTimePricesCompleted(realTimePricing),
                     (error: any) => this.getProductRealTimePricesFailed(error));
@@ -227,10 +236,27 @@
         }
 
         protected getProductRealTimePricesCompleted(realTimePricing: RealTimePricingModel): void {
+            if (this.productSettings.inventoryIncludedWithPricing) {
+                this.getRealTimeInventory();
+            }
         }
 
         protected getProductRealTimePricesFailed(error: any): void {
             this.failedToGetRealTimePrices = true;
+        }
+
+        protected getRealTimeInventory(): void {
+            if (this.productSettings.realTimeInventory) {
+                this.productService.getProductRealTimeInventory(this.products).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
         }
 
         addToCart(product: ProductDto): void {
@@ -316,8 +342,10 @@
         protected initializeCarousel(): void {
             const num = $(".cs-carousel .isc-productContainer", this.productCarouselElement).length;
             const itemsNum: number = this.getItemsNumber();
+            const container = $(".cs-carousel", this.productCarouselElement);
 
-            $(".cs-carousel", this.productCarouselElement).flexslider({
+            container.removeData("flexslider");
+            container.flexslider({
                 animation: "slide",
                 controlNav: false,
                 animationLoop: true,
@@ -422,7 +450,7 @@
                 this.carousel.doMath();
                 isItemsNumChanged = true;
             }
-            
+
             this.$timeout(() => {
                 if (isItemsNumChanged) {
                     this.carousel.resize();

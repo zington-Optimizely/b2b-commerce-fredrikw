@@ -1135,13 +1135,6 @@ declare module kendo.data {
         update?: DataSourceTransportUpdate;
     }
 
-    interface DataSourceTransportWithFunctionOperations extends DataSourceTransport {
-        create?: (options: DataSourceTransportOptions) => void;
-        destroy?: (options: DataSourceTransportOptions) => void;
-        read?: (options: DataSourceTransportReadOptions) => void;
-        update?: (options: DataSourceTransportOptions) => void;
-    }
-
     interface DataSourceTransportOptions {
         success: (data?: any) => void;
         error: (error?: any) => void;

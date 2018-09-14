@@ -139,11 +139,11 @@ module insite.catalog {
                 if (this.productSettings.realTimePricing) {
                     product.pricing.requiresRealTimePrice = true;
                     this.getProductRealTimePrices([product]).then((realTimePrice: RealTimePricingModel) => {
-                        this.changeUnitOfMeasureGetProductRealTimePriceCompleted(product, selectedUnitOfMeasure, realTimePrice, deferred);
+                        this.changeUnitOfMeasureGetProductRealTimePriceCompleted(product, selectedUnitOfMeasure, realTimePrice, deferred as any);
                     });
                 } else {
                     this.getProductPrice(product).finally(() => {
-                        this.changeUnitOfMeasureGetProductPriceCompleted(product, selectedUnitOfMeasure, null, deferred);
+                        this.changeUnitOfMeasureGetProductPriceCompleted(product, selectedUnitOfMeasure, null, deferred as any);
                     });
                 }
             } else {
@@ -152,7 +152,7 @@ module insite.catalog {
                 deferred.resolve(product);
             }
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected changeUnitOfMeasureGetProductRealTimePriceCompleted(product: ProductDto, unitOfMeasure: ProductUnitOfMeasureDto, realTimePrice: RealTimePricingModel, deferred: ng.IDeferred<ProductDto>): void {
@@ -210,7 +210,7 @@ module insite.catalog {
             if (!this.productSettings.canSeePrices) {
                 const deferred = this.$q.defer();
                 deferred.resolve(null);
-                return deferred.promise;
+                return deferred.promise as any;
             }
 
             return this.httpWrapperService.executeHttpRequest(
@@ -249,7 +249,7 @@ module insite.catalog {
             if (!this.productSettings.canSeePrices) {
                 const deferred = this.$q.defer();
                 deferred.resolve(null);
-                return deferred.promise;
+                return deferred.promise as any;
             }
 
             return this.httpWrapperService.executeHttpRequest(
@@ -288,7 +288,7 @@ module insite.catalog {
             if (!this.productSettings.showInventoryAvailability) {
                 const deferred = this.$q.defer();
                 deferred.resolve(null);
-                return deferred.promise;
+                return deferred.promise as any;
             }
 
             return this.httpWrapperService.executeHttpRequest(
@@ -351,7 +351,7 @@ module insite.catalog {
             if ((catalog as any).catalogPageGlobal) {
                 const deferred = this.$q.defer();
                 deferred.resolve((catalog as any).catalogPageGlobal);
-                return deferred.promise;
+                return deferred.promise as any;
             }
 
             return this.httpWrapperService.executeHttpRequest(
@@ -422,14 +422,14 @@ module insite.catalog {
             this.httpWrapperService.executeHttpRequest(
                 this,
                 this.$http({ method: "GET", url: this.productServiceUri, params: this.getProductsParams(parameters, expand, filter), timeout: deferred.promise }),
-                (response: ng.IHttpPromiseCallbackArg<ProductCollectionModel>) => { this.getProductsCompleted(response, deferred); },
-                (error: ng.IHttpPromiseCallbackArg<any>) => { this.getProductsFailed(error, deferred); });
+                (response: ng.IHttpPromiseCallbackArg<ProductCollectionModel>) => { this.getProductsCompleted(response, deferred as any); },
+                (error: ng.IHttpPromiseCallbackArg<any>) => { this.getProductsFailed(error, deferred as any); });
 
             (deferred.promise as any).cancel = () => {
                 deferred.resolve("cancelled");
             };
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getProductsParams(parameters: IProductCollectionParameters, expand?: string[], filter?: string[]): any {

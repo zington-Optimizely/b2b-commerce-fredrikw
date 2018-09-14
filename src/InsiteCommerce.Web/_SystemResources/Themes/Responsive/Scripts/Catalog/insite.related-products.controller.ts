@@ -138,7 +138,6 @@ module insite.catalog {
                 this.$timeout(() => {
                     if (this.isRelatedProductsLoaded) {
                         // this.relatedProducts = this.product.crossSells;
-                        this.imagesLoaded = 0;
                         this.$scope.$apply();
                         this.waitForDom(this.maxTries);
 

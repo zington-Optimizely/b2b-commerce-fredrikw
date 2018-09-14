@@ -82,7 +82,7 @@
 
         getList(): void {
             this.spinnerService.show();
-            this.wishListService.getListById(this.listId, "staticlist").then(
+            this.wishListService.getListById(this.listId, "staticlist,getalllines").then(
                 (list: WishListModel) => { this.getListCompleted(list); },
                 (error: any) => { this.getListFailed(error); });
         }

@@ -10,7 +10,7 @@
 <span ng-if="(vm.session.fulfillmentMethod === 'Ship' || !vm.session.fulfillmentMethod)
                               && ((!vm.session.isAuthenticated && !vm.session.rememberMe) || vm.session.isGuest)">[% translate 'Ship' %]</span>
 <span ng-if="vm.session.fulfillmentMethod === 'PickUp'"
-      ng-bind="'[% translate 'Pick up at' EscapeSingleQuotes %]' + ' ' + (vm.session.pickUpWarehouse ? 
+      ng-bind="'[% translate 'Pick up at' EscapeSingleQuotes %]' + ' ' + (vm.session.pickUpWarehouse ?
       (vm.session.pickUpWarehouse.description || vm.session.pickUpWarehouse.name) : '')"></span>
 [% endcapture %]
 

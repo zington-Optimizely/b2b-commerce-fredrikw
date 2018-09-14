@@ -113,6 +113,10 @@
 
             this.addToWishlistPopupService.display([product]);
         }
+
+        isOutOfStockLine(inventoryCheck: boolean, cartLine: CartLineModel): boolean {
+            return inventoryCheck && (cartLine.availability as any).messageType === 2 && !cartLine.canBackOrder;
+        }
     }
 
     angular

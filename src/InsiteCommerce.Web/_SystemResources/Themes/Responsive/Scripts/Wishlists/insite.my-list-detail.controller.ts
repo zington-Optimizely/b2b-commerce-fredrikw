@@ -32,6 +32,7 @@
         autocompleteOptions: AutoCompleteOptions;
         isAddToListSectionVisible: boolean = false;
         isAddingToList: boolean = false;
+        messageTimeout: ng.IPromise<any>;
 
         notAvailableProducts: WishListLineModel[];
         notVisibleProducts: WishListLineModel[];
@@ -798,11 +799,21 @@
         protected setErrorMessage(message: string) {
             this.errorMessage = message;
             this.successMessage = "";
+            this.initHideMessageTimeout();
         }
 
         protected setSuccessMessage(message: string) {
             this.errorMessage = "";
             this.successMessage = message;
+            this.initHideMessageTimeout();
+        }
+
+        protected initHideMessageTimeout(): void {
+            this.$timeout.cancel(this.messageTimeout);
+            this.messageTimeout = this.$timeout(() => {
+                this.successMessage = "";
+                this.errorMessage = "";
+            }, 2000);
         }
 
         getUomDisplayValue(uom: any): string {

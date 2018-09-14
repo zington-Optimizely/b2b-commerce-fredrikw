@@ -43,7 +43,7 @@ module insite.dealers {
                 this.getGeoCodeFromLatLngCompleted(results, status, deferred);
             });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getGeoCodeFromLatLngCompleted(results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus, deferred: ng.IDeferred<{}>): void {
@@ -66,7 +66,7 @@ module insite.dealers {
                 deferred.reject(google.maps.GeocoderStatus.ZERO_RESULTS);
             }
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getGeoCodeFromAddressCompleted(results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus, deferred: ng.IDeferred<{}>): void {
@@ -84,15 +84,15 @@ module insite.dealers {
             // ok no geoCoder so grab the geolocation from the browser if available.
             if (!navigator.geolocation) {
                 deferred.resolve(response);
-                return deferred.promise;
+                return deferred.promise as any;
             }
 
             navigator.geolocation.getCurrentPosition(
-                (position: Position) => { this.getCurrentPositionCompleted(position, deferred); },
-                (error: any) => { this.getCurrentPositionFailed(error, deferred); },
+                (position: Position) => { this.getCurrentPositionCompleted(position, deferred as any); },
+                (error: any) => { this.getCurrentPositionFailed(error, deferred as any); },
                 { timeout: 5500 });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getCurrentPositionCompleted(position: Position, getGeoLocationDeferred: ng.IDeferred<google.maps.LatLng>) {
@@ -112,7 +112,7 @@ module insite.dealers {
                 (response: ng.IHttpPromiseCallbackArg<DealerCollectionModel>) => { this.getDealersCompleted(response.data, deferred); },
                 (error: ng.IHttpPromiseCallbackArg<any>) => { this.getDealersFailed(error.data, deferred); });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getDealersParams(filter: IDealerFilter): any {
@@ -147,7 +147,7 @@ module insite.dealers {
                 (response: ng.IHttpPromiseCallbackArg<DealerModel>) => { this.getDealerCompleted(response.data, deferred); },
                 (error: ng.IHttpPromiseCallbackArg<any>) => { this.getDealerFailed(error.data, deferred); });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected getDealerCompleted(dealer: DealerModel, deferred: ng.IDeferred<{}>): void {

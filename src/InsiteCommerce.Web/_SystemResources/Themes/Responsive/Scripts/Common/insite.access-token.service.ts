@@ -74,7 +74,7 @@
                         status: status
                     });
                 });
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         set(accessToken: string): void {

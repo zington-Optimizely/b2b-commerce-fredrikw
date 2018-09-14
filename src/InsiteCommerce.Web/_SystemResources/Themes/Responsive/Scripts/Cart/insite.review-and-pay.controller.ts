@@ -196,6 +196,7 @@ module insite.cart {
         }
 
         getCart(isInit?: boolean): void {
+            this.spinnerService.show();
             this.cartService.expand = "cartlines,shipping,tax,carriers,paymentoptions";
             if (this.$localStorage.get("hasRestrictedProducts") === true.toString()) {
                 this.cartService.expand += ",restrictions";
@@ -366,6 +367,7 @@ module insite.cart {
         }
 
         updateShipVia(): void {
+            this.spinnerService.show();
             this.cartService.updateCart(this.cart).then(
                 (cart: CartModel) => {
                     this.updateShipViaCompleted(cart);
@@ -522,7 +524,7 @@ module insite.cart {
 
             return true;
         }
-        
+
         applyPromotion(): void {
             this.promotionAppliedMessage = "";
             this.promotionErrorMessage = "";
@@ -562,9 +564,9 @@ module insite.cart {
                 },
                 (error: any) => {
                     this.getTokenExConfigFailed(error);
-                });  
+                });
         }
-    
+
         protected getTokenExConfigCompleted(tokenExDto: TokenExDto) {
             this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", {
                 origin: tokenExDto.origin,
@@ -591,9 +593,9 @@ module insite.cart {
                 cvvInputType: "Number",
                 debug: true
             });
-            
+
             this.tokenExIframe.load();
-            
+
             this.tokenExIframe.on("tokenize", (data) => {
                 this.$scope.$apply(() => {
                     this.cart.paymentOptions.creditCard.cardNumber = data.token;
@@ -601,7 +603,7 @@ module insite.cart {
                     this.submitCart();
                 });
             });
-            
+
             this.tokenExIframe.on("validate", (data) => {
                 this.$scope.$apply(() => {
                     if (data.isValid) {
@@ -611,9 +613,9 @@ module insite.cart {
                             this.isInvalidCardNumber = true;
                         } else if (data.validator && data.validator !== "required") {
                             this.isInvalidCardNumber = true;
-                        } 
+                        }
                     }
-                    
+
                     if (data.isCvvValid) {
                         this.isInvalidSecurityCode = false;
                     } else {
@@ -621,16 +623,16 @@ module insite.cart {
                             this.isInvalidSecurityCode = true;
                         } else if (data.cvvValidator && data.cvvValidator !== "required") {
                             this.isInvalidSecurityCode = true;
-                        } 
+                        }
                     }
-                        
+
                     if (this.submitting && (this.isInvalidCardNumber || this.isInvalidSecurityCode)) {
                         this.submitting = false;
                         this.spinnerService.hide();
                     }
                 });
-            });        
-            
+            });
+
             this.tokenExIframe.on("error", (data) => {
                 this.$scope.$apply(() => {
                     // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)

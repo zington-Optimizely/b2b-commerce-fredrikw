@@ -134,11 +134,11 @@
         // validate that entry in all numeric text boxes is a number - put the class numerictextbox on all quantity inputs
         $(document).on("keydown", ".numerictextbox", event => {
             let inputIsNumeric = false;
-            
+
             // ignore the shift keydown event, the actual key pressed with shift issues another event when it is pressed
             if (event.keyCode === 16) {
                 return;
-            } 
+            }
 
             // this works for qwerty and azerty keyboard layouts (azerty you have to hit the Shift key to press a number)
             if (event.key !== undefined) {

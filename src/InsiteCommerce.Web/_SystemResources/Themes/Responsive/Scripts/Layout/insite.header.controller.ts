@@ -133,7 +133,15 @@
         }
 
         hideB2CNav($event: any): void {
-            angular.element($event.target).mouseout();
+            const target = angular.element($event.target);
+            if (target.hasClass("toggle-sub")) {
+
+                // For tablets
+                $event.preventDefault();
+                target.mouseover();
+            } else {
+                target.mouseout();
+            }
         }
 
         protected openDeliveryMethodPopup() {

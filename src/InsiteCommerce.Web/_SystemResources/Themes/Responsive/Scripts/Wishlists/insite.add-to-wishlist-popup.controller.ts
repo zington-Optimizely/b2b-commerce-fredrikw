@@ -1,6 +1,6 @@
 ﻿module insite.wishlist {
     "use strict";
-    
+
     export class AddToWishlistPopupController {
         errorMessage: string;
         newWishListName: string;
@@ -102,6 +102,7 @@
         }
 
         protected addWishListFailed(error: any): void {
+            this.addingToList = false;
             this.errorMessage = error.message;
         }
 
@@ -143,6 +144,7 @@
         }
 
         protected addWishListLineFailed(error: any): void {
+            this.addingToList = false;
             this.errorMessage = error.message;
         }
 

@@ -301,11 +301,11 @@ module insite.account {
                 (response: ng.IHttpPromiseCallbackArg<any>) => { deferred.resolve(response.data.isAuthenticatedOnServer); },
                 (error: ng.IHttpPromiseCallbackArg<any>) => { deferred.reject(error); });
 
-            return deferred.promise;
+            return deferred.promise as any;
         }
 
         protected invalidateEtagsOnServer(): ng.IPromise<SessionModel> {
-            return this.$http({ method: "PATCH", url: `${this.serviceUri}/current` });
+            return this.$http({ method: "PATCH", url: `${this.serviceUri}/current` }) as any;
         }
 
         removeAuthentication(): void {

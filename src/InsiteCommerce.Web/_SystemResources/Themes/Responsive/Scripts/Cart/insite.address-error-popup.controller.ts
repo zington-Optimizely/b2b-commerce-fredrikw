@@ -7,30 +7,37 @@
         myAccountAddressUrl: string;
         reviewAndPayPageUrl: string;
         continueUrl: string;
+        oneTimeAddress: boolean;
 
-        static $inject = ["$scope", "coreService", "settingsService", "addressErrorPopupService", "$window"];
+        static $inject = ["$scope", "coreService", "settingsService", "addressErrorPopupService", "$window", "sessionService", "$q"];
 
         constructor(
             protected $scope: ICartScope,
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService,
             protected addressErrorPopupService: IAddressErrorPopupService,
-            protected $window: ng.IWindowService) {
+            protected $window: ng.IWindowService,
+            protected sessionService: account.ISessionService,
+            protected $q: ng.IQService) {
             this.init();
         }
 
         init(): void {
-            this.settingsService.getSettings().then(
-                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
-                (error: any) => { this.getSettingsFailed(error); });
+            this.$q.all([this.sessionService.getSession(), this.settingsService.getSettings()]).then(
+                (results: any[]) => { this.getSessionAndSettingsCompleted(results); },
+                (error: any) => { this.getSessionAndSettingsFailed(error); });
         }
 
-        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
-            this.isAddressEditAllowed = settingsCollection.customerSettings.allowBillToAddressEdit && settingsCollection.customerSettings.allowShipToAddressEdit;
+        protected getSessionAndSettingsCompleted(results: any[]): void {
+            const session = ((results[0]) as SessionModel);
+            const customerSettings = ((results[1]) as core.SettingsCollection).customerSettings;
+
+            this.oneTimeAddress = session.shipTo && session.shipTo.oneTimeAddress;
+            this.isAddressEditAllowed = customerSettings.allowBillToAddressEdit && customerSettings.allowShipToAddressEdit;
             this.registerDisplayFunction();
         }
 
-        protected getSettingsFailed(error: any): void {
+        protected getSessionAndSettingsFailed(error: any): void {
         }
 
         protected registerDisplayFunction(): void {
@@ -44,7 +51,7 @@
                 if (path.indexOf(this.checkoutAddressUrl.toLowerCase()) > -1 || path.indexOf(this.myAccountAddressUrl.toLowerCase()) > -1) {
                     this.continueUrl = "";
                 } else {
-                    this.continueUrl = path.indexOf(this.reviewAndPayPageUrl.toLowerCase()) > -1 ? this.checkoutAddressUrl : this.myAccountAddressUrl;
+                    this.continueUrl = (path.indexOf(this.reviewAndPayPageUrl.toLowerCase()) > -1 || this.oneTimeAddress) ? this.checkoutAddressUrl : this.myAccountAddressUrl;
                 }
                 this.coreService.displayModal($popup);
             }
