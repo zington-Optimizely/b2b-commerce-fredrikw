@@ -17,7 +17,7 @@
                 <div class="cs-carousel">
 
                     <ul class="items slides tst_crossSellProduct_slides">
-                        <li id="tst_crossSellProduct_{{::crossSellProduct.id}}" class="medium-3 large-3 columns isc-productContainer tst_crossSellProduct_productContainer" ng-repeat="crossSellProduct in ::vm.crossSellProducts track by crossSellProduct.id">
+                        <li id="tst_crossSellProduct_{{::crossSellProduct.id}}" class="medium-3 large-3 columns isc-productContainer tst_crossSellProduct_productContainer" ng-repeat="crossSellProduct in vm.crossSellProducts track by crossSellProduct.id">
                             <div class="item-wrap">
 
                                 <div class="carousel-item-equalize">
@@ -63,13 +63,13 @@
                                     </div>
 
                                     <div class="actions-block">
-                                        <div class="item-qty" ng-if="::crossSellProduct.canAddToCart">
+                                        <div class="item-qty" ng-if="crossSellProduct.canAddToCart">
                                             <input type="text" ng-model="crossSellProduct.qtyOrdered" ng-init="crossSellProduct.qtyOrdered = crossSellProduct.minimumOrderQty || 1" class="qty numerictextbox tst_crossSellProduct_qtyOrdered" />
                                         </div>
                                         <div class="action">
-                                            <button class="btn primary btn-add-cart tst_crossSellProduct_addToCart" ng-click="vm.addToCart(crossSellProduct)" ng-if="::crossSellProduct.canAddToCart" ng-disabled="!crossSellProduct.qtyOrdered || crossSellProduct.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add to Cart' %]</button>
+                                            <button class="btn primary btn-add-cart tst_crossSellProduct_addToCart" ng-click="vm.addToCart(crossSellProduct)" ng-if="crossSellProduct.canAddToCart" ng-disabled="!crossSellProduct.qtyOrdered || crossSellProduct.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add to Cart' %]</button>
                                         </div>
-                                        <a href="javascript:void(0);" class="btn secondary btn-add-list isc-addToWishlistPopup tst_crossSellProduct_addToWishlist" ng-click="vm.openWishListPopup(crossSellProduct)" ng-if="::crossSellProduct.canAddToWishlist">[% translate 'Add to List' %]</a>
+                                        <a href="javascript:void(0);" class="btn secondary btn-add-list isc-addToWishlistPopup tst_crossSellProduct_addToWishlist" ng-click="vm.openWishListPopup(crossSellProduct)" ng-if="crossSellProduct.canAddToWishlist">[% translate 'Add to List' %]</a>
                                     </div>
                                 </div>
                             </div>

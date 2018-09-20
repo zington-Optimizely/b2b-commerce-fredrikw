@@ -41,6 +41,12 @@
             } else {
                 this.addingToCart = false;
             }
+
+            this.$scope.$on("fulfillmentMethodChanged", () => {
+                this.crossSellProducts = [];
+                this.imagesLoaded = 0;
+                this.getCrossSells();
+            });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
@@ -67,21 +73,47 @@
 
             this.waitForDom(this.maxTries);
 
-            if (this.productSettings.realTimePricing && this.crossSellProducts && this.crossSellProducts.length > 0) {
-                this.productService.getProductRealTimePrices(this.crossSellProducts).then(
-                    (realTimePricing: RealTimePricingModel) => this.getProductRealTimePricesCompleted(realTimePricing),
-                    (error: any) => this.getProductRealTimePricesFailed(error));
+            if (this.crossSellProducts && this.crossSellProducts.length > 0) {
+                this.getRealTimePrices();
+                if (!this.productSettings.inventoryIncludedWithPricing) {
+                    this.getRealTimeInventory();
+                }
             }
         }
 
         protected getCrossSellsFailed(error: any) {
         }
 
+        protected getRealTimePrices(): void {
+            if (this.productSettings.realTimePricing) {
+                this.productService.getProductRealTimePrices(this.crossSellProducts).then(
+                    (realTimePricing: RealTimePricingModel) => this.getProductRealTimePricesCompleted(realTimePricing),
+                    (error: any) => this.getProductRealTimePricesFailed(error));
+            }
+        }
+
         protected getProductRealTimePricesCompleted(realTimePricing: RealTimePricingModel): void {
+            if (this.productSettings.inventoryIncludedWithPricing) {
+                this.getRealTimeInventory();
+            }
         }
 
         protected getProductRealTimePricesFailed(error: any): void {
             this.failedToGetRealTimePrices = true;
+        }
+
+        protected getRealTimeInventory(): void {
+            if (this.productSettings.realTimeInventory) {
+                this.productService.getProductRealTimeInventory(this.crossSellProducts).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
         }
 
         addToCart(product: ProductDto): void {

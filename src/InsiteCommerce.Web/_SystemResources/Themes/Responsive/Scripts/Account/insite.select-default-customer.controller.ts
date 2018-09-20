@@ -133,8 +133,10 @@
                 return true;
             }
 
-            if (this.fulfillmentMethod === this.pickupFulfillmentMethod && this.pickUpWarehouse) {
-                return this.account.defaultWarehouseId !== this.pickUpWarehouse.id;
+            if (this.fulfillmentMethod === this.pickupFulfillmentMethod && this.pickUpWarehouse && this.initialBillTo && this.initialShipTo) {
+                return this.account.defaultWarehouseId !== this.pickUpWarehouse.id
+                    || this.initialBillTo.id !== this.billTo.id
+                    || this.initialShipTo.id !== this.shipTo.id;
             }
 
             if (this.initialBillTo && this.initialShipTo) {

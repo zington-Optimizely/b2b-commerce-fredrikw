@@ -17,13 +17,14 @@
         realTimePricing = false;
         failedToGetRealTimePrices = false;
 
-        static $inject = ["settingsService", "orderService", "productService", "cartService"];
+        static $inject = ["settingsService", "orderService", "productService", "cartService", "$scope"];
 
         constructor(
             protected settingsService: core.ISettingsService,
             protected orderService: order.IOrderService,
             protected productService: catalog.IProductService,
-            protected cartService: cart.ICartService) {
+            protected cartService: cart.ICartService,
+            protected $scope: ng.IScope) {
             this.init();
         }
 
@@ -31,6 +32,14 @@
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.$scope.$on("fulfillmentMethodChanged", () => {
+                this.isOrdersLoaded = false;
+                this.productItems = [];
+                if (this.showOrders) {
+                    this.getRecentlyPurchasedItems();
+                }
+            });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
