@@ -97,7 +97,7 @@
                     </div>
                     <div id="tst_reviewAndPayPage_requestedPickupDate" class="select-requested-delivery-date" ng-show="vm.enableWarehousePickup && vm.session.fulfillmentMethod === 'PickUp' && vm.cartSettings.enableRequestPickUpDate">
                         <label for="requestedPickupDate">[% translate 'Request Pick Up Date' %]<em>([% translate 'optional' %])</em></label>
-                        <span class="delivery-date-note">[% siteMessage 'Checkout_RequestedDeliveryDateInformation' %]</span>
+                        <span class="delivery-date-note">[% siteMessage 'Checkout_RequestedPickupDateInformation' %]</span>
                         <div class="requested-delivery-date">
                             <input type="text" id="requestedPickupDate" name="requestedPickupDate" class="datepicker"
                                    isc-pick-a-date="vm.cart.requestedPickupDate"

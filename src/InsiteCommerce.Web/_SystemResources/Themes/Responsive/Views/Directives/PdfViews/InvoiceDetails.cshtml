@@ -218,6 +218,11 @@
 </head>
 
 <body>
+    [% if Model.LogoImagePath != null and Model.LogoImagePath != "" -%]
+    <div>
+        <img src="[[Model.LogoImagePath]]" max-height="150" max-width="300" alt="Company Logo" />
+    </div>
+    [% endif -%]
     <div>
         <h2>[% translate "Invoice #" %] [[Model.InvoiceNumber]]</h2>
         <table class="main-block">

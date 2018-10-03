@@ -155,6 +155,9 @@
                                     [% if Model.RequestedDeliveryDate != null -%]
                                     <div class="requested-delivery-date">Requested Delivery Date: [[Model.RequestedDeliveryDate]]</div>
                                     [% endif -%]
+                                    [% if Model.RequestedPickupDate != null -%]
+                                    <div class="requested-delivery-date">Requested Pickup Date: [[Model.RequestedPickupDate]]</div>
+                                    [% endif -%]
                                 </div>
                             </td>
                             [% if Model.IsCreditCard -%]
