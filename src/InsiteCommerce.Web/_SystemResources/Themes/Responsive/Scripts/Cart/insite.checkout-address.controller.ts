@@ -136,7 +136,7 @@
                 if (customers[i] && customers[i].validation) {
                     for (let property in customers[i].validation) {
                         if (customers[i].validation[property].isRequired && !customers[i][property]) {
-                            this.editMode = true;
+                            this.enableEditMode();
                             break;
                         }
                     }
@@ -334,6 +334,14 @@
                 this.cart.shipVia = null;
             }
 
+            if (this.customerHasEditableFields(this.cart.billTo)) {
+                this.updateBillTo(continueUri);
+            } else {
+                this.updateShipTo(continueUri);
+            }
+        }
+
+        protected updateBillTo(continueUri: string): void {
             this.customerService.updateBillTo(this.cart.billTo).then(
                 (billTo: BillToModel) => { this.updateBillToCompleted(billTo, continueUri); },
                 (error: any) => { this.updateBillToFailed(error); });
@@ -357,7 +365,7 @@
                 }
             }
 
-            if (this.cart.shipTo.id !== this.cart.billTo.id) {
+            if (this.cart.shipTo.id !== this.cart.billTo.id && this.customerHasEditableFields(this.cart.shipTo)) {
                 this.customerService.addOrUpdateShipTo(this.cart.shipTo).then(
                     (shipTo: ShipToModel) => { this.addOrUpdateShipToCompleted(shipTo, continueUri, customerWasUpdated); },
                     (error: any) => { this.addOrUpdateShipToFailed(error); });
@@ -484,6 +492,20 @@
 
         protected enableEditMode(): void {
             this.editMode = true;
+        }
+
+        protected customerHasEditableFields(customer: BillToModel | ShipToModel): boolean {
+            if (!customer || !customer.validation) {
+                return false;
+            }
+
+            for (let property in customer.validation) {
+                if (customer.validation.hasOwnProperty(property) && !customer.validation[property].isDisabled) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

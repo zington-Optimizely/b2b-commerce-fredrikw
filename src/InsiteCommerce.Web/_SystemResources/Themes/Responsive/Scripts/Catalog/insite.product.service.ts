@@ -4,6 +4,7 @@ import ProductCollectionModel = Insite.Catalog.WebApi.V1.ApiModels.ProductCollec
 import CatalogPageModel = Insite.Catalog.WebApi.V1.ApiModels.CatalogPageModel;
 import CategoryModel = Insite.Catalog.WebApi.V1.ApiModels.CategoryModel;
 import CategoryCollectionModel = Insite.Catalog.WebApi.V1.ApiModels.CategoryCollectionModel;
+import ProductAvailabilityModel = Insite.Catalog.WebApi.V1.ApiModels.ProductAvailabilityModel;
 import ProductPriceModel = Insite.Catalog.WebApi.V1.ApiModels.ProductPriceModel;
 import CrossSellCollectionModel = Insite.Catalog.WebApi.V1.ApiModels.CrossSellCollectionModel;
 import ProductSettingsModel = Insite.Catalog.WebApi.V1.ApiModels.ProductSettingsModel;
@@ -45,8 +46,10 @@ module insite.catalog {
     export interface IProductParameters {
         categoryId?: string;
         productId: string;
+        unitOfMeasure?: string;
         addToRecentlyViewed?: boolean;
         alsoPurchasedMaxResults?: number;
+        configuration?: string[];
         expand?: string;
     }
 
@@ -67,10 +70,11 @@ module insite.catalog {
     export interface IProductService {
         changeUnitOfMeasure(product: ProductDto, refreshPrice?: boolean): ng.IPromise<ProductDto>;
         updateAvailability(product: ProductDto): void;
+        getProductAvailability(product: ProductDto, configuration?: string[]): ng.IPromise<ProductAvailabilityModel>;
         getProductPrice(product: ProductDto, configuration?: string[]): ng.IPromise<ProductPriceModel>;
         getProductRealTimePrices(products: ProductDto[]): ng.IPromise<RealTimePricingModel>;
         getProductRealTimePrice(product: ProductDto, configuration?: string[]): ng.IPromise<RealTimePricingModel>;
-        getProductRealTimeInventory(products: ProductDto[]): ng.IPromise<RealTimeInventoryModel>;
+        getProductRealTimeInventory(products: ProductDto[], expand?: string[], configurations?: { [key: string]: string[] }): ng.IPromise<RealTimeInventoryModel>;
         getCatalogPage(path: string): ng.IPromise<CatalogPageModel>;
         getCategoryTree(startCategoryId?: string, maxDepth?: number): ng.IPromise<CategoryCollectionModel>;
         getCategory(categoryId?: string): ng.IPromise<CategoryModel>;
@@ -205,6 +209,28 @@ module insite.catalog {
         protected getProductPriceFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
+        getProductAvailability(product: ProductDto, configuration?: string[]): ng.IPromise<ProductAvailabilityModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ method: "GET", url: `${this.productServiceUri}${product.id}/availability`, params: this.getProductAvailabilityParams(product, configuration) }),
+                (response: ng.IHttpPromiseCallbackArg<ProductAvailabilityModel>) => { this.getProductAvailabilityCompleted(response, product); },
+                this.getProductAvailabilityFailed
+            );
+        }
+
+        protected getProductAvailabilityParams(product: ProductDto, configuration?: string[]): any {
+            return {
+                configuration: configuration
+            };
+        }
+
+        protected getProductAvailabilityCompleted(response: ng.IHttpPromiseCallbackArg<ProductAvailabilityModel>, product: ProductDto): void {
+            product.availability = response.data.availability;
+        }
+
+        protected getProductAvailabilityFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
         // updates the pricing with real time (external) prices. only id, selectedUnitOfMeasure, and qtyOrdered are used
         getProductRealTimePrices(products: ProductDto[]): ng.IPromise<RealTimePricingModel> {
             if (!this.productSettings.canSeePrices) {
@@ -284,7 +310,7 @@ module insite.catalog {
         protected getProductRealTimePriceFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
-        getProductRealTimeInventory(products: ProductDto[]): ng.IPromise<RealTimeInventoryModel> {
+        getProductRealTimeInventory(products: ProductDto[], expand?: string[], configuration?: { [key: string]: string[] }): ng.IPromise<RealTimeInventoryModel> {
             if (!this.productSettings.showInventoryAvailability) {
                 const deferred = this.$q.defer();
                 deferred.resolve(null);
@@ -293,13 +319,13 @@ module insite.catalog {
 
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http.post(this.realTimeInventoryUri, this.getProductRealTimeInventoryParams(products)),
+                this.$http.post(this.realTimeInventoryUri + (expand ? `?expand=${expand.join()}` : ""), this.getProductRealTimeInventoryParams(products, configuration)),
                 (response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>) => { this.getProductRealTimeInventoryCompleted(response, products); },
                 this.getProductRealTimeInventoryFailed
             );
         }
 
-        protected getProductRealTimeInventoryParams(products: ProductDto[]): any {
+        protected getProductRealTimeInventoryParams(products: ProductDto[], configurations?: { [key: string]: string[] }): {} {
             var productIds = new Array<System.Guid>();
             products.forEach((product) => {
                 if (productIds.indexOf(product.id) === -1) {
@@ -307,7 +333,8 @@ module insite.catalog {
                 }
             });
             return {
-                productIds: productIds
+                productIds: productIds,
+                configurations: configurations
             };
         }
 

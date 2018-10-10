@@ -30,6 +30,7 @@ module insite.catalog {
         enableWarehousePickup: boolean;
         session: SessionModel;
         initResolvePageCalled: boolean;
+        configuration: string[] = [];
 
         static $inject = [
             "$scope",
@@ -236,6 +237,7 @@ module insite.catalog {
         }
 
         protected initConfigurationSelection(sections: ConfigSectionDto[]): void {
+            this.configurationSelection = [];
             angular.forEach(sections, (section: ConfigSectionDto) => {
                 const result = this.coreService.getObjectByPropertyValue(section.options, { selected: true });
                 this.configurationSelection.push(result);
@@ -448,21 +450,22 @@ module insite.catalog {
 
         configChanged(): void {
             this.configurationCompleted = this.isConfigurationCompleted();
+            this.configuration = [];
+            angular.forEach(this.configurationSelection, (selection) => {
+                this.configuration.push(selection ? selection.sectionOptionId.toString() : guidHelper.emptyGuid());
+            });
+
             this.getConfigurablePrice(this.product);
+            this.getConfigurableAvailability(this.product);
         }
 
         protected getConfigurablePrice(product: ProductDto): void {
-            const configuration: string[] = [];
-            angular.forEach(this.configurationSelection, (selection) => {
-                configuration.push(selection ? selection.sectionOptionId.toString() : guidHelper.emptyGuid());
-            });
-
             if (this.settings.realTimePricing) {
-                this.productService.getProductRealTimePrice(product, configuration).then(
+                this.productService.getProductRealTimePrice(product, this.configuration).then(
                     (realTimePrice: RealTimePricingModel) => this.getProductRealTimePricesCompleted(realTimePrice),
                     (error: any) => this.getProductRealTimePricesFailed(error));
             } else {
-                this.productService.getProductPrice(product, configuration).then(
+                this.productService.getProductPrice(product, this.configuration).then(
                     (productPrice: ProductPriceModel) => { this.getConfigurablePriceCompleted(productPrice); },
                     (error: any) => { this.getConfigurablePriceFailed(error); }
                 );
@@ -473,6 +476,27 @@ module insite.catalog {
         }
 
         protected getConfigurablePriceFailed(error: any): void {
+        }
+
+        protected getConfigurableAvailability(product: ProductDto): void {
+            if (this.settings.realTimeInventory) {
+                const configurations: { [key: string]: string[] } = {};
+                configurations[`${product.id}`] = this.configuration;
+                this.productService.getProductRealTimeInventory([product], null, configurations).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            } else {
+                this.productService.getProductAvailability(product, this.configuration).then(
+                    (productAvailability: ProductAvailabilityModel) => { this.getProductAvailabilityCompleted(productAvailability); },
+                    (error: any) => { this.getProductAvailabilityFailed(error); }
+                );
+            }
+        }
+
+        protected getProductAvailabilityCompleted(productAvailability: ProductAvailabilityModel): void {
+        }
+
+        protected getProductAvailabilityFailed(error: any): void {
         }
 
         protected getDefaultValue(unitOfMeasures: ProductUnitOfMeasureDto[]): string {

@@ -3139,6 +3139,28 @@ div.remove a.btn {
     font-weight: 600;
 }
 
+.availability-by-warehouse-link {
+    display: block;
+}
+
+.popup-availability-by-warehouse {
+    max-width: 400px;
+
+    table {
+        width: 100%;
+
+        td, th {
+            border: solid 1px #dddddd;
+            word-break: break-all;
+
+            &:last-child {
+                text-align: right;
+                min-width: 25%;
+            }
+        }
+    }
+}
+
 .item-actions {
     border: 1px solid #E0E0E0;
 }

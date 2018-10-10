@@ -328,7 +328,7 @@
 
     export class SelectPickUpLocationPopupService extends base.BasePopupService<any> implements ISelectPickUpLocationPopupService {
         protected getDirectiveHtml(): string {
-            return "<isc-select-pick-up-location-popup></isc-isc-select-pick-up-location-popup>";
+            return "<isc-select-pick-up-location-popup></isc-select-pick-up-location-popup>";
         }
     }
 

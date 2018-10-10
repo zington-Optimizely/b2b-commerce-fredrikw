@@ -1,5 +1,6 @@
 ﻿module insite.order {
     "use strict";
+    import OrderSettingsModel = Insite.Order.WebApi.V1.ApiModels.OrderSettingsModel;
 
     class RecentOrdersPaginationModel implements PaginationModel {
         currentPage: number;
@@ -23,11 +24,16 @@
 
     export class RecentOrdersController extends OrderDetailController {
         orderHistory: OrderCollectionModel;
+        orderSettings: OrderSettingsModel;
 
         init(): void {
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(session); },
                 (error: any) => { this.getSessionFailed(error); });
+
+            this.settingsService.getSettings().then(
+                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
+                (error: any) => { this.getSettingsFailed(error); });
         }
 
         protected getSessionCompleted(session: SessionModel): void {
@@ -37,6 +43,13 @@
         }
 
         protected getSessionFailed(error: any): void {
+        }
+
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.orderSettings = settingsCollection.orderSettings;
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         getRecentOrders(): void {

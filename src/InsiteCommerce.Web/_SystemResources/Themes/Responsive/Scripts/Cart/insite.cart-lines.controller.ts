@@ -6,15 +6,17 @@
     export class CartLinesController {
         openLineNoteId = "";
         isUpdateInProgress = false;
+        productSettings: ProductSettingsModel;
 
-        static $inject = ["$scope", "cartService", "productSubscriptionPopupService", "addToWishlistPopupService", "spinnerService"];
+        static $inject = ["$scope", "cartService", "productSubscriptionPopupService", "addToWishlistPopupService", "spinnerService", "settingsService"];
 
         constructor(
             protected $scope: ICartScope,
             protected cartService: ICartService,
             protected productSubscriptionPopupService: catalog.ProductSubscriptionPopupService,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
-            protected spinnerService: core.ISpinnerService) {
+            protected spinnerService: core.ISpinnerService,
+            protected settingsService: core.ISettingsService) {
             this.init();
         }
 
@@ -23,6 +25,17 @@
 
             this.$scope.$on("updateProductSubscription", (event: ng.IAngularEvent, productSubscription: ProductSubscriptionDto, product: ProductDto, cartLine: CartLineModel) =>
                 this.onUpdateProductSubscription(event, productSubscription, product, cartLine));
+
+            this.settingsService.getSettings().then(
+                (settings: core.SettingsCollection) => { this.getSettingsCompleted(settings); },
+                (error: any) => { this.getSettingsFailed(error); });
+        }
+
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.productSettings = settingsCollection.productSettings;
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         protected onCartLoaded(event: ng.IAngularEvent, cart: CartModel): void {

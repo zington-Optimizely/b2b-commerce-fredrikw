@@ -18,14 +18,16 @@
             [% endfor -%]
         [% endif -%]
     </div>
-    <div class="newslist-paging">
-        <isc-content-pager page="[[Model.Drop.Pagination.Page]]"
-                           page-size="[[Model.Drop.Pagination.PageSize]]"
-                           default-page-size="[[Model.Drop.Pagination.DefaultPageSize]]"
-                           total-item-count="[[Model.Drop.Pagination.TotalItemCount]]"
-                           number-of-pages="[[Model.Drop.Pagination.NumberOfPages]]"
-                           content-item-id="[[Model.Drop.NewsListId]]"></isc-content-pager>
-    </div>
+    [% if Model.Drop.Pagination.NumberOfPages > 1 -%]
+        <div class="newslist-paging">
+            <isc-content-pager page="[[Model.Drop.Pagination.Page]]"
+                               page-size="[[Model.Drop.Pagination.PageSize]]"
+                               default-page-size="[[Model.Drop.Pagination.DefaultPageSize]]"
+                               total-item-count="[[Model.Drop.Pagination.TotalItemCount]]"
+                               number-of-pages="[[Model.Drop.Pagination.NumberOfPages]]"
+                               content-item-id="[[Model.Drop.NewsListId]]"></isc-content-pager>
+        </div>
+    [% endif -%]
     <div class="news-list-footer">
         [% zone 'News Footer' %]
     </div>

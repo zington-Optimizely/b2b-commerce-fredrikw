@@ -150,6 +150,10 @@ jQuery.loading = (function () {
                     that.hideOverlay(false);
                 }
 
+                if (!$loading) {
+                    return;
+                }
+
                 $loading.fadeOut(function () {
                     $loading.remove();
                     $loading = null;
@@ -223,6 +227,10 @@ jQuery.frameSpinner = (function () {
                 frameIsLoading = false;
                 if (shouldHideOverlay) {
                     hideOverlay(false);
+                }
+
+                if (!$frameLoading) {
+                    return;
                 }
 
                 $frameLoading.fadeOut(function () {

@@ -7,7 +7,7 @@
     export class UploadToListPopupController extends common.BaseUploadController {
         list: WishListModel;
 
-        static $inject = ["$rootScope", "$scope", "productService", "wishListService", "coreService", "uploadToListPopupService"];
+        static $inject = ["$rootScope", "$scope", "productService", "wishListService", "coreService", "uploadToListPopupService", "settingsService"];
 
         constructor(
             protected $rootScope: ng.IRootScopeService,
@@ -15,8 +15,9 @@
             protected productService: catalog.IProductService,
             protected wishListService: IWishListService,
             protected coreService: core.ICoreService,
-            protected uploadToListPopupService: IUploadToListPopupService) {
-            super($scope, productService, coreService);
+            protected uploadToListPopupService: IUploadToListPopupService,
+            protected settingsService: core.ISettingsService) {
+            super($scope, productService, coreService, settingsService);
             this.uploadToListPopupService.registerDisplayFunction((list: WishListModel) => {
                 this.cleanupUploadData();
                 this.badFile = false;

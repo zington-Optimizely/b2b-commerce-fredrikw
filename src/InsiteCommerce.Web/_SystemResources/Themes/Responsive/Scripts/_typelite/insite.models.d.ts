@@ -838,6 +838,7 @@ declare module Insite.Catalog.Services.Dtos {
 	interface WarehouseDto extends Insite.Catalog.Services.Dtos.AvailabilityDto {
 		name: string;
 		description: string;
+		qty: number;
 		properties: {[key: string]:  string};
 	}
 	interface AttributeTypeDto {
@@ -992,6 +993,9 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 	interface CategoryCollectionModel extends Insite.Core.WebApi.BaseModel {
 		categories: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel[];
 	}
+    interface ProductAvailabilityModel extends Insite.Core.WebApi.BaseModel {
+        availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
+    }
 	interface ProductPriceModel extends Insite.Core.WebApi.BaseModel {
 		productId: System.Guid;
 		isOnSale: boolean;
@@ -1051,6 +1055,8 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		attributesTabSortOrder: string;
 		displayDocumentsInTabs: boolean;
 		documentsTabSortOrder: string;
+		displayInventoryPerWarehouse: boolean;
+	    displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
 	}
 	interface WarehouseModel extends Insite.Core.WebApi.BaseModel {
 		id: System.Guid;

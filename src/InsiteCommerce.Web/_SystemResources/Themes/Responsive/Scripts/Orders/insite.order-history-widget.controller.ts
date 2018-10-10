@@ -5,6 +5,7 @@
         orderHistory: OrderCollectionModel;
         canReorderItems: boolean;
         showOrders: boolean;
+        showWebOrderNumber: boolean;
         reorderedOrdersIds: string[] = [];
 
         static $inject = ["orderService", "settingsService", "cartService"];
@@ -25,6 +26,7 @@
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.canReorderItems = settingsCollection.orderSettings.canReorderItems;
             this.showOrders = settingsCollection.orderSettings.showOrders;
+            this.showWebOrderNumber = settingsCollection.orderSettings.showWebOrderNumber;
             if (this.showOrders) {
                 this.getOrders();
             }

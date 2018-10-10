@@ -237,8 +237,14 @@
         }
 
         protected showPriceSpinner(product: ProductDto): void {
-            // will get cleared when .pricing is replaced
-            product.pricing.requiresRealTimePrice = true;
+            if (product.pricing === null) {
+                product.pricing = {
+                    requiresRealTimePrice: true
+                } as ProductPriceDto;
+            }
+            else {
+                product.pricing.requiresRealTimePrice = true;
+            }
         }
 
         addAllToCart(redirectUrl: string): void {
@@ -289,7 +295,7 @@
         protected getDecimalSymbol(): string {
             let decimalSymbol = ".";
 
-            const productsWithPricing = this.$filter("filter")(this.products, { quoteRequired: false });
+            const productsWithPricing = this.$filter("filter")(this.products, { quoteRequired: false, pricing: { extendedUnitNetPriceDisplay: !null }});
             if (productsWithPricing.length) {
                 const productPriceDisplay = productsWithPricing[0].pricing.extendedUnitNetPriceDisplay;
                 decimalSymbol = productPriceDisplay[productPriceDisplay.length - 3];
@@ -301,7 +307,7 @@
         protected getDelimiterSymbol(): string {
             let delimiterSymbol = ".";
 
-            const productsWithPricing = this.$filter("filter")(this.products, { quoteRequired: false });
+            const productsWithPricing = this.$filter("filter")(this.products, { quoteRequired: false, pricing: { extendedUnitNetPriceDisplay: !null }});
             if (productsWithPricing.length) {
                 const productPriceDisplay = productsWithPricing[0].pricing.extendedUnitNetPriceDisplay;
                 let matches = productPriceDisplay.substring(1, productPriceDisplay.length - 3).match(/[\D]/g);

@@ -4,14 +4,32 @@
     import UploadError = common.UploadError;
 
     export class OrderUploadController extends BaseUploadController {
-        static $inject = ["$scope", "productService", "cartService", "coreService"];
+        settings: ProductSettingsModel;
+        
+        static $inject = ["$scope", "productService", "cartService", "coreService", "settingsService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected productService: catalog.IProductService,
             protected cartService: cart.ICartService,
-            protected coreService: core.ICoreService) {
-            super($scope, productService, coreService);
+            protected coreService: core.ICoreService,
+            protected settingsService: core.ISettingsService) {
+            super($scope, productService, coreService, settingsService);
+        }
+        
+        init() {
+            super.init();
+            
+            this.settingsService.getSettings().then(
+                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
+                (error: any) => { this.getSettingsFailed(error); });
+        }
+        
+        protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
+            this.settings = settingsCollection.productSettings;
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         uploadProducts(popupSelector?: string): void {
@@ -64,6 +82,29 @@
         protected hideUploadingIssuesPopup() {
             this.cleanupUploadData();
             this.coreService.closeModal("#orderUploadingIssuesPopup");
+        }
+        
+        protected batchGetCompleted(products: ProductDto[]): void {
+            if (this.uploadCancelled) {
+                return;
+            }
+
+            if (this.settings.realTimeInventory && !this.settings.allowBackOrder) {
+                this.productService.getProductRealTimeInventory(products.filter(o => o != null)).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, products),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            } else {
+                this.processProducts(products);
+            }
+
+            this.checkCompletion();
+        }
+        
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, products: ProductDto[]): void {
+            this.processProducts(products);
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
         }
     }
 

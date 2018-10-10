@@ -418,7 +418,7 @@ module insite.cart {
 
         protected tokenizeCardInfoIfNeeded(submitSuccessUri: string) {
             this.submitSuccessUri = submitSuccessUri;
-            if (this.useTokenExGateway && this.cart.showCreditCard && this.cart.paymentMethod.isCreditCard) {
+            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && this.cart.paymentMethod.isCreditCard) {
                 this.tokenExIframe.tokenize();
             } else {
                 this.submitCart();
@@ -568,31 +568,7 @@ module insite.cart {
         }
 
         protected getTokenExConfigCompleted(tokenExDto: TokenExDto) {
-            this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", {
-                origin: tokenExDto.origin,
-                timestamp: tokenExDto.timestamp,
-                tokenExID: tokenExDto.tokenExId,
-                tokenScheme: tokenExDto.tokenScheme,
-                authenticationKey: tokenExDto.authenticationKey,
-                styles: {
-                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
-                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
-                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
-                    cvv: {
-                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
-                        focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
-                        error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
-                    }
-                },
-                pci: true,
-                enableValidateOnBlur: true,
-                inputType: "text",
-                enablePrettyFormat: true,
-                cvv: true,
-                cvvContainerID: "tokenExSecurityCode",
-                cvvInputType: "Number",
-                debug: true
-            });
+            this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", this.getTokenExIframeConfig(tokenExDto));
 
             this.tokenExIframe.load();
 
@@ -643,6 +619,33 @@ module insite.cart {
         }
 
         protected getTokenExConfigFailed(error: any): void {
+        }
+
+        protected getTokenExIframeConfig(tokenExDto: TokenExDto): any {
+            return {
+                origin: tokenExDto.origin,
+                timestamp: tokenExDto.timestamp,
+                tokenExID: tokenExDto.tokenExId,
+                tokenScheme: tokenExDto.tokenScheme,
+                authenticationKey: tokenExDto.authenticationKey,
+                styles: {
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
+                    cvv: {
+                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                        focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                        error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
+                    }
+                },
+                pci: true,
+                enableValidateOnBlur: true,
+                inputType: "text",
+                enablePrettyFormat: true,
+                cvv: true,
+                cvvContainerID: "tokenExSecurityCode",
+                cvvInputType: "Number"
+            };
         }
 
         protected openDeliveryMethodPopup() {

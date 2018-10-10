@@ -22,8 +22,8 @@
                 <div ng-if="vm.product && !vm.settings.canSeePrices">
                     <div>[% siteMessage 'Pricing_SignInForPrice' %]</div>
                 </div>
-                <div class="availability">
-                    <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory"></isc-availability-message>
+                <div ng-if="!vm.product.isConfigured || vm.product.isFixedConfiguration || vm.configurationCompleted" class="availability">
+                    <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="vm.product.id" configuration="vm.configuration" unit-of-measure="vm.product.unitOfMeasure" page="ProductDetail"></isc-availability-message>
                 </div>
             </div>
             <div class="small-12 detail-image">

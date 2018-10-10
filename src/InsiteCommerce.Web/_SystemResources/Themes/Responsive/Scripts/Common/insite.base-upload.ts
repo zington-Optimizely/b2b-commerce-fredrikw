@@ -28,11 +28,13 @@
         itemsToSearch: any[] = null;
         uploadedItemsCount = 0;
 
-        static $inject = ["$scope", "productService", "coreService"];
+        static $inject = ["$scope", "productService", "coreService", "settingsService"];
 
-        constructor(protected $scope: ng.IScope,
-                    protected productService: catalog.IProductService,
-                    protected coreService: core.ICoreService) {
+        constructor(
+            protected $scope: ng.IScope,
+            protected productService: catalog.IProductService,
+            protected coreService: core.ICoreService,
+            protected settingsService: core.ISettingsService) {
             this.init();
         }
 
@@ -189,6 +191,15 @@
                 return;
             }
 
+            this.processProducts(products);
+
+            this.checkCompletion();
+        }
+
+        protected batchGetFailed(error: any): void {
+        }
+        
+        protected processProducts(products: ProductDto[]) {
             for (let i = 0; i < products.length; i++) {
                 const item = this.itemsToSearch[i];
                 const index = this.firstRowHeading ? i + 2 : i + 1;
@@ -214,11 +225,6 @@
                     }));
                 }
             }
-
-            this.checkCompletion();
-        }
-
-        protected batchGetFailed(error: any): void {
         }
 
         protected checkCompletion(): void {
@@ -237,16 +243,16 @@
         }
 
         protected validateProduct(product: ProductDto): UploadError {
-            if (product.qtyOnHand === 0 && product.trackInventory && !product.canBackOrder) {
-                return UploadError.OutOfStock;
-            }
-
             if (product.canConfigure || (product.isConfigured && !product.isFixedConfiguration)) {
                 return UploadError.ConfigurableProduct;
             }
 
             if (product.isStyleProductParent) {
                 return UploadError.StyledProduct;
+            }
+
+            if (product.qtyOnHand === 0 && product.trackInventory && !product.canBackOrder) {
+                return UploadError.OutOfStock;
             }
 
             if (!product.canAddToCart) {

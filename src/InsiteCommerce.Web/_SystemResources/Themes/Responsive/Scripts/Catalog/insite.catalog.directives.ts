@@ -29,10 +29,17 @@
             templateUrl: "/PartialViews/Catalog-ProductThumb"
         }))
         .directive("iscAvailabilityMessage", () => ({
+            controller: "ProductAvailabilityMessageController",
+            controllerAs: "vm",
             restrict: "E",
             scope: {
                 availability: "=",
-                failedToGetRealTimeInventory: "="
+                failedToGetRealTimeInventory: "=",
+                productSettings: "=",
+                productId: "=",
+                unitOfMeasure: "=",
+                configuration: "=",
+                page: "@"
             },
             templateUrl: "/PartialViews/Catalog-AvailabilityMessage"
         }))
