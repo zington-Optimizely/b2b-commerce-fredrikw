@@ -43,7 +43,7 @@
                                         [% endif %]
                                         [% if Model.DisplayPrice %]
                                         <div class="price" ng-if="!vm.failedToGetRealTimePrices">
-                                            <isc-product-price product="product" id-key="" ng-if="product.canShowPrice"></isc-product-price>
+                                            <isc-product-price product="product" id-key="{{vm.productCarouselType}}" ng-if="product.canShowPrice"></isc-product-price>
                                             <span class="um displayUnitOfMeasure" ng-if="vm.showUnitOfMeasureLabel(product)">
                                                 <span class="um-sep">/</span>
                                                 <span class="selected-uom">{{product.unitOfMeasureDescription || product.unitOfMeasureDisplay}}</span>

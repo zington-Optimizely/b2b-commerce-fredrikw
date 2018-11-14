@@ -6,7 +6,7 @@
         [% siteMessage 'DealerLocator_NoResultsMessage' %]
     </div>
     <div class="dealer-loc-map" id="dealer-loc-map">
-        <map name="dealersmap" zoom="11" style="height: 650px;"></map>
+        <map name="dealersmap" zoom="11" style="height: 650px;" styles="[{featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]},{featureType:'road',elementType:'labels.icon',stylers:[{visibility:'off'}]}]"></map>
     </div>
 
     <div class="dealer-deetz" ng-if="vm.dealer" ng-cloak>

@@ -5,7 +5,7 @@
 
     export class OrderUploadController extends BaseUploadController {
         settings: ProductSettingsModel;
-        
+
         static $inject = ["$scope", "productService", "cartService", "coreService", "settingsService"];
 
         constructor(
@@ -16,15 +16,15 @@
             protected settingsService: core.ISettingsService) {
             super($scope, productService, coreService, settingsService);
         }
-        
+
         init() {
             super.init();
-            
+
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
         }
-        
+
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.productSettings;
         }
@@ -83,7 +83,7 @@
             this.cleanupUploadData();
             this.coreService.closeModal("#orderUploadingIssuesPopup");
         }
-        
+
         protected batchGetCompleted(products: ProductDto[]): void {
             if (this.uploadCancelled) {
                 return;
@@ -99,7 +99,7 @@
 
             this.checkCompletion();
         }
-        
+
         protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, products: ProductDto[]): void {
             this.processProducts(products);
         }

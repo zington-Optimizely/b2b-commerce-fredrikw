@@ -28,7 +28,7 @@
     "~/SystemResources/Scripts/Libraries/angular-filter/0.5.7/angular-filter.js",
     "~/SystemResources/Scripts/Libraries/angular-utf8-base64/angular-utf8-base64.js",
     "~/SystemResources/Scripts/Libraries/angular-ui-router/0.3.1/angular-ui-router.min.js",
-    "~/SystemResources/Scripts/Libraries/ng-map/0.0.0/ng-map.min.js",
+    "~/SystemResources/Scripts/Libraries/ng-map/1.18.4/ng-map.min.js",
     "~/SystemResources/Scripts/Libraries/lodash/2.4.1/lodash.min.js",
     "~/SystemResources/Scripts/Libraries/flexslider/2.5.0/jquery.flexslider-min.js",
     "~/SystemResources/Scripts/Libraries/kendo-ui/v3.1111/js/kendo.core.min.js",

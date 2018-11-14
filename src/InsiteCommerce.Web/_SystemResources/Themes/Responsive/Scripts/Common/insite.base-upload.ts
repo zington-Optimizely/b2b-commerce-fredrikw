@@ -198,7 +198,7 @@
 
         protected batchGetFailed(error: any): void {
         }
-        
+
         protected processProducts(products: ProductDto[]) {
             for (let i = 0; i < products.length; i++) {
                 const item = this.itemsToSearch[i];

@@ -44,6 +44,8 @@
         }
 
         showPriceSavingForOrderHistory(orderLine: OrderLineModel): boolean {
+            if (orderLine === null) return false;
+
             this.unitNetPrice = orderLine.unitNetPrice;
             this.unitNetPriceDisplay = orderLine.unitNetPriceDisplay;
             this.unitListPrice = orderLine.unitListPrice;

@@ -5,6 +5,7 @@
         addToCart: (param: { productId: string }) => void;
         removeComparedProduct: (param: { productId: string }) => void;
         openWishListPopup: (param: { product: ProductDto }) => void;
+        itemsNumber: number = 0;
         maxTries: number;
         imagesLoaded: number;
         productsToCompare: ProductDto[];
@@ -29,7 +30,7 @@
         changeUnitOfMeasure(product: ProductDto): void {
             this.productService.changeUnitOfMeasure(product).then(
                 (productDto: ProductDto) => { this.changeUnitOfMeasureCompleted(productDto); },
-                (error: any) => {this.changeUnitOfMeasureFailed(error); });
+                (error: any) => { this.changeUnitOfMeasureFailed(error); });
         }
 
         protected changeUnitOfMeasureCompleted(product: ProductDto): void {
@@ -111,60 +112,43 @@
             }
         }
 
-        protected reloadCarousel(): void {
-            const num = $(".top-carousel .items .isc-productContainer").length;
-            const el = $(".top-carousel.isc-carousel");
-            let width = el.innerWidth();
-            let itemsNum: number;
-            let isItemsNumChanged = false;
-
-            if (width > 700) {
-                itemsNum = 4;
-                this.showCarouselArrows(num > 4);
-            } else if (width > 480) {
-                itemsNum = 3;
-                this.showCarouselArrows(num > 3);
-            } else {
-                itemsNum = 1;
-                this.showCarouselArrows(num > 1);
+        protected reloadCarousel(forceResize = false): void {
+            if (!this.carousel) {
+                return;
             }
 
-            if (this.carousel.vars.minItems !== itemsNum && this.carousel.vars.maxItems !== itemsNum) {
-                this.carousel.vars.minItems = itemsNum;
-                this.carousel.vars.maxItems = itemsNum;
-                this.carousel.doMath();
-                isItemsNumChanged = true;
-            }
+            const newItemsNumber = this.getItemsNumber();
+            const isItemsNumberChanged = this.itemsNumber !== newItemsNumber;
+            this.itemsNumber = newItemsNumber;
 
-            this.$timeout(() => {
-                if (isItemsNumChanged) {
-                    this.carousel.resize();
-                    if (num > itemsNum) {
-                        if (this.carousel.currentSlide > num - itemsNum) {
-                            this.carousel.flexAnimate(num - itemsNum);
-                        }
-                    } else {
-                        this.carousel.flexAnimate(0);
-                    }
-                }
+            this.showCarouselArrows(this.productsToCompare.length > newItemsNumber);
 
-                this.equalizeCarouselDimensions();
-            }, 0);
+            this.updateCarousel(this.carousel, isItemsNumberChanged || forceResize, true);
 
             if (this.bottomCarousels) {
-                this.bottomCarousels.forEach(x => {
-                    x.vars.minItems = itemsNum;
-                    x.vars.maxItems = itemsNum;
-                    x.vars.move = width > 480 ? 2 : 1;
-                    x.doMath();
-                    this.$timeout(() => {
-                        x.resize();
-                    }, 0);
+                this.bottomCarousels.forEach(bottomCarousel => {
+                    this.updateCarousel(bottomCarousel, isItemsNumberChanged || forceResize);
                 });
-
             }
+        }
 
-            this.equalizeCarouselDimensions();
+        protected updateCarousel(carousel: any, resize = false, equalize = false) {
+            carousel.vars.itemWidth = this.getItemSize();
+            carousel.vars.minItems = this.getItemsNumber();
+            carousel.vars.maxItems = this.getItemsNumber();
+            carousel.vars.move = this.getItemsMove();
+            carousel.doMath();
+
+            this.$timeout(() => {
+                if (resize) {
+                    carousel.resize();
+                    carousel.flexAnimate(0);
+                }
+
+                if (equalize) {
+                    this.equalizeCarouselDimensions();
+                }
+            }, 100);
         }
 
         protected createFlexSlider(recreate: boolean = false): void {
@@ -233,15 +217,7 @@
         }
 
         protected onWindowResize(): void {
-            $(".top-carousel.isc-carousel").flexslider("pause");
-            if ($(".pc-attr-carousel-container.isc-carousel")) {
-                $(".pc-attr-carousel-container.isc-carousel").flexslider("pause");
-            }
             this.reloadCarousel();
-            $(".top-carousel.isc-carousel").flexslider("play");
-            if ($(".pc-attr-carousel-container.isc-carousel")) {
-                $(".pc-attr-carousel-container.isc-carousel").flexslider("play");
-            }
         }
 
         protected onAttributeTypeClick(event: JQueryEventObject): void {
@@ -283,17 +259,18 @@
             // remove several nodes relating to this product
             $(`[data-productid=${productId}]`).closest("li").remove();
 
+            this.removeComparedProduct({ productId: productId });
+
             this.removeEmptyAttributes();
 
             this.createFlexSlider(true);
 
-            this.removeComparedProduct({ productId: productId });
+            this.reloadCarousel(true);
 
             // update the total number of items
-            const itemCount = $(".top-carousel.isc-carousel .items li").length;
-            $(".pc-controls .results-count .result-num").html(itemCount.toString());
+            $(".pc-controls .results-count .result-num").html(this.productsToCompare.length.toString());
 
-            if (itemCount === 0) {
+            if (this.productsToCompare.length === 0) {
                 this.$window.history.back();
             }
         }
@@ -342,7 +319,7 @@
                 $(".left-nav-2").attr("style", navHeight);
 
                 // clear the height overrides
-                $(".carousel-item-equalize").each(function() {
+                $(".carousel-item-equalize").each(function () {
                     $(this).find(".item-thumb").height("auto");
                     $(this).find(".item-name").height("auto");
                     $(this).find(".product-info").height("auto");
@@ -350,7 +327,7 @@
                 });
 
                 // find the max heights
-                $(".carousel-item-equalize").each(function() {
+                $(".carousel-item-equalize").each(function () {
                     const thumbHeight = $(this).find(".item-thumb").height();
                     maxThumbHeight = maxThumbHeight > thumbHeight ? maxThumbHeight : thumbHeight;
                     const nameHeight = $(this).find(".item-name").height();
@@ -363,7 +340,7 @@
 
                 // set all to max heights
                 if (maxThumbHeight > 0) {
-                    $(".carousel-item-equalize").each(function() {
+                    $(".carousel-item-equalize").each(function () {
                         $(this).find(".item-thumb").height(maxThumbHeight);
                         $(this).find(".item-name").height(maxNameHeight);
                         $(this).find(".product-info").height(maxProductInfoHeight);

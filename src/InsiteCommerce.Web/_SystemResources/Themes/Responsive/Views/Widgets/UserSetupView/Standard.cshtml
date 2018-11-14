@@ -74,8 +74,7 @@
                 </div>
                 <div class="usersetup-form-user-section-heading">[% translate 'Settings' %]</div>
                 <div class="usersetup-form-userrole">
-                    <label>[% translate 'Assign User Role' %]</label><a class="btn-tip" ng-click="vm.displayModal('tipRole')">?</a>
-
+                    <label>[% translate 'Assign User Role' %]</label><a class="btn-tip" ng-click="vm.displayModal('tipRole')"><i class="icon-help"></i></a>
                     <div id="tipRole" class="ma-user-setup reveal-modal popup-role-tip" data-reveal>
                         <div class="modal-wrap">
                             <div class="tip-role">
@@ -90,7 +89,7 @@
                 </div>
 
                 <div class="usersetup-form-approver" ng-if="vm.user.availableRoles.length > 1">
-                    <label>[% translate 'Assign Approver' %]</label><a class="btn-tip" ng-click="vm.displayModal('tipApprover')">?</a>
+                    <label>[% translate 'Assign Approver' %]</label><a class="btn-tip" ng-click="vm.displayModal('tipApprover')"><i class="icon-help"></i></a>
                     <div id="tipApprover" class="ma-user-setup reveal-modal popup-role-tip" data-reveal>
                         <div class="modal-wrap">
                             <div class="tip-approval">

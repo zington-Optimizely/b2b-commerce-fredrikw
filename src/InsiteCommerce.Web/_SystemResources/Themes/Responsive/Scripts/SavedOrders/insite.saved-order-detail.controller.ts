@@ -48,8 +48,8 @@
             this.cart = cart;
             this.cart.showTaxAndShipping = false;
             this.canAddAllToList = this.cart.cartLines.every(l => l.canAddToWishlist);
-            this.canAddToCart = this.cart.cartLines.some(l => l.canAddToCart);
-            this.canAddAllToCart = this.cart.cartLines.every(l => l.canAddToCart);
+            this.canAddToCart = this.cart.cartLines.some(this.canAddCartLineToCart);
+            this.canAddAllToCart = this.cart.cartLines.every(this.canAddCartLineToCart);
             this.getRealTimeInventory();
         }
 
@@ -92,7 +92,7 @@
         }
 
         placeSavedOrder(cartUri: string): void {
-            const availableLines = this.cart.cartLines.filter(l => l.canAddToCart);
+            const availableLines = this.cart.cartLines.filter(this.canAddCartLineToCart);
             if (availableLines.length <= 0) {
                 return;
             }
@@ -141,6 +141,10 @@
         }
 
         protected deleteSavedOrderFailed(error: any): void {
+        }
+
+        canAddCartLineToCart(cartLine: CartLineModel): boolean {
+            return cartLine.canAddToCart && ((cartLine.availability as any).messageType !== 2 || cartLine.canBackOrder);
         }
     }
 

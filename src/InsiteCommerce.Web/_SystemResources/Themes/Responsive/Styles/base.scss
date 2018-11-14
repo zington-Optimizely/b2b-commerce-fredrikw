@@ -3108,9 +3108,6 @@ div.remove a.btn {
     text-align: right;
 }
 
-.item-block .item-opt .p-opt a.t-dropdown {
-}
-
 .item-block .item-opt .f-dropdown.open {
     position: relative !important;
     top: 0 !important;
@@ -5437,6 +5434,18 @@ div.quantity-pricing-popup {
 
 /* Tooltips */
 
+a.t-dropdown {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: #222 !important;
+    text-decoration: none !important;
+
+    &:hover, &:focus {
+        color: dodgerblue !important;
+    }
+}
+
 .f-dropdown.content {
     -webkit-box-shadow: 0 3px 5px 0 rgba(25,25,25,0.2);
     box-shadow: 0 3px 5px 0 rgba(25,25,25,0.2);
@@ -5503,34 +5512,7 @@ div.quantity-pricing-popup {
 }
 
 .quote-required .quote-tip a.t-dropdown {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 21px;
-    text-align: center;
-    border-radius: 100px;
-    border: 1px solid #ccc;
-    text-decoration: none;
-    font-weight: 600;
-    position: relative;
-    z-index: 999;
-}
-
-a.t-dropdown {
-    position: relative;
-    z-index: 999;
-}
-
-.quote-required .quote-tip a.t-dropdown:hover,
-.quote-required .quote-tip a.t-dropdown:focus {
-    color: inherit;
-    border-color: #999;
-}
-
-[role="cross-sells"] .quote-required .quote-tip a.t-dropdown {
-    height: 20px;
-    width: 20px;
-    line-height: 21px;
+    vertical-align: middle;
 }
 
 .quote-required .f-dropdown.content {
@@ -5552,7 +5534,7 @@ a.t-dropdown {
     margin-left: -118px;
 }
 
-/* :before - :after below should only apply to the product cross 
+/* :before - :after below should only apply to the product cross
     sells, on the front page (or other pages if applicable)  */
 .widget-webcrosssells .quote-required .f-dropdown.open:before {
     left: 121px;

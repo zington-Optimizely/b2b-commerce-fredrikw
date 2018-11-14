@@ -180,6 +180,7 @@ module insite.catalog {
         }
 
         removeComparedProduct(productId: string): void {
+            lodash.remove(this.productsToCompare, p => p.id === productId);
             this.compareProductsService.removeProduct(productId);
         }
 

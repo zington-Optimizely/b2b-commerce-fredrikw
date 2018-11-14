@@ -285,7 +285,7 @@ module insite.cart {
         addWishListToCart(wishListId: string, showAddToCartPopup?: boolean): ng.IPromise<CartLineCollectionModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "POST", url: `${this.cartLinesUri}/wishlist/${wishListId}`, bypassErrorInterceptor: true }),
+                this.$http({ method: "POST", url: `${this.currentCartLinesUri}/wishlist/${wishListId}`, bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<CartLineCollectionModel>) => { this.addWishListToCartCompleted(response, showAddToCartPopup); },
                 this.addWishListToCartFailed);
         }

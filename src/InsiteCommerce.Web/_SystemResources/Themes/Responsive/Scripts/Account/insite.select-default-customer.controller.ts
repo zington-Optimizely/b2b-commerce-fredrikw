@@ -19,10 +19,6 @@
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
 
-            this.customerService.getBillTos("shiptos,state").then(
-                (billToCollection: BillToCollectionModel) => { this.getDefaultBillTosCompleted(billToCollection); },
-                (error: any) => { this.getDefaultBillTosFailed(error); });
-
             this.$scope.$on("PickupWarehouseSelected", (event: ng.IAngularEvent, data: WarehouseModel) => {
                 this.pickUpWarehouse = data;
             });
@@ -33,6 +29,10 @@
             if (this.enableWarehousePickup && this.fulfillmentMethod === this.pickupFulfillmentMethod && this.pickUpWarehouse) {
                 this.useDefaultCustomer = true;
             }
+
+            this.customerService.getBillTos("shiptos,state").then(
+                (billToCollection: BillToCollectionModel) => { this.getDefaultBillTosCompleted(billToCollection); },
+                (error: any) => { this.getDefaultBillTosFailed(error); });
         }
 
         protected getSettingsFailed(error: any): void {
@@ -47,7 +47,7 @@
                     return !shipTo.isNew;
                 });
 
-                if (existsShipTos.length === 1) {
+                if (existsShipTos.length === 1 && !this.enableWarehousePickup) {
                     this.showSelectDefaultCustomer = false;
                 }
 

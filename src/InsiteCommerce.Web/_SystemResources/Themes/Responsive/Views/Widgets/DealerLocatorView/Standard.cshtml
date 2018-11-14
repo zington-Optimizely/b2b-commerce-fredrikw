@@ -25,7 +25,7 @@
         </span>
     </div>
     <div class="dealer-loc-map" id="dealer-loc-map">
-        <map name="dealersmap" zoom="11" style="height: 650px;"></map>
+        <map name="dealersmap" zoom="11" style="height: 650px;" styles="[{featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]},{featureType:'road',elementType:'labels.icon',stylers:[{visibility:'off'}]}]"></map>
     </div>
 
     <div class="dealer-loc-results" ng-if="vm.dealers.length > 0">
@@ -95,7 +95,7 @@
             <div class="dealer-addy">{{dealer.address1}}<br />{{dealer.address2}}<br ng-if="dealer.address2" />{{dealer.city}}, {{dealer.state}} {{dealer.postalCode}}<br />{{dealer.phone}}</div>
             <div class="dealer-hours-map" ng-if="dealer.htmlContent">
                 <h4>[% translate 'Hours' %]</h4>
-                <div ng-bind-html="dealer.htmlContent"></div>
+                <div ng-bind-html="dealer.htmlContent | trusted"></div>
             </div>
             <a ng-href="{{'http://maps.google.com/maps?daddr=' + dealer.address1 + ' ' + dealer.address2 + ', ' + dealer.city + ', ' + dealer.state + ' ' + dealer.postalCode}}" class='dealer-directions'>[% translate 'Directions' %]</a>
             <span ng-if="dealer.webSiteUrl"><a ng-href="{{dealer.webSiteUrl}}" class='dealer-www' target='_blank'>[% translate 'Website' %]</a></span>
