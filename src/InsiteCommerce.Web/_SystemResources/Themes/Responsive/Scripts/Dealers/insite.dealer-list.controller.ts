@@ -43,6 +43,9 @@
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
             });
+            this.$scope.$on("$locationChangeStart", () => {
+                this.removeAllMarkers();
+            });
 
             Foundation.libs.dropdown.settings.align = "top";
             Foundation.libs.dropdown.settings.is_hover = true;

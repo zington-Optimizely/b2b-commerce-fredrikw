@@ -9,6 +9,7 @@
 
     export class DealerController {
         dealer: DealerModel;
+        dealerMarker: any;
         notFound: boolean;
 
         static $inject = ["$scope", "dealerService", "$sce", "queryString", "$templateCache"];
@@ -26,6 +27,11 @@
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
             });
+            this.$scope.$on("$locationChangeStart", () => {
+                if (this.dealerMarker) {
+                    this.dealerMarker.setMap(null);
+                }
+            });
         }
 
         protected onMapInitialized(): void {
@@ -40,7 +46,7 @@
             this.dealer.htmlContent = this.$sce.trustAsHtml(this.dealer.htmlContent);
 
             const latlong = new google.maps.LatLng(this.dealer.latitude, this.dealer.longitude);
-            const dealerMarker = new RichMarker({ position: latlong, map: this.$scope.map, flat: true, draggable: false, content: "<span class=\"home-marker\"></span>" });
+            this.dealerMarker = new RichMarker({ position: latlong, map: this.$scope.map, flat: true, draggable: false, content: "<span class=\"home-marker\"></span>" });
             this.$scope.map.setCenter(latlong);
         }
 
