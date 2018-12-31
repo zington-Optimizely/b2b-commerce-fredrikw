@@ -13,6 +13,7 @@
         paginationStorageKey = "DefaultPagination-WishList";
 
         sort: string = "ModifiedOn DESC";
+        filter: string;
         popupWishListModel: WishListModel;
 
         static $inject = ["$scope", "coreService", "wishListService", "cartService", "settingsService", "spinnerService", "$timeout", "sessionService", "paginationService"];
@@ -96,13 +97,17 @@
             }
         }
 
-        getWishLists(storeHistory: boolean = true): void {
+        getWishLists(storeHistory: boolean = true, filterChanged: boolean = false): void {
             this.spinnerService.show();
             if (storeHistory) {
                 this.updateHistory();
             }
 
-            this.wishListService.getWishLists(this.sort, "top3products", null, this.pagination).then(
+            if (filterChanged) {
+                this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
+            }
+
+            this.wishListService.getWishLists(this.sort, "top3products", null, this.pagination, this.filter).then(
                 (wishListCollection: WishListCollectionModel) => { this.getWishListsCompleted(wishListCollection); },
                 (error: any) => { this.getWishListsFailed(error); });
         }

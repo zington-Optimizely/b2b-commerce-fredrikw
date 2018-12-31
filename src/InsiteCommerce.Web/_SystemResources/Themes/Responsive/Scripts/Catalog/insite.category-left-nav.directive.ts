@@ -13,7 +13,11 @@
                 filterCategory: "=",
                 priceFilterMinimums: "=",
                 searchWithinTerms: "=",
-                category: "="
+                category: "=",
+                brandIds: "=",
+                productLineIds: "=",
+                showBrands: "=",
+                showProductLines: "="
             },
             templateUrl: "productList_categoryLeftNav",
             controller: "CategoryLeftNavController",

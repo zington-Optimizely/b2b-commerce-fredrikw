@@ -29,6 +29,7 @@
         isMapInitialized: boolean;
         updateSessionOnSelect: boolean;
         onSelectWarehouse: Function;
+        showSelectedWarehouseMarker: boolean;
 
         static $inject = ["coreService", "$scope", "$rootScope", "$q", "warehouseService", "dealerService", "$compile", "selectPickUpLocationPopupService"];
 
@@ -152,11 +153,11 @@
         protected getWarehouseCollection(coords: google.maps.LatLng): void {
             const filter = this.getFilter(coords);
             this.warehouseService.getWarehouses(filter).then(
-                (warehouseCollection: WarehouseCollectionModel) => { this.getWarehouseCollectionCompleted(warehouseCollection); },
+                (warehouseCollection: WarehouseCollectionModel) => { this.getWarehouseCollectionCompleted(warehouseCollection, filter); },
                 (error: any) => { this.getWarehouseCollectionFailed(error); });
         }
 
-        protected getWarehouseCollectionCompleted(warehouseCollection: WarehouseCollectionModel): void {
+        protected getWarehouseCollectionCompleted(warehouseCollection: WarehouseCollectionModel, filter: IWarehouseFilter): void {
             this.warehouses = warehouseCollection.warehouses;
             this.pagination = warehouseCollection.pagination;
             this.distanceUnitOfMeasure = warehouseCollection.distanceUnitOfMeasure === "Metric" ? 1 : 0;
@@ -164,6 +165,10 @@
             if (!this.center || this.center.lat() === 0 && this.center.lng() === 0) {
                 this.center = new google.maps.LatLng(warehouseCollection.defaultLatitude, warehouseCollection.defaultLongitude);
             }
+
+            const distanceToSelectedWarehouse = this.getDistance(filter.latitude, filter.longitude, this.selectedWarehouse.latitude, this.selectedWarehouse.longitude);
+            this.selectedWarehouse.distance = distanceToSelectedWarehouse;
+            this.showSelectedWarehouseMarker = distanceToSelectedWarehouse < warehouseCollection.defaultRadius;
 
             this.setMap();
         }
@@ -188,10 +193,11 @@
 
             const filter: IWarehouseFilter = {
                 search: this.searchLocation,
-                latitude: coords.lat(),
-                longitude: coords.lng(),
+                latitude: coords.lat() ? coords.lat() : this.selectedWarehouse.latitude,
+                longitude: coords.lng() ? coords.lng() : this.selectedWarehouse.longitude,
                 onlyPickupWarehouses: true,
-                sort: "Distance"
+                sort: "Distance",
+                excludeCurrentPickupWarehouse: true
             };
 
             if (this.pagination) {
@@ -242,11 +248,19 @@
 
         protected setWarehousesMarkers(): void {
             this.warehouses.forEach((warehouse, i) => {
-                const marker = this.createMarker(warehouse.latitude, warehouse.longitude, `<span class='loc-marker'><span>${this.getWarehouseNumber(i)}</span></span>`);
+                this.setWarehouseMarker(warehouse, this.getWarehouseNumber(i).toString());
+            });
 
-                google.maps.event.addListener(marker, "click", () => {
-                    this.onWarehouseMarkerClick(marker, warehouse);
-                });
+            if (this.showSelectedWarehouseMarker) {
+                this.setWarehouseMarker(this.selectedWarehouse, "0");
+            }
+        }
+
+        protected setWarehouseMarker(warehouse: WarehouseModel, markerText: string): void {
+            const marker = this.createMarker(warehouse.latitude, warehouse.longitude, `<span class='loc-marker ${this.selectedWarehouse && this.selectedWarehouse.id === warehouse.id ? "selected" : ""}'><span>${markerText}</span></span>`);
+
+            google.maps.event.addListener(marker, "click", () => {
+                this.onWarehouseMarkerClick(marker, warehouse);
             });
         }
 
@@ -307,6 +321,21 @@
                 this.$scope.map.setCenter(bounds.getCenter());
                 this.$scope.map.fitBounds(bounds);
             }
+        }
+
+        protected getDistance(latitude1: number, longitude1: number, latitude2: number, longitude2: number) {
+            let distance = Math.cos(this.getRadians(latitude1)) * Math.cos(this.getRadians(latitude2)) * Math.cos(this.getRadians(longitude2) - this.getRadians(longitude1)) + Math.sin(this.getRadians(latitude1)) * Math.sin(this.getRadians(latitude2));
+            if (distance > 1) {
+                distance = 1;
+            }
+
+            distance = 3960 * Math.acos(distance);
+
+            return distance;
+        }
+
+        private getRadians(degrees: number) {
+            return degrees * (Math.PI / 180);
         }
 
         onOpenHoursClick($event): void {

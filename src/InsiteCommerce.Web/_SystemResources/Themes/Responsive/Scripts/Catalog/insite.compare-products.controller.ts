@@ -50,7 +50,7 @@ module insite.catalog {
 
         protected getProducts(): void {
             const productsToCompare = this.compareProductsService.getProductIds();
-            const expand = ["styledproducts", "attributes", "pricing"];
+            const expand = ["styledproducts", "attributes", "pricing", "brand"];
 
             const parameter: IProductCollectionParameters = { productIds: productsToCompare };
             this.productService.getProducts(parameter, expand).then(

@@ -80,6 +80,7 @@ module insite.cart {
 
         protected onSessionUpdated(session: SessionModel): void {
             this.fulfillmentMethod = session.fulfillmentMethod;
+            this.pickUpWarehouse = session.pickUpWarehouse;
             this.getCart();
         }
 

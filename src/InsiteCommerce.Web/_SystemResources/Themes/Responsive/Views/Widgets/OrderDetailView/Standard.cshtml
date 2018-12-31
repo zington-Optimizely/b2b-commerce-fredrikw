@@ -206,6 +206,7 @@
                         </div>
                         <div class="small-10 columns item-details">
                             <div class="small-12 medium-6 large-4 columns">
+                                <isc-product-brand product="line"></isc-product-brand>
                                 <div class="item-name">
                                     <a ng-if="line.productUri && line.isActiveProduct" ng-href="{{ line.productUri }}">{{ line.shortDescription || line.description }}</a>
                                     <span ng-if="!line.productUri || !line.isActiveProduct">{{ line.shortDescription || line.description }}</span>

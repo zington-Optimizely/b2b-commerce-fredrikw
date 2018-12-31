@@ -1,5 +1,6 @@
 ﻿module insite.catalog {
     import ProductCollectionModel = Insite.Catalog.WebApi.V1.ApiModels.ProductCollectionModel;
+    import BrandModel = Insite.Brands.WebApi.V1.ApiModels.BrandModel;
     "use strict";
 
     export interface IProductCarouselAttributes {
@@ -12,6 +13,7 @@
         productCarouselId: string;
         selectedCategoryIds: string;
         isCatalogPage: boolean;
+        isBrandDetailPage: boolean;
     }
 
     export class ProductCarouselController {
@@ -31,8 +33,22 @@
         productCarouselElement: any;
         selectedCategoryIds = [];
         isCatalogPage: boolean;
+        isBrandDetailPage: boolean;
+        brandIds: System.Guid[];
 
-        static $inject = ["cartService", "productService", "$timeout", "addToWishlistPopupService", "settingsService", "$scope", "$attrs", "queryString", "$stateParams"];
+        static $inject = [
+            "cartService",
+            "productService",
+            "$timeout",
+            "addToWishlistPopupService",
+            "settingsService",
+            "$scope",
+            "$attrs",
+            "queryString",
+            "$stateParams",
+            "brandService",
+            "$window"
+        ];
 
         constructor(
             protected cartService: cart.ICartService,
@@ -43,7 +59,9 @@
             protected $scope: ng.IScope,
             protected $attrs: IProductCarouselAttributes,
             protected queryString: common.IQueryStringService,
-            protected $stateParams: IProductListStateParams) {
+            protected $stateParams: IProductListStateParams,
+            protected brandService: brands.IBrandService,
+            protected $window: ng.IWindowService) {
             this.init();
         }
 
@@ -59,6 +77,7 @@
 
             const isSearchPage = this.$stateParams.criteria || this.queryString.get("criteria");
             this.isCatalogPage = this.$attrs.isCatalogPage.toString().toLowerCase() === "true" && !isSearchPage;
+            this.isBrandDetailPage = this.$attrs.isBrandDetailPage.toString().toLowerCase() === "true";
 
             this.enableDynamicRecommendations = this.$attrs.enableDynamicRecommendations.toString().toLowerCase() === "true";
             this.productCarouselElement = angular.element("[product-carousel-id='" + this.$attrs.productCarouselId + "']");
@@ -96,9 +115,14 @@
                 }
             });
 
-            this.$scope.$on("categoryLoaded", (event: ng.IAngularEvent, categoryId: System.Guid) => {
+            this.$scope.$on("catalogPageLoaded", (event: ng.IAngularEvent, catalogPage: CatalogPageModel) => {
                 if (this.isCatalogPage) {
-                    this.selectedCategoryIds = [categoryId];
+                    if (catalogPage.category) {
+                        this.selectedCategoryIds = [catalogPage.category.id];
+                    }
+                    if (catalogPage.brandId) {
+                        this.brandIds = [catalogPage.brandId];
+                    }
                     this.getCrossSells();
                 }
             });
@@ -123,7 +147,7 @@
                 if (this.isProductDetailPage && !this.isProductLoaded()) {
                     return;
                 }
-                this.productService.getProducts({}, ["pricing", "recentlyviewed"]).then(
+                this.productService.getProducts({}, ["pricing", "recentlyviewed", "brand"]).then(
                     (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
                     (error: any) => { this.getProductsFailed(error); });
             }
@@ -166,11 +190,27 @@
                     return;
                 }
 
-                if (this.isCatalogPage && this.selectedCategoryIds.length === 0) {
+                if (this.isCatalogPage && this.selectedCategoryIds.length === 0 && !this.brandIds) {
                     return;
                 }
 
-                this.productService.getProducts({ topSellersCategoryIds: this.selectedCategoryIds, topSellersMaxResults: this.numberOfProductsToDisplay }, null, ["topsellers"]).then(
+                if (this.isBrandDetailPage && !this.brandIds) {
+                    this.brandService.getBrandByPath(this.$window.location.pathname).then(
+                        (brand: BrandModel) => { this.getBrandByPathCompleted(brand); },
+                        (error: any) => { this.getBrandByPathFailed(error); });
+                    return;
+                }
+
+                this.productService.getProducts(<IProductCollectionParameters>
+                    {
+                        topSellersCategoryIds: this.selectedCategoryIds,
+                        topSellersMaxResults: this.numberOfProductsToDisplay,
+                        brandIds: this.brandIds,
+                        makeBrandUrls: this.brandIds != null
+                    },
+                    ["brand"],
+                    ["topsellers"])
+                    .then(
                     (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
                     (error: any) => { this.getProductsFailed(error); });
             }
@@ -204,6 +244,14 @@
         }
 
         protected getCartFailed(error: any): void {
+        }
+
+        protected getBrandByPathCompleted(brand: BrandModel): void {
+            this.brandIds = [brand.id];
+            this.getCrossSells();
+        }
+
+        protected getBrandByPathFailed(error: any): void {
         }
 
         protected onCarouselProductsLoaded(products: ProductDto[]): void {

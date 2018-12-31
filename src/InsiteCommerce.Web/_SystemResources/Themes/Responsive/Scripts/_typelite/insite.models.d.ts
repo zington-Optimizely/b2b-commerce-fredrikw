@@ -136,6 +136,214 @@ declare module System {
 	interface Guid {
 	}
 }
+declare module Insite.Catalog.WebApi.V1.ApiModels {
+	interface WarehouseModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		address1: string;
+		address2: string;
+		city: string;
+		contactName: string;
+		countryId: System.Guid;
+		deactivateOn: Date;
+		description: string;
+		phone: string;
+		postalCode: string;
+		shipSite: string;
+		state: string;
+		isDefault: boolean;
+		alternateWarehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
+		latitude: number;
+		longitude: number;
+		hours: string;
+		distance: number;
+		allowPickup: boolean;
+		pickupShipViaId: System.Guid;
+	}
+	interface AutocompleteModel extends Insite.Core.WebApi.BaseModel {
+		categories: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel[];
+		products: Insite.Catalog.WebApi.V1.ApiModels.ProductAutocompleteItemModel[];
+		content: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel[];
+		brands: Insite.Catalog.WebApi.V1.ApiModels.BrandAutocompleteModel[];
+	}
+	interface AutocompleteItemModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		image: string;
+		subtitle: string;
+		title: string;
+		url: string;
+	}
+	interface ProductAutocompleteItemModel extends Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel {
+		manufacturerItemNumber: string;
+		name: string;
+		isNameCustomerOverride: boolean;
+		erpNumber: string;
+		brandName: string;
+		brandDetailPagePath: string;
+	}
+	interface BrandAutocompleteModel extends Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel {
+		productLineName: string;
+		productLineId: System.Guid;
+	}
+	interface ProductModel extends Insite.Core.WebApi.BaseModel {
+		product: Insite.Catalog.Services.Dtos.ProductDto;
+	}
+	interface ProductCollectionModel extends Insite.Core.WebApi.BaseModel {
+		pagination: Insite.Core.WebApi.PaginationModel;
+		products: Insite.Catalog.Services.Dtos.ProductDto[];
+		categoryFacets: Insite.Core.Plugins.Search.Dtos.CategoryFacetDto[];
+		attributeTypeFacets: Insite.Core.Plugins.Search.Dtos.AttributeTypeFacetDto[];
+		brandFacets: Insite.Core.Plugins.Search.Dtos.GenericFacetDto[];
+		productLineFacets: Insite.Core.Plugins.Search.Dtos.GenericFacetDto[];
+		didYouMeanSuggestions: Insite.Core.Plugins.Search.Dtos.SuggestionDto[];
+		priceRange: Insite.Core.Plugins.Search.Dtos.PriceRangeDto;
+		exactMatch: boolean;
+		notAllProductsFound: boolean;
+		notAllProductsAllowed: boolean;
+		originalQuery: string;
+		correctedQuery: string;
+		searchTermRedirectUrl: string;
+	}
+	interface AutocompleteProductModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		erpNumber: string;
+		shortDescription: string;
+		productDetailUrl: string;
+		smallImagePath: string;
+	}
+	interface AutocompleteProductCollectionModel extends Insite.Core.WebApi.BaseModel {
+		products: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteProductModel[];
+	}
+	interface CrossSellCollectionModel extends Insite.Core.WebApi.BaseModel {
+		products: Insite.Catalog.Services.Dtos.ProductDto[];
+	}
+	interface CatalogPageModel extends Insite.Core.WebApi.BaseModel {
+		category: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel;
+		brandId: System.Guid;
+		productLineId: System.Guid;
+		productId: System.Guid;
+		productName: string;
+		title: string;
+		metaDescription: string;
+		metaKeywords: string;
+		canonicalPath: string;
+		isReplacementProduct: boolean;
+		breadCrumbs: Insite.Catalog.WebApi.V1.ApiModels.BreadCrumbModel[];
+		obsoletePath: boolean;
+		needRedirect: boolean;
+		redirectUrl: string;
+		primaryImagePath: string;
+		openGraphTitle: string;
+		openGraphImage: string;
+		openGraphUrl: string;
+	}
+	interface CategoryModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		shortDescription: string;
+		urlSegment: string;
+		smallImagePath: string;
+		largeImagePath: string;
+		imageAltText: string;
+		activateOn: Date;
+		deactivateOn: Date;
+		metaKeywords: string;
+		metaDescription: string;
+		htmlContent: string;
+		sortOrder: number;
+		isFeatured: boolean;
+		isDynamic: boolean;
+		subCategories: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel[];
+		path: string;
+		mobileBannerImageUrl: string;
+		mobilePrimaryText: string;
+		mobileSecondaryText: string;
+		mobileTextJustification: string;
+		mobileTextColor: string;
+	}
+	interface BreadCrumbModel {
+		text: string;
+		url: string;
+		categoryId: string;
+	}
+	interface CategoryCollectionModel extends Insite.Core.WebApi.BaseModel {
+		categories: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel[];
+	}
+	interface ProductAvailabilityModel extends Insite.Core.WebApi.BaseModel {
+		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
+	}
+	interface ProductPriceModel extends Insite.Core.WebApi.BaseModel {
+		productId: System.Guid;
+		isOnSale: boolean;
+		requiresRealTimePrice: boolean;
+		quoteRequired: boolean;
+		additionalResults: {[key: string]:  string};
+		unitCost: number;
+		unitCostDisplay: string;
+		unitListPrice: number;
+		unitListPriceDisplay: string;
+		extendedUnitListPrice: number;
+		extendedUnitListPriceDisplay: string;
+		unitRegularPrice: number;
+		unitRegularPriceDisplay: string;
+		extendedUnitRegularPrice: number;
+		extendedUnitRegularPriceDisplay: string;
+		unitNetPrice: number;
+		unitNetPriceDisplay: string;
+		extendedUnitNetPrice: number;
+		extendedUnitNetPriceDisplay: string;
+		unitOfMeasure: string;
+		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
+		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
+		regularPrice: number;
+		regularPriceDisplay: string;
+		extendedRegularPrice: number;
+		extendedRegularPriceDisplay: string;
+		actualPrice: number;
+		actualPriceDisplay: string;
+		extendedActualPrice: number;
+		extendedActualPriceDisplay: string;
+		regularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
+		actualBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
+	}
+	interface ProductSettingsModel extends Insite.Core.WebApi.BaseModel {
+		allowBackOrder: boolean;
+		allowBackOrderForDelivery: boolean;
+		allowBackOrderForPickup: boolean;
+		showInventoryAvailability: boolean;
+		showAddToCartConfirmationDialog: boolean;
+		enableProductComparisons: boolean;
+		alternateUnitsOfMeasure: boolean;
+		thirdPartyReviews: string;
+		defaultViewType: string;
+		showSavingsAmount: boolean;
+		showSavingsPercent: boolean;
+		realTimePricing: boolean;
+		realTimeInventory: boolean;
+		inventoryIncludedWithPricing: boolean;
+		storefrontAccess: string;
+		canShowPriceFilters: boolean;
+		canSeeProducts: boolean;
+		canSeePrices: boolean;
+		canAddToCart: boolean;
+		pricingService: string;
+		displayAttributesInTabs: boolean;
+		attributesTabSortOrder: string;
+		displayDocumentsInTabs: boolean;
+		documentsTabSortOrder: string;
+		displayInventoryPerWarehouse: boolean;
+		displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
+	}
+	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
+		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
+		distanceUnitOfMeasure: string;
+		defaultLatitude: number;
+		defaultLongitude: number;
+		defaultRadius: number;
+	}
+}
 declare module Insite.Customers.WebApi.V1.ApiModels {
 	interface BillToModel extends Insite.Customers.WebApi.V1.ApiModels.BaseAddressModel {
 		shipTosUri: string;
@@ -255,7 +463,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 	}
 	interface WebsiteSettingsModel extends Insite.Core.WebApi.BaseModel {
 		mobileAppEnabled: boolean;
-        useTokenExGateway: boolean;
+		useTokenExGateway: boolean;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;
@@ -326,338 +534,64 @@ declare module Insite.Account.Services.Dtos {
 		isActive: boolean;
 	}
 }
-declare module Insite.Budget.WebApi.V1.ApiModels {
-	interface BudgetModel extends Insite.Core.WebApi.BaseModel {
-		fiscalYear: number;
-		fiscalYearEndDate: Date;
-		budgetLineCollection: Insite.Budget.WebApi.V1.ApiModels.BudgetLineModel[];
-		userProfileId: string;
-		shipToId: string;
+declare module Insite.Brands.WebApi.V1.ApiModels {
+	interface BrandAlphabetModel extends Insite.Core.WebApi.BaseModel {
+		alphabet: Insite.Brands.WebApi.V1.ApiModels.BrandAlphabetLetterModel[];
 	}
-	interface BudgetLineModel extends Insite.Core.WebApi.BaseModel {
-		period: number;
-		startDate: Date;
-		currentFiscalYearBudget: number;
-		currentFiscalYearBudgetDisplay: string;
-		currentFiscalYearActual: number;
-		currentFiscalYearActualDisplay: string;
-		currentFiscalYearVariance: number;
-		currentFiscalYearVarianceDisplay: string;
-		lastFiscalYearBudget: number;
-		lastFiscalYearBudgetDisplay: string;
-		lastFiscalYearActual: number;
-		lastFiscalYearActualDisplay: string;
-		lastFiscalYearVariance: number;
-		lastFiscalYearVarianceDisplay: string;
+	interface BrandAlphabetLetterModel {
+		letter: string;
+		count: number;
 	}
-	interface BudgetCalendarModel extends Insite.Core.WebApi.BaseModel {
-		fiscalYear: number;
-		fiscalYearEndDate: Date;
-		budgetPeriods: Date[];
-	}
-}
-declare module Insite.Cart.WebApi.V1.ApiModels {
-	interface CartCollectionModel extends Insite.Core.WebApi.BaseModel {
-		carts: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
+	interface BrandCategoryCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
+		brandCategories: Insite.Brands.WebApi.V1.ApiModels.BrandCategoryModel[];
 	}
-	interface CartModel extends Insite.Core.WebApi.BaseModel {
-		cartLinesUri: string;
-		id: string;
-		status: string;
-		statusDisplay: string;
-		type: string;
-		typeDisplay: string;
-		orderNumber: string;
-		erpOrderNumber: string;
-		orderDate: Date;
-		billTo: Insite.Customers.WebApi.V1.ApiModels.BillToModel;
-		shipTo: Insite.Customers.WebApi.V1.ApiModels.ShipToModel;
-		userLabel: string;
-		userRoles: string;
-		shipToLabel: string;
-		notes: string;
-		carrier: Insite.Cart.Services.Dtos.CarrierDto;
-		shipVia: Insite.Cart.Services.Dtos.ShipViaDto;
-		paymentMethod: Insite.Cart.Services.Dtos.PaymentMethodDto;
-		poNumber: string;
-		promotionCode: string;
-		initiatedByUserName: string;
-		totalQtyOrdered: number;
-		lineCount: number;
-		totalCountDisplay: number;
-		quoteRequiredCount: number;
-		orderSubTotal: number;
-		orderSubTotalDisplay: string;
-		orderSubTotalWithOutProductDiscounts: number;
-		orderSubTotalWithOutProductDiscountsDisplay: string;
-		totalTax: number;
-		totalTaxDisplay: string;
-		shippingAndHandling: number;
-		shippingAndHandlingDisplay: string;
-		orderGrandTotal: number;
-		orderGrandTotalDisplay: string;
-		costCodeLabel: string;
-		isAuthenticated: boolean;
-		isGuestOrder: boolean;
-		isSalesperson: boolean;
-		isSubscribed: boolean;
-		requiresPoNumber: boolean;
-		displayContinueShoppingLink: boolean;
-		canModifyOrder: boolean;
-		canSaveOrder: boolean;
-		canBypassCheckoutAddress: boolean;
-		canRequisition: boolean;
-		canRequestQuote: boolean;
-		canEditCostCode: boolean;
-		showTaxAndShipping: boolean;
-		showLineNotes: boolean;
-		showCostCode: boolean;
-		showNewsletterSignup: boolean;
-		showPoNumber: boolean;
-		showCreditCard: boolean;
-		showPayPal: boolean;
-		isAwaitingApproval: boolean;
-		requiresApproval: boolean;
-		approverReason: string;
-		hasApprover: boolean;
-		salespersonName: string;
-		paymentOptions: Insite.Cart.Services.Dtos.PaymentOptionsDto;
-		costCodes: Insite.Cart.Services.Dtos.CostCodeDto[];
-		carriers: Insite.Cart.Services.Dtos.CarrierDto[];
-		warehouses: Insite.Cart.Services.Dtos.WarehouseDto[];
-		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
-		customerOrderTaxes: Insite.Cart.Services.Dtos.CustomerOrderTaxDto[];
-		canCheckOut: boolean;
-		hasInsufficientInventory: boolean;
-		currencySymbol: string;
-		requestedDeliveryDate: string;
-		requestedDeliveryDateDisplay: Date;
-		cartNotPriced: boolean;
-		messages: string[];
-		creditCardBillingAddress: Insite.Cart.WebApi.V1.ApiModels.CreditCardBillingAddressDto;
-		alsoPurchasedProducts: Insite.Catalog.Services.Dtos.ProductDto[];
-		fulfillmentMethod: string;
-		requestedPickupDate: string;
-		requestedPickupDateDisplay: Date;
+	interface BrandCategoryModel extends Insite.Core.WebApi.BaseModel {
+		brandId: System.Guid;
+		categoryId: System.Guid;
+		contentManagerId: System.Guid;
+		categoryName: string;
+		featuredImagePath: string;
+		featuredImageAltText: string;
+		productListPagePath: string;
+		htmlContent: string;
+		subCategories: Insite.Brands.WebApi.V1.ApiModels.BrandCategoryModel[];
 	}
-	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
-		productUri: string;
-		id: string;
-		line: number;
-		productId: System.Guid;
-		requisitionId: System.Guid;
-		smallImagePath: string;
-		altText: string;
-		productName: string;
-		manufacturerItem: string;
-		customerName: string;
-		shortDescription: string;
-		erpNumber: string;
-		unitOfMeasure: string;
-		unitOfMeasureDisplay: string;
-		unitOfMeasureDescription: string;
-		baseUnitOfMeasure: string;
-		baseUnitOfMeasureDisplay: string;
-		qtyPerBaseUnitOfMeasure: number;
-		costCode: string;
-		notes: string;
-		qtyOrdered: number;
-		qtyLeft: number;
-		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
-		isPromotionItem: boolean;
-		isDiscounted: boolean;
-		isConfigured: boolean;
-		isFixedConfiguration: boolean;
-		quoteRequired: boolean;
-		breakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
-		sectionOptions: Insite.Cart.Services.Dtos.SectionOptionDto[];
-		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
-		qtyOnHand: number;
-		canAddToCart: boolean;
-		isQtyAdjusted: boolean;
-		hasInsufficientInventory: boolean;
-		canBackOrder: boolean;
-		salePriceLabel: string;
-		isSubscription: boolean;
-		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
-		isRestricted: boolean;
-		canAddToWishlist: boolean;
-		isActive: boolean;
-	}
-	interface CreditCardBillingAddressDto {
-		address1: string;
-		address2: string;
-		city: string;
-		stateAbbreviation: string;
-		countryAbbreviation: string;
-		postalCode: string;
-	}
-	interface CartLineCollectionModel extends Insite.Core.WebApi.BaseModel {
-		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
-	}
-	interface CartSettingsModel extends Insite.Core.WebApi.BaseModel {
-		canRequestDeliveryDate: boolean;
-		canRequisition: boolean;
-		canEditCostCode: boolean;
-		maximumDeliveryPeriod: number;
-		showCostCode: boolean;
-		showPoNumber: boolean;
-		showPayPal: boolean;
-		showCreditCard: boolean;
-		showTaxAndShipping: boolean;
-		showLineNotes: boolean;
-		showNewsletterSignup: boolean;
-		requiresPoNumber: boolean;
-		addToCartPopupTimeout: number;
-		enableRequestPickUpDate: boolean;
-	}
-}
-declare module Insite.Cart.Services.Dtos {
-	interface CarrierDto {
+	interface BrandModel extends Insite.Core.WebApi.BaseModel {
 		id: System.Guid;
-		description: string;
-		shipVias: Insite.Cart.Services.Dtos.ShipViaDto[];
-	}
-	interface ShipViaDto {
-		id: System.Guid;
-		description: string;
-		isDefault: boolean;
-	}
-	interface PaymentMethodDto {
 		name: string;
-		description: string;
-		isCreditCard: boolean;
-		isPaymentProfile: boolean;
+		manufacturer: string;
+		externalUrl: string;
+		detailPagePath: string;
+		productListPagePath: string;
+		logoSmallImagePath: string;
+		logoLargeImagePath: string;
+		logoAltText: string;
+		featuredImagePath: string;
+		featuredImageAltText: string;
+		topSellerProducts: Insite.Catalog.Services.Dtos.ProductDto[];
+		htmlContent: string;
 	}
-	interface PaymentOptionsDto {
-		paymentMethods: Insite.Cart.Services.Dtos.PaymentMethodDto[];
-		cardTypes: {[key: string]:  string};
-		expirationMonths: {[key: string]:  number};
-		expirationYears: {[key: number]:  number};
-		creditCard: Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
-		canStorePaymentProfile: boolean;
-		storePaymentProfile: boolean;
-		isPayPal: boolean;
-		payPalPayerId: string;
-		payPalToken: string;
-		payPalPaymentUrl: string;
+	interface BrandCollectionModel extends Insite.Core.WebApi.BaseModel {
+		pagination: Insite.Core.WebApi.PaginationModel;
+		brands: Insite.Brands.WebApi.V1.ApiModels.BrandModel[];
 	}
-	interface CostCodeDto {
-		costCode: string;
-		description: string;
-	}
-	interface WarehouseDto {
+	interface BrandProductLineModel extends Insite.Core.WebApi.BaseModel {
 		id: System.Guid;
-		address1: string;
-		address2: string;
-		city: string;
-		countryId: System.Guid;
-		description: string;
-		isDefault: boolean;
 		name: string;
-		phone: string;
-		postalCode: string;
-		shipSite: string;
-		state: string;
-	}
-	interface SectionOptionDto {
-		sectionOptionId: System.Guid;
-		sectionName: string;
-		optionName: string;
-	}
-	interface CustomerOrderTaxDto {
-		taxCode: string;
-		taxDescription: string;
-		taxRate: number;
-		taxAmount: number;
-		taxAmountDisplay: string;
 		sortOrder: number;
+		productListPagePath: string;
+		featuredImagePath: string;
+		featuredImageAltText: string;
+		isFeatured: boolean;
+		isSponsored: boolean;
 	}
-}
-declare module Insite.Core.Plugins.PaymentGateway.Dtos {
-	interface CreditCardDto {
-		cardType: string;
-		cardHolderName: string;
-		cardNumber: string;
-		expirationMonth: number;
-		expirationYear: number;
-		securityCode: string;
-		useBillingAddress: boolean;
-		address1: string;
-		city: string;
-		state: string;
-		stateAbbreviation: string;
-		country: string;
-		countryAbbreviation: string;
-		postalCode: string;
-	}
-}
-declare module Insite.Core.Plugins.Pricing {
-	interface ProductPriceDto {
-		productId: System.Guid;
-		isOnSale: boolean;
-		requiresRealTimePrice: boolean;
-		additionalResults: {[key: string]:  string};
-		unitCost: number;
-		unitCostDisplay: string;
-		unitListPrice: number;
-		unitListPriceDisplay: string;
-		extendedUnitListPrice: number;
-		extendedUnitListPriceDisplay: string;
-		unitRegularPrice: number;
-		unitRegularPriceDisplay: string;
-		extendedUnitRegularPrice: number;
-		extendedUnitRegularPriceDisplay: string;
-		unitNetPrice: number;
-		unitNetPriceDisplay: string;
-		extendedUnitNetPrice: number;
-		extendedUnitNetPriceDisplay: string;
-		unitOfMeasure: string;
-		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
-		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
-		regularPrice: number;
-		regularPriceDisplay: string;
-		extendedRegularPrice: number;
-		extendedRegularPriceDisplay: string;
-		actualPrice: number;
-		actualPriceDisplay: string;
-		extendedActualPrice: number;
-		extendedActualPriceDisplay: string;
-		regularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
-		actualBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
-	}
-	interface BreakPriceDto {
-		breakQty: number;
-		breakPrice: number;
-		breakPriceDisplay: string;
-		savingsMessage: string;
+	interface BrandProductLineCollectionModel extends Insite.Core.WebApi.BaseModel {
+		pagination: Insite.Core.WebApi.PaginationModel;
+		productLines: Insite.Brands.WebApi.V1.ApiModels.BrandProductLineModel[];
 	}
 }
 declare module Insite.Catalog.Services.Dtos {
-	interface AvailabilityDto {
-	}
-	interface ProductSubscriptionDto {
-		subscriptionAddToInitialOrder: boolean;
-		subscriptionAllMonths: boolean;
-		subscriptionApril: boolean;
-		subscriptionAugust: boolean;
-		subscriptionCyclePeriod: string;
-		subscriptionDecember: boolean;
-		subscriptionFebruary: boolean;
-		subscriptionFixedPrice: boolean;
-		subscriptionJanuary: boolean;
-		subscriptionJuly: boolean;
-		subscriptionJune: boolean;
-		subscriptionMarch: boolean;
-		subscriptionMay: boolean;
-		subscriptionNovember: boolean;
-		subscriptionOctober: boolean;
-		subscriptionPeriodsPerCycle: number;
-		subscriptionSeptember: boolean;
-		subscriptionShipViaId: System.Guid;
-		subscriptionTotalCycles: number;
-	}
 	interface ProductDto {
 		id: System.Guid;
 		orderLineId: System.Guid;
@@ -755,6 +689,7 @@ declare module Insite.Catalog.Services.Dtos {
 		score: number;
 		searchBoost: number;
 		salePriceLabel: string;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
 		replacementProductId: System.Guid;
 		warehouses: Insite.Catalog.Services.Dtos.WarehouseDto[];
@@ -780,6 +715,8 @@ declare module Insite.Catalog.Services.Dtos {
 		userProductPrice: boolean;
 		selected: boolean;
 		sortOrder: number;
+	}
+	interface AvailabilityDto {
 	}
 	interface StyleTraitDto {
 		styleTraitId: System.Guid;
@@ -882,125 +819,46 @@ declare module Insite.Catalog.Services.Dtos {
 		htmlContent: string;
 		specifications: Insite.Catalog.Services.Dtos.SpecificationDto[];
 	}
+	interface BrandDto {
+		id: System.Guid;
+		name: string;
+		urlSegment: string;
+		logoSmallImagePath: string;
+		logoLargeImagePath: string;
+		logoImageAltText: string;
+		detailPagePath: string;
+	}
+	interface ProductSubscriptionDto {
+		subscriptionAddToInitialOrder: boolean;
+		subscriptionAllMonths: boolean;
+		subscriptionApril: boolean;
+		subscriptionAugust: boolean;
+		subscriptionCyclePeriod: string;
+		subscriptionDecember: boolean;
+		subscriptionFebruary: boolean;
+		subscriptionFixedPrice: boolean;
+		subscriptionJanuary: boolean;
+		subscriptionJuly: boolean;
+		subscriptionJune: boolean;
+		subscriptionMarch: boolean;
+		subscriptionMay: boolean;
+		subscriptionNovember: boolean;
+		subscriptionOctober: boolean;
+		subscriptionPeriodsPerCycle: number;
+		subscriptionSeptember: boolean;
+		subscriptionShipViaId: System.Guid;
+		subscriptionTotalCycles: number;
+	}
 	interface RelatedProductDto {
 		relatedProductType: string;
 		productDto: Insite.Catalog.Services.Dtos.ProductDto;
 	}
 }
-declare module Insite.OrderApproval.WebApi.V1.ApiModels {
-	interface OrderApprovalCollectionModel extends Insite.Core.WebApi.BaseModel {
-		cartCollection: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
-		pagination: Insite.Core.WebApi.PaginationModel;
-	}
-}
-declare module Insite.Catalog.WebApi.V1.ApiModels {
-	interface AutocompleteModel extends Insite.Core.WebApi.BaseModel {
-		categories: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel[];
-		products: Insite.Catalog.WebApi.V1.ApiModels.ProductAutocompleteItemModel[];
-		content: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel[];
-	}
-	interface AutocompleteItemModel extends Insite.Core.WebApi.BaseModel {
-		id: System.Guid;
-		image: string;
-		subtitle: string;
-		title: string;
-		url: string;
-	}
-	interface ProductAutocompleteItemModel extends Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel {
-		manufacturerItemNumber: string;
-		name: string;
-		isNameCustomerOverride: boolean;
-		erpNumber: string;
-	}
-	interface ProductModel extends Insite.Core.WebApi.BaseModel {
-		product: Insite.Catalog.Services.Dtos.ProductDto;
-	}
-	interface ProductCollectionModel extends Insite.Core.WebApi.BaseModel {
-		pagination: Insite.Core.WebApi.PaginationModel;
-		products: Insite.Catalog.Services.Dtos.ProductDto[];
-		categoryFacets: Insite.Core.Plugins.Search.Dtos.CategoryFacetDto[];
-		attributeTypeFacets: Insite.Core.Plugins.Search.Dtos.AttributeTypeFacetDto[];
-		didYouMeanSuggestions: Insite.Core.Plugins.Search.Dtos.SuggestionDto[];
-		priceRange: Insite.Core.Plugins.Search.Dtos.PriceRangeDto;
-		exactMatch: boolean;
-		notAllProductsFound: boolean;
-		notAllProductsAllowed: boolean;
-		originalQuery: string;
-		correctedQuery: string;
-		searchTermRedirectUrl: string;
-	}
-	interface AutocompleteProductModel extends Insite.Core.WebApi.BaseModel {
-		id: System.Guid;
-		name: string;
-		erpNumber: string;
-		shortDescription: string;
-		productDetailUrl: string;
-		smallImagePath: string;
-	}
-	interface AutocompleteProductCollectionModel extends Insite.Core.WebApi.BaseModel {
-		products: Insite.Catalog.WebApi.V1.ApiModels.AutocompleteProductModel[];
-	}
-	interface CrossSellCollectionModel extends Insite.Core.WebApi.BaseModel {
-		products: Insite.Catalog.Services.Dtos.ProductDto[];
-	}
-	interface CatalogPageModel extends Insite.Core.WebApi.BaseModel {
-		category: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel;
-		productId: System.Guid;
-		productName: string;
-		title: string;
-		metaDescription: string;
-		metaKeywords: string;
-		canonicalPath: string;
-		isReplacementProduct: boolean;
-		breadCrumbs: Insite.Catalog.WebApi.V1.ApiModels.BreadCrumbModel[];
-		obsoletePath: boolean;
-		needRedirect: boolean;
-		redirectUrl: string;
-		primaryImagePath: string;
-		openGraphTitle: string;
-		openGraphImage: string;
-		openGraphUrl: string;
-	}
-	interface CategoryModel extends Insite.Core.WebApi.BaseModel {
-		id: System.Guid;
-		name: string;
-		shortDescription: string;
-		urlSegment: string;
-		smallImagePath: string;
-		largeImagePath: string;
-		imageAltText: string;
-		activateOn: Date;
-		deactivateOn: Date;
-		metaKeywords: string;
-		metaDescription: string;
-		htmlContent: string;
-		sortOrder: number;
-		isFeatured: boolean;
-		isDynamic: boolean;
-		subCategories: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel[];
-		path: string;
-		mobileBannerImageUrl: string;
-		mobilePrimaryText: string;
-		mobileSecondaryText: string;
-		mobileTextJustification: string;
-		mobileTextColor: string;
-	}
-	interface BreadCrumbModel {
-		text: string;
-		url: string;
-		categoryId: string;
-	}
-	interface CategoryCollectionModel extends Insite.Core.WebApi.BaseModel {
-		categories: Insite.Catalog.WebApi.V1.ApiModels.CategoryModel[];
-	}
-    interface ProductAvailabilityModel extends Insite.Core.WebApi.BaseModel {
-        availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
-    }
-	interface ProductPriceModel extends Insite.Core.WebApi.BaseModel {
+declare module Insite.Core.Plugins.Pricing {
+	interface ProductPriceDto {
 		productId: System.Guid;
 		isOnSale: boolean;
 		requiresRealTimePrice: boolean;
-		quoteRequired: boolean;
 		additionalResults: {[key: string]:  string};
 		unitCost: number;
 		unitCostDisplay: string;
@@ -1030,62 +888,286 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		regularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		actualBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 	}
-	interface ProductSettingsModel extends Insite.Core.WebApi.BaseModel {
-		allowBackOrder: boolean;
-		allowBackOrderForDelivery: boolean;
-		allowBackOrderForPickup: boolean;
-		showInventoryAvailability: boolean;
-		showAddToCartConfirmationDialog: boolean;
-		enableProductComparisons: boolean;
-		alternateUnitsOfMeasure: boolean;
-		thirdPartyReviews: string;
-		defaultViewType: string;
-		showSavingsAmount: boolean;
-		showSavingsPercent: boolean;
-		realTimePricing: boolean;
-		realTimeInventory: boolean;
-		inventoryIncludedWithPricing: boolean;
-		storefrontAccess: string;
-		canShowPriceFilters: boolean;
-		canSeeProducts: boolean;
-		canSeePrices: boolean;
-		canAddToCart: boolean;
-		pricingService: string;
-		displayAttributesInTabs: boolean;
-		attributesTabSortOrder: string;
-		displayDocumentsInTabs: boolean;
-		documentsTabSortOrder: string;
-		displayInventoryPerWarehouse: boolean;
-	    displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
+	interface BreakPriceDto {
+		breakQty: number;
+		breakPrice: number;
+		breakPriceDisplay: string;
+		savingsMessage: string;
 	}
-	interface WarehouseModel extends Insite.Core.WebApi.BaseModel {
-		id: System.Guid;
-		name: string;
+}
+declare module Insite.Budget.WebApi.V1.ApiModels {
+	interface BudgetModel extends Insite.Core.WebApi.BaseModel {
+		fiscalYear: number;
+		fiscalYearEndDate: Date;
+		budgetLineCollection: Insite.Budget.WebApi.V1.ApiModels.BudgetLineModel[];
+		userProfileId: string;
+		shipToId: string;
+	}
+	interface BudgetLineModel extends Insite.Core.WebApi.BaseModel {
+		period: number;
+		startDate: Date;
+		currentFiscalYearBudget: number;
+		currentFiscalYearBudgetDisplay: string;
+		currentFiscalYearActual: number;
+		currentFiscalYearActualDisplay: string;
+		currentFiscalYearVariance: number;
+		currentFiscalYearVarianceDisplay: string;
+		lastFiscalYearBudget: number;
+		lastFiscalYearBudgetDisplay: string;
+		lastFiscalYearActual: number;
+		lastFiscalYearActualDisplay: string;
+		lastFiscalYearVariance: number;
+		lastFiscalYearVarianceDisplay: string;
+	}
+	interface BudgetCalendarModel extends Insite.Core.WebApi.BaseModel {
+		fiscalYear: number;
+		fiscalYearEndDate: Date;
+		budgetPeriods: Date[];
+	}
+}
+declare module Insite.Cart.WebApi.V1.ApiModels {
+	interface CartCollectionModel extends Insite.Core.WebApi.BaseModel {
+		carts: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
+	}
+	interface CartModel extends Insite.Core.WebApi.BaseModel {
+		cartLinesUri: string;
+		id: string;
+		status: string;
+		statusDisplay: string;
+		type: string;
+		typeDisplay: string;
+		orderNumber: string;
+		erpOrderNumber: string;
+		orderDate: Date;
+		billTo: Insite.Customers.WebApi.V1.ApiModels.BillToModel;
+		shipTo: Insite.Customers.WebApi.V1.ApiModels.ShipToModel;
+		userLabel: string;
+		userRoles: string;
+		shipToLabel: string;
+		notes: string;
+		carrier: Insite.Cart.Services.Dtos.CarrierDto;
+		shipVia: Insite.Cart.Services.Dtos.ShipViaDto;
+		paymentMethod: Insite.Cart.Services.Dtos.PaymentMethodDto;
+		fulfillmentMethod: string;
+		requestedPickupDate: string;
+		poNumber: string;
+		promotionCode: string;
+		initiatedByUserName: string;
+		totalQtyOrdered: number;
+		lineCount: number;
+		totalCountDisplay: number;
+		quoteRequiredCount: number;
+		orderSubTotal: number;
+		orderSubTotalDisplay: string;
+		orderSubTotalWithOutProductDiscounts: number;
+		orderSubTotalWithOutProductDiscountsDisplay: string;
+		totalTax: number;
+		totalTaxDisplay: string;
+		shippingAndHandling: number;
+		shippingAndHandlingDisplay: string;
+		orderGrandTotal: number;
+		orderGrandTotalDisplay: string;
+		costCodeLabel: string;
+		isAuthenticated: boolean;
+		isGuestOrder: boolean;
+		isSalesperson: boolean;
+		isSubscribed: boolean;
+		requiresPoNumber: boolean;
+		displayContinueShoppingLink: boolean;
+		canModifyOrder: boolean;
+		canSaveOrder: boolean;
+		canBypassCheckoutAddress: boolean;
+		canRequisition: boolean;
+		canRequestQuote: boolean;
+		canEditCostCode: boolean;
+		showTaxAndShipping: boolean;
+		showLineNotes: boolean;
+		showCostCode: boolean;
+		showNewsletterSignup: boolean;
+		showPoNumber: boolean;
+		showCreditCard: boolean;
+		showPayPal: boolean;
+		isAwaitingApproval: boolean;
+		requiresApproval: boolean;
+		approverReason: string;
+		hasApprover: boolean;
+		salespersonName: string;
+		paymentOptions: Insite.Cart.Services.Dtos.PaymentOptionsDto;
+		costCodes: Insite.Cart.Services.Dtos.CostCodeDto[];
+		carriers: Insite.Cart.Services.Dtos.CarrierDto[];
+		warehouses: Insite.Cart.Services.Dtos.WarehouseDto[];
+		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
+		customerOrderTaxes: Insite.Cart.Services.Dtos.CustomerOrderTaxDto[];
+		canCheckOut: boolean;
+		hasInsufficientInventory: boolean;
+		currencySymbol: string;
+		requestedDeliveryDate: string;
+		requestedDeliveryDateDisplay: Date;
+		cartNotPriced: boolean;
+		messages: string[];
+		creditCardBillingAddress: Insite.Cart.WebApi.V1.ApiModels.CreditCardBillingAddressDto;
+		alsoPurchasedProducts: Insite.Catalog.Services.Dtos.ProductDto[];
+		requestedPickupDateDisplay: Date;
+	}
+	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
+		productUri: string;
+		id: string;
+		line: number;
+		productId: System.Guid;
+		requisitionId: System.Guid;
+		smallImagePath: string;
+		altText: string;
+		productName: string;
+		manufacturerItem: string;
+		customerName: string;
+		shortDescription: string;
+		erpNumber: string;
+		unitOfMeasure: string;
+		unitOfMeasureDisplay: string;
+		unitOfMeasureDescription: string;
+		baseUnitOfMeasure: string;
+		baseUnitOfMeasureDisplay: string;
+		qtyPerBaseUnitOfMeasure: number;
+		costCode: string;
+		notes: string;
+		qtyOrdered: number;
+		qtyLeft: number;
+		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
+		isPromotionItem: boolean;
+		isDiscounted: boolean;
+		isConfigured: boolean;
+		isFixedConfiguration: boolean;
+		quoteRequired: boolean;
+		breakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
+		sectionOptions: Insite.Cart.Services.Dtos.SectionOptionDto[];
+		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
+		qtyOnHand: number;
+		canAddToCart: boolean;
+		isQtyAdjusted: boolean;
+		hasInsufficientInventory: boolean;
+		canBackOrder: boolean;
+		salePriceLabel: string;
+		isSubscription: boolean;
+		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
+		isRestricted: boolean;
+		canAddToWishlist: boolean;
+		isActive: boolean;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
+	}
+	interface CreditCardBillingAddressDto {
 		address1: string;
 		address2: string;
 		city: string;
-		contactName: string;
-		country: string;
-		deactivateOn: Date;
+		stateAbbreviation: string;
+		countryAbbreviation: string;
+		postalCode: string;
+	}
+	interface CartLineCollectionModel extends Insite.Core.WebApi.BaseModel {
+		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
+	}
+	interface CartSettingsModel extends Insite.Core.WebApi.BaseModel {
+		canRequestDeliveryDate: boolean;
+		canRequisition: boolean;
+		canEditCostCode: boolean;
+		maximumDeliveryPeriod: number;
+		showCostCode: boolean;
+		showPoNumber: boolean;
+		showPayPal: boolean;
+		showCreditCard: boolean;
+		showTaxAndShipping: boolean;
+		showLineNotes: boolean;
+		showNewsletterSignup: boolean;
+		requiresPoNumber: boolean;
+		addToCartPopupTimeout: number;
+		enableRequestPickUpDate: boolean;
+	}
+}
+declare module Insite.Cart.Services.Dtos {
+	interface CarrierDto {
+		id: System.Guid;
 		description: string;
+		shipVias: Insite.Cart.Services.Dtos.ShipViaDto[];
+	}
+	interface ShipViaDto {
+		id: System.Guid;
+		description: string;
+		isDefault: boolean;
+	}
+	interface PaymentMethodDto {
+		name: string;
+		description: string;
+		isCreditCard: boolean;
+		isPaymentProfile: boolean;
+	}
+	interface PaymentOptionsDto {
+		paymentMethods: Insite.Cart.Services.Dtos.PaymentMethodDto[];
+		cardTypes: {[key: string]:  string};
+		expirationMonths: {[key: string]:  number};
+		expirationYears: {[key: number]:  number};
+		creditCard: Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
+		canStorePaymentProfile: boolean;
+		storePaymentProfile: boolean;
+		isPayPal: boolean;
+		payPalPayerId: string;
+		payPalToken: string;
+		payPalPaymentUrl: string;
+	}
+	interface CostCodeDto {
+		costCode: string;
+		description: string;
+	}
+	interface WarehouseDto {
+		id: System.Guid;
+		address1: string;
+		address2: string;
+		city: string;
+		countryId: System.Guid;
+		description: string;
+		isDefault: boolean;
+		name: string;
 		phone: string;
 		postalCode: string;
 		shipSite: string;
 		state: string;
-		isDefault: boolean;
-		alternateWarehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
-		latitude: number;
-		longitude: number;
-		hours: string;
-		distance: number;
 	}
-	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
-		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
+	interface SectionOptionDto {
+		sectionOptionId: System.Guid;
+		sectionName: string;
+		optionName: string;
+	}
+	interface CustomerOrderTaxDto {
+		taxCode: string;
+		taxDescription: string;
+		taxRate: number;
+		taxAmount: number;
+		taxAmountDisplay: string;
+		sortOrder: number;
+	}
+}
+declare module Insite.Core.Plugins.PaymentGateway.Dtos {
+	interface CreditCardDto {
+		cardType: string;
+		cardHolderName: string;
+		cardNumber: string;
+		expirationMonth: number;
+		expirationYear: number;
+		securityCode: string;
+		useBillingAddress: boolean;
+		address1: string;
+		city: string;
+		state: string;
+		stateAbbreviation: string;
+		country: string;
+		countryAbbreviation: string;
+		postalCode: string;
+	}
+}
+declare module Insite.OrderApproval.WebApi.V1.ApiModels {
+	interface OrderApprovalCollectionModel extends Insite.Core.WebApi.BaseModel {
+		cartCollection: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
-		distanceUnitOfMeasure: string;
-		defaultLatitude: number;
-		defaultLongitude: number;
-		defaultRadius: number;
 	}
 }
 declare module Insite.Core.Plugins.Search.Dtos {
@@ -1110,6 +1192,12 @@ declare module Insite.Core.Plugins.Search.Dtos {
 		valueDisplay: string;
 		count: number;
 		sortOrder: number;
+		selected: boolean;
+	}
+	interface GenericFacetDto {
+		id: System.Guid;
+		name: string;
+		count: number;
 		selected: boolean;
 	}
 	interface SuggestionDto {
@@ -1286,6 +1374,7 @@ declare module Insite.Invoice.WebApi.V1.ApiModels {
 		unitPriceDisplay: string;
 		discountAmountDisplay: string;
 		lineTotalDisplay: string;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
 	interface InvoiceCollectionModel extends Insite.Core.WebApi.BaseModel {
 		invoices: Insite.Invoice.WebApi.V1.ApiModels.InvoiceModel[];
@@ -1485,6 +1574,7 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		sectionOptions: Insite.Order.Services.Dtos.SectionOptionDto[];
 		salePriceLabel: string;
 		canAddToWishlist: boolean;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
 	interface OrderPromotionModel extends Insite.Core.WebApi.BaseModel {
 		id: string;
@@ -1590,6 +1680,7 @@ declare module Insite.Requisition.WebApi.V1.ApiModels {
 		userName: string;
 		orderDate: Date;
 		qtyOrdered: number;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
 }
 declare module Insite.Rfq.WebApi.V1.ApiModels {
@@ -1737,15 +1828,18 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		isVisible: boolean;
 		isDiscontinued: boolean;
 		sortOrder: number;
+		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
 	interface WishListLineCollectionModel extends Insite.Core.WebApi.BaseModel {
 		wishListLines: Insite.WishLists.WebApi.V1.ApiModels.WishListLineModel[];
+		pagination: PaginationModel;
 	}
 	interface WishListSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowMultipleWishLists: boolean;
 		allowEditingOfWishLists: boolean;
 		allowWishListsByCustomer: boolean;
 		allowListSharing: boolean;
+		productsPerPage: number;
 	}
 }
 declare module Insite.JobQuote.WebApi.V1.ApiModels {

@@ -155,7 +155,7 @@ jQuery.loading = (function () {
                 }
 
                 $loading.fadeOut(function () {
-                    $loading.remove();
+                    $("#spinner").remove();
                     $loading = null;
                 });
             }, 300);
@@ -234,7 +234,7 @@ jQuery.frameSpinner = (function () {
                 }
 
                 $frameLoading.fadeOut(function () {
-                    $frameLoading.remove();
+                    $("#frameSpinner").remove();
                     $frameLoading = null;
                 });
             }, 300);

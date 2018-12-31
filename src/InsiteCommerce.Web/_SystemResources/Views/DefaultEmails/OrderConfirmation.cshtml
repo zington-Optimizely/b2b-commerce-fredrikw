@@ -88,10 +88,12 @@
                     <td class="po-number">[[Model.CustomerPO]]</td>
                 </tr>
                 [% endif -%]
+                [% if Model.FulfillmentMethod != "PickUp" -%]
                 <tr>
                     <td class="ship-via-label"><h4>Shipping Method</h4></td>
                     <td class="ship-via">[[Model.ShipMethod]]</td>
                 </tr>
+                [% endif -%]
             </table>
         </div>
         <div class="body-copy">
@@ -129,7 +131,11 @@
                             <td width="10%">&nbsp;</td>
                             <td class="bill-ship ship">
                                 <div>
+                                    [% if Model.FulfillmentMethod == "PickUp" -%]
+                                    <h4>Pick Up Location</h4>
+                                    [% else -%]
                                     <h4>Shipping Information</h4>
+                                    [% endif -%]
                                     <div>[[Model.STDisplayName]]</div>
                                     <div>
                                         [% if Model.STCompany != null and Model.STCompany != "" -%]

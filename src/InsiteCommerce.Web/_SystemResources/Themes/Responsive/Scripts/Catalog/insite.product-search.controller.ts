@@ -8,6 +8,7 @@ module insite.catalog {
         static product = "product";
         static category = "category";
         static content = "content";
+        static brand = "brand";
     }
 
     export class ProductSearchController {
@@ -16,7 +17,7 @@ module insite.catalog {
         autocomplete: any;
         autocompleteOptions: AutoCompleteOptions;
         autocompleteType: string;
-        translations: Array<any>;
+        translations: Array<any>; // translations populated by ng-init in the template
         preventActions: boolean;
         autocompleteEnabled: boolean;
         autocompleteCanceled: boolean;
@@ -173,7 +174,10 @@ module insite.catalog {
             const content = autocompleteModel.content;
             content.forEach((p: any) => p.type = AutocompleteTypes.content);
 
-            this.searchData = data.concat(categories, content, this.products);
+            const brands = autocompleteModel.brands;
+            brands.forEach((p: any) => p.type = AutocompleteTypes.brand);
+
+            this.searchData = data.concat(categories, brands, content, this.products);
             options.success(this.searchData);
         }
 
@@ -225,6 +229,7 @@ module insite.catalog {
                 switch (groupKey) {
                     case AutocompleteTypes.category:
                     case AutocompleteTypes.content:
+                    case AutocompleteTypes.brand:
                         list.find(`.group-${groupKey}`).parent().each((index, item) => leftColumnContainer.append(item));
                         break;
                     case AutocompleteTypes.product:
@@ -291,6 +296,9 @@ module insite.catalog {
                 case AutocompleteTypes.content:
                     template = this.getAutocompleteContentTemplate(suggestion, pattern);
                     break;
+                case AutocompleteTypes.brand:
+                    template = this.getAutocompleteBrandTemplate(suggestion, pattern);
+                    break;
                 default:
                     template = this.getAutocompleteProductTemplate(suggestion, pattern);
             }
@@ -310,6 +318,10 @@ module insite.catalog {
 
         protected getAutocompleteContentTemplate(suggestion: any, pattern: string): string {
             return `<div class="group-${suggestion.type} tst_autocomplete_content_${suggestion.url.replace("/", "-")}">${suggestion.title}</div>`;
+        }
+
+        protected getAutocompleteBrandTemplate(suggestion: any, pattern: string): string {
+            return `<div class="group-${suggestion.type} tst_autocomplete_brand_${suggestion.id}">${suggestion.productLineName ? (suggestion.productLineName + ' in ') : ''}${suggestion.title}</div>`;
         }
 
         protected getAutocompleteProductTemplate(suggestion: any, pattern: string): string {

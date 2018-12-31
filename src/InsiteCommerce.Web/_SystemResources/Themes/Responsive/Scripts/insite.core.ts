@@ -91,7 +91,18 @@
             selector = $(selector);
         }
 
-        selector.pickatime();
+        let options = {} as any;
+
+        try {
+            if (window.sessionStorage.getItem("allowEditableTimes")) {
+                options.editable = true
+            }
+        }
+        catch(ex) {
+            console.log(ex);
+        }
+
+        selector.pickatime(options);
     };
 
     that.setupAjaxError = (onClose, on401) => {

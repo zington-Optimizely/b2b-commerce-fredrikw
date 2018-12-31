@@ -9,6 +9,8 @@
             </div>
             <span ng-if="cartLine.isPromotionItem && editable">[% siteMessage 'Cart_PromotionalItem' %]</span>
 
+            <isc-product-brand product="cartLine"></isc-product-brand>
+
             <div class="item-name">
                 <a ng-href="{{cartLine.productUri}}">
                     <span ng-bind="cartLine.shortDescription"></span>

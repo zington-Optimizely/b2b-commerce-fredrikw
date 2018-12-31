@@ -3,6 +3,7 @@
         <isc-product-thumb product="quoteLine"></isc-product-thumb>
 
         <div class="small-10 columns item-details">
+            <isc-product-brand product="quoteLine"></isc-product-brand>
             <div class="item-name">
                 <a id="requestedDetailsGridShortDescriptionLink_{{quoteLine.id}}" ng-href="{{quoteLine.productUri}}">
                     <span ng-bind="quoteLine.shortDescription"></span>
@@ -46,8 +47,5 @@
                 </div>
             </div>
         </div>
-
-
     </li>
-
 </ul>

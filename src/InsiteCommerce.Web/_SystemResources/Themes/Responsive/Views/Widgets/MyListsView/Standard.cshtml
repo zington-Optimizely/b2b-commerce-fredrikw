@@ -2,7 +2,9 @@
     <div class="row list-top-actions" ng-if="vm.listSettings.allowMultipleWishLists">
         <div class="medium-6 columns"></div>
         <div class="medium-6 columns list-top-actions-sort">
-            <span ng-if="vm.wishListCount > 0">
+            <input type="text" class="list-search-filter" ng-model="vm.filter" ng-model-options="{ debounce: 500 }" ng-change="vm.getWishLists(true, true)"
+                   placeholder="[% translate 'Search lists by name' EscapeSingleQuotes %]"/>
+            <span ng-show="vm.wishListCount > 0">
                 <span class="sort-label">[% translate 'Sort By' %]</span>
                 <select ng-model="vm.sort" ng-change="vm.changeSortBy()">
                     <option value="ModifiedOn DESC">[% translate 'Last Updated' %]</option>

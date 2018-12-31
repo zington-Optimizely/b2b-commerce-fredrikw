@@ -9,19 +9,21 @@
         searchTerm: string;
         selectedUnitOfMeasure: string;
         selectedQty: number;
+        productSettings: Insite.Catalog.WebApi.V1.ApiModels.ProductSettingsModel;
         orderSettings: Insite.Order.WebApi.V1.ApiModels.OrderSettingsModel;
         autocompleteOptions: AutoCompleteOptions;
         findingProduct: boolean;
         addingToCart = false;
         alternateUnitsOfMeasureFromSettings: boolean;
 
-        static $inject = ["cartService", "productService", "searchService", "settingsService"];
+        static $inject = ["cartService", "productService", "searchService", "settingsService", "$q"];
 
         constructor(
             protected cartService: cart.ICartService,
             protected productService: catalog.IProductService,
             protected searchService: catalog.ISearchService,
-            protected settingsService: core.ISettingsService) {
+            protected settingsService: core.ISettingsService,
+            protected $q: ng.IQService) {
             this.init();
         }
 
@@ -60,6 +62,7 @@
         }
 
         protected getSettingsCompleted(settings: core.SettingsCollection): void {
+            this.productSettings = settings.productSettings;
             this.orderSettings = settings.orderSettings;
             this.alternateUnitsOfMeasureFromSettings = settings.productSettings.alternateUnitsOfMeasure;
         }
@@ -79,12 +82,37 @@
 
         protected addProductCompleted(productCollection: ProductCollectionModel): void {
             this.findingProduct = false;
-            this.validateAndSetProduct(productCollection);
+
+            this.getRealTimeInventory(productCollection.products[0]).then(() => {
+                this.validateAndSetProduct(productCollection);
+            });
         }
 
         protected addProductFailed(error: any): void {
             this.findingProduct = false;
             this.errorMessage = angular.element("#messageNotFound").val();
+        }
+
+        protected getRealTimeInventory(product: ProductDto): ng.IPromise<void> {
+            const deferred = this.$q.defer<void>();
+
+            if (this.productSettings.realTimeInventory) {
+                this.productService.getProductRealTimeInventory([product]).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, deferred),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error, deferred));
+            } else {
+                deferred.resolve();
+            }
+
+            return deferred.promise;
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, deferred: ng.IDeferred<void>): void {
+            deferred.resolve();
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any, deferred: ng.IDeferred<void>): void {
+            deferred.resolve();
         }
 
         protected validateAndSetProduct(productCollection: ProductCollectionModel): boolean {
@@ -104,7 +132,7 @@
         protected findProduct(erpNumber: string): ng.IPromise<ProductCollectionModel> {
             this.findingProduct = true;
             const parameters: catalog.IProductCollectionParameters = { extendedNames: [erpNumber] };
-            const expand = ["pricing"];
+            const expand = ["pricing", "brand"];
 
             return this.productService.getProducts(parameters, expand);
         }
@@ -174,10 +202,12 @@
             this.findingProduct = false;
             this.addingToCart = false;
 
-            if (this.validateAndSetProduct(productCollection)) {
-                this.product.qtyOrdered = this.selectedQty;
-                this.addToCartAndClearInput(this.product);
-            }
+            this.getRealTimeInventory(productCollection.products[0]).then(() => {
+                if (this.validateAndSetProduct(productCollection)) {
+                    this.product.qtyOrdered = this.selectedQty;
+                    this.addToCartAndClearInput(this.product);
+                }
+            });
         }
 
         protected addToCartFailed(error: any): void {

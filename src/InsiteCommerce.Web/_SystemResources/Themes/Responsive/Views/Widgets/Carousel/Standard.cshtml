@@ -1,4 +1,4 @@
-﻿[% if IsEditMode and CurrentPage.ContentKey == Model.PageContentKey -%]
+﻿[% if IsEditingMode and CurrentPage.ContentKey == Model.PageContentKey -%]
     <div class="widget-carousel [[Model.CssClass]]">
         [% zone 'Carousel Slides' %]
     </div>

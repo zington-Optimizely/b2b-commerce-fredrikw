@@ -10,7 +10,8 @@
      enable-dynamic-recommendations="[[Model.Drop.EnableDynamicRecommendations]]"
      product-carousel-id="[[Model.Drop.ProductCarouselId]]"
      selected-category-ids="[[Model.Drop.SelectedCategoryIds]]"
-     is-catalog-page="[[Model.Drop.IsCatalogPage]]">
+     is-catalog-page="[[Model.Drop.IsCatalogPage]]"
+     is-brand-detail-page="[[Model.Drop.IsBrandDetailPage]]">
     <h3 ng-if="vm.showCarousel()" ng-cloak>[[Model.Title]]</h3>
     <div class="row" role="cross-sells" ng-if="vm.showCarousel()" ng-cloak>
         <div class="medium-12 large-12 columns">
@@ -28,6 +29,8 @@
                                             </a>
                                         </div>
                                     </div>
+
+                                    <isc-product-brand product="product"></isc-product-brand>
 
                                     <div class="item-name">
                                         <a ng-href="{{product.productDetailUrl}}">{{product.shortDescription}}</a>

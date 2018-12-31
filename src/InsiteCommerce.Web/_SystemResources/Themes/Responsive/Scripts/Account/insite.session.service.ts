@@ -436,6 +436,7 @@ module insite.account {
         }
 
         protected updateSessionCompleted(response: ng.IHttpPromiseCallbackArg<SessionModel>): void {
+            this.getSessionPromise = null;
             this.$rootScope.$broadcast("sessionUpdated", response.data);
         }
 

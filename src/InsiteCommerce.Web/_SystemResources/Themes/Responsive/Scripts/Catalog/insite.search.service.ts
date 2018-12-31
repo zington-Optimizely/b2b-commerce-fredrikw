@@ -141,7 +141,9 @@ module insite.catalog {
                 erpNumber: p.erpNumber,
                 shortDescription: p.title,
                 image: p.image,
-                value: p.title
+                value: p.title,
+                brandName: p.brandName,
+                brandDetailPagePath: p.brandDetailPagePath
             } as any));
         }
     }

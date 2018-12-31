@@ -142,7 +142,7 @@
                         <th class="col-submitted">[% translate 'Requested' %]</th>
                         <th class="col-exp">[% translate 'Expires' %]</th>
                         <th class="col-cust">[% translate 'Customer' %]</th>
-                        <th class="col-shipto">[% translate 'Ship To' %]</th>
+                        <th class="col-shipto">[% translate 'Ship To / Pick Up' %]</th>
                     </tr>
                     <tr ng-repeat="quote in vm.quotes">
                         <td class="col-num"><span class="sticky-first"><a ng-href="[% urlForPage 'RfqQuoteDetailsPage' %]?quoteId={{quote.id}}" title="[% translate 'View Quote' %]" ng-bind="quote.quoteNumber"></a></span></td>

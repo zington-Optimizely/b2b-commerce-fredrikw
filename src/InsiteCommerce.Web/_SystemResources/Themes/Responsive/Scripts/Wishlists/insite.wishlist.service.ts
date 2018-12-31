@@ -8,9 +8,10 @@ module insite.wishlist {
     "use strict";
 
     export interface IWishListService {
-        getWishLists(sort?: string, expand?: string, wishListLinesSort?: string, pagination?: PaginationModel): ng.IPromise<WishListCollectionModel>;
+        getWishLists(sort?: string, expand?: string, wishListLinesSort?: string, pagination?: PaginationModel, query?: string, filter?: string): ng.IPromise<WishListCollectionModel>;
         getWishList(wishList: WishListModel, expand?: string): ng.IPromise<WishListModel>;
-        getListById(listId: System.Guid, expand?: string): ng.IPromise<WishListModel>;
+        getListById(listId: System.Guid, expand?: string, pagination?: PaginationModel, exclude?: string): ng.IPromise<WishListModel>;
+        getWishListLinesById(wishListId: System.Guid, parameter?: IGetWishListLinesParameter): ng.IPromise<WishListLineCollectionModel>;
         addWishList(wishListName: string, description?: string): ng.IPromise<WishListModel>;
         deleteWishList(wishList: WishListModel): ng.IPromise<WishListModel>;
         deleteWishListShare(wishList: WishListModel, wishListShareId?: string): ng.IPromise<WishListModel>;
@@ -30,6 +31,11 @@ module insite.wishlist {
         updateAvailability(line: WishListLineModel): void;
     }
 
+    export interface IGetWishListLinesParameter {
+        pagination?: PaginationModel,
+        query?: string
+    }
+
     export class WishListService implements IWishListService {
         serviceUri = "/api/v1/wishlists";
         wishListSettingsUri = "/api/v1/settings/wishlist";
@@ -43,13 +49,15 @@ module insite.wishlist {
             protected coreService: core.ICoreService) {
         }
 
-        getWishLists(sort?: string, expand?: string, wishListLinesSort?: string, pagination?: PaginationModel): ng.IPromise<WishListCollectionModel> {
+        getWishLists(sort?: string, expand?: string, wishListLinesSort?: string, pagination?: PaginationModel, query?: string, filter?: string): ng.IPromise<WishListCollectionModel> {
             const params = {
                 sort: sort,
                 expand: expand,
                 wishListLinesSort: wishListLinesSort,
                 page: pagination ? pagination.page : null,
-                pageSize: pagination ? pagination.pageSize : null
+                pageSize: pagination ? pagination.pageSize : null,
+                query: query,
+                filter: filter
             };
 
             return this.httpWrapperService.executeHttpRequest(
@@ -77,21 +85,49 @@ module insite.wishlist {
             );
         }
 
-        getListById(listId: System.Guid, expand?: string): ng.IPromise<WishListModel> {
+        getListById(listId: System.Guid, expand?: string, pagination?: PaginationModel, exclude?: string): ng.IPromise<WishListModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ url: this.serviceUri + "/" + listId, method: "GET", params: { expand: expand } }),
+                this.$http({ url: this.serviceUri + "/" + listId, method: "GET", params: this.getWishListParams(pagination, expand, exclude) }),
                 this.getWishListCompleted,
                 this.getWishListFailed
             );
         }
 
-        protected getWishListParams(pagination?: PaginationModel, expand?: string): any {
-            const params: any = { expand: expand };
+        protected getWishListParams(pagination?: PaginationModel, expand?: string, exclude?: string): any {
+            const params: any = { expand: expand, exclude };
 
             if (pagination) {
                 params.page = pagination.page;
                 params.pageSize = pagination.pageSize;
+                params.sort = pagination.sortType;
+            }
+
+            return params;
+        }
+
+        getWishListLinesById(wishListId: System.Guid, parameter?: IGetWishListLinesParameter): ng.IPromise<WishListLineCollectionModel> {
+            let wishListParams = this.getWishListLinesParams(parameter);
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ url: this.serviceUri + "/" + wishListId + "/wishlistLines", method: "GET", params: wishListParams }),
+                this.getWishListLinesCompleted,
+                this.getWishListLinesFailed
+            );
+        }
+
+        protected getWishListLinesParams(parameter?: IGetWishListLinesParameter): any {
+            const params: any = { };
+
+            if (parameter && parameter.pagination) {
+                params.page = parameter.pagination.page;
+                params.pageSize = parameter.pagination.pageSize;
+                params.sort = parameter.pagination.sortType;
+                params.defaultPageSize = parameter.pagination.defaultPageSize;
+            }
+
+            if (parameter && parameter.query) {
+                params.query = parameter.query;
             }
 
             return params;
@@ -101,6 +137,12 @@ module insite.wishlist {
         }
 
         protected getWishListFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        protected getWishListLinesCompleted(response: ng.IHttpPromiseCallbackArg<WishListLineCollectionModel>): void {
+        }
+
+        protected getWishListLinesFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
         addWishList(wishListName: string, description?: string): ng.IPromise<WishListModel> {

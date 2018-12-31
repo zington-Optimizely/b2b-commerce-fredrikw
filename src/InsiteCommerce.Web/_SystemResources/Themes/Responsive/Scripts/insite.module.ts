@@ -70,8 +70,10 @@ module insite {
         }
 
         protected onLocationChangeStart(): void {
-            // on the first link click, hide the first page that was rendered server side
-            this.$rootScope.firstPage = false;
+            if (this.$rootScope.firstPage) {
+                this.$rootScope.firstPage = false;
+            }
+
             this.spinnerService.show("mainLayout");
         }
 

@@ -41,7 +41,9 @@ module insite.catalog {
             "productSubscriptionPopupService",
             "settingsService",
             "$stateParams",
-            "sessionService"];
+            "sessionService",
+            "spinnerService"
+            ];
 
         constructor(
             protected $scope: ng.IScope,
@@ -52,7 +54,8 @@ module insite.catalog {
             protected productSubscriptionPopupService: catalog.ProductSubscriptionPopupService,
             protected settingsService: core.ISettingsService,
             protected $stateParams: IContentPageStateParams,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected spinnerService: core.ISpinnerService) {
             this.init();
         }
 
@@ -110,6 +113,7 @@ module insite.catalog {
         }
 
         protected resolvePage(): void {
+            this.spinnerService.show();
             const path = this.$stateParams.path || window.location.pathname;
             this.productService.getCatalogPage(path).then(
                 (catalogPage: CatalogPageModel) => { this.getCatalogPageCompleted(catalogPage); },
@@ -127,18 +131,20 @@ module insite.catalog {
         }
 
         protected getProductData(productId: string): void {
-            const expand = ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing", "relatedproducts"];
+            this.spinnerService.show();
+            const expand = ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing", "relatedproducts", "brand"];
             let includeAlternateInventory = !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp";
-            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct", includeAlternateInventory).then(
+            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct", includeAlternateInventory, this.configuration).then(
                 (productModel: ProductModel) => { this.getProductCompleted(productModel); },
                 (error: any) => { this.getProductFailed(error); });
         }
 
         protected getProductCompleted(productModel: ProductModel): void {
+            const productWasAlreadyLoaded = !!this.product;
             this.product = productModel.product;
             this.product.qtyOrdered = this.product.minimumOrderQty || 1;
 
-            if (this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
+            if (!productWasAlreadyLoaded && this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
                 this.initConfigurationSelection(this.product.configurationDto.sections);
             }
 
@@ -152,9 +158,14 @@ module insite.catalog {
                 this.initStyleSelection(this.product.styleTraits);
             }
 
-            this.getRealTimePrices();
-            if (!this.settings.inventoryIncludedWithPricing) {
-                this.getRealTimeInventory();
+            if (productWasAlreadyLoaded && this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
+                this.configurationCompleted = false;
+                this.configChanged();
+            } else {
+                this.getRealTimePrices();
+                if (!this.settings.inventoryIncludedWithPricing) {
+                    this.getRealTimeInventory();
+                }
             }
 
             this.setTabs();
@@ -229,6 +240,10 @@ module insite.catalog {
             // product inventory is already updated
             if (this.product.isStyleProductParent) {
                 this.parentProduct = angular.copy(this.product);
+            }
+
+            if (this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
+                this.configurationCompleted = this.isConfigurationCompleted();
             }
         }
 
@@ -449,7 +464,7 @@ module insite.catalog {
         }
 
         configChanged(): void {
-            this.configurationCompleted = this.isConfigurationCompleted();
+            this.spinnerService.show();
             this.configuration = [];
             angular.forEach(this.configurationSelection, (selection) => {
                 this.configuration.push(selection ? selection.sectionOptionId.toString() : guidHelper.emptyGuid());
@@ -494,6 +509,7 @@ module insite.catalog {
         }
 
         protected getProductAvailabilityCompleted(productAvailability: ProductAvailabilityModel): void {
+            this.configurationCompleted = this.isConfigurationCompleted();
         }
 
         protected getProductAvailabilityFailed(error: any): void {

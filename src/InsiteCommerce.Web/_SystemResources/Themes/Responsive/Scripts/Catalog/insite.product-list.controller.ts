@@ -1,6 +1,6 @@
 ﻿import CategoryFacetDto = Insite.Core.Plugins.Search.Dtos.CategoryFacetDto;
 import AttributeTypeFacetDto = Insite.Core.Plugins.Search.Dtos.AttributeTypeFacetDto;
-import AttributeValueDto = Insite.Catalog.Services.Dtos.AttributeValueDto;
+import IProductCollectionParameters = insite.catalog.IProductCollectionParameters;
 
 module insite.catalog {
     "use strict";
@@ -22,6 +22,8 @@ module insite.catalog {
         view: string;
         attributeValueIds: string[] = [];
         priceFilterMinimums: string[] = [];
+        brandIds: string[] = [];
+        productLineIds: string[] = [];
         filterCategory: CategoryFacetDto;
         searchWithinTerms = [];
         query: string;
@@ -29,6 +31,8 @@ module insite.catalog {
         products: ProductCollectionModel = {} as any;
         settings: ProductSettingsModel;
         category: CategoryModel;  // regular category page
+        pageBrandId: System.Guid; // brand product list page
+        pageProductLineId: System.Guid; // productLine product list page
         breadCrumbs: BreadCrumbModel[];
         searchCategory: CategoryModel; // searching within a category
         page: number = null; // query string page
@@ -192,6 +196,12 @@ module insite.catalog {
                 if (state.searchWithinTerms) {
                     this.searchWithinTerms = state.searchWithinTerms;
                 }
+                if (state.brandIds){
+                    this.brandIds = state.brandIds;
+                }
+                if (state.productLineIds){
+                    this.productLineIds = state.productLineIds;
+                }
             } else {
                 // no history for first page - return the default values
                 this.page = 1;
@@ -199,6 +209,8 @@ module insite.catalog {
                 this.filterCategory = { categoryId: null, selected: false, shortDescription: "", count: 0, subCategoryDtos: null, websiteId: null };
                 this.priceFilterMinimums = [];
                 this.searchWithinTerms = [];
+                this.brandIds = [];
+                this.productLineIds = [];
             }
         }
 
@@ -244,13 +256,15 @@ module insite.catalog {
                 this.view = "list";
             }
 
-            this.getProductData({
+            this.getProductData(<IProductCollectionParameters>{
                 query: this.query,
                 categoryId: this.category ? this.category.id : (this.filterCategory ? this.filterCategory.categoryId : null),
                 pageSize: this.pageSize || (this.products.pagination ? this.products.pagination.pageSize : null),
                 sort: this.sort || this.$localStorage.get("productListSortType", null),
                 page: this.page,
                 attributeValueIds: this.attributeValueIds,
+                brandIds: this.brandIds,
+                productLineIds: this.productLineIds,
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
@@ -287,8 +301,11 @@ module insite.catalog {
                 page: this.page,
                 attributeValueIds: this.attributeValueIds,
                 priceFilters: this.priceFilterMinimums,
+                brandIds: this.brandIds,
+                productLineIds: this.productLineIds,
                 includeSuggestions: this.includeSuggestions,
-                includeAttributes: "IncludeOnProduct"
+                includeAttributes: "IncludeOnProduct",
+                makeBrandUrls: this.pageBrandId != null
             };
 
             if (this.isSearch) {
@@ -308,7 +325,7 @@ module insite.catalog {
                 this.view = "list";
             }
 
-            this.customPagerContext = {
+            this.customPagerContext = <ICustomPagerContext>{
                 isSearch: this.isSearch,
                 view: this.view,
                 selectView: this.selectView,
@@ -343,22 +360,29 @@ module insite.catalog {
 
             this.category = catalogPage.category;
             this.breadCrumbs = catalogPage.breadCrumbs;
-            this.getProductData({
-                categoryId: this.category.id,
+
+            this.pageBrandId = catalogPage.brandId;
+            this.pageProductLineId = catalogPage.productLineId;
+
+            this.getProductData(<IProductCollectionParameters>{
+                categoryId: this.category ? this.category.id : null,
                 pageSize: this.pageSize || (this.products.pagination ? this.products.pagination.pageSize : null),
                 sort: this.sort || this.$localStorage.get("productListSortType", ""),
                 page: this.page,
                 attributeValueIds: this.attributeValueIds,
+                brandIds: this.brandIds,
+                productLineIds: this.productLineIds,
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
                 getAllAttributeFacets: true,
                 applyPersonalization: true,
                 includeAttributes: "IncludeOnProduct",
-                includeAlternateInventory: !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp"
+                includeAlternateInventory: !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp",
+                makeBrandUrls: this.pageBrandId != null
             });
 
-            this.$rootScope.$broadcast("categoryLoaded", this.category.id);
+            this.$rootScope.$broadcast("catalogPageLoaded", catalogPage);
         }
 
         protected getCatalogPageFailed(error: any): void {
@@ -370,7 +394,15 @@ module insite.catalog {
                 this.spinnerService.show("productlist");
             }
 
-            expand = expand ? expand : ["pricing", "attributes", "facets"];
+            if(this.pageBrandId){
+                params.brandIds = [this.pageBrandId];
+            }
+
+            if(this.pageProductLineId){
+                params.productLineIds  = [this.pageProductLineId];
+            }
+
+            expand = expand ? expand : ["pricing", "attributes", "facets", "brand"];
 
             this.productService.getProducts(params, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection, params, expand); },
@@ -510,9 +542,14 @@ module insite.catalog {
             if (!expand || !expand.some(e => e === "pricing")) {
                 result.priceRange = this.products.priceRange;
             }
+
+            // secondary calls do not fetch facets again because they don't change.
             if (!expand || !expand.some(e => e === "facets")) {
                 result.attributeTypeFacets = this.products.attributeTypeFacets;
                 result.categoryFacets = this.products.categoryFacets;
+                result.brandFacets = this.products.brandFacets;
+                result.productLineFacets = this.products.productLineFacets;
+                result.priceRange = this.products.priceRange;
             }
 
             if (this.filterType !== "clear") {
@@ -555,7 +592,7 @@ module insite.catalog {
             this.storeHistory();
             this.$localStorage.set("productListSortType", this.products.pagination.sortType);
 
-            const params = {
+            const params: IProductCollectionParameters = {
                 categoryId: this.category ? this.category.id : (this.filterCategory ? this.filterCategory.categoryId : null),
                 query: this.query,
                 searchWithin: this.searchWithinTerms.join(" "),
@@ -563,14 +600,17 @@ module insite.catalog {
                 pageSize: this.products.pagination.pageSize,
                 sort: this.products.pagination.sortType,
                 attributeValueIds: this.attributeValueIds,
+                brandIds: this.brandIds,
+                productLineIds: this.productLineIds,
                 priceFilters: this.priceFilterMinimums,
                 includeSuggestions: this.includeSuggestions,
                 getAllAttributeFacets: this.filterType === "attribute",
                 applyPersonalization: true,
-                includeAttributes: "IncludeOnProduct"
+                includeAttributes: "IncludeOnProduct",
+                makeBrandUrls: this.pageBrandId != null
             };
 
-            this.getProductData(params, this.pageChanged ? ["pricing", "attributes"] : null);
+            this.getProductData(params, this.pageChanged ? ["pricing", "attributes", "brand"] : null);
             this.pageChanged = false;
         }
 
@@ -581,7 +621,9 @@ module insite.catalog {
                 attributeValueIds: this.attributeValueIds,
                 filterCategory: this.filterCategory,
                 priceFilterMinimums: this.priceFilterMinimums,
-                searchWithinTerms: this.searchWithinTerms
+                searchWithinTerms: this.searchWithinTerms,
+                brandIds: this.brandIds,
+                productLineIds: this.productLineIds
             };
             this.coreService.pushState(state);
         }

@@ -245,9 +245,12 @@ module insite.cart {
             this.setUpPaymentMethod(isInit, paymentMethod || this.cart.paymentMethod);
             this.setUpPayPal(isInit);
 
-            setTimeout(() => {
-                this.setUpTokenExGateway();
-            }, 0, false);
+            if (isInit)
+            {
+                setTimeout(() => {
+                    this.setUpTokenExGateway();
+                }, 0, false);
+            }
 
             this.promotionService.getCartPromotions(this.cart.id).then(
                 (promotionCollection: PromotionCollectionModel) => {

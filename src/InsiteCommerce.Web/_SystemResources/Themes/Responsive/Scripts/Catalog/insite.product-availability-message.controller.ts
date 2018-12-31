@@ -2,10 +2,12 @@
     "use strict";
 
     export class ProductAvailabilityMessageController {
-        static $inject = ["spinnerService", "availabilityByWarehousePopupService", "productService"];
+        static $inject = [
+            "availabilityByWarehousePopupService",
+            "productService"
+        ];
 
         constructor(
-            protected spinnerService: core.ISpinnerService,
             protected availabilityByWarehousePopupService: IAvailabilityByWarehousePopupService,
             protected productService: IProductService) {
         }
@@ -14,12 +16,11 @@
             if (productSettings && productSettings.displayInventoryPerWarehouse && productSettings.showInventoryAvailability) {
                 return !productSettings.displayInventoryPerWarehouseOnlyOnProductDetail || productSettings.displayInventoryPerWarehouseOnlyOnProductDetail && page === "ProductDetail";
             }
-
             return false;
         }
 
         openPopup(productSettings: ProductSettingsModel, productId: string, unitOfMeasure: string, configuration: string[]): void {
-            this.spinnerService.show();
+            this.availabilityByWarehousePopupService.display({ warehouses: [] });
             if (productSettings.realTimeInventory) {
                 this.getRealTimeInventory(productId, unitOfMeasure, configuration);
             } else {
@@ -34,14 +35,13 @@
         }
 
         protected getProductCompleted(productModel: ProductModel): void {
-            this.spinnerService.hide();
             this.availabilityByWarehousePopupService.display({
                 warehouses: productModel.product.warehouses
             });
         }
 
         protected getProductFailed(error: any): void {
-            this.spinnerService.hide();
+            this.availabilityByWarehousePopupService.close();
         }
 
         protected getRealTimeInventory(productId: string, unitOfMeasure: string, configuration: string[]): void {
@@ -53,7 +53,6 @@
         }
 
         protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, productId: string, unitOfMeasure: string): void {
-            this.spinnerService.hide();
             var realTimeInventoryResult = realTimeInventory.realTimeInventoryResults.find(o => o.productId === productId);
             if (realTimeInventoryResult) {
                 var inventoryWarehousesDto = realTimeInventoryResult.inventoryWarehousesDtos.find(o => o.unitOfMeasure === unitOfMeasure)
@@ -68,7 +67,7 @@
         }
 
         protected getProductRealTimeInventoryFailed(error: any): void {
-            this.spinnerService.hide();
+            this.availabilityByWarehousePopupService.close();
         }
     };
 

@@ -49,6 +49,7 @@
                     </div>
                     <isc-category-left-nav ng-if="vm.ready" ready="vm.ready" products="vm.products" attribute-value-ids="vm.attributeValueIds" filter-category="vm.filterCategory"
                                            price-filter-minimums="vm.priceFilterMinimums" bread-crumbs="vm.breadCrumbs"
+                                           brand-ids="vm.brandIds" product-line-ids="vm.productLineIds" show-brands="!vm.pageBrandId" show-product-lines="!vm.pageProductLineId"
                                            search-within-terms="vm.searchWithinTerms" category="vm.category">
                     </isc-category-left-nav>
 
@@ -93,6 +94,7 @@
                                     <div class="item-details">
                                         <div class="item-inf-wrapper">
                                             <div class="item-description">
+                                                <isc-product-brand product="product"></isc-product-brand>
                                                 <div class="item-name">
                                                     <a id="tst_productList_{{product.id}}_descriptionLink" ng-href="{{product.productDetailUrl}}">{{product.shortDescription}}</a>
                                                 </div>
@@ -135,12 +137,12 @@
                                             </div>
 
                                             <div class="actions-block">
-                                                <div ng-if="product.canAddToCart" class="product-list-actions">
-                                                    <div class="add-to-cart-block">
+                                                <div class="product-list-actions">
+                                                    <div ng-if="product.canAddToCart" class="add-to-cart-block">
                                                         <div ng-if="product.canEnterQuantity" class="item-qty">
                                                             <input type="text" name="qty" ng-model="product.qtyOrdered" class="qty numerictextbox" />
                                                         </div>
-                                                        <div class="action" ng-if="product.canAddToCart">
+                                                        <div class="action">
                                                             <button ng-show="vm.product.availability.messageType != 2 || vm.product.canBackOrder" id="tst_productList_{{product.id}}_addToCart" ng-click="vm.addToCart(product)"
                                                                     class="btn-add-cart btn primary" ng-disabled="!product.qtyOrdered || product.qtyOrdered == 0 || vm.addingToCart">
                                                                 [% translate 'Add To Cart' %]
@@ -175,6 +177,7 @@
                                                 </a>
                                             </div>
                                             <div class="item-description">
+                                                <isc-product-brand product="product"></isc-product-brand>
                                                 <div class="item-name">
                                                     <a ng-href="{{product.productDetailUrl}}">{{product.shortDescription}}</a>
                                                 </div>
@@ -212,8 +215,8 @@
                                             <span class="um displayUnitOfMeasure isc-uomDisplay">{{product.unitOfMeasureDescription || product.unitOfMeasureDisplay}}</span>
                                         </td>
                                         <td ng-class="{ noToggle: !product.canAddToCart }" class="tv-last-column">
-                                            <div ng-if="product.canAddToCart" class="actions-block">
-                                                <div class="product-info">
+                                            <div class="actions-block">
+                                                <div ng-if="product.canAddToCart" class="product-info">
                                                     <div class="um-pack">
                                                         <div class="um">
                                                             <label ng-if="vm.settings.alternateUnitsOfMeasure && product.productUnitOfMeasures.length > 1">[% translate 'U/M' %]:</label>
@@ -221,7 +224,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="add-to-cart-block">
+                                                <div ng-if="product.canAddToCart" class="add-to-cart-block">
                                                     <div ng-if="product.canEnterQuantity" class="item-qty">
                                                         <input type="text" name="qty" ng-model="product.qtyOrdered" class="qty numerictextbox" />
                                                     </div>
@@ -296,11 +299,23 @@
 <script type="text/ng-template" id="productList_categoryLeftNav">
 
     [% capture filterStatusControls %]
-    <div class="n-filtered" ng-if="vm.filterCategory.categoryId || vm.attributeValues.length > 0 || vm.priceFilters.length > 0 || vm.searchWithinTerms.length > 0">
+    <div class="n-filtered" ng-if="vm.filterCategory.categoryId || vm.attributeValues.length > 0 ||
+        vm.priceFilters.length > 0 || vm.searchWithinTerms.length > 0 ||
+        (vm.showBrands && vm.brandFilters.length > 0 )|| (vm.showProductLines && vm.productLineFilters.length > 0)">
         <ul>
             <li>
                 <a id="tst_productList_categoryLeftNav_appliedCategory_{{vm.filterCategory.categoryId}}" href="javascript:;" ng-if="vm.filterCategory.categoryId" ng-click="vm.toggleCategoryId(vm.filterCategory.categoryId) ">
                     <em>[% translate 'Category' %]:</em> <span>{{vm.filterCategory.shortDescription}}</span>
+                </a>
+            </li>
+            <li ng-if="vm.showBrands" ng-repeat="brandFilter in vm.brandFilters">
+                <a href="javascript:;" ng-click="vm.toggleBrandId(brandFilter.id)">
+                    <em>[% translate 'Brand' %]: {{brandFilter.name}}</em>
+                </a>
+            </li>
+            <li  ng-if="vm.showProductLines" ng-repeat="productLineFilter in vm.productLineFilters">
+                <a href="javascript:;" ng-click="vm.toggleProductLineId(productLineFilter.id)">
+                    <em>[% translate 'Product Line' %]: {{productLineFilter.name}}</em>
                 </a>
             </li>
             <li ng-repeat="attributeValue in vm.attributeValues">
@@ -341,8 +356,10 @@
 
                 <div class="f-search-within">
                     <div class="search-within-search clearfix">
-                        <label ng-if="!vm.category">[% translate 'Search Within Results' %]</label>
-                        <label ng-if="vm.category">[% translate 'Search Within Category' %]</label>
+                        <label ng-if="!vm.category && vm.showBrands">[% translate 'Search Within Results' %]</label>
+                        <label ng-if="vm.category && vm.showBrands">[% translate 'Search Within Category' %]</label>
+                        <label ng-if="!vm.showBrands && vm.showProductLines">[% translate 'Search Within Brand' %]</label>
+                        <label ng-if="!vm.showProductLines">[% translate 'Search Within Product Line' %]</label>
 
                         <div class="search-container">
                             <div class="search-input">
@@ -355,7 +372,7 @@
                     </div>
                 </div>
 
-                <div class="f-cat" ng-if="vm.products.categoryFacets.length > 0">
+                <div class="f-cat" ng-if="!vm.category && vm.products.categoryFacets.length > 0">
                     <section class="accordion">
                         <div>
                             <input type="checkbox" id="accord-1" class="accord-check" checked />
@@ -363,12 +380,12 @@
                             <article class="accord-content">
                                 <div class="f-wrap">
                                     <ul>
-                                        <li id="tst_productList_categoryLeftNav_categoryFacet_{{categoryFacet.categoryId}}" ng-repeat="categoryFacet in vm.products.categoryFacets | orderBy : 'shortDescription'"
+                                        <li id="tst_productList_categoryLeftNav_categoryFacet_{{::categoryFacet.categoryId}}" ng-repeat="categoryFacet in vm.products.categoryFacets | orderBy : 'shortDescription'"
                                             ng-class="{'f-selected' : categoryFacet.selected}"
                                             ng-click="vm.toggleCategory(categoryFacet)">
                                             <a href="javascript:;">
-                                                <span class="f-name">{{categoryFacet.shortDescription}}</span>
-                                                <span class="f-count">({{categoryFacet.count}})</span>
+                                                <span class="f-name">{{::categoryFacet.shortDescription}}</span>
+                                                <span class="f-count">({{::categoryFacet.count}})</span>
                                             </a>
                                         </li>
                                     </ul>
@@ -377,6 +394,53 @@
                         </div>
                     </section>
                 </div>
+
+                <div class="f-cat" ng-if="vm.showBrands && vm.products.brandFacets.length > 0">
+                    <section class="accordion">
+                        <div>
+                            <input type="checkbox" id="accord-1" class="accord-check" checked />
+                            <label for="accord-1" class="accord-head">[% translate 'Brand' %]</label>
+                            <article class="accord-content">
+                                <div class="f-wrap">
+                                    <ul>
+                                        <li id="tst_productList_categoryLeftNav_brandFacets_{{brandFacet.id}}" ng-repeat="brandFacet in vm.products.brandFacets | orderBy : 'name'"
+                                            ng-class="{'f-selected' : brandFacet.selected}"
+                                            ng-click="vm.toggleBrandId(brandFacet.id)">
+                                            <a href="javascript:;">
+                                                <span class="f-name">{{::brandFacet.name}}</span>
+                                                <span class="f-count">({{::brandFacet.count}})</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="f-cat" ng-if="vm.showProductLines && vm.products.productLineFacets.length > 0">
+                    <section class="accordion">
+                        <div>
+                            <input type="checkbox" id="accord-1" class="accord-check" checked />
+                            <label for="accord-1" class="accord-head">[% translate 'Product Line' %]</label>
+                            <article class="accord-content">
+                                <div class="f-wrap">
+                                    <ul>
+                                        <li id="tst_productList_categoryLeftNav_productLineFacets_{{productLineFacet.id}}" ng-repeat="productLineFacet in vm.products.productLineFacets | orderBy : 'name'"
+                                            ng-class="{'f-selected' : productLineFacet.selected}"
+                                            ng-click="vm.toggleProductLineId(productLineFacet.id)">
+                                            <a href="javascript:;">
+                                                <span class="f-name">{{::productLineFacet.name}}</span>
+                                                <span class="f-count">({{::productLineFacet.count}})</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+                </div>
+
 
                 <div class="f-cat" ng-if="vm.products.priceRange.priceFacets.length > 0">
                     <section class="accordion">
@@ -391,7 +455,7 @@
                                             ng-class="{'f-selected' : vm.isPriceFacetSelected(priceFacet)}"
                                             ng-click="vm.togglePriceFilter(priceFacet.minimumPrice.toString())">
                                             <a href="javascript:;">
-                                                <span class="f-name tst_productList_priceFacet_{{$index}}">{{vm.priceRangeDisplay(priceFacet)}}</span> <span ng-attr-id="{{'leftNavCategoryPriceFacetCount_' + $index}}" class="f-count tst_productList_priceFacetCount_{{$index}}">({{priceFacet.count}})</span>
+                                                <span class="f-name tst_productList_priceFacet_{{::$index}}">{{::vm.priceRangeDisplay(priceFacet)}}</span> <span ng-attr-id="{{'leftNavCategoryPriceFacetCount_' + $index}}" class="f-count tst_productList_priceFacetCount_{{::$index}}">({{::priceFacet.count}})</span>
                                             </a>
                                         </li>
                                     </ul>
@@ -414,8 +478,8 @@
                                             ng-class="{'f-selected' : vm.isAttributeValueFacetSelected(attributeValue)}"
                                             ng-click="vm.toggleFilter(attributeValue.attributeValueId)">
                                             <a href="javascript:;">
-                                                <span class="f-name">{{attributeValue.valueDisplay}}</span>
-                                                <span class="f-count">({{attributeValue.count}})</span>
+                                                <span class="f-name">{{::attributeValue.valueDisplay}}</span>
+                                                <span class="f-count">({{::attributeValue.count}})</span>
                                             </a>
                                         </li>
                                     </ul>
@@ -468,6 +532,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div ng-if="vm.products.categoryFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
                                                 ng-model="filterCategoryId"
@@ -476,7 +541,33 @@
                                             <option ng-repeat="categoryFacet in vm.products.categoryFacets | orderBy : 'shortDescription'"
                                                     ng-selected="categoryFacet.selected"
                                                     value="{{categoryFacet.categoryId}}">
-                                                {{categoryFacet.shortDescription}} ({{categoryFacet.count}})
+                                                {{::categoryFacet.shortDescription}} ({{::categoryFacet.count}})
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div ng-if="vm.showBrands && vm.products.brandFacets.length > 0" class="filter-option-container">
+                                        <select data-mini="true"
+                                                ng-model="filterBrandId"
+                                                ng-change="vm.toggleBrandId(filterBrandId)">
+                                            <option value="">[% translate 'Brand' %]</option>
+                                            <option ng-repeat="brandFacet in vm.products.brandFacets | orderBy : 'name'"
+                                                    ng-selected="brandFacet.selected"
+                                                    value="{{brandFacet.id}}">
+                                                {{::brandFacet.name}} ({{::brandFacet.count}})
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                     <div ng-if="vm.products.productLineFacets.length > 0" class="filter-option-container">
+                                        <select data-mini="true"
+                                                ng-model="filterProductLineId"
+                                                ng-change="vm.toggleProductLineId(filterProductLineId)">
+                                            <option value="">[% translate 'Product Line' %]</option>
+                                            <option ng-repeat="productLineFacets in vm.products.productLineFacets | orderBy : 'name'"
+                                                    ng-selected="productLineFacets.selected"
+                                                    value="{{productLineFacets.id}}">
+                                                {{::productLineFacets.name}} ({{::productLineFacets.count}})
                                             </option>
                                         </select>
                                     </div>
@@ -487,7 +578,7 @@
                                             <option ng-repeat="priceFacet in vm.products.priceRange.priceFacets | orderBy : 'minimumPrice'"
                                                     ng-selected="priceFacet.selected"
                                                     value="{{priceFacet.minimumPrice}}">
-                                                {{vm.priceRangeDisplay(priceFacet)}} ({{priceFacet.count}})
+                                                {{::vm.priceRangeDisplay(priceFacet)}} ({{::priceFacet.count}})
                                             </option>
                                         </select>
                                     </div>
@@ -498,7 +589,7 @@
                                             <option ng-repeat="attributeValue in section.attributeValueFacets | orderBy : ['sortOrder','valueDisplay']"
                                                     ng-selected="attributeValue.selected"
                                                     value="{{attributeValue.attributeValueId}}">
-                                                {{attributeValue.valueDisplay}} ({{attributeValue.count}})
+                                                {{::attributeValue.valueDisplay}} ({{::attributeValue.count}})
                                             </option>
                                         </select>
                                     </div>

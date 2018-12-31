@@ -13,9 +13,10 @@
                             <span>[% translate 'Select List' %]</span>
                         </div>
                         <div class="large-7 columns">
-                            <select id="tst_wishListPopup_selectedWishList" ng-change="vm.changeWishList()" ng-model="vm.selectedWishList" ng-options="wishList.name for wishList in vm.wishListCollection track by wishList.id">
-                                <option value="">[% translate 'Create New List' %]</option>
-                            </select>
+                            <input type="text" class="wishlist-selector tst_wishlist_selector" id="selectWishList" name="selectedWishList"
+                                   ng-init="vm.wishListOptionsPlaceholder = '[% translate 'Search or select list' EscapeSingleQuotes %]'" ng-click="vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"
+                                   ng-model="vm.wishListSearch" kendo-auto-complete k-options="vm.wishListOptions" ng-disabled="vm.newWishListName" />
+                            <span class="icon-arw-down-5" ng-click="!vm.newWishListName && vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"></span>
                         </div>
                         <div class="row thor">[% translate 'Or' %]</div>
                         <div class="row create-list">
@@ -41,4 +42,9 @@
             <a class="close-reveal-modal">&#215;</a>
         </div>
     </div>
+    <script id="totalWishListCountTemplate" type="text/template">
+        <div class="k-header" ng-show="vm.totalWishListsCount > vm.defaultPageSize">
+            [% translate 'Showing 1-{0} of {1}' %]
+        </div>
+    </script>
 </div>

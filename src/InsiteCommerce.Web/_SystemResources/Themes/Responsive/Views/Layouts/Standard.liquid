@@ -13,8 +13,8 @@
                 [% comment %] cms-rearrangeable is required by the cms shell [% endcomment %]
                 <div class="cms-rearrangeable" ui-view></div>
                 [% comment %] first page serverside for SEO - this must be outside ui-view or the controller will be called twice [% endcomment %]
-                <div class="cms-rearrangeable" ng-if="firstPage">
-                    [[Body]]
+                <div class="cms-rearrangeable" id="firstPageContainer" ng-controller="FirstPageController as vm">
+                  [[Body]]
                 </div>
                 <isc-spinner show="false" name="mainLayout"></isc-spinner>
             </div>

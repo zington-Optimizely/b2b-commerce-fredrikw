@@ -1279,6 +1279,20 @@ body [role="main"] div.pbtm {
 .popup-add-wishlist .large-5 label {
 }
 
+.popup-add-wishlist .select-list .wishlist-selector {
+        .k-input {
+            padding-right: 2em;
+        }
+
+        + .icon-arw-down-5 {
+            position: absolute;
+            top: 0.3em;
+            right: .25em;
+            font-size: 22px;
+            cursor: pointer;
+        }
+    }
+
 @media all and (min-width: 768px) {
     .popup-add-wishlist .large-7.columns {
         padding-right: 0;
@@ -1617,7 +1631,7 @@ body [role="main"] div.pbtm {
 
 /* Autocomplete */
 
-#qo-search-view-list, #qo-search-widget-list, #orders-page-search-list, .search-autocomplete-list, #selectBillTo-list, #selectShipTo-list {
+#qo-search-view-list, #qo-search-widget-list, #orders-page-search-list, .search-autocomplete-list, #selectBillTo-list, #selectShipTo-list, #selectWishList-list {
     &.k-list-container {
         border: 1px solid #BBB;
         background: #FFF;
@@ -1744,7 +1758,7 @@ body [role="main"] div.pbtm {
     }
 }
 
-#selectBillTo-list, #selectShipTo-list {
+#selectBillTo-list, #selectShipTo-list, #selectWishList-list {
     &.k-list-container ul li {
         &.k-item {
             color: #252525;
@@ -1763,6 +1777,10 @@ body [role="main"] div.pbtm {
         display: block;
     }
 }
+
+.popup-add-wishlist span.wishlist-selector {
+        display: block;
+    }
 
 .search-autocomplete-list {
     @media all and (min-width: 768px) {
@@ -3143,11 +3161,16 @@ div.remove a.btn {
 .popup-availability-by-warehouse {
     max-width: 400px;
 
+    .loader-container {
+        height: 150px;
+        display: flex;
+    }
+
     table {
         width: 100%;
 
         td, th {
-            border: solid 1px #dddddd;
+            border: solid 1px #ddd;
             word-break: break-all;
 
             &:last-child {
@@ -9379,5 +9402,16 @@ header label.toggle.burger:after {
     li {
         list-style-type: disc !important;
         display: list-item;
+    }
+}
+
+.product-brand {
+    margin: 7px 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    img {
+        max-width: 150px;
+        max-height: 150px;
     }
 }

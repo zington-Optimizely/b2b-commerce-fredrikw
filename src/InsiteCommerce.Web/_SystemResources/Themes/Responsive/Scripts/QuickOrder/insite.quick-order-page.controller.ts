@@ -87,7 +87,7 @@
         }
 
         protected lookupAndAddProductById(id: string): void {
-            const expandParameter = ["pricing"];
+            const expandParameter = ["pricing", "brand"];
 
             this.productService.getProduct(null, id, expandParameter).then(
                 (product: ProductModel) => { this.getProductCompleted(product); },
@@ -107,7 +107,7 @@
 
         protected lookupAndAddProductBySearchTerm(searchTerm: string): void {
             const parameter: catalog.IProductCollectionParameters = { extendedNames: [searchTerm] };
-            const expandParameter = ["pricing"];
+            const expandParameter = ["pricing", "brand"];
 
             this.productService.getProducts(parameter, expandParameter).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
@@ -136,9 +136,7 @@
                     productExists = true;
                     if (this.settings.realTimePricing) {
                         this.showPriceSpinner(this.products[i]);
-                        this.productService.getProductRealTimePrices([this.products[i]]).then(
-                            (realTimePricing: RealTimePricingModel) => { this.getProductRealTimePricesCompleted(realTimePricing); },
-                            (error: any) => { this.getProductRealTimePricesFailed(error); });
+                        this.getRealtimePrices(this.products[i]);
                     } else {
                         this.productService.getProductPrice(this.products[i]).then(
                             (productPrice: ProductPriceModel) => { this.getProductPriceCompleted(productPrice); },
@@ -149,20 +147,61 @@
                 }
             }
 
-            if (!productExists) {
-                product.qtyOrdered = product.minimumOrderQty || 1;
-                (product as any).uuid = guidHelper.generateGuid(); // tack on a guid to use as an id for the quantity break pricing tooltip
-                this.products.push(product);
-            }
-
             this.searchTerm = "";
             this.errorMessage = "";
 
-            if (this.settings.realTimePricing && !product.quoteRequired && !productExists) {
-                this.productService.getProductRealTimePrices([product]).then(
-                    (pricingResult: RealTimePricingModel) => this.getProductRealTimePricesCompleted(pricingResult),
-                    (reason: any) => this.getProductRealTimePricesFailed(reason));
+            if (productExists) {
+                return;
             }
+
+            product.qtyOrdered = product.minimumOrderQty || 1;
+            (product as any).uuid = guidHelper.generateGuid(); // tack on a guid to use as an id for the quantity break pricing tooltip
+
+            if (!this.settings.realTimeInventory && !this.settings.realTimePricing) {
+                if (this.canProductBeQuickOrdered(product)) {
+                    this.products.push(product);
+                }
+
+                return;
+            }
+
+            if (this.settings.realTimePricing) {
+                this.getRealtimePrices(product);
+            }
+
+            if (this.settings.realTimeInventory) {
+                if (!this.settings.inventoryIncludedWithPricing) {
+                    this.getRealTimeInventory(product);
+                }
+            } else {
+                if (this.canProductBeQuickOrdered(product)) {
+                    this.products.push(product);
+                }
+            }
+        }
+
+        protected getRealtimePrices(product: ProductDto): void {
+            if (product.quoteRequired) {
+                return;
+            }
+
+            if (!this.settings.realTimePricing) {
+                return;
+            }
+
+            this.productService.getProductRealTimePrices([product]).then(
+                (realTimePricing: RealTimePricingModel) => { this.getProductRealTimePricesCompleted(realTimePricing, product); },
+                (error: any) => { this.getProductRealTimePricesFailed(error); });
+        }
+
+        protected getRealTimeInventory(product: ProductDto): void {
+            if (!this.settings.realTimeInventory) {
+                return;
+            }
+
+            this.productService.getProductRealTimeInventory([product]).then(
+                (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, product),
+                (error: any) => this.getProductRealTimeInventoryFailed(error));
         }
 
         protected canProductBeQuickOrdered(product: ProductDto): boolean {
@@ -213,9 +252,7 @@
         quantityInput(product: ProductDto): void {
             if (this.settings.realTimePricing) {
                 this.showPriceSpinner(product);
-                this.productService.getProductRealTimePrices([product]).then(
-                    (realTimePricing: RealTimePricingModel) => { this.getProductRealTimePricesCompleted(realTimePricing); },
-                    (error: any) => { this.getProductRealTimePricesFailed(error); });
+                this.getRealtimePrices(product);
             } else {
                 this.productService.getProductPrice(product).then(
                     (productPrice: ProductPriceModel) => { this.getProductPriceCompleted(productPrice); },
@@ -223,11 +260,26 @@
             }
         }
 
-        protected getProductRealTimePricesCompleted(realTimePricing: RealTimePricingModel): void {
+        protected getProductRealTimePricesCompleted(realTimePricing: RealTimePricingModel, product: ProductDto): void {
+            if (!this.settings.inventoryIncludedWithPricing) {
+                return;
+            }
+
+            this.getRealTimeInventory(product);
         }
 
         protected getProductRealTimePricesFailed(error: any): void {
             this.products.forEach(p => (p.pricing as any).failedToGetRealTimePrices = true);
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, product: ProductDto): void {
+            if (this.canProductBeQuickOrdered(product)) {
+                this.products.push(product);
+            }
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
+            this.products.forEach(p => (p.pricing as any).failedToGetRealTimeInventory = true);
         }
 
         protected getProductPriceCompleted(productPrice: ProductPriceModel): void {

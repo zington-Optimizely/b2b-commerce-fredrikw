@@ -21,6 +21,7 @@
                         </tr>
                         <tr ng-repeat="product in vm.job.jobQuoteLineCollection">
                             <td class="col-desc">
+                                <isc-product-brand product="product"></isc-product-brand>
                                 <div class="item-name">
                                     <a ng-href="{{product.productUri}}" ng-bind="product.shortDescription"></a>
                                 </div>

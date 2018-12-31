@@ -63,29 +63,21 @@ module insite.account {
         }
 
         updateSession(warehouse: WarehouseModel, onSessionUpdate?: Function): void {
-            if (this.session.isAuthenticated) {
-                const session = {} as SessionModel;
-                session.fulfillmentMethod = this.fulfillmentMethod;
-                session.pickUpWarehouse = warehouse;
-                this.spinnerService.show();
-                this.sessionService.updateSession(session).then(
-                    (updatedSession: SessionModel) => { this.updateSessionCompleted(updatedSession, onSessionUpdate); },
-                    (error: any) => { this.updateSessionFailed(error); });
-            } else {
-                const currentContext = this.sessionService.getContext();
-                currentContext.fulfillmentMethod = this.fulfillmentMethod;
-                currentContext.pickUpWarehouseId = warehouse.id;
-                this.sessionService.setContext(currentContext);
+            const currentContext = this.sessionService.getContext();
+            currentContext.fulfillmentMethod = this.fulfillmentMethod;
+            currentContext.pickUpWarehouseId = warehouse.id;
+            this.sessionService.setContext(currentContext);
+            this.session.fulfillmentMethod = this.fulfillmentMethod;
+            this.session.pickUpWarehouse = warehouse;
 
-                this.session.fulfillmentMethod = this.fulfillmentMethod;
-                this.session.pickUpWarehouse = warehouse;
-                if (angular.isFunction(onSessionUpdate)) {
-                    onSessionUpdate();
-                }
+            const session = {} as SessionModel;
+            session.fulfillmentMethod = this.fulfillmentMethod;
+            session.pickUpWarehouse = warehouse;
 
-                this.$rootScope.$broadcast("sessionUpdated", this.session);
-                this.$rootScope.$broadcast("fulfillmentMethodChanged");
-            }
+            this.spinnerService.show();
+            this.sessionService.updateSession(session).then(
+                (updatedSession: SessionModel) => { this.updateSessionCompleted(updatedSession, onSessionUpdate); },
+                (error: any) => { this.updateSessionFailed(error); });
         }
 
         protected updateSessionCompleted(session: SessionModel, onSessionUpdate?: Function): void {

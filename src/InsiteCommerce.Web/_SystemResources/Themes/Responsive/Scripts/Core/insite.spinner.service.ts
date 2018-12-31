@@ -25,7 +25,7 @@
         show(name: string = "mainLayout", infinite: boolean = false): void {
             const spinner = SpinnerService.spinners[name];
             if (!spinner) {
-                throw new Error(`No spinner named '${name}' is registered.`);
+                return;
             }
 
             spinner.infinite = infinite;
@@ -35,7 +35,7 @@
         hide(name: string = "mainLayout"): void {
             const spinner = SpinnerService.spinners[name];
             if (!spinner) {
-                throw new Error(`No spinner named '${name}' is registered.`);
+                return;
             }
 
             spinner.hide();
@@ -54,7 +54,7 @@
             }
 
             if (!groupExists) {
-                throw new Error(`No spinners found with group '${group}'.`);
+                return;
             }
         }
 
@@ -71,7 +71,7 @@
             }
 
             if (!groupExists) {
-                throw new Error(`No spinners found with group '${group}'.`);
+                return;
             }
         }
 

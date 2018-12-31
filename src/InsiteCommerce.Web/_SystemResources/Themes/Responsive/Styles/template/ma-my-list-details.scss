@@ -24,50 +24,13 @@
             text-overflow: ellipsis;
             white-space: pre-wrap;
         }
+    }
 
-        .notification-section {
-            margin-bottom: 15px;
-
-            .notification-item {
-                border: 1px solid #FFD800;
-                background-color: #FFF6C5;
-                margin-bottom: 15px;
-                padding: 10px;
-
-                h4 {
-                    margin: 0 45px 0 0;
-                    word-wrap: break-word;
-
-                    a {
-                        text-decoration: underline;
-                        color: #222222;
-                    }
-                }
-
-                .icon-close {
-                    float: right;
-                    font-size: 1.5em;
-                    opacity: 0.6;
-                    cursor: pointer;
-                }
-
-                .notification-details {
-                    margin-top: 10px;
-
-                    ul {
-                        margin-bottom: 0;
-
-                        li {
-                            word-wrap: break-word;
-
-                            .main-detail {
-                                font-weight: 600;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    .notification-item {
+        border: 1px solid #FFD800;
+        background-color: #FFF6C5;
+        padding: 10px;
+        margin-bottom: 15px;
     }
 
     .list-title-wrapper {
@@ -110,15 +73,15 @@
 
         .item-summary {
             font-weight: 600;
-            margin-top: 10px;
             padding-left: 0;
 
             .item-summary-count {
-                margin-right: 25px;
+                margin-right: 15px;
             }
 
             .item-list-total {
                 white-space: nowrap;
+                margin-right: 15px;
             }
         }
 
@@ -170,43 +133,6 @@
             padding: 0;
         }
 
-        .items-filtering {
-            display: inline-block;
-            width: 250px;
-            padding-top: 10px;
-
-            .search-btn {
-                border: 1px solid #cccccc;
-                white-space: nowrap;
-                text-align: left;
-
-                i {
-                    opacity: 0.5;
-                    margin: 3px 4px 3px 8px;
-                    vertical-align: middle;
-
-                    &.icon-close {
-                        margin-left: -25px;
-                        cursor: pointer;
-                    }
-                }
-
-                input {
-                    display: inline-block;
-                    border: none;
-                    margin: 0;
-                    box-shadow: none;
-                    padding: 5px 25px 5px 0;
-                    width: calc(100% - 35px);
-                    height: 2.3125rem;
-
-                    &::-ms-clear {
-                        display: none;
-                    }
-                }
-            }
-        }
-
         .items-sort {
             display: inline-block;
             text-align: right;
@@ -227,6 +153,10 @@
         button, select {
             margin-bottom: 0;
         }
+    }
+
+    .multi-actions-block.needs-border {
+        border-bottom: 1px solid #e1e1e1;
     }
 
     .drag-instruction {
@@ -282,7 +212,8 @@
             }
 
             .item-controls {
-                width: 35px;
+                width: 45px;
+                margin-right: 4px;
 
                 i.handle {
                     opacity: 0.5;
@@ -299,7 +230,7 @@
                     display: block;
                 }
 
-                input {
+                .item-select {
                     margin-left: 0;
                     cursor: pointer;
                 }
@@ -315,7 +246,7 @@
         }
 
         .item-details {
-            width: 35%;
+            width: 30%;
             padding: 0 !important;
         }
 
@@ -349,7 +280,7 @@
         }
 
         .item-pricing-and-actions {
-            width: 42%;
+            width: 36%;
             padding-right: 0;
             text-align: right;
         }
@@ -501,6 +432,59 @@
             }
         }
     }
+}
+
+.ma-my-list-details .items-filtering {
+    display: inline-block;
+    width: 275px;
+
+    .search-btn {
+        margin-bottom: 10px;
+        border: 1px solid #cccccc;
+        white-space: nowrap;
+        text-align: left;
+
+        i {
+            opacity: 0.5;
+            margin: 3px 4px 3px 8px;
+            vertical-align: middle;
+
+            &.icon-close {
+                margin-left: -25px;
+                cursor: pointer;
+            }
+        }
+
+        input {
+            display: inline-block;
+            border: none;
+            margin: 0;
+            box-shadow: none;
+            padding: 3px 35px 3px 0;
+            width: calc(100% - 35px);
+            height: 2.3125rem;
+
+            &::-ms-clear {
+                display: none;
+            }
+        }
+    }
+}
+
+.ma-my-list-details .item-sort-order-container {
+    width: 11%;
+    label {
+        text-align: center;
+        display: block;
+        font-weight: bold;
+        font-size: 15px;
+        white-space: nowrap
+    }
+    input { text-align: center; }
+}
+
+body [role="main"] .ma-my-list-details .paginator-34 {
+    border: none;
 }
 
 .popup-delete-item, .popup-line-note, .popup-share-list {
@@ -922,6 +906,8 @@ li.atci-item {
     }
 }
 
+
+
 @media all and (max-width: 767px) {
     .popup-share-list {
         overflow-y: scroll;
@@ -954,10 +940,6 @@ li.atci-item {
                 width: 100%;
             }
 
-            .items-filtering {
-                width: 100%;
-            }
-
             .items-sort {
                 text-align: left;
                 padding: 20px 0;
@@ -986,7 +968,16 @@ li.atci-item {
         }
 
         .checkout-item {
-            .item-pricing-and-actions {
+            .item-sort-order-container {
+                label {
+                    display: inline;
+                }
+                input {
+                    width: 60px;
+                }
+            }
+            .item-pricing-and-actions, .item-sort-order-container {
+                clear: left;
                 width: 77%;
                 margin-left: 23%;
                 margin-bottom: 5px;

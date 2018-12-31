@@ -17,6 +17,7 @@ module insite.rfq {
         invalidPrice = false;
         invalidPercent = false;
         invalidQty = false;
+        disableSubmit: boolean;
 
         static $inject = ["$scope", "coreService", "rfqService"];
 
@@ -44,6 +45,7 @@ module insite.rfq {
         }
 
         protected initialize(): void {
+            this.disableSubmit = false;
             this.showCalculator = false;
             this.currentCalculatorLineIndex = null;
             this.initialBreakPricesState = angular.copy(this.quoteLine.pricingRfq.priceBreaks);
@@ -233,6 +235,7 @@ module insite.rfq {
             if (!this.validateQuoteLineCalculatorForm()) {
                 return;
             }
+            this.disableSubmit = true;
             const quoteLine = {} as QuoteLineModel;
             quoteLine.id = this.quoteLine.id;
             quoteLine.uri = this.quoteLine.uri;
@@ -254,6 +257,7 @@ module insite.rfq {
         }
 
         protected updateQuoteLineFailed(error: any): void {
+            this.disableSubmit = false;
         }
 
         protected setPriceBreaksForJobQuote(quoteLine: QuoteLineModel): void {

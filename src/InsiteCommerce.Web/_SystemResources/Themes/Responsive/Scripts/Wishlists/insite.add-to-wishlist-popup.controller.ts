@@ -15,8 +15,15 @@
         isRememberedUser: boolean;
         isGuest: boolean;
         addingToList: boolean;
+        wishListOptions: any;
+        defaultPageSize = 20;
+        totalWishListsCount: number;
+        wishListSearch: string;
+        wishListOptionsPlaceholder: string;
+        private addToWishListPopupTimeout: number;
 
-        static $inject = ["wishListService", "coreService", "settingsService", "addToWishlistPopupService", "accessToken", "sessionService"];
+        static $inject = ["wishListService", "coreService", "settingsService", "addToWishlistPopupService", "accessToken", "sessionService", "spinnerService"];
+
 
         constructor(
             protected wishListService: IWishListService,
@@ -24,19 +31,20 @@
             protected settingsService: core.ISettingsService,
             protected addToWishlistPopupService: AddToWishlistPopupService,
             protected accessToken: common.IAccessTokenService,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected spinnerService: core.ISpinnerService) {
             this.init();
         }
 
         init(): void {
             this.productsToAdd = [];
-
             this.settingsService.getSettings().then(
                 (settings: core.SettingsCollection) => { this.getSettingsCompleted(settings); },
                 (error: any) => { this.getSettingsFailed(error); });
         }
 
         protected getSettingsCompleted(settings: core.SettingsCollection): void {
+            this.addToWishListPopupTimeout = settings.cartSettings.addToCartPopupTimeout;
             this.allowMultipleWishLists = settings.wishListSettings.allowMultipleWishLists;
 
             this.sessionService.getSession().then((session: SessionModel) => {
@@ -50,7 +58,6 @@
                     this.coreService.displayModal(angular.element("#popup-add-wishlist"));
                 });
             });
-
         }
 
         protected getSettingsFailed(error: any): void {
@@ -60,34 +67,25 @@
             if (this.isAuthenticated || this.isRememberedUser) {
                 this.clearMessages();
                 this.newWishListName = "";
-                const pagination = { pageSize: 999 } as PaginationModel;
+                this.selectedWishList = null;
+                this.wishListSearch = "";
                 if (this.allowMultipleWishLists) {
-                    this.wishListService.getWishLists(null, null, null, pagination).then(
-                        (wishListCollection: WishListCollectionModel) => { this.getWishListCollectionCompleted(wishListCollection); },
-                        (error: any) => { this.getWishListCollectionFailed(error); });
+                    setTimeout(() => this.initWishListAutocompletes(), 0);
                 } else {
                     this.addWishList(this.newWishListName);
                 }
             }
         }
 
-        protected getWishListCollectionCompleted(wishListCollection: WishListCollectionModel): void {
-            this.wishListCollection = wishListCollection.wishListCollection.filter(o => o.allowEdit || !o.isSharedList);
-        }
-
         protected getWishListCollectionFailed(error: any): void {
             this.errorMessage = error.message;
+            this.spinnerService.hide();
         }
 
         clearMessages(): void {
             this.addToWishlistCompleted = false;
             this.errorMessage = "";
             this.showWishlistNameErrorMessage = false;
-        }
-
-        changeWishList(): void {
-            this.newWishListName = "";
-            this.clearMessages();
         }
 
         addWishList(wishListName: string): void {
@@ -139,8 +137,7 @@
         }
 
         protected addWishListLineCompleted(wishListLine: WishListLineModel): void {
-            this.addToWishlistCompleted = true;
-            this.addingToList = false;
+            this.completedAddingToWishList();
         }
 
         protected addWishListLineFailed(error: any): void {
@@ -155,12 +152,105 @@
         }
 
         protected addWishListLineCollectionCompleted(wishListLineCollection: WishListLineCollectionModel): void {
+            this.completedAddingToWishList();
+        }
+
+        private completedAddingToWishList(): void {
             this.addToWishlistCompleted = true;
             this.addingToList = false;
+            setTimeout(() => {
+                if (this.addToWishlistCompleted) {
+                    this.coreService.closeModal("#popup-add-wishlist");
+                }
+            }, this.addToWishListPopupTimeout);
         }
 
         protected addWishListLineCollectionFailed(error: any): void {
             this.errorMessage = error.message;
+        }
+
+        protected openAutocomplete($event: ng.IAngularEvent, selector: string): void {
+            const autoCompleteElement = angular.element(selector) as any;
+            const kendoAutoComplete = autoCompleteElement.data("kendoAutoComplete");
+            kendoAutoComplete.popup.open();
+        }
+
+        initWishListAutocompletes(): void {
+            const wishListValues = ["{{vm.defaultPageSize}}", "{{vm.totalWishListsCount}}"];
+            this.wishListOptions = this.wishListOptions || {
+                headerTemplate: this.renderMessage(wishListValues, "totalWishListCountTemplate"),
+                dataSource: new kendo.data.DataSource({
+                    serverFiltering: true,
+                    serverPaging: true,
+                    transport: {
+                        read: (options: kendo.data.DataSourceTransportReadOptions) => {
+                            this.onWishlistAutocompleteRead(options);
+                        }
+                    }
+                }),
+                select: (event: kendo.ui.AutoCompleteSelectEvent) => {
+                    this.onWishlistAutocompleteSelect(event);
+                },
+                minLength: 0,
+                dataTextField: "name",
+                dataValueField: "id",
+                placeholder: this.wishListOptionsPlaceholder
+            };
+
+            this.wishListOptions.dataSource.read();
+        }
+
+        protected onWishlistAutocompleteRead(options: kendo.data.DataSourceTransportReadOptions): void {
+            this.spinnerService.show();
+            this.wishListService.getWishLists(null, null, null, this.getDefaultPagination(), this.wishListSearch, "availabletoadd").then(
+                (wishListCollection: WishListCollectionModel) => { this.getWishListCollectionCompleted(options, wishListCollection); },
+                (error: any) => { this.getWishListCollectionFailed(error); });
+        }
+
+        protected onWishlistAutocompleteSelect(event: kendo.ui.AutoCompleteSelectEvent): void {
+            if (event.item == null) {
+                return;
+            }
+
+            const dataItem = event.sender.dataItem(event.item.index());
+            this.selectedWishList = dataItem;
+        }
+
+        protected getWishListCollectionCompleted(options: kendo.data.DataSourceTransportReadOptions, wishListCollectionModel: WishListCollectionModel): void {
+            const wishListCollection = wishListCollectionModel.wishListCollection;
+
+            this.totalWishListsCount = wishListCollectionModel.pagination.totalItemCount;
+
+            if (!this.hasWishlistWithLabel(wishListCollection, this.wishListSearch)) {
+                this.selectedWishList = null;
+            }
+
+            // need to wrap this in setTimeout for prevent double scroll
+            setTimeout(() => { options.success(wishListCollection); }, 0);
+            this.spinnerService.hide();
+        }
+
+        protected getDefaultPagination(): PaginationModel {
+            return { page: 1, pageSize: this.defaultPageSize } as PaginationModel;
+        }
+
+        hasWishlistWithLabel(wishLists: any, label: string): boolean {
+            for (let i = 0; i < wishLists.length; i++) {
+                if (wishLists[i].label === label) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        renderMessage(values: string[], templateId: string): string {
+            let template = angular.element(`#${templateId}`).html();
+            for (var i = 0; i < values.length; i++) {
+                template = template.replace(`{${i}}`, values[i]);
+            }
+
+            return template;
         }
     }
 

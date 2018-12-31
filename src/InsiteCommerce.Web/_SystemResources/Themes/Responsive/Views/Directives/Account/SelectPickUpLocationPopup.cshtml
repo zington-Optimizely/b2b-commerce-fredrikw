@@ -5,19 +5,29 @@
         <div class="pop-content">
             <div class="row">
                 <div class="row locations-container">
-                    <div class="medium-2 large-2 columns">
+                    <div class="medium-5 columns">
                         <h4 class="selected-location-title">[% translate 'Selected Location' %]</h4>
-                    </div>
-                    <div class="medium-3 large-3 columns">
-                        <div ng-if="vm.selectedWarehouse" class="selected-warehouse-block">
-                            <h4 class="selected-location-title">[% translate 'Selected Location' %]</h4>
-                            <h4 ng-bind="vm.selectedWarehouse.description || vm.selectedWarehouse.name"></h4>
-                            <div>
+                        <div class="warehouse-item">
+                            <div class="warehouse-name" ng-cloak ng-bind="vm.selectedWarehouse.description || vm.selectedWarehouse.name"></div>
+                            <div class="warehouse-address" ng-cloak>
                                 {{vm.selectedWarehouse.address1}}<br />
                                 {{vm.selectedWarehouse.address2}}<br ng-if="vm.selectedWarehouse.address2" />
                                 {{vm.selectedWarehouse.city}}<span ng-if="vm.selectedWarehouse.state">,</span>
                                 {{vm.selectedWarehouse.state}}<span ng-if="vm.selectedWarehouse.postalCode">,</span> {{vm.selectedWarehouse.postalCode}}<br />
                                 {{vm.selectedWarehouse.phone}}
+                            </div>
+                            <div class="warehouse-links">
+                                <div class="warehouse-hours" ng-if="vm.selectedWarehouse.hours">
+                                    <a href="#" ng-click="vm.onOpenHoursClick($event)" data-dropdown="warehouse-hours-{{vm.selectedWarehouse.id}}" class="t-dropdown">[% translate 'Hours' %]</a>
+                                </div>
+                                <a ng-href="http://maps.google.com/maps?daddr={{warehouse.address1}} {{vm.selectedWarehouse.address2}}, {{vm.selectedWarehouse.city}}, {{vm.selectedWarehouse.state}} {{vm.selectedWarehouse.postalCode}}" class="warehouse-directions" target="_blank">[% translate 'Directions' %]</a>
+                                <span ng-if="vm.showSelectedWarehouseMarker && vm.distanceUnitOfMeasure === 0" class="warehouse-distance miles" ng-cloak>{{ vm.selectedWarehouse.distance.toFixed(2) }} [% translate 'mi' %]</span>
+                                <span ng-if="vm.showSelectedWarehouseMarker && vm.distanceUnitOfMeasure === 1" class="warehouse-distance kilometers" ng-cloak>{{ (vm.selectedWarehouse.distance * 1.60934).toFixed(2) }} [% translate 'km' %]</span>
+                            </div>
+                            <div class="warehouse-hours" ng-if="vm.selectedWarehouse.hours">
+                                <div id="warehouse-hours-{{vm.selectedWarehouse.id}}" class="f-dropdown content" data-dropdown-content>
+                                    <div class="tt-wrap" ng-bind-html="vm.selectedWarehouse.hours|trusted"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -37,7 +47,7 @@
                     </div>
                     <div ng-if="vm.locationKnown && vm.warehouses.length == 0">
                         <span class="field-validation-error">
-                            [% siteMessage 'PickUpLocation_NoResultsMessage' %]
+                            {{vm.showSelectedWarehouseMarker ? '[% siteMessage 'PickUpLocation_SelectedLocationIsOnlyResult' EscapeSingleQuotes %]' : '[% siteMessage 'PickUpLocation_NoResultsMessage' EscapeSingleQuotes %]'}}
                         </span>
                     </div>
                     <div class="medium-5 large-5 columns">

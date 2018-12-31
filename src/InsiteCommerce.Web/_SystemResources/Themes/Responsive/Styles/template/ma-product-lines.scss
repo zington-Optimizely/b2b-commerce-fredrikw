@@ -1,0 +1,41 @@
+.widget-product-lines {
+    .product-lines-row {
+        text-align: center;
+
+        h3 {
+            margin-left: 1em;
+            text-align: left;
+        }
+
+        .product-line-block {
+            float: left !important;
+            text-align: center;
+            margin-bottom: 25px;
+            display: inline-table;
+
+            .product-line-container {
+                display: inline-block;
+                width: 160px;
+
+                .image-block {
+                    line-height: 160px;
+                    vertical-align: middle;
+                    margin-bottom: 10px;
+
+                    img {
+                        max-width: 160px;
+                        max-height: 160px;
+                    }
+                }
+
+                .item-name {
+                    text-align: left;
+                }
+            }
+        }
+    }
+
+    .show-all-button {
+        text-align: center;
+    }
+}

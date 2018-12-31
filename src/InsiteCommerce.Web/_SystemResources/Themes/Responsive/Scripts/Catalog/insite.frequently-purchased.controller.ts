@@ -1,6 +1,12 @@
 ﻿module insite.order {
     "use strict";
 
+    export interface IProductItem {
+        id: System.Guid;
+        unitOfMeasure?: string;
+        product?: ProductDto;
+    }
+
     export class FrequentlyPurchasedController {
         productItems: IProductItem[] = [];
         addingToCart = false;
@@ -31,7 +37,7 @@
         }
 
         getProducts(): void {
-            this.productService.getProducts({}, ["pricing", "frequentlypurchased"]).then(
+            this.productService.getProducts({}, ["pricing", "frequentlypurchased", "brand"]).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
                 (error: any) => { this.getProductsFailed(error); }
             );

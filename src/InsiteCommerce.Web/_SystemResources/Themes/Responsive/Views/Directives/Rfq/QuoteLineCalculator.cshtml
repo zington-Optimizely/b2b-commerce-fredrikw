@@ -133,7 +133,7 @@
 
                         <div class="btns">
                             <button ng-click="vm.clearBreaks()" class="btn tertiary btn-clear" type="button">[% translate 'Clear' %]</button>
-                            <button ng-click="vm.applyQuoteBreaks()" class="btn primary btn-apply-quote isc-btnApplyQuote" type="button">[% translate 'Apply Quote' %]</button>
+                            <button ng-click="vm.applyQuoteBreaks()" ng-disabled="vm.disableSubmit" class="btn primary btn-apply-quote isc-btnApplyQuote" type="button">[% translate 'Apply Quote' %]</button>
                             <button ng-click="vm.closeModal('.popup-quote-item')" class="btn secondary btn-cancel" type="button">[% translate 'Cancel' %]</button>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 ﻿import AttributeValueFacetDto = Insite.Core.Plugins.Search.Dtos.AttributeValueFacetDto;
 import PriceFacetDto = Insite.Core.Plugins.Search.Dtos.PriceFacetDto;
+import GenericFacetDto = Insite.Core.Plugins.Search.Dtos.GenericFacetDto;
 
 module insite.catalog {
     "use strict";
@@ -7,16 +8,22 @@ module insite.catalog {
     export class CategoryLeftNavController {
         products: ProductCollectionModel; // full product collection model from the last rest api call
         breadCrumbs: BreadCrumbModel[];
-        attributeValueIds: string[]; // a list of selected atributes, used by productlist to request data
+        attributeValueIds: string[]; // a list of selected attributes, used by productlist to request data
+        brandIds: string[]; // a list of selected brands, used by productlist to request data
+        productLineIds: string[]; // a list of selected product lines, used by productlist to request data
         filterCategory: CategoryFacetDto; // category selected by user, used by productlist to request data
         priceFilterMinimums: string[]; // a list of the prices selected by the user, used by productlist to request data
         searchWithinTerms: any[]; // search within search terms
         category: CategoryModel; // category if this is a category page
         attributeValues: AttributeValueFacetDto[] = []; // private list of attributes for the ui to display
         priceFilters: PriceFacetDto[] = []; // private list of price ranges for the ui to display
+        brandFilters: GenericFacetDto[] = [];
+        productLineFilters: GenericFacetDto[] = [];
         attributeTypeAttributeValueLimits: {} = {}; // dictionary of attribute types and the number of attribute values to show
         currencySymbol: string;
         searchWithinInput: string;
+        showBrands: boolean;
+        showProductLines: boolean;
 
         static $inject = ["$timeout", "$window", "$scope", "$rootScope", "sessionService"];
 
@@ -34,8 +41,7 @@ module insite.catalog {
                 (session: SessionModel) => { this.onGetSessionCompleted(session); },
                 (error: any) => { this.onGetSessionFailed(error); });
 
-            this.getSelectedFilters();
-            this.getSelectedPriceFilters();
+            this.getAllSelectedFilters();
 
             this.$window.addEventListener("popstate", () => { this.onPopState(); });
 
@@ -51,16 +57,21 @@ module insite.catalog {
 
         protected onPopState(): void {
             this.$timeout(() => {
-                this.getSelectedFilters();
-                this.getSelectedPriceFilters();
+                this.getAllSelectedFilters();
             }, 0);
         }
 
         protected onFilterLoaded(): void {
             this.$timeout(() => {
-                this.getSelectedFilters();
-                this.getSelectedPriceFilters();
+                this.getAllSelectedFilters();
             }, 0);
+        }
+
+        getAllSelectedFilters(){
+            this.getSelectedFilters();
+            this.getSelectedPriceFilters();
+            this.getSelectedBrandFilters();
+            this.getSelectedProductLineFilters();
         }
 
         toggleFilter(attributeValueId: string): void {
@@ -109,6 +120,36 @@ module insite.catalog {
             this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "category");
         }
 
+        toggleBrandId(brandId: string): void {
+
+            this.changeGenericArrayValue(brandId, this.brandIds);
+            this.getSelectedBrandFilters();
+
+            this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "brand");
+        }
+
+        toggleProductLineId(productLineId: string): void {
+
+            this.changeGenericArrayValue(productLineId, this.productLineIds);
+            this.getSelectedProductLineFilters();
+
+            this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "product line");
+        }
+
+        changeGenericArrayValue(id: string, array: string[]): void {
+            if(!id){
+                array.length = 0;
+                return;
+            }
+            const index = array.indexOf(id);
+            if (index > -1){
+                array.splice(index, 1);
+            }
+            else {
+                array.push(id);
+            }
+        }
+
         toggleCategoryId(categoryId: string): void {
             let categoryFacet: CategoryFacetDto;
             this.products.categoryFacets.forEach((c) => {
@@ -133,12 +174,20 @@ module insite.catalog {
         }
 
         clearFilters(): void {
+            // clear in place
             this.filterCategory.categoryId = "";
             this.attributeValueIds.length = 0;
             this.priceFilterMinimums.length = 0;
-            this.searchWithinTerms.length = 0; // clear in place
-            this.getSelectedFilters();
-            this.getSelectedPriceFilters();
+            if(this.showBrands) {
+                this.brandIds.length = 0;
+            }
+
+            if(this.showProductLines) {
+                this.productLineIds.length = 0;
+            }
+
+            this.searchWithinTerms.length = 0;
+            this.getAllSelectedFilters();
             this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "clear");
         }
 
@@ -148,7 +197,7 @@ module insite.catalog {
             const attributeValuesIdsCopy = this.attributeValueIds.slice();
             this.attributeValueIds.length = 0;
             if (this.products && this.products.attributeTypeFacets) {
-                this.products.attributeTypeFacets.forEach((attribute) => { //
+                this.products.attributeTypeFacets.forEach((attribute) => {
                     attribute.attributeValueFacets.forEach((attributeValue) => {
                         attributeValuesIdsCopy.forEach((attributeValueId) => {
                             if (attributeValue.attributeValueId.toString() === attributeValueId &&
@@ -176,6 +225,31 @@ module insite.catalog {
                         if (priceFacet.minimumPrice.toString() === priceFilter && !this.priceFilters.some((pf) => pf.minimumPrice === priceFacet.minimumPrice)) {
                             this.priceFilters.push(priceFacet);
                             this.priceFilterMinimums.push(priceFilter); // rebuild this.priceFilterMinimums in case any were removed
+                        }
+                    });
+                });
+            }
+        }
+
+        protected getSelectedBrandFilters(){
+            this.getSelectedGenericFilters(this.products.brandFacets, this.brandFilters, this.brandIds);
+        }
+
+        protected getSelectedProductLineFilters(){
+            this.getSelectedGenericFilters(this.products.productLineFacets, this.productLineFilters, this.productLineIds);
+        }
+
+        protected getSelectedGenericFilters(allFacets: GenericFacetDto[], filters: GenericFacetDto[], selectedIds: string[]): void {
+            filters.length = 0;
+            const selectedIdsCopy = selectedIds.slice();
+            selectedIds.length = 0;
+
+            if (allFacets != null && selectedIdsCopy != null){
+                allFacets.forEach((facet:GenericFacetDto) => {
+                    selectedIdsCopy.forEach((id:string) => {
+                        if (facet.id === id && !filters.some((f) => f.id === facet.id)) {
+                            filters.push(facet);
+                            selectedIds.push(id); // rebuild in case any were removed
                         }
                     });
                 });

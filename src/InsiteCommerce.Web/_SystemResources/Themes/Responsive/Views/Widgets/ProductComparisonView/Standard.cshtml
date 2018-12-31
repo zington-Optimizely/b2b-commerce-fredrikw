@@ -53,6 +53,7 @@
                                     <ul class="item-list">
                                         <li class="row item-block" ng-repeat="product in vm.getProductsThatContainAttributeTypeIdAndAttributeValue(attributeType.id, productAttributeValue)">
                                             <div class="item-details" data-productid="{{product.id}}">
+                                                <isc-product-brand product="product"></isc-product-brand>
                                                 <div class="item-name">
                                                     <a href="#">{{product.shortDescription}}</a>
                                                 </div>
@@ -96,6 +97,7 @@
                                 </a>
                             </div>
                         </div>
+                        <isc-product-brand product="product"></isc-product-brand>
                         <div class="item-name">
                             <a ng-href="{{::product.productDetailUrl}}">{{::product.shortDescription}}</a>
                         </div>

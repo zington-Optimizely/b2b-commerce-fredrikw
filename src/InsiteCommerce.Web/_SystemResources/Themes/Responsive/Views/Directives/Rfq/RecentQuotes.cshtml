@@ -15,7 +15,7 @@
                         <th class="col-rep" ng-if="vm.isSalesPerson">[% translate 'Sales Rep' %]</th>
                         <th class="col-user" ng-if="vm.isSalesPerson">[% translate 'User' %]</th>
                         <th class="col-cust">[% translate 'Customer' %]</th>
-                        <th class="col-shipto" ng-if="!vm.isSalesPerson">[% translate 'Ship To' %]</th>
+                        <th class="col-shipto" ng-if="!vm.isSalesPerson">[% translate 'Ship To / Pick Up' %]</th>
                     </tr>
                     <tr ng-repeat="quote in vm.quotes">
                         <td class="col-num">

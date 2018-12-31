@@ -114,6 +114,13 @@
     }
 
     .list-top-actions {
+        .list-search-filter {
+            margin-right: 5px;
+            display: inline-block;
+            width: 30%;
+            float: left;
+        }
+
         .list-top-actions-sort {
             text-align: right;
 
@@ -398,6 +405,13 @@
                         left: 29px !important;
                     }
                 }
+            }
+        }
+
+        .list-top-actions {
+            .list-top-actions-sort {
+                width: 100%;
+                margin-top: 50px;
             }
         }
     }

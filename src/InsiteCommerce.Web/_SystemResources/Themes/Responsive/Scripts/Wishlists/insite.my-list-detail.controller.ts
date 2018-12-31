@@ -18,10 +18,10 @@
         failedToGetRealTimePrices = false;
         failedToGetRealTimeInventory = false;
         sortableOptions: any;
-        sort: string = "custom";
         sortProperty: string = "sortOrder";
         reverse: boolean = false;
         searchTerm: string = "";
+        private lastSearchTerm: string = "";
         inviteIsNotAvailable: boolean;
 
         addingSearchTerm: string = "";
@@ -35,14 +35,15 @@
         messageTimeout: ng.IPromise<any>;
 
         notAvailableProducts: WishListLineModel[];
-        notVisibleProducts: WishListLineModel[];
-        hideNotVisibleProducts: boolean;
 
         noteForm: any;
         editNote: boolean;
         listLineNote: string;
         noteErrorMessage: string;
         orderIsSaving: boolean;
+
+        pagination: PaginationModel;
+        paginationStorageKey = "DefaultPagination-MyListDetail";
 
         static $inject = [
             "$scope",
@@ -61,7 +62,8 @@
             "uploadToListPopupService",
             "$localStorage",
             "searchService",
-            "productPriceService"
+            "productPriceService",
+            "paginationService"
         ];
 
         constructor(
@@ -81,7 +83,8 @@
             protected uploadToListPopupService: IUploadToListPopupService,
             protected $localStorage: common.IWindowStorage,
             protected searchService: catalog.ISearchService,
-            protected productPriceService: catalog.IProductPriceService
+            protected productPriceService: catalog.IProductPriceService,
+            protected paginationService: core.IPaginationService
         ) {
             this.init();
         }
@@ -92,18 +95,30 @@
 
             if (!this.listId && this.invite) {
                 this.wishListService.activateInvite(this.invite).then(
-                    (wishList: WishListModel) => { this.updateWishListInviteCompleted(wishList); },
-                    (error: any) => { this.updateWishListInviteFailed(error); });
+                    (wishList: WishListModel) => {
+                        this.updateWishListInviteCompleted(wishList);
+                    },
+                    (error: any) => {
+                        this.updateWishListInviteFailed(error);
+                    });
                 return;
             }
 
             this.settingsService.getSettings().then(
-                (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
-                (error: any) => { this.getSettingsFailed(error); });
+                (settingsCollection: core.SettingsCollection) => {
+                    this.getSettingsCompleted(settingsCollection);
+                },
+                (error: any) => {
+                    this.getSettingsFailed(error);
+                });
 
             this.sessionService.getSession().then(
-                (session: SessionModel) => { this.getSessionCompleted(session); },
-                (error: any) => { this.getSessionFailed(error); }
+                (session: SessionModel) => {
+                    this.getSessionCompleted(session);
+                },
+                (error: any) => {
+                    this.getSessionFailed(error);
+                }
             );
 
             this.updateBreadcrumbs();
@@ -113,7 +128,6 @@
             this.initFilter();
             this.$scope.$on("UploadingItemsToListCompleted", () => this.getList());
             this.initializeAutocomplete();
-            this.calculateListHeight();
 
             this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
                 this.onSessionUpdated(session);
@@ -132,15 +146,11 @@
         }
 
         protected calculateListHeight(): void {
-            const interval = this.$interval(() => {
-                const list = angular.element("ul.item-list[ui-sortable]:visible");
-                if (list.length > 0) {
-                    list.css("height", "auto");
-                    list.height(list.height());
-                } else if (!this.inProgress) {
-                    this.$interval.cancel(interval);
-                }
-            }, 300);
+            const list = angular.element("ul.item-list[ui-sortable]:visible");
+            if (list.length > 0) {
+                list.css("height", "auto");
+                list.height(list.height());
+            }
         }
 
         protected onSessionUpdated(session: SessionModel): void {
@@ -178,52 +188,50 @@
                 "ui-floating": false,
                 stop: this.updateSortOrder.bind(this)
             };
-
-            this.$scope.$watch(() => this.sort,
-                () => {
-                    this.updateSort();
-                },
-                true);
-
-            this.sort = this.$localStorage.get(`listDetailsSort-${this.listId}`) || "custom";
         }
 
-        protected updateSort(): void {
-            if (this.sort === "custom") {
-                this.sortProperty = "sortOrder";
-                this.reverse = false;
-            } else if (this.sort === "dateAdded") {
-                this.sortProperty = "createdOn";
-                this.reverse = true;
-            } else if (this.sort === "productAsc") {
-                this.sortProperty = "shortDescription";
-                this.reverse = false;
-            } else if (this.sort === "productDesc") {
-                this.sortProperty = "shortDescription";
-                this.reverse = true;
-            }
-
-            this.$localStorage.set(`listDetailsSort-${this.listId}`, this.sort);
+        initFilter(): void {
+            let searchTimeout;
+            this.$scope.$watch(() => this.searchTerm, () => {
+                searchTimeout = setTimeout(() => {
+                    clearTimeout(searchTimeout);
+                    this.updateIfNewSearchTerm();
+                }, 500)
+            })
         }
 
-        protected initFilter(): void {
-            (this.$scope as any).filter = (wishListLine: WishListLineModel): boolean => {
-                var searchTermInLowerCase = this.searchTerm.toLowerCase();
-                return wishListLine.shortDescription.toLowerCase().indexOf(searchTermInLowerCase) > -1 ||
-                    wishListLine.erpNumber.toLowerCase().indexOf(searchTermInLowerCase) > -1 ||
-                    wishListLine.manufacturerItem.toLowerCase().indexOf(searchTermInLowerCase) > -1;
+        updateIfNewSearchTerm(): void {
+            if (this.searchTerm !== this.lastSearchTerm) {
+                this.getListLines();
             }
+        }
+
+        clearSearch() {
+            this.searchTerm = "";
+            this.updateIfNewSearchTerm();
+        }
+
+        canReorderList() {
+            return this.pagination.numberOfPages === 1 && this.canChangeSortOrder();
+        }
+
+        canChangeSortOrder() {
+            return this.pagination.totalItemCount > 1 && this.pagination.sortType === 'SortOrder' && !this.searchTerm && !this.lastSearchTerm && (this.listModel.allowEdit || !this.listModel.isSharedList);
         }
 
         protected updateSortOrder(): void {
             this.listModel.wishListLineCollection.forEach((line, index) => {
-                line.sortOrder = index;
+                line.sortOrder = index + 1;
             });
 
             this.orderIsSaving = true;
             this.wishListService.updateWishList(this.listModel).then(
-                (wishList: WishListModel) => { this.orderIsSaving = false; },
-                (error: any) => { this.orderIsSaving = false; });
+                (wishList: WishListModel) => {
+                    this.orderIsSaving = false;
+                },
+                (error: any) => {
+                    this.orderIsSaving = false;
+                });
         }
 
         openSharePopup(): void {
@@ -284,7 +292,9 @@
                 (wishListLineCollection: WishListLineCollectionModel) => {
                     this.deleteLineCollectionCompleted(wishListLineCollection);
                 },
-                (error: any) => { this.deleteLineCollectionFailed(error); });
+                (error: any) => {
+                    this.deleteLineCollectionFailed(error);
+                });
         }
 
         protected deleteLineCollectionCompleted(wishListLineCollection: WishListLineCollectionModel): void {
@@ -305,8 +315,12 @@
 
         deleteList(navigateTo: string): void {
             this.wishListService.deleteWishList(this.listModel).then(
-                (wishList: WishListModel) => { this.deleteWishListCompleted(navigateTo, wishList); },
-                (error: any) => { this.deleteWishListFailed(error); });
+                (wishList: WishListModel) => {
+                    this.deleteWishListCompleted(navigateTo, wishList);
+                },
+                (error: any) => {
+                    this.deleteWishListFailed(error);
+                });
         }
 
         protected deleteWishListCompleted(navigateTo: string, wishList: WishListModel): void {
@@ -347,6 +361,7 @@
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.productSettings = settingsCollection.productSettings;
             this.listSettings = settingsCollection.wishListSettings;
+            this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey, {defaultPageSize: this.listSettings.productsPerPage} as any);
             if (this.listId) {
                 this.getList();
             }
@@ -366,9 +381,14 @@
         getList(): void {
             this.inProgress = true;
             this.spinnerService.show();
-            this.wishListService.getListById(this.listId, "hiddenproducts,getalllines").then(
-                (listModel: WishListModel) => { this.getListCompleted(listModel); },
-                (error: any) => { this.getListFailed(error); });
+
+            this.wishListService.getListById(this.listId, null, null, "listlines").then(
+                (listModel: WishListModel) => {
+                    this.getListCompleted(listModel);
+                },
+                (error: any) => {
+                    this.getListFailed(error);
+                });
         }
 
         calculateListTotal(): void {
@@ -379,8 +399,8 @@
                 if (product.pricing) {
                     const unitNetPrice = this.productPriceService.getUnitNetPrice(product).price;
                     const extendedNetPrice = Math.round(unitNetPrice *
-                            product.qtyOrdered *
-                            100) /
+                        product.qtyOrdered *
+                        100) /
                         100;
 
                     this.listTotal += extendedNetPrice;
@@ -390,33 +410,53 @@
             this.listTotal = Math.round(this.listTotal * 100) / 100;
         }
 
-        removeHiddenProducts(): void {
+        isDiscontinued(wishListLine: WishListLineModel): boolean {
             const outOfStock = 2;
-            this.notAvailableProducts = [];
-            this.notVisibleProducts = [];
+            return !wishListLine.isActive || (wishListLine.isDiscontinued && (<any>wishListLine.availability).messageType === outOfStock);
+        }
 
-            if (!this.listModel.wishListLineCollection || this.listModel.wishListLineCollection.length === 0) {
-                return;
+        isRestricted(wishListLine: WishListLineModel): boolean {
+            if (this.isDiscontinued(wishListLine)) {
+                return false;
             }
 
-            this.notAvailableProducts =
-                this.listModel.wishListLineCollection.filter(o => !o.isActive || (o.isDiscontinued && (<any>o.availability).messageType === outOfStock));
-            const inactiveProductIds = this.notAvailableProducts.map(o => o.id);
-            this.notVisibleProducts =
-                this.listModel.wishListLineCollection.filter(o => !o.isVisible &&
-                    inactiveProductIds.indexOf(o.id) === -1);
-            this.listModel.wishListLinesCount -= (this.notAvailableProducts.length + this.notVisibleProducts.length);
-
-            this.listModel.wishListLineCollection =
-                this.listModel.wishListLineCollection.filter(o => o.isActive && (!o.isDiscontinued || (<any>o.availability).messageType !== outOfStock) && o.isVisible);
+            return !wishListLine.isVisible;
         }
 
         protected getListCompleted(listModel: WishListModel): void {
+            this.listModel = listModel;
+
+            this.getListLines();
+        }
+
+        protected getListFailed(error: any): void {
             this.inProgress = false;
             this.spinnerService.hide();
+        }
 
-            this.listModel = listModel;
-            this.removeHiddenProducts();
+        getListLines(): void {
+            this.inProgress = true;
+            this.spinnerService.show();
+
+            this.lastSearchTerm = this.searchTerm;
+
+            this.wishListService.getWishListLinesById(this.listId, {
+                pagination: this.pagination,
+                query: this.searchTerm
+            }).then(
+                (result: WishListLineCollectionModel) => {
+                    this.getListLinesCompleted(result);
+                },
+                (error: any) => {
+                    this.getListLinesFailed(error);
+                });
+        }
+
+        protected getListLinesCompleted(wishListLineCollection: WishListLineCollectionModel): void {
+            this.inProgress = false;
+            this.spinnerService.hide();
+            this.listModel.wishListLineCollection = wishListLineCollection.wishListLines;
+            this.pagination = wishListLineCollection.pagination;
             this.calculateCheckedItems();
 
             this.getRealTimePrices();
@@ -426,11 +466,16 @@
 
             this.calculateListTotal();
 
-            // refresh foundation tip hover
-            this.$timeout(() => (angular.element(document) as any).foundation("dropdown", "reflow"), 0);
+            this.$timeout(() => {
+                    // refresh foundation tip hover
+                    (angular.element(document) as any).foundation("dropdown", "reflow");
+                    this.calculateListHeight();
+                }
+                , 0);
         }
 
-        protected getListFailed(error: any): void {
+        protected getListLinesFailed(error: any): void {
+            this.inProgress = false;
             this.spinnerService.hide();
         }
 
@@ -439,8 +484,12 @@
                 const products = this.wishListService.mapWishListLinesToProducts(this.listModel.wishListLineCollection);
 
                 this.productService.getProductRealTimePrices(products).then(
-                    (pricingResult: RealTimePricingModel) => { this.handleRealTimePricesCompleted(pricingResult); },
-                    (reason: any) => { this.handleRealtimePricesFailed(reason); });
+                    (pricingResult: RealTimePricingModel) => {
+                        this.handleRealTimePricesCompleted(pricingResult);
+                    },
+                    (reason: any) => {
+                        this.handleRealtimePricesFailed(reason);
+                    });
             }
         }
 
@@ -448,7 +497,7 @@
             result.realTimePricingResults.forEach((productPrice: ProductPriceDto) => {
                 const wishlistLine = this.listModel.wishListLineCollection.find(
                     (p: WishListLineModel) => p.productId === productPrice.productId &&
-                    p.unitOfMeasure === productPrice.unitOfMeasure);
+                        p.unitOfMeasure === productPrice.unitOfMeasure);
                 wishlistLine.pricing = productPrice;
             });
 
@@ -477,7 +526,9 @@
                     (inventoryResult: RealTimeInventoryModel) => {
                         this.handleRealTimeInventoryCompleted(inventoryResult);
                     },
-                    (reason: any) => { this.handleRealtimeInventoryFailed(reason); });
+                    (reason: any) => {
+                        this.handleRealtimeInventoryFailed(reason);
+                    });
             }
         }
 
@@ -495,7 +546,9 @@
                 (cartLineCollection: CartLineCollectionModel) => {
                     this.addLineCollectionCompleted(cartLineCollection);
                 },
-                (error: any) => { this.addLineCollectionFailed(error); });
+                (error: any) => {
+                    this.addLineCollectionFailed(error);
+                });
         }
 
         protected addLineCollectionCompleted(cartLineCollection: CartLineCollectionModel): void {
@@ -507,11 +560,17 @@
         }
 
         updateLine(line: WishListLineModel): void {
-            if (line.qtyOrdered > 0) {
-                this.wishListService.updateLine(line).then(
-                    (wishListLine: WishListLineModel) => { this.updateLineCompleted(wishListLine); },
-                    (error: any) => { this.updateLineFailed(error); });
+            if (line.qtyOrdered <= 0) {
+                line.qtyOrdered = 1;
             }
+
+            this.wishListService.updateLine(line).then(
+                (wishListLine: WishListLineModel) => {
+                    this.updateLineCompleted(wishListLine);
+                },
+                (error: any) => {
+                    this.updateLineFailed(error);
+                });
         }
 
         deleteLine(line: WishListLineModel): void {
@@ -521,8 +580,12 @@
 
             this.inProgress = true;
             this.wishListService.deleteLine(line).then(
-                (wishListLine: WishListLineModel) => { this.deleteLineCompleted(wishListLine); },
-                (error: any) => { this.deleteLineFailed(error); });
+                (wishListLine: WishListLineModel) => {
+                    this.deleteLineCompleted(wishListLine);
+                },
+                (error: any) => {
+                    this.deleteLineFailed(error);
+                });
         }
 
         protected deleteLineCompleted(wishListLine: WishListLineModel): void {
@@ -537,6 +600,12 @@
         }
 
         protected updateLineFailed(error: any): void {
+        }
+
+        sortOrderUpdated(wishListLine: WishListLineModel): void {
+            this.inProgress = true;
+            this.spinnerService.show();
+            this.updateLine(wishListLine);
         }
 
         quantityKeyPress(line: WishListLineModel): void {
@@ -556,13 +625,19 @@
                 (cartLineCollection: CartLineCollectionModel) => {
                     this.addLineCollectionCompleted(cartLineCollection);
                 },
-                (error: any) => { this.addLineCollectionFailed(error); });
+                (error: any) => {
+                    this.addLineCollectionFailed(error);
+                });
         }
 
         addLineToCart(line: any): void {
             this.cartService.addLine(line, true).then(
-                (cartLine: CartLineModel) => { this.addLineCompleted(cartLine); },
-                (error: any) => { this.addLineFailed(error); });
+                (cartLine: CartLineModel) => {
+                    this.addLineCompleted(cartLine);
+                },
+                (error: any) => {
+                    this.addLineFailed(error);
+                });
         }
 
         protected addLineCompleted(cartLine: CartLineModel): void {
@@ -584,8 +659,12 @@
         changeUnitOfMeasure(line: WishListLineModel): void {
             const product = this.wishListService.mapWishlistLineToProduct(line);
             this.productService.changeUnitOfMeasure(product).then(
-                (productDto: ProductDto) => { this.changeUnitOfMeasureCompleted(line, productDto); },
-                (error: any) => { this.changeUnitOfMeasureFailed(error); });
+                (productDto: ProductDto) => {
+                    this.changeUnitOfMeasureCompleted(line, productDto);
+                },
+                (error: any) => {
+                    this.changeUnitOfMeasureFailed(error);
+                });
         }
 
         protected changeUnitOfMeasureCompleted(line: WishListLineModel, productDto: ProductDto): void {
@@ -615,8 +694,12 @@
             this.spinnerService.show();
             this.selectedListLines[0].notes = this.listLineNote;
             this.wishListService.updateLine(this.selectedListLines[0]).then(
-                (wishListLine: WishListLineModel) => { this.updateLineNoteCompleted(wishListLine); },
-                (error: any) => { this.updateLineNoteFailed(error); });
+                (wishListLine: WishListLineModel) => {
+                    this.updateLineNoteCompleted(wishListLine);
+                },
+                (error: any) => {
+                    this.updateLineNoteFailed(error);
+                });
         }
 
         protected updateLineNoteCompleted(wishListLine: WishListLineModel): void {
@@ -631,8 +714,12 @@
 
         protected leaveList(navigateTo: string): void {
             this.wishListService.deleteWishListShare(this.listModel).then(
-                (wishList: WishListModel) => { this.leaveListCompleted(navigateTo, wishList); },
-                (error: any) => { this.leaveListFailed(error); });
+                (wishList: WishListModel) => {
+                    this.leaveListCompleted(navigateTo, wishList);
+                },
+                (error: any) => {
+                    this.leaveListFailed(error);
+                });
         }
 
         protected leaveListCompleted(navigateTo: string, wishList: WishListModel): void {
@@ -642,20 +729,6 @@
         }
 
         protected leaveListFailed(error: any): void {
-        }
-
-        removeProducts(productLines: WishListLineModel[]): void {
-            this.spinnerService.show();
-            if (productLines.length === 1) {
-                this.deleteLine(productLines[0]);
-            } else {
-                this.deleteLines(this.listModel, productLines);
-            }
-        }
-
-        hideNotVisibleProductsNotification(): void {
-            this.hideNotVisibleProducts = true;
-            this.notVisibleProducts = [];
         }
 
         openUploadListPopup(wishList: WishListModel): void {
@@ -675,12 +748,16 @@
             }
 
             this.findProduct(erpNumber).then(
-                (productCollection: ProductCollectionModel) => { this.addProductCompleted(productCollection); },
-                (error: any) => { this.addProductFailed(error); });
+                (productCollection: ProductCollectionModel) => {
+                    this.addProductCompleted(productCollection);
+                },
+                (error: any) => {
+                    this.addProductFailed(error);
+                });
         }
 
         protected findProduct(erpNumber: string): ng.IPromise<ProductCollectionModel> {
-            const parameters: catalog.IProductCollectionParameters = { extendedNames: [erpNumber] };
+            const parameters: catalog.IProductCollectionParameters = {extendedNames: [erpNumber]};
 
             return this.productService.getProducts(parameters);
         }
@@ -717,8 +794,12 @@
             if (!productToAdd || !productToAdd.id) {
                 if (this.addingSearchTerm) {
                     this.findProduct(this.addingSearchTerm).then(
-                        (productCollection: ProductCollectionModel) => { this.findProductCompleted(productCollection); },
-                        (error: any) => { this.findProductFailed(error); });
+                        (productCollection: ProductCollectionModel) => {
+                            this.findProductCompleted(productCollection);
+                        },
+                        (error: any) => {
+                            this.findProductFailed(error);
+                        });
                 } else {
                     this.setErrorMessage(angular.element("#messageEnterProductName").val());
                 }
@@ -751,8 +832,12 @@
 
             this.isAddingToList = true;
             this.wishListService.addWishListLine(this.listModel, productToAdd).then(
-                (data: WishListLineModel) => { this.addProductToListCompleted(data) },
-                (error) => { this.addProductToListFailed(error) });
+                (data: WishListLineModel) => {
+                    this.addProductToListCompleted(data)
+                },
+                (error) => {
+                    this.addProductToListFailed(error)
+                });
         }
 
         protected validateAndSetProduct(productCollection: ProductCollectionModel): boolean {
@@ -788,7 +873,7 @@
             this.getList();
             this.isAddingToList = false;
             this.addingSearchTerm = "";
-            this.itemToAdd = { qtyOrdered: (this.itemToAdd ? this.itemToAdd.qtyOrdered : 1) } as ProductDto;
+            this.itemToAdd = {qtyOrdered: (this.itemToAdd ? this.itemToAdd.qtyOrdered : 1)} as ProductDto;
             this.setSuccessMessage(angular.element("#messageAddedProduct").val());
         }
 
@@ -830,7 +915,7 @@
             this.successMessage = "";
             this.errorMessage = "";
             const originalQty = this.itemToAdd ? this.itemToAdd.qtyOrdered : 1;
-            this.itemToAdd = { qtyOrdered: originalQty } as ProductDto;
+            this.itemToAdd = {qtyOrdered: originalQty} as ProductDto;
         }
 
         checkPrint(event: ng.IAngularEvent): void {

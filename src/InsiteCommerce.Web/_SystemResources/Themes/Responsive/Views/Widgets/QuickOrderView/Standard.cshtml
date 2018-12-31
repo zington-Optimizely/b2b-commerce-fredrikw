@@ -28,6 +28,7 @@
                     <span class="item-num-mfg" ng-show="product.manufacturerItem">[% translate 'MFG #' %]:{{product.manufacturerItem}}</span>
                     <span class="item-num-my" ng-show="product.customerName">[% translate 'My Part #' %]:{{product.customerName}}</span>
                 </div>
+                <isc-product-brand product="product"></isc-product-brand>
                 <div class="item-name">
                     <a ng-href="{{product.productDetailUrl}}" target="_blank">{{product.shortDescription}}</a>
                 </div>

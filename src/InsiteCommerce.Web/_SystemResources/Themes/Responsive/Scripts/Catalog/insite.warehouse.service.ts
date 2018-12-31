@@ -18,6 +18,7 @@
         pageSize?: number;
         onlyPickupWarehouses?: boolean;
         sort: string;
+        excludeCurrentPickupWarehouse?: boolean;
     }
 
     export class WarehouseService implements IWarehouseService {
