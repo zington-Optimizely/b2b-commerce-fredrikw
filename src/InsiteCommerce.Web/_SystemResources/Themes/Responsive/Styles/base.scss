@@ -3166,8 +3166,18 @@ div.remove a.btn {
         display: flex;
     }
 
+    .modal-wrap {
+        max-height: calc(100vh - 40px);
+
+        .pop-content .row {
+            max-height: calc(100vh - 157px);
+            overflow: auto;
+        }
+    }
+
     table {
         width: 100%;
+        margin-bottom: 0;
 
         td, th {
             border: solid 1px #ddd;
