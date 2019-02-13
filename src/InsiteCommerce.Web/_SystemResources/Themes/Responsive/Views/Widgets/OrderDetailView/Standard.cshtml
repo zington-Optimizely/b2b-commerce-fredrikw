@@ -75,7 +75,7 @@
                             </div>
                             <div ng-if="vm.order.requestedDeliveryDateDisplay" class="delivery-date">
                                 <div class="oc-head">
-                                    <h3>[% translate 'Requested Delivery Date' %]</h3>
+                                    <h3 ng-bind="vm.order.fulfillmentMethod === 'PickUp' ? '[% translate 'Requested Pick Up Date' EscapeSingleQuotes %]' : '[% translate 'Requested Delivery Date' EscapeSingleQuotes %]'"></h3>
                                 </div>
                                 <div id="tst_orderDetailPage_requestedDeliveryDate" ng-bind="vm.order.requestedDeliveryDateDisplay | date:'shortDate'"></div>
                             </div>
