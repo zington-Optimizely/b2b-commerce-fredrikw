@@ -19,6 +19,7 @@ module insite.wishlist {
         deleteLine(line: WishListLineModel): ng.IPromise<WishListLineModel>;
         deleteLineCollection(wishList: WishListModel, lines: WishListLineModel[]): ng.IPromise<WishListLineCollectionModel>;
         updateWishList(list: WishListModel): ng.IPromise<WishListModel>;
+        updateWishListSchedule(list: WishListModel): ng.IPromise<WishListModel>;
         updateLine(line: WishListLineModel): ng.IPromise<WishListLineModel>;
         addWishListLines(wishList: WishListModel, products: ProductDto[]): ng.IPromise<WishListLineCollectionModel>;
         getWishListSettings(): ng.IPromise<WishListSettingsModel>;
@@ -275,6 +276,21 @@ module insite.wishlist {
         protected updateWishListFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
+        updateWishListSchedule(list: WishListModel): ng.IPromise<WishListModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ method: "PATCH", url: list.uri + "/schedule", data: list }),
+                this.updateWishListScheduleCompleted,
+                this.updateWishListScheduleFailed
+            );
+        }
+
+        protected updateWishListScheduleCompleted(response: ng.IHttpPromiseCallbackArg<WishListModel>): void {
+        }
+
+        protected updateWishListScheduleFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
         activateInvite(invite: string): ng.IPromise<WishListModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
@@ -386,6 +402,8 @@ module insite.wishlist {
             list.wishListLineCollection.forEach((line: WishListLineModel) => {
                 const productInventory = result.realTimeInventoryResults.find((productInventory: ProductInventoryDto) => line.productId === productInventory.productId);
                 if (productInventory) {
+                    line.qtyOnHand = productInventory.qtyOnHand;
+
                     var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === line.unitOfMeasure);
                     if (inventoryAvailability) {
                         line.availability = inventoryAvailability.availability;
@@ -403,8 +421,15 @@ module insite.wishlist {
                     });
 
                     this.updateAvailability(line);
+                    if (line.canAddToCart && !line.canBackOrder && line.trackInventory && line.qtyOnHand <= 0) {
+                        line.canAddToCart = false;
+                        line.canEnterQuantity = line.canAddToCart;
+                    }
                 }
             });
+
+            list.canAddAllToCart = list.wishListLineCollection.every(p => p.canAddToCart);
+            list.canAddToCart = list.canAddAllToCart || list.wishListLineCollection.every(p => p.canAddToCart);
         }
 
         updateAvailability(line: WishListLineModel): void {

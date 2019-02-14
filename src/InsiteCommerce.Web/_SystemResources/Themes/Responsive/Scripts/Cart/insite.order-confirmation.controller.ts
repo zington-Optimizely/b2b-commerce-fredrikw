@@ -12,7 +12,7 @@
         settings: AccountSettingsModel;
         isGuestUser: boolean;
 
-        static $inject = ["cartService", "promotionService", "queryString", "orderService", "sessionService", "settingsService"];
+        static $inject = ["cartService", "promotionService", "queryString", "orderService", "sessionService", "settingsService", "addToWishlistPopupService"];
 
         constructor(
             protected cartService: ICartService,
@@ -20,7 +20,8 @@
             protected queryString: common.IQueryStringService,
             protected orderService: order.IOrderService,
             protected sessionService: account.ISessionService,
-            protected settingsService: core.ISettingsService) {
+            protected settingsService: core.ISettingsService,
+            protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
             this.init();
         }
 
@@ -130,6 +131,14 @@
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        openWishListPopup() {
+            const products = this.cart.cartLines
+                .filter(o => o.canAddToWishlist)
+                .map(o => ({ id: o.productId, qtyOrdered: o.qtyOrdered, selectedUnitOfMeasure: o.unitOfMeasure } as ProductDto));
+
+            this.addToWishlistPopupService.display(products);
         }
     }
 

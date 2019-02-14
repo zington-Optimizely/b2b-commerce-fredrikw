@@ -20,6 +20,10 @@
                 this.warehouses = data.warehouses || [];
                 this.coreService.displayModal(this.selector);
             });
+
+            this.availabilityByWarehousePopupService.registerUpdatePopupDataFunction((data) => {
+                this.warehouses = data.warehouses || [];
+            });
         }
     };
 
@@ -30,6 +34,8 @@
     export interface IAvailabilityByWarehousePopupService {
         display(data: IAvailabilityByWarehousePopupData): void;
         registerDisplayFunction(p: (data: IAvailabilityByWarehousePopupData) => void);
+        updatePopupData(data: IAvailabilityByWarehousePopupData): void;
+        registerUpdatePopupDataFunction(updatePopupDataFunction: (data: IAvailabilityByWarehousePopupData) => void): void;
         close(): void;
     }
 
@@ -39,6 +45,7 @@
         }
         element: ng.IAugmentedJQuery = null;
         displayFunction: (data: IAvailabilityByWarehousePopupData) => void;
+        updatePopupDataFunction: (data: IAvailabilityByWarehousePopupData) => void;
         selector = "#popup-availability-by-warehouse";
 
         static $inject = ["coreService", "$rootScope", "$compile"];
@@ -67,6 +74,16 @@
 
         registerDisplayFunction(displayFunction: (data: IAvailabilityByWarehousePopupData) => void): void {
             this.displayFunction = displayFunction;
+        }
+
+        updatePopupData(data: IAvailabilityByWarehousePopupData): void {
+            if (this.updatePopupDataFunction) {
+                this.updatePopupDataFunction(data);
+            }
+        }
+
+        registerUpdatePopupDataFunction(updatePopupDataFunction: (data: IAvailabilityByWarehousePopupData) => void): void {
+            this.updatePopupDataFunction = updatePopupDataFunction;
         }
 
         close(): void {

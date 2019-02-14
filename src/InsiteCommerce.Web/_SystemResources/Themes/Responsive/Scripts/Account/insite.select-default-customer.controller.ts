@@ -30,7 +30,7 @@
                 this.useDefaultCustomer = true;
             }
 
-            this.customerService.getBillTos("shiptos,state").then(
+            this.customerService.getBillTos("shiptos,state,excludeonetime").then(
                 (billToCollection: BillToCollectionModel) => { this.getDefaultBillTosCompleted(billToCollection); },
                 (error: any) => { this.getDefaultBillTosFailed(error); });
         }

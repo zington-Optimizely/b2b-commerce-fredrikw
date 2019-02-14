@@ -155,7 +155,10 @@ module insite.catalog {
                 if (this.product.isStyleProductParent) {
                     this.parentProduct = angular.copy(this.product);
                 }
-                this.initStyleSelection(this.product.styleTraits);
+
+                if (!productWasAlreadyLoaded) {
+                    this.initStyleSelection(this.product.styleTraits);
+                }
             }
 
             if (productWasAlreadyLoaded && this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {
@@ -240,6 +243,7 @@ module insite.catalog {
             // product inventory is already updated
             if (this.product.isStyleProductParent) {
                 this.parentProduct = angular.copy(this.product);
+                this.styleChange();
             }
 
             if (this.product.isConfigured && this.product.configurationDto && this.product.configurationDto.sections) {

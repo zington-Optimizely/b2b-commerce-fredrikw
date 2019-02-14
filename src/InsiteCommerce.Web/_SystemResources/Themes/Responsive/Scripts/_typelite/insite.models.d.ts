@@ -1,7 +1,7 @@
-﻿
-
-
-
+﻿  
+ 
+ 
+ 
 
 
 
@@ -744,6 +744,7 @@ declare module Insite.Catalog.Services.Dtos {
 		smallImagePath: string;
 		largeImagePath: string;
 		qtyOnHand: number;
+		unitOfMeasure: string;
 		numberInCart: number;
 		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
 		quoteRequired: boolean;
@@ -1786,6 +1787,10 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		sendEmail: boolean;
 		message: string;
 		senderName: string;
+		schedule: Insite.WishLists.WebApi.V1.ApiModels.WishListEmailScheduleModel;
+		sendDayOfWeekPossibleValues: {[key: string]:  string};
+		sendDayOfMonthPossibleValues: {[key: number]:  string};
+		isGlobal: boolean;
 	}
 	interface WishListShareModel extends Insite.Core.WebApi.BaseModel {
 		id: string;
@@ -1801,6 +1806,7 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		manufacturerItem: string;
 		customerName: string;
 		shortDescription: string;
+		qtyOnHand: number;
 		qtyOrdered: number;
 		erpNumber: string;
 		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
@@ -1810,6 +1816,8 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		canShowPrice: boolean;
 		canAddToCart: boolean;
 		canShowUnitOfMeasure: boolean;
+		canBackOrder: boolean;
+		trackInventory: boolean;
 		availability: Insite.Catalog.Services.Dtos.AvailabilityDto;
 		breakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		unitOfMeasure: string;
@@ -1830,9 +1838,19 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		sortOrder: number;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
+	interface WishListEmailScheduleModel extends Insite.Core.WebApi.BaseModel {
+		repeatPeriod: string;
+		repeatInterval: number;
+		sendDayOfWeek: string;
+		sendDayOfMonth: number;
+		startDate: Date;
+		endDate: Date;
+		message: string;
+		lastDateSent: Date;
+	}
 	interface WishListLineCollectionModel extends Insite.Core.WebApi.BaseModel {
 		wishListLines: Insite.WishLists.WebApi.V1.ApiModels.WishListLineModel[];
-		pagination: PaginationModel;
+		pagination: Insite.Core.WebApi.PaginationModel;
 	}
 	interface WishListSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowMultipleWishLists: boolean;
@@ -1840,6 +1858,7 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		allowWishListsByCustomer: boolean;
 		allowListSharing: boolean;
 		productsPerPage: number;
+		enableWishListReminders: boolean;
 	}
 }
 declare module Insite.JobQuote.WebApi.V1.ApiModels {
@@ -1892,3 +1911,4 @@ declare module Insite.Core.Plugins.Inventory {
 		warehouseDtos: Insite.Catalog.Services.Dtos.WarehouseDto[];
 	}
 }
+

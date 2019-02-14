@@ -118,7 +118,10 @@
         protected getCartCompleted(cart: CartModel): void {
             this.cartService.expand = "";
             this.cart = cart;
-            this.initialShipToId = this.cart.shipTo.id;
+            if (this.cart.shipTo) {
+                this.initialShipToId = this.cart.shipTo.id;
+            }
+
             this.enableEditModeIfRequired();
 
             this.websiteService.getCountries("states").then(
@@ -302,7 +305,7 @@
                 if (!isRequired) {
                     address.state = null;
                 }
-                // TODO This does not work and throws a javascript error $(`#${prefix}state`).rules("add", { required: isRequired });
+                // TODO ISC-9145 This does not work and throws a javascript error $(`#${prefix}state`).rules("add", { required: isRequired });
             }, 100);
         }
 
@@ -483,7 +486,7 @@
         }
 
         protected redirectTo(continueUri: string) {
-            if (this.initialShipToId === this.cart.shipTo.id) {
+            if (!this.cart.shipTo || this.initialShipToId === this.cart.shipTo.id) {
                 this.coreService.redirectToPath(continueUri);
             } else {
                 this.coreService.redirectToPathAndRefreshPage(continueUri);

@@ -9,9 +9,12 @@
         replace = false;
         register: boolean;
 
-        static $inject = ["spinnerService"];
+        static $inject = ["spinnerService", "$element"];
 
-        constructor(protected spinnerService: core.ISpinnerService) {
+        constructor(
+            protected spinnerService: core.ISpinnerService,
+            protected $element: ng.IRootElementService
+        ) {
             this.init();
         }
 
@@ -35,6 +38,7 @@
                 group: this.group,
                 show: () => {
                     this.show = true;
+                    setTimeout(this.alignSpinner);
                 },
                 hide: () => {
                     this.show = false;
@@ -46,6 +50,19 @@
 
             if (this.register) {
                 this.spinnerService.register(api);
+            }
+
+            this.alignSpinner = this.alignSpinner.bind(this);
+        }
+
+        private alignSpinner(): void {
+            const bg = this.$element.find(".loader-bg")[0];
+            const bgOffset = bg.getBoundingClientRect();
+            const loader = this.$element.find(".loader")[0];
+            if (bgOffset.top < 0 || bgOffset.bottom > window.innerHeight) {
+                loader.style.top = `${(window.innerHeight - bgOffset.top) / 2}px`;
+            } else {
+                loader.style.top = `calc(50% - ${loader.clientHeight}px)`;
             }
         }
     }

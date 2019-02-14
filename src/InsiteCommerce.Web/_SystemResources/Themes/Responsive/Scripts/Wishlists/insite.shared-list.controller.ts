@@ -18,7 +18,7 @@
 
         shareDetailsLinkIsVisible(list: WishListModel): boolean {
             return (list.shareOption === ShareOptionEnum[ShareOptionEnum.IndividualUsers] && list.wishListSharesCount > 1) ||
-                list.shareOption === ShareOptionEnum[ShareOptionEnum.AllCustomerUsers];
+                list.shareOption === ShareOptionEnum[ShareOptionEnum.AllCustomerUsers] && !list.isGlobal;
         }
 
         showShareDetails(list: WishListModel): void {

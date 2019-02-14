@@ -63,7 +63,9 @@
             "$localStorage",
             "searchService",
             "productPriceService",
-            "paginationService"
+            "paginationService",
+            "$templateCache",
+            "scheduleReminderPopupService"
         ];
 
         constructor(
@@ -84,7 +86,9 @@
             protected $localStorage: common.IWindowStorage,
             protected searchService: catalog.ISearchService,
             protected productPriceService: catalog.IProductPriceService,
-            protected paginationService: core.IPaginationService
+            protected paginationService: core.IPaginationService,
+            protected $templateCache: ng.ITemplateCacheService,
+            protected scheduleReminderPopupService: IUploadToListPopupService
         ) {
             this.init();
         }
@@ -132,6 +136,8 @@
             this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
                 this.onSessionUpdated(session);
             });
+
+            this.$templateCache.remove(this.$location.path());
         }
 
         protected updateWishListInviteCompleted(wishList: WishListModel): void {
@@ -361,7 +367,13 @@
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.productSettings = settingsCollection.productSettings;
             this.listSettings = settingsCollection.wishListSettings;
-            this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey, {defaultPageSize: this.listSettings.productsPerPage} as any);
+
+            this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
+            if (!this.pagination || this.pagination.defaultPageSize !== this.listSettings.productsPerPage) {
+                this.pagination = { defaultPageSize: this.listSettings.productsPerPage } as any;
+                this.paginationService.setDefaultPagination(this.paginationStorageKey, this.pagination);
+            }
+
             if (this.listId) {
                 this.getList();
             }
@@ -382,7 +394,7 @@
             this.inProgress = true;
             this.spinnerService.show();
 
-            this.wishListService.getListById(this.listId, null, null, "listlines").then(
+            this.wishListService.getListById(this.listId, "schedule", null, "listlines").then(
                 (listModel: WishListModel) => {
                     this.getListCompleted(listModel);
                 },
@@ -453,6 +465,13 @@
         }
 
         protected getListLinesCompleted(wishListLineCollection: WishListLineCollectionModel): void {
+            if (wishListLineCollection.wishListLines.length === 0 && this.pagination.page > 1) {
+                // go back if the last product was deleted on a page
+                this.pagination.page = this.pagination.page - 1;
+                this.getListLines();
+                return;
+            }
+
             this.inProgress = false;
             this.spinnerService.hide();
             this.listModel.wishListLineCollection = wishListLineCollection.wishListLines;
@@ -564,6 +583,9 @@
                 line.qtyOrdered = 1;
             }
 
+            this.inProgress = true;
+            this.spinnerService.show();
+
             this.wishListService.updateLine(line).then(
                 (wishListLine: WishListLineModel) => {
                     this.updateLineCompleted(wishListLine);
@@ -603,13 +625,23 @@
         }
 
         sortOrderUpdated(wishListLine: WishListLineModel): void {
-            this.inProgress = true;
-            this.spinnerService.show();
             this.updateLine(wishListLine);
         }
 
-        quantityKeyPress(line: WishListLineModel): void {
-            this.updateLine(line);
+        quantityUpdated(wishListLine: WishListLineModel): void {
+            this.updateLine(wishListLine);
+        }
+
+        sortOrderKeyPress(keyEvent: KeyboardEvent, wishListLine: WishListLineModel): void {
+            if (keyEvent.which === 13) {
+                (keyEvent.target as any).blur();
+            }
+        }
+
+        quantityKeyPress(line: WishListLineModel, keyEvent: KeyboardEvent): void {
+            if (keyEvent.which === 13) {
+                (keyEvent.target as any).blur();
+            }
         }
 
         addSelectedToCart(): void {
@@ -733,6 +765,10 @@
 
         openUploadListPopup(wishList: WishListModel): void {
             this.uploadToListPopupService.display(wishList);
+        }
+
+        openScheduleReminderPopup(wishList: WishListModel): void {
+            this.scheduleReminderPopupService.display(wishList);
         }
 
         onEnterKeyPressedInAutocomplete(): void {

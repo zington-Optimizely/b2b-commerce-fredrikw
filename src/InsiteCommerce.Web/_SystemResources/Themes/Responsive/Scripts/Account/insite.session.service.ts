@@ -543,6 +543,11 @@ module insite.account {
                 }
             }
 
+            if(this.coreService.isSafari()) {
+                // A varied query string prevents Safari from deleting the CurrentBillToId and CurrentShipToId cookies.
+                returnUrl += (returnUrl.indexOf("?") > -1 ? "&_=" : "?_=") + new Date().getTime();
+            }
+
             // full refresh to get nav from server
             this.$window.location.href = returnUrl;
         }

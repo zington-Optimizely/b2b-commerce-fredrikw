@@ -35,7 +35,7 @@
         }
 
         protected getProductCompleted(productModel: ProductModel): void {
-            this.availabilityByWarehousePopupService.display({
+            this.availabilityByWarehousePopupService.updatePopupData({
                 warehouses: productModel.product.warehouses
             });
         }
@@ -59,7 +59,7 @@
                     || realTimeInventoryResult.inventoryWarehousesDtos[0];
 
                 if (inventoryWarehousesDto) {
-                    this.availabilityByWarehousePopupService.display({
+                    this.availabilityByWarehousePopupService.updatePopupData({
                         warehouses: inventoryWarehousesDto.warehouseDtos
                     });
                 }

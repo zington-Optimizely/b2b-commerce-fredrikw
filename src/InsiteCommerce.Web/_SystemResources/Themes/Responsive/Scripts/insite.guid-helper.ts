@@ -1,8 +1,8 @@
 ﻿/* tslint:disable */
 class guidHelper {
 /* tslint:enable */
-    static isGuid(value: string): boolean {
-        return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i.test(value);
+    static isGuid(value: string, allowNull?: boolean): boolean {
+        return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i.test(value) || allowNull && value === null;
     }
 
     static isEmptyGuid(value: string): boolean {

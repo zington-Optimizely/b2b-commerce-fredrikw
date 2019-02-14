@@ -12,14 +12,15 @@
         dealerMarker: any;
         notFound: boolean;
 
-        static $inject = ["$scope", "dealerService", "$sce", "queryString", "$templateCache"];
+        static $inject = ["$scope", "dealerService", "$sce", "queryString", "$templateCache", "$location"];
 
         constructor(
             protected $scope: IDealerScope,
             protected dealerService: IDealerService,
             protected $sce: ng.ISCEService,
             protected queryString: common.IQueryStringService,
-            protected $templateCache: ng.ITemplateCacheService) {
+            protected $templateCache: ng.ITemplateCacheService,
+            protected $location: ng.ILocationService) {
             this.init();
         }
 
@@ -35,7 +36,7 @@
         }
 
         protected onMapInitialized(): void {
-            this.$templateCache.remove("/DealerLocator/Dealer")
+            this.$templateCache.remove(this.$location.path());
             this.dealerService.getDealer(this.queryString.get("dealerId")).then(
                 (dealer: DealerModel) => { this.getDealerCompleted(dealer); },
                 (error: any) => { this.getDealerFailed(error); });

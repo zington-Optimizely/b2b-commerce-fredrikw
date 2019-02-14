@@ -16,6 +16,7 @@
         replaceState(state: any): void;
         pushState(state: any): void;
         getHistoryState(): any;
+        isSafari(): boolean;
     }
 
     export class CoreService implements ICoreService {
@@ -212,7 +213,7 @@
             return (core as any).signInUrl;
         }
 
-        protected isSafari(): boolean {
+        isSafari(): boolean {
             return navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
                 navigator.userAgent && !navigator.userAgent.match("CriOS");
         }

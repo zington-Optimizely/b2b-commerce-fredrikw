@@ -105,6 +105,7 @@
             <isc-cart-total-display cart="vm.cart" promotions="vm.promotions" order-taxes="vm.cart.customerOrderTaxes"></isc-cart-total-display>
             <div class="btns">
                 <a href="javascript: window.print();" class="hide-for-small btn secondary btn-print">[% translate 'Print' %]</a>
+                <a id="tst_orderConfirmation_addToWishList" ng-click="vm.openWishListPopup()" role="button" class="btn secondary" href="javascript:;">[% translate 'Add Items To List' %]</a>
                 <a href="[% urlForPage 'HomePage' %]" class="btn primary btn-continue-shopping">[% translate 'Continue Shopping' %]</a>
             </div>
         </div>

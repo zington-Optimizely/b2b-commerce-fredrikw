@@ -399,6 +399,12 @@
         openWishListPopup(product: ProductDto): void {
             this.addToWishlistPopupService.display([product]);
         }
+
+        quantityKeyPress(keyEvent: KeyboardEvent, product: ProductDto): void {
+            if (keyEvent.which === 13) {
+                (keyEvent.target as any).blur();
+            }
+        }
     }
 
     angular

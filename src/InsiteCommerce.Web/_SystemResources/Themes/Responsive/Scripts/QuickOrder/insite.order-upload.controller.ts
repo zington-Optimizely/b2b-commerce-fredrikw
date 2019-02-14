@@ -95,13 +95,13 @@
                     (error: any) => this.getProductRealTimeInventoryFailed(error));
             } else {
                 this.processProducts(products);
+                this.checkCompletion();
             }
-
-            this.checkCompletion();
         }
 
         protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, products: ProductDto[]): void {
             this.processProducts(products);
+            this.checkCompletion();
         }
 
         protected getProductRealTimeInventoryFailed(error: any): void {

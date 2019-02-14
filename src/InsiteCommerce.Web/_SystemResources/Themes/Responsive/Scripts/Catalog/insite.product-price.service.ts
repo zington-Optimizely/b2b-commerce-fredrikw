@@ -24,11 +24,6 @@ module insite.catalog {
                 return { price: price.price, priceDisplay: price.priceDisplay } as IPriceModel;
             }
 
-            const priceBreak = this.getBreakPrice(product.pricing.unitRegularBreakPrices, product.qtyOrdered);
-            if (priceBreak && (product.pricing.unitNetPrice < priceBreak.breakPrice)) {
-                return { price: product.pricing.unitNetPrice, priceDisplay: product.pricing.unitNetPriceDisplay } as IPriceModel;
-            }
-
             const price = this.getPrice(product.pricing.unitRegularBreakPrices, product.pricing.unitNetPrice, product.pricing.unitNetPriceDisplay, product.qtyOrdered);
             return { price: price.price, priceDisplay: price.priceDisplay } as IPriceModel;
         }
@@ -45,6 +40,10 @@ module insite.catalog {
             }
 
             const breakPrice = this.getBreakPrice(breaks, qty);
+            if (breakPrice && (price < breakPrice.breakPrice)) {
+                return { price: price, priceDisplay: priceToDisplay } as IPriceModel;
+            }
+
             return { price: breakPrice.breakPrice, priceDisplay: breakPrice.breakPriceDisplay } as IPriceModel;
         }
 

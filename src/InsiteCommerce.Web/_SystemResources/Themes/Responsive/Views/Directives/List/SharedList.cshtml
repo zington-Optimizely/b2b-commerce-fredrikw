@@ -1,5 +1,5 @@
 ﻿<div ng-show="listSettings.allowMultipleWishLists && listSettings.allowListSharing">
-    <div ng-if="list.isSharedList || list.wishListSharesCount > 0">
+    <div ng-if="list.isSharedList && list.sharedByDisplayName || list.wishListSharesCount > 0">
         <i class="icon-users"></i>
         <span ng-if="list.wishListSharesCount > 0 && !list.isSharedList">
             <a id="tst_sharedList_sharedWith_link_{{list.id}}" href="#" ng-click="vm.showManageSharing(list, session)">

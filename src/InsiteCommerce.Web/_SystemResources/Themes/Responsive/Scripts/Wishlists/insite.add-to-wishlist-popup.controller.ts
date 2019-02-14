@@ -21,8 +21,10 @@
         wishListSearch: string;
         wishListOptionsPlaceholder: string;
         private addToWishListPopupTimeout: number;
+        enableWishListReminders: boolean;
+        scheduleReminderAfterAdd: boolean;
 
-        static $inject = ["wishListService", "coreService", "settingsService", "addToWishlistPopupService", "accessToken", "sessionService", "spinnerService"];
+        static $inject = ["wishListService", "coreService", "settingsService", "addToWishlistPopupService", "accessToken", "sessionService", "spinnerService", "scheduleReminderPopupService"];
 
 
         constructor(
@@ -32,7 +34,8 @@
             protected addToWishlistPopupService: AddToWishlistPopupService,
             protected accessToken: common.IAccessTokenService,
             protected sessionService: account.ISessionService,
-            protected spinnerService: core.ISpinnerService) {
+            protected spinnerService: core.ISpinnerService,
+            protected scheduleReminderPopupService: IUploadToListPopupService) {
             this.init();
         }
 
@@ -46,6 +49,7 @@
         protected getSettingsCompleted(settings: core.SettingsCollection): void {
             this.addToWishListPopupTimeout = settings.cartSettings.addToCartPopupTimeout;
             this.allowMultipleWishLists = settings.wishListSettings.allowMultipleWishLists;
+            this.enableWishListReminders = settings.wishListSettings.enableWishListReminders;
 
             this.sessionService.getSession().then((session: SessionModel) => {
                 this.isAuthenticated = session.isAuthenticated;
@@ -69,6 +73,7 @@
                 this.newWishListName = "";
                 this.selectedWishList = null;
                 this.wishListSearch = "";
+                this.scheduleReminderAfterAdd = false;
                 if (this.allowMultipleWishLists) {
                     setTimeout(() => this.initWishListAutocompletes(), 0);
                 } else {
@@ -96,6 +101,7 @@
         }
 
         protected addWishListCompleted(newWishList: WishListModel): void {
+            this.selectedWishList = newWishList;
             this.addProductsToWishList(newWishList);
         }
 
@@ -161,12 +167,27 @@
             setTimeout(() => {
                 if (this.addToWishlistCompleted) {
                     this.coreService.closeModal("#popup-add-wishlist");
+
+                    if (this.scheduleReminderAfterAdd) {
+                        this.wishListService.getListById(this.selectedWishList.id, "schedule", null, "listlines").then(
+                            (listModel: WishListModel) => { this.getListCompleted(listModel); },
+                            (error: any) => { this.getListFailed(error); });
+                    }
                 }
             }, this.addToWishListPopupTimeout);
         }
 
         protected addWishListLineCollectionFailed(error: any): void {
             this.errorMessage = error.message;
+        }
+
+        protected getListCompleted(listModel: WishListModel): void {
+            setTimeout(() => {
+                this.scheduleReminderPopupService.display(listModel);
+            }, 100);
+        }
+
+        protected getListFailed(error: any): void {
         }
 
         protected openAutocomplete($event: ng.IAngularEvent, selector: string): void {

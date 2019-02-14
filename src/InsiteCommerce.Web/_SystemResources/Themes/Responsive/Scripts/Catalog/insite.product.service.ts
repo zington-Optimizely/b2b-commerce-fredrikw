@@ -343,8 +343,11 @@ module insite.catalog {
 
         protected getProductRealTimeInventoryCompleted(response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>, products: ProductDto[]): void {
             response.data.realTimeInventoryResults.forEach((productInventory: ProductInventoryDto) => {
-                const product = products.find((p: ProductDto) => p.id === productInventory.productId);
-                if (product) {
+                products.forEach((product: ProductDto) => {
+                    if (!product || product.id !== productInventory.productId) {
+                        return;
+                    }
+
                     product.qtyOnHand = productInventory.qtyOnHand;
 
                     var inventoryAvailability = productInventory.inventoryAvailabilityDtos.find(o => o.unitOfMeasure === product.unitOfMeasure);
@@ -369,7 +372,7 @@ module insite.catalog {
                         product.canEnterQuantity = product.canAddToCart;
                         product.canViewDetails = !product.canAddToCart;
                     }
-                }
+                });
             });
         }
 

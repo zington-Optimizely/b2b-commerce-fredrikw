@@ -11,7 +11,7 @@
                                 <label>[% translate 'Saved Order Subtotal' %]</label>
                                 <div class="row">
                                     <div class="small-6 columns">
-                                        <select id="OrderTotalOperator" name="OrderTotalOperator" ng-model="vm.searchFilter.orderTotalOperator">
+                                        <select id="OrderSubtotalOperator" name="OrderSubtotalOperator" ng-model="vm.searchFilter.orderSubtotalOperator">
                                             <option value="">[% translate 'Select' %]</option>
                                             <option value="Greater Than">[% translate 'Greater Than' %]</option>
                                             <option value="Less Than">[% translate 'Less Than' %]</option>
@@ -19,7 +19,7 @@
                                         </select>
                                     </div>
                                     <div class="small-6 columns">
-                                        <input type="text" name="OrderTotal" id="OrderTotal" value="" ng-model="vm.searchFilter.orderTotal" />
+                                        <input type="text" name="OrderSubtotal" id="OrderSubtotal" value="" ng-model="vm.searchFilter.orderSubtotal" />
                                     </div>
                                 </div>
                             </div>
@@ -79,8 +79,8 @@
                     </th>
                     <th class="col-tot">
                         <a href="" class="sort"
-                           ng-class="{'sort-ascending': vm.searchFilter.sort === 'OrderGrandTotal', 'sort-descending': vm.searchFilter.sort === 'OrderGrandTotal DESC'}"
-                           ng-click="vm.changeSort('OrderGrandTotal')">
+                           ng-class="{'sort-ascending': vm.searchFilter.sort === 'OrderSubtotal', 'sort-descending': vm.searchFilter.sort === 'OrderSubtotal DESC'}"
+                           ng-click="vm.changeSort('OrderSubtotal')">
                             [% translate 'Subtotal' %]
                         </a>
                     </th>

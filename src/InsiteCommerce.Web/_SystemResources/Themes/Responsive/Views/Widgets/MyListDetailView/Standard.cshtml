@@ -3,6 +3,9 @@
         <div class="list-title-wrapper">
             <h1 id="tst_myListDetailView_pageTitle" class="page-title [[Model.CssClass]]" ng-bind="vm.listModel.name"></h1>
             <div class="btns">
+                <button id="tst_myListDetailView_scheduleBtn" ng-if="vm.listSettings.enableWishListReminders" type="button" class="btn secondary" data-reveal-id="popup-schedule-reminder" ng-click="vm.openScheduleReminderPopup(vm.listModel)">
+                    {{vm.listModel.schedule ? '[% translate 'Update Email Reminder' %]' : '[% translate 'Schedule Email Reminder' %]'}}
+                </button>
                 <a id="tst_myListDetailView_printBtn" href="/list/getpdf?listId={{::vm.listModel.id}}&sort={{vm.sort}}" target="_blank" class="btn secondary print-button" ng-click="vm.checkPrint($event)" ng-class="{ 'disabled' : vm.orderIsSaving }">[% translate 'Print' %]</a>
         <button id="tst_myListDetailView_copyBtn" ng-if="vm.listSettings.allowMultipleWishLists" type="button" class="btn secondary" data-reveal-id="popup-copy-list" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Copy' %]</button>
                 <button id="tst_myListDetailView_shareBtn" ng-if="!vm.listModel.isSharedList && vm.listSettings.allowMultipleWishLists && vm.listSettings.allowListSharing" type="button" class="btn secondary" ng-click="vm.openSharePopup()">[% translate 'Share' %]</button>
@@ -41,7 +44,7 @@
     </div>
     <div class="medium-5 columns middle-btns">
                 <button ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" type="button" class="btn tertiary hide-for-small" ng-click="vm.toggleAddToListSection()">[% translate 'Add Items' %] <i ng-class="{ 'icon-arw-up-3': vm.isAddToListSectionVisible, 'icon-arw-down-3': !vm.isAddToListSectionVisible }"></i></button>
-        <button ng-if="vm.listModel.wishListLineCollection.length > 0" type="button" class="btn primary" ng-click="vm.addAllToCart(vm.listModel)"
+        <button id="tst_myListDetailView_addListToCartBtn" ng-if="vm.listModel.wishListLineCollection.length > 0" type="button" class="btn primary" ng-click="vm.addAllToCart(vm.listModel)"
                         ng-disabled="!vm.allQtysIsValid() || !vm.listModel.canAddToCart || vm.inProgress">
                     [% translate 'Add List To Cart' %]
                 </button>
@@ -81,7 +84,7 @@
                     <button type="button" class="btn primary" ng-disabled="vm.itemToAdd.qtyOrdered == 0 || !vm.itemToAdd.qtyOrdered || vm.isAddingToList" ng-click="vm.addProductToList(vm.itemToAdd)">[% translate 'Add To List' %]</button>
                 </div>
                 <div class="right">
-                    <a ng-click="vm.openUploadListPopup(vm.listModel)">Upload Items</a>
+                    <a ng-click="vm.openUploadListPopup(vm.listModel)">[% translate 'Upload Items' %]</a>
                     <div class="hover-tooltip-wrapper">
                         <i data-dropdown="qtip-upload-to-list" class="icon-help hover-tooltip"></i>
                         <span id="qtip-upload-to-list" class="f-dropdown content hover-tooltip-content" data-dropdown-content>
@@ -91,7 +94,7 @@
                 </div>
             </div>
         </div>
-<div ng-if="vm.listModel.wishListLineCollection.length === 0" class="row no-results">
+        <div ng-if="!vm.inProgress && vm.listModel.wishListLineCollection.length === 0" class="row no-results">
             [% siteMessage 'Lists_NoItemsInList' %]
         </div>
 <div ng-if="vm.listModel.wishListLineCollection.length > 0">
@@ -100,7 +103,7 @@
                     <input id="select_all" type="checkbox" ng-click="vm.selectAll()" ng-checked="vm.isAllSelected()" />
                     <label for="select_all">[% translate 'Select All' %]</label>
                     <button type="button" ng-disabled="!vm.canPutAnySelectedToCart" class="btn secondary" ng-click="vm.addSelectedToCart()">[% translate 'Add To Cart' %]</button>
-                    <button type="button" ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" ng-click="vm.deleteSelectedItems()" data-reveal-id="popup-delete-item" ng-disabled="vm.checkedItemsCount === 0" class="btn secondary">
+                    <button id="tst_myListDetailView_deleteItemBtn" type="button" ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" ng-click="vm.deleteSelectedItems()" data-reveal-id="popup-delete-item" ng-disabled="vm.checkedItemsCount === 0" class="btn secondary">
                         [% translate 'Delete' %]
                     </button>
                 </div>
@@ -176,7 +179,7 @@
                     <div class="columns item-sort-order-container">
                         <div ng-show="vm.canChangeSortOrder()" >
                             <label>[% translate 'Sort order' %]</label>
-                            <input class="numerictextbox" type="text" ng-model="wishListLine.sortOrder" isc-enter="vm.sortOrderUpdated(wishListLine)" ng-blur="vm.sortOrderUpdated(wishListLine)"/>
+                            <input class="numerictextbox" type="text" ng-model="wishListLine.sortOrder" ng-keypress="vm.sortOrderKeyPress($event,wishListLine)" ng-change="vm.sortOrderUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }"/>
                         </div>
                     </div>
                     <div class="columns item-pricing-and-actions">
@@ -209,7 +212,7 @@
                                         <button class="btn primary btn-add-cart" ng-click="vm.addLineToCart(wishListLine)" ng-disabled="!wishListLine.qtyOrdered || wishListLine.qtyOrdered == 0">[% translate 'Add to Cart' %]</button>
                                     </div>
                                     <div class="item-qty" ng-if="wishListLine.canEnterQuantity">
-                                        <input ng-disabled="(!vm.listModel.allowEdit && vm.listModel.isSharedList)" type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" isc-enter="vm.quantityKeyPress(wishListLine)" ng-blur="vm.quantityKeyPress(wishListLine)" />
+                                        <input ng-disabled="(!vm.listModel.allowEdit && vm.listModel.isSharedList)" type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" ng-keypress="vm.quantityKeyPress(wishListLine,$event)" ng-change="vm.quantityUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }"/>
                                     </div>
                                 </div>
                                 <div class="show-for-small">
@@ -261,7 +264,7 @@
                         </div>
                         <div class="row btns">
                             <button ng-click="vm.closeModal('#popup-delete-item')" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
-                            <button ng-click="vm.deleteListItem()" class="btn primary" type="button">[% translate 'Delete' %]</button>
+                            <button id="tst_deleteItemPopup_deleteBtn" ng-click="vm.deleteListItem()" class="btn primary" type="button">[% translate 'Delete' %]</button>
                         </div>
                     </div>
                     <a class="close-reveal-modal">&#215;</a>
@@ -342,4 +345,8 @@
 
 <script type="text/ng-template" id="/PartialViews/List-UploadToListPopup">
     [% partialView 'List-UploadToListPopup' %]
+</script>
+
+<script type="text/ng-template" id="/PartialViews/List-ScheduleReminderPopup">
+    [% partialView 'List-ScheduleReminderPopup' %]
 </script>

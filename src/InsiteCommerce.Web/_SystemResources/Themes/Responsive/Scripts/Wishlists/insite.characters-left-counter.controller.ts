@@ -22,11 +22,9 @@
         }
 
         calculateCharacters(): void {
-            if (this.fieldModel) {
+            if (this.fieldModel || this.fieldModel === "") {
                 this.charactersLeft = this.limit - this.fieldModel.length;
-            }
-
-            if (this.formElement && !this.fieldModel) {
+            } else if (this.formElement) {
                 this.charactersLeft = this.formElement.$error.maxlength ? 0 : this.limit;
             }
 
@@ -46,7 +44,7 @@
             scope: {
                 formElement: "=",
                 fieldModel: "=",
-                limit: "@"
+                limit: "="
             },
             controller: "CharactersLeftCounterController",
             controllerAs: "vm",

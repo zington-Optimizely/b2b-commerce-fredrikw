@@ -9,14 +9,16 @@
                 </div>
                 <form ng-show="vm.allowMultipleWishLists && !vm.addToWishlistCompleted" id="addToWishListForm">
                     <div class="row select-list">
-                        <div class="large-5 columns">
-                            <span>[% translate 'Select List' %]</span>
-                        </div>
-                        <div class="large-7 columns">
-                            <input type="text" class="wishlist-selector tst_wishlist_selector" id="selectWishList" name="selectedWishList"
-                                   ng-init="vm.wishListOptionsPlaceholder = '[% translate 'Search or select list' EscapeSingleQuotes %]'" ng-click="vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"
-                                   ng-model="vm.wishListSearch" kendo-auto-complete k-options="vm.wishListOptions" ng-disabled="vm.newWishListName" />
-                            <span class="icon-arw-down-5" ng-click="!vm.newWishListName && vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"></span>
+                        <div class="row">
+                            <div class="large-5 columns">
+                                <span>[% translate 'Select List' %]</span>
+                            </div>
+                            <div class="large-7 columns">
+                                <input type="text" class="wishlist-selector tst_wishlist_selector" id="selectWishList" name="selectedWishList"
+                                       ng-init="vm.wishListOptionsPlaceholder = '[% translate 'Search or select list' EscapeSingleQuotes %]'" ng-click="vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"
+                                       ng-model="vm.wishListSearch" kendo-auto-complete k-options="vm.wishListOptions" ng-disabled="vm.newWishListName" />
+                                <span class="icon-arw-down-5" ng-click="!vm.newWishListName && vm.totalWishListsCount && vm.openAutocomplete($event, '#selectWishList')"></span>
+                            </div>
                         </div>
                         <div class="row thor">[% translate 'Or' %]</div>
                         <div class="row create-list">
@@ -26,6 +28,13 @@
                             <div class="large-7 columns">
                                 <input id="tst_wishListPopup_newWishListName" type="text" ng-model="vm.newWishListName" ng-disabled="vm.selectedWishList" autofocus="autofocus">
                             </div>
+                        </div>
+                        <div class="row schedule-reminder" ng-if="vm.enableWishListReminders">
+                            <label>
+                                <input type="checkbox" ng-model="vm.scheduleReminderAfterAdd"/>
+                                <span ng-if="!vm.selectedWishList">[% siteMessage 'Lists_Schedule_Reminders' %]</span>
+                                <span ng-if="vm.selectedWishList">[% siteMessage 'Lists_Schedule_Or_Modify_Reminders' %]</span>
+                            </label>
                         </div>
                         <div class="row btns">
                             <button id="tst_wishListPopup_addToWishList" ng-click="vm.addToWishList()" class="btn primary btn-add-wishlist" type="button">[% translate 'Add to List' %]</button>

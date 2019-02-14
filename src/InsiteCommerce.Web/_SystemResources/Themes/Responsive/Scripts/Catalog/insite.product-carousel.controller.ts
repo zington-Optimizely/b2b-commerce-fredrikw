@@ -163,7 +163,9 @@
                             this.products.push(relatedProduct.productDto);
                         }
                     });
+
                     this.waitForCarouselAndImages();
+                    this.onCarouselProductsLoaded(this.products);
                 }
             } else if (this.productCarouselType === "CustomersAlsoPurchased") {
                 if (!this.enableDynamicRecommendations) {

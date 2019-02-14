@@ -56,8 +56,8 @@
                     </div>
                     <div class="qo-qty">
                         <label>[% translate 'QTY_quantity' %]:</label>
-                        <input id="tst_quickOrder_{{product.id}}_quantity" type="text" name="input2" id="input2" value="1" class="qty numerictextbox"
-                               ng-model="product.qtyOrdered" isc-enter="vm.quantityInput(product)" ng-blur="vm.quantityInput(product)" />
+                        <input id="tst_quickOrder_{{product.id}}_quantity" type="text" value="1" class="qty numerictextbox"
+                               ng-model="product.qtyOrdered" ng-model-options="{ updateOn: 'blur' }" ng-change="vm.quantityInput(product)" ng-keypress="vm.quantityKeyPress($event,product)"/>
                     </div>
                     <div ng-show="!product.quoteRequired && !product.pricing.requiresRealTimePrice" class="qo-subtotal">{{product.pricing.extendedUnitNetPriceDisplay}}</div>
                     <div ng-show="product.pricing.failedToGetRealTimePrices" class="qo-subtotal">

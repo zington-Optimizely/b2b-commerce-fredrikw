@@ -241,7 +241,13 @@
     </div>
     [% endif -%]
     <div>
-        <h2>[% translate 'Order #' %] [[Model.WebOrderNumber]]</h2>
+        <h2>[% translate 'Order #' %]
+        [% if Model.WebOrderNumber != null and Model.WebOrderNumber != "" -%]
+            [[Model.WebOrderNumber]]
+        [% else -%]
+            [[Model.ErpOrderNumber]]
+        [% endif -%]
+        </h2>
         <table class="main-block">
             <tr>
                 <td class="general-information">

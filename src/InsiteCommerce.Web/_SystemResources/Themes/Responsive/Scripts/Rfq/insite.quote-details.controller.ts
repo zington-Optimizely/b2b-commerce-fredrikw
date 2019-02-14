@@ -325,6 +325,10 @@
         }
 
         protected expirationDateIsLessThanCurrentDate(): boolean {
+            if (!this.quote) {
+                return true;
+            }
+
             let expirationDate = new Date(this.quote.expirationDate.toString());
             let currentDate = new Date();
 

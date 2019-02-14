@@ -4,6 +4,7 @@
     dataLayer: any;
     currentVersion: string;
     safariBackState: any;
+    disablePendo: boolean;
 }
 
 module insite {

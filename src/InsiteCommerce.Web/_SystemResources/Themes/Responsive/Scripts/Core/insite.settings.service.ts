@@ -63,7 +63,7 @@
                     this.deferredRequests[isAuthenticated] = [];
                     this.httpWrapperService.executeHttpRequest(
                         this,
-                        this.$http.get(`${this.settingsUri}?auth=${isAuthenticated}`),
+                        this.$http.get(`${this.settingsUri}?auth=${isAuthenticated}&timestamp=${Date.now()}`),
                         (response: ng.IHttpPromiseCallbackArg<ISettingsCollectionWrapper>) => { this.getSettingsCompleted(response, isAuthenticated, deferred as any); },
                         this.getSettingsFailed
                     );
