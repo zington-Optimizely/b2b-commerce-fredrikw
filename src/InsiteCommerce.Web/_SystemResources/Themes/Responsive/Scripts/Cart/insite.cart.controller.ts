@@ -88,6 +88,7 @@ module insite.cart {
             this.cartService.expand = "cartlines,costcodes,hiddenproducts";
             if (this.settings.showTaxAndShipping) {
                 this.cartService.expand += ",shipping,tax";
+                this.cartService.allowInvalidAddress = true;
             }
             const hasRestrictedProducts = this.$localStorage.get("hasRestrictedProducts");
             if (hasRestrictedProducts === true.toString()) {
@@ -101,6 +102,7 @@ module insite.cart {
 
         protected getCartCompleted(cart: CartModel): void {
             this.cartService.expand = "";
+            this.cartService.allowInvalidAddress = false;
             if (!cart.cartLines.some(o => o.isRestricted || !o.isActive)) {
                 this.$localStorage.remove("hasRestrictedProducts");
                 this.productsCannotBePurchased = false;
@@ -112,6 +114,7 @@ module insite.cart {
 
         protected getCartFailed(error: any): void {
             this.cartService.expand = "";
+            this.cartService.allowInvalidAddress = false;
         }
 
         displayCart(cart: CartModel): void {

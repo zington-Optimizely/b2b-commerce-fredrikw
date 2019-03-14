@@ -12,11 +12,12 @@
         mylistDetailModel: WishListModel;
         listName: string;
 
-        static $inject = ["wishListService", "coreService"];
+        static $inject = ["wishListService", "coreService", "copyToListPopupService"];
 
         constructor(
             protected wishListService: IWishListService,
-            protected coreService: core.ICoreService) {
+            protected coreService: core.ICoreService,
+            protected copyToListPopupService: ICopyToListPopupService) {
             this.init();
         }
 
@@ -29,9 +30,9 @@
         }
 
         initializePopup(): void {
-            const popup = angular.element("#popup-copy-list");
-
-            popup.on("open", () => {
+            this.copyToListPopupService.registerDisplayFunction((list: WishListModel) => {
+                this.mylistDetailModel = list;
+                this.coreService.displayModal(angular.element("#popup-copy-list"));
                 const pagination = { pageSize: 999 } as PaginationModel;
                 this.clearMessages();
                 this.newListName = "";
@@ -132,15 +133,24 @@
         }
     }
 
+    export interface ICopyToListPopupService {
+        display(data: any): void;
+        registerDisplayFunction(p: (data: any) => void);
+    }
+
+    export class CopyToListPopupService extends base.BasePopupService<any> implements ICopyToListPopupService {
+        protected getDirectiveHtml(): string {
+            return "<isc-copy-to-list-popup></isc-copy-to-list-popup>";
+        }
+    }
+
     angular
         .module("insite")
         .controller("CopyToListPopupController", CopyToListPopupController)
+        .service("copyToListPopupService", CopyToListPopupService)
         .directive("iscCopyToListPopup", () => ({
             restrict: "E",
             replace: true,
-            scope: {
-                mylistDetailModel: "=list"
-            },
             templateUrl: "/PartialViews/List-CopyToListPopup",
             controller: "CopyToListPopupController",
             controllerAs: "vm",

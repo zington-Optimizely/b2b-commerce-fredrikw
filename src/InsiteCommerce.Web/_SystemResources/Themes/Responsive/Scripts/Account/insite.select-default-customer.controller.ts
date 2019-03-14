@@ -86,7 +86,7 @@
 
             const requestBillTo = angular.copy(this.billTo);
             const requestShipTo = angular.copy(this.shipTo);
-
+            this.fulfillmentMethod = this.useDefaultCustomer ? this.fulfillmentMethod : this.shipFulfillmentMethod;
             this.account.setDefaultCustomer = true;
             this.account.defaultCustomerId = this.useDefaultCustomer ? this.shipTo.id : null;
             this.account.defaultFulfillmentMethod = this.fulfillmentMethod;

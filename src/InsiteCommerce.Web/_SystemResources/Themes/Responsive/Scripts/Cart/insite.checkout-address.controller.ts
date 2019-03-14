@@ -305,7 +305,6 @@
                 if (!isRequired) {
                     address.state = null;
                 }
-                // TODO ISC-9145 This does not work and throws a javascript error $(`#${prefix}state`).rules("add", { required: isRequired });
             }, 100);
         }
 

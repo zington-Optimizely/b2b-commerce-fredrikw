@@ -6,13 +6,13 @@
                 <div class="row">
                     <div>
                         <p>
-                            [% translate 'Are you sure you want to delete' %] <span ng-bind="list.name" class="list-name"></span>?
+                            [% translate 'Are you sure you want to delete' %] <span ng-bind="vm.list.name" class="list-name"></span>?
                         </p>
                     </div>
                 </div>
                 <div class="row btns">
-                    <button ng-click="closeModal({ selector: '#popup-delete-list' })" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
-                    <button id="tst_deleteListPopup_deleteBtn" ng-click="deleteList({ url: redirectToUrl })" class="btn primary" type="button">[% translate 'Delete' %]</button>
+                    <button ng-click="vm.closeModal()" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
+                    <button id="tst_deleteListPopup_deleteBtn" ng-click="vm.deleteList()" class="btn primary" type="button">[% translate 'Delete' %]</button>
                 </div>
             </div>
             <a class="close-reveal-modal">&#215;</a>

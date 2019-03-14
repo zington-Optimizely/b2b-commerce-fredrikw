@@ -16,7 +16,7 @@
         filter: string;
         popupWishListModel: WishListModel;
 
-        static $inject = ["$scope", "coreService", "wishListService", "cartService", "settingsService", "spinnerService", "$timeout", "sessionService", "paginationService"];
+        static $inject = ["$scope", "coreService", "wishListService", "cartService", "settingsService", "spinnerService", "$timeout", "sessionService", "paginationService", "createListPopupService", "deleteListPopupService"];
 
         constructor(
             protected $scope: ng.IScope,
@@ -27,7 +27,9 @@
             protected spinnerService: core.ISpinnerService,
             protected $timeout: ng.ITimeoutService,
             protected sessionService: account.ISessionService,
-            protected paginationService: core.IPaginationService) {
+            protected paginationService: core.IPaginationService,
+            protected createListPopupService: ICreateListPopupService,
+            protected deleteListPopupService: IDeleteListPopupService) {
             this.init();
         }
 
@@ -46,6 +48,10 @@
             );
 
             this.$scope.$on("list-was-created", () => {
+                this.getWishLists();
+            });
+
+            this.$scope.$on("list-was-deleted", () => {
                 this.getWishLists();
             });
 
@@ -133,20 +139,6 @@
             this.popupWishListModel = wishList;
         }
 
-        deleteList(navigateTo: string): void {
-            this.wishListService.deleteWishList(this.popupWishListModel).then(
-                (wishList: WishListModel) => { this.deleteWishListCompleted(wishList); },
-                (error: any) => { this.deleteWishListFailed(error); });
-        }
-
-        protected deleteWishListCompleted(wishList: WishListModel): void {
-            this.closeModal("#popup-delete-list");
-            this.getWishLists();
-        }
-
-        protected deleteWishListFailed(error: any): void {
-        }
-
         leaveList(): void {
             this.wishListService.deleteWishListShare(this.popupWishListModel).then(
                 (wishList: WishListModel) => { this.leaveListCompleted(wishList); },
@@ -194,6 +186,14 @@
 
         protected updateHistory(): void {
             this.coreService.pushState({ sort: this.sort, pagination: this.pagination });
+        }
+
+        openCreatePopup(wishList: WishListModel): void {
+            this.createListPopupService.display(wishList);
+        }
+
+        openDeletePopup(wishList: WishListModel): void {
+            this.deleteListPopupService.display(wishList);
         }
     }
 

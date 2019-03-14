@@ -1,16 +1,16 @@
-﻿<div ng-controller="MyListDetailController as vm" ng-cloak>
+﻿<div ng-controller="MyListDetailController as vm" ng-init="vm.myListUrl='[% urlForPage 'MyListsPage' %]'" ng-cloak>
     <div ng-if="vm.listModel">
         <div class="list-title-wrapper">
             <h1 id="tst_myListDetailView_pageTitle" class="page-title [[Model.CssClass]]" ng-bind="vm.listModel.name"></h1>
             <div class="btns">
-                <button id="tst_myListDetailView_scheduleBtn" ng-if="vm.listSettings.enableWishListReminders" type="button" class="btn secondary" data-reveal-id="popup-schedule-reminder" ng-click="vm.openScheduleReminderPopup(vm.listModel)">
+                <button id="tst_myListDetailView_scheduleBtn" ng-if="vm.listSettings.enableWishListReminders" type="button" class="btn secondary" ng-click="vm.openScheduleReminderPopup(vm.listModel)">
                     {{vm.listModel.schedule ? '[% translate 'Update Email Reminder' %]' : '[% translate 'Schedule Email Reminder' %]'}}
                 </button>
                 <a id="tst_myListDetailView_printBtn" href="/list/getpdf?listId={{::vm.listModel.id}}&sort={{vm.sort}}" target="_blank" class="btn secondary print-button" ng-click="vm.checkPrint($event)" ng-class="{ 'disabled' : vm.orderIsSaving }">[% translate 'Print' %]</a>
-        <button id="tst_myListDetailView_copyBtn" ng-if="vm.listSettings.allowMultipleWishLists" type="button" class="btn secondary" data-reveal-id="popup-copy-list" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Copy' %]</button>
+                <button id="tst_myListDetailView_copyBtn" ng-if="vm.listSettings.allowMultipleWishLists" type="button" class="btn secondary" ng-click="vm.openCopyToPopup(vm.listModel)" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Copy' %]</button>
                 <button id="tst_myListDetailView_shareBtn" ng-if="!vm.listModel.isSharedList && vm.listSettings.allowMultipleWishLists && vm.listSettings.allowListSharing" type="button" class="btn secondary" ng-click="vm.openSharePopup()">[% translate 'Share' %]</button>
-                <button id="tst_myListDetailView_deleteBtn" ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" data-reveal-id="popup-delete-list">[% translate 'Delete' %]</button>
-                <button ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" data-reveal-id="popup-create-list">[% translate 'Edit' %]</button>
+                <button id="tst_myListDetailView_deleteBtn" ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openDeletePopup(vm.listModel)">[% translate 'Delete' %]</button>
+                <button ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openCreatePopup(vm.listModel)">[% translate 'Edit' %]</button>
             </div>
         </div>
         <div class="list-header">
@@ -244,13 +244,11 @@
     <isc-pager pagination="vm.pagination" bottom="true" storage-key="vm.paginationStorageKey" update-data="vm.getListLines()"></isc-pager>
         </div>
     </div>
+    <div ng-if="vm.getListErrorMessage" ng-bind="vm.getListErrorMessage" class="row no-results"></div>
     <div ng-if="vm.inviteIsNotAvailable" class="row no-results">
         [% siteMessage 'Lists_InviteIsNotAvailable' %]
     </div>
     <div>
-        <isc-create-list-popup list="vm.listModel"></isc-create-list-popup>
-        <isc-copy-to-list-popup list="vm.listModel"></isc-copy-to-list-popup>
-        <isc-delete-list-popup list="vm.listModel" close-modal="vm.closeModal(selector)" delete-list="vm.deleteList(url)" redirect-to-url="[% urlForPage 'MyListsPage' %]"></isc-delete-list-popup>
         <isc-leave-list-popup close-modal="vm.closeModal(selector)" leave-list="vm.leaveList(url)" redirect-to-url="[% urlForPage 'MyListsPage' %]"></isc-leave-list-popup>
         <div id="popup-delete-item" class="reveal-modal popup-delete-item" data-reveal data-reveal-init>
             <div class="modal-wrap">

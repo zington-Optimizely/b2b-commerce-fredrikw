@@ -82,6 +82,9 @@
         }
 
         protected getSettingsFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+            if (error.data.message && error.data.message.trim() === "Insite.Websites.Services.Handlers.GetSettingsCollectionHandler.ServerClientAuthenticationMismatch" && this.accessToken.exists()) {
+                this.accessToken.remove();
+            }
         }
 
         getTokenExConfig(): ng.IPromise<TokenExDto> {

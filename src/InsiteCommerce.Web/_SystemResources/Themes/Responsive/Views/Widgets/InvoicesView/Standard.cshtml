@@ -72,7 +72,7 @@
 
     <label class="error" ng-if="vm.validationMessage" ng-bind="vm.validationMessage"></label>
 
-    <table ng-show="vm.customerSettings.displayAccountsReceivableBalances && vm.billTo.accountsReceivable" id="invoice-balance">
+    <table ng-show="vm.customerSettings.displayAccountsReceivableBalances && vm.billTo.accountsReceivable && vm.billTo.accountsReceivable.agingBuckets.length > 0" id="invoice-balance">
         <tbody>
         <tr class="balance-lbl">
             <td ng-repeat="agingBucket in vm.billTo.accountsReceivable.agingBuckets" ng-bind="agingBucket.label"></td>

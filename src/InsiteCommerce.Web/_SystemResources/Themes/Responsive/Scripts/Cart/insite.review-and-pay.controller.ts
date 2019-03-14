@@ -6,6 +6,7 @@ module insite.cart {
     import TokenExDto = insite.core.TokenExDto;
     import WarehouseModel = Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
     import SessionModel = Insite.Account.WebApi.V1.ApiModels.SessionModel;
+    import CustomerSettingsModel = Insite.Customers.WebApi.V1.ApiModels.CustomerSettingsModel;
 
     export interface IReviewAndPayControllerAttributes extends ng.IAttributes {
         cartUrl: string;
@@ -26,6 +27,7 @@ module insite.cart {
         submitting: boolean;
         cartUrl: string;
         cartSettings: CartSettingsModel;
+        customerSettings: CustomerSettingsModel;
         pageIsReady = false;
         showQuoteRequiredProducts: boolean;
         submitSuccessUri: string;
@@ -35,6 +37,8 @@ module insite.cart {
         isInvalidSecurityCode: boolean;
         session: SessionModel;
         enableWarehousePickup: boolean;
+        taxFailureReason: string;
+        canUpdateShipToAddress: boolean;
 
         static $inject = [
             "$scope",
@@ -102,10 +106,6 @@ module insite.cart {
                     this.getSettingsFailed(error);
                 });
 
-            this.sessionService.getSession().then(
-                (session: SessionModel) => { this.getSessionCompleted(session); },
-                (error: any) => { this.getSessionFailed(error); });
-
             this.$scope.$on("sessionUpdated", (event, session) => {
                 this.onSessionUpdated(session);
             });
@@ -168,8 +168,13 @@ module insite.cart {
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.cartSettings = settingsCollection.cartSettings;
+            this.customerSettings = settingsCollection.customerSettings;
             this.useTokenExGateway = settingsCollection.websiteSettings.useTokenExGateway;
             this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
+
+            this.sessionService.getSession().then(
+                (session: SessionModel) => { this.getSessionCompleted(session); },
+                (error: any) => { this.getSessionFailed(error); });
         }
 
         protected getSettingsFailed(error: any): void {
@@ -185,6 +190,7 @@ module insite.cart {
 
         protected getSessionCompleted(session: SessionModel): void {
             this.session = session;
+            this.canUpdateShipToAddress = this.session.billTo.isGuest || this.session.shipTo.oneTimeAddress || this.customerSettings.allowBillToAddressEdit || this.customerSettings.allowShipToAddressEdit;
         }
 
         protected getSessionFailed(error: any): void {
@@ -202,6 +208,7 @@ module insite.cart {
                 this.cartService.expand += ",restrictions";
             }
             this.cartService.forceRecalculation = true;
+            this.cartService.allowInvalidAddress = true;
             this.cartService.getCart(this.cartId).then(
                 (cart: CartModel) => {
                     this.getCartCompleted(cart, isInit);
@@ -214,9 +221,12 @@ module insite.cart {
         protected getCartCompleted(cart: CartModel, isInit: boolean): void {
             this.cartService.expand = "";
             this.cartService.forceRecalculation = false;
+            this.cartService.allowInvalidAddress = false;
+
+            this.restoreAlreadyFilledFields(this.cart, cart);
+
             let paymentMethod: Insite.Cart.Services.Dtos.PaymentMethodDto;
             let transientCard: Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
-
             if (this.cart && this.cart.paymentOptions) {
                 paymentMethod = this.cart.paymentMethod;
                 transientCard = this.saveTransientCard();
@@ -293,6 +303,17 @@ module insite.cart {
             this.cart.paymentOptions.creditCard.securityCode = transientCard.securityCode;
         }
 
+        protected restoreAlreadyFilledFields(currentCart: CartModel, newCart: CartModel): void {
+            if (!currentCart) {
+                return;
+            }
+
+            newCart.poNumber = currentCart.poNumber;
+            newCart.notes = currentCart.notes;
+            newCart.requestedDeliveryDate = currentCart.requestedDeliveryDate;
+            newCart.requestedPickupDate = currentCart.requestedPickupDate;
+        }
+
         protected setUpCarrier(isInit: boolean): void {
             this.cart.carriers.forEach(carrier => {
                 if (carrier.id === this.cart.carrier.id) {
@@ -342,6 +363,7 @@ module insite.cart {
         protected getCartFailed(error: any): void {
             this.cartService.expand = "";
             this.cartService.forceRecalculation = false;
+            this.cartService.allowInvalidAddress = false;
         }
 
         protected getCartPromotionsCompleted(promotionCollection: PromotionCollectionModel): void {

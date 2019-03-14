@@ -175,6 +175,17 @@
                     border-color: #555555;
                 }
             }
+
+            .slides img {
+                display: inline-block;
+                max-height: 44px;
+                max-width: 44px;
+                height: auto;
+                width: auto;
+                margin: 0 auto;
+                vertical-align: middle;
+                text-align: center;
+            }
         }
 
         ul {
@@ -192,6 +203,7 @@
             width: 0.7em;
             height: 2em;
             background: none;
+            display: none;
 
             span {
                 font-size: 0.8em;

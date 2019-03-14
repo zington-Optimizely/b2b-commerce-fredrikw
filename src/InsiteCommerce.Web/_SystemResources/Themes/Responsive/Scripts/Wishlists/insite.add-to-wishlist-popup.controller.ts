@@ -59,7 +59,6 @@
                 this.addToWishlistPopupService.registerDisplayFunction((data) => {
                     this.productsToAdd = data;
                     this.initialize();
-                    this.coreService.displayModal(angular.element("#popup-add-wishlist"));
                 });
             });
         }
@@ -76,9 +75,12 @@
                 this.scheduleReminderAfterAdd = false;
                 if (this.allowMultipleWishLists) {
                     setTimeout(() => this.initWishListAutocompletes(), 0);
+                    this.coreService.displayModal(angular.element("#popup-add-wishlist"));
                 } else {
                     this.addWishList(this.newWishListName);
                 }
+            } else {
+                this.coreService.displayModal(angular.element("#popup-add-wishlist"));
             }
         }
 
@@ -162,6 +164,10 @@
         }
 
         private completedAddingToWishList(): void {
+            if (!this.allowMultipleWishLists) {
+                this.coreService.displayModal(angular.element("#popup-add-wishlist"));
+            }
+
             this.addToWishlistCompleted = true;
             this.addingToList = false;
             setTimeout(() => {

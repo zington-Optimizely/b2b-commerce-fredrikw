@@ -204,11 +204,20 @@ module insite.account {
         }
 
         setStateRequiredRule(prefix: string, address: any): void {
-            const isRequired = address.country != null && address.country.states.length > 0;
-            setTimeout(() => {
-                $(`#${prefix}state`).rules("add", { required: isRequired });
-            }, 100);
+            if (!address.country) {
+                return;
+            }
 
+            const country = this.countries.filter((elem) => {
+                return elem.id === address.country.id;
+            });
+
+            const isRequired = country != null && country.length > 0 && country[0].states.length > 0;
+            setTimeout(() => {
+                if (!isRequired) {
+                    address.state = null;
+                }
+            }, 100);
         }
 
         checkSelectedShipTo(): void {

@@ -4,6 +4,11 @@ import CurrentContextModel = insite.core.CurrentContextModel;
 module insite.account {
     "use strict";
 
+    export interface ICartRemindersUnsubscribeParameters {
+        username: string;
+        unsubscribeToken: string;
+    }
+
     export interface ISessionService {
         getSession(): ng.IPromise<SessionModel>;
         getContext(): CurrentContextModel;
@@ -22,6 +27,7 @@ module insite.account {
         sendAccountActivationEmail(username: string): ng.IPromise<SessionModel>;
         redirectAfterSelectCustomer(sessionModel: SessionModel, byPassAddressPage: boolean, dashboardUrl: string,
             returnUrl: string, checkoutAddressUrl: string, reviewAndPayUrl: string, addressesUrl: string, cartUrl: string, canCheckOut: boolean);
+        unsubscribeFromCartReminders(parameters: ICartRemindersUnsubscribeParameters): ng.IPromise<SessionModel>;
     }
 
     export class SessionService implements ISessionService {
@@ -550,6 +556,26 @@ module insite.account {
 
             // full refresh to get nav from server
             this.$window.location.href = returnUrl;
+        }
+
+        unsubscribeFromCartReminders(parameters: ICartRemindersUnsubscribeParameters): ng.IPromise<SessionModel> {
+            const session: SessionModel = {
+                userName: parameters.username,
+                cartReminderUnsubscribeToken: parameters.unsubscribeToken
+            } as any;
+
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ method: "PATCH", url: `${this.serviceUri}/current`, data: session, bypassErrorInterceptor: true }),
+                this.unsubscribeFromCartRemindersCompleted,
+                this.unsubscribeFromCartRemindersFailed
+            );
+        }
+
+        protected unsubscribeFromCartRemindersCompleted(response: ng.IHttpPromiseCallbackArg<SessionModel>): void {
+        }
+
+        protected unsubscribeFromCartRemindersFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
     }
 

@@ -20,8 +20,12 @@ module insite.catalog {
         }
 
         init(): void {
-            this.imagesLoaded = 0;
-            this.waitForDom(this.maxTries);
+            this.$scope.$watch(() => this.productImages, () => {
+                if (this.productImages.length > 0) {
+                    this.imagesLoaded = 0;
+                    this.waitForDom(this.maxTries);
+                }
+            });
         }
 
         protected waitForDom(tries: number): void {
@@ -48,7 +52,11 @@ module insite.catalog {
         }
 
         protected initializeCarousel(): void {
-            $(`#${this.prefix}-img-carousel`).flexslider({
+            var $carousel = $(`#${this.prefix}-img-carousel`);
+            if ($carousel.data("flexslider")) {
+                $carousel.removeData("flexslider");
+            }
+            $carousel.flexslider({
                 animation: "slide",
                 controlNav: false,
                 animationLoop: true,
@@ -80,13 +88,29 @@ module insite.catalog {
         }
 
         protected reloadCarousel(): void {
-            const itemsNum = Math.floor((this.carouselWidth + this.carousel.vars.itemMargin) / (this.carousel.vars.itemWidth + this.carousel.vars.itemMargin));
-            this.showImageCarouselArrows(this.carousel.count > itemsNum);
-            const carouselWidth = (this.carousel.vars.itemWidth + this.carousel.vars.itemMargin) * this.carousel.count - this.carousel.vars.itemMargin;
-            $(`#${this.prefix}-img-carousel-wrapper`).css("width", carouselWidth).css("max-width", this.carouselWidth).css("visibility", "visible").css("position", "relative");
+            var $carousel = $(`#${this.prefix}-img-carousel`);
+            const totalCarouselWidth = Math.round((this.carousel.vars.itemWidth + this.carousel.vars.itemMargin) * this.carousel.count - this.carousel.vars.itemMargin);
+            $(`#${this.prefix}-img-carousel-wrapper`).css({
+                visibility: "visible",
+                position: "relative"
+            });
+
+            $carousel.css({
+                width: "",
+                margin: ""
+            });
+
+            if (totalCarouselWidth < $carousel.width()) {
+                $carousel.css({
+                    width: totalCarouselWidth,
+                    margin: "0 auto"
+                });
+            }
 
             // this line should be there because of a flexslider issue (https://github.com/woocommerce/FlexSlider/issues/1263)
-            $(`#${this.prefix}-img-carousel`).resize();
+            $carousel.resize();
+
+            this.showImageCarouselArrows($carousel.width() < totalCarouselWidth);
         }
 
         protected showImageCarouselArrows(shouldShowArrows: boolean): void {

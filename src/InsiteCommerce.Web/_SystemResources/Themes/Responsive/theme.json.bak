@@ -87,6 +87,7 @@
     "Styles/template/ma-brand-categories.scss",
     "Styles/template/ma-brand-details.scss",
     "Styles/template/ma-brands.scss",
+    "Styles/template/ma-cart-reminder-unsubscribe.scss",
     "Styles/template/ma-dashboard.scss",
     "Styles/template/ma-my-list-details.scss",
     "Styles/template/ma-my-lists.scss",

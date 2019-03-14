@@ -398,8 +398,8 @@
                 <div class="f-cat" ng-if="vm.showBrands && vm.products.brandFacets.length > 0">
                     <section class="accordion">
                         <div>
-                            <input type="checkbox" id="accord-1" class="accord-check" checked />
-                            <label for="accord-1" class="accord-head">[% translate 'Brand' %]</label>
+                            <input type="checkbox" id="accord-brand" class="accord-check" checked />
+                            <label for="accord-brand" class="accord-head">[% translate 'Brand' %]</label>
                             <article class="accord-content">
                                 <div class="f-wrap">
                                     <ul>
@@ -421,8 +421,8 @@
                 <div class="f-cat" ng-if="vm.showProductLines && vm.products.productLineFacets.length > 0">
                     <section class="accordion">
                         <div>
-                            <input type="checkbox" id="accord-1" class="accord-check" checked />
-                            <label for="accord-1" class="accord-head">[% translate 'Product Line' %]</label>
+                            <input type="checkbox" id="accord-product-line" class="accord-check" checked />
+                            <label for="accord-product-line" class="accord-head">[% translate 'Product Line' %]</label>
                             <article class="accord-content">
                                 <div class="f-wrap">
                                     <ul>
@@ -533,7 +533,7 @@
                                         </div>
                                     </div>
 
-                                    <div ng-if="vm.products.categoryFacets.length > 0" class="filter-option-container">
+                                    <div ng-if="!vm.category && vm.products.categoryFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
                                                 ng-model="filterCategoryId"
                                                 ng-change="vm.toggleCategoryId(filterCategoryId)">

@@ -12,7 +12,7 @@
                     <option value="Name DESC">[% translate 'List Name: Z-A' %]</option>
                 </select>
             </span>
-            <button class="btn primary" data-reveal-id="popup-create-list">[% translate 'Create List' %]</button>
+            <button class="btn primary" ng-click="vm.openCreatePopup()">[% translate 'Create List' %]</button>
         </div>
     </div>
     <div ng-if="vm.wishListCount > 0">
@@ -51,7 +51,7 @@
                         <button class="btn primary btn-add-cart" ng-click="vm.addAllToCart(wishList)" ng-disabled="!wishList.canAddToCart || !wishList.wishListLinesCount > 0 || vm.inProgress">[% translate 'Add List To Cart' %]</button>
                     </div>
                     <div>
-                        <a ng-show="vm.listSettings.allowEditingOfWishLists && !wishList.isSharedList" href="javascript:void(0);" data-reveal-id="popup-delete-list" ng-click="vm.setWishList(wishList)">[% translate 'Delete List' %]</a>
+                        <a ng-show="vm.listSettings.allowEditingOfWishLists && !wishList.isSharedList" ng-click="vm.openDeletePopup(wishList)">[% translate 'Delete List' %]</a>
                         <a id="tst_wishListView_leaveLink_{{wishList.id}}" ng-show="vm.listSettings.allowEditingOfWishLists && wishList.isSharedList && !vm.isSharedByCustomer(wishList)" href="javascript:void(0);" data-reveal-id="popup-leave-list" ng-click="vm.setWishList(wishList)">[% translate 'Leave List' %]</a>
                     </div>
                 </div>
@@ -63,8 +63,6 @@
         <h3>[% siteMessage 'Lists_NoListsFound' %]</h3>
     </div>
     <div>
-        <isc-create-list-popup></isc-create-list-popup>
-        <isc-delete-list-popup list="vm.popupWishListModel" close-modal="vm.closeModal(selector)" delete-list="vm.deleteList(url)"></isc-delete-list-popup>
         <isc-leave-list-popup close-modal="vm.closeModal(selector)" leave-list="vm.leaveList(url)"></isc-leave-list-popup>
     </div>
 </div>

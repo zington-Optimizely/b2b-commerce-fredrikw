@@ -56,12 +56,22 @@
             this.autocompleteOptions.template = this.searchService.getProductAutocompleteTemplate(() => this.searchTerm, "tst_quickOrder_autocomplete");
 
             this.autocompleteOptions.select = this.onAutocompleteOptionsSelect();
+
+            this.autocompleteOptions.open = this.onAutocompleteOptionsOpen();
         }
 
         protected onAutocompleteOptionsSelect(): (evt: kendo.ui.AutoCompleteSelectEvent) => void {
             return (evt: kendo.ui.AutoCompleteSelectEvent) => {
                 const dataItem = evt.sender.dataItem(evt.item.index());
                 this.lookupAndAddProductById(dataItem.id);
+            };
+        }
+
+        protected onAutocompleteOptionsOpen(): (evt: kendo.ui.AutoCompleteSelectEvent) => void {
+            return (evt: kendo.ui.AutoCompleteSelectEvent) => {
+                if (!this.searchTerm) {
+                    evt.preventDefault();
+                }
             };
         }
 
@@ -150,6 +160,8 @@
             this.searchTerm = "";
             this.errorMessage = "";
 
+            angular.element("#qo-search-view").data("kendoAutoComplete").close(); // close autocomplete
+
             if (productExists) {
                 return;
             }
@@ -191,7 +203,7 @@
 
             this.productService.getProductRealTimePrices([product]).then(
                 (realTimePricing: RealTimePricingModel) => { this.getProductRealTimePricesCompleted(realTimePricing, product); },
-                (error: any) => { this.getProductRealTimePricesFailed(error); });
+                (error: any) => { this.getProductRealTimePricesFailed(error, product); });
         }
 
         protected getRealTimeInventory(product: ProductDto): void {
@@ -201,7 +213,7 @@
 
             this.productService.getProductRealTimeInventory([product]).then(
                 (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, product),
-                (error: any) => this.getProductRealTimeInventoryFailed(error));
+                (error: any) => this.getProductRealTimeInventoryFailed(error, product));
         }
 
         protected canProductBeQuickOrdered(product: ProductDto): boolean {
@@ -268,8 +280,12 @@
             this.getRealTimeInventory(product);
         }
 
-        protected getProductRealTimePricesFailed(error: any): void {
+        protected getProductRealTimePricesFailed(error: any, product?: ProductDto): void {
             this.products.forEach(p => (p.pricing as any).failedToGetRealTimePrices = true);
+
+            if (product) {
+                this.getProductRealTimePricesCompleted(null, product);
+            }
         }
 
         protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, product: ProductDto): void {
@@ -278,8 +294,12 @@
             }
         }
 
-        protected getProductRealTimeInventoryFailed(error: any): void {
+        protected getProductRealTimeInventoryFailed(error: any, product?: ProductDto): void {
             this.products.forEach(p => (p.pricing as any).failedToGetRealTimeInventory = true);
+
+            if (product) {
+                this.getProductRealTimeInventoryCompleted(null, product);
+            }
         }
 
         protected getProductPriceCompleted(productPrice: ProductPriceModel): void {

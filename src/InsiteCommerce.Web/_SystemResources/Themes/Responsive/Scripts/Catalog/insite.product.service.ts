@@ -191,7 +191,7 @@ module insite.catalog {
         getProductPrice(product: ProductDto, configuration?: string[]): ng.IPromise<ProductPriceModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "GET", url: `${this.productServiceUri}${product.id}/price`, params: this.getProductPriceParams(product, configuration) }),
+                this.$http({ method: "GET", url: `${this.productServiceUri}${product.id}/price`, params: this.getProductPriceParams(product, configuration), bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<ProductPriceModel>) => { this.getProductPriceCompleted(response, product); },
                 this.getProductPriceFailed
             );
@@ -215,7 +215,7 @@ module insite.catalog {
         getProductAvailability(product: ProductDto, configuration?: string[]): ng.IPromise<ProductAvailabilityModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "GET", url: `${this.productServiceUri}${product.id}/availability`, params: this.getProductAvailabilityParams(product, configuration) }),
+                this.$http({ method: "GET", url: `${this.productServiceUri}${product.id}/availability`, params: this.getProductAvailabilityParams(product, configuration), bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<ProductAvailabilityModel>) => { this.getProductAvailabilityCompleted(response, product); },
                 this.getProductAvailabilityFailed
             );
@@ -244,7 +244,7 @@ module insite.catalog {
 
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http.post(this.realTimePricingUri, this.getProductRealTimePricesParams(products)),
+                this.$http({ method: "POST", url: this.realTimePricingUri, data: this.getProductRealTimePricesParams(products), bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<RealTimePricingModel>) => { this.getProductRealTimePricesCompleted(response, products); },
                 this.getProductRealTimePricesFailed
             );
@@ -283,7 +283,7 @@ module insite.catalog {
 
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http.post(this.realTimePricingUri, this.getProductRealTimePriceParams(product, configuration)),
+                this.$http({ method: "POST", url: this.realTimePricingUri, data: this.getProductRealTimePriceParams(product, configuration), bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<RealTimePricingModel>) => { this.getProductRealTimePriceCompleted(response, product); },
                 this.getProductRealTimePriceFailed
             );
@@ -322,7 +322,7 @@ module insite.catalog {
 
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http.post(this.realTimeInventoryUri + (expand ? `?expand=${expand.join()}` : ""), this.getProductRealTimeInventoryParams(products, configuration)),
+                this.$http({ method: "POST", url: this.realTimeInventoryUri + (expand ? `?expand=${expand.join()}` : ""), data: this.getProductRealTimeInventoryParams(products, configuration), bypassErrorInterceptor: true  }),
                 (response: ng.IHttpPromiseCallbackArg<RealTimeInventoryModel>) => { this.getProductRealTimeInventoryCompleted(response, products); },
                 this.getProductRealTimeInventoryFailed
             );

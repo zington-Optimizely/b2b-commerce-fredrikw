@@ -253,7 +253,7 @@
         }
 
         protected closeAllModals(): void {
-            $("[data-reveal]").each(function () {
+            $("[data-reveal]:visible").each(function () {
                 ($(this) as any).foundation("reveal", "close");
             });
         }

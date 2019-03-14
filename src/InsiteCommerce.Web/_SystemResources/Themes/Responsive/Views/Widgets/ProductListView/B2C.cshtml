@@ -330,7 +330,7 @@
                     </div>
                 </div>
 
-                <div class="f-cat" ng-if="vm.products.categoryFacets.length > 0">
+                <div class="f-cat" ng-if="!vm.category && vm.products.categoryFacets.length > 0">
                     <section class="accordion">
                         <div>
                             <input type="checkbox" id="accord-1" class="accord-check" checked />
@@ -437,7 +437,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div ng-if="vm.products.categoryFacets.length > 0" class="filter-option-container">
+                                    <div ng-if="!vm.category && vm.products.categoryFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
                                                 ng-model="filterCategoryId"
                                                 ng-change="vm.toggleCategoryId(filterCategoryId)">

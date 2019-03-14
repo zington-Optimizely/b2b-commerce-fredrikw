@@ -79,16 +79,15 @@
             const popup = angular.element("#popup-share-list");
 
             popup.on("closed", () => {
-                this.isDisabled = false;
-                this.shareWizardStep = "";
-                this.shareListOption = "sendCopy";
-                this.shareByOption = "shareByEmail";
-                this.allowEditList = true.toString();
-                this.sendNotificationToUsers = false;
-                this.clearSharedFormData();
-                if (!this.$scope.$$phase) {
-                    this.$scope.$apply();
-                }
+                this.$timeout(() => {
+                    this.isDisabled = false;
+                    this.shareWizardStep = "";
+                    this.shareListOption = "sendCopy";
+                    this.shareByOption = "shareByEmail";
+                    this.allowEditList = true.toString();
+                    this.sendNotificationToUsers = false;
+                    this.clearSharedFormData();
+                });
             });
 
             popup.on("open", () => {

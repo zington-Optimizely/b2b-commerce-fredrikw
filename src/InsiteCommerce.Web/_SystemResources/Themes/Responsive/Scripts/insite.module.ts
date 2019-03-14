@@ -141,4 +141,13 @@ module insite {
         ])
         .run(["appRunService", ($appRunService: IAppRunService) => { $appRunService.run(); }])
         .service("appRunService", AppRunService);
+
+    angular
+        .module("ngMap")
+        .directive("map", () => {
+            return {
+                priority: 100,
+                terminal: true
+            }
+        });
 }

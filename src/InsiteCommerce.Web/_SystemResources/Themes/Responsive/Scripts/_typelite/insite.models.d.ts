@@ -32,6 +32,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		defaultFulfillmentMethod: string;
 		defaultWarehouseId: System.Guid;
 		defaultWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
+		emailOptOutAbandonedCart: boolean;
 	}
 	interface AccountSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowCreateAccount: boolean;
@@ -85,6 +86,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		isRestrictedProductExistInCart: boolean;
 		pickUpWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
 		fulfillmentMethod: string;
+		cartReminderUnsubscribeToken: string;
 	}
 	interface AccountShipToCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
@@ -394,6 +396,10 @@ declare module Insite.Customers.WebApi.V1.ApiModels {
 		validation: Insite.Customers.Services.Dtos.CustomerValidationDto;
 		isDefault: boolean;
 	}
+	interface CustomerSettingsModel extends Insite.Core.WebApi.BaseModel {
+		allowShipToAddressEdit: boolean;
+		allowBillToAddressEdit: boolean;
+	}
 	interface BillToCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
 		billTos: Insite.Customers.WebApi.V1.ApiModels.BillToModel[];
@@ -551,6 +557,7 @@ declare module Insite.Brands.WebApi.V1.ApiModels {
 		categoryId: System.Guid;
 		contentManagerId: System.Guid;
 		categoryName: string;
+		categoryShortDescription: string;
 		featuredImagePath: string;
 		featuredImageAltText: string;
 		productListPagePath: string;
@@ -1010,6 +1017,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		creditCardBillingAddress: Insite.Cart.WebApi.V1.ApiModels.CreditCardBillingAddressDto;
 		alsoPurchasedProducts: Insite.Catalog.Services.Dtos.ProductDto[];
 		requestedPickupDateDisplay: Date;
+		taxFailureReason: string;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;

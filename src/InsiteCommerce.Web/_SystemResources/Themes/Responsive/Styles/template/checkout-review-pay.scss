@@ -174,7 +174,8 @@
         position: relative;
     }
 
-    .availability-error-message {
+    .availability-error-message,
+    .taxes-invalid-address-error-message {
         color: red;
 
         a {

@@ -12,6 +12,7 @@ module insite.cart {
         expand: string;
         alsoPurchasedMaxResults: number;
         forceRecalculation: boolean;
+        allowInvalidAddress: boolean;
 
         getCarts(filter?: IQueryStringFilter, pagination?: PaginationModel): ng.IPromise<CartCollectionModel>;
         getCart(cartId?: string, suppressApiErrors?: boolean): ng.IPromise<CartModel>;
@@ -41,6 +42,7 @@ module insite.cart {
         expand = "";
         alsoPurchasedMaxResults = 0;
         forceRecalculation = false;
+        allowInvalidAddress = false;
 
         currentCart: CartModel = null;
 
@@ -119,6 +121,10 @@ module insite.cart {
 
             if (this.forceRecalculation) {
                 params.forceRecalculation = this.forceRecalculation;
+            }
+
+            if (this.allowInvalidAddress) {
+                params.allowInvalidAddress = this.allowInvalidAddress;
             }
 
             return params;

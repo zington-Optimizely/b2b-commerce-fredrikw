@@ -23,6 +23,7 @@
         searchTerm: string = "";
         private lastSearchTerm: string = "";
         inviteIsNotAvailable: boolean;
+        getListErrorMessage: string;
 
         addingSearchTerm: string = "";
         successMessage: string;
@@ -41,6 +42,7 @@
         listLineNote: string;
         noteErrorMessage: string;
         orderIsSaving: boolean;
+        myListUrl: string;
 
         pagination: PaginationModel;
         paginationStorageKey = "DefaultPagination-MyListDetail";
@@ -65,7 +67,10 @@
             "productPriceService",
             "paginationService",
             "$templateCache",
-            "scheduleReminderPopupService"
+            "scheduleReminderPopupService",
+            "createListPopupService",
+            "deleteListPopupService",
+            "copyToListPopupService"
         ];
 
         constructor(
@@ -88,7 +93,10 @@
             protected productPriceService: catalog.IProductPriceService,
             protected paginationService: core.IPaginationService,
             protected $templateCache: ng.ITemplateCacheService,
-            protected scheduleReminderPopupService: IUploadToListPopupService
+            protected scheduleReminderPopupService: IUploadToListPopupService,
+            protected createListPopupService: ICreateListPopupService,
+            protected deleteListPopupService: IDeleteListPopupService,
+            protected copyToListPopupService: ICopyToListPopupService
         ) {
             this.init();
         }
@@ -136,6 +144,8 @@
             this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
                 this.onSessionUpdated(session);
             });
+
+            this.$scope.$on("list-was-deleted", () => this.redirectToListPage());
 
             this.$templateCache.remove(this.$location.path());
         }
@@ -319,23 +329,9 @@
             }
         }
 
-        deleteList(navigateTo: string): void {
-            this.wishListService.deleteWishList(this.listModel).then(
-                (wishList: WishListModel) => {
-                    this.deleteWishListCompleted(navigateTo, wishList);
-                },
-                (error: any) => {
-                    this.deleteWishListFailed(error);
-                });
-        }
-
-        protected deleteWishListCompleted(navigateTo: string, wishList: WishListModel): void {
-            this.closeModal("#popup-delete-list");
+        protected redirectToListPage(): void {
             this.spinnerService.show();
-            this.coreService.redirectToPath(navigateTo);
-        }
-
-        protected deleteWishListFailed(error: any): void {
+            this.coreService.redirectToPath(this.myListUrl);
         }
 
         selectAll(): void {
@@ -443,6 +439,7 @@
 
         protected getListFailed(error: any): void {
             this.inProgress = false;
+            this.getListErrorMessage = error;
             this.spinnerService.hide();
         }
 
@@ -769,6 +766,18 @@
 
         openScheduleReminderPopup(wishList: WishListModel): void {
             this.scheduleReminderPopupService.display(wishList);
+        }
+
+        openCreatePopup(wishList: WishListModel): void {
+            this.createListPopupService.display(wishList);
+        }
+
+        openDeletePopup(wishList: WishListModel): void {
+            this.deleteListPopupService.display(wishList);
+        }
+
+        openCopyToPopup(wishList: WishListModel): void {
+            this.copyToListPopupService.display(wishList);
         }
 
         onEnterKeyPressedInAutocomplete(): void {

@@ -9,13 +9,15 @@
         errorMessage: string;
         list: WishListModel;
 
-        static $inject = ["$scope", "$rootScope", "wishListService", "coreService"];
+        static $inject = ["$scope", "$rootScope", "wishListService", "coreService", "$timeout", "createListPopupService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected $rootScope: ng.IRootScopeService,
             protected wishListService: IWishListService,
-            protected coreService: core.ICoreService) {
+            protected coreService: core.ICoreService,
+            protected $timeout: ng.ITimeoutService,
+            protected createListPopupService: ICreateListPopupService) {
             this.init();
         }
 
@@ -34,22 +36,15 @@
         protected initListPopupEvents(): void {
             const popup = angular.element("#popup-create-list");
 
-            popup.on("closed", () => {
-                    this.clearMessages();
-                    this.listName = "";
-                    this.listDescription = "";
-                    this.listForm.$setPristine();
-                    this.listForm.$setUntouched();
-                    this.$scope.$apply();
-                });
-
-            popup.on("open", () => {
-                if (this.list) {
-                    this.clearMessages();
+            this.createListPopupService.registerDisplayFunction((list: WishListModel) => {
+                this.list = list;
+                this.clearMessages();
+                if (list) {
                     this.listName = this.list.name;
                     this.listDescription = this.list.description;
-                    this.$scope.$apply();
                 }
+
+                this.coreService.displayModal(popup);
             });
         }
 
@@ -112,16 +107,25 @@
         }
     }
 
+    export interface ICreateListPopupService {
+        display(data: any): void;
+        registerDisplayFunction(p: (data: any) => void);
+    }
+
+    export class CreateListPopupService extends base.BasePopupService<any> implements ICreateListPopupService {
+        protected getDirectiveHtml(): string {
+            return "<isc-create-list-popup></isc-create-list-popup>";
+        }
+    }
+
     angular
         .module("insite")
         .controller("CreateListPopupController", CreateListPopupController)
+        .service("createListPopupService", CreateListPopupService)
         .directive("iscCreateListPopup", () => ({
             restrict: "E",
             replace: true,
             templateUrl: "/PartialViews/List-CreateListPopup",
-            scope: {
-                list: "="
-            },
             controller: "CreateListPopupController",
             controllerAs: "vm",
             bindToController: true

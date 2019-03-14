@@ -89,7 +89,7 @@
                 return;
             }
 
-            if (this.settings.realTimeInventory && !this.settings.allowBackOrder) {
+            if (this.settings.realTimeInventory && !this.settings.allowBackOrder && products.some(o => o != null)) {
                 this.productService.getProductRealTimeInventory(products.filter(o => o != null)).then(
                     (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, products),
                     (error: any) => this.getProductRealTimeInventoryFailed(error));
