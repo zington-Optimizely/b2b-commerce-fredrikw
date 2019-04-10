@@ -8,6 +8,8 @@
         storageKey: string;
         updateData: () => void;
         pageChanged: () => void;
+        canEditSortOrder: boolean;
+        isSortingMode: boolean;
 
         static $inject = ["paginationService", "$window"];
 
@@ -83,6 +85,10 @@
                 this.pageChanged();
             }
             this.updateData();
+        }
+
+        toggleSortingMode(): void {
+            this.isSortingMode = !this.isSortingMode;
         }
 
         private scrollToTopPager() {

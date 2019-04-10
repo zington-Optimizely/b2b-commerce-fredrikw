@@ -199,41 +199,37 @@
     }
 
     .checkout-item {
+        .item-controls {
+            width: 37px;
+            padding-left: 0;
+
+            i.handle {
+                opacity: 0.5;
+                padding: 10px 0 10px 10px;
+                margin: 0 0 15px -12px;
+                cursor: move;
+
+                &:hover, &:focus {
+                    opacity: 1;
+                }
+            }
+
+            > * {
+                display: block;
+            }
+
+            .item-select {
+                margin-left: 0;
+                cursor: pointer;
+            }
+        }
+
         .item-image-block {
-            width: 23%;
+            width: 19%;
             padding-left: 0;
 
             > * {
                 float: left;
-            }
-
-            .item-image {
-                width: 75%;
-            }
-
-            .item-controls {
-                width: 45px;
-                margin-right: 4px;
-
-                i.handle {
-                    opacity: 0.5;
-                    padding: 10px 0 10px 10px;
-                    margin: 0 0 15px -12px;
-                    cursor: move;
-
-                    &:hover, &:focus {
-                        opacity: 1;
-                    }
-                }
-
-                > * {
-                    display: block;
-                }
-
-                .item-select {
-                    margin-left: 0;
-                    cursor: pointer;
-                }
             }
 
             .item-thumb {
@@ -280,7 +276,7 @@
         }
 
         .item-pricing-and-actions {
-            width: 36%;
+            width: 33%;
             padding-right: 0;
             text-align: right;
         }
@@ -311,13 +307,32 @@
             display: inline-block;
 
             .add-to-cart-block {
+                display: grid;
+
                 .item-qty {
                     width: 60px;
+
+                    input {
+                        margin-bottom: 0.7rem;
+                    }
                 }
 
                 .action {
                     float: right;
                     margin-left: 7px;
+
+                    .btn-add-cart {
+                        margin-bottom: 0.7rem;
+                    }
+                }
+
+                .update-qty-link {
+                    text-align: left;
+                    font-size: 0.9rem;
+
+                    .icon-update, .icon-check {
+                        margin-right: 4px;
+                    }
                 }
             }
         }
@@ -472,7 +487,9 @@
 }
 
 .ma-my-list-details .item-sort-order-container {
-    width: 11%;
+    width: 86px;
+    padding-left: 0;
+
     label {
         text-align: center;
         display: block;
@@ -485,6 +502,12 @@
 
 body [role="main"] .ma-my-list-details .paginator-34 {
     border: none;
+    padding-left: 0;
+    padding-right: 0;
+
+    .sorting-select {
+        width: auto !important;
+    }
 }
 
 .popup-delete-item, .popup-line-note, .popup-share-list, .popup-schedule-reminder {
@@ -1073,7 +1096,7 @@ li.atci-item {
             .item-pricing-and-actions, .item-sort-order-container {
                 clear: left;
                 width: 77%;
-                margin-left: 23%;
+                margin-left: 19%;
                 margin-bottom: 5px;
                 padding-left: 0;
                 float: inherit;

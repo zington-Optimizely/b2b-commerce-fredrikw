@@ -33,8 +33,9 @@ module insite.wishlist {
     }
 
     export interface IGetWishListLinesParameter {
-        pagination?: PaginationModel,
-        query?: string
+        pagination?: PaginationModel;
+        query?: string;
+        changedSharedListLinesQuantities: string;
     }
 
     export class WishListService implements IWishListService {
@@ -129,6 +130,10 @@ module insite.wishlist {
 
             if (parameter && parameter.query) {
                 params.query = parameter.query;
+            }
+
+            if (parameter && parameter.changedSharedListLinesQuantities) {
+                params.changedSharedListLinesQuantities = parameter.changedSharedListLinesQuantities;
             }
 
             return params;

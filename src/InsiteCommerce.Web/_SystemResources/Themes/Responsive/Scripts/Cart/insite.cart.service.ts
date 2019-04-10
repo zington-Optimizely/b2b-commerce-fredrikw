@@ -7,6 +7,10 @@ import ProductSubscriptionDto = Insite.Catalog.Services.Dtos.ProductSubscription
 module insite.cart {
     "use strict";
 
+    export interface IAddWishListToCartData {
+        changedSharedListLinesQuantities: { [key: string]: number };
+    }
+
     export interface ICartService {
         cartLoadCalled: boolean;
         expand: string;
@@ -24,7 +28,7 @@ module insite.cart {
         addLineFromProduct(product: ProductDto, configuration?: ConfigSectionOptionDto[], productSubscription?: ProductSubscriptionDto, toCurrentCart?: boolean, showAddToCartPopup?: boolean): ng.IPromise<CartLineModel>;
         addLineCollection(cartLines: any, toCurrentCart?: boolean, showAddToCartPopup?: boolean): ng.IPromise<CartLineCollectionModel>;
         addLineCollectionFromProducts(products: ProductDto[], toCurrentCart?: boolean, showAddToCartPopup?: boolean): ng.IPromise<CartLineCollectionModel>;
-        addWishListToCart(wishListId: string, showAddToCartPopup?: boolean): ng.IPromise<CartLineCollectionModel>;
+        addWishListToCart(wishListId: string, showAddToCartPopup?: boolean, data?: IAddWishListToCartData): ng.IPromise<CartLineCollectionModel>;
         updateLine(cartLine: CartLineModel, refresh: boolean): ng.IPromise<CartLineModel>;
         removeLine(cartLine: CartLineModel): ng.IPromise<CartLineModel>;
         getLoadedCurrentCart(): CartModel;
@@ -288,10 +292,10 @@ module insite.cart {
             return this.addLineCollection(cartLineCollection, toCurrentCart, showAddToCartPopup);
         }
 
-        addWishListToCart(wishListId: string, showAddToCartPopup?: boolean): ng.IPromise<CartLineCollectionModel> {
+        addWishListToCart(wishListId: string, showAddToCartPopup?: boolean, data?: IAddWishListToCartData): ng.IPromise<CartLineCollectionModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "POST", url: `${this.currentCartLinesUri}/wishlist/${wishListId}`, bypassErrorInterceptor: true }),
+                this.$http({ method: "POST", url: `${this.currentCartLinesUri}/wishlist/${wishListId}`, data: data, bypassErrorInterceptor: true }),
                 (response: ng.IHttpPromiseCallbackArg<CartLineCollectionModel>) => { this.addWishListToCartCompleted(response, showAddToCartPopup); },
                 this.addWishListToCartFailed);
         }

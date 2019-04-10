@@ -24,7 +24,7 @@
                         <span ng-bind="vm.listModel.updatedByDisplayName"></span>
                     </div>
                     <div class="item-share-list">
-                        <isc-shared-list list="vm.listModel" session="vm.session" list-settings="vm.listSettings"></isc-shared-list>
+                        <isc-shared-list list="vm.listModel" session="vm.session" list-settings="vm.listSettings" show-no-permissions-tooltip="true"></isc-shared-list>
                     </div>
                 </div>
             </div>
@@ -108,7 +108,7 @@
                     </button>
                 </div>
         <div class="medium-7 columns items-search-sort">
-            <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getListLines()"></isc-pager>
+            <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getListLines()" can-edit-sort-order="vm.canChangeSortOrder()" is-sorting-mode="vm.isSortingMode"></isc-pager>
                         </div>
                     </div>
     <div class="row drag-instruction" ng-show="vm.canReorderList()">[% translate 'Click' %] <i class="icon-sort-order"></i> [% translate 'and drag items to change their position in the list.' %]</div>
@@ -137,11 +137,17 @@
             </div>
                 </div>
                 <div ng-if="!vm.isRestricted(wishListLine) && !vm.isDiscontinued(wishListLine)">
+                    <div class="columns item-controls hide-for-small">
+                        <input type="checkbox" class="item-select" ng-click="vm.checkProduct(wishListLine.id)" ng-checked="vm.isProductChecked(wishListLine.id)" />
+                        <i class="icon-sort-order handle" ng-show="vm.canReorderList()"></i>
+                    </div>
+                    <div class="columns item-sort-order-container hide-for-small">
+                        <div ng-show="vm.allowedChangeSortOrder()">
+                            <label>[% translate 'Sort order' %]</label>
+                            <input class="numerictextbox" type="text" ng-model="wishListLine.sortOrder" ng-keypress="vm.sortOrderKeyPress($event,wishListLine)" ng-change="vm.sortOrderUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }"/>
+                        </div>
+                    </div>
                     <div class="columns item-image-block">
-                            <div class="item-controls hide-for-small">
-                            <input type="checkbox" class="item-select" ng-click="vm.checkProduct(wishListLine.id)" ng-checked="vm.isProductChecked(wishListLine.id)"/>
-                            <i class="icon-sort-order handle" ng-show="vm.canReorderList()"></i>
-                            </div>
                             <div class="item-image">
                                 <isc-product-thumb product="wishListLine"></isc-product-thumb>
                             </div>
@@ -175,9 +181,9 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                    <div class="columns item-sort-order-container">
-                        <div ng-show="vm.canChangeSortOrder()" >
+                    </div>
+                    <div class="columns item-sort-order-container show-for-small">
+                        <div ng-show="vm.allowedChangeSortOrder()" >
                             <label>[% translate 'Sort order' %]</label>
                             <input class="numerictextbox" type="text" ng-model="wishListLine.sortOrder" ng-keypress="vm.sortOrderKeyPress($event,wishListLine)" ng-change="vm.sortOrderUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }"/>
                         </div>
@@ -208,11 +214,17 @@
                             </div>
                             <div class="item-actions-block">
                                 <div class="add-to-cart-block">
-                                    <div class="action" ng-if="wishListLine.canAddToCart">
-                                        <button class="btn primary btn-add-cart" ng-click="vm.addLineToCart(wishListLine)" ng-disabled="!wishListLine.qtyOrdered || wishListLine.qtyOrdered == 0">[% translate 'Add to Cart' %]</button>
+                                    <div>
+                                        <div class="action" ng-if="wishListLine.canAddToCart">
+                                            <button class="btn primary btn-add-cart" ng-click="vm.addLineToCart(wishListLine)" ng-disabled="!wishListLine.qtyOrdered || wishListLine.qtyOrdered == 0">[% translate 'Add to Cart' %]</button>
+                                        </div>
+                                        <div class="item-qty" ng-if="wishListLine.canEnterQuantity">
+                                            <input ng-disabled="(!vm.listModel.allowEdit && vm.listModel.isSharedList)" type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" ng-keypress="vm.quantityKeyPress(wishListLine,$event)" ng-change="vm.quantityUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }" />
+                                        </div>
                                     </div>
-                                    <div class="item-qty" ng-if="wishListLine.canEnterQuantity">
-                                        <input ng-disabled="(!vm.listModel.allowEdit && vm.listModel.isSharedList)" type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" ng-keypress="vm.quantityKeyPress(wishListLine,$event)" ng-change="vm.quantityUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }"/>
+                                    <div class="update-qty-link">
+                                        <a ng-if="vm.changedSharedListLinesQtys[wishListLine.id.toString()]" ng-click="vm.updateSavedQty(wishListLine)" href="#"><i class="icon-update"></i>[% translate 'Update saved QTY' %]</a>
+                                        <span ng-if="vm.listLinesWithUpdatedQty[wishListLine.id.toString()] && !vm.changedSharedListLinesQtys[wishListLine.id.toString()]"><i class="icon-check"></i>[% translate 'QTY updated' %]</span>
                                     </div>
                                 </div>
                                 <div class="show-for-small">

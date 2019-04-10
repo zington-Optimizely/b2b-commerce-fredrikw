@@ -13,7 +13,9 @@
                 updateData: "&",
                 customContext: "=",
                 storageKey: "=",
-                pageChanged: "&"
+                pageChanged: "&",
+                canEditSortOrder: "=",
+                isSortingMode: "="
             },
             controller: "PagerController",
             controllerAs: "vm",

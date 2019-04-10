@@ -23,6 +23,8 @@
                             ng-model="vm.pagination.sortType"
                             ng-options="option.sortType as option.displayName for option in vm.pagination.sortOptions"
                             ng-change="vm.updateSortOrder()"></select>
+                    <a ng-if="vm.canEditSortOrder && vm.pagination.sortType === 'SortOrder'" class="toggle-sorting-button" href="javascript:void(0)" ng-click="vm.toggleSortingMode()" 
+                       ng-bind="vm.isSortingMode ? '[% translate 'Done Sorting' EscapeSingleQuotes %]' : '[% translate 'Edit Sort Order' EscapeSingleQuotes %]'"></a>
                 </div>
             </li>
             <li ng-if="vm.showPerPage()" class="results-list">

@@ -1070,6 +1070,13 @@ body [role="main"] div.paginator-34 {
     line-height: 250%;
 }
 
+.paginator-34 .toggle-sorting-button {
+    white-space: nowrap;
+    font-size: 0.9em;
+    line-height: 250%;
+    margin-left: 5px;
+}
+
 .paginator-34 .sort-list div.small-4, .paginator-34 li.results-list .per-page {
     width: auto !important;
 }
@@ -8479,6 +8486,14 @@ nav ul:not(.side-nav) li a {
 
 .icon-notes:before {
     content: "\e24d";
+}
+
+.icon-check:before {
+    content: "\e900";
+}
+
+.icon-update:before {
+    content: "\e901";
 }
 
 /* Print Styles */

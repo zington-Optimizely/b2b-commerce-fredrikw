@@ -11,7 +11,8 @@
             scope: {
                 list: "=",
                 session: "=",
-                listSettings: "="
+                listSettings: "=",
+                showNoPermissionsTooltip: "="
             },
             controller: "SharedListController",
             controllerAs: "vm"

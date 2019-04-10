@@ -19,6 +19,7 @@
         failedToGetRealTimeInventory = false;
         sortableOptions: any;
         sortProperty: string = "sortOrder";
+        isSortingMode = false;
         reverse: boolean = false;
         searchTerm: string = "";
         private lastSearchTerm: string = "";
@@ -46,6 +47,9 @@
 
         pagination: PaginationModel;
         paginationStorageKey = "DefaultPagination-MyListDetail";
+
+        changedSharedListLinesQtys: { [key: string]: number } = {};
+        listLinesWithUpdatedQty: { [key: string]: boolean } = {};
 
         static $inject = [
             "$scope",
@@ -227,12 +231,16 @@
             this.updateIfNewSearchTerm();
         }
 
-        canReorderList() {
-            return this.pagination.numberOfPages === 1 && this.canChangeSortOrder();
+        canReorderList(): boolean {
+            return this.pagination.numberOfPages === 1 && this.allowedChangeSortOrder();
         }
 
-        canChangeSortOrder() {
-            return this.pagination.totalItemCount > 1 && this.pagination.sortType === 'SortOrder' && !this.searchTerm && !this.lastSearchTerm && (this.listModel.allowEdit || !this.listModel.isSharedList);
+        allowedChangeSortOrder(): boolean {
+            return this.isSortingMode && this.canChangeSortOrder();
+        }
+
+        canChangeSortOrder(): boolean {
+            return this.pagination.totalItemCount > 1 && this.pagination.sortType === "SortOrder" && !this.searchTerm && !this.lastSearchTerm && (this.listModel.allowEdit || !this.listModel.isSharedList);
         }
 
         protected updateSortOrder(): void {
@@ -451,7 +459,8 @@
 
             this.wishListService.getWishListLinesById(this.listId, {
                 pagination: this.pagination,
-                query: this.searchTerm
+                query: this.searchTerm,
+                changedSharedListLinesQuantities: Object.keys(this.changedSharedListLinesQtys).map(o => `${o}|${this.changedSharedListLinesQtys[o]}`).join(",")
             }).then(
                 (result: WishListLineCollectionModel) => {
                     this.getListLinesCompleted(result);
@@ -483,10 +492,10 @@
             this.calculateListTotal();
 
             this.$timeout(() => {
-                    // refresh foundation tip hover
-                    (angular.element(document) as any).foundation("dropdown", "reflow");
-                    this.calculateListHeight();
-                }
+                // refresh foundation tip hover
+                (angular.element(document) as any).foundation("dropdown", "reflow");
+                this.calculateListHeight();
+            }
                 , 0);
         }
 
@@ -558,7 +567,8 @@
 
         addAllToCart(wishList: WishListModel): void {
             this.inProgress = true;
-            this.cartService.addWishListToCart(wishList.id, true).then(
+            const data = { changedSharedListLinesQuantities: this.changedSharedListLinesQtys };
+            this.cartService.addWishListToCart(wishList.id, true, data).then(
                 (cartLineCollection: CartLineCollectionModel) => {
                     this.addLineCollectionCompleted(cartLineCollection);
                 },
@@ -626,7 +636,22 @@
         }
 
         quantityUpdated(wishListLine: WishListLineModel): void {
+            if (this.listModel.shareOption === ShareOptionEnum[ShareOptionEnum.Private]) {
+                this.updateLine(wishListLine);
+            } else {
+                if (wishListLine.qtyOrdered <= 0) {
+                    wishListLine.qtyOrdered = 1;
+                }
+
+                this.changedSharedListLinesQtys[wishListLine.id.toString()] = wishListLine.qtyOrdered;
+                this.getListLines();
+            }
+        }
+
+        updateSavedQty(wishListLine: WishListLineModel): void {
             this.updateLine(wishListLine);
+            delete this.changedSharedListLinesQtys[wishListLine.id.toString()];
+            this.listLinesWithUpdatedQty[wishListLine.id.toString()] = true;
         }
 
         sortOrderKeyPress(keyEvent: KeyboardEvent, wishListLine: WishListLineModel): void {
