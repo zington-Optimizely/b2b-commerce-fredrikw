@@ -93,6 +93,41 @@
 
     .payment-details {
         margin-bottom: 1em;
+
+        .payment-billing-address {
+            font-size: 14px;
+            margin-top: -12px;
+            display: block;
+            line-height: 18px;
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .payment-profile-expired {
+            font-size: 14px;
+            margin-top: -12px;
+            display: block;
+            color: #f04124;
+            line-height: 18px;
+            margin-bottom: 12px;
+        }
+
+        .exp-year {
+            select {
+                margin-bottom: 0;
+            }
+        } 
+        
+        .tokenex-iframe-block {
+            height: 37.8px;
+            margin: 0 0 1rem 0;
+        }
+
+        .tokenex-error {
+            margin-top: -1rem;
+        }
     }
 
     .paypal {

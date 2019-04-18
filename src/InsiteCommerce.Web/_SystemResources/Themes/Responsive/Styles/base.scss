@@ -6734,7 +6734,7 @@ nav ul:not(.side-nav) li a {
 
 /*Quick Order Widget*/
 
-.qo-wrap.qo-widget {
+.qo-wrap.qo-widget, .qo-search {
     /* Quick Order Panel */
     padding: .5em 1em 1em 1em;
 
@@ -6847,37 +6847,36 @@ nav ul:not(.side-nav) li a {
 }
 
 @media all and (min-width: 768px) {
-    .qo-widget.qo-wrap {
+    body .qo-wrap.qo-widget {
         padding: 1em;
 
         h3 {
             margin-bottom: 1em;
         }
-    }
 
-    .qo-widget.qo-wrap .qo-search-box {
-        width: 38%;
-        margin-right: 2%;
-    }
+        .qo-search-box {
+            width: 38%;
+            margin-right: 2%;
+        }
 
-    body .qo-wrap.qo-widget .qo-qty,
-    body .qo-wrap.qo-widget .qo-um {
-        width: 18%;
-        margin-right: 2%;
-    }
+        .qo-links {
+            margin-bottom: 0;
+            float: right;
 
-    body .qo-wrap.qo-widget .btn {
-        width: 20%;
-    }
+            a {
+                margin-left: 20px;
+                display: inline-block;
+                width: inherit;
+            }
+        }
 
-    .qo-wrap.qo-widget .qo-links {
-        margin-bottom: 0;
-        float: right;
+        .btn {
+            width: 20%;
+        }
 
-        a {
-            margin-left: 20px;
-            display: inline-block;
-            width: inherit;
+        .qo-qty, .qo-um {
+            width: 18%;
+            margin-right: 2%;
         }
     }
 }

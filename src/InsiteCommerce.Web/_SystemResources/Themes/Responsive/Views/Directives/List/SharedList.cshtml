@@ -1,4 +1,4 @@
-﻿<div ng-show="listSettings.allowMultipleWishLists && listSettings.allowListSharing">
+﻿<div data-test-selector="tst_sharedList_sharedStatus" ng-show="listSettings.allowMultipleWishLists && listSettings.allowListSharing">
     <div ng-if="list.isSharedList && list.sharedByDisplayName || list.wishListSharesCount > 0">
         <i class="icon-users"></i>
         <span ng-if="list.wishListSharesCount > 0 && !list.isSharedList">

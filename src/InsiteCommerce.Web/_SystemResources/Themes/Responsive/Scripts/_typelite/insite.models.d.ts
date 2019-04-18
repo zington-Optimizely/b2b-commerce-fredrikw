@@ -32,7 +32,6 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		defaultFulfillmentMethod: string;
 		defaultWarehouseId: System.Guid;
 		defaultWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
-		emailOptOutAbandonedCart: boolean;
 	}
 	interface AccountSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowCreateAccount: boolean;
@@ -51,6 +50,29 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 	}
 	interface AccountCollectionModel extends Insite.Core.WebApi.BaseModel {
 		accounts: Insite.Account.WebApi.V1.ApiModels.AccountModel[];
+		pagination: Insite.Core.WebApi.PaginationModel;
+	}
+	interface AccountPaymentProfileModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		description: string;
+		cardType: string;
+		expirationDate: string;
+		maskedCardNumber: string;
+		cardIdentifier: string;
+		cardHolderName: string;
+		address1: string;
+		address2: string;
+		address3: string;
+		address4: string;
+		city: string;
+		state: string;
+		postalCode: string;
+		country: string;
+		isDefault: boolean;
+		tokenScheme: string;
+	}
+	interface AccountPaymentProfileCollectionModel extends Insite.Core.WebApi.BaseModel {
+		accountPaymentProfiles: Insite.Account.WebApi.V1.ApiModels.AccountPaymentProfileModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
 	}
 	interface SessionModel extends Insite.Core.WebApi.BaseModel {
@@ -695,6 +717,7 @@ declare module Insite.Catalog.Services.Dtos {
 		properties: {[key: string]:  string};
 		score: number;
 		searchBoost: number;
+		searchBoostDecimal: number;
 		salePriceLabel: string;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
@@ -1018,6 +1041,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		alsoPurchasedProducts: Insite.Catalog.Services.Dtos.ProductDto[];
 		requestedPickupDateDisplay: Date;
 		taxFailureReason: string;
+		failedToGetRealTimeInventory: boolean;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;
@@ -1091,6 +1115,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		requiresPoNumber: boolean;
 		addToCartPopupTimeout: number;
 		enableRequestPickUpDate: boolean;
+		enableSavedCreditCards: boolean;
 	}
 }
 declare module Insite.Cart.Services.Dtos {
@@ -1109,6 +1134,10 @@ declare module Insite.Cart.Services.Dtos {
 		description: string;
 		isCreditCard: boolean;
 		isPaymentProfile: boolean;
+		cardType: string;
+		billingAddress: string;
+		isPaymentProfileExpired: boolean;
+		tokenScheme: string;
 	}
 	interface PaymentOptionsDto {
 		paymentMethods: Insite.Cart.Services.Dtos.PaymentMethodDto[];

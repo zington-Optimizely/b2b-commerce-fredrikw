@@ -73,6 +73,7 @@
                     if (this.saveState) {
                         this.saveState = false;
                     } else {
+                        this.$window.safariBackUrl = null;
                         this.$window.safariBackState = null;
                     }
                 }
@@ -222,6 +223,7 @@
         replaceState(state: any): void {
             if (this.isSafari()) {
                 this.saveState = true;
+                this.$window.safariBackUrl = this.$location.path();
                 this.$window.safariBackState = state;
             } else {
                 this.$window.history.replaceState(state, "any");
@@ -232,6 +234,7 @@
         pushState(state: any): void {
             if (this.isSafari()) {
                 this.saveState = true;
+                this.$window.safariBackUrl = this.$location.path();
                 this.$window.safariBackState = state;
             } else {
                 this.$window.history.pushState(state, "any");
@@ -240,7 +243,7 @@
 
         getHistoryState(): any {
             if (this.isSafari()) {
-                return this.$window.safariBackState;
+                return this.$location.path() === this.$window.safariBackUrl ? this.$window.safariBackState : null;
             } else {
                 return this.$window.history.state;
             }

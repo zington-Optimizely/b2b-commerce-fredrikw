@@ -24,15 +24,17 @@
                             </div>
                         </td>
                         <td class="col-price">
-                            <isc-product-price product="product" id-key="{{'rp-widget_' + vm.products.indexOf(product)}}"></isc-product-price>
-                            <span class="um displayUnitOfMeasure" ng-if="vm.showUnitOfMeasureLabel(product)">
-                                <span class="um-sep">/</span>
-                                <span class="selected-uom">{{product.unitOfMeasureDescription || product.unitOfMeasureDisplay}}</span>
-                            </span>
-                            <br />
-                            <isc-product-price-saving product="product" currency-symbol="product.currencySymbol"></isc-product-price-saving>
-                            <div class="d-block" ng-show="product.canShowPrice && !product.quoteRequired">
-                                <isc-quantity-break-pricing product-id="product.id" break-prices="product.pricing.unitRegularBreakPrices" block="{{'_' + vm.products.indexOf(product)}}"></isc-quantity-break-pricing>
+                            <div ng-if="!vm.failedToGetRealTimePrices">
+                                <isc-product-price product="product" id-key="{{'rp-widget_' + vm.products.indexOf(product)}}"></isc-product-price>
+                                <span class="um displayUnitOfMeasure" ng-if="vm.showUnitOfMeasureLabel(product)">
+                                    <span class="um-sep">/</span>
+                                    <span class="selected-uom">{{product.unitOfMeasureDescription || product.unitOfMeasureDisplay}}</span>
+                                </span>
+                                <br />
+                                <isc-product-price-saving product="product" currency-symbol="product.currencySymbol"></isc-product-price-saving>
+                                <div class="d-block" ng-show="product.canShowPrice && !product.quoteRequired">
+                                    <isc-quantity-break-pricing product-id="product.id" break-prices="product.pricing.unitRegularBreakPrices" block="{{'_' + vm.products.indexOf(product)}}"></isc-quantity-break-pricing>
+                                </div>
                             </div>
                             <div ng-if="vm.failedToGetRealTimePrices">
                                 <div>[% siteMessage 'RealTimePricing_PriceLoadFailed' %]</div>

@@ -117,7 +117,7 @@
                                                             <input type="text" name="qty" ng-model="product.qtyOrdered" class="qty numerictextbox" />
                                                         </div>
                                                         <div class="action">
-                                                            <button ng-show="vm.product.availability.messageType != 2 || vm.product.canBackOrder" id="tst_productList_{{product.id}}_addToCart" ng-click="vm.addToCart(product)"
+                                                            <button id="tst_productList_{{product.id}}_addToCart" ng-click="vm.addToCart(product)"
                                                                     class="btn-add-cart btn primary" ng-disabled="!product.qtyOrdered || product.qtyOrdered == 0 || vm.addingToCart">
                                                                 [% translate 'Add To Cart' %]
                                                             </button>
@@ -200,8 +200,8 @@
                                                     <div ng-if="product.canEnterQuantity" class="item-qty">
                                                         <input type="text" name="qty" ng-model="product.qtyOrdered" class="qty numerictextbox" />
                                                     </div>
-                                                    <div class="action" ng-if="product.canAddToCart">
-                                                        <button ng-show="(vm.product.availability.messageType != 2 || vm.product.canBackOrder) && product.canAddToCart" id="tst_productList_{{product.id}}_addToCart" ng-click="vm.addToCart(product)" href="javascript:void(0);" class="btn-add-cart btn primary" ng-disabled="!product.qtyOrdered || product.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add To Cart' %]</button>
+                                                    <div class="action">
+                                                        <button id="tst_productList_{{product.id}}_addToCart" ng-click="vm.addToCart(product)" href="javascript:void(0);" class="btn-add-cart btn primary" ng-disabled="!product.qtyOrdered || product.qtyOrdered == 0 || vm.addingToCart">[% translate 'Add To Cart' %]</button>
                                                     </div>
                                                 </div>
                                                 <a id="tst_productList_{{product.id}}_addToWishList" ng-show="product.canAddToWishlist" ng-click="vm.openWishListPopup(product)" role="button" class="btn secondary btn-add-list" href="javascript:void(0);">[% translate 'Add to List' %]</a>

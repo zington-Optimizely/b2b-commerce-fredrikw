@@ -87,7 +87,7 @@
                 <span class="field-validation-error" ng-if="vm.showUnitError"><span ng-bind="vm.parentProduct.unitOfMeasureDisplay"></span>[% siteMessage 'StyledProduct_WrongUnitOfMeasure' %]</span>
                 <div class="small-12 pd-buttons">
                     <div class="small-12 primary-button">
-                        <button ng-show="(vm.product.availability.messageType != 2 || vm.product.canBackOrder) && vm.product.allowedAddToCart && (vm.product.canAddToCart || vm.configurationCompleted || vm.styleSelectionCompleted && !vm.product.canConfigure)"
+                        <button ng-show="vm.product.allowedAddToCart && (vm.product.canAddToCart || vm.configurationCompleted || vm.styleSelectionCompleted && !vm.product.canConfigure)"
                                 id="tst_productDetail_addToCart" ng-click="vm.addToCart(vm.product)"
                                 role="button" class="btn primary btn-add-to-cart" ng-disabled="!vm.product.qtyOrdered || vm.product.qtyOrdered == 0 || vm.showUnitError || vm.addingToCart">
                             [% translate 'Add To Cart' %]
@@ -98,7 +98,7 @@
                     </div>
                     <div class="small-12 primary-button">
                         <a id="tst_productDetail_productSubscription" href="" class="btn primary btn-product-subscription"
-                           ng-show="vm.product.isSubscription && (vm.product.availability.messageType != 2 || vm.product.canBackOrder) && vm.product.allowedAddToCart && (vm.product.canAddToCart || vm.configurationCompleted || vm.styleSelectionCompleted && !vm.product.canConfigure)"
+                           ng-show="vm.product.isSubscription && vm.product.allowedAddToCart && (vm.product.canAddToCart || vm.configurationCompleted || vm.styleSelectionCompleted && !vm.product.canConfigure)"
                            ng-click="vm.openProductSubscriptionPopup(vm.product)"
                            ng-disabled="!vm.product.qtyOrdered || vm.product.qtyOrdered == 0 || vm.showUnitError">
                             [% translate 'Delivery Schedule' %]

@@ -9,8 +9,11 @@
         orderSettings: Insite.Order.WebApi.V1.ApiModels.OrderSettingsModel;
         autocompleteOptions: AutoCompleteOptions;
         canAddAllToList = false;
+        alternateUnitsOfMeasureFromSettings: boolean;
+        selectedUnitOfMeasure: string;
+        product: ProductDto = { qtyOrdered: 1 } as ProductDto;
 
-        static $inject = ["$scope", "$filter", "coreService", "cartService", "productService", "searchService", "settingsService", "addToWishlistPopupService"];
+        static $inject = ["$scope", "$filter", "coreService", "cartService", "productService", "searchService", "settingsService", "addToWishlistPopupService", "selectVariantProductPopupService", "$q"];
 
         constructor(
             protected $scope: ng.IScope,
@@ -20,16 +23,22 @@
             protected productService: catalog.IProductService,
             protected searchService: catalog.ISearchService,
             protected settingsService: core.ISettingsService,
-            protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
+            protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
+            protected selectVariantProductPopupService: SelectVariantProductPopupService,
+            protected $q: ng.IQService) {
             this.init();
         }
 
         init(): void {
             this.products = [];
             this.getSettings();
+            this.selectedUnitOfMeasure = "EA";
 
             this.initializeAutocomplete();
             this.initCanAddAllToList();
+            this.$scope.$on("addProductToQuickOrderForm", (event, product: ProductDto) => {
+                this.lookupAndAddProductById(product.id as string);
+            });
         }
 
         initCanAddAllToList(): void {
@@ -40,7 +49,7 @@
 
         addAllToList(): void {
             let products = [];
-            for (let i = 0; i < this.products.length; i++) {
+            for (let i = this.products.length - 1; i >= 0; i--) {
                 if (!this.products[i].canAddToWishlist) {
                     continue;
                 }
@@ -84,6 +93,7 @@
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.productSettings;
             this.orderSettings = settingsCollection.orderSettings;
+            this.alternateUnitsOfMeasureFromSettings = settingsCollection.productSettings.alternateUnitsOfMeasure;
         }
 
         protected getSettingsFailed(error: any): void {
@@ -91,13 +101,17 @@
 
         onEnterKeyPressedInAutocomplete(): void {
             const autocomplete = $("#qo-search-view").data("kendoAutoComplete") as any;
-            if (autocomplete._last === kendo.keys.ENTER && autocomplete.listView.selectedDataItems().length === 0) {
-                this.lookupAndAddProductBySearchTerm(this.searchTerm);
+            if (autocomplete._last === kendo.keys.ENTER) {
+                if (!autocomplete.list.is(":visible") && this.product.id && this.product.qtyOrdered) {
+                    this.addProduct(this.product);
+                } else if (autocomplete.listView.selectedDataItems().length === 0) {
+                    this.lookupAndAddProductBySearchTerm(this.searchTerm);
+                }
             }
         }
 
         protected lookupAndAddProductById(id: string): void {
-            const expandParameter = ["pricing", "brand"];
+            const expandParameter = ["pricing", "brand", "styledproducts"];
 
             this.productService.getProduct(null, id, expandParameter).then(
                 (product: ProductModel) => { this.getProductCompleted(product); },
@@ -108,7 +122,9 @@
         protected getProductCompleted(product: ProductModel): void {
             // TODO ISC-4519
             // TODO we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
-            this.addProduct(product.product);
+            this.getRealTimeInventory(product.product).then(() => {
+                this.validateAndSetProduct(product.product);
+            });
         }
 
         protected getProductFailed(error: any): void {
@@ -117,7 +133,7 @@
 
         protected lookupAndAddProductBySearchTerm(searchTerm: string): void {
             const parameter: catalog.IProductCollectionParameters = { extendedNames: [searchTerm] };
-            const expandParameter = ["pricing", "brand"];
+            const expandParameter = ["pricing", "brand", "styledproducts"];
 
             this.productService.getProducts(parameter, expandParameter).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
@@ -127,11 +143,24 @@
         protected getProductsCompleted(productCollection: ProductCollectionModel): void {
             // TODO ISC-4519
             // TODO we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
-            this.addProduct(productCollection.products[0]);
+            this.getRealTimeInventory(productCollection.products[0]).then(() => {
+                this.validateAndSetProduct(productCollection.products[0]);
+            });
         }
 
         protected getProductsFailed(error: any): void {
             this.errorMessage = angular.element("#messageNotFound").val();
+        }
+
+        protected validateAndSetProduct(product: ProductDto): boolean {
+            if (!this.canProductBeQuickOrdered(product)) {
+                return false;
+            }
+
+            product.qtyOrdered = Math.max(this.product.qtyOrdered || 1, product.minimumOrderQty || 1);
+            this.product = product;
+            this.errorMessage = "";
+            return true;
         }
 
         protected addProduct(product: ProductDto): void {
@@ -139,10 +168,11 @@
                 return;
             }
 
+            this.product.qtyOrdered = parseFloat(this.product.qtyOrdered.toString());
             let productExists = false;
             for (let i = 0; i < this.products.length; i++) {
                 if (this.products[i].id === product.id && this.products[i].unitOfMeasure === product.unitOfMeasure) {
-                    this.products[i].qtyOrdered++;
+                    this.products[i].qtyOrdered = parseFloat(this.products[i].qtyOrdered.toString()) + this.product.qtyOrdered;
                     productExists = true;
                     if (this.settings.realTimePricing) {
                         this.showPriceSpinner(this.products[i]);
@@ -163,15 +193,17 @@
             angular.element("#qo-search-view").data("kendoAutoComplete").close(); // close autocomplete
 
             if (productExists) {
+                this.product = { qtyOrdered: 1 } as ProductDto;
                 return;
             }
 
-            product.qtyOrdered = product.minimumOrderQty || 1;
             (product as any).uuid = guidHelper.generateGuid(); // tack on a guid to use as an id for the quantity break pricing tooltip
 
             if (!this.settings.realTimeInventory && !this.settings.realTimePricing) {
                 if (this.canProductBeQuickOrdered(product)) {
-                    this.products.push(product);
+                    this.productService.getProductPrice(product);
+                    this.products.unshift(product);
+                    this.product = { qtyOrdered: 1 } as ProductDto;
                 }
 
                 return;
@@ -181,14 +213,9 @@
                 this.getRealtimePrices(product);
             }
 
-            if (this.settings.realTimeInventory) {
-                if (!this.settings.inventoryIncludedWithPricing) {
-                    this.getRealTimeInventory(product);
-                }
-            } else {
-                if (this.canProductBeQuickOrdered(product)) {
-                    this.products.push(product);
-                }
+            if (this.canProductBeQuickOrdered(product)) {
+                this.products.unshift(product);
+                this.product = { qtyOrdered: 1 } as ProductDto;
             }
         }
 
@@ -206,23 +233,13 @@
                 (error: any) => { this.getProductRealTimePricesFailed(error, product); });
         }
 
-        protected getRealTimeInventory(product: ProductDto): void {
-            if (!this.settings.realTimeInventory) {
-                return;
-            }
-
-            this.productService.getProductRealTimeInventory([product]).then(
-                (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, product),
-                (error: any) => this.getProductRealTimeInventoryFailed(error, product));
-        }
-
         protected canProductBeQuickOrdered(product: ProductDto): boolean {
             if (product.canConfigure || (product.isConfigured && !product.isFixedConfiguration)) {
                 this.errorMessage = angular.element("#messageConfigurableProduct").val();
                 return false;
             }
             if (product.isStyleProductParent) {
-                this.errorMessage = angular.element("#messageStyledProduct").val();
+                this.selectVariantProductPopupService.display(product);
                 return false;
             }
             if (!product.canAddToCart) {
@@ -236,7 +253,7 @@
             return true;
         }
 
-        changeUnitOfMeasure(product: ProductDto): void {
+        changeUnitOfMeasureInList(product: ProductDto): void {
             if (!product.productUnitOfMeasures) {
                 return;
             }
@@ -248,6 +265,25 @@
                     break;
                 }
             }
+
+            // this calls to get a new price and updates the product which updates the ui
+            this.productService.changeUnitOfMeasure(product).then(
+                (productResult: ProductDto) => { this.changeUnitOfMeasureInListCompleted(productResult); },
+                (error: any) => { this.changeUnitOfMeasureInListFailed(error); });
+        }
+
+        protected changeUnitOfMeasureInListCompleted(product: ProductDto): void {
+        }
+
+        protected changeUnitOfMeasureInListFailed(error: any): void {
+        }
+
+        changeUnitOfMeasure(product: ProductDto): void {
+            if (!product.productUnitOfMeasures) {
+                return;
+            }
+
+            product.selectedUnitOfMeasure = this.selectedUnitOfMeasure;
 
             // this calls to get a new price and updates the product which updates the ui
             this.productService.changeUnitOfMeasure(product).then(
@@ -273,33 +309,10 @@
         }
 
         protected getProductRealTimePricesCompleted(realTimePricing: RealTimePricingModel, product: ProductDto): void {
-            if (!this.settings.inventoryIncludedWithPricing) {
-                return;
-            }
-
-            this.getRealTimeInventory(product);
         }
 
         protected getProductRealTimePricesFailed(error: any, product?: ProductDto): void {
             this.products.forEach(p => (p.pricing as any).failedToGetRealTimePrices = true);
-
-            if (product) {
-                this.getProductRealTimePricesCompleted(null, product);
-            }
-        }
-
-        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, product: ProductDto): void {
-            if (this.canProductBeQuickOrdered(product)) {
-                this.products.push(product);
-            }
-        }
-
-        protected getProductRealTimeInventoryFailed(error: any, product?: ProductDto): void {
-            this.products.forEach(p => (p.pricing as any).failedToGetRealTimeInventory = true);
-
-            if (product) {
-                this.getProductRealTimeInventoryCompleted(null, product);
-            }
         }
 
         protected getProductPriceCompleted(productPrice: ProductPriceModel): void {
@@ -320,7 +333,7 @@
         }
 
         addAllToCart(redirectUrl: string): void {
-            this.cartService.addLineCollectionFromProducts(this.products, true).then(
+            this.cartService.addLineCollectionFromProducts(this.products.slice().reverse(), true).then(
                 (cartLines: CartLineCollectionModel) => { this.addAllToCartCompleted(cartLines, redirectUrl); },
                 (error: any) => { this.addAllToCartFailed(error); });
         }
@@ -424,6 +437,28 @@
             if (keyEvent.which === 13) {
                 (keyEvent.target as any).blur();
             }
+        }
+
+        protected getRealTimeInventory(product: ProductDto): ng.IPromise<void> {
+            const deferred = this.$q.defer<void>();
+
+            if (this.settings.realTimeInventory) {
+                this.productService.getProductRealTimeInventory([product]).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, deferred),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error, deferred));
+            } else {
+                deferred.resolve();
+            }
+
+            return deferred.promise;
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, deferred: ng.IDeferred<void>): void {
+            deferred.resolve();
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any, deferred: ng.IDeferred<void>): void {
+            deferred.resolve();
         }
     }
 

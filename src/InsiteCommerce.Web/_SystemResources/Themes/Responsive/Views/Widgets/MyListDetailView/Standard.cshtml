@@ -10,18 +10,18 @@
                 <button id="tst_myListDetailView_copyBtn" ng-if="vm.listSettings.allowMultipleWishLists" type="button" class="btn secondary" ng-click="vm.openCopyToPopup(vm.listModel)" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Copy' %]</button>
                 <button id="tst_myListDetailView_shareBtn" ng-if="!vm.listModel.isSharedList && vm.listSettings.allowMultipleWishLists && vm.listSettings.allowListSharing" type="button" class="btn secondary" ng-click="vm.openSharePopup()">[% translate 'Share' %]</button>
                 <button id="tst_myListDetailView_deleteBtn" ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openDeletePopup(vm.listModel)">[% translate 'Delete' %]</button>
-                <button ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openCreatePopup(vm.listModel)">[% translate 'Edit' %]</button>
+                <button id="tst_myListDetailView_editBtn" ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openCreatePopup(vm.listModel)">[% translate 'Edit' %]</button>
             </div>
         </div>
         <div class="list-header">
-            <p ng-if="vm.listModel.description" class="list-description" ng-bind="vm.listModel.description"></p>
+            <p data-test-selector="tst_myListDetailView_description" ng-if="vm.listModel.description" class="list-description" ng-bind="vm.listModel.description"></p>
             <div class="row">
                 <div class="medium-12 columns">
                     <div ng-if="vm.listModel.updatedOn" class="item-updated">
                         <span ng-if="vm.listModel.updatedOn">[% translate 'Updated' %]</span>
-                        <span ng-bind="vm.listModel.updatedOn | date:'M/d/yyyy'"></span>
+                        <span data-test-selector="tst_myListDetailView_updatedOnDate" ng-bind="vm.listModel.updatedOn | date:'M/d/yyyy'"></span>
                         <span ng-if="vm.listModel.updatedByDisplayName">[% translate 'by' %]</span>
-                        <span ng-bind="vm.listModel.updatedByDisplayName"></span>
+                        <span data-test-selector="tst_myListDetailView_username" ng-bind="vm.listModel.updatedByDisplayName"></span>
                     </div>
                     <div class="item-share-list">
                         <isc-shared-list list="vm.listModel" session="vm.session" list-settings="vm.listSettings" show-no-permissions-tooltip="true"></isc-shared-list>
@@ -43,7 +43,7 @@
         </div>
     </div>
     <div class="medium-5 columns middle-btns">
-                <button ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" type="button" class="btn tertiary hide-for-small" ng-click="vm.toggleAddToListSection()">[% translate 'Add Items' %] <i ng-class="{ 'icon-arw-up-3': vm.isAddToListSectionVisible, 'icon-arw-down-3': !vm.isAddToListSectionVisible }"></i></button>
+                <button data-test-selector="tst_myListDetailView_addItems" ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" type="button" class="btn tertiary hide-for-small" ng-click="vm.toggleAddToListSection()">[% translate 'Add Items' %] <i ng-class="{ 'icon-arw-up-3': vm.isAddToListSectionVisible, 'icon-arw-down-3': !vm.isAddToListSectionVisible }"></i></button>
         <button id="tst_myListDetailView_addListToCartBtn" ng-if="vm.listModel.wishListLineCollection.length > 0" type="button" class="btn primary" ng-click="vm.addAllToCart(vm.listModel)"
                         ng-disabled="!vm.allQtysIsValid() || !vm.listModel.canAddToCart || vm.inProgress">
                     [% translate 'Add List To Cart' %]
@@ -94,7 +94,7 @@
                 </div>
             </div>
         </div>
-        <div ng-if="!vm.inProgress && vm.listModel.wishListLineCollection.length === 0" class="row no-results">
+        <div data-test-selector="tst_myListDetailView_noResultsMessage" ng-if="!vm.inProgress && vm.listModel.wishListLineCollection.length === 0" class="row no-results">
             [% siteMessage 'Lists_NoItemsInList' %]
         </div>
 <div ng-if="vm.listModel.wishListLineCollection.length > 0">

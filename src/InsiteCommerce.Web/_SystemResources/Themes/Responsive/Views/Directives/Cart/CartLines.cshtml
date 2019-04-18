@@ -62,7 +62,7 @@
                            ng-model-options="{ updateOn: 'blur' }"
                            ng-disabled="!cart.canModifyOrder || cartLine.isPromotionItem || vm.isUpdateInProgress || cart.type == 'Job'" />
                 </div>
-                <div class="item-subtotal"><span ng-if="!cartLine.quoteRequired && !cart.cartNotPriced" ng-bind="cartLine.pricing.extendedUnitNetPriceDisplay"></span></div>
+                <div class="item-subtotal"><span ng-if="!cartLine.quoteRequired && !cart.cartNotPriced" ng-bind="cartLine.pricing.extendedUnitNetPriceDisplay" data-test-selector="tst_cartLine_priceDisplay_{{cartLine.productId}}"></span></div>
                 <div class="item-qty-message" ng-show="inventoryCheck || cartLine.isRestricted || !cartLine.isActive">
                     <span ng-show="inventoryCheck && cartLine.hasInsufficientInventory && !vm.isOutOfStockLine(inventoryCheck, cartLine)" class="message-avail--avail">
                         {{'[% siteMessage 'Cart_ToManyQtyRequested' EscapeSingleQuotes %]'.replace('{0}', cartLine.qtyOnHand).replace('{1}', vm.getSumQtyPerUom(cartLine.productId, cart.cartLines))}}
@@ -100,7 +100,7 @@
         </div>
 
         <div ng-if="editable && cart.showLineNotes && !cartLine.isPromotionItem" class="actions-panel edit">
-            <a href="" class="btn tertiary add-to-cart panel-trigger" data-cartnotes="true" ng-click="vm.notePanelClicked(cartLine.id)">[% translate 'Line Notes' %]</a>
+            <a data-test-selector="tst_cartLine_lineNotesButton" href="" class="btn tertiary add-to-cart panel-trigger" data-cartnotes="true" ng-click="vm.notePanelClicked(cartLine.id)">[% translate 'Line Notes' %]</a>
             <div class="item-actions" data-cartnotes="true" ng-class="{open : (cartLine.id == vm.openLineNoteId)}">
                 <div class="item-actions-wrap">
                     <div class="large-9 columns item-code-notes">

@@ -24,13 +24,14 @@
         tokenExId: string;
         origin: string;
         timestamp: string;
+        token: string;
         tokenScheme: string;
         authenticationKey: string;
     }
 
     export interface ISettingsService {
         getSettings(): ng.IPromise<SettingsCollection>;
-        getTokenExConfig(): ng.IPromise<TokenExDto>;
+        getTokenExConfig(token?: string): ng.IPromise<TokenExDto>;
     }
 
     export class SettingsService implements ISettingsService {
@@ -87,10 +88,11 @@
             }
         }
 
-        getTokenExConfig(): ng.IPromise<TokenExDto> {
+        getTokenExConfig(token?: string): ng.IPromise<TokenExDto> {
+            var url = token ? `${this.tokenExConfigUri}?token=${token}` : `${this.tokenExConfigUri}`;
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http.get(`${this.tokenExConfigUri}`),
+                this.$http.get(url),
                 this.getTokenExConfigCompleted,
                 this.getTokenExConfigFailed
             );

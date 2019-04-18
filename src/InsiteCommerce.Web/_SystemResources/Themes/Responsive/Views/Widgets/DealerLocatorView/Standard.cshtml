@@ -9,17 +9,17 @@
                 <h4>[% siteMessage 'DealerLocator_NameSearchLabel' %]</h4>
                 <input type="text" name="name" class="nameSearchField" ng-model="vm.storeName" />
                 <button type="submit" class="btn primary fastClick dealer-search">
-                    <i class="foundicon-search"></i><span>[% translate 'Search' %]</span>
+                    <i id="tst_dealerLocatorPage_searchIcon" class="foundicon-search"></i><span>[% translate 'Search' %]</span>
                 </button>
             </div>
         </div>
     </form>
-    <div ng-if="!vm.locationKnown">
+    <div id='tst_dealerResults_geocodeError' ng-if="!vm.locationKnown">
         <span class="field-validation-error">
             [% siteMessage 'DealerLocator_GeocodeErrorMessage' %]
         </span>
     </div>
-    <div ng-if="vm.locationKnown && vm.dealers.length == 0">
+    <div id='tst_dealerResults_noResults' ng-if="vm.locationKnown && vm.dealers.length == 0">
         <span class="field-validation-error">
             [% siteMessage 'DealerLocator_NoResultsMessage' %]
         </span>
@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <ul class="sl-list">
+        <ul id="tst_dealerResultsList" class="sl-list">
             <li ng-repeat="dealer in vm.dealers">
                 <div class="result-num">{{::vm.getDealerNumber($index)}}</div>
                 <div class="dealer-deetz">

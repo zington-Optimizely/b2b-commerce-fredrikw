@@ -2,6 +2,8 @@
 import AccountSettingsModel = Insite.Account.WebApi.V1.ApiModels.AccountSettingsModel;
 import AccountCollectionModel = Insite.Account.WebApi.V1.ApiModels.AccountCollectionModel;
 import ExternalProviderLinkCollectionModel = Insite.IdentityServer.Models.ExternalProviderLinkCollectionModel;
+import AccountPaymentProfileModel = Insite.Account.WebApi.V1.ApiModels.AccountPaymentProfileModel;
+import AccountPaymentProfileCollectionModel = Insite.Account.WebApi.V1.ApiModels.AccountPaymentProfileCollectionModel;
 
 module insite.account {
     "use strict";
@@ -14,6 +16,10 @@ module insite.account {
         getExternalProviders(): ng.IPromise<ExternalProviderLinkCollectionModel>;
         createAccount(account: AccountModel): ng.IPromise<AccountModel>;
         updateAccount(account: AccountModel, accountId?: System.Guid): ng.IPromise<AccountModel>;
+        getPaymentProfiles(): ng.IPromise<AccountPaymentProfileCollectionModel>;
+        addPaymentProfile(paymentProfile: AccountPaymentProfileModel): ng.IPromise<AccountPaymentProfileModel>;
+        updatePaymentProfile(paymentProfileId: System.Guid, paymentProfile: AccountPaymentProfileModel): ng.IPromise<AccountPaymentProfileModel>;
+        deletePaymentProfiles(paymentProfileId: System.Guid): ng.IPromise<void>;
     }
 
     export class AccountService {
@@ -139,6 +145,83 @@ module insite.account {
         }
 
         protected updateAccountFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        getPaymentProfiles(expand?: string, pagination?: Insite.Core.WebApi.PaginationModel, sort?: string): ng.IPromise<AccountPaymentProfileCollectionModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ url: `${this.serviceUri}/current/paymentprofiles`, method: "GET", params: this.getPaymentProfilesParams(expand, pagination, sort) }),
+                this.getPaymentProfilesCompleted,
+                this.getPaymentProfilesFailed
+            );
+        }
+
+        protected getPaymentProfilesParams(expand?: string, pagination?: Insite.Core.WebApi.PaginationModel, sort?: string): any {
+            const params = {
+                sort: sort
+            } as any;
+
+            if (this.expand) {
+                params.expand = this.expand;
+            }
+
+            if (pagination) {
+                params.page = pagination.page;
+                params.pageSize = pagination.pageSize;
+            }
+
+            return params;
+        }
+
+        protected getPaymentProfilesCompleted(response: ng.IHttpPromiseCallbackArg<AccountPaymentProfileCollectionModel>): void {
+        }
+
+        protected getPaymentProfilesFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        addPaymentProfile(paymentProfile: AccountPaymentProfileModel): ng.IPromise<AccountPaymentProfileModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ url: `${this.serviceUri}/current/paymentprofiles`, method: "POST", data: paymentProfile }),
+                this.addPaymentProfileCompleted,
+                this.addPaymentProfileFailed
+            );
+        }
+
+        protected addPaymentProfileCompleted(response: ng.IHttpPromiseCallbackArg<AccountPaymentProfileModel>): void {
+        }
+
+        protected addPaymentProfileFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        updatePaymentProfile(paymentProfileId: System.Guid, paymentProfile: AccountPaymentProfileModel): ng.IPromise<AccountPaymentProfileModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ url: `${this.serviceUri}/current/paymentprofiles/${paymentProfileId}`, method: "PATCH", data: paymentProfile }),
+                this.updatePaymentProfileCompleted,
+                this.updatePaymentProfileFailed
+            );
+        }
+
+        protected updatePaymentProfileCompleted(response: ng.IHttpPromiseCallbackArg<AccountPaymentProfileModel>): void {
+        }
+
+        protected updatePaymentProfileFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        deletePaymentProfiles(paymentProfileId: System.Guid): ng.IPromise<void> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http<void>({ url: `${this.serviceUri}/current/paymentprofiles/${paymentProfileId}`, method: "DELETE" }),
+                this.deletePaymentProfileCompleted,
+                this.deletePaymentProfileFailed
+            );
+        }
+
+        protected deletePaymentProfileCompleted(response: ng.IHttpPromiseCallbackArg<void>): void {
+        }
+
+        protected deletePaymentProfileFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
     }
 

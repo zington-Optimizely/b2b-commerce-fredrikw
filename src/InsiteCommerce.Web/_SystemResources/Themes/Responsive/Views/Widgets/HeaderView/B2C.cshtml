@@ -33,7 +33,7 @@
             <span class="sign-in-label">[% translate 'Sign In' %]</span>
         </a>
     </li>
-    <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup">
+    <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
         <a href="" id="tst_header_fulfillMethodLink" class="btn fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
             <i class="foundicon-location"></i>
             [[DeliveryLabel]]
@@ -186,7 +186,7 @@
                     </a>
                     <a class="ex fastClick"><i class="foundicon-remove"></i></a>
                 </li>
-                <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup">
+                <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
                     <a href="" id="tst_header_fulfillMethodLink" class="fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
                         <i class="foundicon-location"></i>
                         [[DeliveryLabel]]

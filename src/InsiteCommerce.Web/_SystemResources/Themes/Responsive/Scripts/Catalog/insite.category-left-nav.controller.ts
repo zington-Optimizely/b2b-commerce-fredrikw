@@ -24,6 +24,8 @@ module insite.catalog {
         searchWithinInput: string;
         showBrands: boolean;
         showProductLines: boolean;
+        filterBrandId: string;
+        filterProductLineId: string;
 
         static $inject = ["$timeout", "$window", "$scope", "$rootScope", "sessionService"];
 
@@ -180,10 +182,12 @@ module insite.catalog {
             this.priceFilterMinimums.length = 0;
             if(this.showBrands) {
                 this.brandIds.length = 0;
+                this.filterBrandId = "";
             }
 
             if(this.showProductLines) {
                 this.productLineIds.length = 0;
+                this.filterProductLineId = "";
             }
 
             this.searchWithinTerms.length = 0;

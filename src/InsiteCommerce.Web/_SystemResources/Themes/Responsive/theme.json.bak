@@ -110,6 +110,7 @@
     "Styles/template/ma-quote-details.scss",
     "Styles/template/ma-saved-order-details.scss",
     "Styles/template/ma-saved-orders.scss",
+    "Styles/template/ma-saved-payments.scss",
     "Styles/template/ma-user-administration.scss",
     "Styles/template/ma-user-setup.scss",
     "Styles/template/ma-assign-edit-shipto.scss",

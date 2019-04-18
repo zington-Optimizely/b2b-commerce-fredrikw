@@ -6,11 +6,27 @@
             <p class="qo-search-desc">
                 [% siteMessage 'QuickOrder_Instructions' %]
             </p>
-            <div class="qo-search-input">
-                <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]'" class="qo-searchbox"
-                       kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.searchTerm" isc-enter="vm.onEnterKeyPressedInAutocomplete()" />
+            <div class="qo-form">
+                <div class="qo-search-input">
+                    <input id="qo-search-view" type="text" name="textfield" ng-init="vm.autocompleteOptions.placeholder = '[% translate 'Enter keyword or item #' EscapeSingleQuotes %]'" class="qo-searchbox"
+                           kendo-auto-complete k-options="vm.autocompleteOptions" ng-model="vm.searchTerm" isc-enter="vm.onEnterKeyPressedInAutocomplete()" />
+                </div>
+                <div class="qo-qty">
+                    <label for="quickOrderQuantity">[% translate 'QTY_quantity' %]</label>
+                    <input type="text" id="quickOrderQuantity" value="1" class="qty numerictextbox tst_quickOrderPage_qtyOrdered" ng-model="vm.product.qtyOrdered" />
+                </div>
+                <div class="qo-um" ng-if="vm.alternateUnitsOfMeasureFromSettings">
+                    <label for="quickOrderUnitOfMeasureSelector">[% translate 'U/M' %]</label>
+                    <select id="quickOrderUnitOfMeasureSelector" ng-model="vm.selectedUnitOfMeasure" ng-change="vm.changeUnitOfMeasure(vm.product)" name="unitOfMeasure" class="uom-selector tst_quickOrderPage_unitOfMeasure">
+                        <option ng-if="vm.product.productUnitOfMeasures.length > 0" ng-init="vm.selectedUnitOfMeasure = vm.product.selectedUnitOfMeasure" ng-repeat="uom in vm.product.productUnitOfMeasures" value="{{uom.unitOfMeasure}}"
+                                ng-selected="{{vm.product.selectedUnitOfMeasure == uom.unitOfMeasure}}">
+                            {{uom.description ? uom.description : uom.unitOfMeasureDisplay}} {{uom.qtyPerBaseUnitOfMeasure !== 1 ? "/" + uom.qtyPerBaseUnitOfMeasure : ""}}
+                        </option>
+                    </select>
+                </div>
+                <button id="tst_quickOrderPage_addToQuickOrder" class="btn primary btn-add-to-quick-order" ng-click="vm.addProduct(vm.product)" ng-disabled="!vm.product.id || !vm.product.qtyOrdered || vm.product.qtyOrdered == 0">[% translate 'Add to Order' %]</button>
+                <span id="errorMessage" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>
             </div>
-            <span id="errorMessage" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>
         </div>
         <div class="btns" ng-show="vm.products.length > 0">
             <button id="tst_quickOrder_addAll" class="btn primary btn-add-all-checkout" ng-click="vm.addAllToCart('[% urlForPage 'CartPage' %]')" ng-disabled="!vm.allQtysIsValid()">[% translate 'Add All to Cart & Check Out' %]</button>
@@ -52,7 +68,7 @@
                         <isc-unit-of-measure-select-list product="product"
                                                          alternate-units-of-measure="{{vm.settings.alternateUnitsOfMeasure}}"
                                                          show-pack="false"
-                                                         change-unit-of-measure="vm.changeUnitOfMeasure(product)"></isc-unit-of-measure-select-list>
+                                                         change-unit-of-measure="vm.changeUnitOfMeasureInList(product)"></isc-unit-of-measure-select-list>
                     </div>
                     <div class="qo-qty">
                         <label>[% translate 'QTY_quantity' %]:</label>

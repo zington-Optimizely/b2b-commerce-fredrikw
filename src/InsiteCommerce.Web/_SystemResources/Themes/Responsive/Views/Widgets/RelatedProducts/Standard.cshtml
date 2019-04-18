@@ -29,7 +29,7 @@
                                             <span class="item-num-my" ng-if="::(!!relatedProduct.customerName)">[% translate 'My Part #' %]: {{::relatedProduct.customerName}}</span>
                                         </div>
 
-                                        <div class="price">
+                                        <div class="price" ng-if="!vm.failedToGetRealTimePrices">
                                             <isc-product-price product="relatedProduct" id-key="" ng-if="::relatedProduct.canShowPrice"></isc-product-price>
                                             <span class="um displayUnitOfMeasure" ng-if="vm.showUnitOfMeasureLabel(relatedProduct)">
                                                 <span class="um-sep">/</span>

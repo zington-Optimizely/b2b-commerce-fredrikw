@@ -126,6 +126,12 @@
                                     ng-options="PaymentMethod.description for PaymentMethod in vm.cart.paymentOptions.paymentMethods">
                                 <option value="">[% translate 'Select Payment Method' %]</option>
                             </select>
+                            <span ng-show="vm.cart.paymentMethod.isPaymentProfile && !vm.cart.paymentMethod.isPaymentProfileExpired" class="payment-billing-address">
+                                <b>[% translate 'Billing Address' %]: </b>{{vm.cart.paymentMethod.billingAddress}}
+                            </span>
+                            <span ng-show="vm.cart.paymentMethod.isPaymentProfileExpired" class="payment-profile-expired">
+                                [% siteMessage 'Checkout_PaymentProfileExpired' %] <a href="[% urlForPage 'MySavedPaymentsPage' %]">[% translate 'Edit card' %]</a>
+                            </span>
                             <span class="field-validation-valid" data-valmsg-for="paymentMethod" data-valmsg-replace="true"></span>
                         </div>
                         <div class="paypal" ng-show="vm.cartSettings.showPayPal">
@@ -143,13 +149,20 @@
                                    ng-model="vm.cart.poNumber">
                             <span class="field-validation-valid" data-valmsg-for="poNumber" data-valmsg-replace="true"></span>
                         </div>
-                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isPaymentProfile">
+                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isPaymentProfile && !vm.cart.paymentMethod.isPaymentProfileExpired">
                             <div class="security-code">
                                 <label>[% translate 'Security Code' %]&nbsp;<a href="javascript:void(0);" data-reveal-id="ppWhatsThisPopup">[% translate "What's This?" %]</a></label>
-                                <input id="ppSecurityCode" name="ppSecurityCode" type="text" minlength="3" maxlength="4"
-                                       data-rule-required="true" data-msg-required="[% translate 'Security code is required.' %]"
-                                       data-rule-digits="true" data-msg-digits="[% translate 'Security code is invalid.' %]"
-                                       ng-model="vm.cart.paymentOptions.creditCard.securityCode">
+                                <span ng-if="vm.useTokenExGateway">
+                                    <input type="text" disabled ng-show="!vm.ppTokenExIframeIsLoaded" />
+                                    <div id="ppTokenExSecurityCode" class="tokenex-iframe-block" ng-show="vm.ppTokenExIframeIsLoaded"></div>
+                                    <label ng-if="vm.ppIsInvalidSecurityCode" class="tokenex-error error">[% translate 'Security code is invalid.' %]</label>
+                                </span>
+                                <span ng-if="!vm.useTokenExGateway">
+                                    <input id="ppSecurityCode" name="ppSecurityCode" type="text" minlength="3" maxlength="4"
+                                           data-rule-required="true" data-msg-required="[% translate 'Security code is required.' %]"
+                                           data-rule-digits="true" data-msg-digits="[% translate 'Security code is invalid.' %]"
+                                           ng-model="vm.cart.paymentOptions.creditCard.securityCode">
+                                </span>
                                 <span class="field-validation-valid" data-valmsg-for="ppSecurityCode" data-valmsg-replace="true"></span>
                                 <div id="ppWhatsThisPopup" class="checkout-review-pay reveal-modal" data-reveal>
                                     <div class="modal-wrap">
@@ -182,8 +195,8 @@
                                 <div class="card-num">
                                     <label for="cardNumber">[% translate 'Card Number' %]</label>
                                 <span ng-if="vm.useTokenExGateway">
-                                    <div id="tokenExCardNumber" style="width: 100%; height: 37.8px;"></div>
-                                    <label ng-if="vm.isInvalidCardNumber" class="error">[% translate 'Credit card number is invalid.' %]</label>
+                                    <div id="tokenExCardNumber" class="tokenex-iframe-block"></div>
+                                    <label ng-if="vm.isInvalidCardNumber" class="tokenex-error error">[% translate 'Credit card number is invalid.' %]</label>
                                 </span>
                                 <span ng-if="!vm.useTokenExGateway">
                                     <input id="cardNumber" name="cardNumber" maxlength="16" type="text" style="display: block;"
@@ -196,8 +209,8 @@
                                 <div class="security-code">
                                     <label>[% translate 'Security Code' %]&nbsp;<a href="javascript:void(0);" data-reveal-id="whatsThisPopup">[% translate "What's This?" %]</a></label>
                                 <span ng-if="vm.useTokenExGateway">
-                                    <div id="tokenExSecurityCode" style="width: 100%; height: 37.8px;"></div>
-                                    <label ng-if="vm.isInvalidSecurityCode" class="error">[% translate 'Security code is invalid.' %]</label>
+                                    <div id="tokenExSecurityCode" class="tokenex-iframe-block"></div>
+                                    <label ng-if="vm.isInvalidSecurityCode" class="tokenex-error error">[% translate 'Security code is invalid.' %]</label>
                                 </span>
                                 <span ng-if="!vm.useTokenExGateway">
                                     <input id="securityCode" name="securityCode" type="text" minlength="3" maxlength="4"
@@ -233,12 +246,12 @@
                                 </div>
                                 <label for="expirationMonth" class="error"></label>
                             </div>
-                            <!-- TODO Put this back in after 4.0, taken out because we don't have time to properly document it
                             <div ng-show="vm.cart.paymentOptions.canStorePaymentProfile">
-                                <label for="savePaymentInfo">[% translate 'Save Payment Info' %]</label>
-                                <input type="checkbox" ng-model="vm.cart.paymentOptions.storePaymentProfile" />
+                                <label>
+                                    <input id="tst_reviewAndPayPage_saveCard" type="checkbox" ng-model="vm.cart.paymentOptions.storePaymentProfile" />
+                                    [% translate 'Save card information' %]
+                                </label>
                             </div>
-                            -->
                         </div>
                         <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard">
                             <div class="use-billing-address">
@@ -335,7 +348,9 @@
             </div>
             <div class="btns">
                 <a id="tst_submitForApproval_button" href="" class="btn primary btn-submit-for-approval" ng-show="vm.cart.requiresApproval && vm.cart.hasApprover && !vm.submitting" ng-click="vm.submit('[% urlForPage 'OrderApprovalDetailPage' %]')">[% translate 'Submit for approval' %]</a>
-                <a id="tst_placeOrder_button" href="" class="btn primary btn-place-order" ng-hide="vm.cart.requiresApproval || vm.submitting" ng-click="!vm.cart.hasInsufficientInventory && vm.submit('[% urlForPage 'OrderConfirmationPage' %]', '[% urlForPage 'SignInPage' %]')" ng-class="{'disabled': vm.cart.hasInsufficientInventory}">[% translate 'Place Order' %]</a>
+                <a id="tst_placeOrder_button" href="" class="btn primary btn-place-order" ng-hide="vm.cart.requiresApproval || vm.submitting || vm.cart.paymentMethod.isPaymentProfileExpired"
+                   ng-click="!vm.cart.hasInsufficientInventory && vm.submit('[% urlForPage 'OrderConfirmationPage' %]', '[% urlForPage 'SignInPage' %]')"
+                   ng-class="{'disabled': vm.cart.hasInsufficientInventory}">[% translate 'Place Order' %]</a>
                 <div id="tst_submitErrorMessage" style="color: red;" ng-bind="vm.submitErrorMessage"></div>
             </div>
         </div>

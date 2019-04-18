@@ -7,7 +7,8 @@
                     review-and-pay-url="[% urlForPage 'ReviewAndPayPage' %]"
                     my-list-detail-url="[% urlForPage 'MyListDetailPage' %]"
                     static-list-url="[% urlForPage 'StaticListPage' %]"
-                    cart-url="[% urlForPage 'CartPage' %]">
+                    cart-url="[% urlForPage 'CartPage' %]"
+                    order-confirmation-url="[% urlForPage 'OrderConfirmationPage' %]">
 
     <div class="row">
         <div class="columns " ng-if="vm.session && !vm.session.isAuthenticated && vm.isFromReviewAndPay">
@@ -60,7 +61,7 @@
             <h3>[% translate 'Create New Account' %]</h3>
             <div class="cm">[[Model.CreateAccountContent]]</div>
             <div class="btns">
-                <a class="btn secondary" ng-href="[% urlForPage 'CreateAccountPage' %]?returnUrl={{ vm.encodeUriComponent(vm.returnUrl) }}">[% translate 'Create Account' %]</a>
+                <a id="tst_signIn_createNewAccount" class="btn secondary" ng-href="[% urlForPage 'CreateAccountPage' %]?returnUrl={{ vm.encodeUriComponent(vm.returnUrl) }}">[% translate 'Create Account' %]</a>
                 <a id="tst_signIn_checkoutAsGuest" href="javascript: void();" class="btn secondary" ng-if="vm.showGuestCheckout()" ng-click="vm.guestCheckout()">[% translate 'Checkout As Guest' %]</a>
             </div>
         </div>

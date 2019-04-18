@@ -16,14 +16,16 @@
         addingToCart = false;
         alternateUnitsOfMeasureFromSettings: boolean;
 
-        static $inject = ["cartService", "productService", "searchService", "settingsService", "$q"];
+        static $inject = ["cartService", "productService", "searchService", "settingsService", "$q", "$scope", "selectVariantProductPopupService"];
 
         constructor(
             protected cartService: cart.ICartService,
             protected productService: catalog.IProductService,
             protected searchService: catalog.ISearchService,
             protected settingsService: core.ISettingsService,
-            protected $q: ng.IQService) {
+            protected $q: ng.IQService,
+            protected $scope: ng.IScope,
+            protected selectVariantProductPopupService: SelectVariantProductPopupService) {
             this.init();
         }
 
@@ -38,6 +40,9 @@
             this.getSettings();
 
             this.initializeAutocomplete();
+            this.$scope.$on("addProductToQuickOrderForm", (event, product: ProductDto) => {
+                this.addProduct(product.erpNumber);
+            });
         }
 
         protected initializeAutocomplete(): void {
@@ -119,7 +124,7 @@
             const product = productCollection.products[0];
 
             if (this.validateProduct(product)) {
-                product.qtyOrdered = product.minimumOrderQty || 1;
+                product.qtyOrdered = Math.max(this.selectedQty || 1, product.minimumOrderQty || 1);
                 this.selectedQty = product.qtyOrdered;
                 this.product = product;
                 this.errorMessage = "";
@@ -132,7 +137,7 @@
         protected findProduct(erpNumber: string): ng.IPromise<ProductCollectionModel> {
             this.findingProduct = true;
             const parameters: catalog.IProductCollectionParameters = { extendedNames: [erpNumber] };
-            const expand = ["pricing", "brand"];
+            const expand = ["pricing", "brand", "styledproducts"];
 
             return this.productService.getProducts(parameters, expand);
         }
@@ -143,7 +148,7 @@
                 return false;
             }
             if (product.isStyleProductParent) {
-                this.errorMessage = angular.element("#messageStyledProduct").val();
+                this.selectVariantProductPopupService.display(product);
                 return false;
             }
             if (!product.canAddToCart) {
@@ -155,8 +160,12 @@
 
         onEnterKeyPressedInAutocomplete(): void {
             const autocomplete = $("#qo-search-widget").data("kendoAutoComplete") as any;
-            if (autocomplete._last === kendo.keys.ENTER && autocomplete.listView.selectedDataItems().length === 0) {
-                this.addProduct(this.searchTerm);
+            if (autocomplete._last === kendo.keys.ENTER) {
+                if (!autocomplete.list.is(":visible") && this.selectedQty && !this.findingProduct && !this.addingToCart && this.product) {
+                    this.addToCart(this.product);
+                } else if (autocomplete.listView.selectedDataItems().length === 0) {
+                    this.addProduct(this.searchTerm);
+                }
             }
         }
 

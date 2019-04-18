@@ -12,14 +12,14 @@
                     <option value="Name DESC">[% translate 'List Name: Z-A' %]</option>
                 </select>
             </span>
-            <button class="btn primary" ng-click="vm.openCreatePopup()">[% translate 'Create List' %]</button>
+            <button class="btn primary" ng-click="vm.openCreatePopup()" data-test-selector="tst_myListsPage_createList">[% translate 'Create List' %]</button>
         </div>
     </div>
     <div ng-if="vm.wishListCount > 0">
         <div class="cm">[% zone 'TopContent' %]</div>
         <isc-pager pagination="vm.pagination" storage-key="vm.paginationStorageKey" update-data="vm.getWishLists()"></isc-pager>
         <ul class="item-list">
-            <li ng-repeat="wishList in vm.wishListCollection" class="row item-block">
+            <li ng-repeat="wishList in vm.wishListCollection" class="row item-block" data-test-selector="tst_myListsPage_list_{{$index}}">
                 <div class="medium-6 columns item-details">
                     <div class="description-block">
                         <div class="item-name">
@@ -30,9 +30,9 @@
                         </div>
                         <div ng-if="wishList.updatedOn || wishList.updatedByDisplayName" class="item-updated">
                             <span ng-if="wishList.updatedOn">[% translate 'Updated' %]</span>
-                            <span ng-bind="wishList.updatedOn | date:'M/d/yyyy'"></span>
+                            <span ng-bind="wishList.updatedOn | date:'M/d/yyyy'" data-test-selector="tst_myListPage_updatedOnDate"></span>
                             <span ng-if="wishList.updatedByDisplayName">[% translate 'by' %]</span>
-                            <span ng-bind="wishList.updatedByDisplayName"></span>
+                            <span ng-bind="wishList.updatedByDisplayName" data-test-selector="tst_myListPage_updatedByUsername"></span>
                         </div>
                     </div>
                     <div class="images-block">

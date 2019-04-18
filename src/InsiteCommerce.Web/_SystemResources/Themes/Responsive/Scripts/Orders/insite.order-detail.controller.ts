@@ -14,7 +14,6 @@
         showCancelationConfirmation = false;
         showPoNumber: boolean;
         showTermsCode: boolean;
-        showOrderStatus: boolean;
         allowCancellationStatuses: string[];
         allowRmaStatuses: string[];
         extraProperties: {
@@ -70,7 +69,6 @@
             this.canReorderItems = settingsCollection.orderSettings.canReorderItems;
             this.showPoNumber = settingsCollection.orderSettings.showPoNumber;
             this.showTermsCode = settingsCollection.orderSettings.showTermsCode;
-            this.showOrderStatus = settingsCollection.orderSettings.showOrderStatus;
         }
 
         protected getSettingsFailed(error: any): void {

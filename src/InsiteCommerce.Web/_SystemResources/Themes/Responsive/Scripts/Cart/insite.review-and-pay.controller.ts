@@ -6,6 +6,7 @@ module insite.cart {
     import TokenExDto = insite.core.TokenExDto;
     import WarehouseModel = Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
     import SessionModel = Insite.Account.WebApi.V1.ApiModels.SessionModel;
+    import PaymentMethodDto = Insite.Cart.Services.Dtos.PaymentMethodDto;
     import CustomerSettingsModel = Insite.Customers.WebApi.V1.ApiModels.CustomerSettingsModel;
 
     export interface IReviewAndPayControllerAttributes extends ng.IAttributes {
@@ -39,6 +40,9 @@ module insite.cart {
         enableWarehousePickup: boolean;
         taxFailureReason: string;
         canUpdateShipToAddress: boolean;
+        ppTokenExIframe: any;
+        ppTokenExIframeIsLoaded: boolean;
+        ppIsInvalidSecurityCode: boolean;
 
         static $inject = [
             "$scope",
@@ -85,6 +89,11 @@ module insite.cart {
 
             $("#reviewAndPayForm").validate();
 
+            this.$scope.$watch("vm.cart.paymentMethod", (paymentMethod: PaymentMethodDto) => {
+                if (paymentMethod && paymentMethod.isPaymentProfile) {
+                    this.setUpPPTokenExGateway();
+                }
+            });
             this.$scope.$watch("vm.cart.paymentOptions.creditCard.expirationYear", (year: number) => {
                 this.onExpirationYearChanged(year);
             });
@@ -203,7 +212,7 @@ module insite.cart {
 
         getCart(isInit?: boolean): void {
             this.spinnerService.show();
-            this.cartService.expand = "cartlines,shipping,tax,carriers,paymentoptions";
+            this.cartService.expand = `cartlines,shipping,tax,carriers,paymentoptions,${Date.now()}`; // include date to prevent caching when clicking back from order confirmation
             if (this.$localStorage.get("hasRestrictedProducts") === true.toString()) {
                 this.cartService.expand += ",restrictions";
             }
@@ -443,11 +452,20 @@ module insite.cart {
 
         protected tokenizeCardInfoIfNeeded(submitSuccessUri: string) {
             this.submitSuccessUri = submitSuccessUri;
-            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && this.cart.paymentMethod.isCreditCard) {
-                this.tokenExIframe.tokenize();
-            } else {
-                this.submitCart();
+
+            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal) {
+                if (this.cart.paymentMethod.isCreditCard) {
+                    this.tokenExIframe.tokenize();
+                    return;
+                }
+
+                if (this.cart.paymentMethod.isPaymentProfile) {
+                    this.ppTokenExIframe.tokenize();
+                    return;
+                }
             }
+
+            this.submitCart();
         }
 
         protected submitCart(): void {
@@ -593,6 +611,10 @@ module insite.cart {
         }
 
         protected getTokenExConfigCompleted(tokenExDto: TokenExDto) {
+            this.setUpTokenExIframe(tokenExDto);
+        }
+
+        protected setUpTokenExIframe(tokenExDto: TokenExDto) {
             this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", this.getTokenExIframeConfig(tokenExDto));
 
             this.tokenExIframe.load();
@@ -634,7 +656,7 @@ module insite.cart {
                 });
             });
 
-            this.tokenExIframe.on("error", (data) => {
+            this.tokenExIframe.on("error", () => {
                 this.$scope.$apply(() => {
                     // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)
                     // try to completely re-initialize the tokenex iframe
@@ -654,11 +676,11 @@ module insite.cart {
                 tokenScheme: tokenExDto.tokenScheme,
                 authenticationKey: tokenExDto.authenticationKey,
                 styles: {
-                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
                     focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
                     error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
                     cvv: {
-                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 13px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
                         focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
                         error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
                     }
@@ -669,8 +691,126 @@ module insite.cart {
                 enablePrettyFormat: true,
                 cvv: true,
                 cvvContainerID: "tokenExSecurityCode",
-                cvvInputType: "Number"
+                cvvInputType: "text"
             };
+        }
+
+        setUpPPTokenExGateway(): void {
+            if (!this.useTokenExGateway) {
+                return;
+            }
+
+            this.ppTokenExIframeIsLoaded = false;
+
+            this.settingsService.getTokenExConfig(this.cart.paymentMethod.name).then(
+                (tokenExDto: TokenExDto) => {
+                    this.getTokenExConfigForCVVOnlyCompleted(tokenExDto);
+                },
+                (error: any) => {
+                    this.getTokenExConfigForCVVOnlyFailed(error);
+                });
+        }
+
+        protected getTokenExConfigForCVVOnlyCompleted(tokenExDto: TokenExDto) {
+            this.setUpPPTokenExIframe(tokenExDto);
+        }
+
+        protected setUpPPTokenExIframe(tokenExDto: TokenExDto) {
+            if (!this.useTokenExGateway) {
+                return;
+            }
+
+            if (this.ppTokenExIframe) {
+                this.ppTokenExIframe.remove();
+            }
+
+            this.ppTokenExIframe = new TokenEx.Iframe("ppTokenExSecurityCode", this.getPPTokenExIframeConfig(tokenExDto));
+
+            this.ppTokenExIframe.load();
+
+            this.ppTokenExIframe.on("load", () => {
+                this.$scope.$apply(() => {
+                    this.ppTokenExIframeIsLoaded = true;
+                    this.ppIsInvalidSecurityCode = false;
+                });
+            });
+
+            this.ppTokenExIframe.on("tokenize", () => {
+                this.$scope.$apply(() => {
+                    this.submitCart();
+                });
+            });
+
+            this.ppTokenExIframe.on("validate", (data) => {
+                this.$scope.$apply(() => {
+                    if (data.isValid) {
+                        this.ppIsInvalidSecurityCode = false;
+                    } else {
+                        if (this.submitting) {
+                            this.ppIsInvalidSecurityCode = true;
+                        } else if (data.validator && data.validator !== "required") {
+                            this.ppIsInvalidSecurityCode = true;
+                        }
+                    }
+
+                    if (this.submitting && this.ppIsInvalidSecurityCode) {
+                        this.submitting = false;
+                        this.spinnerService.hide();
+                    }
+                });
+            });
+
+            this.ppTokenExIframe.on("error", () => {
+                this.$scope.$apply(() => {
+                    // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)
+                    // try to completely re-initialize the tokenex iframe
+                    this.setUpPPTokenExGateway();
+                });
+            });
+        }
+
+        protected getTokenExConfigForCVVOnlyFailed(error: any): void {
+        }
+
+        protected getPPTokenExIframeConfig(tokenExDto: TokenExDto): any {
+            return {
+                origin: tokenExDto.origin,
+                timestamp: tokenExDto.timestamp,
+                tokenExID: tokenExDto.tokenExId,
+                token: this.cart.paymentMethod.name,
+                tokenScheme: this.cart.paymentMethod.tokenScheme,
+                authenticationKey: tokenExDto.authenticationKey,
+                styles: {
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
+                    cvv: {
+                        base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                        focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                        error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);",
+                    }
+                },
+                enableValidateOnBlur: true,
+                cvv: true,
+                cvvOnly: true,
+                inputType: "text",
+                cardType: this.getValidTokenExCardType(this.cart.paymentMethod.cardType)
+            };
+        }
+
+        private getValidTokenExCardType(cardType: string): string {
+            cardType = cardType.toLowerCase();
+            if (cardType === "visa") {
+                return cardType;
+            } else if (cardType === "mastercard") {
+                return "masterCard";
+            } else if (cardType === "discover") {
+                return cardType;
+            } else if (cardType.indexOf("american") > -1) {
+                return "americanExpress";
+            } else {
+                return cardType;
+            }
         }
 
         protected openDeliveryMethodPopup() {

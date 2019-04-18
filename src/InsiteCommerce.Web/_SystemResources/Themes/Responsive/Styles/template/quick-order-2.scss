@@ -25,10 +25,17 @@
         color: #FFF;
     }
 
-    .qo-search .qo-search-input {
-        .qo-searchbox {
-            display: block;
-            width: 100%;
+    .qo-search {
+        .qo-search-input {
+            .qo-searchbox {
+                display: block;
+                width: 100%;
+            }
+        }
+
+        .btn{
+            width: 25%;
+            float: right;
         }
     }
 
@@ -160,8 +167,11 @@
         }
     }
 
-    .qo-item .item-num,
-    .qo-item .item-name {
+    .btn primary btn-add-to-quick-order {
+        width: 25%;
+    }
+
+    .qo-item .item-num, .qo-item .item-name {
         padding-right: 3.5em !important;
     }
     /* Remove btn */
@@ -202,7 +212,20 @@
     .quick-order-2 {
         .qo-search {
             float: left;
-            width: 70%;
+            width: 100%;
+            padding: 1em 0;
+
+            .qo-qty, .qo-um {
+                width: 15%;
+                margin-right: 2%;
+            }
+
+            .qo-search-input {
+                width: 38%;
+                display: inline-block;
+                float: left;
+                margin-right: 2%;
+            }
         }
 
         .qo-tbl {
@@ -219,5 +242,38 @@
             width: 25%;
             text-align: right;
         }
+    }
+}
+
+.popup-select-variant-product {
+    max-width: 400px;
+    text-align: left;
+
+    .modalTitle {
+        margin-bottom: 10px;
+    }
+
+    .row {
+        span {
+            display: inline-block;
+            width: 25%;
+            word-wrap: break-word;
+            vertical-align: middle;
+        }
+
+        div {
+            display: inline-block;
+            width: 70%;
+        }
+    }
+
+    .btn {
+        width: 100%;
+        margin: 0px;
+    }
+
+    .price {
+        height: 30px;
+        margin: 5px 0px;
     }
 }

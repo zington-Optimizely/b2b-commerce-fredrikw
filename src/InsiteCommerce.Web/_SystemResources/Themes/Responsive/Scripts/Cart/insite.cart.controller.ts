@@ -102,6 +102,7 @@ module insite.cart {
 
         protected getCartCompleted(cart: CartModel): void {
             this.cartService.expand = "";
+            this.failedToGetRealTimeInventory = cart.failedToGetRealTimeInventory;
             this.cartService.allowInvalidAddress = false;
             if (!cart.cartLines.some(o => o.isRestricted || !o.isActive)) {
                 this.$localStorage.remove("hasRestrictedProducts");

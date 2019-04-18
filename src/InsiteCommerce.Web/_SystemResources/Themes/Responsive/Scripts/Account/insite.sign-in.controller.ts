@@ -12,6 +12,7 @@
         myListDetailUrl: string;
         staticListUrl: string;
         cartUrl: string;
+        orderConfirmationUrl: string;
     }
 
     export class SignInController {
@@ -32,6 +33,7 @@
         staticListUrl: string;
         cartUrl: string;
         addressesUrl: string;
+        orderConfirmationUrl: string;
         settings: AccountSettingsModel;
         signInError = "";
         disableSignIn = false;
@@ -96,9 +98,10 @@
             this.myListDetailUrl = this.$attrs.myListDetailUrl;
             this.staticListUrl = this.$attrs.staticListUrl;
             this.cartUrl = this.$attrs.cartUrl;
+            this.orderConfirmationUrl = this.$attrs.orderConfirmationUrl;
 
             this.returnUrl = this.queryString.get("returnUrl");
-            if (!this.returnUrl) {
+            if (!this.returnUrl || this.returnUrl.indexOf(this.orderConfirmationUrl) !== -1) {
                 this.returnUrl = this.homePageUrl;
             }
 

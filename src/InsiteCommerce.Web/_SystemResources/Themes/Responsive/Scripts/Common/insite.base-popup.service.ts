@@ -27,7 +27,7 @@ namespace base {
                 this.element = angular.element(this.getDirectiveHtml());
                 $("body").append(this.element);
                 this.$compile(this.element)(this.$rootScope.$new());
-            } else {
+            } else if (this.displayFunction) {
                 this.displayFunction(data);
             }
         }

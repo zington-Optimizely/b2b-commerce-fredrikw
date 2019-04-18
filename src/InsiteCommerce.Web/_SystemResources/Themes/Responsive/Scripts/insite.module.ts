@@ -3,6 +3,7 @@
     recordError(errorMessage: string): void;
     dataLayer: any;
     currentVersion: string;
+    safariBackUrl: string;
     safariBackState: any;
     disablePendo: boolean;
 }
