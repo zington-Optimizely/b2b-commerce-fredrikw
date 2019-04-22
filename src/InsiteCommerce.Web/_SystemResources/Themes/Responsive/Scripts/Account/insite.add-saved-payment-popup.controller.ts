@@ -1,6 +1,7 @@
 ﻿module insite.account {
     "use strict";
     import StateModel = Insite.Websites.WebApi.V1.ApiModels.StateModel;
+    import TokenExDto = insite.core.TokenExDto;
 
     export class AddSavedPaymentPopupController {
         savedPayments: AccountPaymentProfileModel[];
