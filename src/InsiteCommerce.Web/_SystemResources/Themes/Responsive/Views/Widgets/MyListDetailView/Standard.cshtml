@@ -224,7 +224,7 @@
                                     </div>
                                     <div class="update-qty-link">
                                         <a ng-if="vm.changedSharedListLinesQtys[wishListLine.id.toString()]" ng-click="vm.updateSavedQty(wishListLine)" href="#"><i class="icon-update"></i>[% translate 'Update saved QTY' %]</a>
-                                        <span ng-if="vm.listLinesWithUpdatedQty[wishListLine.id.toString()] && !vm.changedSharedListLinesQtys[wishListLine.id.toString()]"><i class="icon-check"></i>[% translate 'QTY updated' %]</span>
+                                        <span ng-if="vm.listLinesWithUpdatedQty[wishListLine.id.toString()] && !vm.changedSharedListLinesQtys[wishListLine.id.toString()] && !vm.inProgress"><i class="icon-check"></i>[% translate 'QTY updated' %]</span>
                                     </div>
                                 </div>
                                 <div class="show-for-small">

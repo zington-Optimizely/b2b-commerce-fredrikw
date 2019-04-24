@@ -1,8 +1,8 @@
 ﻿<div class="large-12 columns" ng-controller="QuickOrderPageController as vm" ng-cloak>
-    <a id="tst_quickOrder_uploadAnOrder" ng-href="[% urlForPage 'OrderUploadPage' %]" class="page-top-link" ng-show="vm.orderSettings.canOrderUpload">[% translate 'Upload an Order' %]</a>
     <div class="clearfix"></div>
     <div class="qo-top">
         <div class="qo-search">
+            <a id="tst_quickOrder_uploadAnOrder" ng-href="[% urlForPage 'OrderUploadPage' %]" class="page-top-link" ng-show="vm.orderSettings.canOrderUpload">[% translate 'Upload an Order' %]</a>
             <p class="qo-search-desc">
                 [% siteMessage 'QuickOrder_Instructions' %]
             </p>
