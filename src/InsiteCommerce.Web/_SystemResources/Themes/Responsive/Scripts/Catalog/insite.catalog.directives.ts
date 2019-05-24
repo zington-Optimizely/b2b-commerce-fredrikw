@@ -89,6 +89,7 @@
             replace: true,
             scope: {
                 attributeTypes: "=",
+                brand: "=",
                 maximumNumber: "@"
             },
             templateUrl: "/PartialViews/Catalog-SortedAttributeValueList"

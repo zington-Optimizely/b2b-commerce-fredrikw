@@ -68,7 +68,7 @@
         }
 
         protected getRecentlyViewed(): void {
-            this.productService.getProducts({}, ["pricing", "recentlyviewed"]).then(
+            this.productService.getProducts({}, ["pricing", "recentlyviewed", "brand"]).then(
                 (productCollection: ProductCollectionModel) => { this.getRecentlyViewedCompleted(productCollection); },
                 (error: any) => { this.getRecentlyViewedFailed(error); });
         }
@@ -201,7 +201,7 @@
         }
 
         protected initializeCarousel(): void {
-            const num = $(`#csCarousel_recentlyViewed .isc-productContainer`).length;
+            const num = $(`.csCarousel_recentlyViewed .isc-productContainer`, this.carouselElement).length;
             const itemsNum: number = this.getItemsNumber();
 
             $(`.csCarousel_recentlyViewed`, this.carouselElement).flexslider({

@@ -219,11 +219,11 @@
                                             <button class="btn primary btn-add-cart" ng-click="vm.addLineToCart(wishListLine)" ng-disabled="!wishListLine.qtyOrdered || wishListLine.qtyOrdered == 0">[% translate 'Add to Cart' %]</button>
                                         </div>
                                         <div class="item-qty" ng-if="wishListLine.canEnterQuantity">
-                                            <input ng-disabled="(!vm.listModel.allowEdit && vm.listModel.isSharedList)" type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" ng-keypress="vm.quantityKeyPress(wishListLine,$event)" ng-change="vm.quantityUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }" />
+                                            <input type="text" class="numerictextbox qty tst_wishListLine_qty" ng-model="wishListLine.qtyOrdered" ng-keypress="vm.quantityKeyPress(wishListLine,$event)" ng-change="vm.quantityUpdated(wishListLine)" ng-model-options="{ updateOn: 'blur' }" />
                                         </div>
                                     </div>
-                                    <div class="update-qty-link">
-                                        <a ng-if="vm.changedSharedListLinesQtys[wishListLine.id.toString()]" ng-click="vm.updateSavedQty(wishListLine)" href="#"><i class="icon-update"></i>[% translate 'Update saved QTY' %]</a>
+                                    <div ng-if="(!vm.listModel.isSharedList || vm.listModel.allowEdit)" class="update-qty-link">
+                                        <a ng-if="vm.changedSharedListLinesQtys[wishListLine.id.toString()]" ng-click="vm.updateSavedQuantities()" href="#"><i class="icon-update"></i>[% translate 'Update saved QTY' %]</a>
                                         <span ng-if="vm.listLinesWithUpdatedQty[wishListLine.id.toString()] && !vm.changedSharedListLinesQtys[wishListLine.id.toString()] && !vm.inProgress"><i class="icon-check"></i>[% translate 'QTY updated' %]</span>
                                     </div>
                                 </div>
@@ -254,6 +254,18 @@
             </div>
 
     <isc-pager pagination="vm.pagination" bottom="true" storage-key="vm.paginationStorageKey" update-data="vm.getListLines()"></isc-pager>
+            <div ng-if="vm.listModel.wishListLineCollection.length > 0">
+                <div class="row multi-actions-block">
+                    <div class="medium-5 columns items-multi-actions hide-for-small">
+                        <input id="select_all" type="checkbox" ng-click="vm.selectAll()" ng-checked="vm.isAllSelected()" />
+                        <label for="select_all">[% translate 'Select All' %]</label>
+                        <button type="button" ng-disabled="!vm.canPutAnySelectedToCart" class="btn secondary" ng-click="vm.addSelectedToCart()">[% translate 'Add To Cart' %]</button>
+                        <button id="tst_myListDetailView_deleteItemBtn" type="button" ng-if="vm.listModel.allowEdit || !vm.listModel.isSharedList" ng-click="vm.deleteSelectedItems()" data-reveal-id="popup-delete-item" ng-disabled="vm.checkedItemsCount === 0" class="btn secondary">
+                            [% translate 'Delete' %]
+                        </button>
+        </div>
+    </div>
+            </div>
         </div>
     </div>
     <div ng-if="vm.getListErrorMessage" ng-bind="vm.getListErrorMessage" class="row no-results"></div>
@@ -303,8 +315,7 @@
                                 <button ng-if="vm.editNote" ng-click="vm.deleteNote()" class="btn tertiary" type="button">[% translate 'Delete Note' %]</button>
                                 <button ng-click="vm.closeModal('#popup-line-note')" class="btn tertiary btn-cancel" type="button">[% translate 'Cancel' %]</button>
                                 <button ng-click="vm.saveNote()" class="btn primary" type="button"
-                                    ng-bind="vm.editNote ? '[% translate 'Save' EscapeSingleQuotes %]' : '[% translate 'Add Note' EscapeSingleQuotes %]'">
-                            </button>
+                                        ng-bind="vm.editNote ? '[% translate 'Save' EscapeSingleQuotes %]' : '[% translate 'Add Note' EscapeSingleQuotes %]'"></button>
                             </div>
                         </div>
                     </form>

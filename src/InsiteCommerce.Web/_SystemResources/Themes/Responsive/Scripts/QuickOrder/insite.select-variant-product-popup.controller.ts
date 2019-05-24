@@ -105,6 +105,7 @@
             this.product.id = styledProduct.productId;
             this.product.erpNumber = styledProduct.erpNumber;
             this.product.pricing = styledProduct.pricing;
+            this.product.shortDescription = styledProduct.shortDescription;
 
             if (this.settings.realTimePricing && this.product.pricing.requiresRealTimePrice) {
                 const products = this.initialStyledProducts.map((styledProduct) => {

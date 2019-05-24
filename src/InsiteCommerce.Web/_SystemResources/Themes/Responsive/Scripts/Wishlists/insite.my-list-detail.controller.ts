@@ -74,7 +74,8 @@
             "scheduleReminderPopupService",
             "createListPopupService",
             "deleteListPopupService",
-            "copyToListPopupService"
+            "copyToListPopupService",
+            "listQuantityAdjustmentPopupService",
         ];
 
         constructor(
@@ -100,7 +101,8 @@
             protected scheduleReminderPopupService: IUploadToListPopupService,
             protected createListPopupService: ICreateListPopupService,
             protected deleteListPopupService: IDeleteListPopupService,
-            protected copyToListPopupService: ICopyToListPopupService
+            protected copyToListPopupService: ICopyToListPopupService,
+            protected listQuantityAdjustmentPopupService: IListQuantityAdjustmentPopupService
         ) {
             this.init();
         }
@@ -454,7 +456,7 @@
         getListLines(): void {
             this.inProgress = true;
             this.spinnerService.show();
-
+            this.checkStorage = {};
             this.lastSearchTerm = this.searchTerm;
 
             this.wishListService.getWishListLinesById(this.listId, {
@@ -477,6 +479,9 @@
                 this.getListLines();
                 return;
             }
+
+            this.listModel.canAddAllToCart = wishListLineCollection.wishListLines.every(p => p.canAddToCart);
+            this.listModel.canAddToCart = this.listModel.canAddAllToCart || wishListLineCollection.wishListLines.some(p => p.canAddToCart);
 
             this.inProgress = false;
             this.spinnerService.hide();
@@ -636,22 +641,43 @@
         }
 
         quantityUpdated(wishListLine: WishListLineModel): void {
-            if (this.listModel.shareOption === ShareOptionEnum[ShareOptionEnum.Private]) {
-                this.updateLine(wishListLine);
-            } else {
-                if (wishListLine.qtyOrdered <= 0) {
-                    wishListLine.qtyOrdered = 1;
-                }
-
-                this.changedSharedListLinesQtys[wishListLine.id.toString()] = wishListLine.qtyOrdered;
-                this.getListLines();
+            if (wishListLine.qtyOrdered <= 0) {
+                wishListLine.qtyOrdered = 1;
             }
+
+            this.changedSharedListLinesQtys[wishListLine.id.toString()] = wishListLine.qtyOrdered;
         }
 
-        updateSavedQty(wishListLine: WishListLineModel): void {
-            this.updateLine(wishListLine);
-            delete this.changedSharedListLinesQtys[wishListLine.id.toString()];
-            this.listLinesWithUpdatedQty[wishListLine.id.toString()] = true;
+        updateSavedQuantities(): void {
+            this.inProgress = true;
+            this.spinnerService.show();
+
+            const data: IUpdateWishListLineCollectionData = {
+                wishListId: this.listId,
+                changedSharedListLinesQuantities: this.changedSharedListLinesQtys,
+                includeListLines: true,
+            }
+            this.wishListService.updateWishListLineCollection(data).then(
+                (wishListLineCollection: WishListLineCollectionModel) => {
+                    this.updateSavedQuantitiesCompleted(wishListLineCollection);
+                },
+                (error: any) => {
+                    this.updateSavedQuantitiesFailed(error);
+                });
+        }
+
+        protected updateSavedQuantitiesCompleted(wishListLineCollection: WishListLineCollectionModel): void {
+            if (wishListLineCollection.wishListLines.some(wishListLine => wishListLine.isQtyAdjusted)) {
+                this.listQuantityAdjustmentPopupService.display({ isQtyAdjusted: true });
+            }
+
+            this.getList();
+            Object.keys(this.changedSharedListLinesQtys).forEach(o => this.listLinesWithUpdatedQty[o] = true);
+            this.changedSharedListLinesQtys = {};
+        }
+
+        protected updateSavedQuantitiesFailed(error: any): void {
+            this.inProgress = false;
         }
 
         sortOrderKeyPress(keyEvent: KeyboardEvent, wishListLine: WishListLineModel): void {

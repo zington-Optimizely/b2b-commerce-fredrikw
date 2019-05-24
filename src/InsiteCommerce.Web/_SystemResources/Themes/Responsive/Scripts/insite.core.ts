@@ -26,10 +26,6 @@
         $modal.find(".close-reveal-modal").click();
     };
 
-    that.setupPunchoutKeepAlive = () => {
-        setInterval(() => { $.post("/Punchout/punchoutsessionstatus.isch"); }, 900000);
-    };
-
     that.checkForIFrame = () => { // used to bust out of iframes for pdass compliance
         try {
             if (window.parent != null && window.location !== window.parent.location && window.parent.location.pathname.toLowerCase().indexOf("/contentadmin") < 0) {

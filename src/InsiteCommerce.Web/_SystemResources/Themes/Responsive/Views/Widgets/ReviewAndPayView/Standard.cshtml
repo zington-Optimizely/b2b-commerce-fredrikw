@@ -192,8 +192,8 @@
                                        ng-model="vm.cart.paymentOptions.creditCard.cardHolderName">
                                 <span class="field-validation-valid" data-valmsg-for="cardHolderName" data-valmsg-replace="true"></span>
                             </div>
-                                <div class="card-num">
-                                    <label for="cardNumber">[% translate 'Card Number' %]</label>
+                            <div class="card-num">
+                                <label for="cardNumber">[% translate 'Card Number' %]</label>
                                 <span ng-if="vm.useTokenExGateway">
                                     <div id="tokenExCardNumber" class="tokenex-iframe-block"></div>
                                     <label ng-if="vm.isInvalidCardNumber" class="tokenex-error error">[% translate 'Credit card number is invalid.' %]</label>
@@ -205,9 +205,9 @@
                                            ng-model="vm.cart.paymentOptions.creditCard.cardNumber">
                                     <span class="field-validation-valid" data-valmsg-for="cardNumber" data-valmsg-replace="true"></span>
                                 </span>
-                                </div>
-                                <div class="security-code">
-                                    <label>[% translate 'Security Code' %]&nbsp;<a href="javascript:void(0);" data-reveal-id="whatsThisPopup">[% translate "What's This?" %]</a></label>
+                            </div>
+                            <div class="security-code">
+                                <label>[% translate 'Security Code' %]&nbsp;<a href="javascript:void(0);" data-reveal-id="whatsThisPopup">[% translate "What's This?" %]</a></label>
                                 <span ng-if="vm.useTokenExGateway">
                                     <div id="tokenExSecurityCode" class="tokenex-iframe-block"></div>
                                     <label ng-if="vm.isInvalidSecurityCode" class="tokenex-error error">[% translate 'Security code is invalid.' %]</label>
@@ -219,13 +219,13 @@
                                            ng-model="vm.cart.paymentOptions.creditCard.securityCode">
                                     <span class="field-validation-valid" data-valmsg-for="securityCode" data-valmsg-replace="true"></span>
                                 </span>
-                                    <div id="whatsThisPopup" class="checkout-review-pay reveal-modal" data-reveal>
-                                        <div class="modal-wrap">
-                                            <img src="/Images/Default/security_code_sample.jpg" alt="Security Code Sample"/>
-                                            <a class="close-reveal-modal">&#215;</a>
-                                        </div>
+                                <div id="whatsThisPopup" class="checkout-review-pay reveal-modal" data-reveal>
+                                    <div class="modal-wrap">
+                                        <img src="/Images/Default/security_code_sample.jpg" alt="Security Code Sample"/>
+                                        <a class="close-reveal-modal">&#215;</a>
                                     </div>
                                 </div>
+                            </div>
                             <div class="exp-date">
                                 <label>[% translate 'Expiration Date' %]</label>
                                 <div class="row">

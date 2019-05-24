@@ -69,7 +69,7 @@
                         </h3>
 
                         <div class="search-didyoumean" ng-if="vm.products.didYouMeanSuggestions.length >= 1">
-                            [% translate 'Did you mean ' %] <a ng-click="vm.goToSearchCriteria(vm.products.didYouMeanSuggestions[0].suggestion)" ng-bind="vm.products.didYouMeanSuggestions[0].suggestion"></a>
+                            [% translate 'Did you mean ' %] <a id="tst_productList_didYouMeanLink1" ng-click="vm.goToSearchCriteria(vm.products.didYouMeanSuggestions[0].suggestion)" ng-bind="vm.products.didYouMeanSuggestions[0].suggestion"></a>
                         </div>
                         <div class="search-autocorrect-original" ng-if="vm.autoCorrectedQuery">
                             [% translate 'Search instead for' %] <a id="tst_productList_originalQuery" ng-click="vm.goToSearchCriteria(vm.originalQuery, false)">{{vm.originalQuery}}</a>
@@ -108,7 +108,7 @@
                                             <div class="availability">
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure"></isc-availability-message>
                                             </div>
-                                            <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
+                                            <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0 || product.brand" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
                                         </div>
                                         <div class="item-price">
                                             <div class="product-info">
@@ -161,7 +161,9 @@
                                 <thead>
                                     <tr>
                                         <th data-class="tv-description" class="tv-description">[% translate 'Description' %]</th>
-                                        <th ng-repeat="section in vm.visibleTableColumns(null)" class="tv-attr{{$index+1}}" data-id="{{section.attributeTypeId}}" data-class="tv-attr{{$index+1}}">{{section.nameDisplay}}</th>
+                                        <th ng-repeat="section in vm.visibleTableColumns(null)" class="tv-attr{{$index+1}}" data-id="{{section.attributeTypeId}}" data-class="tv-attr{{$index+1}}">
+                                            {{section.nameDisplay || (section.name === 'Brand' ? '[% translate 'Brand' EscapeSingleQuotes %]' : (section.name === 'Product Line' ? '[% translate 'Product Line' EscapeSingleQuotes %]' : section.name))}}
+                                        </th>
                                         <th data-class="tv-availability" class="tv-availability" ng-if="vm.settings.showInventoryAvailability">[% translate 'Availability' %]</th>
                                         <th data-class="tv-price" class="tv-price">[% translate 'Price' %]</th>
                                         <th data-class="tv-um" class="tv-um">[% translate 'U/M' %]</th>

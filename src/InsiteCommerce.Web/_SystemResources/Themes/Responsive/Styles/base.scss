@@ -1700,12 +1700,12 @@ body [role="main"] div.pbtm {
             white-space: normal;
             overflow: hidden;
 
-            .group-category {
+            .group {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
 
-                .group-category__title {
+                .group__title {
                     color: DodgerBlue;
 
                     &:hover {
@@ -6871,12 +6871,20 @@ nav ul:not(.side-nav) li a {
         }
 
         .btn {
-            width: 20%;
+            width: auto;
         }
 
         .qo-qty, .qo-um {
             width: 18%;
             margin-right: 2%;
+        }
+
+        .qo-qty {
+            min-width: 100px;
+        }
+
+        .qo-um {
+            min-width: 130px;
         }
     }
 }
@@ -7044,10 +7052,6 @@ nav ul:not(.side-nav) li a {
         width: 100%;
         float: left;
         margin: 1em 0;
-    }
-
-    .breadcrumbs {
-        margin-bottom: 0;
     }
 
     .breadcrumbs li.current {
@@ -9452,7 +9456,7 @@ header label.toggle.burger:after {
     overflow: hidden;
 
     img {
-        max-width: 150px;
-        max-height: 150px;
+        max-width: 75px;
+        max-height: 75px;
     }
 }

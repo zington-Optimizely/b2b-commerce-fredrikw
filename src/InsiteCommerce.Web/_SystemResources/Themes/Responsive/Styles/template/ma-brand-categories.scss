@@ -1,27 +1,36 @@
 .widget-brand-categories {
     .brand-categories-row {
-        text-align: center;
+        @media only screen and (max-width: 767px) {
+            > div:nth-child(2n+1) {
+                clear: left;
+            }
+        }
 
-        h3 {
-            margin-left: 1em;
-            text-align: left;
+        @media only screen and (min-width: 768px) and (max-width: 1024px) {
+            > div:nth-child(3n+1) {
+                clear: left;
+            }
+        }
+
+        @media only screen and (min-width: 1025px) {
+            > div:nth-child(4n+1) {
+                clear: left;
+            }
         }
 
         .brand-category-block {
             float: left !important;
-            text-align: center;
             margin-bottom: 25px;
-            display: inline-table;
-            padding: 0 12px;
+
+            @media only screen and (max-width: 767px) {
+                width: 50%;
+            }
 
             .category-container {
-                display: inline-block;
-                width: 160px;
-
                 .image-block {
                     line-height: 160px;
-                    vertical-align: middle;
                     margin-bottom: 10px;
+                    text-align: center;
 
                     img {
                         max-width: 160px;
@@ -31,35 +40,11 @@
 
                 .item-name {
                     font-weight: bold;
-                    text-align: left;
                 }
 
-                .sub-category-link {
-                    text-align: left;
-                }
-            }
-        }
-    }
-}
-
-@media all and (min-width: 767px) {
-    .widget-brand-categories {
-        .brand-categories-row {
-            .brand-category-block {
-                &:nth-of-type(4n+5) {
-                    clear: both;
-                }
-            }
-        }
-    }
-}
-
-@media all and (max-width: 767px) {
-    .widget-brand-categories {
-        .brand-categories-row {
-            .brand-category-block {
-                &:nth-of-type(2n+3) {
-                    clear: both;
+                .item-name, .sub-category-link {
+                    line-height: 1.25em;
+                    margin-bottom: 0.5em;
                 }
             }
         }

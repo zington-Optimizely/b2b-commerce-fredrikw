@@ -311,9 +311,9 @@ module insite.catalog {
         }
 
         protected getAutocompleteCategoryTemplate(suggestion: any, pattern: string): string {
-            const parent = suggestion.subtitle ? `<span class='parent-category'>in ${suggestion.subtitle}</span>` : "";
-            const title = suggestion.title.replace(new RegExp(pattern, "gi"), "<strong>$1<\/strong>");
-            return `<div class="group-${suggestion.type}"><span class="group-category__title">${title}</span>${parent}</div>`;
+            const suggestionParentHTML = this.getSuggestionParentHTML(suggestion.subtitle);
+            const highlightedSuggestionHTML = this.getPatternHighlightedInTextHTML(suggestion.title, pattern);
+            return `<div class="group group-${suggestion.type}"><span class="group__title">${highlightedSuggestionHTML}</span>${suggestionParentHTML}</div>`;
         }
 
         protected getAutocompleteContentTemplate(suggestion: any, pattern: string): string {
@@ -321,11 +321,21 @@ module insite.catalog {
         }
 
         protected getAutocompleteBrandTemplate(suggestion: any, pattern: string): string {
-            return `<div class="group-${suggestion.type} tst_autocomplete_brand_${suggestion.id}">${suggestion.productLineName ? (suggestion.productLineName + ' in ') : ''}${suggestion.title}</div>`;
+            const suggestionParentHTML = this.getSuggestionParentHTML(suggestion.productLineName ? suggestion.title : "");
+            const highlightedSuggestionHTML = this.getPatternHighlightedInTextHTML(suggestion.productLineName || suggestion.title, pattern);
+            return `<div class="group group-${suggestion.type} tst_autocomplete_brand_${suggestion.id}"><span class="group__title">${highlightedSuggestionHTML}</span>${suggestionParentHTML}</div>`;
+        }
+
+        private getSuggestionParentHTML(parentText: string): string {
+            return parentText ? `<span class="parent-category">in ${parentText}</span>` : "";
+        }
+
+        private getPatternHighlightedInTextHTML(text: string, patternInText: string): string {
+            return text.replace(new RegExp(patternInText, "gi"), "<strong>$1<\/strong>");
         }
 
         protected getAutocompleteProductTemplate(suggestion: any, pattern: string): string {
-            const shortDescription = suggestion.title.replace(new RegExp(pattern, "gi"), "<strong>$1<\/strong>");
+            const shortDescription = this.getPatternHighlightedInTextHTML(suggestion.title, pattern);
 
             let additionalInfo = "";
 
@@ -340,13 +350,13 @@ module insite.catalog {
                     partNumber = suggestion.erpNumber || "";
                 }
 
-                partNumber = partNumber.replace(new RegExp(pattern, "gi"), "<strong>$1<\/strong>");
+                partNumber = this.getPatternHighlightedInTextHTML(partNumber, pattern);
 
                 additionalInfo += `<span class='name'><span class='label'>${partNumberLabel}</span><span class='value tst_autocomplete_product_${suggestion.id}_number'>${partNumber}</span></span>`;
             }
 
             if (suggestion.manufacturerItemNumber) {
-                const manufacturerItemNumber = suggestion.manufacturerItemNumber.replace(new RegExp(pattern, "gi"), "<strong>$1<\/strong>");
+                const manufacturerItemNumber = this.getPatternHighlightedInTextHTML(suggestion.manufacturerItemNumber, pattern);
                 const manufacturerItemNumberLabel = this.getTranslation("manufacturerItemNumber") || "";
                 additionalInfo += `<span class='manufacturer-item-number'><span class='label'>${manufacturerItemNumberLabel}</span><span class='value'>${manufacturerItemNumber}</span></span>`;
             }

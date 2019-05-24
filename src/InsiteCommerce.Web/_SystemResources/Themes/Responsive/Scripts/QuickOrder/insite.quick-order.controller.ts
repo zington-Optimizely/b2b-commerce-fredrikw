@@ -41,6 +41,7 @@
 
             this.initializeAutocomplete();
             this.$scope.$on("addProductToQuickOrderForm", (event, product: ProductDto) => {
+                this.searchTerm = product.shortDescription;
                 this.addProduct(product.erpNumber);
             });
         }

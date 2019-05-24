@@ -143,8 +143,11 @@
                             <i>[[orderLine.ProductNumber]]</i>
                         </p>
                         <p class="item" align="left">
-                            [% if orderLine.UnitNetPrice > 0 -%]
+                            [% if orderLine.UnitNetPrice > 0 and orderLine.QuoteRequired == false -%]
                             <span class="price">[[orderLine.UnitNetPriceDisplay]]</span>
+                            [% endif -%]
+                            [% if orderLine.QuoteRequired -%]
+                            <span class="price">Requires Quote</span>
                             [% endif -%]
                             <em class="item-um">[[orderLine.Uom]]</em>
                             <span class="qty">

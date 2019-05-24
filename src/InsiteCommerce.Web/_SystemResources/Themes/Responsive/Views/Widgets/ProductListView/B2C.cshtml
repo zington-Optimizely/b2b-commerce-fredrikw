@@ -48,7 +48,7 @@
                         </h3>
 
                         <div class="search-didyoumean" ng-if="vm.products.didYouMeanSuggestions.length >= 1">
-                            [% translate 'Did you mean ' %] <a ng-click="vm.goToSearchCriteria(vm.products.didYouMeanSuggestions[0].suggestion)" ng-bind="vm.products.didYouMeanSuggestions[0].suggestion"></a>
+                            [% translate 'Did you mean ' %] <a id="tst_productList_didYouMeanLink1" ng-click="vm.goToSearchCriteria(vm.products.didYouMeanSuggestions[0].suggestion)" ng-bind="vm.products.didYouMeanSuggestions[0].suggestion"></a>
                         </div>
                         <div class="search-autocorrect-original" ng-if="vm.autoCorrectedQuery">
                             [% translate 'Search instead for' %] <a ng-click="vm.goToSearchCriteria(vm.originalQuery, false)">{{vm.originalQuery}}</a>
@@ -87,7 +87,7 @@
                                             <div class="availability">
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure"></isc-availability-message>
                                             </div>
-                                            <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
+                                            <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0 || product.brand" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
                                         </div>
                                         <div class="item-price" ng-if="!vm.failedToGetRealTimePrices">
                                             <div class="product-info">

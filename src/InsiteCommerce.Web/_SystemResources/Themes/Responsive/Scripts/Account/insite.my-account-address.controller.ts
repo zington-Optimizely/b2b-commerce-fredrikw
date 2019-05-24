@@ -12,7 +12,7 @@ module insite.account {
         isReadOnly = false;
         addressFields: AddressFieldCollectionModel;
 
-        static $inject = ["$location", "$localStorage", "customerService", "websiteService", "sessionService", "queryString"];
+        static $inject = ["$location", "$localStorage", "customerService", "websiteService", "sessionService", "queryString", "$rootScope"];
 
         constructor(
             protected $location: ng.ILocaleService,
@@ -20,7 +20,8 @@ module insite.account {
             protected customerService: customers.ICustomerService,
             protected websiteService: websites.IWebsiteService,
             protected sessionService: account.ISessionService,
-            protected queryString: common.IQueryStringService) {
+            protected queryString: common.IQueryStringService,
+            protected $rootScope: ng.IRootScopeService) {
             this.init();
         }
 
@@ -82,6 +83,7 @@ module insite.account {
                     (error: any) => { this.addOrUpdateShipToFailed(error); });
             } else {
                 (angular.element("#saveSuccess") as any).foundation("reveal", "open");
+                this.updateHeaderSession();
             }
         }
 
@@ -100,9 +102,14 @@ module insite.account {
             }
 
             (angular.element("#saveSuccess") as any).foundation("reveal", "open");
+            this.updateHeaderSession();
         }
 
         protected addOrUpdateShipToFailed(error: any): void {
+        }
+
+        updateHeaderSession(): void {
+            this.$rootScope.$broadcast("updateHeaderSession");
         }
 
         getBillTo(selectedShipTo?: ShipToModel): void {

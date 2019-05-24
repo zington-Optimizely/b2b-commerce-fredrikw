@@ -19,6 +19,7 @@ module insite.wishlist {
         deleteLine(line: WishListLineModel): ng.IPromise<WishListLineModel>;
         deleteLineCollection(wishList: WishListModel, lines: WishListLineModel[]): ng.IPromise<WishListLineCollectionModel>;
         updateWishList(list: WishListModel): ng.IPromise<WishListModel>;
+        updateWishListLineCollection(data: IUpdateWishListLineCollectionData): ng.IPromise<WishListLineCollectionModel>;
         updateWishListSchedule(list: WishListModel): ng.IPromise<WishListModel>;
         updateLine(line: WishListLineModel): ng.IPromise<WishListLineModel>;
         addWishListLines(wishList: WishListModel, products: ProductDto[]): ng.IPromise<WishListLineCollectionModel>;
@@ -36,6 +37,12 @@ module insite.wishlist {
         pagination?: PaginationModel;
         query?: string;
         changedSharedListLinesQuantities: string;
+    }
+
+    export interface IUpdateWishListLineCollectionData {
+        wishListId: string;
+        changedSharedListLinesQuantities?: { [key: string]: number };
+        includeListLines: boolean;
     }
 
     export class WishListService implements IWishListService {
@@ -281,6 +288,21 @@ module insite.wishlist {
         protected updateWishListFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
+        updateWishListLineCollection(data: IUpdateWishListLineCollectionData): ng.IPromise<WishListLineCollectionModel> {
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http({ method: "PATCH", url: `${this.serviceUri}/${data.wishListId}/wishlistLines/batch`, data: data }),
+                this.updateWishListCompleted,
+                this.updateWishListFailed
+            );
+        }
+
+        protected updateWishListLineCollectionCompleted(response: ng.IHttpPromiseCallbackArg<WishListLineCollectionModel>): void {
+        }
+
+        protected updateWishListLineCollectionFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
         updateWishListSchedule(list: WishListModel): ng.IPromise<WishListModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
@@ -434,7 +456,7 @@ module insite.wishlist {
             });
 
             list.canAddAllToCart = list.wishListLineCollection.every(p => p.canAddToCart);
-            list.canAddToCart = list.canAddAllToCart || list.wishListLineCollection.every(p => p.canAddToCart);
+            list.canAddToCart = list.canAddAllToCart || list.wishListLineCollection.some(p => p.canAddToCart);
         }
 
         updateAvailability(line: WishListLineModel): void {

@@ -13,7 +13,7 @@
             </div>
             <div class="brand-names" style="height: {{ vm.calcHeight(vm.brandLettersMap[alphabetitem.letter].length) }}px">
                 <div class="brand-item" ng-repeat="brand in vm.brandLettersMap[alphabetitem.letter]">
-                    <a class="tst_brand_link" ng-href="{{ ::brand.detailPagePath }}" ng-bind="::brand.name"></a>
+                    <a class="brand-link tst_brand_link" ng-href="{{ ::brand.detailPagePath }}" ng-bind="::brand.name"></a>
                 </div>
             </div>
         </div>

@@ -720,6 +720,7 @@ declare module Insite.Catalog.Services.Dtos {
 		searchBoostDecimal: number;
 		salePriceLabel: string;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
+		productLine: Insite.Catalog.Services.Dtos.ProductLineDto;
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
 		replacementProductId: System.Guid;
 		warehouses: Insite.Catalog.Services.Dtos.WarehouseDto[];
@@ -775,6 +776,7 @@ declare module Insite.Catalog.Services.Dtos {
 		largeImagePath: string;
 		qtyOnHand: number;
 		unitOfMeasure: string;
+		productDetailUrl: string;
 		numberInCart: number;
 		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
 		quoteRequired: boolean;
@@ -858,6 +860,10 @@ declare module Insite.Catalog.Services.Dtos {
 		logoLargeImagePath: string;
 		logoImageAltText: string;
 		detailPagePath: string;
+	}
+	interface ProductLineDto {
+		id: System.Guid;
+		name: string;
 	}
 	interface ProductSubscriptionDto {
 		subscriptionAddToInitialOrder: boolean;
@@ -1874,6 +1880,7 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 		isDiscontinued: boolean;
 		sortOrder: number;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
+		isQtyAdjusted: boolean;
 	}
 	interface WishListEmailScheduleModel extends Insite.Core.WebApi.BaseModel {
 		repeatPeriod: string;

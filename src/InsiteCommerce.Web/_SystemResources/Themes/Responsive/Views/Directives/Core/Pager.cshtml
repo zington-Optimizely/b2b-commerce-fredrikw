@@ -60,7 +60,7 @@
             <div id="choosecolumns" data-dropdown-content class="f-dropdown content">
                 <ul class="column-selection">
                     <li ng-repeat="section in vm.customContext.sortedTableColumns">
-                        <label><input type="checkbox" ng-model="section.checked" ng-change="vm.customContext.changeTableColumn(section)" data-test-selector="chooseColumns_{{section.nameDisplay}}" data-id="{{section.id}}" />{{section.nameDisplay}}</label>
+                        <label><input type="checkbox" ng-model="section.checked" ng-change="vm.customContext.changeTableColumn(section)" data-test-selector="chooseColumns_{{section.nameDisplay}}" data-id="{{section.id}}" />{{section.nameDisplay || (section.name === 'Brand' ? '[% translate 'Brand' EscapeSingleQuotes %]' : (section.name === 'Product Line' ? '[% translate 'Product Line' EscapeSingleQuotes %]' : section.name))}}</label>
                     </li>
                 </ul>
             </div>

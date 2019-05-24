@@ -4,7 +4,7 @@
         <div class="detail-info">
             <div class="name-price">
                 <isc-product-brand product="vm.product" show-logo="true"></isc-product-brand>
-                <h1>{{vm.product.shortDescription}}</h1>
+                <h1 id="tst_productDetail_shortDescription">{{vm.product.shortDescription}}</h1>
                 <isc-product-name product="vm.product" no-link="true"></isc-product-name>
 
                 <div ng-if="vm.product.canShowPrice && !vm.failedToGetRealTimePrices" class="pd-price-um">
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <isc-sorted-attribute-value-list ng-if="!vm.settings.displayAttributesInTabs && vm.product.attributeTypes.length > 0" attribute-types="vm.product.attributeTypes" maximum-number="5" class="attribute-list"></isc-sorted-attribute-value-list>
+                <isc-sorted-attribute-value-list ng-if="!vm.settings.displayAttributesInTabs && (vm.product.attributeTypes.length > 0 || vm.product.brand)" attribute-types="vm.product.attributeTypes" brand="vm.product.brand" maximum-number="5" class="attribute-list"></isc-sorted-attribute-value-list>
 
                 <div id="tst_productDetail_htmlContent" class="product-cm" ng-bind-html="vm.product.htmlContent|trusted"></div>
             </div>
@@ -117,21 +117,25 @@
         </div>
     </div>
 
-    <div ng-show="vm.product.specifications.length > 0 || vm.product.attributeTypes.length > 0 || vm.product.documents.length > 0" class="row pd-specs">
+    <div ng-show="vm.product.specifications.length > 0 || vm.product.attributeTypes.length > 0 || vm.product.documents.length > 0 || vm.product.brand.name" class="row pd-specs">
         <div id="tst_productDetail_specifications" class="detail-specs easy-resp-tabs">
             <ul class="resp-tabs-list">
-                <li ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayFirst' && vm.product.attributeTypes.length > 0">[% translate 'Attributes' %]</li>
+                <li ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayFirst' && (vm.product.attributeTypes.length > 0 || vm.product.brand.name)">[% translate 'Attributes' %]</li>
                 <li ng-if="vm.settings.displayDocumentsInTabs && vm.settings.documentsTabSortOrder === 'DisplayFirst' && vm.product.documents.length > 0">[% translate 'Documents' %]</li>
                 <li ng-repeat="specification in vm.product.specifications | filter: { isActive: 'true' } | orderBy: 'sortOrder'" ng-class="{active: ($first)}">
                     {{specification.nameDisplay}}
                 </li>
-                <li ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayLast' && vm.product.attributeTypes.length > 0">[% translate 'Attributes' %]</li>
+                <li ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayLast' && (vm.product.attributeTypes.length > 0 || vm.product.brand.name)">[% translate 'Attributes' %]</li>
                 <li ng-if="vm.settings.displayDocumentsInTabs && vm.settings.documentsTabSortOrder === 'DisplayLast' && vm.product.documents.length > 0">[% translate 'Documents' %]</li>
             </ul>
             <div class="resp-tabs-container">
-                <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayFirst' && vm.product.attributeTypes.length > 0">
+                <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayFirst' && (vm.product.attributeTypes.length > 0 || vm.product.brand.name)">
                     <table class="info-tbl spec-attributes">
                         <tbody>
+                            <tr ng-if="vm.product.brand.name" class="row">
+                                <td class="col-label columns small-4">[% translate 'Brand' %]</td>
+                                <td class="col-value columns small-8" ng-bind="vm.product.brand.name"></td>
+                            </tr>
                             <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name']" class="row">
                                 <td class="col-label columns small-4" ng-bind="attributeType.label || attributeType.name"></td>
                                 <td class="col-value columns small-8"><isc-no-element ng-repeat="attributeValue in attributeType.attributeValues | orderBy  : ['sortOrder','valueDisplay']">{{attributeValue.valueDisplay}}{{$last ? '' : ', '}}</isc-no-element></td>
@@ -148,13 +152,17 @@
                     </ul>
                 </div>
                 <div ng-repeat="specification in vm.product.specifications | filter: { isActive: 'true' } | orderBy: 'sortOrder'" ng-bind-html="specification.htmlContent|trusted"></div>
-                <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayLast' && vm.product.attributeTypes.length > 0">
+                <div ng-if="vm.settings.displayAttributesInTabs && vm.settings.attributesTabSortOrder === 'DisplayLast' && (vm.product.attributeTypes.length > 0 || vm.product.brand.name)">
                     <table class="info-tbl spec-attributes">
                         <tbody>
-                        <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name']" class="row">
-                            <td class="col-label columns small-4" ng-bind="attributeType.label || attributeType.name"></td>
-                            <td class="col-value columns small-8"><isc-no-element ng-repeat="attributeValue in attributeType.attributeValues | orderBy  : ['sortOrder','valueDisplay']">{{attributeValue.valueDisplay}}{{$last ? '' : ', '}}</isc-no-element></td>
-                        </tr>
+                            <tr ng-if="vm.product.brand.name" class="row">
+                                <td class="col-label columns small-4">[% translate 'Brand' %]</td>
+                                <td class="col-value columns small-8" ng-bind="vm.product.brand.name"></td>
+                            </tr>
+                            <tr ng-repeat="attributeType in vm.product.attributeTypes | orderBy : ['label', 'name']" class="row">
+                                <td class="col-label columns small-4" ng-bind="attributeType.label || attributeType.name"></td>
+                                <td class="col-value columns small-8"><isc-no-element ng-repeat="attributeValue in attributeType.attributeValues | orderBy  : ['sortOrder','valueDisplay']">{{attributeValue.valueDisplay}}{{$last ? '' : ', '}}</isc-no-element></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

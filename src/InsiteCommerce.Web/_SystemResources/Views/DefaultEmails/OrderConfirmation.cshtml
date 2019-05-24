@@ -195,6 +195,9 @@
                     <tr>
                         <th class="left"><b>Product Number</b></th>
                         <th class="left"><b>Description</b></th>
+                        [% if Model.EnableBrands and Model.IsAnyProductWithBrand -%]
+                        <th class="left"><b>Brand</b></th>
+                        [% endif -%]
                         <th class="right"><b>Qty</b></th>
                         <th class="right"><b>Unit Price</b></th>
                         <th class="right"><b>Extended Amount</b></th>
@@ -203,6 +206,9 @@
                     <tr>
                         <td class="left">[[orderLine.ProductNumber]]<br/></td>
                         <td class="left">[[orderLine.Description]]</td>
+                        [% if Model.EnableBrands and Model.IsAnyProductWithBrand -%]
+                        <td class="left">[[orderLine.BrandName]]</td>
+                        [% endif -%]
                         <td class="right">[[orderLine.QtyOrderedDisplay]]</td>
                         <td class="right">[[orderLine.UnitNetPriceDisplay]]</td>
                         <td class="right">[[orderLine.ExtendedUnitNetPriceDisplay]]</td>

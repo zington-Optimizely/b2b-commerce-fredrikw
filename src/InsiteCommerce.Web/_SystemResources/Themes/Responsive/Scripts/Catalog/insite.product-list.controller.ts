@@ -55,7 +55,6 @@ module insite.catalog {
         productFilterLoaded = false;
         filterType: string;
         addingToCart = false;
-        initialAttributeTypeFacets: AttributeTypeFacetDto[];
         enableWarehousePickup: boolean;
         session: SessionModel;
         getPageDataCalled: boolean;
@@ -162,9 +161,8 @@ module insite.catalog {
         }
 
         protected getFacetsCompleted(productCollection: ProductCollectionModel): void {
-            this.initialAttributeTypeFacets = productCollection.attributeTypeFacets;
-            this.resetVisibleColumnNames(productCollection);
             this.customPagerContext.sortedTableColumns = this.sortedTableColumns(productCollection);
+            this.resetVisibleColumnNames(this.customPagerContext.sortedTableColumns);
         }
 
         protected getFacetsFailed(error: any): void {
@@ -637,6 +635,13 @@ module insite.catalog {
                     }
                 }
             }
+
+            if (sectionFacet.name === "Brand" && product.brand) {
+                return product.brand.name;
+            } else if (sectionFacet.name === "Product Line" && product.productLine) {
+                return product.productLine.name;
+            }
+
             return null;
         }
 
@@ -777,19 +782,40 @@ module insite.catalog {
 
         // all columns for table view check boxes
         protected sortedTableColumns(products: ProductCollectionModel): AttributeTypeFacetDto[] {
-            if (!products.attributeTypeFacets) {
+            if (!products.attributeTypeFacets && !products.brandFacets && !products.productLineFacets) {
                 return [];
             }
 
-            return lodash.chain(products.attributeTypeFacets)
+            const sortedTableColumns = lodash.chain(products.attributeTypeFacets)
                 .sortBy(["sort", "name"])
                 .value();
+
+            if (products.brandFacets.length > 0) {
+                sortedTableColumns.push({
+                    attributeTypeId: "",
+                    name: "Brand",
+                    nameDisplay: "",
+                    sort: 0,
+                    attributeValueFacets: []
+                });
+            }
+
+            if (products.productLineFacets.length > 0) {
+                sortedTableColumns.push({
+                    attributeTypeId: "",
+                    name: "Product Line",
+                    nameDisplay: "",
+                    sort: 0,
+                    attributeValueFacets: []
+                });
+            }
+
+            return sortedTableColumns;
         }
 
         // visible (checked) columns for table view
-        protected visibleTableColumns(): any[] {
-            return lodash.chain(this.initialAttributeTypeFacets)
-                .sortBy(["sort", "name"])
+        protected visibleTableColumns(): AttributeTypeFacetDto[] {
+            return lodash.chain(this.customPagerContext ? this.customPagerContext.sortedTableColumns : [])
                 .filter(atf => this.visibleColumnNames.indexOf(atf.name) !== -1)
                 .value();
         }
@@ -828,9 +854,9 @@ module insite.catalog {
             }
         }
 
-        resetVisibleColumnNames(products: ProductCollectionModel): void {
+        resetVisibleColumnNames(sortedTableColumns: AttributeTypeFacetDto[]): void {
             this.visibleColumnNames = [];
-            lodash.chain(this.sortedTableColumns(products))
+            lodash.chain(sortedTableColumns)
                 .first(3)
                 .forEach(facet => {
                     this.visibleColumnNames.push(facet.name);

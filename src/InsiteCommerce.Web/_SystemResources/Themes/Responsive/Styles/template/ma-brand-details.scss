@@ -5,8 +5,8 @@
 
         img {
             display: inline-block;
-            max-width: 150px;
-            max-height: 150px;
+            max-width: 300px;
+            max-height: 300px;
         }
     }
 
@@ -25,5 +25,21 @@
 
     .widget-brandContainer {
         margin-bottom: 25px;
+
+        .widget-shopAllProducts,
+        .widget-visitBrandWebsite {
+            padding: 20px 0px;
+
+            @media only screen and (max-width: 767px) {
+                text-align: center;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .left-brand-container,
+            .right-brand-container {
+                width: 100%;
+            }
+        }
     }
 }

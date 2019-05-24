@@ -37,6 +37,7 @@
             this.initializeAutocomplete();
             this.initCanAddAllToList();
             this.$scope.$on("addProductToQuickOrderForm", (event, product: ProductDto) => {
+                this.searchTerm = product.shortDescription;
                 this.lookupAndAddProductById(product.id as string);
             });
         }

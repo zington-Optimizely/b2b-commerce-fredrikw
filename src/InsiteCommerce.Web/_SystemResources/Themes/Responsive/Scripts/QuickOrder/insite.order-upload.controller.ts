@@ -6,14 +6,21 @@
     export class OrderUploadController extends BaseUploadController {
         settings: ProductSettingsModel;
 
-        static $inject = ["$scope", "productService", "cartService", "coreService", "settingsService"];
+        static $inject = [
+            "$scope",
+            "productService",
+            "cartService",
+            "coreService",
+            "settingsService",
+            "sessionService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected productService: catalog.IProductService,
             protected cartService: cart.ICartService,
             protected coreService: core.ICoreService,
-            protected settingsService: core.ISettingsService) {
+            protected settingsService: core.ISettingsService,
+            protected sessionService: account.ISessionService) {
             super($scope, productService, coreService, settingsService);
         }
 
@@ -89,7 +96,11 @@
                 return;
             }
 
-            if (this.settings.realTimeInventory && !this.settings.allowBackOrder && products.some(o => o != null)) {
+            let currentContext = this.sessionService.getContext();
+
+            if (this.settings.realTimeInventory && products.some(o => o != null)
+                && ((!this.settings.allowBackOrderForDelivery && currentContext.fulfillmentMethod === "Ship") 
+                    || (!this.settings.allowBackOrderForPickup && currentContext.fulfillmentMethod === "PickUp"))) {
                 this.productService.getProductRealTimeInventory(products.filter(o => o != null)).then(
                     (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory, products),
                     (error: any) => this.getProductRealTimeInventoryFailed(error));

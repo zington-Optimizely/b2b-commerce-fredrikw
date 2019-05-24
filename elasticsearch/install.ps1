@@ -70,6 +70,7 @@ function Install-Elasticsearch {
         #------------------------------------
         Write-Host "[1\$numOfSteps] Downloading Elasticsearch" -foregroundcolor green
         $clnt = new-object System.Net.WebClient
+        [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
         $url = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-" + $elasticVersion + ".zip"
         $file = "$elasticPath\elasticsearch-" + $elasticVersion + ".zip"
         $clnt.DownloadFile($url,$file)

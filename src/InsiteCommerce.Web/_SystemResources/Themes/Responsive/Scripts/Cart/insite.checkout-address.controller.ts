@@ -40,7 +40,8 @@
             "$q",
             "sessionService",
             "$localStorage",
-            "$attrs"
+            "$attrs",
+            "$rootScope"
         ];
 
         constructor(
@@ -57,7 +58,8 @@
             protected $q: ng.IQService,
             protected sessionService: SessionService,
             protected $localStorage: common.IWindowStorage,
-            protected $attrs: ICheckoutAddressControllerAttributes) {
+            protected $attrs: ICheckoutAddressControllerAttributes,
+            protected $rootScope: ng.IRootScopeService) {
             this.init();
         }
 
@@ -459,6 +461,8 @@
         }
 
         protected updateSessionCompleted(session: SessionModel, cart: CartModel, continueUri: string) {
+            this.$rootScope.$broadcast("sessionUpdated", session);
+
             if (session.isRestrictedProductRemovedFromCart) {
                 this.coreService.displayModal(angular.element("#removedProductsFromCart"), () => {
                     if (session.isRestrictedProductExistInCart) {

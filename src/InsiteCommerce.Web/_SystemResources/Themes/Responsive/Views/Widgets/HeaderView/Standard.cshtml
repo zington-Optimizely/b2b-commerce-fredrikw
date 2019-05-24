@@ -51,11 +51,11 @@
                             <div class="inf-ship">
                                 <span class="inf-label">[% translate 'Ship To' %]:</span>
                                 <span class="inf-value">
-                                    <span id="tst_userNav_shipToCompanyName" ng-bind="::vm.session.shipTo.companyName"></span>
-                                    <span id="tst_userNav_shipToName" ng-cloak ng-if="::(vm.session.shipTo.lastName || vm.session.shipTo.firstName)">
-                                        {{::vm.session.shipTo.lastName}} {{::vm.session.shipTo.firstName}},
+                                    <span id="tst_userNav_shipToCompanyName" ng-bind="vm.session.shipTo.companyName"></span>
+                                    <span id="tst_userNav_shipToName" ng-cloak ng-if="vm.session.shipTo.lastName || vm.session.shipTo.firstName">
+                                        {{vm.session.shipTo.lastName}} {{vm.session.shipTo.firstName}},
                                     </span>
-                                    <span ng-bind="::vm.session.shipTo.fullAddress"></span>
+                                    <span ng-bind="vm.session.shipTo.fullAddress"></span>
                                 </span>
                             </div>
                             <a ng-if="::vm.session.displayChangeCustomerLink" href="[% urlForPage 'ChangeCustomerPage' %]" id="tst_header_changeCustomer" class="btn primary btn-change-custship">

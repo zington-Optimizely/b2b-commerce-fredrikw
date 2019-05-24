@@ -123,6 +123,10 @@
 
             this.showCarouselArrows(this.productsToCompare.length > newItemsNumber);
 
+            if (this.productsToCompare.length === 0) {
+                return;
+            }
+
             this.updateCarousel(this.carousel, isItemsNumberChanged || forceResize, true);
 
             if (this.bottomCarousels) {

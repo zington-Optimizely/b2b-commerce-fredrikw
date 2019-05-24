@@ -42,7 +42,8 @@ module insite.catalog {
             "settingsService",
             "$stateParams",
             "sessionService",
-            "spinnerService"
+            "spinnerService",
+            "queryString"
             ];
 
         constructor(
@@ -55,7 +56,8 @@ module insite.catalog {
             protected settingsService: core.ISettingsService,
             protected $stateParams: IContentPageStateParams,
             protected sessionService: account.ISessionService,
-            protected spinnerService: core.ISpinnerService) {
+            protected spinnerService: core.ISpinnerService,
+            protected queryString: common.IQueryStringService) {
             this.init();
         }
 
@@ -265,10 +267,33 @@ module insite.catalog {
         }
 
         protected initStyleSelection(styleTraits: StyleTraitDto[]): void {
+            // from autocomplete we are using option, from search user will be redirected with criteria
+            const styledOption = this.queryString.get("option") || this.queryString.get("criteria");
+            const styledOptionLowerCase = styledOption ? styledOption.toLowerCase() : "";
+            let styledProduct: StyledProductDto;
+            if (styledOptionLowerCase && this.product.styledProducts) {
+                styledProduct = this.product.styledProducts.filter(o => o.erpNumber.toLowerCase() === styledOptionLowerCase)[0];
+            }
+
             angular.forEach(styleTraits.sort((a, b) => a.sortOrder - b.sortOrder), (styleTrait: StyleTraitDto) => {
-                const result = this.coreService.getObjectByPropertyValue(styleTrait.styleValues, { isDefault: true });
+                let result: StyleValueDto = null;
+                if (styledProduct) {
+                    for (let styleValue of styledProduct.styleValues) {
+                        result = this.coreService.getObjectByPropertyValue(styleTrait.styleValues,
+                            { styleTraitId: styleValue.styleTraitId, styleTraitValueId: styleValue.styleTraitValueId });
+                        if (result) {
+                            break;
+                        }
+                    }
+                }
+
+                if (!result) {
+                    result = this.coreService.getObjectByPropertyValue(styleTrait.styleValues, { isDefault: true });
+                }
+
                 this.styleSelection.push(result);
             });
+
             this.styleChange();
         }
 
@@ -422,6 +447,7 @@ module insite.catalog {
             this.product.availability = styledProduct.availability;
             this.product.productUnitOfMeasures = styledProduct.productUnitOfMeasures;
             this.product.productImages = styledProduct.productImages;
+            this.product.productDetailUrl = styledProduct.productDetailUrl;
 
             if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length > 1) {
                 this.productService.getProductPrice(this.product).then(

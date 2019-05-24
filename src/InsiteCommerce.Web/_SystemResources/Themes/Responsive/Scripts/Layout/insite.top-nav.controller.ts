@@ -37,6 +37,10 @@
             this.$scope.$on("sessionUpdated", (event, session) => {
                 this.onSessionUpdated(session);
             });
+
+            this.$scope.$on("updateHeaderSession", () => {
+                this.getSession();
+            });
         }
 
         protected onSessionUpdated(session: SessionModel): void {
