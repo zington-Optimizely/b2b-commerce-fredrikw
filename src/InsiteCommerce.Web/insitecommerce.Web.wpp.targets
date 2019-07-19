@@ -1,7 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>   
-    <ExcludeFromPackageFolders Include="UserFiles;App_Data;config">
-      <FromTarget>These should not be deployed with project</FromTarget>
-    </ExcludeFromPackageFolders>
-  </ItemGroup>
-</Project>
