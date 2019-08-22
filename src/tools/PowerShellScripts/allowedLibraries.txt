@@ -5,6 +5,7 @@ Elasticsearch.Net
 EntityFramework
 EntityFramework.SqlServer
 FluentValidation
+GemBox.Spreadsheet
 Insite.Account
 Insite.Brands
 Insite.Budget
