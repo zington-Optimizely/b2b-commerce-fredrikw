@@ -1105,6 +1105,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 	interface CartLineCollectionModel extends Insite.Core.WebApi.BaseModel {
 		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
+	    notAllAddedToCart: boolean;
 	}
 	interface CartSettingsModel extends Insite.Core.WebApi.BaseModel {
 		canRequestDeliveryDate: boolean;

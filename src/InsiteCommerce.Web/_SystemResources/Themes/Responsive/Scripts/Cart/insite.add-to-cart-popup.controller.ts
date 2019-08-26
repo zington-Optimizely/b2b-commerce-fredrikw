@@ -4,6 +4,7 @@
     export class AddToCartPopupController {
         isAddAll: boolean;
         isQtyAdjusted: boolean;
+        notAllAdded: boolean;
         productSettings: ProductSettingsModel;
         cartSettings: CartSettingsModel;
 
@@ -53,6 +54,11 @@
                 this.isQtyAdjusted = data.isQtyAdjusted;
             }
 
+            this.notAllAdded = false;
+            if (data && data.notAllAdded) {
+                this.notAllAdded = data.notAllAdded;
+            }
+
             let showPopup: boolean;
 
             if (data && typeof data.showAddToCartPopup !== "undefined" && data.showAddToCartPopup !== null) {
@@ -84,6 +90,7 @@
         isAddAll?: boolean;
         isQtyAdjusted: boolean;
         showAddToCartPopup?: boolean;
+        notAllAdded?: boolean;
     }
 
     export interface IAddToCartPopupService {

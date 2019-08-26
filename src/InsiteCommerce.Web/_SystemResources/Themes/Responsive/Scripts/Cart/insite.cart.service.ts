@@ -306,7 +306,7 @@ module insite.cart {
                 return line.isQtyAdjusted;
             });
 
-            this.addToCartPopupService.display({ isAddAll: true, isQtyAdjusted: isQtyAdjusted, showAddToCartPopup: showAddToCartPopup });
+            this.addToCartPopupService.display({ isAddAll: true, notAllAdded: cartLineCollection.notAllAddedToCart, isQtyAdjusted: isQtyAdjusted, showAddToCartPopup: showAddToCartPopup });
 
             this.getCart();
             this.$rootScope.$broadcast("cartChanged");
