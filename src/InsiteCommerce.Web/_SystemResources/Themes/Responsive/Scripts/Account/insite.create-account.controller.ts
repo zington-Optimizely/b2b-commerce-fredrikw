@@ -13,6 +13,7 @@
 
         static $inject = [
             "accountService",
+            "cartService",
             "sessionService",
             "coreService",
             "settingsService",
@@ -24,6 +25,7 @@
 
         constructor(
             protected accountService: IAccountService,
+            protected cartService: cart.ICartService,
             protected sessionService: ISessionService,
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService,
@@ -89,9 +91,24 @@
             );
         }
 
+        protected unassignCartFromGuest(): ng.IPromise<CartModel> {
+            const cart = this.cartService.getLoadedCurrentCart();
+
+            if (cart && cart.lineCount > 0) {
+                cart.unassignCart = true;
+                return this.cartService.updateCart(cart);
+            }
+
+            const defer = this.$q.defer<CartModel>();
+            defer.resolve();
+            return defer.promise;
+        }
+
         protected signOutIfGuestSignedIn(): ng.IPromise<string> {
             if (this.session.isAuthenticated && this.session.isGuest) {
-                return this.sessionService.signOut();
+                return this.unassignCartFromGuest().then(
+                    (result) => { return this.sessionService.signOut(); }
+                );
             }
 
             const defer = this.$q.defer<string>();

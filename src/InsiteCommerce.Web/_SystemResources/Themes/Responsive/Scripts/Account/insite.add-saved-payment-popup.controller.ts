@@ -259,7 +259,7 @@
                 this.tokenExIframe.remove();
             }
 
-            this.tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", this.getTokenExIframeConfig(tokenExDto));
+            this.tokenExIframe = new TokenEx.Iframe("addTokenExCardNumber", this.getTokenExIframeConfig(tokenExDto));
 
             this.tokenExIframe.load();
 

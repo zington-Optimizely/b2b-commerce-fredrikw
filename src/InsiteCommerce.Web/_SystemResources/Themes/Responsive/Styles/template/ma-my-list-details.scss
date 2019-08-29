@@ -554,6 +554,20 @@ body [role="main"] .ma-my-list-details .paginator-34 {
             word-wrap: break-word;
             overflow: hidden;
         }
+
+        .list-selector {
+            .k-input {
+                padding-right: 2em;
+            }
+
+            + .icon-arw-down-5 {
+                position: absolute;
+                top: 0.3em;
+                right: .8em;
+                font-size: 22px;
+                cursor: pointer;
+            }
+        }
     }
 
     .copy-field-label {

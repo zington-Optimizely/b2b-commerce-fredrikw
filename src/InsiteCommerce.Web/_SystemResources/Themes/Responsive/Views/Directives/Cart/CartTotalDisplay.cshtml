@@ -16,7 +16,7 @@
     </div>
     <div data-test-selector="tst_cartLine_shippingAndHandling" class="row" ng-if="!showSeparateShippingAndHandling && (cart.showTaxAndShipping || !isCartPage) && cart.shippingAndHandlingDisplay.length > 0">
         <div class="small-6 columns sub-label">[% translate 'Shipping & Handling' %]</div>
-        <div class="small-6 columns sub-amount" ng-bind="cart.shippingAndHandlingDisplay"></div>
+        <div data-test-selector="tst_cartLine_shippingAndHandlingPrice" class="small-6 columns sub-amount" ng-bind="cart.shippingAndHandlingDisplay"></div>
     </div>
     <div class="row promo-applied" ng-repeat="promotion in promotions | filter: discountShippingFilter">
         <div class="small-6 columns sub-label">[% translate 'Promotion' %]: <em><span ng-bind="promotion.name"></span></em></div>

@@ -76,7 +76,7 @@
             <% Response.StatusCode = 500; %>
             <%= ConfigurationManager.AppSettings["SiteIdentifier"] ?? "InsiteCommerce" %> SimplePing is bad
            <%} %>
-        
+
     </div>
 </form>
 </body>

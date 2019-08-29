@@ -39,7 +39,8 @@
                 productId: "=",
                 unitOfMeasure: "=",
                 configuration: "=",
-                page: "@"
+                page: "@",
+                trackInventory: "="
             },
             templateUrl: "/PartialViews/Catalog-AvailabilityMessage"
         }))

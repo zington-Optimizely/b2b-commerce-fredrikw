@@ -16,9 +16,10 @@
                             <span>[% translate 'Select List' %]:</span>
                         </div>
                         <div class="large-8 columns">
-                            <select id="tst_copyToListPopup_selectedList" ng-model="vm.selectedList" ng-change="vm.changeList()" ng-options="list.name for list in vm.listCollection track by list.id">
-                                <option value="">[% translate 'Create New List' %]</option>
-                            </select>
+                            <input type="text" class="list-selector" id="selectList" name="selectedList"
+                                   ng-init="vm.listOptionsPlaceholder = '[% translate 'Search or select list' EscapeSingleQuotes %]'" ng-click="vm.totalListsCount && vm.openAutocomplete($event, '#selectList')"
+                                   ng-model="vm.listSearch" kendo-auto-complete k-options="vm.listOptions" ng-disabled="vm.newListName" />
+                            <span class="icon-arw-down-5" ng-click="!vm.newListName && vm.totalListsCount && vm.openAutocomplete($event, '#selectList')"></span>
                         </div>
                         <div class="large-4 columns copy-field-label">
                             <span>[% translate 'New List Name' %]:</span>
@@ -44,4 +45,9 @@
             <a class="close-reveal-modal">&#215;</a>
         </div>
     </div>
+    <script id="totalListCountTemplate" type="text/template">
+        <div class="k-header" ng-show="vm.totalListsCount > vm.defaultPageSize">
+            [% translate 'Showing 1-{0} of {1}' %]
+        </div>
+    </script>
 </div>

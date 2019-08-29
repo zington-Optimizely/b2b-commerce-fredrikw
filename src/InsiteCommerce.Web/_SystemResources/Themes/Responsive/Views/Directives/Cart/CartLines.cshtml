@@ -22,7 +22,7 @@
 
             <isc-product-name product="cartLine" no-link="true"></isc-product-name>
             <div ng-show="includeInventory && !cartLine.quoteRequired" class="availability">
-                <isc-availability-message availability="cartLine.availability" failed-to-get-real-time-inventory="failedToGetRealTimeInventory" product-settings="vm.productSettings" product-id="cartLine.productId" unit-of-measure="cartLine.unitOfMeasure"></isc-availability-message>
+                <isc-availability-message availability="cartLine.availability" failed-to-get-real-time-inventory="failedToGetRealTimeInventory" product-settings="vm.productSettings" product-id="cartLine.productId" unit-of-measure="cartLine.unitOfMeasure" track-inventory="cartLine.trackInventory"></isc-availability-message>
             </div>
 
             <div class="row promo-applied" ng-repeat="promotion in promotions | filter: {orderLineId : cartLine.id}">
@@ -67,7 +67,7 @@
                     <span ng-show="inventoryCheck && cartLine.hasInsufficientInventory && !vm.isOutOfStockLine(inventoryCheck, cartLine)" class="message-avail--avail">
                         {{'[% siteMessage 'Cart_ToManyQtyRequested' EscapeSingleQuotes %]'.replace('{0}', cartLine.qtyOnHand).replace('{1}', vm.getSumQtyPerUom(cartLine.productId, cart.cartLines))}}
                     </span>
-                    <span ng-show="cartLine.isRestricted" class="message-avail--avail">
+                    <span data-test-selector="tst_cartLine_isRestricted" ng-show="cartLine.isRestricted" class="message-avail--avail">
                         [% translate 'Restricted product' %]
                     </span>
                     <span ng-show="!cartLine.isActive" class="message-avail--avail">

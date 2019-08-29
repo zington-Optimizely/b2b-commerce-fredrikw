@@ -776,6 +776,7 @@ declare module Insite.Catalog.Services.Dtos {
 		largeImagePath: string;
 		qtyOnHand: number;
 		unitOfMeasure: string;
+		trackInventory: boolean;
 		productDetailUrl: string;
 		numberInCart: number;
 		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
@@ -1048,6 +1049,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		requestedPickupDateDisplay: Date;
 		taxFailureReason: string;
 		failedToGetRealTimeInventory: boolean;
+		unassignCart: boolean;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;
@@ -1086,6 +1088,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		isQtyAdjusted: boolean;
 		hasInsufficientInventory: boolean;
 		canBackOrder: boolean;
+		trackInventory: boolean;
 		salePriceLabel: string;
 		isSubscription: boolean;
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;

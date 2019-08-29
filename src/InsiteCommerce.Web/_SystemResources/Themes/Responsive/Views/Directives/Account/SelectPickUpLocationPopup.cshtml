@@ -8,8 +8,8 @@
                     <div class="medium-5 columns">
                         <h4 class="selected-location-title">[% translate 'Selected Location' %]</h4>
                         <div class="warehouse-item">
-                            <div class="warehouse-name" ng-cloak ng-bind="vm.selectedWarehouse.description || vm.selectedWarehouse.name"></div>
-                            <div class="warehouse-address" ng-cloak>
+                            <div data-test-selector="tst_pickupLocationPopup_selectedWarehouseName" class="warehouse-name" ng-cloak ng-bind="vm.selectedWarehouse.description || vm.selectedWarehouse.name"></div>
+                            <div data-test-selector="tst_pickupLocationPopup_selectedWarehouseAddress" class="warehouse-address" ng-cloak>
                                 {{vm.selectedWarehouse.address1}}<br />
                                 {{vm.selectedWarehouse.address2}}<br ng-if="vm.selectedWarehouse.address2" />
                                 {{vm.selectedWarehouse.city}}<span ng-if="vm.selectedWarehouse.state">,</span>
@@ -20,7 +20,7 @@
                                 <div class="warehouse-hours" ng-if="vm.selectedWarehouse.hours">
                                     <a href="#" ng-click="vm.onOpenHoursClick($event)" data-dropdown="warehouse-hours-{{vm.selectedWarehouse.id}}" class="t-dropdown">[% translate 'Hours' %]</a>
                                 </div>
-                                <a ng-href="http://maps.google.com/maps?daddr={{warehouse.address1}} {{vm.selectedWarehouse.address2}}, {{vm.selectedWarehouse.city}}, {{vm.selectedWarehouse.state}} {{vm.selectedWarehouse.postalCode}}" class="warehouse-directions" target="_blank">[% translate 'Directions' %]</a>
+                                <a ng-href="http://maps.google.com/maps?daddr={{vm.selectedWarehouse.address1}} {{vm.selectedWarehouse.address2}}, {{vm.selectedWarehouse.city}}, {{vm.selectedWarehouse.state}} {{vm.selectedWarehouse.postalCode}}" class="warehouse-directions" target="_blank">[% translate 'Directions' %]</a>
                                 <span ng-if="vm.showSelectedWarehouseMarker && vm.distanceUnitOfMeasure === 0" class="warehouse-distance miles" ng-cloak>{{ vm.selectedWarehouse.distance.toFixed(2) }} [% translate 'mi' %]</span>
                                 <span ng-if="vm.showSelectedWarehouseMarker && vm.distanceUnitOfMeasure === 1" class="warehouse-distance kilometers" ng-cloak>{{ (vm.selectedWarehouse.distance * 1.60934).toFixed(2) }} [% translate 'km' %]</span>
                             </div>
@@ -33,20 +33,20 @@
                     </div>
                     <div class="medium-7 large-7 columns search-container">
                         <h4>[% translate 'Search Locations' %]</h4>
-                        <input type="text" ng-model="vm.searchLocation" isc-enter="vm.getWarehouses()" />
-                        <button type="button" class="btn primary fastClick location-search" ng-click="vm.getWarehouses()">
+                        <input data-test-selector="tst_pickupLocationPopup_searchLocation" type="text" ng-model="vm.searchLocation" isc-enter="vm.getWarehouses()" />
+                        <button data-test-selector="tst_pickupLocationPopup_searchBtn" type="button" class="btn primary fastClick location-search" ng-click="vm.getWarehouses()">
                             <i class="foundicon-search"></i><span>[% translate 'Search' %]</span>
                         </button>
                     </div>
                 </div>
                 <div class="row warehouses-map-container">
                     <div ng-if="!vm.locationKnown">
-                        <span class="field-validation-error">
+                        <span data-test-selector="tst_pickupLocationPopup_errorMessage" class="field-validation-error">
                             [% siteMessage 'PickUpLocation_GeocodeErrorMessage' %]
                         </span>
                     </div>
                     <div ng-if="vm.locationKnown && vm.warehouses.length == 0">
-                        <span class="field-validation-error">
+                        <span data-test-selector="tst_pickupLocationPopup_errorMessage" class="field-validation-error">
                             {{vm.showSelectedWarehouseMarker ? '[% siteMessage 'PickUpLocation_SelectedLocationIsOnlyResult' EscapeSingleQuotes %]' : '[% siteMessage 'PickUpLocation_NoResultsMessage' EscapeSingleQuotes %]'}}
                         </span>
                     </div>
@@ -58,23 +58,23 @@
                                 </div>
                                 <div class="distance-unit">
                                     <label>
-                                        <input type="radio" name="milesKmGroup" class="Imperial" ng-model="vm.distanceUnitOfMeasure" ng-value="0"/>[% translate 'mi' %]
+                                        <input data-test-selector="tst_pickupLocationPopup_miles" type="radio" name="milesKmGroup" class="Imperial" ng-model="vm.distanceUnitOfMeasure" ng-value="0"/>[% translate 'mi' %]
                                     </label>
                                     <label>
-                                        <input type="radio" name="milesKmGroup" class="Metric" ng-model="vm.distanceUnitOfMeasure" ng-value="1"/>[% translate 'km' %]
+                                        <input data-test-selector="tst_pickupLocationPopup_km" type="radio" name="milesKmGroup" class="Metric" ng-model="vm.distanceUnitOfMeasure" ng-value="1"/>[% translate 'km' %]
                                     </label>
                                 </div>
                             </div>
-                            <ul class="sl-list">
+                            <ul data-test-selector="tst_pickupLocationPopup_listOfWarehouseResults" class="sl-list">
                                 <li ng-repeat="warehouse in vm.warehouses">
-                                    <div class="result-num">{{::vm.getWarehouseNumber($index)}}</div>
+                                    <div data-test-selector="tst_pickupLocationPopup_resultIndex{{$index + 1}}_{{warehouse.name}}" class="result-num">{{::vm.getWarehouseNumber($index)}}</div>
                                     <div class="warehouse-item">
                                         <div class="warehouse-select-block">
                                             <button ng-if="vm.selectedWarehouse && vm.selectedWarehouse.id === warehouse.id" class="btn tertiary" type="button">[% translate 'Selected' %]</button>
-                                            <button ng-if="!vm.selectedWarehouse || vm.selectedWarehouse.id !== warehouse.id" class="btn primary" type="button" ng-click="vm.selectWarehouse(warehouse)">[% translate 'Select' %]</button>
+                                            <button data-test-selector="tst_pickupLocationPopup_selectBtn_{{warehouse.name}}" ng-if="!vm.selectedWarehouse || vm.selectedWarehouse.id !== warehouse.id" class="btn primary" type="button" ng-click="vm.selectWarehouse(warehouse)">[% translate 'Select' %]</button>
                                         </div>
-                                        <div class="warehouse-name" ng-cloak ng-bind="warehouse.description || warehouse.name"></div>
-                                        <div class="warehouse-address" ng-cloak>
+                                        <div data-test-selector="tst_pickupLocationPopup_warehouseName_{{warehouse.name}}" class="warehouse-name" ng-cloak ng-bind="warehouse.description || warehouse.name"></div>
+                                        <div data-test-selector="tst_pickupLocationPopup_warehouseAddress_{{warehouse.name}}" class="warehouse-address" ng-cloak>
                                             {{warehouse.address1}}<br />
                                             {{warehouse.address2}}<br ng-if="warehouse.address2" />
                                             {{warehouse.city}}<span ng-if="warehouse.state">,</span>
@@ -86,15 +86,15 @@
                                                 <a href="#" ng-click="vm.onOpenHoursClick($event)" data-dropdown="warehouse-hours-{{warehouse.id}}" class="t-dropdown">[% translate 'Hours' %]</a>
                                             </div>
                                             <a ng-href="http://maps.google.com/maps?daddr={{warehouse.address1}} {{warehouse.address2}}, {{warehouse.city}}, {{warehouse.state}} {{warehouse.postalCode}}" class="warehouse-directions" target="_blank">[% translate 'Directions' %]</a>
-                                            <span ng-if="vm.distanceUnitOfMeasure === 0" class="warehouse-distance miles" ng-cloak>{{ warehouse.distance.toFixed(2) }} [% translate 'mi' %]</span>
-                                            <span ng-if="vm.distanceUnitOfMeasure === 1" class="warehouse-distance kilometers" ng-cloak>{{ (warehouse.distance * 1.60934).toFixed(2) }} [% translate 'km' %]</span>
+                                            <span data-test-selector="tst_pickupLocationPopup_warehouseDistance_{{warehouse.name}}" ng-if="vm.distanceUnitOfMeasure === 0" class="warehouse-distance miles" ng-cloak>{{ warehouse.distance.toFixed(2) }} [% translate 'mi' %]</span>
+                                            <span data-test-selector="tst_pickupLocationPopup_warehouseDistance_{{warehouse.name}}" ng-if="vm.distanceUnitOfMeasure === 1" class="warehouse-distance kilometers" ng-cloak>{{ (warehouse.distance * 1.60934).toFixed(2) }} [% translate 'km' %]</span>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
                             <div ng-repeat="warehouse in vm.warehouses" class="warehouse-hours" ng-if="warehouse.hours">
                                 <div id="warehouse-hours-{{warehouse.id}}" class="f-dropdown content" data-dropdown-content>
-                                    <div class="tt-wrap" ng-bind-html="warehouse.hours|trusted"></div>
+                                    <div data-test-selector="tst_pickupLocationPopup_warehouseHours_{{warehouse.name}}" class="tt-wrap" ng-bind-html="warehouse.hours|trusted"></div>
                                 </div>
                             </div>
                             <isc-pager pagination="vm.pagination" bottom="true" update-data="vm.searchWarehouses()"></isc-pager>
@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </div>
-            <a class="close-reveal-modal">&#215;</a>
+            <a data-test-selector="tst_pickupLocationPopup_closeIcon" class="close-reveal-modal">&#215;</a>
         </div>
     </div>
 

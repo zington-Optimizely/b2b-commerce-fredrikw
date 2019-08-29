@@ -36,7 +36,7 @@
         orderConfirmationUrl: string;
         settings: AccountSettingsModel;
         signInError = "";
-        disableSignIn = false;
+        disableSignIn = true;
         userName: string;
         userNameToReset: string;
         cart: CartModel;
@@ -138,6 +138,7 @@
 
         protected getSessionCompleted(session: SessionModel): void {
             this.session = session;
+            this.disableSignIn = false;
             if (session.isAuthenticated && !session.isGuest) {
                 this.$window.location.href = this.dashboardUrl;
             } else if (this.invitedToList) {
@@ -179,6 +180,10 @@
         }
 
         signIn(errorMessage: string): void {
+            if (this.disableSignIn) {
+                return;
+            }
+
             this.signInError = "";
 
             if (this.signInForm.$invalid) {
@@ -194,9 +199,22 @@
             );
         }
 
+        protected unassignCartFromGuest(): ng.IPromise<CartModel> {
+            if (this.cart && this.cart.lineCount > 0) {
+                this.cart.unassignCart = true;
+                return this.cartService.updateCart(this.cart);
+            }
+
+            const defer = this.$q.defer<CartModel>();
+            defer.resolve();
+            return defer.promise;
+        }
+
         protected signOutIfGuestSignedIn(): ng.IPromise<string> {
             if (this.session.isAuthenticated && this.session.isGuest) {
-                return this.sessionService.signOut();
+                return this.unassignCartFromGuest().then(
+                    (result) => { return this.sessionService.signOut(); }
+                );
             }
 
             const defer = this.$q.defer<string>();

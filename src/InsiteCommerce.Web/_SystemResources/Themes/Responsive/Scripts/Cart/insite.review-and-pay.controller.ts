@@ -324,14 +324,18 @@ module insite.cart {
         }
 
         protected setUpCarrier(isInit: boolean): void {
-            this.cart.carriers.forEach(carrier => {
-                if (carrier.id === this.cart.carrier.id) {
-                    this.cart.carrier = carrier;
-                    if (isInit) {
-                        this.updateCarrier();
+            if (this.cart.carriers.length > 0) {
+                this.cart.carriers.forEach(carrier => {
+                    if (carrier.id === this.cart.carrier.id) {
+                        this.cart.carrier = carrier;
+                        if (isInit) {
+                            this.updateCarrier();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                this.pageIsReady = true;
+            }
         }
 
         protected setUpShipVia(isInit: boolean): void {

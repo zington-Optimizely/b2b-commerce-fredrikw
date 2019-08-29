@@ -447,6 +447,7 @@ module insite.catalog {
             this.product.availability = styledProduct.availability;
             this.product.productUnitOfMeasures = styledProduct.productUnitOfMeasures;
             this.product.productImages = styledProduct.productImages;
+            this.product.trackInventory = styledProduct.trackInventory;
             this.product.productDetailUrl = styledProduct.productDetailUrl;
 
             if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length > 1) {
@@ -455,7 +456,10 @@ module insite.catalog {
                     (error: any) => { this.selectStyleProductGetProductPriceFailed(error); }
                 );
 
-                if (this.product.productUnitOfMeasures.every(elem => elem.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
+                if (!this.product.selectedUnitOfMeasure) {
+                    this.product.selectedUnitOfMeasure = this.getDefaultValue(this.product.productUnitOfMeasures);
+                    this.changeUnitOfMeasure(this.product);
+                } else if (this.product.productUnitOfMeasures.every(elem => elem.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
                     this.product.unitOfMeasureDisplay = "";
                     this.showUnitError = true;
                 }
@@ -554,6 +558,14 @@ module insite.catalog {
             } else {
                 return unitOfMeasures[0].unitOfMeasure;
             }
+        }
+
+        protected isAddToCartVisible() {
+            return this.product && this.product.allowedAddToCart &&
+            (this.product.canAddToCart ||
+                this.configurationCompleted ||
+                    (this.styleSelectionCompleted && (this.settings.allowBackOrder || (<any>this.product.availability).messageType !== 2))
+                    && !this.product.canConfigure);
         }
     }
 

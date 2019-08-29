@@ -35,8 +35,8 @@
                                     <h3>[% translate 'Shipping Address' %]</h3>
                                 </div>
                                 <ul>
-                                    <li ng-bind="vm.order.stCompanyName"></li>
-                                    <li ng-bind="vm.order.stAddress1"></li>
+                                    <li data-test-selector="tst_orderDetailPage_shippingCompanyName" ng-bind="vm.order.stCompanyName"></li>
+                                    <li data-test-selector="tst_orderDetailPage_shippingAddress1" ng-bind="vm.order.stAddress1"></li>
                                     <li ng-if="vm.order.stAddress2" ng-bind="vm.order.stAddress2"></li>
                                     <li ng-bind="vm.stFormat"></li>
                                     <li ng-bind="vm.order.stCountry"></li>
@@ -159,7 +159,7 @@
                     </div>
                     <div class="row" ng-if="vm.order.orderHistoryTaxes.length == 0">
                         <div class="small-6 columns sub-label">[% translate 'Tax' %]</div>
-                        <div class="small-6 columns sub-amount" ng-bind="vm.order.totalTaxDisplay"></div>
+                        <div class="small-6 columns sub-amount" ng-bind="vm.order.totalTaxDisplay" data-test-selector="tst_orderDetailPage_totalTaxAmount"></div>
                     </div>
                     <div class="row" ng-repeat="orderTax in vm.order.orderHistoryTaxes | orderBy:'sortOrder'">
                         <div class="small-6 columns sub-label">
@@ -170,7 +170,7 @@
                     </div>
                     <div class="row order-total">
                         <div class="small-6 columns sub-label">[% translate 'Total' %]</div>
-                        <div class="small-6 columns sub-amount" ng-bind="vm.order.orderGrandTotalDisplay"></div>
+                        <div data-test-selector="tst_orderDetailPage_orderGrandTotalDisplay" class="small-6 columns sub-amount" ng-bind="vm.order.orderGrandTotalDisplay"></div>
                     </div>
                 </div>
             </div>

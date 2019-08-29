@@ -5,6 +5,7 @@
         isAddAll: boolean;
         isQtyAdjusted: boolean;
         notAllAdded: boolean;
+        showAddToCartPopup: boolean;
         productSettings: ProductSettingsModel;
         cartSettings: CartSettingsModel;
 
@@ -61,8 +62,9 @@
 
             let showPopup: boolean;
 
+            this.showAddToCartPopup = false;
             if (data && typeof data.showAddToCartPopup !== "undefined" && data.showAddToCartPopup !== null) {
-                showPopup = data.showAddToCartPopup;
+                this.showAddToCartPopup = showPopup = data.showAddToCartPopup;
             } else {
                 showPopup = this.productSettings.showAddToCartConfirmationDialog || this.isQtyAdjusted;
             }

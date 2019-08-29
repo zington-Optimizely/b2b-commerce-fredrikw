@@ -23,8 +23,8 @@
                 <div ng-if="vm.product && !vm.settings.canSeePrices">
                     <div>[% siteMessage 'Pricing_SignInForPrice' %]</div>
                 </div>
-                <div ng-if="!vm.product.isConfigured || vm.product.isFixedConfiguration || vm.configurationCompleted" class="availability">
-                    <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="vm.product.id" configuration="vm.configuration" unit-of-measure="vm.product.unitOfMeasure" page="ProductDetail"></isc-availability-message>
+                <div ng-if="(!vm.product.isConfigured || vm.product.isFixedConfiguration || vm.configurationCompleted) && !vm.product.isStyleProductParent" class="availability">
+                    <isc-availability-message availability="vm.product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="vm.product.id" configuration="vm.configuration" unit-of-measure="vm.product.unitOfMeasure" page="ProductDetail" track-inventory="vm.product.trackInventory"></isc-availability-message>
                 </div>
             </div>
             <div class="small-12 detail-image">
@@ -87,7 +87,7 @@
                 <span class="field-validation-error" ng-if="vm.showUnitError"><span ng-bind="vm.parentProduct.unitOfMeasureDisplay"></span>[% siteMessage 'StyledProduct_WrongUnitOfMeasure' %]</span>
                 <div class="small-12 pd-buttons">
                     <div class="small-12 primary-button">
-                        <button ng-show="vm.product.allowedAddToCart && (vm.product.canAddToCart || vm.configurationCompleted || vm.styleSelectionCompleted && !vm.product.canConfigure)"
+                        <button ng-show="vm.isAddToCartVisible()"
                                 id="tst_productDetail_addToCart" ng-click="vm.addToCart(vm.product)"
                                 role="button" class="btn primary btn-add-to-cart" ng-disabled="!vm.product.qtyOrdered || vm.product.qtyOrdered == 0 || vm.showUnitError || vm.addingToCart">
                             [% translate 'Add To Cart' %]
@@ -108,10 +108,10 @@
             </div>
             <div class="small-12 secondary-button">
                 <a id="tst_productDetail_addToWishList" ng-if="vm.product.canAddToWishlist || vm.styleSelectionCompleted" ng-click="vm.openWishListPopup(vm.product)" role="button"
-                   class="btn secondary btn-add-to-list" href="javascript:;">[% translate 'Add to List' %]</a>
+                   class="btn secondary btn-add-to-list" href="javascript:void(0);">[% translate 'Add to List' %]</a>
                 <div ng-show="vm.product" class="small-12 detail-share">
-                    <a id="tst_productDetail_share" href="javascript:;" class="pd-zoom" data-reveal-id="TellAFriendDialogContainer">[% translate 'Share' %]</a>
-                    <isc-tell-a-friend-popup product="vm.product" data-reveal></isc-tell-a-friend-popup>
+                    <a id="tst_productDetail_share" href="javascript:void(0);" class="pd-zoom" data-reveal-id="TellAFriendDialogContainer">[% translate 'Share' %]</a>
+                    <isc-tell-a-friend-popup product="vm.product"></isc-tell-a-friend-popup>
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
         <div id="TellAFriendDialogContainer" class="product-detail popup-share reveal-modal" data-reveal data-reveal-init>
             <div class="modal-wrap">
                 <h2>[% translate 'Share with a Friend' %]</h2>
-                <form novalidate id="tellAFriendForm" class="custom">
+                <form novalidate id="tellAFriendForm" class="custom" ng-hide="vm.isSuccess">
                     <div class="row share-name">
                         <isc-tell-a-friend-field field-label="[% translate 'Friend's Name' %]"
                                                  field-name="friendsName"
@@ -232,7 +232,7 @@
                         </div>
                     </div>
                     <div class="row btns">
-                        <button id="tst_productDetail_shareSubmit" ng-click="vm.shareWithFriend()" class="btn primary btn-create-wishlist" type="button">[% translate 'Share' %]</button>
+                        <button id="tst_productDetail_shareSubmit" ng-disabled="vm.inProgress" ng-click="vm.shareWithFriend()" class="btn primary btn-create-wishlist" type="button">[% translate 'Share' %]</button>
                     </div>
                 </form>
                 <div id="tst_productDetail_shareSubmitMessage" class="messaging" ng-show="vm.isSuccess || vm.isError">

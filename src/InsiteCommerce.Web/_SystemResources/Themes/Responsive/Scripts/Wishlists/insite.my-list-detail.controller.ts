@@ -510,7 +510,7 @@
         }
 
         protected getRealTimePrices(): void {
-            if (this.productSettings.realTimePricing && this.listModel.wishListLineCollection != null) {
+            if (this.productSettings.realTimePricing && this.listModel.wishListLineCollection != null && this.listModel.wishListLineCollection.length > 0) {
                 const products = this.wishListService.mapWishListLinesToProducts(this.listModel.wishListLineCollection);
 
                 this.productService.getProductRealTimePrices(products).then(
@@ -524,6 +524,7 @@
         }
 
         protected handleRealTimePricesCompleted(result: RealTimePricingModel): void {
+            this.failedToGetRealTimePrices = false;
             result.realTimePricingResults.forEach((productPrice: ProductPriceDto) => {
                 const wishlistLine = this.listModel.wishListLineCollection.find(
                     (p: WishListLineModel) => p.productId === productPrice.productId &&
@@ -547,7 +548,7 @@
         }
 
         protected getRealTimeInventory(): void {
-            if (this.productSettings.realTimeInventory && this.listModel.wishListLineCollection != null) {
+            if (this.productSettings.realTimeInventory && this.listModel.wishListLineCollection != null && this.listModel.wishListLineCollection.length > 0) {
                 const products =
                     this.listModel.wishListLineCollection.map(
                         wishlistLine => this.wishListService.mapWishlistLineToProduct(wishlistLine));
@@ -563,6 +564,7 @@
         }
 
         protected handleRealTimeInventoryCompleted(result: RealTimeInventoryModel): void {
+            this.failedToGetRealTimeInventory = false;
             this.wishListService.applyRealTimeInventoryResult(this.listModel, result);
         }
 

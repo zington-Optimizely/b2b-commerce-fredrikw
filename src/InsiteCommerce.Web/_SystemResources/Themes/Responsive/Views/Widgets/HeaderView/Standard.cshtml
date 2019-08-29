@@ -5,11 +5,11 @@
 [% endcapture %]
 
 [% capture DeliveryLabel %]
-    <span ng-if="vm.session.fulfillmentMethod === 'Ship' && ((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)"
+    <span data-test-selector="tst_header_fulfillmentMethodLink_shipToCompanyFullAddress" ng-if="vm.session.fulfillmentMethod === 'Ship' && ((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)"
           ng-bind="'[% translate 'Ship to' EscapeSingleQuotes %]' + ' ' + vm.session.shipTo.companyName + ', ' + vm.session.shipTo.fullAddress"></span>
     <span ng-if="(vm.session.fulfillmentMethod === 'Ship' || !vm.session.fulfillmentMethod)
                                   && ((!vm.session.isAuthenticated && !vm.session.rememberMe) || vm.session.isGuest)">[% translate 'Ship' %]</span>
-    <span ng-if="vm.session.fulfillmentMethod === 'PickUp'"
+    <span data-test-selector="tst_header_fulfillmentMethodLink_pickUpWarehouseAddress" ng-if="vm.session.fulfillmentMethod === 'PickUp'"
           ng-bind="'[% translate 'Pick up at' EscapeSingleQuotes %]' + ' ' + (vm.session.pickUpWarehouse ?
           (vm.session.pickUpWarehouse.description || vm.session.pickUpWarehouse.name) : '')"></span>
 [% endcapture %]

@@ -7,6 +7,7 @@
         maxTries: number;
         crossSellProducts: ProductDto[];
         imagesLoaded: number;
+        productsWithImages: number = 0;
         carousel: any;
         productSettings: ProductSettingsModel;
         failedToGetRealTimePrices = false;
@@ -198,6 +199,7 @@
         protected waitForDom(tries: number): void {
             if (isNaN(+tries)) {
                 tries = this.maxTries || 1000; // Max 20000ms
+                this.productsWithImages = this.crossSellProducts.filter((product: ProductDto) => !!product.mediumImagePath).length;
             }
 
             // If DOM isn't ready after max number of tries then stop
@@ -210,11 +212,14 @@
                         this.waitForDom(tries - 1);
                     }
                 }, 20, false);
+            } else {
+                this.initializeCarousel();
+                this.$scope.$apply();
             }
         }
 
         protected isCarouselDomReadyAndImagesLoaded(): boolean {
-            return $(".cs-carousel", this.carouselElement).length > 0 && this.imagesLoaded >= this.crossSellProducts.length;
+            return $(".cs-carousel", this.carouselElement).length > 0 && this.imagesLoaded >= this.productsWithImages;
         }
 
         protected isProductLoaded(): boolean {

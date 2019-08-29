@@ -271,11 +271,16 @@ module insite.catalog {
         }
 
         searchWithinEntered(): void {
-            if (this.searchWithinInput) {
+            if (!this.searchWithinInput) {
+                return;
+            }
+
+            if (this.searchWithinTerms.every(o => o !== this.searchWithinInput)) {
                 this.searchWithinTerms.push(this.searchWithinInput);
-                this.searchWithinInput = "";
                 this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated");
             }
+
+            this.searchWithinInput = "";
         }
 
         clearSearchWithinItem(index: number): void {

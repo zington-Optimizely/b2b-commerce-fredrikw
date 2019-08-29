@@ -2,8 +2,15 @@
     [string]$configPath
 )
 
+function Get-ScriptDirectory
+{
+  $Invocation = (Get-Variable MyInvocation -Scope 1).Value
+  Split-Path $Invocation.MyCommand.Path
+}
+
+
 if ($configPath -eq "") {
-    $configPath = "."
+    $configPath = Get-ScriptDirectory
 }
 
 function Restart-ScriptAsAdmin

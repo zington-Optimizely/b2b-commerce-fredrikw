@@ -51,7 +51,7 @@
                 <div ng-show="vm.cart.failedToGetRealTimeInventory" class="messaging--error">
                     [% siteMessage 'Cart_NoInventoryAvailableAtCheckout' %]
                 </div>
-                <div ng-show="vm.productsCannotBePurchased" class="messaging--error">
+                <div data-test-selector="tst_cartPage_productsCannotBePurchasedError" ng-show="vm.productsCannotBePurchased" class="messaging--error">
                     [% siteMessage 'Cart_ProductsCannotBePurchased' %]
                 </div>
                 <div class="hide-for-medium-up btns hide-for-print">

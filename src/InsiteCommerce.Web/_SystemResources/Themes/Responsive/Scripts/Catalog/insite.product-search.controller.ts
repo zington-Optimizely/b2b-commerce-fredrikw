@@ -67,6 +67,10 @@ module insite.catalog {
             angular.element(window.document).bind("scroll", () => {
                 angular.element("input.isc-searchAutoComplete").blur();
             });
+
+            this.$scope.$watch(() => this.criteria, () => {
+                this.products = [];
+            });
         }
 
         protected onLocationChangeStart(event: ng.IAngularEvent, uri: string): void {

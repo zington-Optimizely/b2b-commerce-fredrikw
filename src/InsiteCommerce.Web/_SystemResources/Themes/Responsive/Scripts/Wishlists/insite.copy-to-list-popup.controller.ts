@@ -11,13 +11,19 @@
         showListNameErrorMessage: boolean;
         mylistDetailModel: WishListModel;
         listName: string;
+        listOptions: any;
+        defaultPageSize = 20;
+        totalListsCount: number;
+        listSearch: string;
+        listOptionsPlaceholder: string;
 
-        static $inject = ["wishListService", "coreService", "copyToListPopupService"];
+        static $inject = ["wishListService", "coreService", "copyToListPopupService", "spinnerService"];
 
         constructor(
             protected wishListService: IWishListService,
             protected coreService: core.ICoreService,
-            protected copyToListPopupService: ICopyToListPopupService) {
+            protected copyToListPopupService: ICopyToListPopupService,
+            protected spinnerService: core.ISpinnerService) {
             this.init();
         }
 
@@ -33,21 +39,17 @@
             this.copyToListPopupService.registerDisplayFunction((list: WishListModel) => {
                 this.mylistDetailModel = list;
                 this.coreService.displayModal(angular.element("#popup-copy-list"));
-                const pagination = { pageSize: 999 } as PaginationModel;
+                this.selectedList = null;
+                this.listSearch = "";
                 this.clearMessages();
                 this.newListName = "";
-                this.wishListService.getWishLists(null, null, null, pagination).then(
-                    (listCollection: WishListCollectionModel) => { this.getListCollectionCompleted(listCollection); },
-                    (error: any) => { this.getListCollectionFailed(error); });
+                setTimeout(() => this.initListAutocompletes(), 0);
             });
-        }
-
-        protected getListCollectionCompleted(listCollection: WishListCollectionModel): void {
-            this.listCollection = listCollection.wishListCollection.filter(o => o.id !== this.mylistDetailModel.id);
         }
 
         protected getListCollectionFailed(error: any): void {
             this.errorMessage = error.message;
+            this.spinnerService.hide();
         }
 
         clearMessages(): void {
@@ -55,11 +57,6 @@
             this.copyToListCompleted = false;
             this.errorMessage = "";
             this.showListNameErrorMessage = false;
-        }
-
-        changeList(): void {
-            this.newListName = "";
-            this.clearMessages();
         }
 
         addList(listName: string): void {
@@ -130,6 +127,90 @@
         protected addListLineCollectionFailed(error: any): void {
             this.errorMessage = error.message;
             this.copyInProgress = false;
+        }
+
+        protected openAutocomplete($event: ng.IAngularEvent, selector: string): void {
+            const autoCompleteElement = angular.element(selector) as any;
+            const kendoAutoComplete = autoCompleteElement.data("kendoAutoComplete");
+            kendoAutoComplete.popup.open();
+        }
+
+        initListAutocompletes(): void {
+            const listValues = ["{{vm.defaultPageSize}}", "{{vm.totalListsCount}}"];
+            this.listOptions = this.listOptions || {
+                headerTemplate: this.renderMessage(listValues, "totalListCountTemplate"),
+                dataSource: new kendo.data.DataSource({
+                    serverFiltering: true,
+                    serverPaging: true,
+                    transport: {
+                        read: (options: kendo.data.DataSourceTransportReadOptions) => {
+                            this.onListAutocompleteRead(options);
+                        }
+                    }
+                }),
+                select: (event: kendo.ui.AutoCompleteSelectEvent) => {
+                    this.onListAutocompleteSelect(event);
+                },
+                minLength: 0,
+                dataTextField: "name",
+                dataValueField: "id",
+                placeholder: this.listOptionsPlaceholder
+            };
+
+            this.listOptions.dataSource.read();
+        }
+
+        protected onListAutocompleteRead(options: kendo.data.DataSourceTransportReadOptions): void {
+            this.spinnerService.show();
+            this.wishListService.getWishLists(null, null, null, this.getDefaultPagination(), this.listSearch, "availabletoadd").then(
+                (listCollection: WishListCollectionModel) => { this.getListCollectionCompleted(options, listCollection); },
+                (error: any) => { this.getListCollectionFailed(error); });
+        }
+
+        protected onListAutocompleteSelect(event: kendo.ui.AutoCompleteSelectEvent): void {
+            if (event.item == null) {
+                return;
+            }
+
+            const dataItem = event.sender.dataItem(event.item.index());
+            this.selectedList = dataItem;
+        }
+
+        protected getListCollectionCompleted(options: kendo.data.DataSourceTransportReadOptions, listCollectionModel: WishListCollectionModel): void {
+            const listCollection = listCollectionModel.wishListCollection.filter(o => o.id !== this.mylistDetailModel.id);
+
+            this.totalListsCount = listCollectionModel.pagination.totalItemCount;
+
+            if (!this.hasListWithLabel(listCollection, this.listSearch)) {
+                this.selectedList = null;
+            }
+
+            // need to wrap this in setTimeout for prevent double scroll
+            setTimeout(() => { options.success(listCollection); }, 0);
+            this.spinnerService.hide();
+        }
+
+        protected getDefaultPagination(): PaginationModel {
+            return { page: 1, pageSize: this.defaultPageSize } as PaginationModel;
+        }
+
+        hasListWithLabel(lists: any, label: string): boolean {
+            for (let i = 0; i < lists.length; i++) {
+                if (lists[i].label === label) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        renderMessage(values: string[], templateId: string): string {
+            let template = angular.element(`#${templateId}`).html();
+            for (let i = 0; i < values.length; i++) {
+                template = template.replace(`{${i}}`, values[i]);
+            }
+
+            return template;
         }
     }
 

@@ -142,6 +142,10 @@ module insite.catalog {
             });
 
             this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
+                if (this.products.pagination) {
+                    this.page = this.products.pagination.currentPage;
+                }
+                
                 this.onSessionUpdated(session);
             });
         }
@@ -424,7 +428,13 @@ module insite.catalog {
             // got product data
             if (productCollection.exactMatch) {
                 this.searchService.addSearchHistory(this.query, this.searchHistoryLimit, this.includeSuggestions.toLowerCase() === "true");
-                this.coreService.redirectToPath(`${productCollection.products[0].productDetailUrl}?criteria=${encodeURIComponent(params.query)}`);
+                const productDetailUrl = productCollection.products[0].productDetailUrl;
+                if (productDetailUrl.indexOf("?") !== -1) {
+                    this.coreService.redirectToPath(`${productDetailUrl}&criteria=${encodeURIComponent(params.query)}`);
+                } else {
+                    this.coreService.redirectToPath(`${productDetailUrl}?criteria=${encodeURIComponent(params.query)}`);
+                }
+                
                 return;
             }
 

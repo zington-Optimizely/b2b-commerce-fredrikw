@@ -20,7 +20,7 @@
                         </div>
                         <div>
                             <input type="text" disabled ng-show="!vm.tokenExIframeIsLoaded" />
-                            <div id="tokenExCardNumber" class="tokenex-iframe-block" ng-show="vm.tokenExIframeIsLoaded"></div>
+                            <div id="addTokenExCardNumber" class="tokenex-iframe-block" ng-show="vm.tokenExIframeIsLoaded"></div>
                             <label ng-if="vm.isInvalidCardNumber" class="tokenex-error error">[% translate 'Credit card number is invalid.' %]</label>
                             <label ng-if="vm.isCardAlreadyExists" class="tokenex-error error">[% translate 'This card already exists.' %]</label>
                         </div>

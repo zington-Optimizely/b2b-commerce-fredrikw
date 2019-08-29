@@ -20,6 +20,7 @@
         parentProduct: ProductDto;
         products: ProductDto[];
         imagesLoaded: number;
+        productsWithImages: number = 0;
         carousel: any;
         productSettings: ProductSettingsModel;
         failedToGetRealTimePrices = false;
@@ -371,17 +372,21 @@
             if (typeof (tries) === "undefined") {
                 this.imagesLoaded = 0;
                 tries = 1000; // Max 20s
+                this.productsWithImages = this.products.filter((product: ProductDto) => !!product.mediumImagePath).length;
             }
 
             if (tries > 0) {
                 this.$timeout(() => {
-                    if ($(".cs-carousel", this.productCarouselElement).length > 0 && this.imagesLoaded >= this.products.length) {
+                    if ($(".cs-carousel", this.productCarouselElement).length > 0 && this.imagesLoaded >= this.productsWithImages) {
                         this.initializeCarousel();
                         this.$scope.$apply();
                     } else {
                         this.waitForCarouselAndImages(tries - 1);
                     }
                 }, 20, false);
+            } else {
+                this.initializeCarousel();
+                this.$scope.$apply();
             }
         }
 
