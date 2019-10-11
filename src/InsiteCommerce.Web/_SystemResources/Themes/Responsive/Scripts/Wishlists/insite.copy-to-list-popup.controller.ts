@@ -10,6 +10,7 @@
         listCollection: WishListModel[];
         showListNameErrorMessage: boolean;
         mylistDetailModel: WishListModel;
+        changedSharedListLinesQtys: { [key: string]: number };
         listName: string;
         listOptions: any;
         defaultPageSize = 20;
@@ -36,8 +37,9 @@
         }
 
         initializePopup(): void {
-            this.copyToListPopupService.registerDisplayFunction((list: WishListModel) => {
-                this.mylistDetailModel = list;
+            this.copyToListPopupService.registerDisplayFunction((data: ICopyToListModel) => {
+                this.mylistDetailModel = data.list;
+                this.changedSharedListLinesQtys = data.changedSharedListLinesQtys;
                 this.coreService.displayModal(angular.element("#popup-copy-list"));
                 this.selectedList = null;
                 this.listSearch = "";
@@ -115,7 +117,7 @@
         }
 
         protected addLineCollectionToList(list: WishListModel): void {
-            this.wishListService.addWishListLines(list, this.wishListService.mapWishListLinesToProducts(this.mylistDetailModel.wishListLineCollection)).then(
+            this.wishListService.addAllWishListLines(list, this.mylistDetailModel.id, this.changedSharedListLinesQtys).then(
                 (listLineCollection: WishListLineCollectionModel) => { this.addListLineCollectionCompleted(listLineCollection); },
                 (error: any) => { this.addListLineCollectionFailed(error); });
         }
@@ -214,9 +216,14 @@
         }
     }
 
+    export interface ICopyToListModel {
+        list: WishListModel;
+        changedSharedListLinesQtys: { [key: string]: number };
+    }
+
     export interface ICopyToListPopupService {
-        display(data: any): void;
-        registerDisplayFunction(p: (data: any) => void);
+        display(data: ICopyToListModel): void;
+        registerDisplayFunction(p: (data: ICopyToListModel) => void);
     }
 
     export class CopyToListPopupService extends base.BasePopupService<any> implements ICopyToListPopupService {

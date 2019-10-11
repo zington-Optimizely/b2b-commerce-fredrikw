@@ -1,7 +1,7 @@
 ﻿[% if Model.Drop.DisabledMessage != "" %]
     [[Model.Drop.DisabledMessage]]
 [% else %]
-<div class="widget-webcrosssells [[Model.CssClass]]" ng-controller="ProductCarouselController as vm"
+<div class="widget-webcrosssells [[Model.CssClass]] [% if Model.Drop.IsMobileApp %] widget-mobileAppProductCarousel [% endif %]" ng-controller="ProductCarouselController as vm"
      product-carousel-type="[[Model.CarouselType]]"
      related-product-type="[[Model.RelatedProductsRelationship]]"
      is-product-detail-page="[[Model.Drop.IsProductDetailPage]]"
@@ -30,7 +30,7 @@
                                         </div>
                                     </div>
 
-                                    <isc-product-brand product="product"></isc-product-brand>
+                                    <isc-product-brand product="product" carousel-includes-brands="vm.carouselIncludesBrands"></isc-product-brand>
 
                                     <div class="item-name">
                                         <a ng-href="{{product.productDetailUrl}}">{{product.shortDescription}}</a>

@@ -84,7 +84,7 @@
                                                 </div>
                                             </div>
                                             <div class="rating"></div>
-                                            <div class="availability">
+                                            <div ng-if="(!product.isConfigured || product.isFixedConfiguration) && !product.isStyleProductParent" class="availability">
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure" track-inventory="product.trackInventory"></isc-availability-message>
                                             </div>
                                             <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0 || product.brand" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
@@ -172,7 +172,9 @@
                                             {{vm.attributeValueForSection(section, product)}}
                                         </td>
                                         <td class="attribute-column" ng-if="vm.settings.showInventoryAvailability">
-                                            <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure" track-inventory="product.trackInventory"></isc-availability-message>
+                                            <div ng-if="(!product.isConfigured || product.isFixedConfiguration) && !product.isStyleProductParent" class="availability">
+                                                <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure" track-inventory="product.trackInventory"></isc-availability-message>
+                                            </div>
                                         </td>
                                         <td class="price-column">
                                             <isc-product-price product="product" id-key="_tv"></isc-product-price>

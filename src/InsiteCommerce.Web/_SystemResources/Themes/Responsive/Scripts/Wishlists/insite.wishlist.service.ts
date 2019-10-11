@@ -23,6 +23,7 @@ module insite.wishlist {
         updateWishListSchedule(list: WishListModel): ng.IPromise<WishListModel>;
         updateLine(line: WishListLineModel): ng.IPromise<WishListLineModel>;
         addWishListLines(wishList: WishListModel, products: ProductDto[]): ng.IPromise<WishListLineCollectionModel>;
+        addAllWishListLines(wishList: WishListModel, copyFromWishListId: System.Guid, changedSharedListLinesQtys: { [key: string]: number }): ng.IPromise<WishListLineCollectionModel>;
         getWishListSettings(): ng.IPromise<WishListSettingsModel>;
         activateInvite(invite: string): ng.IPromise<WishListModel>;
         sendACopy(list: WishListModel): ng.IPromise<WishListModel>;
@@ -362,6 +363,27 @@ module insite.wishlist {
         }
 
         protected addWishListLinesFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        addAllWishListLines(wishList: WishListModel, copyFromWishListId: System.Guid, changedSharedListLinesQtys: { [key: string]: number }): ng.IPromise<WishListLineCollectionModel> {
+            const wishListLineCollection = {
+                changedListLineQuantities: changedSharedListLinesQtys,
+                wishListLines: [],
+                pagination: null
+            } as WishListLineCollectionModel;
+
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http.post(`${wishList.wishListLinesUri}/batch/${copyFromWishListId}`, wishListLineCollection),
+                this.addAllWishListLinesCompleted,
+                this.addAllWishListLinesFailed
+            );
+        }
+
+        protected addAllWishListLinesCompleted(response: ng.IHttpPromiseCallbackArg<WishListLineCollectionModel>): void {
+        }
+
+        protected addAllWishListLinesFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
         getWishListSettings(): ng.IPromise<WishListSettingsModel> {

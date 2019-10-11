@@ -13,6 +13,7 @@
         failedToGetRealTimePrices = false;
         addingToCart = true;
         carouselElement: ng.IAugmentedJQuery;
+        carouselIncludesBrands = false;
 
         static $inject = ["cartService", "productService", "$timeout", "addToWishlistPopupService", "settingsService", "$scope"];
 
@@ -75,6 +76,7 @@
             this.waitForDom(this.maxTries);
 
             if (this.crossSellProducts && this.crossSellProducts.length > 0) {
+                this.carouselIncludesBrands = this.crossSellProducts.some((product) => !!product.brand);
                 this.getRealTimePrices();
                 if (!this.productSettings.inventoryIncludedWithPricing) {
                     this.getRealTimeInventory();

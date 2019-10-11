@@ -7,7 +7,8 @@
             restrict: "E",
             scope: {
                 product: "=",
-                showLogo: "@"
+                showLogo: "@",
+                carouselIncludesBrands: "="
             },
             templateUrl: "/PartialViews/Brands-ProductBrand"
         }));

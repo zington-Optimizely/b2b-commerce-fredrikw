@@ -6,10 +6,8 @@
         .directive("iscTellAFriendPopup", () => ({
             restrict: "E",
             replace: true,
-            scope: {
-                product: "="
-            },
-            templateUrl: "productDetail_tellAFriend",
+            scope: {},
+            templateUrl: "/PartialViews/Catalog-TellAFriendPopup",
             controller: "TellAFriendController",
             controllerAs: "vm",
             bindToController: true
@@ -17,7 +15,7 @@
         .directive("iscTellAFriendField", () => ({
             restrict: "E",
             replace: true,
-            templateUrl: "productDetail_tellAFriendField",
+            templateUrl: "/PartialViews/Catalog-TellAFriendField",
             scope: {
                 fieldLabel: "@",
                 fieldName: "@",

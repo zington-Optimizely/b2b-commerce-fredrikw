@@ -21,7 +21,7 @@
             <!-- product carousel without attributes -->
             <isc-compare-products-carousel add-to-cart="vm.addToCart(product)" remove-compared-product="vm.removeComparedProduct(productId)"
                                            products-to-compare="vm.productsToCompare" open-wish-list-popup="vm.openWishListPopup(product)"
-                                           product-settings="vm.productSettings">
+                                           product-settings="vm.productSettings" carousel-includes-brands="vm.carouselIncludesBrands">
             </isc-compare-products-carousel>
 
             <!-- large view only - lower part of carousel shows attribute values -->
@@ -53,7 +53,7 @@
                                     <ul class="item-list">
                                         <li class="row item-block" ng-repeat="product in vm.getProductsThatContainAttributeTypeIdAndAttributeValue(attributeType.id, productAttributeValue)">
                                             <div class="item-details" data-productid="{{product.id}}">
-                                                <isc-product-brand product="product"></isc-product-brand>
+                                                <isc-product-brand product="product" carousel-includes-brands="{{vm.carouselIncludesBrands}}"></isc-product-brand>
                                                 <div class="item-name">
                                                     <a href="#">{{product.shortDescription}}</a>
                                                 </div>
@@ -97,7 +97,7 @@
                                 </a>
                             </div>
                         </div>
-                        <isc-product-brand product="product"></isc-product-brand>
+                        <isc-product-brand product="product" carousel-includes-brands="vm.carouselIncludesBrands"></isc-product-brand>
                         <div class="item-name">
                             <a ng-href="{{::product.productDetailUrl}}">{{::product.shortDescription}}</a>
                         </div>

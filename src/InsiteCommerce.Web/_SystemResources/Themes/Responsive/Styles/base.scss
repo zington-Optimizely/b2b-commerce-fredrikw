@@ -5625,6 +5625,44 @@ a.t-dropdown {
     }
 }
 
+/* Mobile App Product Carousel */
+
+.widget-mobileAppProductCarousel {
+    [role="cross-sells"] .item-wrap {
+        .thumb-wrap {
+            margin-bottom: 0.875em;
+
+            .item-thumb img {
+                max-width: 120px;
+                max-height: 120px;
+            }
+        }
+
+        .item-num {
+            margin-bottom: 0.4em;
+            font-size: 0.75rem;
+        }
+    }
+
+    ul {
+        font-size: 0.8rem !important;
+    }
+
+    .um-pack, .actions-block, .quantity-pricing {
+        display: none;
+    }
+
+    .cs-carousel {
+        a {
+            pointer-events: none;
+        }
+
+        .quote-tip a {
+            display: none;
+        }
+    }
+}
+
 @media all and (min-width: 481px) {
     .quote-required .f-dropdown.content {
         margin-left: -5px;
@@ -8743,7 +8781,7 @@ header label.toggle.burger:after {
     }
 }
 
-@media (max-width: 48em) {
+@media (max-width: 47.9em) {
     .header-zone.rt .widget-linklist.list-horizontal {
         display: none;
     }

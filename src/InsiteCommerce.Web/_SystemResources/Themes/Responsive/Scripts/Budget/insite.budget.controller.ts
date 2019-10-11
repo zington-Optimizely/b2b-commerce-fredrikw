@@ -313,6 +313,7 @@ module insite.budget {
         }
 
         protected getMaintenanceReviewsFailed(error: any): void {
+            this.maintenanceInfo = null;
         }
 
         updateBudgets(): void {
@@ -380,6 +381,7 @@ module insite.budget {
         }
 
         protected getReviewsFailed(error: any): void {
+            this.reviewInfo = null;
         }
 
         removePeriod(value: number): void {

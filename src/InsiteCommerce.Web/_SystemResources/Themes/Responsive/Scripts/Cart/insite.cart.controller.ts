@@ -5,6 +5,7 @@ module insite.cart {
 
     export class CartController {
         cart: CartModel;
+        cartIdParam: string;
         promotions: PromotionModel[];
         settings: CartSettingsModel;
         showInventoryAvailability = false;
@@ -111,6 +112,7 @@ module insite.cart {
                 this.productsCannotBePurchased = true;
             }
             this.displayCart(cart);
+            this.cartIdParam = this.cart.id === "current" ? "" : `?cartId=${this.cart.id}`;
         }
 
         protected getCartFailed(error: any): void {

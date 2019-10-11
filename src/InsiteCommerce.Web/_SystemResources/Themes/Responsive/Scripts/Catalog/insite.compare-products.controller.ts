@@ -9,6 +9,7 @@ module insite.catalog {
         relevantAttributeTypes: AttributeTypeDto[];
         productSettings: ProductSettingsModel;
         addingToCart = false;
+        carouselIncludesBrands = false;
 
         static $inject = [
             "cartService",
@@ -62,6 +63,7 @@ module insite.catalog {
             this.productsToCompare = productCollection.products;
 
             if (this.productsToCompare.length > 0) {
+                this.carouselIncludesBrands = this.productsToCompare.some((product) => !!product.brand);
                 const allAttributeTypes = lodash.chain(this.productsToCompare)
                     .pluck<AttributeTypeDto>("attributeTypes")
                     .flatten<AttributeTypeDto>(true)
@@ -85,6 +87,10 @@ module insite.catalog {
                     (error: any) => this.getProductRealTimePricesFailed(error));
             }
 
+            if (!this.productSettings.inventoryIncludedWithPricing) {
+                this.getRealTimeInventory();
+            }
+
             this.ready = true;
         }
 
@@ -100,6 +106,20 @@ module insite.catalog {
                     (product.pricing as any).failedToGetRealTimePrices = true;
                 }
             });
+        }
+
+        protected getRealTimeInventory(): void {
+            if (this.productSettings.realTimeInventory && this.productsToCompare.length) {
+                this.productService.getProductRealTimeInventory(this.productsToCompare).then(
+                    (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
+                    (error: any) => this.getProductRealTimeInventoryFailed(error));
+            }
+        }
+
+        protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel): void {
+        }
+
+        protected getProductRealTimeInventoryFailed(error: any): void {
         }
 
         // gets all attribute value display strings available for a given attribute type

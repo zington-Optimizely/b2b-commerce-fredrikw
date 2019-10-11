@@ -36,6 +36,7 @@
         isCatalogPage: boolean;
         isBrandDetailPage: boolean;
         brandIds: System.Guid[];
+        carouselIncludesBrands = false;
 
         static $inject = [
             "cartService",
@@ -216,6 +217,10 @@
                     .then(
                     (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
                     (error: any) => { this.getProductsFailed(error); });
+            } else if (this.productCarouselType === "FeaturedCategory") {
+                this.productService.getProducts({ categoryId: this.selectedCategoryIds[0], pageSize: 3 } as IProductCollectionParameters).then(
+                    (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },
+                    (error: any) => { this.getProductsFailed(error); });
             }
         }
 
@@ -271,6 +276,7 @@
             });
 
             if (this.products && this.products.length > 0) {
+                this.carouselIncludesBrands = this.products.some((product) => !!product.brand);
                 this.getRealTimePrices();
                 if (!this.productSettings.inventoryIncludedWithPricing) {
                     this.getRealTimeInventory();

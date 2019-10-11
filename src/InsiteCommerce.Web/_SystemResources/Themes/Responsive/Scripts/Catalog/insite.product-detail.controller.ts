@@ -43,7 +43,8 @@ module insite.catalog {
             "$stateParams",
             "sessionService",
             "spinnerService",
-            "queryString"
+            "queryString",
+            "tellAFriendPopupService"
             ];
 
         constructor(
@@ -57,7 +58,8 @@ module insite.catalog {
             protected $stateParams: IContentPageStateParams,
             protected sessionService: account.ISessionService,
             protected spinnerService: core.ISpinnerService,
-            protected queryString: common.IQueryStringService) {
+            protected queryString: common.IQueryStringService,
+            protected tellAFriendPopupService: catalog.ITellAFriendPopupService) {
             this.init();
         }
 
@@ -76,6 +78,12 @@ module insite.catalog {
 
             this.$scope.$on("sessionUpdated", (event: ng.IAngularEvent, session: SessionModel) => {
                 this.onSessionUpdated(session);
+            });
+
+            this.$scope.$on("$locationChangeSuccess", () => {
+                if (this.product && this.product.styleTraits) {
+                    this.initStyleSelection(this.product.styleTraits);
+                }
             });
         }
 
@@ -275,6 +283,7 @@ module insite.catalog {
                 styledProduct = this.product.styledProducts.filter(o => o.erpNumber.toLowerCase() === styledOptionLowerCase)[0];
             }
 
+            this.styleSelection = [];
             angular.forEach(styleTraits.sort((a, b) => a.sortOrder - b.sortOrder), (styleTrait: StyleTraitDto) => {
                 let result: StyleValueDto = null;
                 if (styledProduct) {
@@ -293,6 +302,10 @@ module insite.catalog {
 
                 this.styleSelection.push(result);
             });
+
+            if (styledProduct) {
+                this.product.qtyOrdered = styledProduct.minimumOrderQty || 1;
+            }
 
             this.styleChange();
         }
@@ -325,6 +338,10 @@ module insite.catalog {
 
         openProductSubscriptionPopup(product: ProductDto): void {
             this.productSubscriptionPopupService.display({ product: product, cartLine: null, productSubscription: this.productSubscription });
+        }
+
+        openSharePopup(product: ProductDto): void {
+            this.tellAFriendPopupService.display({ product: product });
         }
 
         changeUnitOfMeasure(product: ProductDto): void {
@@ -448,7 +465,12 @@ module insite.catalog {
             this.product.productUnitOfMeasures = styledProduct.productUnitOfMeasures;
             this.product.productImages = styledProduct.productImages;
             this.product.trackInventory = styledProduct.trackInventory;
+            this.product.minimumOrderQty = styledProduct.minimumOrderQty;
             this.product.productDetailUrl = styledProduct.productDetailUrl;
+
+            if (this.product.qtyOrdered < this.product.minimumOrderQty) {
+                this.product.qtyOrdered = this.product.minimumOrderQty;
+            }
 
             if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length > 1) {
                 this.productService.getProductPrice(this.product).then(

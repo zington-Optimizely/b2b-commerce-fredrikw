@@ -58,6 +58,7 @@ module insite.catalog {
         enableWarehousePickup: boolean;
         session: SessionModel;
         getPageDataCalled: boolean;
+        defaultIncludeSuggestions: string = "true";
 
         static $inject = [
             "$scope",
@@ -106,7 +107,6 @@ module insite.catalog {
             this.view = this.$localStorage.get("productListViewName");
 
             this.getQueryStringValues();
-            this.getHistoryValues();
 
             this.isSearch = this.query !== "";
 
@@ -177,43 +177,25 @@ module insite.catalog {
             this.page = this.queryString.get("page") || null;
             this.pageSize = this.queryString.get("pageSize") || null;
             this.sort = this.queryString.get("sort") || null;
-            this.includeSuggestions = this.queryString.get("includeSuggestions") || "true";
-        }
+            this.includeSuggestions = this.queryString.get("includeSuggestions") || this.defaultIncludeSuggestions;
 
-        // get context values coming from the browser history (when back button was used)
-        protected getHistoryValues(): void {
-            const state = this.coreService.getHistoryState();
-            if (state) {
-                this.page = state.page;
+            const categoryId = this.queryString.get("category") || null;
+            this.filterCategory = { categoryId: categoryId || null, selected: false, shortDescription: "", count: 0, subCategoryDtos: null, websiteId: null };
 
-                if (state.attributeValueIds) {
-                    this.attributeValueIds = state.attributeValueIds;
-                }
-                if (state.filterCategory) {
-                    this.filterCategory = state.filterCategory;
-                }
-                if (state.priceFilterMinimums) {
-                    this.priceFilterMinimums = state.priceFilterMinimums;
-                }
-                if (state.searchWithinTerms) {
-                    this.searchWithinTerms = state.searchWithinTerms;
-                }
-                if (state.brandIds){
-                    this.brandIds = state.brandIds;
-                }
-                if (state.productLineIds){
-                    this.productLineIds = state.productLineIds;
-                }
-            } else {
-                // no history for first page - return the default values
-                this.page = 1;
-                this.attributeValueIds = [];
-                this.filterCategory = { categoryId: null, selected: false, shortDescription: "", count: 0, subCategoryDtos: null, websiteId: null };
-                this.priceFilterMinimums = [];
-                this.searchWithinTerms = [];
-                this.brandIds = [];
-                this.productLineIds = [];
-            }
+            const attributeValueIds = this.queryString.get("attributes") || null;
+            this.attributeValueIds = attributeValueIds ? attributeValueIds.split(",") : [];
+
+            const brandIds = this.queryString.get("brands") || null;
+            this.brandIds = brandIds ? brandIds.split(",") : [];
+
+            const prices = this.queryString.get("prices") || null;
+            this.priceFilterMinimums = prices ? prices.split(",") : [];
+
+            const productLines = this.queryString.get("productLines") || null;
+            this.productLineIds = productLines ? productLines.split(",") : [];
+
+            const searchTerms = this.queryString.get("searchTerms") || null;
+            this.searchWithinTerms = searchTerms ? searchTerms.split(" ") : [];
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
@@ -295,7 +277,6 @@ module insite.catalog {
 
         restoreState = () => {
             this.getQueryStringValues();
-            this.getHistoryValues();
 
             const getProductParams: IProductCollectionParameters = {
                 pageSize: this.pageSize || (this.products.pagination ? this.products.pagination.pageSize : null),
@@ -307,7 +288,8 @@ module insite.catalog {
                 productLineIds: this.productLineIds,
                 includeSuggestions: this.includeSuggestions,
                 includeAttributes: "IncludeOnProduct",
-                makeBrandUrls: this.pageBrandId != null
+                makeBrandUrls: this.pageBrandId != null,
+                isRestoreState: true
             };
 
             if (this.isSearch) {
@@ -413,6 +395,7 @@ module insite.catalog {
 
         protected getProductsCompleted(productCollection: ProductCollectionModel, params: IProductCollectionParameters, expand?: string[]): void {
             this.addSearchResultEvent(params.query, productCollection);
+            this.updateSearchQuery(params);
 
             if (productCollection.searchTermRedirectUrl) {
                 // use replace to prevent back button from returning to this page
@@ -487,6 +470,39 @@ module insite.catalog {
             }
         }
 
+        protected updateSearchQuery(params: IProductCollectionParameters) {
+            const searchParams = {
+                category: this.category ? null : params.categoryId,
+                attributes: params.attributeValueIds && params.attributeValueIds.length ? params.attributeValueIds.join(",") : "",
+                brands: params.brandIds && params.brandIds.length ? params.brandIds.join(",") : "",
+                includeSuggestions: params.includeSuggestions === this.defaultIncludeSuggestions ? "" : params.includeSuggestions,
+                page: params.page,
+                pageSize: params.pageSize,
+                prices: params.priceFilters && params.priceFilters.length ? params.priceFilters.join(",") : "",
+                productLines: params.productLineIds && params.productLineIds.length ? params.productLineIds.join(",") : "",
+                criteria: params.query,
+                searchTerms: params.searchWithin,
+                sort: params.sort
+            };
+
+            if (params.isRestoreState) {
+                if (this.products.pagination && this.products.pagination.pageSize === searchParams.pageSize) {
+                    searchParams.pageSize = null;
+                }
+                if (this.$localStorage.get("productListSortType", "") === searchParams.sort) {
+                    searchParams.sort = "";
+                }
+            }
+
+            for (const key in searchParams) {
+                if (searchParams.hasOwnProperty(key) && searchParams[key] === "") {
+                    delete searchParams[key];
+                }
+            }
+
+            this.$location.search(searchParams);
+        }
+
         protected getProductsFailed(error: any): void {
             // no results
             this.ready = true;
@@ -494,7 +510,7 @@ module insite.catalog {
         }
 
         protected getRealTimePrices(): void {
-            if (this.settings.realTimePricing) {
+            if (this.settings.realTimePricing && this.products.products.length) {
                 this.productService.getProductRealTimePrices(this.products.products).then(
                     (pricingResult: RealTimePricingModel) => this.getProductRealTimePricesCompleted(pricingResult),
                     (error: any) => this.getProductRealTimePricesFailed(error));
@@ -516,7 +532,7 @@ module insite.catalog {
         }
 
         protected getRealTimeInventory(): void {
-            if (this.settings.realTimeInventory) {
+            if (this.settings.realTimeInventory && this.products.products.length) {
                 this.productService.getProductRealTimeInventory(this.products.products).then(
                     (realTimeInventory: RealTimeInventoryModel) => this.getProductRealTimeInventoryCompleted(realTimeInventory),
                     (error: any) => this.getProductRealTimeInventoryFailed(error));
@@ -571,7 +587,7 @@ module insite.catalog {
                     });
                 }
 
-                if (this.products.priceRange && this.products.priceRange.priceFacets) {
+                if (this.filterType !== "price" && this.products.priceRange && this.products.priceRange.priceFacets) {
                     this.products.priceRange.priceFacets.forEach((pf) => {
                         if (pf.selected) {
                             this.priceFilterMinimums.push(pf.minimumPrice.toString());
@@ -597,7 +613,6 @@ module insite.catalog {
 
         // updates products based on the state of this.pagination and the initial search/category query
         protected updateProductData(): void {
-            this.storeHistory();
             this.$localStorage.set("productListSortType", this.products.pagination.sortType);
 
             const params: IProductCollectionParameters = {
@@ -620,20 +635,6 @@ module insite.catalog {
 
             this.getProductData(params, this.pageChanged ? ["pricing", "attributes", "brand"] : null);
             this.pageChanged = false;
-        }
-
-        // store state in the browser history so back button will work
-        protected storeHistory(): void {
-            const state = {
-                page: this.products.pagination.page,
-                attributeValueIds: this.attributeValueIds,
-                filterCategory: this.filterCategory,
-                priceFilterMinimums: this.priceFilterMinimums,
-                searchWithinTerms: this.searchWithinTerms,
-                brandIds: this.brandIds,
-                productLineIds: this.productLineIds
-            };
-            this.coreService.pushState(state);
         }
 
         attributeValueForSection(sectionFacet: AttributeTypeFacetDto, product: ProductDto): string {

@@ -6,7 +6,7 @@
     ***id-key is required only for table view on product list***
 {% endcomment %}
 
-<div ng-if="::product.quoteRequired" class="quote-required">
+<div ng-if="product.quoteRequired" class="quote-required">
     <span>[% translate 'Requires Quote' %]</span>
     <div class="quote-tip">
         <a href="#" data-dropdown="{{::('qtip-cart-' + product.id + '-' + idKey)}}" class="t-dropdown tst_productPrice_quoteRequiredLink">

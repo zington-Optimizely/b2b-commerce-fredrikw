@@ -8,9 +8,11 @@
         mainPrefix = "main";
         zoomPrefix = "zoom";
 
-        static $inject = ["$scope"];
+        static $inject = ["$scope", "coreService"];
 
-        constructor(protected $scope: ng.IScope) {
+        constructor(
+            protected $scope: ng.IScope,
+            protected coreService: core.ICoreService) {
             this.init();
         }
 
@@ -28,11 +30,16 @@
                 }
             }, true);
 
-            (angular.element("#imgZoom") as any).foundation("reveal");
+            this.coreService.refreshUiBindings();
 
             angular.element(document).on("close.fndtn.reveal", "#imgZoom[data-reveal]:visible", () => { this.onImgZoomClose(); });
 
             angular.element(document).on("opened.fndtn", "#imgZoom[data-reveal]", () => { this.onImgZoomOpened(); });
+
+            this.$scope.$on("$destroy", () => {
+                angular.element(document).off("close.fndtn.reveal", "#imgZoom[data-reveal]:visible");
+                angular.element(document).off("opened.fndtn", "#imgZoom[data-reveal]");
+            });
         }
 
         protected onImgZoomClose(): void {

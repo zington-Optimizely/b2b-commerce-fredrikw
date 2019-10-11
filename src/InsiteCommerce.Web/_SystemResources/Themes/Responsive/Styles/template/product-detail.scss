@@ -232,7 +232,7 @@
 
     .pd-specs {
         .spec-attributes {
-            width: 500px;
+            width: 480px;
 
             td {
                 padding: .5625rem .625rem;
@@ -299,6 +299,12 @@
         .pd-grid .fc-qty {
             width: 100% !important;
             float: left;
+        }
+
+        .pd-specs {
+            .spec-attributes {
+                width: 100%;
+            }
         }
     }
 }

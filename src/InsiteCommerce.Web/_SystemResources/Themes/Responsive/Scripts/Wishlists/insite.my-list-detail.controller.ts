@@ -830,7 +830,7 @@
         }
 
         openCopyToPopup(wishList: WishListModel): void {
-            this.copyToListPopupService.display(wishList);
+            this.copyToListPopupService.display({ list: wishList, changedSharedListLinesQtys: this.changedSharedListLinesQtys } as ICopyToListModel);
         }
 
         onEnterKeyPressedInAutocomplete(): void {

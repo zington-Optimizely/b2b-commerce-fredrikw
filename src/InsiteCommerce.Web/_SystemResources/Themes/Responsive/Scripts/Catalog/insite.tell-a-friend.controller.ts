@@ -8,24 +8,23 @@
         isError: boolean;
         inProgress: boolean;
 
-        static $inject = ["$scope", "emailService", "$timeout"];
+        static $inject = ["$scope", "emailService", "$timeout", "coreService", "tellAFriendPopupService"];
 
         constructor(
             protected $scope: ng.IScope,
             protected emailService: email.IEmailService,
-            protected $timeout: ng.ITimeoutService) {
+            protected $timeout: ng.ITimeoutService,
+            protected coreService: core.ICoreService,
+            protected tellAFriendPopupService: ITellAFriendPopupService) {
             this.init();
         }
 
         init(): void {
-            angular.element("#TellAFriendDialogContainer").on("closed", () => {
-                this.onTellAFriendPopupClosed();
+            this.tellAFriendPopupService.registerDisplayFunction((data) => {
+                this.product = data.product;
+                this.resetPopup();
+                this.coreService.displayModal("#popup-tell-a-friend");
             });
-        }
-
-        protected onTellAFriendPopupClosed(): void {
-            this.resetPopup();
-            this.$scope.$apply();
         }
 
         protected resetPopup(): void {
@@ -38,6 +37,9 @@
             this.isSuccess = false;
             this.isError = false;
             this.inProgress = false;
+
+            angular.element("#tellAFriendForm").validate().resetForm();
+            angular.element("#tellAFriendForm input.error, #tellAFriendForm textarea.error").removeClass("error");
         }
 
         shareWithFriend(): void {
@@ -63,8 +65,12 @@
             this.isError = false;
             this.inProgress = false;
             this.$timeout(() => {
-                (angular.element("#TellAFriendDialogContainer") as any).foundation("reveal", "close");
+                this.closeModal();
             }, 1000);
+        }
+
+        protected closeModal(): void {
+            this.coreService.closeModal("#popup-tell-a-friend");
         }
 
         protected tellAFriendFailed(error: any): void {
@@ -74,7 +80,19 @@
         }
     }
 
+    export interface ITellAFriendPopupService {
+        display(data: any): void;
+        registerDisplayFunction(p: (data: any) => void);
+    }
+
+    export class TellAFriendPopupService extends base.BasePopupService<any> implements ITellAFriendPopupService {
+        protected getDirectiveHtml(): string {
+            return "<isc-tell-a-friend-popup></isc-tell-a-friend-popup>";
+        }
+    }
+
     angular
         .module("insite")
-        .controller("TellAFriendController", TellAFriendController);
+        .controller("TellAFriendController", TellAFriendController)
+        .service("tellAFriendPopupService", TellAFriendPopupService);
 }

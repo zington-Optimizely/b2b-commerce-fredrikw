@@ -163,7 +163,7 @@ $projectFile = "<Project ToolsVersion=`"12.0`" DefaultTargets=`"Build`" xmlns=`"
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>$themeName</RootNamespace>
     <AssemblyName>$themeName</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />

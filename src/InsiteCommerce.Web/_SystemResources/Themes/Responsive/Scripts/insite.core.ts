@@ -180,11 +180,6 @@
         that.setupAjaxError();
     };
 
-    // remove reveal animation on mobile so popups work in IOS chrome
-    if (Modernizr.touch) {
-        $(document).foundation("reveal", { animation: false });
-    }
-
     // From the Foundation 4 to 5, the section functionality was removed
     // this code emulates the functionality.
     $("body").on("click", ".section-container .title", function () {

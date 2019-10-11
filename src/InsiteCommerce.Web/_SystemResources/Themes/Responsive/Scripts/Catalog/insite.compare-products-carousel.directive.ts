@@ -13,7 +13,8 @@
                 removeComparedProduct: "&",
                 productsToCompare: "=",
                 openWishListPopup: "&",
-                productSettings: "="
+                productSettings: "=",
+                carouselIncludesBrands: "="
             },
             templateUrl: "productComparison_carousel",
             bindToController: true

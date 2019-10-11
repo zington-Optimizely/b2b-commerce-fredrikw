@@ -777,6 +777,7 @@ declare module Insite.Catalog.Services.Dtos {
 		qtyOnHand: number;
 		unitOfMeasure: string;
 		trackInventory: boolean;
+		minimumOrderQty: number;
 		productDetailUrl: string;
 		numberInCart: number;
 		pricing: Insite.Core.Plugins.Pricing.ProductPriceDto;
@@ -1108,7 +1109,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 	interface CartLineCollectionModel extends Insite.Core.WebApi.BaseModel {
 		cartLines: Insite.Cart.WebApi.V1.ApiModels.CartLineModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
-	    notAllAddedToCart: boolean;
+		notAllAddedToCart: boolean;
 	}
 	interface CartSettingsModel extends Insite.Core.WebApi.BaseModel {
 		canRequestDeliveryDate: boolean;
@@ -1898,6 +1899,7 @@ declare module Insite.WishLists.WebApi.V1.ApiModels {
 	}
 	interface WishListLineCollectionModel extends Insite.Core.WebApi.BaseModel {
 		wishListLines: Insite.WishLists.WebApi.V1.ApiModels.WishListLineModel[];
+		changedListLineQuantities: {[key: string]:  number};
 		pagination: Insite.Core.WebApi.PaginationModel;
 	}
 	interface WishListSettingsModel extends Insite.Core.WebApi.BaseModel {
