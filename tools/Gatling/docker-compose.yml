@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  gatling:
+    image: denvazh/gatling:2.3.1
+    volumes:
+      - ./user-files:/opt/gatling/user-files
+      - ./results:/opt/gatling/results
