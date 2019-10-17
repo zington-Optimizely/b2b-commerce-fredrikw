@@ -288,8 +288,7 @@ module insite.catalog {
                 productLineIds: this.productLineIds,
                 includeSuggestions: this.includeSuggestions,
                 includeAttributes: "IncludeOnProduct",
-                makeBrandUrls: this.pageBrandId != null,
-                isRestoreState: true
+                makeBrandUrls: this.pageBrandId != null
             };
 
             if (this.isSearch) {
@@ -471,33 +470,33 @@ module insite.catalog {
         }
 
         protected updateSearchQuery(params: IProductCollectionParameters) {
+            if (params.attributeValueIds) {
+                params.attributeValueIds.sort((a, b) => a.localeCompare(b));
+            }
+
             const searchParams = {
                 category: this.category ? null : params.categoryId,
                 attributes: params.attributeValueIds && params.attributeValueIds.length ? params.attributeValueIds.join(",") : "",
-                brands: params.brandIds && params.brandIds.length ? params.brandIds.join(",") : "",
+                brands: !this.pageBrandId && params.brandIds && params.brandIds.length ? params.brandIds.join(",") : "",
                 includeSuggestions: params.includeSuggestions === this.defaultIncludeSuggestions ? "" : params.includeSuggestions,
-                page: params.page,
+                page: params.page > 1 ? params.page : null,
                 pageSize: params.pageSize,
                 prices: params.priceFilters && params.priceFilters.length ? params.priceFilters.join(",") : "",
-                productLines: params.productLineIds && params.productLineIds.length ? params.productLineIds.join(",") : "",
+                productLines: !this.pageProductLineId && params.productLineIds && params.productLineIds.length ? params.productLineIds.join(",") : "",
                 criteria: params.query,
                 searchTerms: params.searchWithin,
                 sort: params.sort
             };
 
-            if (params.isRestoreState) {
-                if (this.products.pagination && this.products.pagination.pageSize === searchParams.pageSize) {
-                    searchParams.pageSize = null;
-                }
-                if (this.$localStorage.get("productListSortType", "") === searchParams.sort) {
-                    searchParams.sort = "";
+            for (const key in searchParams) {
+                if (searchParams.hasOwnProperty(key) && !searchParams[key]) {
+                    delete searchParams[key];
                 }
             }
 
-            for (const key in searchParams) {
-                if (searchParams.hasOwnProperty(key) && searchParams[key] === "") {
-                    delete searchParams[key];
-                }
+            if (!Object.keys(searchParams).filter(o => o !== "pageSize" && o !== "sort").length) {
+                searchParams.pageSize = null;
+                searchParams.sort = null;
             }
 
             this.$location.search(searchParams);

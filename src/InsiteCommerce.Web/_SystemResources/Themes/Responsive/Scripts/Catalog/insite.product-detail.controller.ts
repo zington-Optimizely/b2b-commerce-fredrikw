@@ -144,7 +144,7 @@ module insite.catalog {
             this.spinnerService.show();
             const expand = ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing", "relatedproducts", "brand"];
             let includeAlternateInventory = !this.enableWarehousePickup || this.session.fulfillmentMethod !== "PickUp";
-            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct", includeAlternateInventory, this.configuration).then(
+            this.productService.getProduct(null, productId, expand, true, true, "IncludeOnProduct", includeAlternateInventory, this.configuration, false).then(
                 (productModel: ProductModel) => { this.getProductCompleted(productModel); },
                 (error: any) => { this.getProductFailed(error); });
         }

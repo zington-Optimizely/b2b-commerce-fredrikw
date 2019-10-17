@@ -29,7 +29,7 @@
         }
 
         protected getWarehouses(productId: string, unitOfMeasure: string, configuration: string[]): void {
-            this.productService.getProductByParameters({ productId: productId, unitOfMeasure: unitOfMeasure, configuration: configuration, expand: "warehouses" }).then(
+            this.productService.getProductByParameters({ productId: productId, unitOfMeasure: unitOfMeasure, configuration: configuration, expand: "warehouses", replaceProducts: false }).then(
                 (productModel: ProductModel) => { this.getProductCompleted(productModel); },
                 (error: any) => { this.getProductFailed(error); });
         }

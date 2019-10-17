@@ -43,7 +43,6 @@ module insite.catalog {
         includeAttributes?: string;
         includeAlternateInventory?: boolean;
         makeBrandUrls?: boolean;
-        isRestoreState?: boolean;
     }
 
     // parameters accepted by get getProduct
@@ -55,6 +54,7 @@ module insite.catalog {
         alsoPurchasedMaxResults?: number;
         configuration?: string[];
         expand?: string;
+        replaceProducts?: boolean;
     }
 
     export interface IProductPriceParameter {
@@ -94,7 +94,7 @@ module insite.catalog {
          * @param productId Id of the product
          * @param expand Specifies which optional data to bring back. some valid values are ["documents", "specifications", "styledproducts", "htmlcontent", "attributes", "crosssells", "pricing"]
          */
-        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[]): ng.IPromise<ProductModel>;
+        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[], replaceProducts?: boolean): ng.IPromise<ProductModel>;
         getProductByParameters(parameters: IProductParameters): ng.IPromise<ProductModel>;
         getProductSettings(): ng.IPromise<ProductSettingsModel>;
         getCrossSells(productId: string): ng.IPromise<CrossSellCollectionModel>;
@@ -488,15 +488,15 @@ module insite.catalog {
             deferred.reject(error);
         }
 
-        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[]): ng.IPromise<ProductModel> {
+        getProduct(categoryId: string, productId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[], replaceProducts?: boolean): ng.IPromise<ProductModel> {
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "GET", url: `${this.productServiceUri}${productId}`, params: this.getProductParams(categoryId, expand, addToRecentlyViewed, applyPersonalization, includeAttributes, includeAlternateInventory, configuration) }),
+                this.$http({ method: "GET", url: `${this.productServiceUri}${productId}`, params: this.getProductParams(categoryId, expand, addToRecentlyViewed, applyPersonalization, includeAttributes, includeAlternateInventory, configuration, replaceProducts) }),
                 this.getProductCompleted,
                 this.getProductFailed);
         }
 
-        protected getProductParams(categoryId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[]): any {
+        protected getProductParams(categoryId: string, expand?: string[], addToRecentlyViewed?: boolean, applyPersonalization?: boolean, includeAttributes?: string, includeAlternateInventory?: boolean, configuration?: string[], replaceProducts?: boolean): any {
             const params = {} as any;
 
             if (expand) {
@@ -519,6 +519,9 @@ module insite.catalog {
             }
             if (typeof (configuration) !== "undefined") {
                 params.configuration = configuration;
+            }
+            if (typeof (replaceProducts) !== "undefined") {
+                params.replaceProducts = replaceProducts;
             }
 
             return params;
