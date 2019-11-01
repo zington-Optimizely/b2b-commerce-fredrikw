@@ -286,6 +286,14 @@
 
         guestCheckout(): void {
             const account = { isGuest: true } as AccountModel;
+
+            if (this.session) {
+                account.defaultFulfillmentMethod = this.session.fulfillmentMethod;
+                if (this.session.pickUpWarehouse) {
+                    account.defaultWarehouseId = this.session.pickUpWarehouse.id;
+                }
+            }
+
             this.spinnerService.show("mainLayout", true);
             this.accountService.createAccount(account).then(
                 (createdAccount: AccountModel) => { this.createAccountCompleted(createdAccount); },
