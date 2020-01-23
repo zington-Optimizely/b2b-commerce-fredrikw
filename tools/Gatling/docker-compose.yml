@@ -1,8 +1,24 @@
 version: '3'
 
+volumes:
+    gatling_results: {}
+    parsed_results: {}
+
 services:
   gatling:
-    image: denvazh/gatling:2.3.1
+    build: .
     volumes:
-      - ./user-files:/opt/gatling/user-files
-      - ./results:/opt/gatling/results
+      - gatling_results:/opt/gatling/results
+    environment: 
+      - JAVA_OPTS=${JAVA_OPTS}
+
+  parser: 
+    build: 
+      context: .
+      dockerfile: ./Gatling-Parsing/Dockerfile
+    volumes: 
+      - gatling_results:/data/results
+      - parsed_results:/data/report
+    environment:
+      - ELASTIC_URL=${ELASTIC_URL} 
+      - ELASTIC_ACTIVATE=${ELASTIC_ACTIVATE} 

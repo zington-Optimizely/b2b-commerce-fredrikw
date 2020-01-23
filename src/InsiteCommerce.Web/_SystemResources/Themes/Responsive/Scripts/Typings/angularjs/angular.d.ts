@@ -1227,6 +1227,7 @@ declare module ng {
     interface IHttpPromise<T> extends IPromise<T> {
         success(callback: IHttpPromiseCallback<T>): IHttpPromise<T>;
         error(callback: IHttpPromiseCallback<any>): IHttpPromise<T>;
+        then<TResult>(successCallback: (response: IHttpPromiseCallbackArg<T>) => IPromise<TResult>|TResult, errorCallback?: (response: IHttpPromiseCallbackArg<any>) => any): IPromise<TResult>;
         then<TResult>(successCallback: (promiseValue: T) => IPromise<TResult>|TResult, errorCallback?: (response: IHttpPromiseCallbackArg<any>) => any): IPromise<TResult>;
     }
 

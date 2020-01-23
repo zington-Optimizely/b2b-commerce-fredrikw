@@ -231,7 +231,7 @@
                                 <div class="row">
                                     <div class="small-6 columns exp-month">
                                         <select id="expirationMonth" name="expirationMonth"
-                                                data-rule-required="true" data-msg-min="[% translate 'Card is expired. Please enter a valid expiration date.' %]" data-msg-required="[% translate 'Expiration month is required.' %]"
+                                                data-rule-required="true" data-msg-angularmin="[% translate 'Card is expired. Please enter a valid expiration date.' %]" data-msg-required="[% translate 'Expiration month is required.' %]"
                                                 ng-model="vm.cart.paymentOptions.creditCard.expirationMonth"
                                                 ng-options="month.value as month.key for month in vm.cart.paymentOptions.expirationMonths"></select>
                                         <span class="field-validation-valid" data-valmsg-for="expirationMonth" data-valmsg-replace="true"></span>

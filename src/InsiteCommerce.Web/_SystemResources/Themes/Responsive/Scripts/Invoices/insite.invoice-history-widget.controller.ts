@@ -55,8 +55,8 @@
         protected getInvoicesFailed(error: any): void {
         }
 
-        showShareModal(entityId: string): void {
-            this.coreService.displayModal(`#shareEntityPopupContainer_${entityId}`);
+        showShareModal(event, index: number): void {
+            this.coreService.displayModal($(event.target).closest(".widget-invoice-history").find(`[id=shareEntityPopupContainer]:eq(${index})`));
         }
     }
 

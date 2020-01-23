@@ -2,6 +2,6 @@
     <span>[% translate 'Regular Price:' %]</span>
     <span ng-bind="vm.unitListPriceDisplay"></span><span ng-if="!(!vm.showSavingsAmount && !vm.showSavingsPercent)">, [% translate 'you save' %] </span>
     <span id="tst_productPriceSaving_promotionAmount_{{::product.id}}" ng-if="vm.showSavingsAmount" ng-bind="vm.getSavingsAmount() | currency: currencySymbol"></span>
-    <span ng-if="vm.showSavingsAmount && vm.showSavingsPercent">({{vm.getSavingsPercent()}}%)</span>
-    <span ng-if="!vm.showSavingsAmount && vm.showSavingsPercent">{{vm.getSavingsPercent()}}%</span>
+    <span data-test-selector="tst_productPriceSaving_promotionPercent_{{::product.id}}" ng-if="vm.showSavingsAmount && vm.showSavingsPercent">({{vm.getSavingsPercent()}}%)</span>
+    <span data-test-selector="tst_productPriceSaving_promotionPercent_{{::product.id}}" ng-if="!vm.showSavingsAmount && vm.showSavingsPercent">{{vm.getSavingsPercent()}}%</span>
 </span>

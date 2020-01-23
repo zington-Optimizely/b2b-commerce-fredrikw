@@ -214,8 +214,8 @@
             this.validationMessage = error.exceptionMessage;
         }
 
-        showShareModal(entityId: string): void {
-            this.coreService.displayModal(`#shareEntityPopupContainer_${entityId}`);
+        showShareModal(): void {
+            this.coreService.displayModal("#shareEntityPopupContainer");
         }
 
         openWishListPopup(orderLine: OrderLineModel): void {

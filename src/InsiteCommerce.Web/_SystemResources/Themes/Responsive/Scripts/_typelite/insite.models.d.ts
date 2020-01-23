@@ -358,6 +358,8 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		documentsTabSortOrder: string;
 		displayInventoryPerWarehouse: boolean;
 		displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
+		displayFacetsForStockedItems: boolean;
+		imageProvider: string;
 	}
 	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
 		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
@@ -492,6 +494,8 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 	interface WebsiteSettingsModel extends Insite.Core.WebApi.BaseModel {
 		mobileAppEnabled: boolean;
 		useTokenExGateway: boolean;
+		defaultPageSize: number;
+		enableCookiePrivacyPolicyPopup: boolean;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;
@@ -787,6 +791,9 @@ declare module Insite.Catalog.Services.Dtos {
 		productUnitOfMeasures: Insite.Catalog.Services.Dtos.ProductUnitOfMeasureDto[];
 		productImages: Insite.Catalog.Services.Dtos.ProductImageDto[];
 		warehouses: Insite.Catalog.Services.Dtos.WarehouseDto[];
+		manufacturerItem: string;
+		upcCode: string;
+		sku: string;
 	}
 	interface ProductUnitOfMeasureDto {
 		productUnitOfMeasureId: System.Guid;
@@ -802,6 +809,7 @@ declare module Insite.Catalog.Services.Dtos {
 		id: System.Guid;
 		sortOrder: number;
 		name: string;
+		imageType: string;
 		smallImagePath: string;
 		mediumImagePath: string;
 		largeImagePath: string;

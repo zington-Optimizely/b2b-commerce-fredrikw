@@ -24,12 +24,14 @@ module insite.catalog {
         priceFilterMinimums: string[] = [];
         brandIds: string[] = [];
         productLineIds: string[] = [];
+        previouslyPurchasedProducts: boolean;
         filterCategory: CategoryFacetDto;
         searchWithinTerms = [];
         query: string;
         ready = false;
         products: ProductCollectionModel = {} as any;
         settings: ProductSettingsModel;
+        searchSettings: any;
         category: CategoryModel;  // regular category page
         pageBrandId: System.Guid; // brand product list page
         pageProductLineId: System.Guid; // productLine product list page
@@ -59,6 +61,7 @@ module insite.catalog {
         session: SessionModel;
         getPageDataCalled: boolean;
         defaultIncludeSuggestions: string = "true";
+        stockedItemsOnly: boolean;
 
         static $inject = [
             "$scope",
@@ -128,6 +131,11 @@ module insite.catalog {
 
             this.$scope.$on("CategoryLeftNavController-filterUpdated", (event: any, filterType: any) => {
                 this.filterType = filterType;
+                if (this.filterType === "previouslyPurchasedProducts") {
+                    this.previouslyPurchasedProducts = !this.previouslyPurchasedProducts;
+                } else if (this.filterType === "stockedItemsOnly") {
+                    this.stockedItemsOnly = !this.stockedItemsOnly;
+                }
                 this.onCategoryLeftNavFilterUpdated();
             });
 
@@ -178,6 +186,8 @@ module insite.catalog {
             this.pageSize = this.queryString.get("pageSize") || null;
             this.sort = this.queryString.get("sort") || null;
             this.includeSuggestions = this.queryString.get("includeSuggestions") || this.defaultIncludeSuggestions;
+            this.previouslyPurchasedProducts = this.queryString.get("previouslyPurchased") === "true";
+            this.stockedItemsOnly = this.queryString.get("stockedItemsOnly") === "true";
 
             const categoryId = this.queryString.get("category") || null;
             this.filterCategory = { categoryId: categoryId || null, selected: false, shortDescription: "", count: 0, subCategoryDtos: null, websiteId: null };
@@ -200,7 +210,8 @@ module insite.catalog {
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
             this.settings = settingsCollection.productSettings;
-            this.searchHistoryLimit = settingsCollection.searchSettings ? settingsCollection.searchSettings.searchHistoryLimit : null;
+            this.searchSettings = settingsCollection.searchSettings;
+            this.searchHistoryLimit = this.searchSettings ? this.searchSettings.searchHistoryLimit : null;
             this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
             this.applySettings();
 
@@ -249,6 +260,8 @@ module insite.catalog {
                 attributeValueIds: this.attributeValueIds,
                 brandIds: this.brandIds,
                 productLineIds: this.productLineIds,
+                previouslyPurchasedProducts: this.previouslyPurchasedProducts,
+                stockedItemsOnly: this.stockedItemsOnly,
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
@@ -286,6 +299,8 @@ module insite.catalog {
                 priceFilters: this.priceFilterMinimums,
                 brandIds: this.brandIds,
                 productLineIds: this.productLineIds,
+                previouslyPurchasedProducts: this.previouslyPurchasedProducts,
+                stockedItemsOnly: this.stockedItemsOnly,
                 includeSuggestions: this.includeSuggestions,
                 includeAttributes: "IncludeOnProduct",
                 makeBrandUrls: this.pageBrandId != null
@@ -355,6 +370,8 @@ module insite.catalog {
                 attributeValueIds: this.attributeValueIds,
                 brandIds: this.brandIds,
                 productLineIds: this.productLineIds,
+                previouslyPurchasedProducts: this.previouslyPurchasedProducts,
+                stockedItemsOnly: this.stockedItemsOnly,
                 priceFilters: this.priceFilterMinimums,
                 searchWithin: this.searchWithinTerms.join(" "),
                 includeSuggestions: this.includeSuggestions,
@@ -408,7 +425,7 @@ module insite.catalog {
             }
 
             // got product data
-            if (productCollection.exactMatch) {
+            if (productCollection.exactMatch && !this.previouslyPurchasedProducts) {
                 this.searchService.addSearchHistory(this.query, this.searchHistoryLimit, this.includeSuggestions.toLowerCase() === "true");
                 const productDetailUrl = productCollection.products[0].productDetailUrl;
                 if (productDetailUrl.indexOf("?") !== -1) {
@@ -475,6 +492,8 @@ module insite.catalog {
             }
 
             const searchParams = {
+                previouslyPurchased: this.previouslyPurchasedProducts ? "true" : "",
+                stockedItemsOnly: this.stockedItemsOnly ? "true" : "",
                 category: this.category ? null : params.categoryId,
                 attributes: params.attributeValueIds && params.attributeValueIds.length ? params.attributeValueIds.join(",") : "",
                 brands: !this.pageBrandId && params.brandIds && params.brandIds.length ? params.brandIds.join(",") : "",
@@ -546,6 +565,10 @@ module insite.catalog {
         }
 
         protected loadProductFilter(result: ProductCollectionModel, expand?: string[]): void {
+            if ((this.filterType === "previouslyPurchasedProducts" || this.filterType === "stockedItemsOnly" || this.searchWithinTerms.length) && result.products.length === 0) {
+                return;
+            }
+
             if (this.filterType === "attribute") {
                 if (result.attributeTypeFacets.length > 0) {
                     this.products.attributeTypeFacets = result.attributeTypeFacets;
@@ -624,9 +647,11 @@ module insite.catalog {
                 attributeValueIds: this.attributeValueIds,
                 brandIds: this.brandIds,
                 productLineIds: this.productLineIds,
+                previouslyPurchasedProducts: this.previouslyPurchasedProducts,
+                stockedItemsOnly: this.stockedItemsOnly,
                 priceFilters: this.priceFilterMinimums,
                 includeSuggestions: this.includeSuggestions,
-                getAllAttributeFacets: this.filterType === "attribute",
+                getAllAttributeFacets: this.filterType === "attribute" || this.filterType === "previouslyPurchasedProducts" || this.filterType === "stockedItemsOnly",
                 applyPersonalization: true,
                 includeAttributes: "IncludeOnProduct",
                 makeBrandUrls: this.pageBrandId != null

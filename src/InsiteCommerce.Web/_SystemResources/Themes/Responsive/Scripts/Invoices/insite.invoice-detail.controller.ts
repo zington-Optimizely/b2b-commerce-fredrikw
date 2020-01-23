@@ -62,8 +62,8 @@
             return formattedString;
         }
 
-        showShareModal(entityId: string): void {
-            this.coreService.displayModal(`#shareEntityPopupContainer_${entityId}`);
+        showShareModal(): void {
+            this.coreService.displayModal("#shareEntityPopupContainer");
         }
     }
 

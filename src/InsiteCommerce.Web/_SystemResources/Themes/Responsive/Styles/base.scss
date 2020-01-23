@@ -6347,7 +6347,7 @@ a.ex:hover, a.ex:focus {
 }
 
 header .foundicon-remove:before, [role="secondary-nav"] .foundicon-remove:before {
-    color: DodgerBlue;
+	color: #77bc1f;
     content: "\e606";
     font-size: 1.2rem;
 }
@@ -7342,6 +7342,20 @@ nav ul:not(.side-nav) li a {
         display: none;
     }
 
+    .topbar-user header.header-b2c li[role="user-options"] {
+        a.user-button {
+            background-color: #77BC1F;
+            padding-left: 30px;
+            span {
+                color: #fff;
+            }
+        }
+        .foundicon-remove:before {
+            color: #fff;
+            padding-left: 10px;
+        }
+    }
+
     header.header-b2c {
         z-index: 10;
         border-bottom: 1px solid #E0E0E0;
@@ -7365,8 +7379,40 @@ nav ul:not(.side-nav) li a {
             vertical-align: top;
             padding-top: 5px;
 
+            @media (max-width:1024px) {
+                &[role="user-options"] a {
+                    max-width: 200px !important;
+                }
+                &[role="fulfillment-method"] a.btn {
+                    max-width: 90px;
+                    padding: 0;
+
+                }
+                &[role="account-menu"] .sn-account > ul > li > a {
+                    padding: 0 !important;
+                }
+            }
+
             &.has-sub {
                 padding-top: 0px;
+            }
+
+            &[role="user-options"] {
+                position: relative;
+                border-right: none;
+
+                a .cust-name {
+                    font-weight: normal;
+                }
+
+                .ex i {
+                    top: 4px !important;
+                    left: -5px !important;
+                }
+            }
+
+            .subnav-check {
+                display: none;
             }
 
             .btn, button.btn {
@@ -9508,5 +9554,63 @@ header label.toggle.burger:after {
     img {
         max-width: 75px;
         max-height: 75px;
+    }
+}
+
+// cookie privacy policy popup
+.cookie-privacy-policy-popup {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    min-height: 80px;
+    display: flex;
+    padding: 0.7em;
+    background: #555555;
+    color: #fff;
+    align-items: center;
+    flex-direction: column;
+
+    .policy-text {
+        flex: 100%;
+        padding-right: 0.3em;
+        margin-right: 0;
+        text-align: center;
+        overflow-y: auto;
+        max-height: 50vh;
+        margin-bottom: 0.5em;
+    }
+
+    .policy-btns {
+        display: flex;
+    }
+
+    .policy-accept {
+        white-space: nowrap;
+        margin-bottom: 0;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+
+    .policy-hide {
+        margin-bottom: 0;
+        background: none;
+        color: #000;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+@media ( min-width:48em ) {
+    .cookie-privacy-policy-popup {
+        flex-direction: row;
+
+        .policy-text {
+            margin-bottom: 0;
+            margin-right: 0.3em;
+        }
     }
 }

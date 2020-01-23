@@ -138,6 +138,7 @@ module insite {
             "ab-base64",
             "kendo.directives",
             "ui.router",
+            "ui.router.state.events",
             "ui.sortable"
         ])
         .run(["appRunService", ($appRunService: IAppRunService) => { $appRunService.run(); }])

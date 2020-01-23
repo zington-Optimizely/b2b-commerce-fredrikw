@@ -43,6 +43,8 @@ module insite.catalog {
         includeAttributes?: string;
         includeAlternateInventory?: boolean;
         makeBrandUrls?: boolean;
+        previouslyPurchasedProducts?: boolean;
+        stockedItemsOnly?: boolean;
     }
 
     // parameters accepted by get getProduct

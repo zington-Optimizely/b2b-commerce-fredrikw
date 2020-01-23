@@ -69,11 +69,11 @@
         }
 
         closeModal(): void {
-            (angular.element(`#shareEntityPopupContainer_${this.entityId}`) as any).foundation("reveal", "close");
+            (angular.element("#shareEntityPopupContainer") as any).foundation("reveal", "close");
         }
 
         shareEntity(): void {
-            const valid = angular.element(`#shareEntityForm_${this.entityId}`).validate().form();
+            const valid = angular.element(".shareEntityForm:visible").validate().form();
             if (!valid) {
                 return;
             }

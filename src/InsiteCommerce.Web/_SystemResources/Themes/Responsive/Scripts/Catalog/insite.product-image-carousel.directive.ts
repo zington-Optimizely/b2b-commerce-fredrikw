@@ -11,7 +11,8 @@
                 selectedImage: "=",
                 prefix: "@",
                 maxTries: "@",
-                getCarouselWidth: "&"
+                getCarouselWidth: "&",
+                imageProvider: "@"
             },
             templateUrl: "/PartialViews/Catalog-ProductImageCarousel",
             controller: "ProductImageCarouselController",

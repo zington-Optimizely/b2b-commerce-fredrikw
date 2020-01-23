@@ -6,9 +6,14 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class SignIn extends Simulation {
+class CreateAccount extends Simulation {
+
+  val myRamp  = java.lang.Long.getLong("ramp", 0L)
+  val nbUrl = System.getProperty("url")
+  val nbUsers = Integer.getInteger("users", 1)
+
   val httpProtocol = http
-    .baseURL("http://host.docker.internal")
+    .baseURL(nbUrl)
     .acceptHeader("application/json, text/plain, */*")
     .acceptEncodingHeader("gzip, deflate")
     .acceptLanguageHeader("en-US,en;q=0.5")
@@ -18,16 +23,17 @@ class SignIn extends Simulation {
 
   val userNameFeeder = Iterator.from(0).map(i => Map("userName" -> f"test$i%03d"))
 
-  val scn = scenario("SignIn")
+  val scn = scenario("CreateAccount")
     .feed(userNameFeeder)
     .exec(AnonymousRequests.firstHome)
     .pause(1)
     .exec(AnonymousRequests.signInPage)
     .pause(1)
+    .exec(AnonymousRequests.createAccountPage)
+    .pause(1)
+    .exec(AnonymousRequests.createAccount)
     .exec(AnonymousRequests.signIn)
     .exec(AuthenticatedRequests.firstHome)
 
-  setUp(scn.inject(rampUsers(100) over (30 seconds))).protocols(httpProtocol)
+  setUp(scn.inject(rampUsers(nbUsers) over (myRamp seconds))).protocols(httpProtocol)
 }
-
-

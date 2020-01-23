@@ -251,7 +251,7 @@
                 const shouldAddReturnUrl = this.returnUrl && this.returnUrl !== this.homePageUrl;
                 this.$window.location.href = this.changeCustomerPageUrl + (shouldAddReturnUrl ? `?returnUrl=${encodeURIComponent(this.returnUrl)}` : "");
             } else {
-                this.cartService.expand = "cartlines";
+                this.cartService.expand = "cartlines,hiddenproducts";
                 this.cartService.getCart(this.cart.id).then(
                     (cart: CartModel) => { this.getCartCompleted(session, cart); },
                     (error: any) => { this.getCartFailed(error); });

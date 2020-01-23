@@ -15,7 +15,7 @@
     <h3 ng-if="vm.showCarousel()" ng-cloak>[[Model.Title]]</h3>
     <div class="row" role="cross-sells" ng-if="vm.showCarousel()" ng-cloak>
         <div class="medium-12 large-12 columns">
-            <div class="carousel-wrapper">
+            <div class="carousel-wrapper tst_productCarousel[[Model.RelatedProductsRelationship]]_carousel">
                 <div class="cs-carousel">
                     <ul class="items slides tst_productCarousel[[Model.RelatedProductsRelationship]]_slides">
                         <li id="tst_productCarousel[[Model.RelatedProductsRelationship]]_{{product.id}}" class="medium-3 large-3 columns isc-productContainer tst_productCarousel[[Model.RelatedProductsRelationship]]_productContainer" ng-repeat="product in vm.products track by $id(product)">

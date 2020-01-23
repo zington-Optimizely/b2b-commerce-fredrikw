@@ -89,5 +89,12 @@
                 scope.dateTime = new Date(attrs.dateTime);
             },
             template: "{{dateTime | date:'shortDate'}}"
+        }))
+        .directive("iscCookiePrivacyPolicyPopup", () => ({
+            restrict: "E",
+            replace: true,
+            templateUrl: "/PartialViews/Core-CookiePrivacyPolicyPopup",
+            controller: "CookiePrivacyPolicyPopupController",
+            controllerAs: "ctrl"
         }));
 }

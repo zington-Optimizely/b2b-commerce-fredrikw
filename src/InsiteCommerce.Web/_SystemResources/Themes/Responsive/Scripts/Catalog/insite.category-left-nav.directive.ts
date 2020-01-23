@@ -17,7 +17,12 @@
                 brandIds: "=",
                 productLineIds: "=",
                 showBrands: "=",
-                showProductLines: "="
+                showProductLines: "=",
+                previouslyPurchasedProducts: "=",
+                searchSettings: "=",
+                productSettings: "=",
+                stockedItemsOnly: "=",
+                session: "="
             },
             templateUrl: "productList_categoryLeftNav",
             controller: "CategoryLeftNavController",

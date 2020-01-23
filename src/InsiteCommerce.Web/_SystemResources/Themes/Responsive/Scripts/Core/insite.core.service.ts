@@ -65,6 +65,15 @@
             });
 
             this.contextPersonaIds = this.ipCookie("SetContextPersonaIds");
+
+            // Since UI Router relies on $state's defaultErrorHandler instead of the $onStateChangeError event,
+            // the HTTP 401 handling must be rewritten all over using UI Router best practices.
+            this.$state.defaultErrorHandler((rejection) => {
+                if (rejection.detail.message.indexOf("p1=401") > -1) { // There could be a better way to do it, very weak check
+                    const signIn = `${this.getSignInUrl()}?returnUrl=${encodeURIComponent(this.$location.url())}`;
+                    this.redirectToPath(signIn);
+                }
+            });
         }
 
         protected onStateChangeSuccess(event: ng.IAngularEvent, to: any, toParams: any, from: any, fromParams: any): void {
@@ -83,8 +92,12 @@
 
         protected onStateChangeError(event: ng.IAngularEvent, to: any, toParams: any, from: any, fromParams: any, error: any): void {
             event.preventDefault();
-            if (error.status === 401) {
+            if (error?.detail?.message?.toLowerCase().indexOf("p1=401") > -1) {
                 const signIn = `${this.getSignInUrl()}?returnUrl=${encodeURIComponent(toParams.path)}`;
+                // The SignInController relies on a full page redirect (not a SPA redirect)
+                // in order to register a listener for the "cartLoaded" event on the Angular scope.
+                // The listener ensures that the correct cart data is available after a
+                // user successfully signs into the application.
                 this.$window.location.replace(signIn);
             }
         }

@@ -6,7 +6,7 @@
             </div>
             <div class="btns small-6 columns">
                 <a id="tst_invoiceDetailPage_print" href="/Invoice/GetPdf?invoiceNumber={{vm.invoice.invoiceNumber}}" class="hide-for-small btn secondary btn-print" ng-show="vm.invoice" target="_blank">[% translate 'Print' %]</a>
-                <a id="tst_invoiceDetailPage_email" ng-click="vm.showShareModal(vm.invoice.invoiceNumber)" href="javascript:;" class="btn secondary btn-print" ng-show="vm.invoice">[% translate 'Email' %]</a>
+                <a id="tst_invoiceDetailPage_email" ng-click="vm.showShareModal()" href="javascript:;" class="btn secondary btn-print" ng-show="vm.invoice">[% translate 'Email' %]</a>
                 <isc-share-entity-popup entity-id="vm.invoice.invoiceNumber" entity-name="Invoice" url="/api/v1/invoices/shareinvoice" file-link="/Invoice/GetPdf?invoiceNumber={{vm.invoice.invoiceNumber}}" header-text="[% translate 'Email Invoice' %]"
                                         file-name="invoice_{{vm.invoice.invoiceNumber}}.pdf" subject="[% translate 'Invoice #' %]{{vm.invoice.invoiceNumber}}" submit-button-text="[% translate 'Email Invoice' %]"></isc-share-entity-popup>
             </div>

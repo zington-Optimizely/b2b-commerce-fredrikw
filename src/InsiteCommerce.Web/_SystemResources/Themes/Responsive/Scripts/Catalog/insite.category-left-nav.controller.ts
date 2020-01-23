@@ -82,6 +82,14 @@ module insite.catalog {
             this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "attribute");
         }
 
+        togglePreviouslyPurchasedProducts(): void {
+            this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "previouslyPurchasedProducts");
+        }
+
+        toggleStockedItemsOnly(): void {
+            this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "stockedItemsOnly");
+        }
+
         // removes or adds item to array
         protected changeArrayValue(item: string, array: string[]): void {
             if (this.products && this.products.attributeTypeFacets && this.products.attributeTypeFacets.some(atf => atf.attributeTypeId === item)) {

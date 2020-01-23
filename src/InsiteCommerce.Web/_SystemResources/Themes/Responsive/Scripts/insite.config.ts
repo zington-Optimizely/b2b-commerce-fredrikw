@@ -23,9 +23,12 @@
             protected $locationProvider: ng.ILocationProvider,
             protected $provide: ng.auto.IProvideService) {
             const baseUri = $("body").attr("data-webApiRoot");
+            const sirvUrlRegExp = new RegExp("^(https?):\\/\\/(w{3}\\.)?([a-zA-Z0-9][a-zA-Z0-9-_]*\\.)sirv\.com\\/.+$");
             if (typeof (baseUri) !== "undefined" && baseUri !== "") {
-                $sceDelegateProvider.resourceUrlWhitelist(["self", `${baseUri}/**`]);
+                $sceDelegateProvider.resourceUrlWhitelist(["self", `${baseUri}/**`, sirvUrlRegExp]);
                 $httpProvider.defaults.withCredentials = true;
+            } else {
+                $sceDelegateProvider.resourceUrlWhitelist(["self", sirvUrlRegExp]);
             }
 
             // set ASP.NET IsAjaxRequest to 'true'

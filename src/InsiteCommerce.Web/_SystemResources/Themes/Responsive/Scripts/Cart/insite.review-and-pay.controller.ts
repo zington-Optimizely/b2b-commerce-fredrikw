@@ -118,6 +118,11 @@ module insite.cart {
             this.$scope.$on("sessionUpdated", (event, session) => {
                 this.onSessionUpdated(session);
             });
+
+            jQuery.validator.addMethod("angularmin", (value, element, minValue) => {
+                const valueParts = value.split(":");
+                return valueParts.length === 2 && valueParts[1] > minValue;
+            });
         }
 
         protected onCartChanged(event: ng.IAngularEvent): void {
@@ -128,7 +133,7 @@ module insite.cart {
             if (year) {
                 const now = new Date();
                 const minMonth = now.getFullYear() === year ? now.getMonth() : 0;
-                jQuery("#expirationMonth").rules("add", {min: minMonth});
+                jQuery("#expirationMonth").rules("add", {angularmin: minMonth});
                 jQuery("#expirationMonth").valid();
             }
         }
@@ -191,7 +196,9 @@ module insite.cart {
 
         protected getCountriesCompleted(countryCollection: CountryCollectionModel) {
             this.countries = countryCollection.countries;
-            this.creditCardBillingCountry = this.countries[0];
+            if (this.countries.length === 1) {
+                this.creditCardBillingCountry = this.countries[0];
+            }
         }
 
         protected getCountriesFailed(error: any): void {
@@ -388,11 +395,11 @@ module insite.cart {
 
         updateCarrier(): void {
             if (this.cart.carrier && this.cart.carrier.shipVias) {
-                if (this.cart.carrier.shipVias.length === 1 && this.cart.carrier.shipVias[0].id !== this.cart.shipVia.id) {
+                if (this.cart.carrier.shipVias.length === 1 && (!this.cart.shipVia || this.cart.carrier.shipVias[0].id !== this.cart.shipVia.id)) {
                     this.cart.shipVia = this.cart.carrier.shipVias[0];
                     this.updateShipVia();
                 } else if (this.cart.carrier.shipVias.length > 1 &&
-                    this.cart.carrier.shipVias.every(sv => sv.id !== this.cart.shipVia.id) &&
+                    (!this.cart.shipVia || this.cart.carrier.shipVias.every(sv => sv.id !== this.cart.shipVia.id)) &&
                     this.cart.carrier.shipVias.filter(sv => sv.isDefault).length > 0) {
                     this.cart.shipVia = this.cart.carrier.shipVias.filter(sv => sv.isDefault)[0];
                     this.updateShipVia();
@@ -405,6 +412,10 @@ module insite.cart {
         }
 
         updateShipVia(): void {
+            if (this.cart.shipVia === null) {
+                return;
+            }
+
             this.spinnerService.show();
             this.cartService.updateCart(this.cart).then(
                 (cart: CartModel) => {

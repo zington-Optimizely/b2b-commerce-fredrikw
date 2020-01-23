@@ -33,19 +33,29 @@
             <span class="sign-in-label">[% translate 'Sign In' %]</span>
         </a>
     </li>
-    <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
+     <li role="fulfillment-method" ng-cloak id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
         <a href="" id="tst_header_fulfillMethodLink" class="btn fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
             <i class="foundicon-location"></i>
             [[DeliveryLabel]]
         </a>
     </li>
-    <li role="account-menu" ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
+    <li role="user-options" ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
+        <a href="#" class="user-button fastClick btn" id="tst_userNav_userName_button">
+            <i ng-cloak class="social foundicon-torso"></i>
+            <span class="cust-name" ng-bind="vm.session.userLabel"></span>
+            <span class="user-role" ng-if="::vm.session.userRoles" ng-bind="::('(' + vm.session.userRoles + ')')"></span>
+        </a>
+        <a class="ex fastClick">
+            <i class="foundicon-remove"></i>
+        </a>
+    </li>
+    <li role="account-menu" ng-cloak ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
         <div class="sn-account">
             <ul>
                 <li class="has-sub">
                     <a href="#" class="btn" id="tst_userNav_userName_button">
-                        <i ng-cloak class="social foundicon-torso"></i>
-                        <span class="cust-name" ng-bind="::(vm.session.firstName || vm.session.userName)"></span>
+                        <span class="cust-name">[% translate 'My Account' %]</span>
+                        <i ng-cloak class="social foundicon-sub"></i>
                     </a>
                     <ul>
                         [% navigationMenu viewName: 'B2C' pageName: 'My Account' surroundWith: '' %]
@@ -186,7 +196,7 @@
                     </a>
                     <a class="ex fastClick"><i class="foundicon-remove"></i></a>
                 </li>
-                <li role="fulfillment-method" id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
+				<li role="fulfillment-method" ng-cloak id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
                     <a href="" id="tst_header_fulfillMethodLink" class="fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
                         <i class="foundicon-location"></i>
                         [[DeliveryLabel]]

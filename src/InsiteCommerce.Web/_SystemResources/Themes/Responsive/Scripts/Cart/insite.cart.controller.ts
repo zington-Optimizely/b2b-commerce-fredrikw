@@ -136,7 +136,7 @@ module insite.cart {
         }
 
         emptyCart(emptySuccessUri: string): void {
-            this.cartService.removeCart(this.cart).then(
+            this.cartService.removeLineCollection(this.cart).then(
                 () => { this.emptyCartCompleted(); },
                 (error: any) => { this.emptyCartFailed(error); });
         }

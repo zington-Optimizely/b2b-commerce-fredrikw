@@ -80,7 +80,7 @@ module insite.core {
                     if (!newValue) {
                         element.prop("value", "");
                     } else {
-                        if (newValue.indexOf("T") === -1) {
+                        if (newValue.indexOf("T") === -1 && newValue.indexOf("AM") === -1 && newValue.indexOf("PM") === -1) {
                             newValue += "T00:00:00";
                         }
 

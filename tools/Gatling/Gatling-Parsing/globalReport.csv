@@ -1,0 +1,1 @@
+Name,Request count,Min response time,Max response time,Mean response time,Std deviation,Response time 50th percentile,Response time 75th percentile,Response time 95th percentile,Response time 99th percentile,Mean requests/sec,t < 800 ms,800 ms < t < 1200 ms ,t > 1200 ms,Failed

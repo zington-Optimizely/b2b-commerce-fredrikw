@@ -1,9 +1,9 @@
-﻿<div id="shareEntityPopupContainer_{{vm.entityId}}" class="share-entity-modal popup-share reveal-modal" data-reveal data-reveal-init>
+﻿<div id="shareEntityPopupContainer" class="share-entity-modal popup-share reveal-modal" data-reveal data-reveal-init>
     <div class="modal-wrap">
         <div class="columns share-modal-label">
             <h2 ng-bind="vm.headerText"></h2>
         </div>
-        <form novalidate id="shareEntityForm_{{vm.entityId}}" class="custom">
+        <form novalidate id="shareEntityForm" class="custom shareEntityForm">
             <div class="columns">
                 <h3><a id="tst_shareEntityModal_fileLink" href="{{vm.fileLink}}" ng-bind="vm.fileName" class="link" target="blank"></a></h3>
                 <div class="required-label">

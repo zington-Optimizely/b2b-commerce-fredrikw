@@ -31,6 +31,7 @@ module insite.cart {
         addWishListToCart(wishListId: string, showAddToCartPopup?: boolean, data?: IAddWishListToCartData): ng.IPromise<CartLineCollectionModel>;
         updateLine(cartLine: CartLineModel, refresh: boolean): ng.IPromise<CartLineModel>;
         removeLine(cartLine: CartLineModel): ng.IPromise<CartLineModel>;
+        removeLineCollection(cart: CartModel): ng.IPromise<CartModel>;
         getLoadedCurrentCart(): CartModel;
         getRealTimeInventory(cart: CartModel): ng.IPromise<RealTimeInventoryModel>;
     }
@@ -349,6 +350,25 @@ module insite.cart {
         }
 
         protected removeLineFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        removeLineCollection(cart: CartModel): ng.IPromise<CartModel> {
+            const uri = `${cart.uri}/cartlines`;
+
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http.delete(uri),
+                this.removeLineCollectionCompleted,
+                this.removeLineCollectionFailed
+            );
+        }
+
+        protected removeLineCollectionCompleted(response: ng.IHttpPromiseCallbackArg<CartModel>): void {
+            this.getCart();
+            this.$rootScope.$broadcast("cartChanged");
+        }
+
+        protected removeLineCollectionFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
 
         getRealTimeInventory(cart: CartModel): ng.IPromise<RealTimeInventoryModel> {

@@ -441,8 +441,8 @@
                                     </div>
                                     <div ng-if="!vm.category && vm.products.categoryFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
-                                                ng-model="filterCategoryId"
-                                                ng-change="vm.toggleCategoryId(filterCategoryId)">
+                                                ng-model="vm.filterCategory.categoryId"
+                                                ng-change="vm.toggleCategoryId(vm.filterCategory.categoryId)">
                                             <option value="">[% translate 'Category' %]</option>
                                             <option ng-repeat="categoryFacet in vm.products.categoryFacets | orderBy : 'shortDescription'"
                                                     ng-selected="categoryFacet.selected"

@@ -192,6 +192,14 @@ module insite.account {
         }
 
         protected getSessionFromServerCompleted(response: ng.IHttpPromiseCallbackArg<SessionModel>): void {
+            if (!response.data.isAuthenticated && this.accessToken.exists()) {
+                this.removeAuthentication();
+                this.invalidateEtagsOnServer().then(() => {
+                    this.refreshPage();
+                });
+                return;
+            }
+
             this.checkForSessionTimeout = response.data.isAuthenticated;
             this.setContextFromSession(response.data);
             this.$rootScope.$broadcast("sessionLoaded", response.data);
@@ -315,6 +323,7 @@ module insite.account {
         }
 
         removeAuthentication(): void {
+            this.isAuthenticated = false;
             this.accessToken.remove();
             const currentContext = this.getContext();
             currentContext.billToId = null;

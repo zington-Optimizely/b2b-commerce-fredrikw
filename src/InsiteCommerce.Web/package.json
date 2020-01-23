@@ -13,6 +13,6 @@
         "tslint": "3.15.1",
         "tslint-msbuild-path": "^0.9",
         "tslint-teamcity-reporter": "2.0.0",
-        "typescript": "1.8.7"
+        "typescript": "3.7"
     }
 }

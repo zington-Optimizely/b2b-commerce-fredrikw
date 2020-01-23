@@ -20,5 +20,5 @@
 
 <span id="tst_productPrice_{{::product.id}}_{{product.unitOfMeasure}}" ng-if="(!product.quoteRequired && product.pricing)" class="tst_price price pd-price">
     <isc-product-sale-price-label product="product" hide-sale-price-label="hideSalePriceLabel"></isc-product-sale-price-label>
-    <span class="unit-net-price" ng-class="{'price-sale' : product.pricing.isOnSale || product.isDiscounted || product.isPromotionItem}" ng-bind-html="vm.getUnitNetPriceDisplay(product)"></span>
+    <span data-test-selector="tst_productPrice_{{product.productId || product.id}}" class="unit-net-price" ng-class="{'price-sale' : product.pricing.isOnSale || product.isDiscounted || product.isPromotionItem}" ng-bind-html="vm.getUnitNetPriceDisplay(product)"></span>
 </span>

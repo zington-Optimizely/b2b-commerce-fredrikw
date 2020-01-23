@@ -164,18 +164,10 @@
     .images-carousel-wrapper {
         padding: 0.6em 0;
         visibility: hidden;
-        position: absolute;
+        position: relative;
         margin: 0 auto;
 
         .img-carousel {
-            li {
-                border: 1px solid #d5d5d5;
-
-                &.active {
-                    border-color: #555555;
-                }
-            }
-
             .slides img {
                 display: inline-block;
                 max-height: 44px;
@@ -190,11 +182,20 @@
 
         ul {
             li {
-                margin: 0 4.8px 0 0;
-                width: 46px;
-                height: 46px;
-                line-height: 44px;
+                margin: 0;
+                width: 50.8px;
+                height: 50.8px;
+                line-height: 42px;
                 cursor: pointer;
+
+                .item-wrap {
+                    margin: 0 4.8px 0 0;
+                    border: 1px solid #d5d5d5;
+                }
+
+                &.active .item-wrap {
+                    border-color: #555555;
+                }
             }
         }
 
@@ -260,6 +261,11 @@
         display: block;
         margin: 0 auto;
         max-height: 80vh;
+    }
+
+    .sirv-image {
+        width: 400px;
+        padding-top: 10px;
     }
 
     .zoom-carousel-wrapper {

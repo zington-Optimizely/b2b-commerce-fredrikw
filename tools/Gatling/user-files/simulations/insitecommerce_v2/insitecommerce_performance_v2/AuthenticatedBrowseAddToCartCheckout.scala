@@ -1,4 +1,4 @@
-package insitecommerce_performance
+package insitecommerce_performance_v2
 
 import scala.concurrent.duration._
 
@@ -7,8 +7,13 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
 class AuthenticatedBrowseAddToCartCheckout extends Simulation {
+  
+  val myRamp  = java.lang.Long.getLong("ramp", 0L)
+  val nbUrl = System.getProperty("url")
+  val nbUsers = Integer.getInteger("users", 1)
+
   val httpProtocol = http
-    .baseURL("http://host.docker.internal")
+    .baseURL(nbUrl)
     .acceptHeader("application/json, text/plain, */*")
     .acceptEncodingHeader("gzip, deflate")
     .acceptLanguageHeader("en-US,en;q=0.5")
@@ -26,9 +31,9 @@ class AuthenticatedBrowseAddToCartCheckout extends Simulation {
     Map("qtyOrdered" -> "5")
   ).random
 
-  val categoryDetailFeeder = jsonUrl("http://host.docker.internal/api/v1/categories/feederData?type=categoryDetail").random 
-  val productListFeeder = jsonUrl("http://host.docker.internal/api/v1/categories/feederData?type=productList").random 
-  val productDetailFeeder = jsonUrl("http://host.docker.internal/api/v1/products/feederData").random 
+  val categoryDetailFeeder = jsonUrl(nbUrl + "/api/v1/categories/feederData?type=categoryDetail").random 
+  val productListFeeder = jsonUrl(nbUrl + "/api/v1/categories/feederData?type=productList").random 
+  val productDetailFeeder = jsonUrl(nbUrl + "/api/v1/products/feederData").random 
 
   val scn = scenario("AuthenticatedBrowseAddToCartCheckout")
     .feed(userNameFeeder)
@@ -64,7 +69,7 @@ class AuthenticatedBrowseAddToCartCheckout extends Simulation {
     .pause(1)
     .exec(AuthenticatedRequests.home)
 
-  setUp(scn.inject(rampUsers(50) over (30 seconds))).protocols(httpProtocol)
+  setUp(scn.inject(rampUsers(nbUsers) over (myRamp seconds))).protocols(httpProtocol)
 }
 
 
