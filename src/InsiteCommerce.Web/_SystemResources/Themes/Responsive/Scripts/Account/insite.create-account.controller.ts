@@ -33,10 +33,9 @@
             protected accessToken: common.IAccessTokenService,
             protected spinnerService: core.SpinnerService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.returnUrl = this.queryString.get("returnUrl");
 
             this.sessionService.getSession().then(

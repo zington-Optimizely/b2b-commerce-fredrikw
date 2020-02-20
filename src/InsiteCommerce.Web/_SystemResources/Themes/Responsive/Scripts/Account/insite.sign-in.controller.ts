@@ -85,10 +85,9 @@
             protected $localStorage: common.IWindowStorage,
             protected wishListService: IWishListService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init() {
+        $onInit() {
             this.homePageUrl = this.$attrs.homePageUrl;
             this.changeCustomerPageUrl = this.$attrs.changeCustomerPageUrl;
             this.dashboardUrl = this.$attrs.dashboardUrl;

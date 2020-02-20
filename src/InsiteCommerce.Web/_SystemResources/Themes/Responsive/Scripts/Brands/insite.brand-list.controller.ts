@@ -28,10 +28,9 @@
             protected brandService: IBrandService,
             protected $window: ng.IWindowService,
             protected $interval: ng.IIntervalService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getBrandAlphabet();
             this.initWindowResize();
         }

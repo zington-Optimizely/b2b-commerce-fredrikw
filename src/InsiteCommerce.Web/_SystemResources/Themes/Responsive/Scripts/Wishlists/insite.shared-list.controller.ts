@@ -7,12 +7,10 @@
         constructor(
             protected $scope: ng.IScope,
             protected shareDetailsPopupService: IShareDetailsPopupService,
-            protected manageSharingPopupService: IManageSharingPopupService
-        ) {
-            this.init();
+            protected manageSharingPopupService: IManageSharingPopupService) {
         }
 
-        init(): void {
+        $onInit(): void {
             this.updateScopeList();
         }
 

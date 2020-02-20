@@ -13,12 +13,10 @@
 
         constructor(
             protected spinnerService: core.ISpinnerService,
-            protected $element: ng.IRootElementService
-        ) {
-            this.init();
+            protected $element: ng.IRootElementService) {
         }
 
-        init(): void {
+        $onInit(): void {
             this.show = this.show && this.show.toString() === "true";
             // Register with the spinner service by default if not specified.
             if (!this.hasOwnProperty("register")) {

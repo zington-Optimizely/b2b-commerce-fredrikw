@@ -17,12 +17,10 @@
             protected selectVariantProductPopupService: ISelectVariantProductPopupService,
             protected $rootScope: ng.IRootScopeService,
             protected productService: catalog.IProductService,
-            protected settingsService: core.ISettingsService
-        ) {
-            this.init();
+            protected settingsService: core.ISettingsService) {
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

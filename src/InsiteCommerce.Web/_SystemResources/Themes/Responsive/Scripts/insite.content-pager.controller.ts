@@ -22,10 +22,9 @@
             protected $attrs: IContentPagerControllerAttributes,
             protected $location: ng.ILocationService,
             protected coreService: core.ICoreService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.pagination = {
                 currentPage: parseInt(this.$attrs.page, 10),
                 page: parseInt(this.$attrs.page, 10),

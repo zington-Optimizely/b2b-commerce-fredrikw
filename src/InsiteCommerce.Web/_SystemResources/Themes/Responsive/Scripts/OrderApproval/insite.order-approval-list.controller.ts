@@ -18,10 +18,9 @@
             protected coreService: core.ICoreService,
             protected paginationService: core.IPaginationService,
             protected cartService: cart.ICartService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
 
             this.cartService.getCart().then(

@@ -26,10 +26,9 @@ module insite.rfq {
             protected sessionService: account.ISessionService,
             protected settingsService: core.ISettingsService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.initEvents();
             this.cartService.cartLoadCalled = true;
         }

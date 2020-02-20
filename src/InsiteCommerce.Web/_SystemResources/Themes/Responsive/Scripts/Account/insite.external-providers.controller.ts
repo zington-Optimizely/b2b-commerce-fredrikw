@@ -9,10 +9,9 @@ module insite.account {
         static $inject = ["accountService"];
 
         constructor(protected accountService: IAccountService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.accountService.getExternalProviders().then(
                 (externalProviderLinkCollection: ExternalProviderLinkCollectionModel) => { this.getExternalProvidersCompleted(externalProviderLinkCollection); },
                 (error: any) => {this.getExternalProvidersFailed(error); });

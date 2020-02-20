@@ -11,10 +11,9 @@
 
         constructor(
             protected $scope: ng.IScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.calculateCharacters();
             this.$scope.$watch(() => this.fieldModel, (newValue) => {
                 this.calculateCharacters();

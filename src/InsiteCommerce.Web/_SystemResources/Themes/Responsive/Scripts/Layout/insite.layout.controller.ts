@@ -6,10 +6,9 @@
 
         constructor(
             protected $window: ng.IWindowService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
         }
 
         hideHeader(): any {

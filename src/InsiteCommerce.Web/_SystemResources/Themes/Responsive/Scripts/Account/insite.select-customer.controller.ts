@@ -77,10 +77,9 @@
             protected addressErrorPopupService: cart.IAddressErrorPopupService,
             protected apiErrorPopupService: core.IApiErrorPopupService,
             protected $localStorage: common.IWindowStorage) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.homePageUrl = this.$attrs.homePageUrl;
             this.dashboardUrl = this.$attrs.dashboardUrl;
             this.addressesUrl = this.$attrs.addressesUrl;

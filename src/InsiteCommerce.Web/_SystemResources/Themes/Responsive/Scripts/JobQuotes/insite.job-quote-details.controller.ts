@@ -20,10 +20,9 @@ module insite.jobquote {
             protected jobQuoteService: jobquote.IJobQuoteService,
             protected $attrs: ISignInControllerAttributes,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.checkoutAddressUrl = this.$attrs.checkoutAddressUrl;
             this.jobQuoteId = this.queryString.get("jobQuoteId");
             this.getJob();

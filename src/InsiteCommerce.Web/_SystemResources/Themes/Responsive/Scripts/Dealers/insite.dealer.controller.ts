@@ -21,10 +21,9 @@
             protected queryString: common.IQueryStringService,
             protected $templateCache: ng.ITemplateCacheService,
             protected $location: ng.ILocationService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
             });

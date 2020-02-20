@@ -19,10 +19,9 @@
             protected userService: useradministration.IUserService,
             protected paginationService: core.IPaginationService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
             this.userProfileId = this.queryString.get("userId");
 

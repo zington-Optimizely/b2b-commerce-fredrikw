@@ -26,10 +26,9 @@
             protected $q: ng.IQService,
             protected $scope: ng.IScope,
             protected selectVariantProductPopupService: SelectVariantProductPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.product = null;
             this.alternateUnitsOfMeasure = true;
             this.canAddToCart = true;

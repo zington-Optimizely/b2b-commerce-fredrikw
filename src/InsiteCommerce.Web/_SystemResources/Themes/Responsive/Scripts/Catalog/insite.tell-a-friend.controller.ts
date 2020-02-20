@@ -16,10 +16,9 @@
             protected $timeout: ng.ITimeoutService,
             protected coreService: core.ICoreService,
             protected tellAFriendPopupService: ITellAFriendPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.tellAFriendPopupService.registerDisplayFunction((data) => {
                 this.product = data.product;
                 this.resetPopup();

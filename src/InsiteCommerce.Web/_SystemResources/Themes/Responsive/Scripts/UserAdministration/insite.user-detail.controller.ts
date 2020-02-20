@@ -32,10 +32,9 @@
             protected spinnerService: core.ISpinnerService,
             protected $rootScope: IAppRootScope,
             protected $location: ng.ILocationService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.userId = this.queryString.get("userId") as System.Guid;
             if (this.userId) {
                 this.isNewUser = false;

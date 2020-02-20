@@ -35,10 +35,9 @@
             protected productService: catalog.IProductService,
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             if (typeof(XLSX) === "undefined") {
                 $.getScript("/SystemResources/Scripts/Libraries/xlsx/0.8.0/xlsx.full.min.js", () => {
                     this.XLSX = XLSX;

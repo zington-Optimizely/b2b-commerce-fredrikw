@@ -25,10 +25,9 @@ module insite.rfq {
             protected $scope: ng.IScope,
             protected coreService: core.ICoreService,
             protected rfqService: rfq.IRfqService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("openLineCalculator", (event, data) => { this.onOpenLineCalculator(event, data); });
         }
 

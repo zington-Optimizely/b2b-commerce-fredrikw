@@ -39,10 +39,9 @@
             protected $window: ng.IWindowService,
             protected settingsService: core.ISettingsService,
             protected productService: catalog.IProductService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.quoteId = this.getQuoteId();
 
             this.settingsService.getSettings().then(

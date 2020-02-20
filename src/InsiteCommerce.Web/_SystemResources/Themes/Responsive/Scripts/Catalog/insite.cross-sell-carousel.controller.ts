@@ -24,10 +24,9 @@
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
             protected settingsService: core.ISettingsService,
             protected $scope: ng.IScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

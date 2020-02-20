@@ -32,10 +32,9 @@
             protected sessionService: account.ISessionService,
             protected cartService: cart.ICartService,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

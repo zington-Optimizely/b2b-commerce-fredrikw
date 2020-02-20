@@ -29,10 +29,9 @@ module insite.catalog {
             protected settingsService: core.ISettingsService,
             protected $scope: ng.IScope,
             protected $attrs: IRelatedProductsAttributes) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.carouselElement = angular.element("[carousel-element-id='" + this.$attrs.carouselElementId + "']");
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },

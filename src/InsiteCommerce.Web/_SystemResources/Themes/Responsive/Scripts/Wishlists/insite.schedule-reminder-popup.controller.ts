@@ -30,10 +30,9 @@
             protected coreService: core.ICoreService,
             protected scheduleReminderPopupService: IScheduleReminderPopupService,
             protected settingsService: core.ISettingsService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.scheduleReminderPopupService.registerDisplayFunction(this.display.bind(this));
 
             this.$scope.$watch(() => this.hasEndDate, (newValue) => {

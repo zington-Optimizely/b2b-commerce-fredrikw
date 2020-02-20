@@ -19,10 +19,9 @@ module insite.rma {
             protected orderService: order.IOrderService,
             protected coreService: core.ICoreService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getOrder();
         }
 

@@ -35,10 +35,9 @@ module insite.catalog {
             protected $scope: ng.IScope,
             protected $rootScope: ng.IRootScopeService,
             protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.onGetSessionCompleted(session); },
                 (error: any) => { this.onGetSessionFailed(error); });

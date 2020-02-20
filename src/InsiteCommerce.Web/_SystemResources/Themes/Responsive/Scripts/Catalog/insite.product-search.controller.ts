@@ -38,10 +38,9 @@ module insite.catalog {
             protected queryString: common.IQueryStringService,
             protected $scope: ng.IScope,
             protected $window: ng.IWindowService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.criteria = decodeURIComponent(this.queryString.get("criteria"));
 
             this.$scope.$on("$locationChangeStart", (event: ng.IAngularEvent, uri: string) => {

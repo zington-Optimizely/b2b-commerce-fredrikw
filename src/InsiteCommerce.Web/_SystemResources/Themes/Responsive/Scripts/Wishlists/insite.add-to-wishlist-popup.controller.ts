@@ -36,10 +36,9 @@
             protected sessionService: account.ISessionService,
             protected spinnerService: core.ISpinnerService,
             protected scheduleReminderPopupService: IUploadToListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.productsToAdd = [];
             this.settingsService.getSettings().then(
                 (settings: core.SettingsCollection) => { this.getSettingsCompleted(settings); },

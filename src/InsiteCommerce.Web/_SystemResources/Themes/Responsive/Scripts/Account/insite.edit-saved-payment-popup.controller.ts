@@ -35,10 +35,9 @@
             protected accountService: account.IAccountService,
             protected customerService: customers.ICustomerService,
             protected editSavedPaymentPopupService: IEditSavedPaymentPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.editSavedPaymentPopupService.registerDisplayFunction((data) => {
                 this.savedPayment = data.savedPayment;
                 this.savedPayments = data.savedPayments;

@@ -12,10 +12,9 @@
             protected wishListService: IWishListService,
             protected spinnerService: core.ISpinnerService,
             protected shareDetailsPopupService: IShareDetailsPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.shareDetailsPopupService.registerDisplayFunction((listModel) => {
                 if (listModel.shareOption === ShareOptionEnum[ShareOptionEnum.AllCustomerUsers]) {
                     this.list = listModel;

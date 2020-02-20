@@ -62,16 +62,15 @@
         private returnResult(data: string, config: ng.IRequestShortcutConfig): ng.IPromise<IAccessTokenDto> {
             const deferred = this.$q.defer();
             this.$http.post(this.tokenUri, data, config)
-                .success((result: any) => deferred.resolve({
-                    accessToken: result.access_token,
-                    refreshToken: result.refresh_token,
-                    expiresIn: result.expires_in
-                }))
-                .error((error, status) => {
+                .then((result: ng.IHttpPromiseCallbackArg<any>) => deferred.resolve({
+                    accessToken: result.data.access_token,
+                    refreshToken: result.data.refresh_token,
+                    expiresIn: result.data.expires_in
+                }), (error: ng.IHttpPromiseCallbackArg<any>) => {
                     deferred.reject({
-                        errorCode: error.error,
-                        message: error.error_description,
-                        status: status
+                        errorCode: error.data.error,
+                        message: error.data.error_description,
+                        status: error.status
                     });
                 });
             return deferred.promise as any;

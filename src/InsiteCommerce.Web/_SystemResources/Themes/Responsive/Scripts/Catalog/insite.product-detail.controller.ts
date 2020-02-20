@@ -60,10 +60,9 @@ module insite.catalog {
             protected spinnerService: core.ISpinnerService,
             protected queryString: common.IQueryStringService,
             protected tellAFriendPopupService: catalog.ITellAFriendPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
@@ -585,8 +584,8 @@ module insite.catalog {
         protected isAddToCartVisible() {
             return this.product && this.product.allowedAddToCart &&
             (this.product.canAddToCart ||
-                this.configurationCompleted ||
-                    (this.styleSelectionCompleted && (this.settings.allowBackOrder || (<any>this.product.availability).messageType !== 2))
+                ((this.styleSelectionCompleted || this.configurationCompleted)
+                    && (this.settings.allowBackOrder || (<any>this.product.availability).messageType !== 2))
                     && !this.product.canConfigure);
         }
     }

@@ -22,10 +22,9 @@
             protected sessionService: account.ISessionService,
             protected settingsService: core.ISettingsService,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             const confirmedCartId = this.queryString.get("cartId");
 
             this.cartService.expand = "cartlines,carriers,creditCardBillingAddress";

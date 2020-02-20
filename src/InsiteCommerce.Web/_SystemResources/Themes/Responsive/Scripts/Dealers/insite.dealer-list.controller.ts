@@ -36,10 +36,9 @@
             protected $q: ng.IQService,
             protected dealerService: IDealerService,
             protected $compile: ng.ICompileService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
             });

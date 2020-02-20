@@ -12,10 +12,9 @@
             protected wishListService: IWishListService,
             protected coreService: core.ICoreService,
             protected deleteListPopupService: IDeleteListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             const popup = angular.element("#popup-delete-list");
 
             this.deleteListPopupService.registerDisplayFunction((list: WishListModel) => {

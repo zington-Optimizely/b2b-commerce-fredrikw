@@ -19,10 +19,9 @@
             protected settingsService: core.ISettingsService,
             protected coreService: core.ICoreService,
             protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

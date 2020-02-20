@@ -24,8 +24,8 @@
             super($scope, productService, coreService, settingsService);
         }
 
-        init() {
-            super.init();
+        $onInit() {
+            super.$onInit();
 
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },

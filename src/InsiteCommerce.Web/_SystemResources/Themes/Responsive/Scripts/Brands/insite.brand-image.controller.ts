@@ -14,10 +14,9 @@
         constructor(
             protected $window: ng.IWindowService,
             protected brandService: IBrandService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.brandService.getBrandByPath(this.$window.location.pathname).then(
                 (brand: BrandModel) => { this.getBrandByPathCompleted(brand); },
                 (error: any) => { this.getBrandByPathFailed(error); });

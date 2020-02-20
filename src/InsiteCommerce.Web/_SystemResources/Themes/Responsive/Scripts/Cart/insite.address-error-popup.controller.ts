@@ -19,10 +19,9 @@
             protected $window: ng.IWindowService,
             protected sessionService: account.ISessionService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$q.all([this.sessionService.getSession(), this.settingsService.getSettings()]).then(
                 (results: any[]) => { this.getSessionAndSettingsCompleted(results); },
                 (error: any) => { this.getSessionAndSettingsFailed(error); });

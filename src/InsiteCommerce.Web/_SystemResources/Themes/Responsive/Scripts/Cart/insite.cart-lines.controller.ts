@@ -17,10 +17,9 @@
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
             protected spinnerService: core.ISpinnerService,
             protected settingsService: core.ISettingsService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("cartLoaded", (event: ng.IAngularEvent, cart: CartModel) => this.onCartLoaded(event, cart));
 
             this.$scope.$on("updateProductSubscription", (event: ng.IAngularEvent, productSubscription: ProductSubscriptionDto, product: ProductDto, cartLine: CartLineModel) =>

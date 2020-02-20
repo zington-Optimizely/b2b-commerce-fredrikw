@@ -7,10 +7,9 @@
         static $inject = ["jobQuoteService"];
 
         constructor(protected jobQuoteService: jobquote.IJobQuoteService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getJobs();
         }
 

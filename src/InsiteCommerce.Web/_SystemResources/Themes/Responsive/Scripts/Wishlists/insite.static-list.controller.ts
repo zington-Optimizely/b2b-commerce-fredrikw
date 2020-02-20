@@ -37,12 +37,10 @@
             protected spinnerService: core.ISpinnerService,
             protected productService: catalog.IProductService,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
-            protected sessionService: account.ISessionService
-        ) {
-            this.init();
+            protected sessionService: account.ISessionService) {
         }
 
-        init(): void {
+        $onInit(): void {
             this.listId = this.queryString.get("id");
             this.updateBreadcrumbs();
             this.initListPopupEvents();

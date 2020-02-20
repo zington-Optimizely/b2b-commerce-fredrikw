@@ -13,10 +13,9 @@
             protected $rootScope: ng.IRootScopeService,
             protected coreService: core.ICoreService,
             protected quotePastExpirationDatePopupService: QuotePastExpirationDatePopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.quotePastExpirationDatePopupService.registerDisplayFunction((data) => {
                 this.url = data.url;
                 setTimeout(() => {

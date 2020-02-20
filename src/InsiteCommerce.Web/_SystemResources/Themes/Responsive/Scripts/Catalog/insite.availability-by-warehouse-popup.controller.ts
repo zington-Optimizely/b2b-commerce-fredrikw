@@ -12,10 +12,9 @@
             protected coreService: core.ICoreService,
             protected availabilityByWarehousePopupService: IAvailabilityByWarehousePopupService
         ) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.availabilityByWarehousePopupService.registerDisplayFunction((data) => {
                 this.warehouses = data.warehouses || [];
                 this.coreService.displayModal(this.selector);

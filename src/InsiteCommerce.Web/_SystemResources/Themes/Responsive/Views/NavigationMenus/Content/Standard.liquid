@@ -4,7 +4,7 @@ This uses NavigationMenuItemDrop as the model
 
 [% if Model.Children == empty %]
     <li>
-        <a href="[[Model.Url]]" [% if Model.OpenInNewTab %] target="_blank" rel="noopener noreferrer" [% endif %]>[[Model.Title]]</a>
+        <a href="[[Model.Url]]" onclick="insite.nav.hideMenu();" [% if Model.OpenInNewTab %] target="_blank" rel="noopener noreferrer" [% endif %]>[[Model.Title]]</a>
     </li>
 [% else %]
     <li>

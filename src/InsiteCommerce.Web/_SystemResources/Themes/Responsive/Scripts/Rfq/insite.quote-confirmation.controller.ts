@@ -14,10 +14,9 @@
             protected queryString: common.IQueryStringService,
             protected settingsService: core.ISettingsService,
             protected productService: catalog.IProductService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.rfqService.expand = "billTo";
             this.confirmedOrderId = this.getConfirmedOrderId();
             this.settingsService.getSettings().then(

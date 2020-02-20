@@ -31,10 +31,9 @@ module insite.cart {
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
             protected spinnerService: core.ISpinnerService,
             protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.initEvents();
             this.cartService.cartLoadCalled = true; // prevents request race
         }

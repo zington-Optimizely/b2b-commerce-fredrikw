@@ -16,6 +16,9 @@
 
     that.hideMenu = () => {
         $("#sub-cat").addClass("hide-item");
+        if (Modernizr.touch) {
+            $(".isc-primary-nav ul.touch-active-nav").removeClass("touch-active-nav");
+        }
     };
 
     that.activatePanel = () => {
@@ -33,6 +36,17 @@
         $(".isc-primary-nav ul").removeClass("active-nav");
 
         const self = $(navArrow);
+        if (Modernizr.touch) {
+            const parent = self.parents(".touch-active-nav").eq(0);
+            if (parent.length > 0) {
+                parent.find(".touch-active-nav").removeClass("touch-active-nav");
+            } else {
+                $(".isc-primary-nav ul.touch-active-nav").removeClass("touch-active-nav");
+            }
+
+            self.closest("li").find("ul.subnav:first").addClass("touch-active-nav");
+        }
+
         self.closest("li").find("ul.subnav:first").addClass("active-nav");
 
         $(".isc-primary-nav-back").removeClass("isc-hidden");
@@ -69,6 +83,16 @@
             e.preventDefault();
             that.closePanel();
         });
+
+        if (Modernizr.touch) {
+            $body.on(events,
+                (e) => {
+                    const parent = $(e.target).parents(".isc-primary-nav ul li").eq(0);
+                    if (parent.length === 0) {
+                        $(".isc-primary-nav ul.touch-active-nav").removeClass("touch-active-nav");
+                    }
+                });
+        }
 
         let resizeTimer;
         let $windowWidth;

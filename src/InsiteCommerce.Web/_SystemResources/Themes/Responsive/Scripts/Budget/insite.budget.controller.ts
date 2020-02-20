@@ -46,10 +46,9 @@ module insite.budget {
             protected customerService: customers.ICustomerService,
             protected settingsService: core.ISettingsService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$q.all([
                     this.getBudgetCalendar(),
                     this.getCostCodes(),

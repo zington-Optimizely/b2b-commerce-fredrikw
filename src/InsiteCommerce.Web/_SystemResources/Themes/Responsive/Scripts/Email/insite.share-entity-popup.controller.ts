@@ -23,10 +23,9 @@
             protected $scope: ng.IScope,
             protected emailService: email.IEmailService,
             protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(session); },
                 (error: any) => { this.getSessionFailed(error); });

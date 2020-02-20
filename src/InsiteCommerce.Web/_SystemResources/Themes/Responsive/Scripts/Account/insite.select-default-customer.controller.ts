@@ -11,7 +11,7 @@
         shipFulfillmentMethod = "Ship";
         pickupFulfillmentMethod = "PickUp";
 
-        init(): void {
+        $onInit(): void {
             this.useDefaultCustomer = false;
             this.fulfillmentMethod = this.account.defaultFulfillmentMethod;
             this.pickUpWarehouse = this.account.defaultWarehouse;

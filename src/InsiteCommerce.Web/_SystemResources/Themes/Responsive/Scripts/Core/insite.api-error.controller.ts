@@ -10,10 +10,9 @@
             protected $scope: ng.IScope,
             protected coreService: ICoreService,
             protected apiErrorPopupService: IApiErrorPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.apiErrorPopupService.registerDisplayFunction((data: any) => {
                 const $popup = angular.element(".api-error-popup");
                 if ($popup.length > 0) {

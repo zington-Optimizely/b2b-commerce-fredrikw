@@ -17,10 +17,9 @@
             protected spinnerService: core.ISpinnerService,
             protected manageSharingPopupService: IManageSharingPopupService,
             protected shareListPopupService: IShareListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.manageSharingPopupService.registerDisplayFunction((data) => {
                 this.session = data.session;
                 this.privateSectionIsActive = false;

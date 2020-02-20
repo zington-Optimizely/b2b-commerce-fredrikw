@@ -26,10 +26,9 @@
             protected brandService: IBrandService,
             protected $attrs: IBrandContainerAttributes,
             protected $timeout: ng.ITimeoutService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.isEditMode = this.$attrs.isEditMode.toString().toLowerCase() === "true";
             this.containerElement = angular.element(`[container-id='${this.$attrs.containerId}']`);
 

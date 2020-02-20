@@ -26,10 +26,9 @@
             protected dashboardService: IDashboardService,
             protected $attrs: IDashboardViewAttributes,
             protected cartService: cart.ICartService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(session); },
                 (error: any) => { this.getSessionFailed(error); }

@@ -29,10 +29,9 @@ module insite.catalog {
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
             protected settingsService: core.ISettingsService,
             protected $localStorage: common.IWindowStorage) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.productsToCompare = [];
             this.relevantAttributeTypes = [];
 

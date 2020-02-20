@@ -7,10 +7,9 @@
         constructor(
             protected $scope: ng.IScope,
             protected $rootScope: IAppRootScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             // properly destroy and remove first page content
             const removeListener = this.$rootScope.$on("$stateChangeStart", () => {
                 this.$scope.$destroy();

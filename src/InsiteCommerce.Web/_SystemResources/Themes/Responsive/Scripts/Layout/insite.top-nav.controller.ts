@@ -23,10 +23,9 @@
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService,
             protected deliveryMethodPopupService: account.IDeliveryMethodPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.dashboardUrl = this.$attrs.dashboardUrl;
             // TODO ISC-4406
             // TODO ISC-2937 SPA kill all of the things that depend on broadcast for session and convert them to this, assuming we can properly cache this call

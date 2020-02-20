@@ -13,10 +13,9 @@
             protected accountService: IAccountService,
             protected editSavedPaymentPopupService: IEditSavedPaymentPopupService,
             protected addSavedPaymentPopupService: IAddSavedPaymentPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getPaymentProfiles();
         }
 

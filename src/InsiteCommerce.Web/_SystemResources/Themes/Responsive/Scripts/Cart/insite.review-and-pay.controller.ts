@@ -76,10 +76,9 @@ module insite.cart {
             protected websiteService: websites.IWebsiteService,
             protected deliveryMethodPopupService: account.IDeliveryMethodPopupService,
             protected selectPickUpLocationPopupService: account.ISelectPickUpLocationPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("cartChanged", (event: ng.IAngularEvent) => this.onCartChanged(event));
 
             this.cartUrl = this.$attrs.cartUrl;

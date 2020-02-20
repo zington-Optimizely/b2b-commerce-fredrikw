@@ -21,11 +21,9 @@
             protected $attrs: IOrderStatusLookupControllerAttributes,
             protected coreService: core.ICoreService,
             protected spinnerService: core.ISpinnerService) {
-            this.init();
         }
 
-        init(): void {
-
+        $onInit(): void {
         }
 
         checkOrderStatus(): void {

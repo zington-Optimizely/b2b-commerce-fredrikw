@@ -17,10 +17,9 @@
             protected $window: ng.IWindowService,
             protected settingsService: core.ISettingsService,
             protected deliveryMethodPopupService: account.IDeliveryMethodPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("cartLoaded", (event, cart) => {
                 this.onCartLoaded(cart);
             });

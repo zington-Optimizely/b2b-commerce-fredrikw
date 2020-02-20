@@ -14,12 +14,12 @@
                                 <div class="list-question">[% translate 'Allow editing?' %]</div>
                                 <div class="list-option">
                                     <input id="manage-edit-yes" name="manage-mode" ng-model="vm.allowEditList"
-                                           ng-click="vm.changeEditMode()" type="radio" value="true"/>
+                                           ng-change="vm.changeEditMode()" type="radio" value="true"/>
                                     <label for="manage-edit-yes">[% translate 'Yes, allow editing.' %]</label>
                                 </div>
                                 <div class="list-option">
                                     <input id="manage-edit-no" name="manage-mode" ng-model="vm.allowEditList"
-                                           ng-click="vm.changeEditMode()" type="radio" value="false"/>
+                                           ng-change="vm.changeEditMode()" type="radio" value="false"/>
                                     <label for="manage-edit-no">[% translate 'No, the list can only be viewed.' %]</label>
                                 </div>
                             </div>

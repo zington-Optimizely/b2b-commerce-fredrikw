@@ -42,10 +42,9 @@
             protected dealerService: IDealerService,
             protected $compile: ng.ICompileService,
             protected selectPickUpLocationPopupService: ISelectPickUpLocationPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
                 this.isMapInitialized = true;

@@ -26,7 +26,7 @@
         orderHistory: OrderCollectionModel;
         orderSettings: OrderSettingsModel;
 
-        init(): void {
+        $onInit(): void {
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(session); },
                 (error: any) => { this.getSessionFailed(error); });

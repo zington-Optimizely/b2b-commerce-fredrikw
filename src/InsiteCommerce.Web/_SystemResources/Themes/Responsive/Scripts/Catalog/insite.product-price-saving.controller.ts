@@ -14,10 +14,9 @@
         constructor(
             protected productPriceService: IProductPriceService,
             protected settingsService: core.ISettingsService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

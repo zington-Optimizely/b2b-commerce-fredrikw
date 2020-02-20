@@ -21,10 +21,9 @@
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService,
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

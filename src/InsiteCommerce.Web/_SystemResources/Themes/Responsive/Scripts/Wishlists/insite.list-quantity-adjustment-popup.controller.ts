@@ -12,11 +12,9 @@
         constructor(
             protected coreService: core.ICoreService,
             protected listQuantityAdjustmentPopupService: IListQuantityAdjustmentPopupService) {
-
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.registerDisplayFunction();
         }
 

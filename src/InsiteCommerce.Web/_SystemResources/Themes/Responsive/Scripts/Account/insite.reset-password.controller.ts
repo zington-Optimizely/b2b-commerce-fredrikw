@@ -23,10 +23,9 @@
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.isResettingPassword = this.queryString.get("reset").toLowerCase() === "true";
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },

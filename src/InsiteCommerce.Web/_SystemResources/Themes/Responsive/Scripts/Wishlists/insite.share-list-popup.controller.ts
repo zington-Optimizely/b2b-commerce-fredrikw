@@ -45,10 +45,9 @@
             protected wishListService: IWishListService,
             protected spinnerService: core.ISpinnerService,
             protected shareListPopupService: IShareListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.initShareListPopup();
 
             this.shareListPopupService.registerDisplayFunction((data) => {

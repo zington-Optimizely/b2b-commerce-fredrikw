@@ -53,7 +53,7 @@ module insite {
 
             this.$rootScope.firstPage = true;
 
-            this.$rootScope.$on("$locationChangeSuccess", () => { this.onLocationChangeSuccess(); });
+            this.$rootScope.$on("$locationChangeSuccess", (event, newUrl, oldUrl) => { this.onLocationChangeSuccess(newUrl, oldUrl); });
 
             this.$rootScope.$on("$stateChangeStart", () => { this.onLocationChangeStart(); });
 
@@ -63,19 +63,22 @@ module insite {
             this.$rootScope.$on("$viewContentLoaded", () => { this.onViewContentLoaded(); });
         }
 
-        protected onLocationChangeSuccess(): void {
+        protected onLocationChangeSuccess(newUrl, oldUrl): void {
             if (this.$rootScope.firstPage) {
+                newUrl = newUrl.split("#").shift();
+                oldUrl = oldUrl.split("#").shift();
+
+                if (newUrl === oldUrl) {
+                    return;
+                }
+
+                this.$rootScope.firstPage = false;
+                this.$urlRouter.sync();
                 this.$urlRouter.listen();
-                // fixes popups on initial page
-                this.coreService.refreshUiBindings();
             }
         }
 
         protected onLocationChangeStart(): void {
-            if (this.$rootScope.firstPage) {
-                this.$rootScope.firstPage = false;
-            }
-
             this.spinnerService.show("mainLayout");
         }
 

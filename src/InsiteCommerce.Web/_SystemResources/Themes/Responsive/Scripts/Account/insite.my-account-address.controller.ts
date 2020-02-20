@@ -22,10 +22,9 @@ module insite.account {
             protected sessionService: account.ISessionService,
             protected queryString: common.IQueryStringService,
             protected $rootScope: ng.IRootScopeService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.websiteService.getAddressFields().then(
                 (addressFieldCollection: AddressFieldCollectionModel) => { this.getAddressFieldsCompleted(addressFieldCollection); },
                 (error: any) => { this.getAddressFieldsFailed(error); });

@@ -12,10 +12,9 @@
             protected rfqService: rfq.IRfqService,
             protected settingsService: core.ISettingsService,
             protected cartService: cart.ICartService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

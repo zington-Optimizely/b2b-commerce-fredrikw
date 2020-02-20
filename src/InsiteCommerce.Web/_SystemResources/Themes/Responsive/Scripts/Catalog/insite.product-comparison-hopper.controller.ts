@@ -13,10 +13,9 @@
             protected compareProductsService: ICompareProductsService,
             protected coreService: core.ICoreService,
             protected $localStorage: common.IWindowStorage) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.productsToCompare = []; // full product objects
 
             // add product from product list controller

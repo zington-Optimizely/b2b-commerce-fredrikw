@@ -23,10 +23,9 @@
             protected paginationService: core.IPaginationService,
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getWishLists();
 
             this.settingsService.getSettings().then(

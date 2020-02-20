@@ -30,10 +30,9 @@
             protected paginationService: core.IPaginationService,
             protected createListPopupService: ICreateListPopupService,
             protected deleteListPopupService: IDeleteListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.restoreHistory();
             this.getWishLists(false);
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);

@@ -19,10 +19,9 @@
             protected $timeout: ng.ITimeoutService,
             protected $window: ng.IWindowService,
             protected $scope: ng.IScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.imagesLoaded = 0;
             this.waitForDom(this.maxTries);
         }

@@ -21,10 +21,9 @@
             protected dealerService: IDealerService,
             protected $sce: ng.ISCEService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$on("mapInitialized", () => {
                 this.onMapInitialized();
             });

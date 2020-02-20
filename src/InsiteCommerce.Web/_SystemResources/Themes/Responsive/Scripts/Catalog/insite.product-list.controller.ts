@@ -101,10 +101,9 @@ module insite.catalog {
             protected queryString: common.IQueryStringService,
             protected $location: ng.ILocationService,
             protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.products.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
             this.filterCategory = { categoryId: null, selected: false, shortDescription: "", count: 0, subCategoryDtos: null, websiteId: null };
             this.view = this.$localStorage.get("productListViewName");
@@ -885,7 +884,7 @@ module insite.catalog {
             // for unknown reasons clicking on link does not trigger new search on microsites
             // so we need force re-init
             if ((this.$window as any).insiteMicrositeUriPrefix) {
-                setTimeout(() => { this.init(); }, 50);
+                setTimeout(() => { this.$onInit(); }, 50);
             }
         }
 

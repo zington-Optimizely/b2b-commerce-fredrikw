@@ -13,12 +13,9 @@
             protected $scope: ng.IScope,
             protected rfqService: rfq.IRfqService,
             protected queryString: common.IQueryStringService) {
-
-            this.init();
         }
 
-        init(): void {
-
+        $onInit(): void {
         }
 
         sendMessage(): any {

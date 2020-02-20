@@ -496,6 +496,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 		useTokenExGateway: boolean;
 		defaultPageSize: number;
 		enableCookiePrivacyPolicyPopup: boolean;
+		enableDynamicRecommendations: boolean;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;

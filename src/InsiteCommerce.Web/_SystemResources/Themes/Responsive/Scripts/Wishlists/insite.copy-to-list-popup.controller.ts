@@ -25,10 +25,9 @@
             protected coreService: core.ICoreService,
             protected copyToListPopupService: ICopyToListPopupService,
             protected spinnerService: core.ISpinnerService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.initializePopup();
         }
 

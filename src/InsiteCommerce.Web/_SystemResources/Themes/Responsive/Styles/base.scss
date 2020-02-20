@@ -9085,6 +9085,10 @@ header label.toggle.burger:after {
         display: block;
     }
 
+    .isc-primary-nav ul li > ul.touch-active-nav {
+        display: block;
+    }
+
     .hide-item {
         display: none;
     }

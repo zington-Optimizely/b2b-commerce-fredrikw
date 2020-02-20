@@ -13,10 +13,9 @@
             protected invoiceService: invoice.IInvoiceService,
             protected coreService: core.ICoreService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getInvoice();
         }
 

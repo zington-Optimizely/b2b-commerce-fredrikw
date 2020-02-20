@@ -16,10 +16,9 @@
             protected accountService: account.IAccountService,
             protected coreService: core.ICoreService,
             protected queryString: common.IQueryStringService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             const cartId = this.queryString.get("cartid");
 
             this.initEvents();

@@ -30,10 +30,9 @@
             protected coreService: core.ICoreService,
             protected $attrs: IRequisitionsControllerAttributes,
             protected spinnerService: core.ISpinnerService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.updateItemMessage = this.$attrs.updateItemMessage;
             this.deleteItemMessage = this.$attrs.deleteItemMessage;
             this.deleteOrderLineMessage = this.$attrs.deleteOrderLineMessage;

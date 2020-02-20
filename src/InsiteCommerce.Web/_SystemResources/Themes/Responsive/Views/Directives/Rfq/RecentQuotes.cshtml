@@ -20,7 +20,7 @@
                     <tr ng-repeat="quote in vm.quotes">
                         <td class="col-num">
                             <span class="sticky-first">
-                                <a href='[% urlForPage 'RfqQuoteDetailsPage' %]/?quoteId={{quote.id}}' title="[% translate 'View Quote' %]" ng-bind="quote.quoteNumber"></a>
+                                <a href="[% urlForPage 'RfqQuoteDetailsPage' %]/?quoteId={{quote.id}}" title="[% translate 'View Quote' %]" ng-bind="quote.quoteNumber"></a>
                             </span>
                         </td>
                         <td class="col-type" ng-if="vm.quoteSettings.jobQuoteEnabled"><span ng-bind="quote.typeDisplay"></span></td>

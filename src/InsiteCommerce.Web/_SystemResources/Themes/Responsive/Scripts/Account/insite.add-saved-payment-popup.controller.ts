@@ -44,10 +44,9 @@
             protected addSavedPaymentPopupService: IAddSavedPaymentPopupService,
             protected spinnerService: core.ISpinnerService,
             protected settingsService: core.ISettingsService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.addSavedPaymentPopupService.registerDisplayFunction((data) => {
                 this.savedPayments = data.savedPayments;
                 this.afterSaveFn = data.afterSaveFn;

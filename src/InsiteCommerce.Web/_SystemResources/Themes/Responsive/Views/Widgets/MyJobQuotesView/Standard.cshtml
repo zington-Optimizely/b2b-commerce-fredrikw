@@ -15,7 +15,7 @@
                     <tr ng-repeat="job in vm.jobs">
                         <td class="col-num">
                             <span class="sticky-first">
-                                <a href='[% urlForPage 'JobQuoteDetailsPage' %]?jobQuoteId={{job.id}}' title="[% translate 'View Job' %]" ng-bind="job.orderNumber"></a>
+                                <a href="[% urlForPage 'JobQuoteDetailsPage' %]?jobQuoteId={{job.id}}" title="[% translate 'View Job' %]" ng-bind="job.orderNumber"></a>
                             </span>
                         </td>
                         <td class="col-submitted"><span ng-bind="job.jobName"></span></td>

@@ -10,10 +10,9 @@
         static $inject = ["messageService"];
 
         constructor(protected messageService: message.IMessageService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.getMessages();
         }
 

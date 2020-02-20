@@ -102,12 +102,10 @@
             protected createListPopupService: ICreateListPopupService,
             protected deleteListPopupService: IDeleteListPopupService,
             protected copyToListPopupService: ICopyToListPopupService,
-            protected listQuantityAdjustmentPopupService: IListQuantityAdjustmentPopupService
-        ) {
-            this.init();
+            protected listQuantityAdjustmentPopupService: IListQuantityAdjustmentPopupService) {
         }
 
-        init(): void {
+        $onInit(): void {
             this.listId = this.queryString.get("id") || this.queryString.get("wishListId");
             this.invite = this.queryString.get("invite");
 

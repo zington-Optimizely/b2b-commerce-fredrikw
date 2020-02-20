@@ -10,10 +10,9 @@
         constructor(
             protected $element: ng.IRootElementService,
             protected $scope: ng.IScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$form = this.$element.find("form");
             this.$form.removeData("validator");
             this.$form.removeData("unobtrusiveValidation");

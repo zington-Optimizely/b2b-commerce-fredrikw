@@ -14,10 +14,9 @@
             protected $rootScope: ng.IRootScopeService,
             protected coreService: core.ICoreService,
             protected productSubscriptionPopupService: ProductSubscriptionPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.productSubscriptionPopupService.registerDisplayFunction((data) => {
                 this.product = data.product;
                 this.cartLine = data.cartLine;

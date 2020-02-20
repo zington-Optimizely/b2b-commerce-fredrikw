@@ -14,10 +14,9 @@
             protected accountService: account.IAccountService,
             protected paginationService: core.IPaginationService,
             protected coreService: core.ICoreService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.pagination = this.paginationService.getDefaultPagination(this.paginationStorageKey);
             this.restoreHistory();
 

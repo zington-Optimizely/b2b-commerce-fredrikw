@@ -26,10 +26,9 @@
             protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
             protected selectVariantProductPopupService: SelectVariantProductPopupService,
             protected $q: ng.IQService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.products = [];
             this.getSettings();
             this.selectedUnitOfMeasure = "EA";

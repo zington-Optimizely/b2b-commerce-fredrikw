@@ -7,10 +7,9 @@
         static $inject = ["queryString", "sessionService"];
 
         constructor(protected queryString: common.IQueryStringService, protected sessionService: account.ISessionService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             const parameters: ICartRemindersUnsubscribeParameters = {
                 username: this.queryString.get("username"),
                 unsubscribeToken: this.queryString.get("unsubscribeToken")

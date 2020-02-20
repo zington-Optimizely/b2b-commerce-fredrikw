@@ -11,10 +11,9 @@
             protected $scope: ng.IScope,
             protected settingsService: core.ISettingsService,
             protected ipCookie: any) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

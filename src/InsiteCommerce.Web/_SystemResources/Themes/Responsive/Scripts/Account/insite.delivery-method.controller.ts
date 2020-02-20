@@ -20,10 +20,9 @@ module insite.account {
             protected sessionService: account.ISessionService,
             protected selectPickUpLocationPopupService: ISelectPickUpLocationPopupService,
             protected spinnerService: core.ISpinnerService) {
-            this.init();
         }
 
-        init() {
+        $onInit() {
             if (!this.session) {
                 this.sessionService.getSession().then(
                     (session: SessionModel) => { this.getSessionCompleted(session); },

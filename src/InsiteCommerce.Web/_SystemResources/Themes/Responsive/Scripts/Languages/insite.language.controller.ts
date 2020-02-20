@@ -15,10 +15,9 @@
             protected $timeout: ng.ITimeoutService,
             protected sessionService: account.ISessionService,
             protected websiteService: websites.IWebsiteService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             angular.element(window.document).bind("click", event => {
                 if (this.languageButton && this.languageButton !== event.target && this.languageButton.find(event.target).length === 0) {
                     this.showLanguagesMenu = false;

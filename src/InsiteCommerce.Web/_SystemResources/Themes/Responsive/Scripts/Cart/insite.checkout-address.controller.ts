@@ -60,10 +60,9 @@
             protected $localStorage: common.IWindowStorage,
             protected $attrs: ICheckoutAddressControllerAttributes,
             protected $rootScope: ng.IRootScopeService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.cartId = this.queryString.get("cartId");
             this.reviewAndPayUrl = this.$attrs.reviewAndPayUrl;
             const referringPath = this.coreService.getReferringPath();

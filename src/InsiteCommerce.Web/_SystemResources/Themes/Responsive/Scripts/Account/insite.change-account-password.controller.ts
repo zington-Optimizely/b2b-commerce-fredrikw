@@ -25,10 +25,9 @@
             protected $attrs: IChangeAccountPasswordControllerAttributes,
             protected settingsService: core.ISettingsService,
             protected coreService: core.ICoreService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.successUrl = this.$attrs.successUrl;
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },

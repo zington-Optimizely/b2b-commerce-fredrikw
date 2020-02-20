@@ -64,10 +64,9 @@
             protected $stateParams: IProductListStateParams,
             protected brandService: brands.IBrandService,
             protected $window: ng.IWindowService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.productCarouselType = this.$attrs.productCarouselType;
             this.relatedProductType = this.$attrs.relatedProductType;
             this.isProductDetailPage = this.$attrs.isProductDetailPage.toString().toLowerCase() === "true";

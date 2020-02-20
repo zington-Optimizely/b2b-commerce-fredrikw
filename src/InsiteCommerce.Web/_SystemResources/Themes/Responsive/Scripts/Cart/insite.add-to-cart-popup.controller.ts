@@ -21,11 +21,9 @@
             protected coreService: core.ICoreService,
             protected settingsService: core.ISettingsService,
             protected addToCartPopupService: IAddToCartPopupService) {
-
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

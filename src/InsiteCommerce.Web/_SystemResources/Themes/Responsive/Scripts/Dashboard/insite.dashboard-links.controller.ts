@@ -13,10 +13,9 @@ module insite.dashboard {
         static $inject = ["dashboardService", "$rootScope"];
 
         constructor(protected dashboardService: IDashboardService, protected $rootScope: ng.IRootScopeService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.dashboardService.getDashboardPanels().then(
                 (dashboardPanelCollection: DashboardPanelCollectionModel) => { this.getDashboardPanelsCompleted(dashboardPanelCollection); },
                 (error: any) => { this.getDashboardPanelsFailed(error); });

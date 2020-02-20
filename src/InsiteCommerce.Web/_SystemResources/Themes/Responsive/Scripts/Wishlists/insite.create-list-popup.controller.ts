@@ -18,10 +18,9 @@
             protected coreService: core.ICoreService,
             protected $timeout: ng.ITimeoutService,
             protected createListPopupService: ICreateListPopupService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.initListPopupEvents();
         }
 

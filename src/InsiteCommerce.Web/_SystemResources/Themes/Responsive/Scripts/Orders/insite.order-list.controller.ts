@@ -38,10 +38,9 @@ module insite.order {
             protected paginationService: core.IPaginationService,
             protected settingsService: core.ISettingsService,
             protected searchService: catalog.ISearchService) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });

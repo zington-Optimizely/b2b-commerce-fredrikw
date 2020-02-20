@@ -16,10 +16,9 @@ module insite.catalog {
         static $inject = ["$timeout", "$scope"];
 
         constructor(protected $timeout: ng.ITimeoutService, protected $scope: ng.IScope) {
-            this.init();
         }
 
-        init(): void {
+        $onInit(): void {
             this.$scope.$watch(() => this.productImages, () => {
                 if (this.productImages.length > 0) {
                     this.imagesLoaded = 0;

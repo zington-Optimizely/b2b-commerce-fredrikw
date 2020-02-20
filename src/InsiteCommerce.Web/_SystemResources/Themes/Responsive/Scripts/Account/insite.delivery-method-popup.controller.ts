@@ -11,10 +11,9 @@
         constructor(
             protected coreService: core.ICoreService,
             protected deliveryMethodPopupService: IDeliveryMethodPopupService) {
-            this.init();
         }
 
-        init() {
+        $onInit() {
             this.deliveryMethodPopupService.registerDisplayFunction((data) => {
                 this.session = data.session;
                 this.fulfillmentMethod = data.session.fulfillmentMethod;
