@@ -1,5 +1,5 @@
 ﻿<ul>
-    <li ng-show="address.firstName && address.lastName" ng-bind="address.firstName + ', ' + address.lastName"></li>
+    <li ng-show="address.firstName && address.lastName" ng-bind="address.firstName + ' ' + address.lastName"></li>
     <li ng-show="address.firstName && !address.lastName || !address.firstName && address.lastName" ng-bind="address.firstName || address.lastName"></li>
     <li ng-show="address.attention" ng-bind="address.attention"></li>
     <li ng-bind="address.companyName"></li>

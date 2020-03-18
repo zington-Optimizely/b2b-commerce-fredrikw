@@ -56,11 +56,9 @@ $nugetReferences = New-Object System.Collections.ArrayList
 $disallowedReferences = @{}
 foreach ($reference in $nugetReferences) {
 
-    # TODO Do we care if the version changes?
     if ($allowedLibraries.ContainsKey($reference.PackageName)) {
         $allowedLibraryPackage = $allowedLibraries[$reference.PackageName]
 
-        # TODO Do we care if the version changes?
         if (-not $allowedLibraryPackage.Libraries.ContainsKey($reference.LibraryName)) {
             addDisallowedReference -disallowedReferences $disallowedReferences -disallowedReference $reference
         }

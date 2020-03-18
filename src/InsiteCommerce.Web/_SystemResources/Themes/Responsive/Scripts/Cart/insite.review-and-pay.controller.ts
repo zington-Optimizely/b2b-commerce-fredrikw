@@ -1,4 +1,4 @@
-﻿declare let TokenEx: any;
+declare let TokenEx: any;
 
 module insite.cart {
     "use strict";
@@ -469,7 +469,14 @@ module insite.cart {
 
             if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal) {
                 if (this.cart.paymentMethod.isCreditCard) {
-                    this.tokenExIframe.tokenize();
+                    if (typeof this.isInvalidCardNumber !== 'undefined') {
+                        this.tokenExIframe.tokenize();
+                    } else {
+                        this.tokenExIframe.validate();
+                        this.spinnerService.hide();
+                        this.scrollToTopOfForm();
+                        this.submitting = false;
+                    }
                     return;
                 }
 
@@ -573,13 +580,17 @@ module insite.cart {
         protected validateReviewAndPayForm(): boolean {
             const valid = jQuery("#reviewAndPayForm").validate().form();
             if (!valid) {
-                jQuery("html, body").animate({
-                    scrollTop: jQuery("#reviewAndPayForm").offset().top
-                }, 300);
+                this.scrollToTopOfForm();
                 return false;
             }
 
             return true;
+        }
+
+        protected scrollToTopOfForm(): void {
+            jQuery("html, body").animate({
+                scrollTop: jQuery("#reviewAndPayForm").offset().top
+            }, 300);
         }
 
         applyPromotion(): void {

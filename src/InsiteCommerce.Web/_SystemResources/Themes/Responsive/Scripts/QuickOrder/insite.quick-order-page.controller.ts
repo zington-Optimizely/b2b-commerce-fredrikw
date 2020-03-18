@@ -120,8 +120,7 @@
         }
 
         protected getProductCompleted(product: ProductModel): void {
-            // TODO ISC-4519
-            // TODO we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
+            // TODO ISC-4519 we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
             this.getRealTimeInventory(product.product).then(() => {
                 this.validateAndSetProduct(product.product);
             });
@@ -141,8 +140,7 @@
         }
 
         protected getProductsCompleted(productCollection: ProductCollectionModel): void {
-            // TODO ISC-4519
-            // TODO we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
+            // TODO ISC-4519 we may need to refresh the foundation tooltip, used to be insite.core.refreshFoundationUI
             this.getRealTimeInventory(productCollection.products[0]).then(() => {
                 this.validateAndSetProduct(productCollection.products[0]);
             });

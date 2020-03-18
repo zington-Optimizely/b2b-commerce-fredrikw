@@ -38,7 +38,7 @@
             this.xhrResolutions++;
             this.updateLoadingStatus();
             const config: ICustomRequestConfig = response.config;
-            // TODO ditch bypassError completely?
+
             if (config.bypassErrorInterceptor) {
                 return this.$q.reject(response);
             }

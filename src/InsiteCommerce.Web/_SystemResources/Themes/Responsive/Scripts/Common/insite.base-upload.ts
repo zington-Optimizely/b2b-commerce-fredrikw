@@ -207,7 +207,7 @@
                     const error = this.validateProduct(product);
 
                     if (error === UploadError.None) {
-                        product.qtyOrdered = !item.Qty ? 1 : item.Qty;
+                        product.qtyOrdered = (!item.Qty || item.Qty === "0") ? 1 : item.Qty;
 
                         const isErrorProduct = this.setProductUnitOfMeasure(product, item, index);
 

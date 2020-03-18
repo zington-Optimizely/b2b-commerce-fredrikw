@@ -131,7 +131,8 @@
                                         "Insite.Integration.Connector.APlus":  null,
                                         "Insite.Core.Interfaces":  null,
                                         "Insite.Requisition":  null,
-                                        "Insite.Integration.Connector.SXe":  null
+                                        "Insite.Integration.Connector.SXe":  null,
+                                        "Insite.Integration.Connector.Facts":  null
                                     }
                   }
     },
