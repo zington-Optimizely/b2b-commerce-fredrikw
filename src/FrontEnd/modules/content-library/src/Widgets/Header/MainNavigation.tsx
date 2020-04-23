@@ -85,12 +85,17 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
                 title,
             };
         } else if (type === "Page") {
-            mappedLink = getPageLinkByNodeId(state, value);
-            if (mappedLink && overrideTitle) {
-                mappedLink = {
-                    ...mappedLink,
-                    title: overrideTitle,
-                };
+            const mappedLinkFromCache = getPageLinkByNodeId(state, value);
+            if (mappedLinkFromCache) {
+                if (overrideTitle) {
+                    mappedLink = {
+                        ...mappedLinkFromCache,
+                        title: overrideTitle,
+                    };
+                } else {
+                    // mappedLinkFromCache is frozen so we need to clone so it can be updated further down.
+                    mappedLink = { ...mappedLinkFromCache };
+                }
             }
         } else if (type === "Category") {
             const depthLoaded = getCategoryDepthLoaded(state, value);
