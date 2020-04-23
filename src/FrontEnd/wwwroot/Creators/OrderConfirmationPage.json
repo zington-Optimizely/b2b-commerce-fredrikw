@@ -1,0 +1,70 @@
+{
+    "nodeId": "acf1f2b5-5780-4400-9ddf-a94ea25188bf",
+    "name": "Checkout - Order Confirmation",
+    "type": "OrderConfirmationPage",
+    "parentId": "52f8e988-c923-4d06-8f1b-933bcf1ffcca",
+    "sortOrder": 10,
+    "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "widgets": [
+        {
+            "parentId": "6ba76adc-96cd-4625-90d7-22fcc74ce151",
+            "zone": "Content",
+            "type": "OrderConfirmation/OrderConfirmationPageContainer",
+            "id": "4b635cb8-6ec3-4c4c-aefd-30e7ec22e80b",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4b635cb8-6ec3-4c4c-aefd-30e7ec22e80b",
+            "zone": "Content00",
+            "type": "OrderConfirmation/OrderConfirmationHeader",
+            "id": "b99a1591-f650-4731-8a45-7e7786ddf22e",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4b635cb8-6ec3-4c4c-aefd-30e7ec22e80b",
+            "zone": "Content01",
+            "type": "OrderConfirmation/OrderConfirmationOrderInformation",
+            "id": "6a155e14-1035-407d-af47-7fef53f7679d",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4b635cb8-6ec3-4c4c-aefd-30e7ec22e80b",
+            "zone": "Content02",
+            "type": "OrderConfirmation/OrderConfirmationTotal",
+            "id": "313be4ad-c91d-425e-b381-a505d75ce05d",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4b635cb8-6ec3-4c4c-aefd-30e7ec22e80b",
+            "zone": "Content03",
+            "type": "OrderConfirmation/OrderConfirmationProductList",
+            "id": "4c11ae0c-3f38-4c09-aea7-960bd5b88965",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        }
+    ],
+    "id": "6ba76adc-96cd-4625-90d7-22fcc74ce151",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": [],
+        "hideBreadcrumbs": false
+    },
+    "translatableFields": {
+        "title": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Checkout - Order Confirmation"
+        },
+        "urlSegment": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "OrderConfirmation"
+        }
+    },
+    "contextualFields": {}
+}

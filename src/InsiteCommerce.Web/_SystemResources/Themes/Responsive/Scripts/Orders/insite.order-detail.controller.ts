@@ -120,14 +120,22 @@
             return (promotion.promotionResultType === "AmountOffShipping" || promotion.promotionResultType === "PercentOffShipping");
         }
 
-        formatCityCommaStateZip(city: string, state: string, zip: string): string {
+        protected formatCityCommaStateZip(city: string, state: string, zip: string): string {
             let formattedString = "";
             if (city) {
                 formattedString += city;
             }
 
-            if (city && state) {
-                formattedString += `, ${state} ${zip}`;
+            if (city && (state || zip)) {
+                formattedString += ",";
+            }
+
+            if (state) {
+                formattedString += ` ${state}`;
+            }
+
+            if (zip) {
+                formattedString += ` ${zip}`;
             }
 
             return formattedString;

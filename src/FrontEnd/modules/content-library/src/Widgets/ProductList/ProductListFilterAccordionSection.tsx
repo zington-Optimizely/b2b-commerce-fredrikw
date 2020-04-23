@@ -1,0 +1,92 @@
+import React, { FC, useState } from "react";
+import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection/AccordionSection";
+import translate from "@insite/client-framework/Translate";
+import CheckboxGroup, { CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
+import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox/Checkbox";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link/Link";
+import { css } from "styled-components";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { FacetModel } from "@insite/client-framework/Types/ApiModels";
+
+export interface ProductListFilterAccordionSectionStyles {
+    accordionSection?: AccordionSectionPresentationProps;
+    checkBoxGroup?: CheckboxGroupProps;
+    checkBox?: CheckboxPresentationProps;
+    checkBoxSelected?: CheckboxPresentationProps;
+    seeAllLink?: LinkPresentationProps;
+    seeLessLink?: LinkPresentationProps;
+}
+
+export const productListFilterAccordionSectionStyles: ProductListFilterAccordionSectionStyles = {
+    accordionSection: {
+        headerProps: { css: css` padding-top: 5px; ` },
+        panelProps: { css: css` overflow: hidden; ` },
+    },
+    checkBoxGroup: {
+        css: css` 
+            width: 100%;
+            &:not(:last-child) {
+                padding-bottom: 5px;
+            }
+        `,
+    },
+    checkBox: {
+        typographyProps: {
+            css: css` word-break: break-all; `,
+        },
+    },
+    checkBoxSelected: {
+        typographyProps: {
+            css: css` word-break: break-all; `,
+            weight: "bold",
+        },
+    },
+    seeAllLink: {
+        css: css` padding-top: 5px; `,
+    },
+    seeLessLink: {
+        css: css` padding-top: 5px; `,
+    },
+};
+
+export interface Props {
+    title: string;
+    facets: FacetModel[];
+    onChangeFacet: (facet: FacetModel) => void;
+    showMoreLimit: number;
+    extendedStyles: ProductListFilterAccordionSectionStyles;
+    expandByDefault: boolean;
+}
+
+const ProductListFiltersAccordionSection: FC<Props> = ({ title, facets, onChangeFacet, showMoreLimit, expandByDefault, extendedStyles }) => {
+
+    const [styles] = React.useState(() => mergeToNew(productListFilterAccordionSectionStyles, extendedStyles));
+
+    const [expanded, setExpanded] = useState(false);
+
+    const limitedFacets = (expanded ? facets : facets?.slice(0, showMoreLimit));
+    const anySelected = facets.find(f => f.selected) !== undefined;
+
+    return (
+        <AccordionSection title={title} {...styles.accordionSection} expanded={expandByDefault || anySelected}>
+            {limitedFacets?.map((facet) => (
+                <CheckboxGroup key={facet.id} {...styles.checkBoxGroup}>
+                    <Checkbox
+                        {...(facet.selected ? styles.checkBoxSelected : styles.checkBox)}
+                        checked={facet.selected}
+                        onChange={() => onChangeFacet(facet)}
+                        data-test-selector={`facetFilter${facet.id}`}
+                    >
+                        {facet.name} {facet.count !== -1 && `(${facet.count})`}
+                    </Checkbox>
+                </CheckboxGroup>
+            ))}
+            {facets && facets.length > showMoreLimit && (expanded
+                ? <Link {...styles.seeLessLink} onClick={() => setExpanded(false)}>{translate("See Less")}</Link>
+                : <Link {...styles.seeAllLink} onClick={() => setExpanded(true)}>{translate("See All")}</Link>)
+            }
+        </AccordionSection>
+    );
+};
+
+export default ProductListFiltersAccordionSection;

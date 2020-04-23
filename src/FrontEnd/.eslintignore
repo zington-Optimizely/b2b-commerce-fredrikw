@@ -1,0 +1,6 @@
+dist/
+node_modules/
+Icons/
+
+# Crashes a constructor rule, may be fixed in a future ESLint version.
+Froalaeditor.d.ts

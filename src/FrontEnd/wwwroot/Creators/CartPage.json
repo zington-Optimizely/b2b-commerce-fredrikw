@@ -1,0 +1,113 @@
+{
+    "nodeId": "33741217-8790-4494-bdf8-bf781e21735d",
+    "name": "Cart",
+    "type": "CartPage",
+    "parentId": "58e95d38-6b2c-4153-810e-eb9b9cc7d665",
+    "sortOrder": 6,
+    "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "widgets": [
+        {
+            "parentId": "2589582a-b653-4052-b0a0-9858505b6e7b",
+            "type": "Cart/CartPageContainer",
+            "zone": "Content",
+            "id": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "type": "Cart/CartHeader",
+            "zone": "Content0",
+            "id": "4454db4d-2e2c-464b-8d9b-063a500fe02f",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "type": "Cart/CartTotal",
+            "zone": "Content1",
+            "id": "1abd14db-716d-45e6-846c-7c1c11501aa0",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "type": "Cart/CartLines",
+            "zone": "Content2",
+            "id": "07b09d18-34d7-468e-88ba-96ab29cdd2fb",
+            "generalFields": {
+                "showLineNotes": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "type": "Cart/CartFulfillmentMethodSelector",
+            "zone": "Content3",
+            "id": "b685eb0b-e218-46f2-a9c2-53cc48dab445",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "e5e2de65-381f-4f41-9472-b01e6e5658df",
+            "type": "Common/ProductCarousel",
+            "zone": "Content4",
+            "id": "3c1d8cda-e2c9-4292-8209-6eb097cd0a68",
+            "generalFields": {
+                "carouselType": "crossSells",
+                "displayProductsFrom": "allCategories",
+                "selectedCategoryIds": "",
+                "relatedProductType": "",
+                "numberOfProductsToDisplay": 10,
+                "seedWithManuallyAssigned": "",
+                "maxNumberOfColumns": 1,
+                "showImage": true,
+                "showTitle": true,
+                "showBrandName": true,
+                "showPartNumbers": true,
+                "showPrice": true,
+                "showAddToCart": true,
+                "showAddToList": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4454db4d-2e2c-464b-8d9b-063a500fe02f",
+            "type": "Basic/PageTitle",
+            "zone": "Content0",
+            "id": "fece12ae-4858-4010-a2ad-cbaa83134ea9",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "4454db4d-2e2c-464b-8d9b-063a500fe02f",
+            "type": "Cart/CartActions",
+            "zone": "Content1",
+            "id": "d0e23c2b-1a42-4b63-a071-b55ba056593d",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        }
+    ],
+    "id": "2589582a-b653-4052-b0a0-9858505b6e7b",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": []
+    },
+    "translatableFields": {
+        "title": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Cart"
+        },
+        "urlSegment": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Cart"
+        }
+    },
+    "contextualFields": {}
+}

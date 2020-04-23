@@ -21,6 +21,7 @@
                     this.selectedImage = this.product.productImages[0];
                 } else {
                     this.selectedImage = {
+                        imageType: "Static",
                         smallImagePath: this.product.smallImagePath,
                         mediumImagePath: this.product.mediumImagePath,
                         largeImagePath: this.product.largeImagePath,

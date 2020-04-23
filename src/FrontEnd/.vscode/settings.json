@@ -1,0 +1,22 @@
+{
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "files.exclude": {
+        "**/dist": true
+    },
+    "files.watcherExclude": {
+        "**/dist": true
+    },
+    "search.exclude": {
+        "**/dist": true
+    },
+    "cSpell.words": [
+        "immer",
+        "mobius"
+    ],
+    "javascript.preferences.quoteStyle": "double",
+    "typescript.preferences.quoteStyle": "double"
+}

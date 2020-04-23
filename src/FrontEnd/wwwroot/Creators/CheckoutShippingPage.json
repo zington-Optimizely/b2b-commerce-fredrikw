@@ -1,0 +1,78 @@
+{
+    "nodeId": "0b079e2b-5fd9-4746-8ec0-254a3bc96f73",
+    "name": "Checkout - Shipping & Billing",
+    "type": "CheckoutShippingPage",
+    "parentId": "da5d736e-01ff-4676-84cb-9635c3431adf",
+    "sortOrder": 7,
+    "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "widgets": [
+        {
+            "parentId": "97096996-8c59-483b-9df2-6c7a8257c930",
+            "zone": "Content",
+            "type": "CheckoutShipping/CheckoutShippingPageContainer",
+            "id": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "zone": "Content0",
+            "type": "CheckoutShipping/CheckoutShippingHeader",
+            "id": "baac5bd7-9968-4b9d-a470-2d4065c55fdd",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "zone": "Content1",
+            "type": "CheckoutShipping/CheckoutShippingFulfillmentMethodSelector",
+            "id": "d6053f8d-1d88-4f39-a521-d132090bf15d",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "zone": "Content2",
+            "type": "CheckoutShipping/CheckoutShippingOrderNotesEntry",
+            "id": "65a51e27-9249-439a-a6e9-46b1635031a6",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "zone": "Content3",
+            "type": "CheckoutShipping/CheckoutShippingCartTotal",
+            "id": "c8545d25-7f75-4e3c-8ecc-80ec9637fb73",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "56e9a2aa-9463-4830-8695-ed6fa181349f",
+            "zone": "Content4",
+            "type": "CheckoutShipping/CheckoutShippingAddresses",
+            "id": "e6df8210-f42f-49f0-8ebc-38a117ca6075",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        }
+    ],
+    "id": "97096996-8c59-483b-9df2-6c7a8257c930",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": []
+    },
+    "translatableFields": {
+        "title": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Checkout - Shipping & Billing"
+        },
+        "urlSegment": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "CheckoutShipping"
+        }
+    },
+    "contextualFields": {}
+}

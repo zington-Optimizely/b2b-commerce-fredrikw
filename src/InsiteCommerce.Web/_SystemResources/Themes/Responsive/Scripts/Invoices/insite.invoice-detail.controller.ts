@@ -52,10 +52,19 @@
         protected formatCityCommaStateZip(city: string, state: string, zip: string): string {
             let formattedString = "";
             if (city) {
-                formattedString = city;
-                if (state) {
-                    formattedString += `, ${state} ${zip}`;
-                }
+                formattedString += city;
+            }
+
+            if (city && (state || zip)) {
+                formattedString += ",";
+            }
+
+            if (state) {
+                formattedString += ` ${state}`;
+            }
+
+            if (zip) {
+                formattedString += ` ${zip}`;
             }
 
             return formattedString;

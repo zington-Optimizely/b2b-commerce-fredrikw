@@ -1,0 +1,22 @@
+{
+  "id": "fb1591b7-1c65-41c0-935a-38e59727fc31",
+  "parentId": "f9c98cf8-c69d-400b-9a6f-8367be20698e",
+  "nodeId": "9b466087-9d2e-41ef-8341-c9c75d3e5b85",
+  "sortOrder": 0,
+  "fields": {
+    "url": "RfqMyQuotesPage"
+  },
+  "translatableFields": {},
+  "type": "RfqMyQuotesPage",
+  "widgets": [
+    {
+      "id": "f3414a2e-9fa5-4a0f-8655-720d4632e5c6",
+      "parentId": "fb1591b7-1c65-41c0-935a-38e59727fc31",
+      "type": "Basic/PageTitle",
+      "zone": "Content",
+      "fields": {},
+      "translatableFields": {}
+    }
+  ],
+  "websiteId": "5c028c3a-c7f1-41fe-a4c0-1414b4c7acdb"
+}

@@ -1,0 +1,9 @@
+{
+    "tags": [ "example" ],
+    "imports": [
+        "mobius",
+        "client-framework",
+        "content-library",
+        "server-framework"
+    ]
+}

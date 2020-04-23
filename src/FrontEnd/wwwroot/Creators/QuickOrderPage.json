@@ -1,0 +1,93 @@
+{
+    "nodeId": "6cb393fa-087c-4d9c-8285-18d4cad360bc",
+    "name": "Quick Order",
+    "type": "QuickOrderPage",
+    "parentId": "b0e716bd-6a2b-4275-8ba6-c6b4ff374003",
+    "sortOrder": 13,
+    "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "widgets": [
+        {
+            "parentId": "44014349-29b8-4f75-baf3-e2d0ace27b0a",
+            "type": "QuickOrder/QuickOrderPageContainer",
+            "zone": "Content",
+            "id": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "Basic/PageTitle",
+            "zone": "Content0",
+            "id": "748d9fb9-f681-40eb-88d3-f6ee9d28578d",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "QuickOrder/QuickOrderActions",
+            "zone": "Content1",
+            "id": "f55c56a1-2204-4383-9a1e-0e0f94b8e5f0",
+            "generalFields": {
+                "useOverflowMenu": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "QuickOrder/QuickOrderProductList",
+            "zone": "Content4",
+            "id": "cb040bf6-10d5-4ef0-a581-747291f5dc91",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "QuickOrder/QuickOrderActions",
+            "zone": "Content4",
+            "id": "e95515d5-4b2a-49b4-b423-df6b075c0046",
+            "generalFields": {
+                "useOverflowMenu": false
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "QuickOrder/QuickOrderActions",
+            "zone": "Content3",
+            "id": "c5a42ebc-bd68-4dc8-97ee-c59200e4a66a",
+            "generalFields": {
+                "useOverflowMenu": false
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "2c03443b-c7cd-48d1-b1c4-9f8ad9004cda",
+            "type": "QuickOrder/QuickOrderSearch",
+            "zone": "Content2",
+            "id": "b0b9ac3a-82fc-46e2-b6aa-ddbe98cc6754",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        }
+    ],
+    "id": "44014349-29b8-4f75-baf3-e2d0ace27b0a",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": []
+    },
+    "translatableFields": {
+        "title": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Quick Order"
+        },
+        "urlSegment": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "QuickOrder"
+        }
+    },
+    "contextualFields": {}
+}

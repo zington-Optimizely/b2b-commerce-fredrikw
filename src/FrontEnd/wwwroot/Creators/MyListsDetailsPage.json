@@ -1,0 +1,60 @@
+{
+  "id": "0f2f5f1b-10ab-4baa-b770-c25aa0a7fbd9",
+  "nodeId": "74678a26-9225-4627-a8a4-201df1ad2d1e",
+  "type": "MyListsDetailsPage",
+  "parentId": "39a6275d-8f82-4636-94fa-c21f441ae527",
+  "sortOrder": -1,
+  "websiteId": "5c028c3a-c7f1-41fe-a4c0-1414b4c7acdb",
+  "fields": {
+    "url": "MyListsDetails",
+    "title": "ListDetails",
+    "name": "ListDetails",
+    "urlSegment": "ListDetails"
+  }, 
+  "translatableFields": {},
+  "widgets": [
+    {
+      "id": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
+      "parentId": "0f2f5f1b-10ab-4baa-b770-c25aa0a7fbd9",
+      "type": "Basic/Rows",
+      "zone": "Content",
+      "fields": {
+        "rowCount": 4,
+        "gap": 0
+      },
+      "translatableFields": {}
+    },
+    {
+      "id": "c5cb8f3f-5412-4063-b928-8186712930d0",
+      "parentId": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
+      "type": "MyListsDetails/MyListsDetailsActions",
+      "zone": "Content0",
+      "fields": {},
+      "translatableFields": {}
+    },
+    {
+      "id": "f11a0740-473d-46b3-9fe0-3ad3aea0b6be",
+      "parentId": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
+      "type": "MyListsDetails/MyListsDetailsHeader",
+      "zone": "Content1",
+      "fields": {},
+      "translatableFields": {}
+    },
+    {
+      "id": "8a5dbcdd-167b-47ed-8fad-ae0c6a1e40d8",
+      "parentId": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
+      "type": "MyListsDetails/MyListsDetailsOptions",
+      "zone": "Content2",
+      "fields": {},
+      "translatableFields": {}
+    },
+    {
+      "id": "1aea3b3d-ba79-44bc-aed1-7efe3edd4be5",
+      "parentId": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
+      "type": "MyListsDetails/MyListsDetailsProductList",
+      "zone": "Content3",
+      "fields": {},
+      "translatableFields": {}
+    }
+  ]
+}

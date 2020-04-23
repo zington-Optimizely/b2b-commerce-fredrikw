@@ -1,0 +1,130 @@
+import { Dictionary } from "@insite/client-framework/Common/Types";
+import { newGuid } from "@insite/client-framework/Common/StringHelpers";
+import { PageModel } from "@insite/client-framework/Types/PageProps";
+import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { getContextualId } from "@insite/client-framework/Store/UNSAFE_CurrentPage/ReducerHelpers/PrepareFields";
+import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import logger from "@insite/client-framework/Logger";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { BasicLanguageModel } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+
+export function setupPageModel(pageModel: PageModel,
+                               name: string,
+                               urlSegment: string,
+                               parentId: string,
+                               sortOrder: number,
+                               language: BasicLanguageModel,
+                               personaId: string,
+                               defaultPersonaId: string,
+                               websiteId: string) {
+
+    if (!pageModel.fields) {
+        pageModel.fields = {};
+    }
+    pageModel.name = name;
+    pageModel.sortOrder = sortOrder;
+    pageModel.websiteId = websiteId;
+    pageModel.parentId = parentId;
+
+    // clean up any properties that we don't want at the root level anymore
+    delete (pageModel as any)["url"];
+    delete (pageModel as any)["title"];
+
+    const guidMap: Dictionary<string> = {};
+    guidMap[pageModel.id] = newGuid();
+
+    for (const widget of pageModel.widgets) {
+        guidMap[widget.id] = newGuid();
+    }
+
+    pageModel.id = guidMap[pageModel.id];
+    pageModel.nodeId = newGuid();
+
+    const contextualId = getContextualId(language.id, "Desktop", language.hasPersonaSpecificContent ? personaId : defaultPersonaId);
+
+    setFieldsToExistingValuesWithProperContext(pageModel, language.id, contextualId);
+    const pageDefinition = getPageDefinition(pageModel.type);
+    if (!pageDefinition) {
+        throw new Error(`There was no PageDefinition found for the type ${pageModel.type}`);
+    }
+    setDefaultFieldValues(pageModel, pageDefinition.fieldDefinitions, language.id, contextualId);
+
+    for (const widget of pageModel.widgets) {
+        widget.id = guidMap[widget.id];
+        widget.parentId = guidMap[widget.parentId];
+
+        setFieldsToExistingValuesWithProperContext(widget, language.id, contextualId);
+        const widgetDefinition = getWidgetDefinition(widget.type);
+        if (!widgetDefinition) {
+            if (!IS_PRODUCTION) {
+                throw new Error(`There was no WidgetDefinition found for the type ${widget.type}`);
+            } else {
+                logger.warn(`There was no WidgetDefinition found for the type ${widget.type}`);
+            }
+        }
+        setDefaultFieldValues(widget, widgetDefinition.fieldDefinitions, language.id, contextualId);
+    }
+
+    if (pageDefinition.hasEditableTitle) {
+        pageModel.translatableFields["title"][language.id] = name;
+    }
+    if (pageDefinition.hasEditableUrlSegment) {
+        pageModel.translatableFields["urlSegment"][language.id] = urlSegment;
+    }
+}
+
+export function initializeFields(item: WidgetProps | PageModel) {
+    if (!item.fields) {
+        item.fields = {};
+    }
+    if (!item.translatableFields) {
+        item.translatableFields = {};
+    }
+    if (!item.contextualFields) {
+        item.contextualFields = {};
+    }
+    if (!item.generalFields) {
+        item.generalFields = {};
+    }
+}
+
+function setFieldsToExistingValuesWithProperContext(item: WidgetProps | PageModel, currentLanguageId: string, contextualId: string) {
+    initializeFields(item);
+
+    const { translatableFields, contextualFields } = item;
+
+    function doWork(theFields: Dictionary<Dictionary<string>>, key: string) {
+        for (const field in theFields) {
+            const currentValues = theFields[field];
+            const firstValue = currentValues[Object.keys(currentValues)[0]];
+            theFields[field] = {};
+            theFields[field][key] = firstValue;
+        }
+    }
+
+    doWork(translatableFields, currentLanguageId);
+
+    doWork(contextualFields, contextualId);
+}
+
+export function setDefaultFieldValues(item: WidgetProps | PageModel, fieldDefinitions: FieldDefinition[], currentLanguageId: string, contextualId: string) {
+    initializeFields(item);
+    const { fields, translatableFields, contextualFields, generalFields } = item;
+
+    for (const fieldDefinition of fieldDefinitions) {
+        const { name, fieldType } = fieldDefinition;
+        if (typeof fields[name] === "undefined") {
+            fields[name] = fieldDefinition.defaultValue;
+        }
+
+        if (fieldType === "Translatable" && typeof translatableFields[name] === "undefined") {
+            translatableFields[name] = {};
+            translatableFields[name][currentLanguageId] = fields[name];
+        } else if (fieldType === "Contextual" && typeof contextualFields[name] === "undefined") {
+            contextualFields[name] = {};
+            contextualFields[name][contextualId] = fields[name];
+        } else if (fieldType === "General" && typeof generalFields[name] === "undefined") {
+            generalFields[name] = fields[name];
+        }
+    }
+}

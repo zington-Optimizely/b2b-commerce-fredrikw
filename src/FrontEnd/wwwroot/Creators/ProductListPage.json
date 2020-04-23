@@ -1,0 +1,206 @@
+{
+  "id": "88ffbfef-37ae-4e1c-81b4-a6253e94650b",
+  "nodeId": "4c3d92a7-eb3a-42ab-975b-d1f430eb4a61",
+  "name": "Product List",
+  "type": "ProductListPage",
+  "parentId": "692f229e-7a9b-45d8-971c-b0404262b16b",
+  "sortOrder": 4,
+  "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+  "generalFields": {
+    "horizontalRule": "",
+    "tags": []
+  },
+  "translatableFields": {},
+  "contextualFields": {},
+  "widgets": [
+    {
+      "id": "386ecb39-40f4-4730-9661-03b2ba1ef5e5",
+      "parentId": "88ffbfef-37ae-4e1c-81b4-a6253e94650b",
+      "type": "Category/CategoryName",
+      "zone": "Content",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "parentId": "88ffbfef-37ae-4e1c-81b4-a6253e94650b",
+      "type": "ProductList/ProductListColumns",
+      "zone": "Content",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "98acd59f-80cc-4ff0-aa4c-0fa2a624431c",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListPagination",
+      "zone": "Content01",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "b3be2775-15a3-4732-9868-c53c7eaef9e5",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListSuggestion",
+      "zone": "Content01",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "ea95b51b-990b-435f-943c-145b12ffabf2",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListControlsContainer",
+      "zone": "Content01",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "0a47cd79-6a2b-43b6-900d-f2bee51fe8f5",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListCardList",
+      "zone": "Content01",
+      "generalFields": {
+        "showImage": true,
+        "showCompare": true,
+        "showBrand": true,
+        "showTitle": true,
+        "showPartNumbers": true,
+        "showAvailability": true,
+        "showAttributes": true,
+        "showPrice": true,
+        "showAddToList": true
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "16ba9d9c-9436-450b-82eb-0fae06caeb4f",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListPagination",
+      "zone": "Content01",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "498d86bb-7d52-4eef-bfdd-9fba25a3578b",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListFilterList",
+      "zone": "Content00",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "a135dde1-d815-4621-904c-e66850b80926",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListSearchWithin",
+      "zone": "Content00",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "parentId": "7781dee9-a6a5-4af6-a673-49152a26e1b8",
+      "type": "ProductList/ProductListFiltersAccordion",
+      "zone": "Content00",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "d4d778c0-2061-48ce-9eb0-bf696622bb54",
+      "parentId": "ea95b51b-990b-435f-943c-145b12ffabf2",
+      "type": "ProductList/ProductListProductCount",
+      "zone": "Content00",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "36c34bb8-5c7d-4dde-8242-c0c163a18178",
+      "parentId": "ea95b51b-990b-435f-943c-145b12ffabf2",
+      "type": "ProductList/ProductListSortSelect",
+      "zone": "Content01",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "0965f588-9152-4030-930f-92de278c2665",
+      "parentId": "ea95b51b-990b-435f-943c-145b12ffabf2",
+      "type": "ProductList/ProductListViewSelect",
+      "zone": "Content02",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "e46d0982-3319-4ec9-a2b7-9b11cc829491",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListStockedItemsFilter",
+      "zone": "Content",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "27ce0bad-9255-4dfb-9557-65b05038298c",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListCategoryFilters",
+      "zone": "Content",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "4f2cc248-3718-495a-ad17-31e9ae0cacbc",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListBrandFilters",
+      "zone": "Content",
+      "generalFields": {
+        "expandByDefault": false
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "b23c9422-ef99-4161-b5c7-45a4e4ca4e03",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListProductLineFilters",
+      "zone": "Content",
+      "generalFields": {
+        "expandByDefault": false
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "1da20548-a12b-4c73-888c-dffbbb7a70d7",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListPriceFilters",
+      "zone": "Content",
+      "generalFields": {
+        "expandByDefault": false
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "id": "c9997ba2-afd4-4d22-a900-969fb13fe454",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListAttributeFilters",
+      "zone": "Content",
+      "generalFields": {
+        "expandByDefault": false
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    }
+  ]
+}

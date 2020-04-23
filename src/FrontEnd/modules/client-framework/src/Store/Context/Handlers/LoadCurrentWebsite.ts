@@ -1,0 +1,30 @@
+import { GetCurrentWebsiteApiParameter, getCurrentWebsite, Website } from "@insite/client-framework/Services/WebsiteService";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+
+type HandlerType = ApiHandlerDiscreteParameter<{}, GetCurrentWebsiteApiParameter, Website>;
+
+export const PopulateApiParameter: HandlerType = props => {
+    props.apiParameter = {
+        expand: ["languages", "currencies"],
+    };
+};
+
+export const RequestDataFromApi: HandlerType = async props => {
+    props.apiResult = await getCurrentWebsite(props.apiParameter);
+};
+
+export const DispatchCompleteLoadCurrentWebsite: HandlerType = props => {
+    props.dispatch({
+        type: "Context/CompleteLoadWebsite",
+        website: props.apiResult,
+    });
+};
+
+export const chain = [
+    PopulateApiParameter,
+    RequestDataFromApi,
+    DispatchCompleteLoadCurrentWebsite,
+];
+
+const loadCurrentWebsite = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentWebsite");
+export default loadCurrentWebsite;

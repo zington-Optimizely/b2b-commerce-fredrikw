@@ -1,0 +1,8 @@
+{
+    "tags": [ "server-framework" ],
+    "imports": [
+        "client-framework",
+        "shell",
+        "mobius"
+    ]
+}

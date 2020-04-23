@@ -1,0 +1,59 @@
+import ShellState from "@insite/shell/Store/ShellState";
+import { connect, ResolveThunks } from "react-redux";
+import * as React from "react";
+import Icon from "@insite/mobius/Icon";
+import shellTheme from "@insite/shell/ShellTheme";
+import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
+import ContentMode from "@insite/client-framework/Common/ContentMode";
+import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+
+const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
+    targetMatchesCurrentContentMode: state.shellContext.contentMode === ownProps.targetContentMode,
+});
+
+const mapDispatchToProps = {
+    setContentMode,
+};
+
+type OwnProps = { targetContentMode: ContentMode, icon: React.FC, disabled?: boolean };
+
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+
+const contentModeLabel: Record<ContentMode, string> = {
+    Editing: "Edit",
+    Previewing: "Preview",
+    Viewing: "View",
+};
+
+class ContentModeClicker extends React.Component<Props> {
+    onClick = () => {
+        const { targetMatchesCurrentContentMode, setContentMode, targetContentMode } = this.props;
+        setContentMode(targetMatchesCurrentContentMode ? "Viewing" : targetContentMode);
+    };
+
+    render() {
+        const { targetMatchesCurrentContentMode, icon, targetContentMode, disabled } = this.props;
+        const { colors: { common, primary, text } } = shellTheme;
+        let iconColor: string;
+
+        if (disabled) {
+            iconColor = common.disabled;
+        } else if (targetMatchesCurrentContentMode) {
+            iconColor = primary.main;
+        } else {
+            iconColor = text.accent;
+        }
+
+        return <ClickerStyle
+            clickable
+            onClick={this.onClick}
+            data-test-selector={`contentModeClicker_${targetContentMode}`}
+            disabled={disabled}
+            title={contentModeLabel[targetContentMode]}
+        >
+            <Icon src={icon} color={iconColor} />
+        </ClickerStyle>;
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContentModeClicker);
