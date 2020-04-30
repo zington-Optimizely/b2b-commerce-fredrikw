@@ -1,28 +1,16 @@
-# my global config
 global:
-  scrape_interval:     5s
-  evaluation_interval: 5s
-
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
+  scrape_interval:     3s
+  evaluation_interval: 3s
   external_labels:
-      monitor: 'isc-local'
+      monitor: 'isc'
 
-
-
-# Place to add the new jobs 
+# Section where additional sites can be monitored
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-
-  - job_name: 'isc'
+  - job_name: 'isc-metrics'
     metrics_path: "/api/v1/admin/metrics"
     scheme: http
     basic_auth:
-      username: "[MetricsUsername]" 
-      password: "[MetricsPassword]"
-
+      username: "{{METRICS_USERNAME}}"
+      password: "{{METRICS_PASSWORD}}"
     static_configs:
-         - targets: ['host.docker.internal:80']
-
-
- 
+      - targets: ['host.docker.internal:10000']

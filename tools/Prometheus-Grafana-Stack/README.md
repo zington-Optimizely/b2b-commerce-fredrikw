@@ -1,16 +1,19 @@
+**TL;DR,** a starting point for analyzing ISC's Prometheus metrics:
+1. Edit `.env` with the domain and Prometheus exporter credentials of a target ISC site
+2. Run `docker-compose up --build`
+3. Browse to http://localhost:3001/d/QrXgpZCZz/performance-dashboard
+
 # Prometheus-Grafana Stack
-The Prometheus-Grafana Stack is a combination of tools that can be used to collect timing data on pipes, pipelines, handlers and handler chains in ISC. This way if any of these is performing slower than it should be, we will be able to notice it and graph it. 
- 
+The Prometheus-Grafana Stack is a combination of tools that can be used to collect timing data on pipes, pipelines, handlers, and handler chains in ISC. This way if any of these is performing slower than it should be, we will be able to notice it and graph it.
+
 # Architecture 
 Prometheus is an open-source monitoring system with a dimensional data model and an efficient time-series database. Grafana is also an open-source project that is used to visualize metrics. Combined they make a powerful tool to track metrics.  
 
+![Performance Presentation](https://user-images.githubusercontent.com/49656548/79552136-3b665780-8060-11ea-8f74-13ee0d68a77f.png)
 
+The diagram above shows a high-level diagram of the architecture of the Prometheus-Grafana Stack. Metric exporters are injected into ISC and that allows the metrics to be exposed. Prometheus pulls those metrics and logs them. After Prometheus has logged the metrics, Grafana can connect with and receive data from Prometheus and create the dashboards.
 
-![Architecture](https://user-images.githubusercontent.com/53531628/63285428-56878a00-c27b-11e9-939e-6043ff3824a0.png)
-**Fig 1.1**
-
-Fig 1.1 shows a high-level diagram of the architecture of the Prometheus-Grafana Stack. Metric exporters are injected into ISC and that allows the metrics to be exposed. Prometheus pulls those metrics and logs them. After Prometheus has logged the metrics, Grafana can connect with and receive data from Prometheus and create the dashboards. 
-
+Prometheus includes the port in the host header when requesting metrics, which can cause issues with certain networking configurations. To work around this, the requests are routed through a local Envoy proxy that strips the port from the host header.
 
 # Setup 
 Follow these steps to have the Prometheus-Grafana stack running locally. You might have some of these steps already completed. 
@@ -34,9 +37,9 @@ Steps:
 
 ## Running Prometheus-Grafana Stack
 
-* Run `docker-compose up -d`
+Run `docker-compose up --build`
 
-If you now run `docker ps`, it should show the currently running Prometheus and Grafana
+The output should show If you now run `docker ps`, it should show the currently running Prometheus and Grafana
 
 The default config is setup such that:
 * Prometheus is running at **localhost:9090**
@@ -83,12 +86,3 @@ If you would like to add a new folder you have to first create a folder in **./g
 
 ### Adding data sources 
 Adding more data sources is similarly very easy. Go under **./grafana/provisioning/datasources** and open *datasource.yml* file. There you can add a new data source. The file is documented well and adding a new source should be easy if you just follow the instructions. For more help please see the official [documentation](https://grafana.com/docs/administration/provisioning/)
-
-## Troubleshooting
-
-### Time drift of Hyper-v 
-When your computer goes to sleep, the time in your VM and the time in your computer will go out of synch. To fix that issue please run the following commands in Powershell as Administrator:
-
-`Get-VMIntegrationService -VMName DockerDesktopVM -Name "Time Synchronization" | Disable-VMIntegrationService`
-
-`Get-VMIntegrationService -VMName DockerDesktopVM -Name "Time Synchronization" | Enable-VMIntegrationService`

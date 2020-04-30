@@ -1,25 +1,27 @@
 version: '3.2'
 
 volumes:
-    prometheus_data: {}
     grafana_data: {}
-
+    prometheus_data: {}
 
 services:
 
   prometheus:
-    image: prom/prometheus
-    volumes:
-      - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
+    build:
+      context: ./prometheus/
+      args:
+        METRICS_USERNAME: ${METRICS_USERNAME?METRICS_USERNAME}
+        METRICS_PASSWORD: ${METRICS_PASSWORD?METRICS_PASSWORD}
+    depends_on:
+      - envoy-proxy
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--log.level=debug'
     ports:
       - 9090:9090
-    restart: always
 
   grafana:
     image: grafana/grafana
@@ -32,5 +34,11 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-    restart: always
 
+  envoy-proxy:
+    build:
+      context: ./proxy
+      args:
+        TARGET_SITE: ${TARGET_SITE?TARGET_SITE}
+    ports:
+      - 10000:10000

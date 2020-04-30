@@ -181,7 +181,7 @@ for folderName,value in folderNameVariablesNumeric.items():
 
     if reportResultsToElasticsearch == 'TRUE':
       print("Pushing to ElasticSearch")
-      header = ['Name', "Request count", "Min response time", "Max response time", "Mean response time", "Std deviation", "Response time 50th percentile", "Response time 75th percentile", "Response time 95th percentile", "Response time 99th percentile", "Mean requests/sec", "t < 800 ms", "800 ms < t < 1200 ms ", "t > 1200 ms", "Failed"]
+      header = ['Name', "Request count", "Min response time", "Max response time", "Mean response time", "Std deviation", "Response time 50th percentile", "Response time 75th percentile", "Response time 95th percentile", "Response time 99th percentile","800 ms < t < 1200 ms", "t < 800 ms", "t > 1200 ms", "Failed Percentage", "Reqs/s"]
 
       template['test_name'] = l1[0]
       for i in range(1,len(header)): 
@@ -192,7 +192,7 @@ for folderName,value in folderNameVariablesNumeric.items():
     
 finalArray.append(arr1)
 
-header = [['Name', "Request count", "Min response time", "Max response time", "Mean response time", "Std deviation", "Response time 50th percentile", "Response time 75th percentile", "Response time 95th percentile", "Response time 99th percentile", "Mean requests/sec", "t < 800 ms", "800 ms < t < 1200 ms ", "t > 1200 ms", "Failed"]]
+header = [['Name', "Request count", "Min response time", "Max response time", "Mean response time", "Std deviation", "Response time 50th percentile", "Response time 75th percentile", "Response time 95th percentile", "Response time 99th percentile","800 ms < t < 1200 ms", "t < 800 ms", "t > 1200 ms", "Failed Percentage", "Reqs/s"]]
 whiteRow = [[' ', ' ', ' ', ' ', ' ']]
 finalArray.insert(0, header)
 my_df = pd.DataFrame()
@@ -226,11 +226,11 @@ for folderName,value in folderNameVariablesNumeric.items():
             l1.append(bound)
 
             
-            if (l1[3]<benchmarks[apiName + ' Lower bound']):
-                l1.append("Good")
-
-            elif(l1[3]>benchmarks[apiName + ' Upper bound']):
+            if (l1[2]>benchmarks[apiName + ' Upper bound']):
                 l1.append("Bad")
+
+            elif(l1[3]<benchmarks[apiName + ' Lower bound']):
+                l1.append("Good")
 
             else: 
                 l1.append("Normal")
