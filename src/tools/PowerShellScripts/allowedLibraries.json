@@ -99,6 +99,7 @@
                                         "Insite.Integration.Connector.Acumatica":  null,
                                         "Insite.TaxCalculator.Vertex":  null,
                                         "Insite.RealTimePricing":  null,
+                                        "Insite.Integration.Connector.Facts":  null,
                                         "Insite.RealTimeInventory":  null,
                                         "Insite.Websites":  null,
                                         "Insite.Invoice":  null,
@@ -131,8 +132,7 @@
                                         "Insite.Integration.Connector.APlus":  null,
                                         "Insite.Core.Interfaces":  null,
                                         "Insite.Requisition":  null,
-                                        "Insite.Integration.Connector.SXe":  null,
-                                        "Insite.Integration.Connector.Facts":  null
+                                        "Insite.Integration.Connector.SXe":  null
                                     }
                   }
     },
@@ -422,6 +422,17 @@
                       "PackageFramework":  "net40",
                       "Libraries":  {
                                         "Renci.SshNet":  "2016.1.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "System.IdentityModel.Tokens.Jwt",
+        "Value":  {
+                      "PackageName":  "System.IdentityModel.Tokens.Jwt",
+                      "PackageVersion":  "4.0.2.206221351",
+                      "PackageFramework":  "net45",
+                      "Libraries":  {
+                                        "System.IdentityModel.Tokens.Jwt":  "4.0.20622.1351"
                                     }
                   }
     },

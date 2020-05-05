@@ -30,6 +30,7 @@ System.Data.DataSetExtensions
 System.Drawing
 System.EnterpriseServices
 System.IdentityModel
+System.IdentityModel.Tokens.Jwt
 System.Net
 System.Net.Http
 System.Net.Http.Formatting

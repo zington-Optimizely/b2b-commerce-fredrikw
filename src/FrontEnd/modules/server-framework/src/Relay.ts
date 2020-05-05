@@ -37,7 +37,7 @@ function createRelay(prefix: string) {
         }
 
         const url = `${prefix}${request.originalUrl}`;
-        logger.debug(`Relaying ${request.method} ${request.originalUrl} to ${url}.`);
+        logger.info(`Relaying ${request.method} ${request.originalUrl} to ${url}.`);
 
         const result = await fetch(url, {
             method: request.method,
