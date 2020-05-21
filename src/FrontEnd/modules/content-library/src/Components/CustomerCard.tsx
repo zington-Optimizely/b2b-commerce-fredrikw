@@ -63,9 +63,10 @@ const CustomerCard: FC<OwnProps> = ({
     isSelected,
     allowEditCustomer,
     onEdit,
-    ...otherProps
+    extendedStyles,
+    onSelect,
 }) => {
-    const [styles] = React.useState(() => mergeToNew(customerCardStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(customerCardStyles, extendedStyles));
 
     const handleEditClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => onEdit?.(event, customer);
 
@@ -83,7 +84,7 @@ const CustomerCard: FC<OwnProps> = ({
                 <ActionsWrapper {...styles.actionsWrapper}>
                     <Button
                         {...styles.selectButton}
-                        onClick={() => otherProps.onSelect(customer)}
+                        onClick={() => onSelect(customer)}
                         disabled={isSelected}
                         data-test-selector={`customerCard_select_${customer.id}`}
                     >

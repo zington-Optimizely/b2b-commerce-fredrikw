@@ -18,6 +18,8 @@ import updateProduct from "@insite/client-framework/Store/Pages/ProductList/Hand
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 
 interface OwnProps extends HasProductContext {
     showPrice: boolean;
@@ -31,6 +33,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 const mapDispatchToProps = {
     changeProductUnitOfMeasure,
     updateProduct,
+    changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -70,21 +73,24 @@ const styles: ProductListActionsStyles = {
             display: flex;
             align-items: flex-end;
             margin-top: 10px;
+            min-height: 6rem;
         `,
     },
     addToCartButton: { css: css` width: 80%; ` },
     quantityOrdered: {
         cssOverrides: {
             formField: css`
-                width: 20%;
                 margin-right: 10px;
+                width: 4.1rem;
+                min-width: 4.1rem;
             `,
         },
     },
     addToListWrapper: {
         css: css`
             text-align: center;
-            margin-top: 30px;
+            margin-top: 25px;
+            min-height: 2rem;
         `,
     },
 };
@@ -96,6 +102,7 @@ const ProductListActions: FC<Props> = (
         product,
         productSettings,
         changeProductUnitOfMeasure,
+        changeProductQtyOrdered,
         updateProduct,
         showPrice,
         showAddToList,
@@ -106,9 +113,12 @@ const ProductListActions: FC<Props> = (
         return null;
     }
 
-    const quantityInputChangeHandler = (value: string) => {
-        updateProduct({ product: { ...product, qtyOrdered: parseFloat(value) } });
-        setQuantity(parseFloat(value));
+    const quantityInputChangeHandler = async (value: string) => {
+        const newQuantity = parseFloat(value);
+        setQuantity(newQuantity);
+
+        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: newQuantity });
+        updateProduct({ product: productToUpdate });
     };
 
     const onSuccessUomChanged = (product: ProductModelExtended) => {
@@ -152,14 +162,14 @@ const ProductListActions: FC<Props> = (
                     quantity={quantity}
                     unitOfMeasure={product.selectedUnitOfMeasure}
                     extendedStyles={styles.addToCartButton}
-                    />
+                />
             </StyledWrapper>
             {showAddToList
                 && <StyledWrapper {...styles.addToListWrapper}>
                     <ProductAddToListLink
                         product={product}
                         data-test-selector={`actionsAddToList${product.id}`}
-                        extendedStyles={styles.addToListLink}/>
+                        extendedStyles={styles.addToListLink} />
                 </StyledWrapper>
             }
         </StyledWrapper>

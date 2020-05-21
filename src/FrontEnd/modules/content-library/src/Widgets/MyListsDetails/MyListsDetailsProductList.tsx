@@ -193,16 +193,20 @@ const MyListsDetailsProductList: React.FC<Props> = ({
 
     if (!wishListLines || wishListLines.length === 0 || products.length === 0) {
         return <StyledWrapper {...styles.centeringWrapper}>
-            <Typography {...styles.messageText}>
+            <Typography {...styles.messageText} data-test-selector="noItemsMessage">
                 {loadWishListLinesParameter.query ? siteMessage("Lists_NoResultsMessage") : siteMessage("Lists_NoItemsInList")}
             </Typography>
         </StyledWrapper>;
     }
 
     return <>
-        <GridContainer {...styles.container}>
+        <GridContainer {...styles.container} data-test-selector="linesContainer">
             {wishListLines.map((wishListLine, index) =>
-                <GridItem {...styles.lineGridItem} key={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
+                <GridItem
+                    {...styles.lineGridItem}
+                    key={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}
+                    data-test-selector="lineContainer"
+                >
                     <MyListsDetailsProductListLine
                         wishList={wishList}
                         wishListLine={wishListLine}
@@ -211,7 +215,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
                         onEditNotesClick={editNotesClickHandler} />
                 </GridItem>)
             }
-            <GridItem {...styles.paginationGridItem}>
+            <GridItem {...styles.paginationGridItem} data-test-selector="pagination">
                 <Pagination
                     {...styles.pagination}
                     currentPage={pagination.currentPage}
@@ -229,7 +233,9 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             cancelButtonText={translate("Cancel")}
             submitButtonText={translate("Delete")}
             onCancel={deleteCancelHandler}
-            onSubmit={deleteSubmitHandler} />
+            onSubmit={deleteSubmitHandler}
+            submitTestSelector="submitDeleteListItem"
+        />
         {wishListLineToAction
             && <Modal
                 {...styles.editNotesModal}

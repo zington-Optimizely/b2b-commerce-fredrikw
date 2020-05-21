@@ -9,8 +9,6 @@ import FormField, {
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps } from "../Icon";
-import Calendar from "../Icons/Calendar";
-import XIcon from "../Icons/X";
 import { chevronLeftString } from "../Icons/ChevronLeft";
 import { chevronRightString } from "../Icons/ChevronRight";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -21,6 +19,7 @@ import injectCss from "../utilities/injectCss";
 import safeColor from "../utilities/safeColor";
 import { StyledProp } from "../utilities/InjectableCss";
 import uniqueId from "../utilities/uniqueId";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import VisuallyHidden from "../VisuallyHidden";
 
 export interface DatePickerPresentationProps extends
@@ -101,8 +100,8 @@ export interface DatePickerState {
 export type DatePickerProps = DatePickerPresentationProps & DatePickerComponentProps;
 
 const DatePickerIcon = styled(Icon)<{_sizeVariant: FormFieldSizeVariant} & ThemeProps<BaseTheme>>`
-    width: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].height - 4}px;
-    height: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].height - 4}px;
+    width: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
+    height: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
     padding: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].iconPadding - 2}px;
     background: ${getColor("common.background")};
     border-radius: 100%;
@@ -198,7 +197,6 @@ const DateTimePickerStyle = styled.div<{_sizeVariant: FormFieldSizeVariant, css?
         button {
             background-color: ${getColor("common.background")};
             &:enabled {
-
                 &:hover:not(:disabled),
                 &:focus:not(:disabled) {
                     color: ${getColor("text.main")};
@@ -299,8 +297,8 @@ const DateTimePickerStyle = styled.div<{_sizeVariant: FormFieldSizeVariant, css?
 /**
  * Input component for selecting a single date from an input field and calendar interface.
  */
-class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
-    constructor(props: DatePickerProps) {
+class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, DatePickerState> {
+    constructor(props: DatePickerProps & HasDisablerContext) {
         super(props);
         this.handleDayChange = this.handleDayChange.bind(this);
         this.state = {
@@ -350,12 +348,17 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     render() {
         const {
             cssOverrides,
+            disable,
             disabled,
             error,
             label,
             required,
+            theme: { translate },
             ...otherProps
         } = this.props;
+        // Because disabled html attribute doesn't accept undefined
+        // eslint-disable-next-line no-unneeded-ternary
+        const isDisabled = (disable || disabled) ? true : false;
         const { selectedDay, isEmpty, selectedDayDisabled } = this.state;
         const {
             applyProp,
@@ -372,7 +375,7 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
             <DateTimePickerStyle
                 _sizeVariant={sizeVariant}
                 css={_cssOverrides.datePicker}
-                disabled={!!disabled}
+                disabled={!!isDisabled}
                 role="group"
                 aria-invalid={selectedDayDisabled || (required && isEmpty) || false}
             >
@@ -381,22 +384,20 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                     calendarIcon={<>
                         <DatePickerIcon
                             _sizeVariant={sizeVariant}
-                            src={Calendar}
                             {...calendarIconProps}
-                            color={disabled ? "text.disabled" : calendarIconProps.color}
+                            color={isDisabled ? "text.disabled" : calendarIconProps.color}
                         />
-                        <VisuallyHidden>{otherProps.theme.translate("open or close calendar")}</VisuallyHidden>
+                        <VisuallyHidden>{translate("open or close calendar")}</VisuallyHidden>
                     </>}
                     clearIcon={<>
                         <DatePickerIcon
                             _sizeVariant={sizeVariant}
-                            src={XIcon}
                             {...clearIconProps}
-                            color={disabled ? "text.disabled" : clearIconProps.color}
+                            color={isDisabled ? "text.disabled" : clearIconProps.color}
                         />
-                        <VisuallyHidden>{otherProps.theme.translate("clear date")}</VisuallyHidden>
+                        <VisuallyHidden>{translate("clear date")}</VisuallyHidden>
                     </>}
-                    disabled={disabled}
+                    disabled={isDisabled}
                     {...otherProps}
                     format={applyProp("format", "MM/dd/y")}
                     {...spreadProps("dateTimePickerProps")}
@@ -415,7 +416,7 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                     inputId={inputId}
                     cssOverrides={_cssOverrides}
                     error={selectedDayDisabled || (required && isEmpty)
-                        ? (error || otherProps.theme.translate("please choose a valid date"))
+                        ? (error || translate("please choose a valid date"))
                         : null}
                     {...this.props}
                 />
@@ -424,6 +425,6 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     }
 }
 
-export default withTheme(DatePicker);
+export default withDisabler(withTheme(DatePicker));
 
 export { DatePickerIcon };

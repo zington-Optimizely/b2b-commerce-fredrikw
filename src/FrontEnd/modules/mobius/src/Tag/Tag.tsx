@@ -4,7 +4,6 @@ import Button, { ButtonIcon } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import VisuallyHidden from "../VisuallyHidden";
 import { IconProps } from "../Icon";
-import X from "../Icons/X";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getContrastColor from "../utilities/getContrastColor";
@@ -104,10 +103,10 @@ const Tag: React.FC<TagProps> = withTheme(({ children, css, deletable, disabled,
                 {(deletable && !disabled)
                     && <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>
                         <VisuallyHidden>{otherProps.theme.translate("delete")}</VisuallyHidden>
-                        <TagIcon src={X} {...iconProps} />
+                        <TagIcon {...iconProps} />
                     </Button>
                 }
-                {(disabled) && <TagIcon src={X} {...iconProps} disabled/>}
+                {(disabled) && <TagIcon {...iconProps} disabled/>}
             </TagStyle>
         </TagWrapper>
     );

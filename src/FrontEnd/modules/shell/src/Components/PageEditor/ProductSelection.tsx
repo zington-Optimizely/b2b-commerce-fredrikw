@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import ShellState from "@insite/shell/Store/ShellState";
 import { selectProduct, loadProducts } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import styled from "styled-components";
 
 interface OwnProps {
 
@@ -39,7 +40,7 @@ class ProductSelection extends React.Component<Props> {
             return null;
         }
 
-        return <div>
+        return <Wrapper>
             <label>
                 Product:
                 <select onChange={this.onChange} value={this.getValue()}>
@@ -49,8 +50,16 @@ class ProductSelection extends React.Component<Props> {
                     )}
                 </select>
             </label>
-        </div>;
+        </Wrapper>;
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSelection);
+
+const Wrapper = styled.div`
+    white-space: nowrap;
+    max-width: 50%;
+    select {
+        max-width: 100%;
+    }
+`;

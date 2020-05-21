@@ -9,12 +9,14 @@ import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionC
 import PageCreatorModal from "@insite/shell/Components/Modals/PageCreatorModal";
 import styled from "styled-components";
 import SiteFrame from "@insite/shell/Components/Shell/SiteFrame";
-import { loadPage } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
 import Stage from "@insite/shell/Components/Shell/Stage";
-import { nullPage } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageState";
+import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
+import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { Location } from "history";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import { RouteComponentProps } from "react-router";
+
 
 interface OwnProps extends RouteComponentProps<{
     readonly id: string,
@@ -25,11 +27,14 @@ interface PageEditorState {
     id: string;
 }
 
-const mapStateToProps = (state: ShellState) => ({
-    pageDefinition: getPageDefinition(state.currentPage.page.type),
-    page: state.currentPage.page,
-    pageLinks: state.links.pageLinks,
-});
+const mapStateToProps = (state: ShellState) => {
+    const page = getCurrentPageForShell(state);
+    return ({
+        pageDefinition: getPageDefinition(page.type),
+        page,
+        pageLinks: state.links.pageLinks,
+    });
+};
 
 const mapDispatchToProps = {
     loadPage,
@@ -57,7 +62,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
     }
 
     static loadPage(id: string, props: Props) {
-        props.loadPage({ pathname: `/Content/Page/${id}` } as Location);
+        props.loadPage({ pathname: `/Content/Page/${id}`, search: "" } as Location);
     }
 
     static getDerivedStateFromProps(nextProps: Props, prevState: PageEditorState) {

@@ -2,7 +2,7 @@ import * as React from "react";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import { CategoryListPageContext } from "@insite/content-library/Pages/CategoryListPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -15,6 +15,8 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { css } from "styled-components";
 import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
+import { HomePageContext } from "@insite/content-library/Pages/HomePage";
+import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
 
 const enum fields {
     showImages = "showImages",
@@ -30,7 +32,11 @@ const mapStateToProps = (state: ApplicationState) => ({
     categoriesDataView: getCategoriesDataView(state),
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = {
+    loadCategories,
+};
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CategoryListStyles {
     centeringWrapper?: InjectableCss;
@@ -102,60 +108,72 @@ const styles: CategoryListStyles = {
 
 export const listStyles = styles;
 
-const CategoryList: React.FC<Props> = ({ categoriesDataView, fields: { showImages } }) => {
-    if (categoriesDataView.isLoading) {
+class CategoryList extends React.Component<Props> {
+    UNSAFE_componentWillMount(): void {
+        const { categoriesDataView, loadCategories } = this.props;
+        if (!categoriesDataView.isLoading && !categoriesDataView.value) {
+            loadCategories();
+        }
+    }
+
+    render() {
+        const { categoriesDataView, fields: { showImages } } = this.props;
+        if (categoriesDataView.isLoading) {
+            return (
+                <StyledWrapper {...styles.centeringWrapper}>
+                    <LoadingSpinner {...styles.spinner} />
+                </StyledWrapper>
+            );
+        }
+
+        if (!categoriesDataView.value) {
+            return null;
+        }
+
         return (
-            <StyledWrapper {...styles.centeringWrapper}>
-                <LoadingSpinner {...styles.spinner} />
-            </StyledWrapper>
+            <GridContainer {...styles.container}>
+                {categoriesDataView.value.map((category) => (
+                    <GridItem key={category.id.toString()} {...styles.categoryItem}>
+                        <GridContainer {...styles.innerContainer}>
+                            {showImages
+                                && <GridItem {...styles.categoryImageItem}>
+                                    {category.path
+                                        && <Link href={category.path} {...styles.categoryImageLink}>
+                                            <LazyImage src={category.smallImagePath} {...styles.categoryImage} />
+                                        </Link>
+                                    }
+                                </GridItem>
+                            }
+                            <GridItem {...styles.categoryNameLinkItem}>
+                                <Link href={category.path} {...styles.categoryNameLink}>
+                                    <Typography {...styles.categoryName}>{category.shortDescription}</Typography>
+                                </Link>
+                            </GridItem>
+                            {category.subCategories && category.subCategories.slice(0, 4).map((subCategory) => (
+                                <GridItem key={subCategory.id.toString()} {...styles.subCategoryNameLinkItem}>
+                                    <Link href={subCategory.path} {...styles.subCategoryNameLink}>
+                                        {subCategory.shortDescription}
+                                    </Link>
+                                </GridItem>
+                            ))}
+                            {category.subCategories && category.subCategories.length > 4
+                                && <GridItem {...styles.viewMoreLinkItem}>
+                                    <Link href={category.path} {...styles.viewMoreLink}>{translate("View More")}</Link>
+                                </GridItem>
+                            }
+                        </GridContainer>
+                    </GridItem>
+                ))}
+            </GridContainer>
         );
     }
-
-    if (!categoriesDataView.value) {
-        return null;
-    }
-
-    return <GridContainer {...styles.container}>
-        {categoriesDataView.value.map((category) => (
-            <GridItem key={category.id.toString()} {...styles.categoryItem}>
-                <GridContainer {...styles.innerContainer}>
-                    {showImages
-                        && <GridItem {...styles.categoryImageItem}>
-                            {category.path
-                                && <Link href={category.path} {...styles.categoryImageLink}>
-                                    <LazyImage src={category.smallImagePath} {...styles.categoryImage} />
-                                </Link>
-                            }
-                        </GridItem>
-                    }
-                    <GridItem {...styles.categoryNameLinkItem}>
-                        <Link href={category.path} {...styles.categoryNameLink}>
-                            <Typography {...styles.categoryName}>{category.shortDescription}</Typography>
-                        </Link>
-                    </GridItem>
-                    {category.subCategories && category.subCategories.slice(0, 4).map((subCategory) => (
-                        <GridItem key={subCategory.id.toString()} {...styles.subCategoryNameLinkItem}>
-                            <Link href={subCategory.path} {...styles.subCategoryNameLink}>
-                                {subCategory.shortDescription}
-                            </Link>
-                        </GridItem>
-                    ))}
-                    {category.subCategories && category.subCategories.length > 4
-                        && <GridItem {...styles.viewMoreLinkItem}>
-                            <Link href={category.path} {...styles.viewMoreLink}>{translate("View More")}</Link>
-                        </GridItem>
-                    }
-                </GridContainer>
-            </GridItem>
-        ))}
-    </GridContainer>;
-};
+}
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(CategoryList),
+    component: connect(mapStateToProps, mapDispatchToProps)(CategoryList),
     definition: {
         group: "Categories",
-        allowedContexts: [CategoryListPageContext],
+        allowedContexts: [CategoryListPageContext, HomePageContext],
         fieldDefinitions: [
             {
                 name: fields.showImages,

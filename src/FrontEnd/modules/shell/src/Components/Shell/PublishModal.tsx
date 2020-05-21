@@ -15,26 +15,30 @@ import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import Typography from "@insite/mobius/Typography";
 import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
-const mapStateToProps = ({
-    shellContext: {
-        showModal,
-        publishInTheFuture,
+const mapStateToProps = (state: ShellState) => {
+    const {
+        shellContext: {
+            showModal,
+            publishInTheFuture,
+            pagePublishInfo,
+            languagesById,
+            personasById,
+        },
+    } = state;
+
+    const page = getCurrentPageForShell(state);
+
+    return ({
+        visible: showModal === "Publish",
+        publishImmediately: !publishInTheFuture,
+        page,
         pagePublishInfo,
         languagesById,
         personasById,
-},
-    currentPage: {
-        page,
-    },
-}: ShellState) => ({
-    visible: showModal === "Publish",
-    publishImmediately: !publishInTheFuture,
-    page,
-    pagePublishInfo,
-    languagesById,
-    personasById,
-});
+    });
+};
 
 const mapDispatchToProps = {
     close: (): AnyShellAction => ({
@@ -70,17 +74,17 @@ const mapDispatchToProps = {
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const PublishModal: React.FC<Props> = ({
-    visible,
-    close,
-    refresh,
-    publishImmediately,
-    togglePublishInTheFuture,
-    pagePublishInfo,
-    page,
-    publish,
-    languagesById,
-    personasById,
-}) => {
+                                           visible,
+                                           close,
+                                           refresh,
+                                           publishImmediately,
+                                           togglePublishInTheFuture,
+                                           pagePublishInfo,
+                                           page,
+                                           publish,
+                                           languagesById,
+                                           personasById,
+                                       }) => {
     const { id, fields: { title } } = page;
 
     useEffect(
@@ -111,36 +115,38 @@ const PublishModal: React.FC<Props> = ({
             </MessageContainer>
             <PublishableContextTable cellSpacing={0} data-test-selector="publishModal">
                 <thead>
-                    <tr>
-                        <th>Page</th>
-                        <th>Language</th>
-                        <th>Customer Segment</th>
-                        <th>Device</th>
-                        <th>Edited By</th>
-                        <th>Edited On</th>
-                        <th>Compare</th>
-                    </tr>
+                <tr>
+                    <th>Page</th>
+                    <th>Language</th>
+                    <th>Customer Segment</th>
+                    <th>Device</th>
+                    <th>Edited By</th>
+                    <th>Edited On</th>
+                    <th>Compare</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {
-                    !pagePublishInfo ? <tr><td>...</td></tr>
-                    : pagePublishInfo.value && pagePublishInfo.value.map(({ unpublishedContexts }) =>
-                    // eslint-disable-next-line react/no-array-index-key
-                    unpublishedContexts.map(({ languageId, personaId, deviceType, modifiedBy, modifiedOn }, index) => <tr key={index}>
-                        <td>{title} <BadgeDefault /></td>
-                        <td>{!languageId ? "All" : languagesById[languageId]?.description ?? languageId}</td>
-                        <td>{!personaId ? "All" : personasById[personaId]?.name ?? personaId}</td>
-                        <td>{deviceType || "All"}</td>
-                        <td>{modifiedBy}</td>
-                        <td>{new Date(modifiedOn).toLocaleString()}</td>
-                        <td>
-                            <ButtonInTable
-                                variant="tertiary"
-                                disabled // TODO ISC-11132
-                            >Compare</ButtonInTable>
-                        </td>
-                    </tr>))
-                    }
+                {
+                    !pagePublishInfo ? <tr>
+                            <td>...</td>
+                        </tr>
+                        : pagePublishInfo.value && pagePublishInfo.value.map(({ unpublishedContexts }) =>
+                        // eslint-disable-next-line react/no-array-index-key
+                        unpublishedContexts.map(({ languageId, personaId, deviceType, modifiedBy, modifiedOn }, index) => <tr key={index}>
+                            <td>{title} <BadgeDefault/></td>
+                            <td>{!languageId ? "All" : languagesById[languageId]?.description ?? languageId}</td>
+                            <td>{!personaId ? "All" : personasById[personaId]?.name ?? personaId}</td>
+                            <td>{deviceType || "All"}</td>
+                            <td>{modifiedBy}</td>
+                            <td>{new Date(modifiedOn).toLocaleString()}</td>
+                            <td>
+                                <ButtonInTable
+                                    variant="tertiary"
+                                    disabled // TODO ISC-11132
+                                >Compare</ButtonInTable>
+                            </td>
+                        </tr>))
+                }
                 </tbody>
             </PublishableContextTable>
             <Checkbox
@@ -171,7 +177,7 @@ const PublishModal: React.FC<Props> = ({
                                     tooltipClickable: css`
     padding: 0;
 `,
-tooltipWrapper: css`
+                                    tooltipWrapper: css`
     > button > span {
         margin-top: -0.125em;
         > svg {

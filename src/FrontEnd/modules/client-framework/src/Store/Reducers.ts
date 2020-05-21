@@ -1,6 +1,5 @@
 import categoriesReducer from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesReducer";
 import currentCategoryReducer from "@insite/client-framework/Store/UNSAFE_CurrentCategory/CurrentCategoryReducer";
-import currentPageReducer from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageReducer";
 import linksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 import dataReducer, { DataReducers } from "@insite/client-framework/Store/Data/DataReducer";
 import componentsReducer, { ComponentsReducers } from "@insite/client-framework/Store/Components/ComponentsReducer";
@@ -16,7 +15,6 @@ export const reducers = {
 
     UNSAFE_categories: categoriesReducer,
     UNSAFE_currentCategory: currentCategoryReducer,
-    UNSAFE_currentPage: currentPageReducer,
 };
 
 type Reducers = Omit<typeof reducers, "components" | "pages" | "data">;

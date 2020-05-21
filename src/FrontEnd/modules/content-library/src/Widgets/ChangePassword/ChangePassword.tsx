@@ -134,7 +134,7 @@ const ChangePasswordView: FC<Props> = (props) => {
     }
 
     return (
-        <>
+        <form>
             <ChangePasswordHeader
                 title={props.pageTitle}
                 password={password}
@@ -162,6 +162,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                         type={showPasswords ? "password" : "text"}
                         label={translate("Current Password")}
                         onInput={currentPasswordChangeHandler}
+                        autoComplete="current-password"
                     />
                 </GridItem>
                 <GridItem {...styles.userInformationGridItem}>
@@ -169,6 +170,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                         type={showPasswords ? "password" : "text"}
                         label={translate("New Password")}
                         onInput={newPasswordChangeHandler}
+                        autoComplete="new-password"
                     />
                 </GridItem>
                 <GridItem {...styles.userInformationGridItem}>
@@ -177,6 +179,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                         label={translate("Confirm New Password")}
                         onInput={confirmNewPasswordChangeHandler}
                         error={confirmNewPasswordError}
+                        autoComplete="new-password"
                     />
                 </GridItem>
                 <GridItem {...styles.showPasswordsGridItem}>
@@ -200,7 +203,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                     </Hidden>
                 </GridItem>
             </GridContainer>
-        </>);
+        </form>);
 };
 
 const widgetModule: WidgetModule = {

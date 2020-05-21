@@ -1,5 +1,5 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { UpdateCartApiParameter, updateCart, Cart, CartResult } from "@insite/client-framework/Services/CartService";
+import { UpdateCartApiParameter, updateCartWithResult, Cart, CartResult } from "@insite/client-framework/Services/CartService";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
@@ -145,7 +145,19 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const UpdateCart: HandlerType = async props => {
-    props.apiResult = await updateCart(props.apiParameter);
+    const result = await updateCartWithResult(props.apiParameter);
+    if (result.successful) {
+        props.apiResult = result.result;
+    } else {
+        props.dispatch({
+            type: "Pages/CheckoutReviewAndSubmit/SetPlaceOrderErrorMessage",
+            errorMessage: result.errorMessage,
+        });
+        props.dispatch({
+            type: "Pages/CheckoutReviewAndSubmit/CompletePlaceOrder",
+        });
+        return false;
+    }
 };
 
 export const ReloadCurrentCart: HandlerType = props => {

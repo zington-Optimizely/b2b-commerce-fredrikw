@@ -2,7 +2,7 @@ import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { request } from "@insite/client-framework/Services/ApiService";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { BasicLanguageModel } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 
 export const getPageByType = (type: string) => get<{ page: PageModel, statusCode: number, redirectTo: string }>("pageByType", { type });
 
@@ -20,6 +20,8 @@ export const getWebsiteRequiresGeneration = () => get<{
 export const saveInitialPages = (pages: PageModel[]) => post<PageModel[]>("saveInitialPages", pages);
 
 export const getTheme = () => get<BaseTheme>("theme");
+
+export const getPageUrlByType = (type: string) => get<string>("pageUrlByType", { type });
 
 const contentUrl = "/api/v2/content/";
 

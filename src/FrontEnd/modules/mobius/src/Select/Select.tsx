@@ -9,8 +9,8 @@ import FormField, {
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
-import ChevronDown from "../Icons/ChevronDown";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
@@ -54,7 +54,7 @@ export type SelectProps = SelectPresentationProps & SelectComponentProps;
 /**
  * Creates a dropdown with an optional label, hint text and error message. Accepts children to render as options.
  */
-class Select extends React.Component<SelectProps> {
+class Select extends React.Component<SelectProps & HasDisablerContext> {
     static defaultProps = {
         onChange: () => {},
     };
@@ -80,6 +80,7 @@ class Select extends React.Component<SelectProps> {
             {(theme?: BaseTheme) => {
                 const {
                     children,
+                    disable,
                     disabled,
                     error,
                     hint,
@@ -87,12 +88,15 @@ class Select extends React.Component<SelectProps> {
                     ...otherProps
                 } = this.props;
 
+                // Because disabled html attribute doesn't accept undefined
+                // eslint-disable-next-line no-unneeded-ternary
+                const isDisabled = (disable || disabled) ? true : false;
                 const { uid } = this.state;
                 const descriptionId = `${uid}-description`;
                 const labelId = `${uid}-label`;
                 const inputLabelObj = otherProps.label === 0 || otherProps.label ? { "aria-labelledby": labelId } : {};
 
-                const { spreadProps, applyProp } = applyPropBuilder(this.props, { component: "select", category: "formField" });
+                const { spreadProps, applyProp } = applyPropBuilder({ theme, ...this.props }, { component: "select", category: "formField" });
                 const iconProps = spreadProps("iconProps");
                 const sizeVariant: FormFieldSizeVariant = applyProp("sizeVariant", "default");
                 const hasDescription = !!error || !!hint;
@@ -103,22 +107,21 @@ class Select extends React.Component<SelectProps> {
                             id={this.state.uid}
                             aria-describedby={hasDescription ? descriptionId : undefined}
                             aria-invalid={!!error}
-                            aria-required={!disabled && required}
+                            aria-required={!isDisabled && required}
                             aria-labelledby={labelId}
                             onChange={this.onChangeWithValue}
                             data-selected-index={this.state.value || ""}
                             value={this.state.value}
-                            {...{ disabled, required }}
+                            {...{ disabled: isDisabled, required }}
                             {...inputLabelObj}
                             {...omitMultiple(otherProps, ["sizeVariant", "border", "label", "cssOverrides", "labelPosition", "labelProps", "theme", "backgroundColor"])}
                         >
                             {children}
                         </select>
                         <FormFieldIcon
-                            src={ChevronDown}
                             {...iconProps}
                             size={sizeVariantValues[sizeVariant].icon}
-                            color={disabled ? "text.disabled" : (iconProps.color || "text.main")}
+                            color={isDisabled ? "text.disabled" : (iconProps.color || "text.main")}
                         />
                     </>
                 );
@@ -129,6 +132,7 @@ class Select extends React.Component<SelectProps> {
                         formInput={selectInput}
                         inputId={this.state.uid}
                         labelId={labelId}
+                        disabled={isDisabled}
                         {...this.props}
                     />
                 );
@@ -139,4 +143,4 @@ class Select extends React.Component<SelectProps> {
 }
 
 /** @component */
-export default Select;
+export default withDisabler(Select);

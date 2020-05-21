@@ -6,7 +6,7 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import MissingComponent from "@insite/client-framework/Components/MissingComponent";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
-import { nullPage } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageState";
+import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 
 type RequireContext = __WebpackModuleApi.RequireContext;
 

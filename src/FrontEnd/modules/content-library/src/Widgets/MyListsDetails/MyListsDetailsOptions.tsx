@@ -220,10 +220,12 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                             {...styles.search}
                             placeholder={translate("Search products in list")}
                             value={query}
-                            onChange={searchChangeHandler}/>
+                            onChange={searchChangeHandler}
+                            data-test-selector="wishListSearch"
+                        />
                     </GridItem>
                     <GridItem {...styles.selectAllGridItem}>
-                        <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler}>
+                        <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler} data-test-selector="selectAllItems">
                             {translate("Select All")}
                         </Checkbox>
                         {loadWishListLinesParameter.sort === "SortOrder"
@@ -231,7 +233,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                         }
                     </GridItem>
                     <GridItem {...styles.addItemsGridItem}>
-                        <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler}>
+                        <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
                             {translate("Add Items To List")}
                         </Link>
                     </GridItem>

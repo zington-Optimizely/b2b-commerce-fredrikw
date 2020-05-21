@@ -1,11 +1,13 @@
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
-import { addProduct, AddProductApiParameter } from "@insite/client-framework/Services/CartService";
+import { addProductWithResult, AddProductApiParameter } from "@insite/client-framework/Services/CartService";
 import {
     ApiHandler, createHandlerChainRunner, HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 
-type AddToCartParameter = AddProductApiParameter & HasOnSuccess;
+type AddToCartParameter = {
+    onError?: (error: string) => void;
+} & AddProductApiParameter & HasOnSuccess;
 
 type HandlerType = ApiHandler<AddToCartParameter, CartLineModel>;
 
@@ -14,7 +16,13 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const SendDataToApi: HandlerType = async props => {
-    props.apiResult = await addProduct(props.apiParameter);
+    const result = await addProductWithResult(props.apiParameter);
+    if (result.successful) {
+        props.apiResult = result.result;
+    } else {
+        props.parameter.onError?.(result.errorMessage);
+        return false;
+    }
 };
 
 export const LoadCart: HandlerType = props => {

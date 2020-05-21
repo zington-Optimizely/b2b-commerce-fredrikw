@@ -1,9 +1,10 @@
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
+import styled, { withTheme } from "styled-components";
 import { checkboxSizes } from "../Checkbox";
 import RadioGroupContext from "../RadioGroup/RadioGroupContext";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import combineTypographyProps from "../utilities/combineTypographyProps";
 import getColor from "../utilities/getColor";
 import getContrastColor from "../utilities/getContrastColor";
@@ -12,7 +13,6 @@ import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
 import InjectableCss from "../utilities/InjectableCss";
 import FieldSetPresentationProps from "../utilities/fieldSetProps";
-import { BaseTheme } from "../globals/baseTheme";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type RadioComponentProps = MobiusStyledComponentProps<"div", {
@@ -72,9 +72,9 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color
     ${injectCss}
 `;
 
-const Radio: React.FC<RadioProps & ThemeProps<BaseTheme>> = (props) => {
+const Radio: React.FC<RadioProps & HasDisablerContext> = (props) => {
     const {
-        children, disabled, value, ...otherProps
+        children, disable, disabled, value, ...otherProps
     } = props;
 
     return (
@@ -83,9 +83,12 @@ const Radio: React.FC<RadioProps & ThemeProps<BaseTheme>> = (props) => {
                 name, onChange, sizeVariant: sizeVariantFromContext, value: radioGroupValue,
             }) => {
                 const { applyProp, spreadProps } = applyPropBuilder({ sizeVariant: sizeVariantFromContext, ...props }, { component: "radio", category: "fieldSet" });
+                // Because disabled html attribute doesn't accept undefined
+                // eslint-disable-next-line no-unneeded-ternary
+                const isDisabled = (disable || disabled) ? true : false;
                 const sizeVariant = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
                 const typographyProps = combineTypographyProps({
-                    theme: otherProps.theme,
+                    theme: otherProps.theme!,
                     passedProps: spreadProps("typographyProps"),
                     defaultProps: {
                         size: checkboxSizes[sizeVariant].fontSize,
@@ -102,12 +105,12 @@ const Radio: React.FC<RadioProps & ThemeProps<BaseTheme>> = (props) => {
                             name={name}
                             value={radioValue}
                             checked={radioValue === radioGroupValue}
-                            {...{ disabled, onChange }}
+                            {...{ disabled: isDisabled, onChange }}
                             {...omitMultiple(otherProps, ["typographyProps", "color", "css"])}
                         />
                         <Typography
                             {...typographyProps}
-                            color={disabled ? "text.disabled" : typographyProps.color}
+                            color={isDisabled ? "text.disabled" : typographyProps.color}
                             as="label"
                             htmlFor={id}
                         >
@@ -121,6 +124,6 @@ const Radio: React.FC<RadioProps & ThemeProps<BaseTheme>> = (props) => {
 };
 
 /** @component */
-export default withTheme(Radio);
+export default withDisabler(withTheme(Radio));
 
 export { RadioStyle };

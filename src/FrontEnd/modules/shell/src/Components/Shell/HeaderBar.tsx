@@ -1,7 +1,7 @@
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import ShellState from "@insite/shell/Store/ShellState";
-import { changeContext } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import styled from "styled-components";
 import { loadShellContext } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import shellTheme from "@insite/shell/ShellTheme";

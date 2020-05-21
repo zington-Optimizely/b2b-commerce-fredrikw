@@ -2,10 +2,6 @@ import * as React from "react";
 import styled, { css, withTheme, ThemeProps } from "styled-components";
 import Button, { ButtonIcon, ButtonPresentationProps, ButtonVariants } from "../Button";
 import buttonDisplayProps from "./buttonDisplayProps";
-import ChevronLeft from "../Icons/ChevronLeft";
-import ChevronRight from "../Icons/ChevronRight";
-import ChevronsLeft from "../Icons/ChevronsLeft";
-import ChevronsRight from "../Icons/ChevronsRight";
 import Select, { SelectComponentProps } from "../Select";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -37,6 +33,14 @@ export interface PaginationPresentationProps {
     /** An object containing props to be passed down to the select component inside pagination
      * @themable */
     selectProps?: FormFieldPresentationProps<SelectComponentProps>;
+    /** An object containing icon sources for the navigation button icons.
+     * @themable */
+    navIconsSrc?: {
+        firstPage?: React.ComponentType | string,
+        previousPage?: React.ComponentType | string,
+        nextPage?: React.ComponentType | string,
+        lastPage?: React.ComponentType | string,
+    }
 }
 
 export type PaginationComponentProps = MobiusStyledComponentProps<"div", {
@@ -123,6 +127,7 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
     const buttonProps = spreadProps("buttonProps" as any);
     const currentPageButtonVariant = applyProp("currentPageButtonVariant");
     const translate = otherProps.theme.translate;
+    const navIconsSrc = spreadProps("navIconsSrc");
 
     const finalPageIndex = Math.floor((resultsCount - 1) / resultsPerPage) + 1;
     let pagesToDisplay: ("e" | number)[] = [];
@@ -154,7 +159,13 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
     const forwardDisabled = currentPage === finalPageIndex || finalPageIndex === 1;
     const backDisabled = currentPage === 1 || finalPageIndex === 1;
 
-    const navIcon = (pageIndex: number, icon: React.ComponentType, ariaLabel: string, disabledFlag: boolean, dataTestSelector?: string) => (
+    const navIcon = (
+        pageIndex: number,
+        icon: string | React.ComponentType,
+        ariaLabel: string,
+        disabledFlag: boolean,
+        dataTestSelector?: string,
+    ) => (
         <Button
             variant="secondary"
             {...buttonDisplayProps(props, { page: -1, moreCss: iconButtonStyles, cssOverrides, buttonProps, currentPageButtonVariant })}
@@ -184,11 +195,11 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
             </PerPageSelect>
             <LinkList role="navigation" aria-label={translate("Pagination navigation")} css={cssOverrides.linkList} data-test-selector={`paginationCurrentPage${currentPage}`}>
                 <ul>
-                    <li>{navIcon(1, ChevronsLeft, translate("First page"), backDisabled)}</li>
-                    <li>{navIcon(currentPage - 1, ChevronLeft, translate("Previous page"), backDisabled)}</li>
+                    <li>{navIcon(1, navIconsSrc.firstPage, translate("First page"), backDisabled)}</li>
+                    <li>{navIcon(currentPage - 1, navIconsSrc.previousPage, translate("Previous page"), backDisabled)}</li>
                     {paginationButtons}
-                    <li>{navIcon(currentPage + 1, ChevronRight, translate("Next page"), forwardDisabled, "paginationButtonNext")}</li>
-                    <li>{navIcon(finalPageIndex, ChevronsRight, translate("Last page"), forwardDisabled)}</li>
+                    <li>{navIcon(currentPage + 1, navIconsSrc.nextPage, translate("Next page"), forwardDisabled, "paginationButtonNext")}</li>
+                    <li>{navIcon(finalPageIndex, navIconsSrc.lastPage, translate("Last page"), forwardDisabled)}</li>
                 </ul>
             </LinkList>
         </PaginationStyle>

@@ -30,6 +30,8 @@ import translate from "@insite/client-framework/Translate";
 import getColor from "@insite/mobius/utilities/getColor";
 import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 
 const mapStateToProps = (state: ApplicationState) => ({
     products: state.pages.quickOrder.products,
@@ -57,11 +59,11 @@ export interface QuickOrderProductListStyles {
     brand?: ProductBrandStyles;
     productDescription?: ProductDescriptionStyles;
     productNumberText?: TypographyPresentationProps;
+    availability?: ProductAvailabilityStyles;
     priceAndQuantityGridItem?: GridItemProps;
     priceAndQuantityContainer?: GridContainerProps;
     priceGridItem?: GridItemProps;
     price?: ProductPriceStyles;
-    availability?: ProductAvailabilityStyles;
     quantityGridItem?: GridItemProps;
     quantityOrdered?: TextFieldProps;
     extendedPriceGridItem?: GridItemProps;
@@ -92,16 +94,36 @@ const styles: QuickOrderProductListStyles = {
             `,
         },
     },
-    productImageGridItem: { width: 2 },
+    productImageGridItem: {
+        width: 2,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css` padding-left: 0; padding-right: 0; font-size: 10px; `,
+                    css` padding-left: 0; padding-right: 0; font-size: 10px; `,
+                    css` padding-left: 0; `,
+                    css` padding-left: 0; `,
+                    css` padding-left: 0; `,
+                ])}
+        `,
+    },
     productInfoGridItem: { width: [7, 7, 7, 8, 8] },
     brandAndProductDescriptionGridItem: {
         width: [12, 12, 12, 6, 5],
         css: css` flex-direction: column; `,
     },
+    availability: {
+        container: {
+            css: css` margin-top: 10px; `,
+        },
+    },
     priceAndQuantityGridItem: { width: [12, 12, 12, 6, 7] },
     priceGridItem: {
         width: [12, 12, 4, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+            justify-content: center;
+        `,
     },
     quantityGridItem: { width: [6, 6, 5, 5, 4] },
     quantityOrdered: {
@@ -118,7 +140,10 @@ const styles: QuickOrderProductListStyles = {
     },
     extendedPriceGridItem: { width: [6, 6, 3, 3, 4] },
     extendedPriceText: {
-        css: css` font-weight: bold; `,
+        css: css`
+            font-weight: bold;
+            align-self: center;
+        `,
     },
     removeProductGridItem: {
         css: css`
@@ -188,6 +213,14 @@ const QuickOrderProductList: FC<Props> = ({
                                 <ProductBrand brand={product.brand!} extendedStyles={styles.brand} />
                                 <ProductDescription product={product} extendedStyles={styles.productDescription} />
                                 <Typography {...styles.productNumberText}>{product.productNumber}</Typography>
+                                {!product.quoteRequired
+                                    && <ProductAvailability
+                                        productId={product.id!}
+                                        availability={product.availability!}
+                                        unitOfMeasure={product.unitOfMeasure}
+                                        trackInventory={product.trackInventory}
+                                        extendedStyles={styles.availability} />
+                                }
                             </GridItem>
                             <GridItem {...styles.priceAndQuantityGridItem}>
                                 <GridContainer {...styles.priceAndQuantityContainer}>
@@ -198,14 +231,6 @@ const QuickOrderProductList: FC<Props> = ({
                                             showSavings={false}
                                             showLabel={false}
                                             extendedStyles={styles.price} />
-                                        {!product.quoteRequired
-                                            && <ProductAvailability
-                                                productId={product.id!}
-                                                availability={product.availability!}
-                                                unitOfMeasure={product.unitOfMeasure}
-                                                trackInventory={product.trackInventory}
-                                                extendedStyles={styles.availability} />
-                                        }
                                     </GridItem>
                                     <GridItem {...styles.quantityGridItem}>
                                         <ProductQuantityOrdered

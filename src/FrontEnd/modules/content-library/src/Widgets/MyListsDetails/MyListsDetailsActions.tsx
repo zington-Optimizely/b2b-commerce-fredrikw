@@ -340,10 +340,10 @@ class MyListsDetailsActions extends React.Component<Props, State> {
 
         return (
             <StyledWrapper {...styles.wrapper}>
-                <Typography {...styles.nameText}>{wishList.name}</Typography>
-                <StyledWrapper {...styles.buttonWrapper}>
+                <Typography {...styles.nameText} data-test-selector="listName">{wishList.name}</Typography>
+                <StyledWrapper {...styles.buttonWrapper} data-test-selector="menuWrapper">
                     <Hidden {...styles.narrowHidden}>
-                        <OverflowMenu {...styles.overflowMenu}>
+                        <OverflowMenu {...styles.overflowMenu} >
                             {showAddToCart ? <Clickable onClick={this.addToCartClickHandler}>{addListToCartButtonText}</Clickable> : null}
                             {showRemoveSelected ? <Clickable onClick={this.removeSelectedClickHandler}>{translate("Remove Selected")}</Clickable> : null}
                             {showShare ? <Clickable>{translate("Share")}</Clickable> : null}
@@ -354,19 +354,19 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                             {showEdit ? <Clickable onClick={this.deleteClickHandler}>{translate("Delete")}</Clickable> : null}
                         </OverflowMenu>
                     </Hidden>
-                    <Hidden {...styles.wideHidden}>
+                    <Hidden {...styles.wideHidden} data-test-selector="wideHidden">
                         <OverflowMenu {...styles.overflowMenu}>
-                            {showCopy ? <Clickable onClick={this.copyClickHandler}>{translate("Copy")}</Clickable> : null}
-                            {showEdit ? <Clickable onClick={this.deleteClickHandler}>{translate("Delete")}</Clickable> : null}
+                            {showCopy ? <Clickable onClick={this.copyClickHandler} data-test-selector="copyList">{translate("Copy")}</Clickable> : null}
+                            {showEdit ? <Clickable onClick={this.deleteClickHandler} data-test-selector="deleteList">{translate("Delete")}</Clickable> : null}
                         </OverflowMenu>
                         <Button {...styles.printButton} onClick={this.printOrOpenPrintAllModal}>{translate("Print")}</Button>
                         {showSchedule ? <Button {...styles.scheduleButton}>{scheduleButtonText}</Button> : null}
-                        {showEdit ? <Button {...styles.editButton} onClick={this.editClickHandler}>{translate("Edit")}</Button> : null}
+                        {showEdit ? <Button {...styles.editButton} onClick={this.editClickHandler} data-test-selector="editList">{translate("Edit")}</Button> : null}
                         {showShare ? <Button {...styles.shareButton}>{translate("Share")}</Button> : null}
-                        {showRemoveSelected ? <Button {...styles.removeSelectedButton} onClick={this.removeSelectedClickHandler}>
+                        {showRemoveSelected ? <Button {...styles.removeSelectedButton} onClick={this.removeSelectedClickHandler} data-test-selector="removeSelected">
                             {translate("Remove Selected")}</Button> : null}
                         <Button disabled={!this.enableAddToCart() || !showAddToCart} {...styles.addListButton}
-                            onClick={this.addToCartClickHandler}>{addListToCartButtonText}</Button>
+                            onClick={this.addToCartClickHandler} data-test-selector="addListToCart">{addListToCartButtonText}</Button>
                     </Hidden>
                 </StyledWrapper>
                 <Modal
@@ -388,7 +388,9 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                     cancelButtonText={translate("Cancel")}
                     submitButtonText={translate("Delete")}
                     onCancel={this.deleteCancelHandler}
-                    onSubmit={this.deleteSubmitHandler}>
+                    onSubmit={this.deleteSubmitHandler}
+                    submitTestSelector="submitDeleteList"
+                >
                 </TwoButtonModal>
                 <PrintAllPagesModal
                     isOpen={this.state.printAllModalIsOpen}

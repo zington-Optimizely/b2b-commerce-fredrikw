@@ -235,7 +235,9 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
                     {translate("Cancel")}
                 </Button>
                 <Button {...styles.continueButton} onClick={handleContinueClicked}
-                    disabled={!billTo || !shipTo}>
+                    disabled={!billTo || !shipTo}
+                    data-test-selector="changeCustomer_continue"
+                >
                     {translate("Continue")}
                 </Button>
             </GridItem>

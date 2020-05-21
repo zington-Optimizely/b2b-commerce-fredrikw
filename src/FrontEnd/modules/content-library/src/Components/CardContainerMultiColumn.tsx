@@ -14,11 +14,11 @@ export interface CardContainerMultiColumnStyles {
 export const cardContainerMultiColumnStyles: CardContainerMultiColumnStyles = {
     gridItem: {
         width: [12, 12, 6, 4, 4],
-        css: css` padding: 30px 0; `,
+        css: css` padding: 10px 0; `,
     },
     cardDivider: {
         css: css`
-            margin: 15px;
+            padding: 15px;
             height: 100%;
             width: 100%;
             overflow: hidden;

@@ -13,7 +13,7 @@ import logger from "@insite/client-framework/Logger";
 import {
     beginDraggingWidget,
     endDraggingWidget,
-} from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+} from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import Icon from "@insite/mobius/Icon";
 import Trash2 from "@insite/mobius/Icons/Trash2";
 import Edit from "@insite/mobius/Icons/Edit";
@@ -29,10 +29,10 @@ interface State {
     error?: Error;
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
+const mapStateToProps = ({ data: { pages: { widgetsById, draggingWidgetId } } }: ApplicationState, { id }: OwnProps) => {
     return {
-        widget: state.UNSAFE_currentPage.widgetsById[ownProps.id],
-        draggingWidgetId: state.UNSAFE_currentPage.draggingWidgetId,
+        widget: widgetsById[id],
+        draggingWidgetId,
     };
 };
 

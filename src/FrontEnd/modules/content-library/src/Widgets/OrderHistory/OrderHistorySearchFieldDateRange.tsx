@@ -73,7 +73,7 @@ const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = (props)
 
     return(
         <SearchFieldWrapper extendedStyles={styles.searchFieldWrapper}>
-            <StyledWrapper {...styles.datePickersWrapper}>
+            <StyledWrapper {...styles.datePickersWrapper} data-test-selector="tst_orderHistory_filterDateRange">
                 <DatePicker
                     data-test-selector="orderHistory_filterFromDate"
                     {...styles.fromDate}

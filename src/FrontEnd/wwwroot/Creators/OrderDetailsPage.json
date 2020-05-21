@@ -1,210 +1,315 @@
 {
-  "nodeId": "d5337960-29b3-41d8-83d8-3f3a9af4969f",
-  "name": "Order Details",
-  "type": "OrderDetailsPage",
-  "parentId": "ce44c60e-ef19-4c9c-bed6-6f7b95af0f50",
-  "sortOrder": 0,
-  "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
-  "widgets": [
-      {
-          "parentId": "998c291d-1971-4406-b993-0c7d17350454",
-          "type": "Basic/Row",
-          "zone": "Content",
-          "id": "ff4a070e-90dd-4a1e-9e1b-35f36f6cf7c2",
-          "generalFields": {
-              "columns": [5,7],
-              "alignment": [],
-              "gap": 0
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "998c291d-1971-4406-b993-0c7d17350454",
-          "type": "Basic/Row",
-          "zone": "Content",
-          "id": "ce7832cb-5ca2-49f3-ab7a-c078e0f1eda0",
-          "generalFields": {
-              "columns": [[6,6,4,4,4],[6,6,4,4,4],[12,12,4,4,4]],
-              "alignment": [],
-              "gap": 0
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "998c291d-1971-4406-b993-0c7d17350454",
-          "type": "OrderDetails/OrderDetailsSummaryTable",
-          "zone": "Content",
-          "id": "d3681918-0557-406c-a436-d8deb92b8c86",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "ff4a070e-90dd-4a1e-9e1b-35f36f6cf7c2",
-          "type": "OrderDetails/OrderDetailsTitle",
-          "zone": "Content0",
-          "id": "fde8b1e6-d6fb-490f-bfa4-a3dbecc4800c",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "ff4a070e-90dd-4a1e-9e1b-35f36f6cf7c2",
-          "zone": "Content1",
-          "type": "OrderDetails/OrderDetailsButtonSet",
-          "id": "1311bab6-4135-4248-a5da-5dfdfde90f6a",
-          "generalFields": {
-              "buttonsOrder": [
-                  {
-                      "fields": {
-                          "name": "Cancel"
-                      }
-                  },
-                  {
-                      "fields": {
-                          "name": "Email"
-                      }
-                  },
-                  {
-                      "fields": {
-                          "name": "Print"
-                      }
-                  },
-                  {
-                      "fields": {
-                          "name": "Reorder"
-                      }
-                  },
-                  {
-                      "fields": {
-                          "name": "Rma"
-                      }
-                  }
-              ]
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "ce7832cb-5ca2-49f3-ab7a-c078e0f1eda0",
-          "type": "Basic/Row",
-          "zone": "Content0",
-          "id": "fc35d48c-1312-4443-99da-bff144ea0688",
-          "generalFields": {
-              "columns": [12,12,12],
-              "alignment": [],
-              "gap": 0,
-              "reflow": false
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "ce7832cb-5ca2-49f3-ab7a-c078e0f1eda0",
-          "type": "Basic/Row",
-          "zone": "Content2",
-          "id": "3bf51221-1bd2-4df0-a7f6-bb402f1ab353",
-          "generalFields": {
-              "columns": [12],
-              "alignment": [],
-              "gap": 0,
-              "reflow": false
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "ce7832cb-5ca2-49f3-ab7a-c078e0f1eda0",
-          "type": "Basic/Row",
-          "zone": "Content1",
-          "id": "12adce57-bdb1-40bd-82e3-d22c23d67865",
-          "generalFields": {
-              "columns": [12,12,12],
-              "alignment": [],
-              "gap": 0,
-              "reflow": false
-          },
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "fc35d48c-1312-4443-99da-bff144ea0688",
-          "type": "OrderDetails/OrderDetailsStatus",
-          "zone": "Content0",
-          "id": "f3d6f06c-4875-48ba-87e5-c105ca1fa65a",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "fc35d48c-1312-4443-99da-bff144ea0688",
-          "type": "OrderDetails/OrderDetailsBillingAddress",
-          "zone": "Content0",
-          "id": "542fd3dd-04af-4379-9f48-6701dd1aaa69",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "fc35d48c-1312-4443-99da-bff144ea0688",
-          "type": "OrderDetails/OrderDetailsShippingMethod",
-          "zone": "Content1",
-          "id": "69ed3c17-6926-4661-865a-e94a4e46b6ec",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "3bf51221-1bd2-4df0-a7f6-bb402f1ab353",
-          "type": "OrderDetails/OrderDetailsTotal",
-          "zone": "Content0",
-          "id": "99b25a6e-eeff-4a8f-b377-b78c2e4f7287",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "12adce57-bdb1-40bd-82e3-d22c23d67865",
-          "type": "OrderDetails/OrderDate",
-          "zone": "Content0",
-          "id": "8e302592-aef8-4068-a5d2-8ca98e9e4d19",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "12adce57-bdb1-40bd-82e3-d22c23d67865",
-          "type": "OrderDetails/OrderDetailsShippingAddress",
-          "zone": "Content0",
-          "id": "1a1d7972-7188-4574-982a-eb9f75a2e80a",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "12adce57-bdb1-40bd-82e3-d22c23d67865",
-          "type": "OrderDetails/OrderDetailsNotes",
-          "zone": "Content2",
-          "id": "f8e43dd5-05e2-4fee-8d69-443aedecae42",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      }
-  ],
-  "id": "998c291d-1971-4406-b993-0c7d17350454",
-  "generalFields": {
-      "horizontalRule": "",
-      "tags": []
-  },
-  "translatableFields": {
-      "title": {
-          "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Order Details"
-      },
-      "urlSegment": {
-          "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Details"
-      }
-  },
-  "contextualFields": {}
+    "nodeId": "0c3bad22-1ef0-416a-a674-2f88815fc7d7",
+    "name": "Order Details",
+    "type": "OrderDetailsPage",
+    "parentId": "2022bf21-96f8-455a-b4b4-998e74624b3c",
+    "sortOrder": 0,
+    "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "widgets": [
+        {
+            "parentId": "5c2944da-1641-4352-b861-6ef5cce27044",
+            "type": "Basic/Row",
+            "zone": "Content",
+            "id": "82f45b32-2146-44f7-891c-593e62d3f5d9",
+            "generalFields": {
+                "columns": [
+                    [
+                        10,
+                        10,
+                        8,
+                        8,
+                        5
+                    ],
+                    [
+                        2,
+                        2,
+                        4,
+                        4,
+                        7
+                    ]
+                ],
+                "alignment": [],
+                "gap": 0,
+                "reflow": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "5c2944da-1641-4352-b861-6ef5cce27044",
+            "type": "Basic/Row",
+            "zone": "Content",
+            "id": "ebbeb9a4-4fcf-4dcc-a627-718fbcff964d",
+            "generalFields": {
+                "columns": [
+                    [
+                        12,
+                        12,
+                        12,
+                        12,
+                        8
+                    ],
+                    [
+                        12,
+                        12,
+                        12,
+                        12,
+                        4
+                    ]
+                ],
+                "alignment": [],
+                "gap": 15,
+                "reflow": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "5c2944da-1641-4352-b861-6ef5cce27044",
+            "type": "OrderDetails/OrderDetailsSummaryTable",
+            "zone": "Content",
+            "id": "c35f9418-937c-4adb-90b1-d650b70a95c0",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "82f45b32-2146-44f7-891c-593e62d3f5d9",
+            "type": "OrderDetails/OrderDetailsTitle",
+            "zone": "Content0",
+            "id": "41eeeea8-8c73-409d-9bf6-072bd62a0f95",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "82f45b32-2146-44f7-891c-593e62d3f5d9",
+            "type": "OrderDetails/OrderDetailsButtonSet",
+            "zone": "Content1",
+            "id": "96ef5d6c-6cf6-4ef0-a46f-e3cf83f9dd33",
+            "generalFields": {
+                "buttonsOrder": [
+                    {
+                        "fields": {
+                            "name": "Email"
+                        }
+                    },
+                    {
+                        "fields": {
+                            "name": "Print"
+                        }
+                    },
+                    {
+                        "fields": {
+                            "name": "Rma"
+                        }
+                    },
+                    {
+                        "fields": {
+                            "name": "Cancel"
+                        }
+                    },
+                    {
+                        "fields": {
+                            "name": "Reorder"
+                        }
+                    }
+                ]
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "ebbeb9a4-4fcf-4dcc-a627-718fbcff964d",
+            "type": "OrderDetails/OrderDetailsTotal",
+            "zone": "Content1",
+            "id": "777aba0b-ad44-45ce-9124-2d61dd5ee785",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "ebbeb9a4-4fcf-4dcc-a627-718fbcff964d",
+            "type": "Basic/Rows",
+            "zone": "Content0",
+            "id": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "generalFields": {
+                "rowCount": 5,
+                "gap": 15
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "Basic/Row",
+            "zone": "Content0",
+            "id": "d5207925-ae59-4e7c-a407-bb08ede5161e",
+            "generalFields": {
+                "columns": [
+                    [
+                        5,
+                        5,
+                        2,
+                        2,
+                        2
+                    ],
+                    [
+                        7,
+                        7,
+                        10,
+                        10,
+                        10
+                    ]
+                ],
+                "alignment": [],
+                "gap": 0,
+                "reflow": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "Basic/RichContent",
+            "zone": "Content1",
+            "id": "6a11748f-84eb-4dd0-b1bf-520433bedb5f",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {
+                "content": {
+                    "a26095ef-c714-e311-ba31-d43d7e4e88b2|Desktop|d06988c0-9358-4dbb-aa3d-b7be5b6a7fd9": "<h4 style=\"line-height: 1;\">Shipping Information</h4>"
+                }
+            }
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "Basic/Row",
+            "zone": "Content1",
+            "id": "8b4672f5-0927-4375-af4b-bd38178ef669",
+            "generalFields": {
+                "columns": [
+                    6,
+                    6
+                ],
+                "alignment": [],
+                "gap": 0,
+                "reflow": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "Basic/RichContent",
+            "zone": "Content2",
+            "id": "85a39547-8767-40a2-b40f-2ddfdcaab47f",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {
+                "content": {
+                    "a26095ef-c714-e311-ba31-d43d7e4e88b2|Desktop|d06988c0-9358-4dbb-aa3d-b7be5b6a7fd9": "<h4 style=\"line-height: 1;\">Billing Information</h4>"
+                }
+            }
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "OrderDetails/OrderDetailsBillingAddress",
+            "zone": "Content2",
+            "id": "8798d6f9-6ecd-4e89-bcd7-305264882b25",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "OrderDetails/OrderDetailsNotes",
+            "zone": "Content3",
+            "id": "b85ae1bc-9f60-46c1-a925-1b8a4c8d0c01",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "329d5975-c970-4573-93cc-e1300aa3052d",
+            "type": "OrderDetails/OrderDetailsShipmentPackages",
+            "zone": "Content4",
+            "id": "126dfe63-51db-4f65-ae1c-04128639e454",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "d5207925-ae59-4e7c-a407-bb08ede5161e",
+            "type": "OrderDetails/OrderDetailsStatus",
+            "zone": "Content0",
+            "id": "b0b5cd75-23c0-4489-b16b-3579aed6bfe9",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "d5207925-ae59-4e7c-a407-bb08ede5161e",
+            "type": "OrderDetails/OrderDate",
+            "zone": "Content1",
+            "id": "6219ca5c-f071-48f5-9d3a-8de570628731",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "8b4672f5-0927-4375-af4b-bd38178ef669",
+            "type": "OrderDetails/OrderDetailsShippingAddress",
+            "zone": "Content0",
+            "id": "247a3ba5-ac05-44e6-96da-fffaf972e6dd",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "8b4672f5-0927-4375-af4b-bd38178ef669",
+            "type": "Basic/Rows",
+            "zone": "Content1",
+            "id": "20a2d2b0-f827-4c41-8a87-0531f1fbfdb0",
+            "generalFields": {
+                "rowCount": 2,
+                "gap": 10
+            },
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "20a2d2b0-f827-4c41-8a87-0531f1fbfdb0",
+            "type": "OrderDetails/OrderDetailsShippingMethod",
+            "zone": "Content0",
+            "id": "ef784132-5077-428e-a051-ae3585fe02cb",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "20a2d2b0-f827-4c41-8a87-0531f1fbfdb0",
+            "type": "OrderDetails/OrderDetailsRequestedDate",
+            "zone": "Content1",
+            "id": "b752b6fe-79cf-41ff-b1d8-abe75847dbf4",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        }
+    ],
+    "id": "5c2944da-1641-4352-b861-6ef5cce27044",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": [],
+        "hideBreadcrumbs": false
+    },
+    "translatableFields": {
+        "title": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Order Details"
+        },
+        "urlSegment": {
+            "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Details"
+        }
+    },
+    "contextualFields": {}
 }

@@ -40,9 +40,10 @@ const CartLinesListHeader: FC<{
 }> = ({
     productsCount,
     onChangeIsCondensed,
-    ...otherProps
+    extendedStyles,
+    isCondensed,
 }) => {
-    const [styles] = React.useState(() => mergeToNew(cartLinesListHeaderStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(cartLinesListHeaderStyles, extendedStyles));
 
     const productsLabel = productsCount > 1 ? "Products" : "Product";
 
@@ -52,7 +53,7 @@ const CartLinesListHeader: FC<{
             <CheckboxGroup {...styles.checkboxGroup}>
                 <Checkbox
                     {...styles.condensedCheckbox}
-                    checked={otherProps.isCondensed}
+                    checked={isCondensed}
                     onChange={onChangeIsCondensed}
                 >
                     {translate("Condensed View")}

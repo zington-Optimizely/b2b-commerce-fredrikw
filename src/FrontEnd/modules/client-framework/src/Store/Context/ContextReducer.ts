@@ -39,6 +39,15 @@ const reducer = {
     "Context/CompleteSignIn": (draft: Draft<ContextState>) => {
         draft.isSigningIn = false;
     },
+    "Context/CompleteSelectProduct": (draft: Draft<ContextState>, action: { productPath: string; }) => {
+        draft.selectedProductPath = action.productPath;
+    },
+    "Context/CompleteSelectCategory": (draft: Draft<ContextState>, action: { categoryPath: string; }) => {
+        draft.selectedCategoryPath = action.categoryPath;
+    },
+    "Context/CompleteSelectBrand": (draft: Draft<ContextState>, action: { brandPath: string; }) => {
+        draft.selectedBrandPath = action.brandPath;
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

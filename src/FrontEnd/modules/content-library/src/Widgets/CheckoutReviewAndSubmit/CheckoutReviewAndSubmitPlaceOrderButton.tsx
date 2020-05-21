@@ -19,14 +19,17 @@ const mapStateToProps = (state: ApplicationState) => {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
-const CheckoutReviewAndSubmitPlaceOrderButton: FC<Props> = (props) => {
+const CheckoutReviewAndSubmitPlaceOrderButton: FC<Props> = ({ isDisabled, styles }) => {
+    const handleClick = () => {
+        document.getElementById("reviewAndSubmitPaymentForm-submit")?.click();
+    };
     return (
         <Button
             type="submit"
-            disabled={props.isDisabled}
-            form="reviewAndSubmitPaymentForm"
+            disabled={isDisabled}
             data-test-selector="checkoutReviewAndSubmit_placeOrder"
-            {...props.styles}
+            {...styles}
+            onClick={handleClick}
         >
             {translate("Place Order")}
         </Button>

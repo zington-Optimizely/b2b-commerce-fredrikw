@@ -813,7 +813,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     }
 
     return (
-        <StyledForm {...styles.form} id="reviewAndSubmitPaymentForm" onSubmit={handleFormSubmit} noValidate={true}>
+        <StyledForm {...styles.form} id="reviewAndSubmitPaymentForm" onSubmit={handleFormSubmit} noValidate={true} data-test-selector="reviewAndSubmitPaymentForm">
             <StyledFieldSet {...styles.fieldset}>
                 <Typography {...styles.paymentDetailsHeading} as="h2">
                     {translate("Payment Details")}
@@ -956,6 +956,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 </GridContainer>
                 }
             </StyledFieldSet>
+            {/* This button should only be used to trigger the submit of the form, it is required for IE11 to function. */}
+            <button id="reviewAndSubmitPaymentForm-submit" type="submit" style={{ display: "none" }}>{translate("Place Order")}</button>
         </StyledForm>
     );
 };

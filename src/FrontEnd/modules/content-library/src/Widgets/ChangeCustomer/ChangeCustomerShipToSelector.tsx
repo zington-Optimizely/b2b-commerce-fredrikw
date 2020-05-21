@@ -119,7 +119,8 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
             onInputChange={searchTextChanged}
             selected={shipTo?.id}
             placeholder={dropdownPlaceholder}
-            options={options} />
+            options={options}
+            data-test-selector="changeCustomerShipToSelector" />
     );
 };
 

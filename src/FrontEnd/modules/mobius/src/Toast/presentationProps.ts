@@ -23,11 +23,22 @@ const ToastPresentationPropsDefault: ComponentThemeProps["toast"]["defaultProps"
         `,
         size: 36,
     },
+    closeButtonIconProps: {
+        src: "X",
+        size: 24,
+        color: "common.border",
+    },
     bodyTypographyProps: {
         css: css` ${({ theme }: ThemeProps<BaseTheme>) => breakpointMediaQueries(theme, [css` font-size: 12px; `, null, css` font-size: 16px; `, null, null], "min")} `,
         color: "common.backgroundContrast",
     },
     transitionDuration: "regular",
+    iconSrcByMessage: {
+        success: "Check",
+        warning: "AlertTriangle",
+        danger: "AlertCircle",
+        info: "Info",
+    },
 };
 
 export { toasterProps };

@@ -15,6 +15,10 @@ const ModalPresentationPropsDefault: ComponentThemeProps["modal"]["defaultProps"
         color: "common.background",
         size: 36,
     },
+    closeButtonIconProps: {
+        src: "X",
+        size: 24,
+    },
     transition: {
         enabled: true,
         length: 300,

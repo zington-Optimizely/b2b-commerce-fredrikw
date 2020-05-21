@@ -78,9 +78,27 @@ export const creditCardBillingAddressEntryStyles: CreditCardBillingAddressEntryS
 const CreditCardBillingAddressEntry = ({
     useBillTo,
     billTo,
-    ...otherProps
+    extendedStyles,
+    onUseBillToChange,
+    address1,
+    onAddress1Change,
+    address1Error,
+    country,
+    onCountryChange,
+    countryError,
+    availableCountries,
+    state,
+    onStateChange,
+    stateError,
+    availableStates,
+    city,
+    onCityChange,
+    cityError,
+    postalCode,
+    onPostalCodeChange,
+    postalCodeError,
 }: OwnProps) => {
-    const [styles] = React.useState(() => mergeToNew(creditCardBillingAddressEntryStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(creditCardBillingAddressEntryStyles, extendedStyles));
 
     if (!billTo) {
         return null;
@@ -96,7 +114,7 @@ const CreditCardBillingAddressEntry = ({
                     <Checkbox
                         {...styles.useBillingAddressCheckbox}
                         checked={useBillTo}
-                        onChange={otherProps.onUseBillToChange}
+                        onChange={onUseBillToChange}
                         data-test-selector="checkoutReviewAndSubmit_useBillingAddress"
                     >
                         {translate("Use billing address")}
@@ -118,11 +136,11 @@ const CreditCardBillingAddressEntry = ({
                         <TextField
                             {...styles.address1Text}
                             label={translate("Address")}
-                            value={otherProps.address1}
-                            onChange={otherProps.onAddress1Change}
+                            value={address1}
+                            onChange={onAddress1Change}
                             required
                             maxLength={30}
-                            error={otherProps.address1Error}
+                            error={address1Error}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingAddress1"
                         />
                     </GridItem>
@@ -130,14 +148,14 @@ const CreditCardBillingAddressEntry = ({
                         <Select
                             {...styles.countrySelect}
                             label={translate("Country")}
-                            value={otherProps.country}
-                            onChange={otherProps.onCountryChange}
+                            value={country}
+                            onChange={onCountryChange}
                             required
-                            error={otherProps.countryError}
+                            error={countryError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingCountry"
                         >
                             <option value="">{translate("Select Country")}</option>
-                            {otherProps.availableCountries.map(country => (
+                            {availableCountries.map(country => (
                                 <option key={country.id} value={country.id}>{country.name}</option>
                             ))}
                         </Select>
@@ -146,14 +164,14 @@ const CreditCardBillingAddressEntry = ({
                         <Select
                             {...styles.stateSelect}
                             label={translate("State")}
-                            value={otherProps.state}
-                            onChange={otherProps.onStateChange}
+                            value={state}
+                            onChange={onStateChange}
                             required
-                            error={otherProps.stateError}
+                            error={stateError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingState"
                         >
                             <option value="">{translate("Select State")}</option>
-                            {otherProps.availableStates?.map(state => (
+                            {availableStates?.map(state => (
                                 <option key={state.id} value={state.id}>{state.name}</option>
                             ))}
                         </Select>
@@ -162,11 +180,11 @@ const CreditCardBillingAddressEntry = ({
                         <TextField
                             {...styles.cityText}
                             label={translate("City")}
-                            value={otherProps.city}
-                            onChange={otherProps.onCityChange}
+                            value={city}
+                            onChange={onCityChange}
                             required
                             maxLength={30}
-                            error={otherProps.cityError}
+                            error={cityError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingCity"
                         />
                     </GridItem>
@@ -174,11 +192,11 @@ const CreditCardBillingAddressEntry = ({
                         <TextField
                             {...styles.postalCodeText}
                             label={translate("Postal Code")}
-                            value={otherProps.postalCode}
-                            onChange={otherProps.onPostalCodeChange}
+                            value={postalCode}
+                            onChange={onPostalCodeChange}
                             required
                             maxLength={30}
-                            error={otherProps.postalCodeError}
+                            error={postalCodeError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingPostalCode"
                         />
                     </GridItem>

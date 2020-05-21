@@ -6,6 +6,7 @@ import HistoryContext from "../utilities/HistoryContext";
 import injectCss from "../utilities/injectCss";
 import isRelativeUrl from "../utilities/isRelativeUrl";
 import InjectableCss from "../utilities/InjectableCss";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type ClickablePresentationProps = InjectableCss<ClickableComponentProps>;
@@ -26,7 +27,10 @@ export type ClickableButtonProps = MobiusStyledComponentProps<"button", Clickabl
     target: never;
 }>;
 
-export type ClickableLinkProps = MobiusStyledComponentProps<"a", ClickableComponentProps & ClickablePresentationProps>;
+export type ClickableLinkProps = MobiusStyledComponentProps<"a", ClickableComponentProps & ClickablePresentationProps & {
+    /** Never assigned to a link--distinguishes a link from a button. */
+    disabled?: boolean;
+}>;
 
 export type ClickableProps = ClickableButtonProps | ClickableLinkProps;
 
@@ -64,13 +68,16 @@ const StyledButton = styled.button`
  *
  * In order to provide SPA routing, Clickable must be wrapped in a `HistoryContext.Provider`.
  */
-const Clickable: React.FC<ClickableProps> = withTheme(({
+const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(({
     children,
     className,
+    disabled,
+    disable,
     href,
     onClick,
     spaOptOut,
     stopPropagation,
+    target,
     ...otherProps
 }) => (
     <HistoryContext.Consumer>
@@ -84,7 +91,8 @@ const Clickable: React.FC<ClickableProps> = withTheme(({
                 as?: "a" | "button" | "span";
                 href?: string;
                 onClick?: React.EventHandler<React.MouseEvent>;
-            } = {};
+                tabIndex: 0 | -1;
+            } = { tabIndex: 0 };
 
             if (href) {
                 forwardProps.as = "a";
@@ -97,7 +105,7 @@ const Clickable: React.FC<ClickableProps> = withTheme(({
                     if (
                         !e.defaultPrevented // onClick prevented default
                         && e.button === 0 // ignore everything but left clicks
-                        && (!otherProps.target || otherProps.target === "_self") // let browser handle "target=_blank" etc.
+                        && (!target || target === "_self") // let browser handle "target=_blank" etc.
                         && !(e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) // ignore clicks with modifier keys
                     ) {
                         e.preventDefault();
@@ -115,14 +123,18 @@ const Clickable: React.FC<ClickableProps> = withTheme(({
                 forwardProps.as = "span";
             }
 
+            if (disable) forwardProps.tabIndex = -1;
+
             // TODO ISC-12114 - Fixing the return type of getProps revealed a typing issue with otherProps.
             return (
                 <StyledButton
                     className={className}
                     css={applyProp("css")}
-                    tabIndex={0}
                     {...forwardProps}
-                    {...otherProps as any}
+                    {...otherProps}
+                    // Because disabled doesn't accept undefined
+                    // eslint-disable-next-line no-unneeded-ternary
+                    disabled={(disable || disabled) ? true : false}
                 >
                     {children}
                 </StyledButton>
@@ -136,6 +148,6 @@ Clickable.defaultProps = {
 };
 
 /** @component */
-export default Clickable;
+export default withDisabler(Clickable);
 
 export { StyledButton };

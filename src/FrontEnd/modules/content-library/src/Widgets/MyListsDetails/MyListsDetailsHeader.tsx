@@ -94,7 +94,7 @@ const MyListsDetailsHeader: FC<Props> = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem  {...styles.infoGridItem}>
-                <Typography {...styles.lastUpdateText}>{lastUpdatedDisplay}</Typography>
+                <Typography {...styles.lastUpdateText} data-test-selector="lastUpdate">{lastUpdatedDisplay}</Typography>
                 <WishListSharingStatus extendedStyles={styles.sharingStatus}
                                        isSharedList={wishList.isSharedList}
                                        wishListSharesCount={wishList.wishListSharesCount}
@@ -106,7 +106,12 @@ const MyListsDetailsHeader: FC<Props> = ({
                 }
             </GridItem>
             {wishList.description && <GridItem {...styles.descriptionGridItem}>
-                <SmallHeadingAndText heading={translate("Description")} text={wishList.description} extendedStyles={styles.descriptionStyles}/>
+                <SmallHeadingAndText
+                    heading={translate("Description")}
+                    text={wishList.description}
+                    extendedStyles={styles.descriptionStyles}
+                    data-test-selector="listDescription"
+                />
             </GridItem>}
         </GridContainer>
     );

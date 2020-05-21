@@ -3,15 +3,19 @@ import React from 'react';
 import { mount } from 'enzyme';
 import ThemeProvider from '../ThemeProvider';
 import TextField from './TextField';
+import DisablerContext from '../utilities/DisablerContext';
 
 describe('TextField', () => {
     let props;
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <TextField {...props} />
+                    <DisablerContext.Provider value={disablerValue}>
+                        <TextField {...props} />
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -51,5 +55,21 @@ describe('TextField', () => {
         const hintText = wrapper().find(TextField).find('[id$="-description"] span').getDOMNode().innerHTML;
 
         expect(hintText).toBe(props.hint);
+    });
+
+    describe('is appropriately disabled', () => {
+        test("if DisablerContext is true", () => {
+            disablerValue = { disable: true };
+            expect(wrapper().find("input").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is true", () => {
+            props = { disabled: true };
+            disablerValue = { disable: false };
+            expect(wrapper().find("input").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is false", () => {
+            disablerValue = { disable: false };
+            expect(wrapper().find("input").prop("disabled")).toBe(false);
+        });
     });
 });

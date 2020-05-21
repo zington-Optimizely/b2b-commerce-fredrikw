@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection/AccordionSection";
 import translate from "@insite/client-framework/Translate";
 import CheckboxGroup, { CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
-import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox/Checkbox";
+import Checkbox, { CheckboxPresentationProps, StyleProps as CheckboxStyleProps } from "@insite/mobius/Checkbox/Checkbox";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link/Link";
 import { css } from "styled-components";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
@@ -19,8 +19,12 @@ export interface ProductListFilterAccordionSectionStyles {
 
 export const productListFilterAccordionSectionStyles: ProductListFilterAccordionSectionStyles = {
     accordionSection: {
-        headerProps: { css: css` padding-top: 5px; ` },
-        panelProps: { css: css` overflow: hidden; ` },
+        panelProps: {
+            css: css`
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 350px;
+        ` },
     },
     checkBoxGroup: {
         css: css` 
@@ -31,11 +35,23 @@ export const productListFilterAccordionSectionStyles: ProductListFilterAccordion
         `,
     },
     checkBox: {
+        css: css<CheckboxStyleProps>`
+            align-items: flex-start;
+            span[role=checkbox] {
+                ${({ _sizeVariant }) => _sizeVariant === "small" ? css` margin-top: 5px; ` : css` margin-top: 4px; `}
+            }
+        `,
         typographyProps: {
             css: css` word-break: break-all; `,
         },
     },
     checkBoxSelected: {
+        css: css<CheckboxStyleProps>`
+            align-items: flex-start;
+            span[role=checkbox] {
+                ${({ _sizeVariant }) => _sizeVariant === "small" ? css` margin-top: 5px; ` : css` margin-top: 4px; `}
+            }
+        `,
         typographyProps: {
             css: css` word-break: break-all; `,
             weight: "bold",
@@ -61,7 +77,6 @@ export interface Props {
 const ProductListFiltersAccordionSection: FC<Props> = ({ title, facets, onChangeFacet, showMoreLimit, expandByDefault, extendedStyles }) => {
 
     const [styles] = React.useState(() => mergeToNew(productListFilterAccordionSectionStyles, extendedStyles));
-
     const [expanded, setExpanded] = useState(false);
 
     const limitedFacets = (expanded ? facets : facets?.slice(0, showMoreLimit));

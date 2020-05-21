@@ -21,6 +21,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 interface OwnProps {
     currentShipTo?: ShipToModel;
     currentBillTo?: BillToModel;
+    isPickUp: boolean;
     extendedStyles?: DefaultShippingAddressStyles;
 }
 
@@ -73,6 +74,7 @@ const DefaultShippingAddress: React.FunctionComponent<Props> = ({
                                                                     currentBillTo,
                                                                     updateAccountSettings,
                                                                     extendedStyles,
+                                                                    isPickUp,
                                                                 }) => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -95,7 +97,7 @@ const DefaultShippingAddress: React.FunctionComponent<Props> = ({
     return (
         <GridContainer {...styles.gridContainer}>
             <GridItem {...styles.headingGridItem}>
-                <Typography {...styles.headingText}>{translate("Default Shipping Address")}</Typography>
+                <Typography {...styles.headingText}>{isPickUp ? translate("Recipient Address") : translate("Default Shipping Address")}</Typography>
                 <Link {...styles.editLink} onClick={editClickHandler} data-test-selector="accountSettings_changeShipping">{translate("Change")}</Link>
                 <Modal
                     {...styles.customerSelectorModal}

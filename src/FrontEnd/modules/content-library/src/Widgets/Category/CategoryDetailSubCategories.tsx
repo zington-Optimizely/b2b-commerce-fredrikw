@@ -73,6 +73,7 @@ const styles: CategoryDetailSubCategoriesStyles = {
             weight: "bold",
             css: css`
                 width: 100%;
+                text-align: center;
                 word-wrap: break-word;
             `,
         },

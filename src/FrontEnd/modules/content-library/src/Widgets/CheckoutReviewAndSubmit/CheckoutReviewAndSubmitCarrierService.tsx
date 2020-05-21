@@ -144,7 +144,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                     {...styles.carrierSelect}
                                     value={carrier ? carrier.id?.toString() : ""}
                                     onChange={carrierChangeHandler}
-                                    data-test-selector="checkoutShippingCarrierSelect"
+                                    data-test-selector="checkoutReviewAndSubmitCarrierSelect"
                                 >
                                     {cart.carriers!.map(c => {
                                         const id = c.id!.toString();
@@ -160,7 +160,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                     {...styles.serviceSelect}
                                     value={shipVia ? shipVia.id.toString() : ""}
                                     onChange={shipViaChangeHandler}
-                                    data-test-selector="checkoutShippingShippingServiceSelect"
+                                    data-test-selector="checkoutReviewAndSubmitShippingServiceSelect"
                                 >
                                     {carrier && carrier.shipVias!.map(s => {
                                         const id = s.id.toString();
@@ -195,7 +195,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
             )}
             {showPickUpDate && (
                 <>
-                    <GridItem {...styles.pickUpDateGridItem}>
+                    <GridItem {...styles.pickUpDateGridItem} data-test-selector="checkoutPickUpRequestedDeliveryDate">
                         <DatePicker
                             label={`${translate("Request Pick Up Date")} (${translate("optional")})`}
                             hint={siteMessage("Checkout_RequestedPickupDateInformation")}
@@ -207,7 +207,6 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                 ...styles.pickUpDatePicker?.dateTimePickerProps,
                             }}
                             onDayChange={handleRequestPickUpDateChanged}
-                            data-test-selector="checkoutPickUpRequestedDeliveryDate"
                         />
                     </GridItem>
                 </>

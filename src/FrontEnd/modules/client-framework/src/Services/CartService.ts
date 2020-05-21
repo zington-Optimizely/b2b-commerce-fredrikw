@@ -5,7 +5,7 @@ import {
     del,
     ApiParameter,
     API_URL_CURRENT_FRAGMENT,
-    doesNotHaveExpand, ServiceResult,
+    doesNotHaveExpand, ServiceResult, ApiError,
 } from "@insite/client-framework/Services/ApiService";
 import {
     CartModel,
@@ -16,6 +16,7 @@ import {
     BillToModel,
     ShipToModel,
 } from "@insite/client-framework/Types/ApiModels";
+import isApiError from "@insite/client-framework/Common/isApiError";
 
 export interface GetCartApiParameter extends ApiParameter {
     cartId: string;
@@ -90,12 +91,43 @@ export async function getCart(parameter: GetCartApiParameter) {
 }
 
 export async function updateCart(parameter: UpdateCartApiParameter) {
-    (parameter.cart as CartModel).billTo = parameter.cart.billToId ? { id: parameter.cart.billToId } as BillToModel : null;
-    (parameter.cart as CartModel).shipTo = parameter.cart.shipToId ? { id: parameter.cart.shipToId } as ShipToModel : null;
+    const { cart } = parameter;
+    const { billToId, shipToId } = cart;
+    const patchModel: CartModel = {
+        ...cart,
+        billTo: billToId ? { id: billToId } as BillToModel : null,
+        shipTo: shipToId ? { id: shipToId } as ShipToModel : null,
+    };
 
-    const cartModel = await patch<CartModel>(`${cartsUrl}/${parameter.cart.id}`, parameter.cart);
+    const cartModel = await patch<CartModel>(`${cartsUrl}/${patchModel.id}`, patchModel);
     const cartResult = cleanCart(cartModel, { expand: ["paymentOptions"] });
     return cartResult;
+}
+
+export async function updateCartWithResult(parameter: UpdateCartApiParameter): Promise<ServiceResult<CartResult>> {
+    const { cart } = parameter;
+    const { billToId, shipToId } = cart;
+    const patchModel: CartModel = {
+        ...cart,
+        billTo: billToId ? { id: billToId } as BillToModel : null,
+        shipTo: shipToId ? { id: shipToId } as ShipToModel : null,
+    };
+    try {
+        const cartModel = await patch<CartModel>(`${cartsUrl}/${patchModel.id}`, patchModel);
+        const cartResult = cleanCart(cartModel, { expand: ["paymentOptions"] });
+        return {
+            successful: true,
+            result: cartResult,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
 }
 
 function cleanCart(cartModel: CartModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
@@ -154,6 +186,30 @@ export function addProduct(parameter: AddProductApiParameter) {
     };
 
     return post<AddProductApiParameter, CartLineModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
+}
+
+export async function addProductWithResult(parameter: AddProductApiParameter): Promise<ServiceResult<CartLineModel>> {
+    const cartLine = {
+        productId: parameter.productId,
+        qtyOrdered: parameter.qtyOrdered,
+        unitOfMeasure: parameter.unitOfMeasure,
+    };
+
+    try {
+        const cartLineModel = await post<AddProductApiParameter, CartLineModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
+        return {
+            successful: true,
+            result: cartLineModel,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
 }
 
 export function addWishListToCart(parameter: AddWishListToCartApiParameter) {

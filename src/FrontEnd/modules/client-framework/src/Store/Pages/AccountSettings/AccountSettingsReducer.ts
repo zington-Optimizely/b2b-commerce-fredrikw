@@ -35,6 +35,7 @@ const reducer = {
 
         if (action.billToId) {
             draft.selectedBillToId = action.billToId;
+            draft.selectedShipToId = undefined;
             draft.editingAccount.defaultCustomerId = null;
         }
 
@@ -58,7 +59,7 @@ const reducer = {
             } else {
                 draft.editingAccount.defaultCustomerId = (draft.initialUseDefaultCustomer ? draft.initialShipToId : draft.selectedShipToId) || null;
             }
-            draft.editingAccount.setDefaultCustomer = draft.editingAccount.defaultCustomerId !== draft.initialShipToId;
+            draft.editingAccount.setDefaultCustomer = draft.editingAccount.defaultCustomerId !== (draft.initialShipToId ?? null);
         }
     },
     "Pages/AccountSettings/SetInitialValues": (draft: Draft<AccountSettingsState>, action: {
@@ -74,7 +75,10 @@ const reducer = {
         draft.useDefaultCustomer = action.useDefaultCustomer;
         draft.initialUseDefaultCustomer = draft.useDefaultCustomer;
         draft.showSelectDefaultCustomer = action.showSelectDefaultCustomer;
-        draft.editingAccount = action.account;
+        draft.editingAccount = {
+            ...action.account,
+            defaultCustomerId: draft.selectedShipToId ?? null,
+        };
         delete draft.emailErrorMessage;
     },
 };

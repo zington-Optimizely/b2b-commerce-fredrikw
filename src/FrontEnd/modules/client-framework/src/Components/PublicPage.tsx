@@ -29,7 +29,7 @@ class PublicPage extends React.Component<Props> {
 
         sendToShell({
             type: "LoadPageComplete",
-            page: this.props.page,
+            pageId: this.props.page.id,
         });
     }
 

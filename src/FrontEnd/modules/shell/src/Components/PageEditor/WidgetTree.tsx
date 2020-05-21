@@ -7,10 +7,10 @@ interface OwnProps {
     readonly id: string;
 }
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
+const mapStateToProps = ({ data: { pages: { widgetsById, widgetIdsByParentIdAndZone } } }: ShellState) => {
     return {
-        widgetIdsByParentIdAndZone: state.currentPage.widgetIdsByParentIdAndZone,
-        widgetsById: state.currentPage.widgetsById,
+        widgetIdsByParentIdAndZone,
+        widgetsById,
     };
 };
 

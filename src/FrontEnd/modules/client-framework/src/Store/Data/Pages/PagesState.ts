@@ -1,20 +1,18 @@
-import { Dictionary } from "@insite/client-framework/Common/Types";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 
-export default interface CurrentPageState {
-    readonly selectedProductPath?: string;
-    readonly selectedCategoryPath?: string;
-    readonly selectedBrandPath?: string;
-    readonly draggingWidgetId?: string;
-    readonly page: PageProps;
-    readonly header: PageProps;
-    readonly footer: PageProps;
+export interface PagesState {
+    readonly isLoading: Dictionary<boolean>;
+    readonly byId: Dictionary<Readonly<PageProps>>;
+    readonly idByPath: SafeDictionary<string>;
+    readonly idByType: SafeDictionary<string>;
     readonly widgetIdsByPageId: Dictionary<readonly string[]>;
     readonly widgetsById: Dictionary<Readonly<WidgetProps>>;
     readonly widgetIdsByParentIdAndZone: Dictionary<Dictionary<readonly string[]>>;
     readonly location: Location;
+    readonly draggingWidgetId?: string;
 }
 
 const frozenEmptyObject = Object.freeze({});

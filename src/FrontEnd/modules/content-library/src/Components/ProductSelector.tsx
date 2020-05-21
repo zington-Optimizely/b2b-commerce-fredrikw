@@ -22,12 +22,15 @@ import setProduct from "@insite/client-framework/Store/Components/ProductSelecto
 import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
 import debounce from "lodash/debounce";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 
 interface OwnProps {
     onSelectProduct: (product: ProductModelExtended) => void;
     selectButtonTitle?: string;
     productIsConfigurableMessage?: React.ReactNode;
     productIsUnavailableMessage?: React.ReactNode;
+    customErrorMessage?: React.ReactNode;
+    extendedStyles?: ProductSelectorStyles;
 }
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -147,12 +150,17 @@ const ProductSelector: React.FC<Props> = ({
     selectedProduct,
     errorType,
     changeProductUnitOfMeasure,
-    ...otherProps
+    extendedStyles,
+    customErrorMessage,
+    productIsConfigurableMessage,
+    productIsUnavailableMessage,
 }) => {
     const [qty, setQty] = React.useState("1");
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
     const [selectedProductId, setSelectedProductId] = React.useState("");
     const [options, setOptions] = React.useState<OptionObject[]>([]);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const [mergedStyles] = React.useState(() => mergeToNew(styles, extendedStyles));
 
     React.useEffect(() => {
         if (!searchResults) {
@@ -162,18 +170,22 @@ const ProductSelector: React.FC<Props> = ({
         const newOptions = searchResults.map(product => ({
             optionText: product.title,
             optionValue: product.id || undefined,
-            rowChildren: <StyledWrapper {...styles.optionWrapper}>
-                <StyledWrapper {...styles.imageWrapper}>
-                    <LazyImage {...styles.productImage} src={product.image} />
+            rowChildren: <StyledWrapper {...mergedStyles.optionWrapper}>
+                <StyledWrapper {...mergedStyles.imageWrapper}>
+                    <LazyImage {...mergedStyles.productImage} src={product.image} />
                 </StyledWrapper>
-                <StyledWrapper {...styles.infoWrapper}>
-                    <Typography {...styles.autocompleteTitleText}>{product.title}</Typography>
-                    <Typography {...styles.autocompleteErpText}>{product.erpNumber}</Typography>
+                <StyledWrapper {...mergedStyles.infoWrapper}>
+                    <Typography {...mergedStyles.autocompleteTitleText}>{product.title}</Typography>
+                    <Typography {...mergedStyles.autocompleteErpText}>{product.erpNumber}</Typography>
                 </StyledWrapper>
             </StyledWrapper>,
         }));
         setOptions(newOptions);
     }, [searchResults]);
+
+    React.useEffect(() => {
+        setErrorMessage(customErrorMessage);
+    }, [customErrorMessage]);
 
     React.useEffect(() => {
         setSelectedProductId(selectedProduct ? selectedProduct.id : "");
@@ -182,10 +194,10 @@ const ProductSelector: React.FC<Props> = ({
     React.useEffect(() => {
         switch (errorType) {
             case "productIsConfigurable":
-                setErrorMessage(otherProps.productIsConfigurableMessage || translate("Cannot select configurable products"));
+                setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
                 break;
             case "productIsUnavailable":
-                setErrorMessage(otherProps.productIsUnavailableMessage || translate("Product is unavailable"));
+                setErrorMessage(productIsUnavailableMessage || translate("Product is unavailable"));
                 break;
             default:
                 setErrorMessage("");
@@ -205,6 +217,7 @@ const ProductSelector: React.FC<Props> = ({
 
     const onInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         setErrorMessage("");
+        setSearchTerm(event.target.value);
 
         if (selectedProduct) {
             setProduct({});
@@ -246,15 +259,17 @@ const ProductSelector: React.FC<Props> = ({
             } else if (searchResults && searchResults.length === 1) {
                 const productId = searchResults[0].id ?? "";
                 setProduct({ productId, validateProduct: true });
+            } else if (searchTerm) {
+                setProduct({ searchTerm });
             }
         }
     };
 
     return (
-        <GridContainer {...styles.container}>
-            <GridItem {...styles.searchGridItem} data-test-selector="productSelector_search">
+        <GridContainer {...mergedStyles.container} data-test-selector="productSelector">
+            <GridItem {...mergedStyles.searchGridItem}>
                 <DynamicDropdown
-                    {...styles.searchDynamicDropdown}
+                    {...mergedStyles.searchDynamicDropdown}
                     label={translate("Search")}
                     onSelectionChange={onSelectionChangeHandler}
                     onInputChange={onInputChanged}
@@ -264,32 +279,36 @@ const ProductSelector: React.FC<Props> = ({
                     isLoading={isSearching}
                     options={options}
                     error={errorMessage}
+                    data-test-selector="productSelector_search"
                 />
             </GridItem>
-            <GridItem {...styles.qtyGridItem}>
+            <GridItem {...mergedStyles.qtyGridItem}>
                 <TextField
                     type="number"
                     min={1}
                     label={translate("QTY")}
                     value={qty}
                     onChange={(e) => { setQty(e.currentTarget.value); }}
+                    data-test-selector="productSelector_qty"
                 />
             </GridItem>
-            <GridItem {...styles.unitOfMeasureGridItem}>
+            <GridItem {...mergedStyles.unitOfMeasureGridItem}>
                 {selectedProduct && selectedProduct.unitOfMeasures && selectedProduct.unitOfMeasures.length > 0
                     && <ProductUnitOfMeasureSelect
                         productUnitOfMeasures={selectedProduct.unitOfMeasures}
                         selectedUnitOfMeasure={selectedProduct.selectedUnitOfMeasure}
                         onChangeHandler={uomChangeHandler}
                         extendedStyles={styles.unitOfMeasureSelect}
+                        data-test-selector="productSelector_uom"
                     />
                 }
             </GridItem>
-            <GridItem {...styles.buttonGridItem} data-test-selector="productSelector_selectProduct">
+            <GridItem {...mergedStyles.buttonGridItem}>
                 <Button
-                    {...styles.selectButton}
+                    {...mergedStyles.selectButton}
                     onClick={() => selectProduct()}
                     disabled={!selectedProduct || !!errorMessage || Number(qty) < 1}
+                    data-test-selector="productSelector_selectProduct"
                 >
                     {selectButtonTitle || translate("Select Product")}
                 </Button>

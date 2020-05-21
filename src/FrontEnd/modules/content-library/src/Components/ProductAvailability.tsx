@@ -74,7 +74,10 @@ export interface ProductAvailabilityStyles {
 }
 
 export const productAvailabilityStyles: ProductAvailabilityStyles = {
-    container: { gap: 0 },
+    container: {
+        gap: 0,
+        css: css` flex-grow: 0; `,
+    },
     messageGridItem: { width: 12 },
     availabilityByWarehouseLinkGridItem: { width: 12 },
     availabilityByWarehouseModal: {

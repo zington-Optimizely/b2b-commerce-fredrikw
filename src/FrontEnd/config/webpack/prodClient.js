@@ -7,37 +7,39 @@ const webpack = require("webpack");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const RemovePlugin = require("remove-files-webpack-plugin");
 
-const commonConfig = setupCommonConfig(false);
+module.exports = env => {
+    const commonConfig = setupCommonConfig(false, env);
 
-const clientConfig = merge(commonConfig, commonClientConfig, commonProdConfig, {
-    entry: {
-        shell: "./modules/shell/Entry.ts",
-        public: "./modules/client-framework/Entry.ts",
-    },
-    plugins: [
-        new RemovePlugin({
-            before: {
-                root: ".",
-                test: [
-                    {
-                        folder: "./wwwroot/dist",
-                        method: () => true,
-                        recursive: true,
-                    },
-                ],
-            },
-        }),
-        new webpack.DefinePlugin({
-            IS_PRODUCTION: true,
-            IS_SERVER_SIDE: false,
-        }),
-        new BundleAnalyzerPlugin({
-            analyzerMode: "static",
-            openAnalyzer: false,
-            reportFilename: "webpack-bundle-analyzer.html",
-        }),
-    ],
-    devtool: "source-map",
-});
+    const clientConfig = merge(commonConfig, commonClientConfig, commonProdConfig, {
+        entry: {
+            shell: "./modules/shell/Entry.ts",
+            public: "./modules/client-framework/Entry.ts",
+        },
+        plugins: [
+            new RemovePlugin({
+                before: {
+                    root: ".",
+                    test: [
+                        {
+                            folder: "./wwwroot/dist",
+                            method: () => true,
+                            recursive: true,
+                        },
+                    ],
+                },
+            }),
+            new webpack.DefinePlugin({
+                IS_PRODUCTION: true,
+                IS_SERVER_SIDE: false,
+            }),
+            new BundleAnalyzerPlugin({
+                analyzerMode: "static",
+                openAnalyzer: false,
+                reportFilename: "webpack-bundle-analyzer.html",
+            }),
+        ],
+        devtool: "source-map",
+    });
 
-module.exports = clientConfig;
+    return clientConfig;
+};

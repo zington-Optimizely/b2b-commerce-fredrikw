@@ -19,6 +19,10 @@ const reducer = {
     },
     "Pages/CheckoutReviewAndSubmit/BeginPlaceOrder": (draft: Draft<CheckoutReviewAndSubmitState>) => {
         draft.isPlacingOrder = true;
+        draft.placeOrderErrorMessage = undefined;
+    },
+    "Pages/CheckoutReviewAndSubmit/SetPlaceOrderErrorMessage": (draft: Draft<CheckoutReviewAndSubmitState>, action: { errorMessage?: string }) => {
+        draft.placeOrderErrorMessage = action.errorMessage;
     },
     "Pages/CheckoutReviewAndSubmit/CompletePlaceOrder": (draft: Draft<CheckoutReviewAndSubmitState>) => {
         draft.isPlacingOrder = false;

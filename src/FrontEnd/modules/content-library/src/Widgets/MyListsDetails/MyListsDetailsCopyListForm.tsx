@@ -181,7 +181,7 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
         }
 
         return (
-            <GridContainer {...styles.container}>
+            <GridContainer {...styles.container} data-test-selector="copyListForm">
                 <GridItem {...styles.descriptionGridItem}>
                     <Typography {...styles.descriptionText}>{translate("Copy items to a new or existing list.")}</Typography>
                 </GridItem>
@@ -192,6 +192,7 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                         onSelectionChange={this.wishListChangeHandler}
                         selected={this.CREATE_ID}
                         options={options}
+                        data-test-selector="selectList"
                     />
                 </GridItem>
                 {this.state.wishListId === this.CREATE_ID
@@ -213,7 +214,7 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                         onClick={this.props.onCancel}>
                         {translate("Cancel")}
                     </Button>
-                    <Button {...styles.createButton} onClick={this.submitHandler}>
+                    <Button {...styles.createButton} onClick={this.submitHandler} data-test-selector="submitCopyListButton">
                         {translate("Copy to List")}
                     </Button>
                 </GridItem>

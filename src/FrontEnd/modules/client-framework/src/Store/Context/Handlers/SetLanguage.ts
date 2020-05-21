@@ -2,6 +2,7 @@ import { LanguageModel } from "@insite/client-framework/Types/ApiModels";
 import { UpdateSessionApiParameter, updateSession, Session } from "@insite/client-framework/Services/SessionService";
 import { updateContext } from "@insite/client-framework/Context";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ languageId: string; }, UpdateSessionApiParameter, Session>;
 
@@ -23,6 +24,13 @@ export const UpdateContext: HandlerType = props => {
     updateContext({ languageId: props.parameter.languageId });
 };
 
+export const InformShell: HandlerType = props => {
+    sendToShell({
+        type: "ChangeWebsiteLanguage",
+        languageId: props.parameter.languageId,
+    });
+};
+
 export const ReloadPage: HandlerType = () => {
     let href = window.location.href;
     const switchingLanguageParameter = "SwitchingLanguage=true";
@@ -41,6 +49,7 @@ export const chain = [
     PopulateApiParameter,
     UpdateSession,
     UpdateContext,
+    InformShell,
     ReloadPage,
 ];
 

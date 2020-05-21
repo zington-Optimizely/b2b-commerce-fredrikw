@@ -15,6 +15,18 @@
             "program": "${workspaceFolder}/startDevelopment.js",
             "cwd": "${workspaceFolder}/",
             "args": [ "example" ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Production (No Build)",
+            "program": "${workspaceFolder}/dist/server.js",
+            "cwd": "${workspaceFolder}/",
+            "env": {
+                "ISC_API_URL": "http://commerce.local.com",
+                "ISC_FRONT_END_PORT": "3000",
+                "ISC_ENABLE_COMPRESSION": "true"
+            }
         }
     ]
 }

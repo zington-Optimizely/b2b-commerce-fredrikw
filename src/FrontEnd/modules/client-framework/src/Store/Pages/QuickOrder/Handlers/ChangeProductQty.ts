@@ -27,15 +27,13 @@ export const SetQtyOrdered: HandlerType = ({ parameter, result: { product } }) =
 };
 
 export const UpdatePrice: HandlerType = async ({ result: { product }, getState }) => {
-    if (getSettingsCollection(getState()).productSettings.realTimePricing) {
-        if (product.quoteRequired) {
-            return;
-        }
-
-        const realTimePricing = await getProductRealTimePrice({ product });
-        const realTimePricingResult = realTimePricing.realTimePricingResults?.find(o => o.productId === product.id);
-        product.pricing = realTimePricingResult || product.pricing;
+    if (product.quoteRequired) {
+        return;
     }
+
+    const realTimePricing = await getProductRealTimePrice({ product });
+    const realTimePricingResult = realTimePricing.realTimePricingResults?.find(o => o.productId === product.id);
+    product.pricing = realTimePricingResult || product.pricing;
 };
 
 export const DispatchCompleteChangeQty: HandlerType = ({ result: { product }, dispatch }) => {

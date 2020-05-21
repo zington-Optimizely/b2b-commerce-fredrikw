@@ -78,7 +78,7 @@ const reducer = {
         draft.personasById = personasById;
     },
 
-    "CurrentPage/CompleteChangeContext": (draft: Draft<ShellContextState>, action: {
+    "Data/Pages/CompleteChangeContext": (draft: Draft<ShellContextState>, action: {
         languageId: string;
         personaId: string;
         deviceType: DeviceType;

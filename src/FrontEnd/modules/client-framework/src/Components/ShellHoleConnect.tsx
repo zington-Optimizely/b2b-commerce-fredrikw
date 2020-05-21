@@ -6,24 +6,25 @@ import {
     addWidget,
     removeWidget,
     replaceItem,
-    selectProduct,
-    selectCategory,
-    selectBrand,
     UpdateFieldParameter, endDraggingWidget, beginDraggingWidget,
-} from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+} from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { cleanupAfterDragging } from "@insite/client-framework/WidgetReordering";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ItemProps } from "@insite/client-framework/Types/PageProps";
 import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
 import { initializeSiteHole } from "@insite/client-framework/Components/ShellHole";
+import { selectBrand, selectCategory, selectProduct } from "@insite/client-framework/Store/Context/ContextActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { History } from "@insite/mobius/utilities/HistoryContext";
 
 interface OwnProps {
     history: History;
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({});
+const mapStateToProps = (state: ApplicationState) => ({
+    page: getCurrentPage(state),
+});
 
 const mapDispatchToProps = {
     updateField,
@@ -74,7 +75,7 @@ class ShellHoleProvider extends React.Component<Props> {
                 this.props.endDraggingWidget();
             },
             AddWidget: ({ widget, sortOrder }: { widget: WidgetProps; sortOrder: number; }) => {
-                this.props.addWidget(widget, sortOrder);
+                this.props.addWidget(widget, sortOrder, props.page.id);
             },
             RemoveWidget: ({ id }: { id: string; }) => {
                 this.props.removeWidget(id);

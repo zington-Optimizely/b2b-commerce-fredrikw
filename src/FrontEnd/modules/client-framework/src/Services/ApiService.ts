@@ -44,7 +44,7 @@ export function get<T>(endpoint: string, parameter: ApiParameter = {}, queryStri
 
     for (const key in combinedQueryString) {
         if (key !== "additionalQueryStringParameters" && combinedQueryString[key] !== undefined) {
-            if (key !== "expand" && Array.isArray(combinedQueryString[key])) {
+            if (key !== "expand" && key !== "exclude" && Array.isArray(combinedQueryString[key])) {
                 // WebApi requires arrays to be split into individual query string values
                 combinedQueryString[key].forEach((p: string) => {
                     queryString += `${key}=${encodeURIComponent(p)}&`;

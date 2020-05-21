@@ -22,13 +22,21 @@ import CartLineQuantity, { CartLineQuantityStyles } from "@insite/content-librar
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import XCircle from "@insite/mobius/Icons/XCircle";
-import { HandleThunkActionCreator } from "react-redux";
+import { connect, ResolveThunks, HandleThunkActionCreator } from "react-redux";
 import { css } from "styled-components";
 import getColor from "@insite/mobius/utilities/getColor";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 
 interface OwnProps {
     cart: Cart;
@@ -38,10 +46,20 @@ interface OwnProps {
     showLineNotes?: boolean;
     updateCartLine: HandleThunkActionCreator<typeof updateCartLine>;
     removeCartLine: HandleThunkActionCreator<typeof removeCartLine>;
+    showRemoveAction?: boolean;
     extendedStyles?: CartLineCardExpandedStyles;
 }
 
-type Props = OwnProps & HasCartLineContext;
+const mapStateToProps = (state: ApplicationState) => ({
+    wishListSettings: getSettingsCollection(state).wishListSettings,
+});
+
+const mapDispatchToProps = {
+    setAddToListModalIsOpen,
+    addToWishList,
+};
+
+type Props = OwnProps & HasCartLineContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CartLineCardExpandedStyles {
     container?: GridContainerProps;
@@ -71,6 +89,7 @@ export interface CartLineCardExpandedStyles {
     productPrice?: ProductPriceStyles;
     promotionNameText?: TypographyProps;
     productAvailability?: ProductAvailabilityStyles;
+    addToListLink?: LinkPresentationProps;
     cartLineNotesGridItem?: GridItemProps;
     cartLineNotes?: CartLineNotesStyles;
     removeCartLineGridItem?: GridItemProps;
@@ -85,8 +104,21 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
             padding: 1rem 0;
         `,
     },
-    productImageGridItem: { width: 2 },
+    productImageGridItem: {
+        width: 2,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    null,
+                ])}
+        `,
+    },
     cartLineInfoGridItem: { width: [8, 8, 8, 9, 9] },
+    cartLineInfoContainer: { gap: 20 },
     productInfoGridItem: { width: [12, 12, 12, 7, 7] },
     productInfoContainer: { gap: 12 },
     productBrandAndDescriptionGridItem: {
@@ -114,6 +146,7 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
         width: [12, 12, 12, 5, 5],
         css: css` flex-direction: column; `,
     },
+    addToListLink: { css: css` margin-top: 20px; ` },
     cartLineNotesGridItem: { width: 12 },
     removeCartLineGridItem: {
         css: css` justify-content: center; `,
@@ -132,6 +165,10 @@ const CartLineCardExpanded: FC<Props> = ({
     updateCartLine,
     removeCartLine,
     extendedStyles,
+    showRemoveAction,
+    wishListSettings,
+    setAddToListModalIsOpen,
+    addToWishList,
 }) => {
     const toasterContext = useContext(ToasterContext);
     const qtyOrderedChangeHandler = (qtyOrdered: number) => {
@@ -167,7 +204,34 @@ const CartLineCardExpanded: FC<Props> = ({
     };
 
     const removeCartLineClickHandler = () => {
+        if (!showRemoveAction) {
+            return;
+        }
+
         removeCartLine({ cartLineId: cartLine.id });
+    };
+
+    const addToListClickHandler = () => {
+        if (!wishListSettings) {
+            return;
+        }
+
+        const product = {
+            id: cartLine.productId,
+            qtyOrdered: cartLine.qtyOrdered,
+            selectedUnitOfMeasure: cartLine.unitOfMeasure,
+        } as ProductModelExtended;
+        if (!wishListSettings.allowMultipleWishLists) {
+            addToWishList({
+                products: [product],
+                onSuccess: () => {
+                    toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
+                },
+            });
+            return;
+        }
+
+        setAddToListModalIsOpen({ modalIsOpen: true, products: [product] });
     };
 
     const sumQtyPerUom = cart.cartLines!.reduce(
@@ -276,6 +340,7 @@ const CartLineCardExpanded: FC<Props> = ({
                                 trackInventory={cartLine.trackInventory}
                                 extendedStyles={styles.productAvailability} />
                         }
+                        <Link {...styles.addToListLink} onClick={addToListClickHandler}>{translate("Add to List")}</Link>
                     </GridItem>
                     {showLineNotes && cart.properties["isPunchout"] === undefined
                         && <GridItem {...styles.cartLineNotesGridItem}>
@@ -289,12 +354,14 @@ const CartLineCardExpanded: FC<Props> = ({
                 </GridContainer>
             </GridItem>
             <GridItem {...styles.removeCartLineGridItem}>
-                <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
-                    <IconMemo {...styles.removeCartLineIcon} />
-                </Clickable>
+                {showRemoveAction
+                    && <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                        <IconMemo {...styles.removeCartLineIcon} />
+                    </Clickable>
+                }
             </GridItem>
         </GridContainer>
     );
 };
 
-export default withCartLine(CartLineCardExpanded);
+export default connect(mapStateToProps, mapDispatchToProps)(withCartLine(CartLineCardExpanded));

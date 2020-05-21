@@ -33,7 +33,7 @@ import { css } from "styled-components";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Clickable from "@insite/mobius/Clickable";
-import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getShipTosDataView, getCurrentShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import updateShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/UpdateShipTo";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
@@ -47,6 +47,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     shipTosDataView: getShipTosDataView(state, state.pages.addresses.getShipTosParameter),
     getShipTosParameter: state.pages.addresses.getShipTosParameter,
     currentBillTo: getCurrentBillToState(state).value,
+    currentShipTo: getCurrentShipToState(state).value,
     countries: getCurrentCountries(state),
     addressFieldDataView: getAddressFieldsDataView(state),
 });
@@ -150,19 +151,28 @@ export const AddressBookContext = createContext<ContextType>({
     },
 });
 
-const AddressBook: React.FC<Props> = (props) => {
-    const { shipTosDataView } = props;
-
+const AddressBook: React.FC<Props> = ({
+    id,
+    shipTosDataView,
+    loadShipTos,
+    setCurrentShipTo,
+    updateShipTo,
+    addressFieldDataView,
+    countries,
+    currentBillTo,
+    currentShipTo,
+    getShipTosParameter,
+}) => {
     const [isSettingShipTo, setIsSettingShipTo] = useState(false);
 
     React.useEffect(() => {
         if (!shipTosDataView.value && !shipTosDataView.isLoading) {
-            props.loadShipTos();
+            loadShipTos();
         }
     });
 
     let component;
-    if (shipTosDataView.isLoading || !shipTosDataView.value || !props.addressFieldDataView.value) {
+    if (shipTosDataView.isLoading || !shipTosDataView.value || !addressFieldDataView.value) {
         component = (
             <StyledWrapper {...styles.centeringWrapper}>
                 <LoadingSpinner {...styles.spinner}></LoadingSpinner>
@@ -173,12 +183,13 @@ const AddressBook: React.FC<Props> = (props) => {
             <GridItem {...styles.addressCardGridItem} key={shipTo.id.toString()}>
                 <AddressCard
                     shipTo={shipTo}
-                    setCurrentShipTo={props.setCurrentShipTo}
-                    updateShipTo={props.updateShipTo}
-                    billToAddressFields={props.addressFieldDataView.value!.billToAddressFields}
-                    shipToAddressFields={props.addressFieldDataView.value!.shipToAddressFields}
-                    countries={props.countries}
-                    currentBillTo={props.currentBillTo}
+                    setCurrentShipTo={setCurrentShipTo}
+                    updateShipTo={updateShipTo}
+                    billToAddressFields={addressFieldDataView.value!.billToAddressFields}
+                    shipToAddressFields={addressFieldDataView.value!.shipToAddressFields}
+                    countries={countries}
+                    currentBillTo={currentBillTo}
+                    currentShipTo={currentShipTo}
                 />
             </GridItem>
         ));
@@ -186,7 +197,7 @@ const AddressBook: React.FC<Props> = (props) => {
         component = (
             <StyledWrapper {...styles.centeringWrapper}>
                 <Typography {...styles.noAddressesText}>
-                    {props.getShipTosParameter.filter ? siteMessage("Addresses_NoResultsMessage") : siteMessage("Addresses_NoAddressesFound")}
+                    {getShipTosParameter.filter ? siteMessage("Addresses_NoResultsMessage") : siteMessage("Addresses_NoAddressesFound")}
                 </Typography>
             </StyledWrapper>
         );
@@ -198,7 +209,7 @@ const AddressBook: React.FC<Props> = (props) => {
                 <Typography {...styles.titleText}>{translate("Address Book")}</Typography>
             </GridItem>
             <GridItem {...styles.addressHeaderGridItem}>
-                <Zone contentId={props.id} zoneName="Content00"/>
+                <Zone contentId={id} zoneName="Content00"/>
             </GridItem>
             {component}
         </GridContainer>
@@ -208,6 +219,7 @@ const AddressBook: React.FC<Props> = (props) => {
 interface AddressCardProps {
     shipTo: ShipToModel;
     currentBillTo?: BillToModel;
+    currentShipTo?: ShipToModel;
     countries?: CountryModel[];
     billToAddressFields?: AddressFieldDisplayCollectionModel;
     shipToAddressFields?: AddressFieldDisplayCollectionModel;
@@ -246,6 +258,7 @@ const AddressCard: React.FunctionComponent<AddressCardProps> = (props: AddressCa
                     updateShipTo={props.updateShipTo}
                     setCurrentShipTo={props.setCurrentShipTo}
                     currentBillTo={props.currentBillTo}
+                    currentShipTo={props.currentShipTo}
                     countries={props.countries}
                     shipToAddressFields={props.shipToAddressFields}
                     billToAddressFields={props.billToAddressFields}
@@ -261,6 +274,7 @@ const AddressCard: React.FunctionComponent<AddressCardProps> = (props: AddressCa
 interface AddressActionsProps {
     shipTo: ShipToModel;
     currentBillTo?: BillToModel;
+    currentShipTo?: ShipToModel;
     countries?: CountryModel[];
     billToAddressFields?: AddressFieldDisplayCollectionModel;
     shipToAddressFields?: AddressFieldDisplayCollectionModel;
@@ -271,7 +285,7 @@ interface AddressActionsProps {
 const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: AddressActionsProps) => {
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
-    const { shipTo } = props;
+    const { shipTo, currentShipTo } = props;
 
     const addressBookContext = useContext(AddressBookContext);
 
@@ -320,7 +334,12 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
         <>
             <Hidden above="sm">
                 <OverflowMenu {...componentStyles.overflowMenu}>
-                    <Clickable onClick={useAsShippingAddressHandler} disabled={addressBookContext.isSettingShipTo}>{translate("Use as Shipping Address")}</Clickable>
+                    <Clickable
+                        onClick={useAsShippingAddressHandler}
+                        disabled={addressBookContext.isSettingShipTo || shipTo.id === currentShipTo?.id}
+                    >
+                        {translate("Use as Shipping Address")}
+                    </Clickable>
                     <Clickable onClick={editClickHandler}>{translate("Edit")}</Clickable>
                 </OverflowMenu>
             </Hidden>
@@ -328,7 +347,7 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
                 <Button
                     {...componentStyles.actionUseAsShippingAddressButton}
                     onClick={useAsShippingAddressHandler}
-                    disabled={addressBookContext.isSettingShipTo}
+                    disabled={addressBookContext.isSettingShipTo || shipTo.id === currentShipTo?.id}
                 >
                     {translate("Use as Shipping Address")}
                 </Button>

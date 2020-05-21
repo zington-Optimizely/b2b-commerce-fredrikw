@@ -158,7 +158,7 @@ const CartTotalDisplay: FC<Props> = ({
                 <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
             </GridItem>
             <GridItem {...styles.valueGridItem}>
-                <Typography {...styles.subtotalValue}>{cart.orderSubTotalDisplay}</Typography>
+                <Typography {...styles.subtotalValue} data-test-selector="cartTotal_subTotal">{cart.orderSubTotalDisplay}</Typography>
             </GridItem>
             {orderPromotions && orderPromotions.map(promotion => (
                 <Fragment key={promotion.id}>
@@ -200,7 +200,7 @@ const CartTotalDisplay: FC<Props> = ({
                         </Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
-                        <Typography {...styles.promotionValue}>
+                        <Typography {...styles.promotionValue} data-test-selector="cartTotalShippingPromotionValue">
                             {`-${promotion.amountDisplay}`}
                         </Typography>
                     </GridItem>

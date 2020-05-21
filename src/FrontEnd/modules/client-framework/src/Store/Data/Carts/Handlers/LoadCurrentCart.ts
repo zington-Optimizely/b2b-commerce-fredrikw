@@ -1,13 +1,13 @@
 import {
-    createHandlerChainRunnerOptionalParameter, Handler,
+    createHandlerChainRunnerOptionalParameter, Handler, HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { CartResult, getCart, GetCartApiParameter } from "@insite/client-framework/Services/CartService";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 type HandlerType = Handler<{
-    onSuccess?: () => void,
-}, {
+    shouldLoadFullCart?: boolean;
+} & HasOnSuccess, {
     apiParameter: GetCartApiParameter,
     apiResult: CartResult,
     needFullCart: boolean,
@@ -22,7 +22,10 @@ export const DispatchBeginLoadCart: HandlerType = props => {
 
 export const SetNeedFullCart: HandlerType = props => {
     const pageType = getCurrentPage(props.getState()).type;
-    props.needFullCart = pageType === "CheckoutShippingPage" || pageType === "CheckoutReviewAndSubmitPage" || pageType === "CartPage";
+    props.needFullCart = props.parameter.shouldLoadFullCart
+        || pageType === "CheckoutShippingPage"
+        || pageType === "CheckoutReviewAndSubmitPage"
+        || pageType === "CartPage";
 };
 
 export const PopulateApiParameter: HandlerType = props => {

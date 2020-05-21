@@ -370,6 +370,7 @@ module insite.catalog {
         onEnter(): void {
             if (this.getAutocomplete()._last === kendo.keys.ENTER && this.isSearchEnabled()) {
                 this.search();
+                this.getAutocomplete().element.blur();
             }
         }
 

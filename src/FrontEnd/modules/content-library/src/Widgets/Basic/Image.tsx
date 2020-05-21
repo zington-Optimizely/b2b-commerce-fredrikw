@@ -9,6 +9,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import { connect } from "react-redux";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 
 const enum fields {
     imageUrl = "imageUrl",
@@ -33,16 +34,13 @@ type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface ImageStyles {
     wrapper?: InjectableCss;
+    image?: LazyImageProps;
     imageLink?: LinkPresentationProps;
 }
 
 const styles: ImageStyles = {
-    wrapper: {
-        css: css`
-            img {
-                width: 100%;
-            }
-        `,
+    image: {
+        css: css` max-width: 100%; `,
     },
 };
 
@@ -52,7 +50,7 @@ const Image: React.FunctionComponent<Props> = ({
     fields,
     pageUrl,
 }: Props) => {
-    const image = <img src={fields.imageUrl} alt={fields.altText} />;
+    const image = <LazyImage src={fields.imageUrl} altText={fields.altText} {...styles.image} />;
 
     return <StyledWrapper {...styles.wrapper}>
         {pageUrl

@@ -33,11 +33,15 @@ import ProductUnitOfMeasureSelect from "@insite/content-library/Components/Produ
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
 import updateWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLine";
 import setWishListLineIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineIsSelected";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
+import updateProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateProduct";
 
 interface OwnProps {
     wishList: WishListModel;
@@ -56,6 +60,8 @@ const mapDispatchToProps = {
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
     updateWishListLine,
+    changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
+    updateProduct,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -81,6 +87,7 @@ export interface MyListsDetailsProductListLineStyles {
     priceAndAvailabilityInnerContainer?: GridContainerProps;
     priceGridItem?: GridItemProps;
     productPriceStyles?: ProductPriceStyles;
+    quantityBreakPricing?: ProductQuantityBreakPricingStyles;
     uomAndQuantityGridItem?: GridItemProps;
     uomAndQuantityInnerContainer?: GridContainerProps;
     uomGridItem?: GridItemProps;
@@ -129,6 +136,7 @@ const styles: MyListsDetailsProductListLineStyles = {
                 max-width: 83px;
             }
             width: 100%;
+            min-width: 0;
             flex-direction: column;
         `,
     },
@@ -172,6 +180,7 @@ const styles: MyListsDetailsProductListLineStyles = {
     priceGridItem: {
         width: [12, 12, 12, 12, 5],
         printWidth: 5,
+        css: css` flex-direction: column; `,
     },
     productPriceStyles: {
         priceLabelText: {
@@ -180,6 +189,9 @@ const styles: MyListsDetailsProductListLineStyles = {
             weight: 600,
             css: css` @media print { font-size: 12px; } `,
         },
+    },
+    quantityBreakPricing: {
+        viewLink: { typographyProps: { size: 12 } },
     },
     uomAndQuantityGridItem: {
         width: [12, 12, 12, 12, 7],
@@ -273,10 +285,16 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
     updateWishListLine,
+    changeProductQtyOrdered,
+    updateProduct,
 }) => {
     const [quantity, setQuantity] = React.useState(product.qtyOrdered);
-    const quantityChangeHandler = (value: string) => {
-        setQuantity(parseFloat(value));
+    const quantityChangeHandler = async (value: string) => {
+        const newQuantity = parseFloat(value);
+        setQuantity(newQuantity);
+
+        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: newQuantity });
+        updateProduct({ product: productToUpdate });
     };
     React.useEffect(() => {
         setQuantity(product.qtyOrdered);
@@ -336,7 +354,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
 
     if (isRestricted() || isDiscontinued()) {
         return (
-            <GridContainer {...styles.lineInnerContainer}>
+            <GridContainer {...styles.lineInnerContainer} data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
                 <GridItem {...styles.restrictedDescriptionGridItem}>
                     <Typography {...styles.restrictedDescriptionText}>{wishListLine.shortDescription}</Typography>
                     <Hidden {...styles.partNumbersHidden}>
@@ -357,7 +375,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     />
                 </GridItem>
                 <GridItem {...styles.priceAndAvailabilityGridItem}>
-                    <Typography {...styles.restrictedMessageText}>
+                    <Typography {...styles.restrictedMessageText} data-test-selector="restrictedMessage">
                         {isRestricted()
                             && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Restrictions")}</>
                         }
@@ -368,7 +386,13 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     {canEditWishList
-                        && <Link {...styles.restrictedRemoveItemLink} onClick={() => deleteClickHandler(wishListLine)}>{translate("Remove item")}</Link>
+                        && <Link
+                            {...styles.restrictedRemoveItemLink}
+                            onClick={() => deleteClickHandler(wishListLine)}
+                            data-test-selector="removeRestricted"
+                        >
+                            {translate("Remove item")}
+                        </Link>
                     }
                 </GridItem>
             </GridContainer>
@@ -378,10 +402,10 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     const { productSettings } = settingsCollection;
 
     return (
-        <GridContainer {...styles.lineInnerContainer}>
+        <GridContainer {...styles.lineInnerContainer} data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
             <GridItem {...styles.imageGridItem}>
                 <Hidden {...styles.selectedCheckboxHidden}>
-                    <Checkbox {...styles.selectedCheckbox} checked={isSelected} onChange={selectChangeHandler} />
+                    <Checkbox {...styles.selectedCheckbox} checked={isSelected} onChange={selectChangeHandler} data-test-selector="selectItem" />
                 </Hidden>
                 <StyledWrapper {...styles.imageWrapper}>
                     <ProductImage product={product} extendedStyles={styles.productImageStyles} />
@@ -442,6 +466,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                             showSavingsAmount={productSettings.showSavingsAmount}
                             showSavingsPercent={productSettings.showSavingsPercent}
                             extendedStyles={styles.productPriceStyles} />
+                        <ProductQuantityBreakPricing product={product} extendedStyles={styles.quantityBreakPricing} />
                     </GridItem>
                     <GridItem {...styles.uomAndQuantityGridItem}>
                         <GridContainer {...styles.uomAndQuantityInnerContainer}>
@@ -483,10 +508,22 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 </Hidden>
             }
             <GridItem {...styles.buttonsGridItem}>
-                <ProductAddToCartButton product={product} quantity={quantity} unitOfMeasure={product.selectedUnitOfMeasure} extendedStyles={styles.addToCartButton} />
+                <ProductAddToCartButton
+                    product={product}
+                    quantity={quantity}
+                    unitOfMeasure={product.selectedUnitOfMeasure}
+                    extendedStyles={styles.addToCartButton}
+                    data-test-selector="addToCart"
+                />
                 <Hidden {...styles.deleteLinkHidden}>
                     {canEditWishList
-                        && <Link {...styles.deleteLink} onClick={() => deleteClickHandler(wishListLine)}>{translate("Delete")}</Link>
+                        && <Link
+                            {...styles.deleteLink}
+                            onClick={() => deleteClickHandler(wishListLine)}
+                            data-test-selector="deleteListItem"
+                        >
+                            {translate("Delete")}
+                        </Link>
                     }
                     <Link {...styles.updateSavedQuantityLink}>{translate("Update Saved Quantity")}</Link>
                 </Hidden>

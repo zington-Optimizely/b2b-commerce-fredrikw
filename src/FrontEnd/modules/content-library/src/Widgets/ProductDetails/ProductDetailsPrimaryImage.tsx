@@ -10,6 +10,7 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import { css } from "styled-components";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import LazyImage from "@insite/mobius/LazyImage";
 
 type Props = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
 
@@ -20,6 +21,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 export interface ProductDetailsPrimaryImageStyles {
     centeringWrapper?: InjectableCss;
+    hiddenWrapper?: InjectableCss;
     spinner?: LoadingSpinnerProps;
 }
 
@@ -36,6 +38,9 @@ const styles: ProductDetailsPrimaryImageStyles = {
                 max-width: 100%;
             }
         `,
+    },
+    hiddenWrapper: {
+        css: css` display: none; `,
     },
     spinner: {
         css: css` margin: auto; `,
@@ -83,7 +88,7 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
                 setIsLoading(true);
             }
         },
-        [selectedImage],
+        [selectedImage.id],
     );
 
     React.useEffect(
@@ -117,16 +122,15 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
                 <LoadingSpinner {...styles.spinner} />
             </StyledWrapper>
         }
-        {selectedImage.imageType ===  "Static"
-            && <StyledWrapper {...styles.centeringWrapper}>
-                <img
-                    ref={setRefHandler}
+        {selectedImage.imageType === "Static"
+            && <StyledWrapper {...(isLoading ? styles.hiddenWrapper : styles.centeringWrapper)}>
+                <LazyImage
                     key={selectedImage.id}
                     src={path}
-                    alt={selectedImage.imageAltText}
+                    altText={selectedImage.imageAltText}
+                    imgProps={{ ref: setRefHandler }}
                     onLoad={onLoadHandler}
                     onError={onLoadHandler}
-                    style={{ display: isLoading ? "none" : "block" }}
                     data-test-selector="productDetails_mainImage"
                 />
             </StyledWrapper>

@@ -91,7 +91,8 @@ const ChangeCustomerBillToSelector: FC<Props> = ({
             selected={billTo?.id}
             options={options}
             placeholder={translate("Search or Select Bill To")}
-            error={noShipToAndCantCreate && siteMessage("SignIn_NoShipToAndCantCreate")} />
+            error={noShipToAndCantCreate && siteMessage("SignIn_NoShipToAndCantCreate")}
+            data-test-selector="changeCustomerBillToSelector" />
     );
 };
 

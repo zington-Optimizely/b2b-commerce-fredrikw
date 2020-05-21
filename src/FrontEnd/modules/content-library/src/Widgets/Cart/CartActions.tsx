@@ -8,16 +8,20 @@ import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable"
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import React, { FC } from "react";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 import { getCurrentCartState, isCartEmpty, canAddAllToList, canSaveOrder } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-
-interface OwnProps extends WidgetProps {
-}
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCurrentCartState(state).value;
     return ({
+        wishListSettings: getSettingsCollection(state).wishListSettings,
         cart,
         isCartEmpty: isCartEmpty(cart),
         canSaveOrder: canSaveOrder(cart),
@@ -25,7 +29,12 @@ const mapStateToProps = (state: ApplicationState) => {
     });
 };
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = {
+    setAddToListModalIsOpen,
+    addToWishList,
+};
+
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CartActionsStyles {
     narrowHidden?: HiddenProps;
@@ -68,21 +77,50 @@ export const cartActionsStyles = styles;
 const CartActions: FC<Props> = ({
     cart,
     isCartEmpty,
-    ...otherProps
+    canAddAllToList,
+    canSaveOrder,
+    wishListSettings,
+    setAddToListModalIsOpen,
+    addToWishList,
 }) => {
     if (!cart) {
         return null;
     }
 
+    const toasterContext = React.useContext(ToasterContext);
     const showRequestAQuote = cart.canRequestQuote && !cart.isAwaitingApproval;
     const requestAQuoteLabel = translate(cart.isSalesperson ? "Create a Quote" : "Request a Quote");
     const overflowItems = [];
     const wideHiddenOverflowMenu = [];
 
+    const addAllToListClickHandler = () => {
+        if (!wishListSettings) {
+            return;
+        }
+
+        const products = cart.cartLines?.map(cartLine => ({
+            id: cartLine.productId,
+            qtyOrdered: cartLine.qtyOrdered,
+            selectedUnitOfMeasure: cartLine.unitOfMeasure,
+        }) as ProductModelExtended) || [];
+        if (!wishListSettings.allowMultipleWishLists) {
+            addToWishList({
+                products,
+                onSuccess: () => {
+                    toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
+                },
+            });
+            return;
+        }
+
+        setAddToListModalIsOpen({ modalIsOpen: true, products });
+    };
+
     if (!isCartEmpty) {
         overflowItems.push(<Clickable {...styles.addAllToListClickable}
             key="addAll"
-            disabled={!otherProps.canAddAllToList}
+            disabled={!canAddAllToList}
+            onClick={addAllToListClickHandler}
             data-test-selector="cartlineAddAllToList">
             {translate("Add All to List")}
         </Clickable>);
@@ -97,7 +135,7 @@ const CartActions: FC<Props> = ({
             <Hidden {...styles.narrowHidden} data-test-selector="cartActionsNarrow">
                 <OverflowMenu {...styles.narrowOverflowMenu}>
                     <Clickable {...styles.saveOrderClickable}
-                        disabled={!otherProps.canSaveOrder}
+                        disabled={!canSaveOrder}
                         data-test-selector="cartlineSaveOrder">
                         {translate("Save Order")}
                     </Clickable>
@@ -107,7 +145,7 @@ const CartActions: FC<Props> = ({
             <Hidden {...styles.wideHidden} data-test-selector="cartActionsWide">
                 <Button
                     {...styles.saveOrderButton}
-                    disabled={!otherProps.canSaveOrder}
+                    disabled={!canSaveOrder}
                     data-test-selector="cartlineSaveOrder">
                     {translate("Save Order")}
                 </Button>
@@ -118,7 +156,7 @@ const CartActions: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(CartActions),
+    component: connect(mapStateToProps, mapDispatchToProps)(CartActions),
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],

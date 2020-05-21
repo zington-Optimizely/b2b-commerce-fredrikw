@@ -1,7 +1,7 @@
-import { ApiParameter, get, patch } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get, patch, HasPagingParameters } from "@insite/client-framework/Services/ApiService";
 import { MessageCollectionModel, MessageModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface GetMessagesApiParameter extends ApiParameter{
+export interface GetMessagesApiParameter extends ApiParameter, HasPagingParameters{
 }
 
 export interface UpdateMessageApiParameter {

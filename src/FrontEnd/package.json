@@ -2,10 +2,13 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "@comment build": "webpack building both configs together would randomly not build the server.js file. Splitting them into two webpack builds got rid of the issue",
-    "build": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prodServer.js && node node_modules/webpack/bin/webpack.js --config=config/webpack/prodClient.js",
-    "build:server": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prodServer.js",
-    "build:client": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prodClient.js",
+    "@comment build": "webpack building both configs together would randomly not build the server.js file. Splitting them into two webpack builds got rid of the issue.",
+    "@comment build": "Optionally pass a blueprint name. IE npm run build example",
+    "build": "npm-run-all \"build:server {1}\" \"build:client {1}\" --",
+    "build:server": "npm-run-all \"node-build:server -- --env.BLUEPRINT={1}\" --",
+    "node-build:server": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prodServer.js",
+    "build:client": "npm-run-all \"node-build:client -- --env.BLUEPRINT={1}\" --",
+    "node-build:client": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prodClient.js",
     "build:docker": "node node_modules/webpack/bin/webpack.js --config=config/webpack/prod.js",
     "create-blueprint": "node ./scripts/createBlueprint",
     "eslint": "eslint . --ext .ts,.tsx",
@@ -18,16 +21,19 @@
     "start:example": "node startDevelopment.js example 4000",
     "start:prod": "CLS && SET ISC_API_URL=http://commerce.local.com && SET ISC_FRONT_END_PORT=3000 && ECHO Starting... && node dist/server.js",
     "start:styleguide": "npm start --prefix ./modules/mobius-styleguide",
-    "stylelint": "stylelint \"./modules/**/*.tsx\""
+    "stylelint": "stylelint \"./modules/**/*.tsx\"",
+    "test": "cd modules && jest"
   },
   "devDependencies": {
     "@react-google-maps/api": "^1.8.2",
     "@types/codemirror": "^0.0.84",
     "@types/color": "^3.0.1",
+    "@types/compression": "^1.7.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.2",
     "@types/googlemaps": "^3.39.2",
     "@types/history": "^4.7.5",
+    "@types/jest": "^25.2.1",
     "@types/js-cookie": "^2.2.4",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.0",
@@ -45,6 +51,7 @@
     "@types/webpack-env": "^1.15.1",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "css-loader": "^3.4.2",
     "embla-carousel-react": "^1.2.16",
@@ -61,7 +68,9 @@
     "good-fences": "^0.9.0",
     "html-react-parser": "^0.9.1",
     "immer": "3.3.0",
+    "jest": "^25.5.1",
     "lerna": "^3.20.2",
+    "npm-run-all": "^4.1.5",
     "plop": "^2.5.3",
     "react-router": "^5.1.2",
     "redux-thunk": "^2.3.0",
@@ -72,6 +81,7 @@
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-custom-processor-loader": "^0.6.0",
     "stylelint-processor-styled-components": "^1.9.0",
+    "ts-jest": "^25.4.0",
     "ts-loader": "^6.2.1",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "typescript": "3.7.1-rc",
@@ -84,6 +94,5 @@
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.2",
     "winston": "^3.2.1"
-  },
-  "dependencies": {}
+  }
 }

@@ -11,11 +11,13 @@ import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotion
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import setPlaceOrderErrorMessage from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetPlaceOrderErrorMessage";
 
 const mapDispatchToProps = {
     loadCurrentCart,
     loadCurrentPromotions,
     loadCurrentCountries,
+    setPlaceOrderErrorMessage,
 };
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -31,6 +33,7 @@ type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<t
 
 class CheckoutReviewAndSubmitPage extends Component<Props> {
     componentDidMount() {
+        this.props.setPlaceOrderErrorMessage({});
         if (this.props.shouldLoadCart) {
             this.props.loadCurrentCart();
         }
@@ -44,7 +47,7 @@ class CheckoutReviewAndSubmitPage extends Component<Props> {
 
     render() {
         return (
-            <Page>
+            <Page data-test-selector="checkoutReviewAndSubmitPage">
                 <Zone zoneName="Content" contentId={this.props.id} />
             </Page>
         );

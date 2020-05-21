@@ -6,7 +6,7 @@ import WidgetRenderer from "@insite/client-framework/Components/WidgetRenderer";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import { dragLeaveZone, dragWidgetOverZone, dropWidgetOnZone } from "@insite/client-framework/WidgetReordering";
 import styled from "styled-components";
-import { addWidget, moveWidgetTo } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { moveWidgetTo } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import Icon from "@insite/mobius/Icon";
 import PlusCircle from "@insite/mobius/Icons/PlusCircle";
@@ -20,11 +20,10 @@ export interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     widgets: getWidgetsByIdAndZone(state, ownProps.contentId, ownProps.zoneName),
-    draggingWidgetId: state.UNSAFE_currentPage.draggingWidgetId,
+    draggingWidgetId: state.data.pages.draggingWidgetId,
 });
 
 const mapDispatchToProps = {
-    addWidget,
     moveWidgetTo,
 };
 

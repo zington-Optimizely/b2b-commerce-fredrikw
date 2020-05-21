@@ -16,7 +16,8 @@ import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQuer
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getLocation, getReturnUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
 const enum fields {
     text = "text",
@@ -25,13 +26,14 @@ const enum fields {
 const mapStateToProps = (state: ApplicationState) => {
     const { search } = getLocation(state);
     const accountSettings = getSettingsCollection(state).accountSettings;
-    const query = parseQueryString<{ returnUrl?: string; returnurl?: string; }>(search);
-    const returnUrl = query.returnUrl || query.returnurl;
+    const returnUrl = getReturnUrl(state);
     const referredFromShipping = returnUrl?.toLowerCase() === "/checkoutshipping";
+    const createAccountPageLink = getPageLinkByPageType(state, "CreateAccountPage");
     return {
         allowCreateAccount: accountSettings.allowCreateAccount,
         allowGuestCheckout: accountSettings.allowGuestCheckout && !state.context.session.isAuthenticated && referredFromShipping,
         returnUrl,
+        createAccountUrl: createAccountPageLink ? `${createAccountPageLink.url}${search}` : undefined,
     };
 };
 
@@ -121,6 +123,7 @@ const SignInCreateNewAccount: FC<Props> = ({
     allowCreateAccount,
     allowGuestCheckout,
     returnUrl,
+    createAccountUrl,
     signInAsGuest,
 }) => {
     if (!allowCreateAccount) {
@@ -133,6 +136,14 @@ const SignInCreateNewAccount: FC<Props> = ({
         }
 
         signInAsGuest({ returnUrl });
+    };
+
+    const handleCreateNewAccount = () => {
+        if (!createAccountUrl) {
+            return;
+        }
+
+        history.push(createAccountUrl);
     };
 
     return (
@@ -153,11 +164,15 @@ const SignInCreateNewAccount: FC<Props> = ({
                         {translate("Checkout as Guest")}
                     </Button>
                 }
-                <Button {...styles.createNewAccountButton}
-                    onClick={() => { history.push("/MyAccount/CreateAccount"); }}
-                >
-                    {translate("Create Account")}
-                </Button>
+                {createAccountUrl
+                    && <Button
+                        {...styles.createNewAccountButton}
+                        onClick={handleCreateNewAccount}
+                        data-test-selector="signInCreateNewAccount_createNewAccount"
+                    >
+                        {translate("Create Account")}
+                    </Button>
+                }
             </GridItem>
         </GridContainer>);
 };

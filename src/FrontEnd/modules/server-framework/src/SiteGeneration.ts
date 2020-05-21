@@ -11,7 +11,7 @@ import {
 import { saveInitialPages, getWebsiteRequiresGeneration } from "@insite/client-framework/Services/ContentService";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
-import { BasicLanguageModel } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 
 const readFileAsync = promisify(readFile);
 

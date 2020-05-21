@@ -4,14 +4,20 @@ import styled, { css } from "styled-components";
 import ShellState from "@insite/shell/Store/ShellState";
 import DeviceMobile from "@insite/shell/Components/Icons/DeviceMobile";
 import DeviceTablet from "@insite/shell/Components/Icons/DeviceTablet";
+import getProp from "@insite/mobius/utilities/getProp";
 
 const StageFlexContainer = styled.div<StageProps>`
     ${({ stageMode }) => {
         if (stageMode === "Desktop") {
-            return "width: calc(100% - 18px); height: calc(100% - 18px);";
+            return css`            
+                overflow: auto;
+                width: calc(100% - 18px);
+                height: calc(100% - 18px);
+            `;
         }
     }}
     margin: 0 18px 18px 0;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,7 +27,15 @@ interface StageProps { stageMode: "Desktop" | "Tablet" | "Phone"; }
 
 const StageWrapper = styled.div<StageProps>`
     ${({ stageMode }) => {
-        if (stageMode === "Desktop") return "width: 100%; height: 100%;";
+        if (stageMode === "Desktop") {
+            return css` 
+                position: absolute;
+                left: 0;
+                width: 100%;
+                min-width: ${getProp("theme.breakpoints.values.3")}px;
+                height: 100%;
+            `;
+        }
         const isMobile = stageMode === "Phone";
         return css`
             position: relative;

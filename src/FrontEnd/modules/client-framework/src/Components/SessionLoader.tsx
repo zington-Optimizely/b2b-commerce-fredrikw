@@ -6,6 +6,7 @@ import loadSession from "@insite/client-framework/Store/Context/Handlers/LoadSes
 import loadSettings from "@insite/client-framework/Store/Context/Handlers/LoadSettings";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 
 interface OwnProps {
     location: Location;
@@ -18,7 +19,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const setLocation = (location: Location): AnyAction => ({
-    type: "CurrentPage/SetLocation",
+    type: "Data/Pages/SetLocation",
     location,
 });
 
@@ -37,13 +38,19 @@ class SessionLoader extends React.Component<Props> {
     UNSAFE_componentWillMount() {
         const props = this.props;
 
+        const parsedQuery = parseQueryString<{ setcontextlanguagecode: string }>(props.location.search);
+
         props.setLocation(props.location);
 
         if (!props.isWebsiteLoaded) {
             props.loadCurrentWebsite();
         }
         if (!props.isSessionLoaded) {
-            props.loadSession();
+            if (parsedQuery.setcontextlanguagecode) {
+                props.loadSession({ setContextLanguageCode: parsedQuery.setcontextlanguagecode });
+            } else {
+                props.loadSession();
+            }
         }
         if (!props.areSettingsLoaded) {
             props.loadSettings();

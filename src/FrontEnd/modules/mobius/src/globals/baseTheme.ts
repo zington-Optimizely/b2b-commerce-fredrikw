@@ -7,6 +7,7 @@ import BreadcrumbsPresentationPropsDefault from "../Breadcrumbs/presentationProp
 import { ButtonPresentationProps } from "../Button";
 import ButtonPresentationPropsDefault from "../Button/presentationProps";
 import { CheckboxPresentationProps } from "../Checkbox";
+import CheckboxPresentationPropsDefault from "../Checkbox/presentationProps";
 import { CheckboxGroupProps } from "../CheckboxGroup/CheckboxGroup";
 import { ClickableProps } from "../Clickable";
 import { DataTablePresentationProps } from "../DataTable";
@@ -18,9 +19,12 @@ import DrawerPresentationPropsDefault from "../Drawer/presentationProps";
 import { DynamicDropdownPresentationProps } from "../DynamicDropdown";
 import DynamicDropdownPresentationPropsDefault from "../DynamicDropdown/presentationProps";
 import { FileUploadPresentationProps } from "../FileUpload";
+import FileUploadPresentationPropsDefault from "../FileUpload/presentationProps";
 import { FormFieldPresentationProps, FormFieldPropsMock } from "../FormField";
 import { IconThemableProps } from "../Icon";
 import IconPresentationPropsDefault from "../Icon/presentationProps";
+import { LazyImagePresentationProps } from "../LazyImage";
+import LazyImagePresentationPropsDefault from "../LazyImage/presentationProps";
 import { LinkPresentationProps } from "../Link";
 import LinkPresentationPropsDefault from "../Link/presentationProps";
 import { LoadingSpinnerProps } from "../LoadingSpinner";
@@ -36,7 +40,8 @@ import { PanelMenuPresentationProps } from "../PanelMenu";
 import PanelMenuDefaultProps from "../PanelMenu/presentationProps";
 import { RadioProps } from "../Radio";
 import { RadioGroupProps } from "../RadioGroup";
-import { SelectProps } from "../Select";
+import { SelectProps, SelectPresentationProps } from "../Select";
+import SelectPresentationPropsDefault from "../Select/presentationProps";
 import { TabPresentationProps } from "../Tab";
 import { TabGroupPresentationProps } from "../TabGroup";
 import { TagPresentationProps } from "../Tag";
@@ -169,6 +174,7 @@ export interface ComponentThemeProps {
     fileUpload: { defaultProps?: FileUploadPresentationProps; };
     icon: { defaultProps?: IconThemableProps; };
     link: { defaultProps?: LinkPresentationProps };
+    lazyImage: { defaultProps?: LazyImagePresentationProps };
     loadingSpinner: { defaultProps?: LoadingSpinnerProps };
     menu: { defaultProps?: MenuPresentationProps };
     modal: {
@@ -186,7 +192,7 @@ export interface ComponentThemeProps {
         defaultProps?: FieldSetPresentationProps<RadioProps>;
         groupDefaultProps?: FieldSetGroupPresentationProps<RadioGroupProps>;
     };
-    select: { defaultProps?: FormFieldPresentationProps<SelectProps>; };
+    select: { defaultProps?: FormFieldPresentationProps<SelectProps> & SelectPresentationProps; };
     tab: {
         defaultProps?: TabPresentationProps
         groupDefaultProps?: TabGroupPresentationProps;
@@ -416,12 +422,13 @@ const baseTheme: BaseTheme = {
             buttonType: "solid",
         },
     },
-    checkbox: { defaultProps: {}, groupDefaultProps: {} },
+    checkbox: { defaultProps: CheckboxPresentationPropsDefault, groupDefaultProps: {} },
     clickable: { defaultProps: {} },
     dataTable: { defaultProps: DataTablePresentationPropsDefault },
     datePicker: { defaultProps: DatePickerPresentationPropsDefault },
     drawer: { defaultProps: DrawerPresentationPropsDefault },
     dynamicDropdown: { defaultProps: DynamicDropdownPresentationPropsDefault },
+    fileUpload: { defaultProps: FileUploadPresentationPropsDefault },
     formField: {
         defaultProps: {
             border: "rectangle",
@@ -437,11 +444,9 @@ const baseTheme: BaseTheme = {
             sizeVariant: "default",
         },
     },
-    fileUpload: {
-        defaultProps: {},
-    },
     icon: { defaultProps: IconPresentationPropsDefault },
     link: { defaultProps: LinkPresentationPropsDefault },
+    lazyImage: { defaultProps: LazyImagePresentationPropsDefault },
     loadingSpinner: { defaultProps: {} },
     menu: { defaultProps: MenuDefaultProps },
     modal: {
@@ -456,7 +461,7 @@ const baseTheme: BaseTheme = {
     pagination: { defaultProps: PaginationPresentationPropsDefault },
     panelMenu: { defaultProps: PanelMenuDefaultProps },
     radio: { defaultProps: {}, groupDefaultProps: {} },
-    select: { defaultProps: {} },
+    select: { defaultProps: SelectPresentationPropsDefault },
     tab: {
         defaultProps: {},
         groupDefaultProps: {},

@@ -242,6 +242,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                         <DefaultShippingAddress
                             currentShipTo={shipTo}
                             currentBillTo={billTo}
+                            isPickUp={account.defaultFulfillmentMethod === "PickUp"}
                         />
                     </GridItem>
                 </GridContainer>

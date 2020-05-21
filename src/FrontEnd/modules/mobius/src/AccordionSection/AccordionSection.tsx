@@ -4,7 +4,6 @@ import AccordionContext from "../Accordion/AccordionContext";
 import AccordionSectionHeader, { AccordionSectionHeaderProps } from "./AccordionSectionHeader";
 import AccordionSectionPanel, { AccordionSectionPanelProps } from "./AccordionSectionPanel";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import ChevronDown from "../Icons/ChevronDown";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import uniqueId from "../utilities/uniqueId";
@@ -38,10 +37,12 @@ export interface AccordionSectionComponentProps {
     uid?: string;
     /** The content to be displayed as the title of the section. */
     title: React.ReactNode;
+    /** Function that will be called when the component is toggled. */
+    onTogglePanel?: (expanded: boolean) => void;
 }
 
 export interface AccordionSectionProps extends AccordionSectionComponentProps,
-    Omit<AccordionSectionPresentationProps, "headerProps"> {}
+    Omit<AccordionSectionPresentationProps, "headerProps"> { }
 
 type State = Pick<AccordionSectionProps, "expanded" | "uid">;
 type Props = AccordionSectionProps & ThemeProps<BaseTheme>;
@@ -61,7 +62,11 @@ class AccordionSection extends React.Component<Props, State> {
     }
 
     togglePanel = () => {
-        this.setState(({ expanded }) => ({ expanded: !expanded }));
+        this.setState(({ expanded }) => ({ expanded: !expanded }), () => {
+            if (this.props.onTogglePanel) {
+                this.props.onTogglePanel(this.state.expanded ?? false);
+            }
+        });
     };
 
     render() {
@@ -99,7 +104,6 @@ class AccordionSection extends React.Component<Props, State> {
                             >
                                 {titleElement}
                                 <IconMemo
-                                    src={ChevronDown}
                                     role="presentation"
                                     className="toggle"
                                     {...spreadProps("toggleIconProps")}

@@ -25,6 +25,7 @@ const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderPro
         background: transparent;
         font-family: inherit;
         display: flex;
+        text-align: left;
         align-items: center;
         justify-content: space-between;
         cursor: pointer;

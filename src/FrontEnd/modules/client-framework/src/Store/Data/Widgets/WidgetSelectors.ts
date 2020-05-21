@@ -2,7 +2,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 
 export const getWidgetsByIdAndZone = (state: ApplicationState, id: string, zoneName: string): WidgetProps[] => {
-    const widgetIdsUnderParentId = state.UNSAFE_currentPage.widgetIdsByParentIdAndZone[id];
+    const widgetIdsUnderParentId = state.data.pages.widgetIdsByParentIdAndZone[id];
     if (typeof widgetIdsUnderParentId === "undefined") {
         return [];
     }
@@ -12,14 +12,14 @@ export const getWidgetsByIdAndZone = (state: ApplicationState, id: string, zoneN
         return [];
     }
 
-    return widgetIdsInZone.map(o => state.UNSAFE_currentPage.widgetsById[o]);
+    return widgetIdsInZone.map(o => state.data.pages.widgetsById[o]);
 };
 
 export const getWidgetsByPageId = (state: ApplicationState, pageId: string): WidgetProps[] => {
-    const widgetIdsByPageId = state.UNSAFE_currentPage.widgetIdsByPageId[pageId];
+    const widgetIdsByPageId = state.data.pages.widgetIdsByPageId[pageId];
     if (typeof widgetIdsByPageId === "undefined") {
         return [];
     }
 
-    return widgetIdsByPageId.map(o => state.UNSAFE_currentPage.widgetsById[o]);
+    return widgetIdsByPageId.map(o => state.data.pages.widgetsById[o]);
 };

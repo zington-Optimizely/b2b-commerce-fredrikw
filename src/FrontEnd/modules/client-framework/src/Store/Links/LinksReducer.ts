@@ -52,6 +52,9 @@ const reducer = {
         const loadCategories = (categories: CategoryModel[], parentCategoryId: string, currentDepth: number) => {
             UNSAFE_categoryDepthLoaded[parentCategoryId] = depth - currentDepth;
             if (categories.length === 0) { // an empty array indicates there are sub categories, but they weren't returned by the api
+                if (parentCategoryId === startCategoryId) { // ...unless the starting point is empty, which means there aren't any categories.
+                    parentCategoryIdToChildrenIds[parentCategoryId] = [];
+                }
                 return;
             }
             const ids: string[] = [];

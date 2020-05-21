@@ -98,6 +98,9 @@ export const productPriceStyles: ProductPriceStyles = {
                 }
             `,
         },
+        unitOfMeasureText: {
+            css: css` white-space: nowrap; `,
+        },
     },
     packWrapper: {
         css: css` margin-bottom: 8px; `,

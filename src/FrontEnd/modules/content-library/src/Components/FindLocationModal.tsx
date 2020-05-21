@@ -569,7 +569,7 @@ const FindLocationModal: React.FC<Props> = ({
                                     </GridContainer>
                                 </GridItem>
                                 <GridItem {...styles.searchResultSelectGridItem}>
-                                    <Button {...styles.searchResultSelectButton} onClick={generateWarehouseSelectClickHandler(warehouse)}
+                                    <Button {...styles.searchResultSelectButton} type="button" onClick={generateWarehouseSelectClickHandler(warehouse)}
                                         data-test-selector="findLocationModal_warehouseSelect"
                                     >{translate("Select")}</Button>
                                 </GridItem>

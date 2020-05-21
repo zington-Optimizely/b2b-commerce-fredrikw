@@ -10,8 +10,8 @@ import FormField, {
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
-import UploadCloud from "../Icons/UploadCloud";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import injectCss from "../utilities/injectCss";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
@@ -41,7 +41,7 @@ type FileUploadComponentProps = MobiusStyledComponentProps<"input", {
      * Unique id to be passed into the input element.
      * If not provided, a random id is assigned (an id is required for accessibility purposes).
      */
-    uid?: number;
+    uid?: string | number;
     /** React reference used to display and reference the file input element. */
     inputRef?: React.RefObject<AnyStyledComponent>;
     /** Label text to be displayed above the input. */
@@ -92,13 +92,13 @@ const UploadWrapper = styled.div`
     flex-direction: row;
 `;
 
-const uploadOmitProps = ["onFileChange", "size", "border", "label", "backgroundColor"] as (keyof Omit<FileUploadProps,  "buttonText" | "disabled" | "error" | "hideButton" | "hint" | "iconProps" | "uid" | "label" | "labelPosition" | "placeholder" | "required">)[];
-const formFieldOmitProps = ["domId", "onFileChange", "labelProps"] as (keyof Omit<FileUploadProps,  "buttonText" | "disabled" | "error" | "hideButton" | "hint" | "iconProps" | "uid" | "label" | "labelPosition" | "placeholder" | "required">)[];
+const uploadOmitProps = ["onFileChange", "size", "border", "label", "backgroundColor"] as (keyof Omit<FileUploadProps,  "buttonText" | "disabled" | "disable" | "error" | "hideButton" | "hint" | "iconProps" | "uid" | "label" | "labelPosition" | "placeholder" | "required">)[];
+const formFieldOmitProps = ["domId", "onFileChange", "labelProps"] as (keyof Omit<FileUploadProps,  "buttonText" | "disabled" | "disable" | "error" | "hideButton" | "hint" | "iconProps" | "uid" | "label" | "labelPosition" | "placeholder" | "required">)[];
 
 /**
  * An input that accepts a file type to upload. File upload must be handled via the onFileChange callback and/or form submission.
  */
-class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
+class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, FileUploadState> {
     static defaultProps = {
         buttonText: "Choose file",
     };
@@ -118,6 +118,7 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
             {(theme?: BaseTheme) => {
                 const {
                     buttonText,
+                    disable,
                     disabled,
                     error,
                     hideButton,
@@ -132,6 +133,9 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
                 } = this.props;
                 const { applyProp, spreadProps } = applyPropBuilder({ ...otherProps, theme, iconProps }, { component: "fileUpload", category: "formField" });
 
+                // Because disabled html attribute doesn't accept undefined
+                // eslint-disable-next-line no-unneeded-ternary
+                const isDisabled = (disable || disabled) ? true : false;
                 const { css: buttonCss, ...otherButtonProps } = spreadProps("buttonProps");
                 const labelProps = spreadProps("labelProps");
                 labelProps.forwardAs = "span";
@@ -153,9 +157,10 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
                                 ref={this.state.fileInput as any}
                                 aria-describedby={hasDescription ? descriptionId : undefined}
                                 aria-invalid={!!error}
-                                aria-required={!disabled && required}
+                                aria-required={!isDisabled && required}
                                 onChange={this.handleFiles}
-                                {...{ disabled, required }}
+                                data-id="functionalInput"
+                                {...{ disabled: isDisabled, required }}
                                 {...inputLabelObj}
                                 {...omitMultiple(otherProps, uploadOmitProps)}
                             />
@@ -168,9 +173,8 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
                                 data-id="visualInput"/>
                         </FileUploadStyle>
                         <FormFieldIcon
-                            src={UploadCloud}
                             size={sizeVariantValues[sizeVariant].icon}
-                            color={disabled ? "text.disabled" : "text.main"}
+                            color={isDisabled ? "text.disabled" : "text.main"}
                             {...spreadProps("iconProps")}
                         />
                     </>
@@ -190,7 +194,7 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
                             ? null : <Button
                                 sizeVariant={sizeVariantValues[sizeVariant].button}
                                 htmlFor={inputId}
-                                forwardAs={disabled ? "button" : "label"}
+                                forwardAs={isDisabled ? "button" : "label"}
                                 css={css`
                                     white-space: noWrap;
                                     display: inline-block;
@@ -199,7 +203,7 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
                                     margin: ${label && (labelPosition !== "left") ? sizeVariantValues[sizeVariant].labelHeight : 0}px 0 0 15px;
                                     ${buttonCss}
                                 `}
-                                disabled={disabled}
+                                disabled={isDisabled}
                                 {...otherButtonProps}
                             >
                                 {buttonText}
@@ -212,4 +216,4 @@ class FileUpload extends React.Component<FileUploadProps, FileUploadState> {
 }
 
 /** @component */
-export default FileUpload;
+export default withDisabler(FileUpload);

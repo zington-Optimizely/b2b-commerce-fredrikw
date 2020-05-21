@@ -2,12 +2,15 @@ import {
     BatchGetProductsApiParameter,
     batchGetProducts,
 } from "@insite/client-framework/Services/ProductService";
-import { ProductDto } from "@insite/client-framework/Types/ApiModels";
+import { ProductDto, RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
 import {
     HandlerWithResult,
     createHandlerChainRunner,
+    makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
 import { OrderUploadRowError, UploadedItem } from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadState";
+import loadRealTimeInventory, { LoadRealTimeInventoryParameter } from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 export const enum UploadError {
     None,
@@ -54,6 +57,30 @@ export const PopulateApiParameter: HandlerType = props => {
 
 export const RequestDataFromApi: HandlerType = async props => {
     props.result.apiResult = await batchGetProducts(props.result.apiParameter);
+};
+
+export const LoadRealTimeInventory: HandlerType = async ({ result: { apiResult: products }, dispatch, getState }) => {
+    if (!products.length) {
+        return;
+    }
+
+    const realTimeInventory = await makeHandlerChainAwaitable<LoadRealTimeInventoryParameter, RealTimeInventoryModel>(loadRealTimeInventory)({
+        parameter: { products: products as unknown as ProductModelExtended[] },
+    })(dispatch, getState);
+
+    realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
+        products.filter(p => p.id === inventory.productId).forEach(product => {
+            product.qtyOnHand = inventory.qtyOnHand;
+
+            const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure === product.unitOfMeasure);
+            product.availability = inventoryAvailability?.availability || { messageType: 0, message: "", requiresRealTimeInventory: false };
+
+            product.productUnitOfMeasures?.forEach(productUoM => {
+                const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure === productUoM.unitOfMeasure);
+                productUoM.availability = inventoryAvailability?.availability || { messageType: 0, message: "", requiresRealTimeInventory: false };
+            });
+        });
+    });
 };
 
 export const ProcessProducts: HandlerType = props => {
@@ -204,6 +231,7 @@ export const chain = [
     InitializeResult,
     PopulateApiParameter,
     RequestDataFromApi,
+    LoadRealTimeInventory,
     ProcessProducts,
     DispatchCompleteBatchLoadProducts,
 ];

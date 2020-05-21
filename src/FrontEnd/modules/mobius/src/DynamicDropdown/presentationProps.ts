@@ -8,6 +8,7 @@ const DynamicDropdownPresentationPropsDefault: ComponentThemeProps["dynamicDropd
             color: ${getColor("text.disabled")};
         ` as any,
     },
+    iconProps: { src: "ChevronDown" },
 };
 
 export default DynamicDropdownPresentationPropsDefault;

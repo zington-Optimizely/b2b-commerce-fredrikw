@@ -87,7 +87,8 @@ export interface FormFieldPresentationProps<T> extends FormFieldPresentationProp
 
 export type FormFieldProps = FormFieldPresentationProps<FormFieldComponentProps> & FormFieldComponentProps & ThemeProps<BaseTheme>;
 
-export const FormFieldIcon = styled(Icon)<IconPresentationProps>``;
+// below "as any" necessary to prevent deep type instantiation errors on `formStyles`
+export const FormFieldIcon = styled(Icon)<IconPresentationProps>`` as any;
 export const FormFieldClickable = styled(Clickable)<any>``;
 
 /* eslint-disable indent */

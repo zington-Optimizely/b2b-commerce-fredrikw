@@ -4,7 +4,7 @@ import {
     createContextualIds,
     getContextualId,
     prepareFields,
-} from "@insite/client-framework/Store/UNSAFE_CurrentPage/ReducerHelpers/PrepareFields";
+} from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import { setDefaultFieldValues } from "@insite/shell/Services/PageCreation";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";

@@ -5,9 +5,7 @@ import React from 'react';
 import Button from '../Button';
 import baseTheme from '../globals/baseTheme';
 import Icon from '../Icon';
-import AlertCircle from '../Icons/AlertCircle';
 import Check from '../Icons/Check';
-import X from '../Icons/X';
 import ThemeProvider from '../ThemeProvider';
 import Toast from './Toast';
 import Toaster from './Toaster';
@@ -91,15 +89,17 @@ describe('Toast', () => {
         describe('toast', () => {
             test('renders expected icon', () => {
                 const root = wrapper();
-                root.find(Button).simulate('click');
-                expect(root.find(Icon)).toHaveLength(2);
-                expect(root.find(Check)).toHaveLength(1);
+                setTimeout(() => {
+                    root.find(Button).simulate('click');
+                    expect(root.find(Icon)).toHaveLength(2);
+                    expect(root.find(Check)).toHaveLength(1);
+                }, 200);
             });
             test('renders button', () => {
                 const root = wrapper();
                 root.find(Button).simulate('click');
                 expect(root.find(Button)).toHaveLength(2);
-                expect(root.find(X)).toHaveLength(1);
+                expect(root.find("[src='X']")).toHaveLength(1);
             });
             test('renders body when passed with no children', () => {
                 const root = wrapper();
@@ -173,11 +173,11 @@ describe('Toast', () => {
             /* eslint-enable */
             const root = wrapper();
             root.find(Button).simulate('click');
-            expect(root.find(Check)).toHaveLength(3);
-            expect(root.find(AlertCircle)).toHaveLength(0);
+            expect(root.find("[src='Check']")).toHaveLength(3);
+            expect(root.find("[src='AlertCircle']")).toHaveLength(0);
             setTimeout(() => {
-                expect(root.find(Check)).toHaveLength(2);
-                expect(root.find(AlertCircle)).toHaveLength(1);
+                expect(root.find("[src='Check']")).toHaveLength(2);
+                expect(root.find("[src='AlertCircle']")).toHaveLength(1);
             }, 200);
         });
     });
@@ -228,20 +228,26 @@ describe('Toast', () => {
         describe('iconProps', () => {
             test('instance with no theme applies instance', () => {
                 children = <Toast {...defaultToastProps} iconProps={{ size: 35 }} in={true} />;
-                expect(wrapper().find(Icon).first()).toHaveStyleRule('height', '35px');
+                setTimeout(() => {
+                    expect(wrapper().find(Icon).first()).toHaveStyleRule('height', '35px');
+                }, 200);
             });
             test('theme with no instance applies theme', () => {
                 children = <Toast {...defaultToastProps} in={true} />;
                 theme = themeGenerator({ iconProps: { color: 'orange' } });
-                expect(wrapper().find(Icon).first()).toHaveStyleRule('color', 'orange');
+                setTimeout(() => {
+                    expect(wrapper().find(Icon).first()).toHaveStyleRule('color', 'orange');
+                }, 200);
             });
             test('theme and instance applies instance', () => {
                 children = <Toast {...defaultToastProps} iconProps={{ color: 'blue', size: 80 }} in={true} />;
                 theme = themeGenerator({ iconProps: { size: 52 } });
                 const root = wrapper();
-                expect(root.find(Icon).first()).toHaveStyleRule('height', '80px');
-                expect(root.find(Icon).first()).not.toHaveStyleRule('height', '52px');
-                expect(root.find(Icon).first()).toHaveStyleRule('color', 'blue');
+                setTimeout(() => {
+                    expect(root.find(Icon).first()).toHaveStyleRule('height', '80px');
+                    expect(root.find(Icon).first()).not.toHaveStyleRule('height', '52px');
+                    expect(root.find(Icon).first()).toHaveStyleRule('color', 'blue');
+                }, 200);
             });
         });
         describe('bodyTypographyProps', () => {

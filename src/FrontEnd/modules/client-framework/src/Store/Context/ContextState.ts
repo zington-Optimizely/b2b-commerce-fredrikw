@@ -12,4 +12,7 @@ export default interface ContextState {
     areSettingsLoaded: boolean;
     tokenExConfigs: Dictionary<TokenExConfig>;
     isSigningIn: boolean,
+    selectedBrandPath?: string;
+    selectedProductPath?: string;
+    selectedCategoryPath?: string;
 }

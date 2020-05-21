@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
+import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
@@ -12,7 +12,6 @@ import { css } from "styled-components";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import clearAllProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearAllProductFilters";
-import setNavRef from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetNavRef";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { formatPriceRangeFacet } from "@insite/content-library/Widgets/ProductList/ProductListPriceFilters";
 import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
@@ -45,7 +44,6 @@ const mapStateToProps = ({ pages: { productList: { productsState, productFilters
 const mapDispatchToProps = {
     removeProductFilters,
     clearAllProductFilters,
-    setNavRef,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -60,8 +58,8 @@ export interface ProductListFilterListStyles {
 }
 
 const styles: ProductListFilterListStyles = {
-    wrapper: { css: css`
-            padding-bottom: 20px;
+    wrapper: {
+        css: css`
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -76,6 +74,9 @@ const styles: ProductListFilterListStyles = {
             top: -65px;
             width: 100%;
         `,
+    },
+    clearAllLink: {
+        css: css` padding-bottom: 20px; `,
     },
 };
 
@@ -98,18 +99,8 @@ const ProductListFilterList: FC<Props> = (
         selectedCategoryId,
         removeProductFilters,
         clearAllProductFilters,
-        setNavRef,
         session,
     }) => {
-    const afterFilters = React.createRef<HTMLSpanElement>();
-
-    React.useEffect(() => {
-        setNavRef({ navRef: afterFilters });
-
-        return () => {
-            setNavRef({ navRef: undefined });
-        };
-    }, []);
 
     if (!loaded) {
         return null;
@@ -145,6 +136,7 @@ const ProductListFilterList: FC<Props> = (
 
     const anyActiveFilters
         = searchWithinQueries?.length
+        || stockedItemsOnly
         || selectedBrandIds?.length
         || selectedProductLineIds?.length
         || selectedPriceFilters?.length
@@ -155,7 +147,11 @@ const ProductListFilterList: FC<Props> = (
         <StyledWrapper {...styles.wrapper}>
             <Typography {...styles.filterText} data-test-selector="productListFilterList">{translate("Filter")}</Typography>
             <StyledWrapper {...styles.skipFiltersButtonWrapper}>
-                <SkipNav text={translate("Skip to Results")} extendedStyles={styles.skipFiltersButton} destination={afterFilters}/>
+                <ProductListPageDataContext.Consumer>
+                    {({ ref }) => {
+                        return (ref ? <SkipNav text={translate("Skip to Results")} extendedStyles={styles.skipFiltersButton} destination={ref}/> : undefined);
+                    }}
+                </ProductListPageDataContext.Consumer>
             </StyledWrapper>
             {stockedItemsOnly
                 && <Tag
@@ -225,7 +221,7 @@ const ProductListFilterList: FC<Props> = (
                 }
             )}
             {anyActiveFilters
-                && <Link {...styles.clearAllLink} onClick={clearAllProductFilters} data-test-selector="productListClearAll">{translate("Clear All")}</Link>
+                && <Link {...styles.clearAllLink} onClick={() => clearAllProductFilters()} data-test-selector="productListClearAll">{translate("Clear All")}</Link>
             }
         </StyledWrapper>
     );

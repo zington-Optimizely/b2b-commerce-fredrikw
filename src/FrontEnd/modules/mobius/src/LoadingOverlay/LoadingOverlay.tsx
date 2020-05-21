@@ -6,6 +6,8 @@ import VisuallyHidden from "../VisuallyHidden";
 import getProp from "../utilities/getProp";
 import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import DisablerContext from "../utilities/DisablerContext";
+import safeColor from "../utilities/safeColor";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type LoadingOverlayProps = MobiusStyledComponentProps<"div", {
@@ -24,7 +26,7 @@ const LoadingOverlayStyle = styled.div<Pick<LoadingOverlayProps, "css">>`
     & > div:first-child {
         height: 100%;
         width: 100%;
-        background: rgba(255, 255, 255, 0.6);
+        background: ${props => safeColor(props.theme.colors.common.background).rgb().alpha(0.6).string()};
         will-change: opacity;
         opacity: 0;
         transition: opacity 0.2s ease-in-out;
@@ -37,16 +39,17 @@ const LoadingOverlayStyle = styled.div<Pick<LoadingOverlayProps, "css">>`
             position: fixed;
             display: none;
         }
-        & > ${LoadingSpinnerStyle} {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            margin: auto;
-        }
     }
     ${injectCss}
+`;
+
+const SpinnerWrapper = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: 50%;
+    bottom: 50%;
+    margin: auto;
 `;
 
 /**
@@ -58,9 +61,11 @@ const LoadingOverlay: React.FC<LoadingOverlayProps & ThemeProps<BaseTheme>> = ({
     <LoadingOverlayStyle css={css} {...otherProps}>
         <div data-loading={loading} data-test-selector="loadingOverlaySpinner" role="alert" aria-live="assertive">
             <VisuallyHidden>{loading ? theme.translate("loading content") : theme.translate("content loaded")}</VisuallyHidden>
-            <LoadingSpinner {...spinnerProps} />
+            <SpinnerWrapper><LoadingSpinner {...spinnerProps} /></SpinnerWrapper>
         </div>
-        {children}
+        <DisablerContext.Provider value={{ disable: loading }}>
+            {children}
+        </DisablerContext.Provider>
     </LoadingOverlayStyle>
 );
 

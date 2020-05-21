@@ -22,6 +22,7 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { History } from "history";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch => {
     addTask(async function () {
@@ -162,7 +163,7 @@ export const deletePage = (nodeId: string, history: History): ShellThunkAction =
 
         dispatch(loadTreeNodes());
 
-        if (nodeId === getState().currentPage.page.nodeId) {
+        if (nodeId === getCurrentPageForShell(getState()).nodeId) {
             history.push(`/ContentAdmin/Page/${getState().shellContext.homePageId}`);
         }
     }());

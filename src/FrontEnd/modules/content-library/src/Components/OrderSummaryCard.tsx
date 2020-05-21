@@ -50,9 +50,9 @@ const OrderSummaryCard: FC<Props> = ({
     language,
     order,
     orderSettings,
-    ...otherProps
+    extendedStyles,
 }) => {
-    const [styles] = React.useState(() => mergeToNew(orderSummaryCardStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(orderSummaryCardStyles, extendedStyles));
 
     const orderDateDisplay = getLocalizedDateTime({
         dateTime: order.orderDate,

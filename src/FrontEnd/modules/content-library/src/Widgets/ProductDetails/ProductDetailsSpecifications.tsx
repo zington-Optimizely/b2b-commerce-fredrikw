@@ -69,13 +69,13 @@ const styles: ProductDetailsSpecificationsStyles = {
 export const specificationsStyles = styles;
 
 const ProductDetailsSpecifications: React.FC<OwnProps> = ({
-                                                              product,
-                                                              documents,
-                                                              attributeTypes,
-                                                              specifications,
-                                                              fields: { showDocuments, showAttributes },
-                                                          }) => {
-    const renderingDocuments = showDocuments && documents?.length;
+    product,
+    documents,
+    attributeTypes,
+    specifications,
+    fields: { showDocuments, showAttributes },
+}) => {
+    const renderingDocuments = showDocuments && documents && documents.length > 0;
     const renderingAttributes = showAttributes && (product.brand || attributeTypes);
     if (!renderingDocuments && !renderingAttributes && (!specifications?.length)) {
         return null;

@@ -15,6 +15,9 @@ const reducer = {
         draft.isOpen = action.isOpen;
         draft.products = action.products;
     },
+    "CurrentPage/LoadPageComplete": (draft: Draft<AddToListModalState>, action: { }) => {
+        draft.isOpen = false;
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

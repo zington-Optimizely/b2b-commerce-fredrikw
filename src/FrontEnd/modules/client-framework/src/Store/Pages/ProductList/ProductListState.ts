@@ -21,7 +21,6 @@ export interface ProductFilters extends HasPagingParameters {
 }
 
 export type ProductListViewType = "List" | "Grid";
-export type ProductListNavRefState = React.RefObject<any> | undefined;
 
 export default interface ProductListState {
     productsState: LoadedState<ProductCollectionModelExtended>
@@ -31,5 +30,4 @@ export default interface ProductListState {
     filterQuery?: string;
     isSearchPage?: boolean;
     view?: ProductListViewType;
-    navRef?: ProductListNavRefState;
 }

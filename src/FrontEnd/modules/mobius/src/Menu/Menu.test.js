@@ -77,6 +77,6 @@ describe('Menu', () => {
         props = createProps({ maxDepth: 2 });
         const root = wrapper();
         expect(root.find(Icon)).toHaveLength(1);
-        expect(root.find(ChevronRight)).toHaveLength(1);
+        expect(root.find("[src='ChevronRight']")).toHaveLength(1);
     });
 });

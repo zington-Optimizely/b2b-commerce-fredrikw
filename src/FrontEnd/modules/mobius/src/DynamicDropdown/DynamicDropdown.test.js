@@ -3,13 +3,13 @@ import React from 'react';
 import { mount } from 'enzyme';
 import ThemeProvider from '../ThemeProvider';
 import DynamicDropdown, { Option } from './DynamicDropdown';
-import ChevronDown from '../Icons/ChevronDown';
 import Icon from '../Icon';
 import Link from '../Link';
 import LoadingSpinner from '../LoadingSpinner';
 import Typography from '../Typography';
 import FormField from '../FormField';
 import { colors } from './optionsLists';
+import DisablerContext from '../utilities/DisablerContext';
 
 const generateOptions = valsArr => valsArr.map(val => ({ optionText: val }));
 const colorOptions = generateOptions(colors);
@@ -28,11 +28,14 @@ const validateOptions = (root, options) => {
 describe('DynamicDropdown', () => {
     let props = { options: colorOptions };
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <DynamicDropdown {...props} />
+                    <DisablerContext.Provider value={disablerValue}>
+                        <DynamicDropdown {...props} />
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -47,7 +50,7 @@ describe('DynamicDropdown', () => {
         test('displays a carat icon', () => {
             const root = wrapper();
             expect(root.find(Icon)).toHaveLength(1);
-            expect(root.find(ChevronDown)).toHaveLength(1);
+            expect(root.find(Icon).find("[src='ChevronDown']")).toHaveLength(1);
         });
         test('renders all options as passed', () => {
             const root = wrapper();
@@ -106,6 +109,23 @@ describe('DynamicDropdown', () => {
             const root = wrapper();
             expect(root.find('input').prop('placeholder')).toBe('');
             expect(root.find(Typography).getDOMNode().innerHTML).toBe('indigo');
+        });
+        describe('is appropriately disabled', () => {
+            test("if DisablerContext is true", () => {
+                disablerValue = { disable: true };
+                props = { options: colorOptions, selected: 'indigo' };
+                expect(wrapper().find("input").prop("disabled")).toBe(true);
+            });
+            test("if DisablerContext is false and disabled is true", () => {
+                disablerValue = { disable: false };
+                props = { options: colorOptions, selected: 'indigo', disabled: true };
+                expect(wrapper().find("input").prop("disabled")).toBe(true);
+            });
+            test("if DisablerContext is false and disabled is false", () => {
+                disablerValue = { disable: false };
+                props = { options: colorOptions, selected: 'indigo' };
+                expect(wrapper().find("input").prop("disabled")).toBe(false);
+            });
         });
         // test('displayed value changes if props change', () => {
         // });

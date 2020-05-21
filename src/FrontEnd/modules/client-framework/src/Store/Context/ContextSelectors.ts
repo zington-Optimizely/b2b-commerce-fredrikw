@@ -13,15 +13,15 @@ export function getSettingsCollection(state: ApplicationState) {
 }
 
 export function getSelectedCategoryPath(state: ApplicationState) {
-    return state.UNSAFE_currentPage.selectedCategoryPath;
+    return state.context.selectedCategoryPath;
 }
 
 export function getSelectedProductPath(state: ApplicationState) {
-    return state.UNSAFE_currentPage.selectedProductPath;
+    return state.context.selectedProductPath;
 }
 
 export function getSelectedBrandPath(state: ApplicationState) {
-    return state.UNSAFE_currentPage.selectedBrandPath;
+    return state.context.selectedBrandPath;
 }
 
 export const getDefaultPageSize = (state: ApplicationState) => state.context.settings.settingsCollection.websiteSettings.defaultPageSize ?? -1;

@@ -1,9 +1,13 @@
 Antlr3.Runtime
+BouncyCastle.Crypto
 Elasticsearch.Net
 EntityFramework
 EntityFramework.SqlServer
 FluentValidation
 Microsoft.AspNet.Identity.Core
+Microsoft.Azure.KeyVault.Core
+Microsoft.Azure.Storage.Blob
+Microsoft.Azure.Storage.Common
 Microsoft.CSharp
 Microsoft.OData.Core
 Microsoft.OData.Edm
@@ -18,6 +22,7 @@ mscorlib
 NEST
 Newtonsoft.Json
 Owin
+PgpCore
 'protobuf-net'
 Renci.SshNet
 Schema.NET

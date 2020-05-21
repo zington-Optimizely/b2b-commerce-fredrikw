@@ -43,6 +43,7 @@ interface ButtonMapper {
     [key: string]: {
         button: any,
         clickable: any,
+        showButtonOnTablet?: boolean,
     }
 }
 
@@ -80,8 +81,11 @@ const mapDispatchToProps = {
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 export interface OrderDetailsButtonSetStyles {
+    buttonsWrapper?: InjectableCss;
     buttonHidden?: HiddenProps;
     buttonGridContainer?: GridContainerProps;
+    tabletButtonHidden?: HiddenProps;
+    tabletMenuHidden?: HiddenProps;
     menuHidden?: HiddenProps;
     overflowMenu?: OverflowMenuPresentationProps;
     shareEntityButtonStyles?: ShareEntityButtonStyles;
@@ -99,9 +103,16 @@ export interface OrderDetailsButtonSetStyles {
 }
 
 const styles: OrderDetailsButtonSetStyles = {
+    buttonsWrapper: {
+        css: css`
+            display: flex;
+            justify-content: flex-end;
+            clear: both;
+        `,
+    },
     shareEntityButtonStyles: {
         button: {
-            color: "primary",
+            variant: "tertiary",
         },
     },
     buttonHidden: {
@@ -112,8 +123,16 @@ const styles: OrderDetailsButtonSetStyles = {
             justify-content: flex-end;
         `,
     },
-    menuHidden: {
+    tabletButtonHidden: {
+        below: "md",
         above: "md",
+    },
+    tabletMenuHidden: {
+        below: "md",
+        above: "md",
+    },
+    menuHidden: {
+        above: "sm",
         css: css`
             width: 100%;
             display: flex;
@@ -123,11 +142,20 @@ const styles: OrderDetailsButtonSetStyles = {
     buttonWrapper: {
         css: css` margin-left: 20px; `,
     },
+    cancelButton: {
+        variant: "secondary",
+    },
+    printButton: {
+        variant: "tertiary",
+    },
     reorderButton: {
         css: css`
             display: flex;
             align-items: center;
         `,
+    },
+    rmaButton: {
+        variant: "secondary",
     },
     spinner: {
         size: 22,
@@ -200,7 +228,6 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
         };
     }
 
-
     if (order.canAddToCart && canReorderItems) {
         buttonList[buttons.reorder] = {
             button: <>
@@ -219,6 +246,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                     && <LoadingSpinner {...styles.reorderClickableSpinner} />
                 }
             </>,
+            showButtonOnTablet: true,
         };
     }
 
@@ -242,7 +270,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     const buttonsToRender = fields.buttonsOrder.map(button => buttonList[button.fields.name]).filter(button => button);
 
     return (
-        <>
+        <StyledWrapper {...styles.buttonsWrapper}>
             <Hidden {...styles.buttonHidden}>
                 {buttonsToRender.map((button, index) =>
                     // eslint-disable-next-line react/no-array-index-key
@@ -250,6 +278,24 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                         {button.button}
                     </StyledWrapper>)
                 }
+            </Hidden>
+            <Hidden {...styles.tabletButtonHidden}>
+                {buttonsToRender.filter(o => o.showButtonOnTablet).map((button, index) =>
+                    // eslint-disable-next-line react/no-array-index-key
+                    <StyledWrapper {...styles.buttonWrapper} key={index}>
+                        {button.button}
+                    </StyledWrapper>)
+                }
+            </Hidden>
+            <Hidden {...styles.tabletMenuHidden}>
+                <OverflowMenu {...styles.overflowMenu}>
+                    {buttonsToRender.filter(o => !o.showButtonOnTablet).map((button, index) =>
+                        // eslint-disable-next-line react/no-array-index-key
+                        <div key={index}>
+                            {button.clickable}
+                        </div>)
+                    }
+                </OverflowMenu>
             </Hidden>
             <Hidden {...styles.menuHidden}>
                 <OverflowMenu {...styles.overflowMenu}>
@@ -261,7 +307,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                     }
                 </OverflowMenu>
             </Hidden>
-        </>
+        </StyledWrapper>
     );
 };
 

@@ -46,7 +46,7 @@ const ShippingAddressInfoDisplay = ({
         <GridContainer {...styles.container}>
             <GridItem {...styles.headingGridItem}>
                 <Typography {...styles.heading}>{translate("Shipping Address")}</Typography>
-                <Link {...styles.editLink} onClick={onEdit}>
+                <Link {...styles.editLink} onClick={onEdit} data-test-selector="checkoutReviewAndSubmit_changeShipping">
                     {translate("Edit")}
                 </Link>
             </GridItem>

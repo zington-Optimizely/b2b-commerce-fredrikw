@@ -26,7 +26,7 @@ import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import { generateSiteIfNeeded } from "@insite/server-framework/SiteGeneration";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
-import { getTheme } from "@insite/client-framework/Services/ContentService";
+import { getTheme, RetrievePageResult, getPageUrlByType } from "@insite/client-framework/Services/ContentService";
 import logger from "@insite/client-framework/Logger";
 import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
@@ -37,6 +37,7 @@ import { setResolver, processSiteMessages } from "@insite/client-framework/SiteM
 import { getSiteMessages } from "@insite/client-framework/Services/WebsiteService";
 import translate from "@insite/client-framework/Translate";
 import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
+import getPageMetadataProperties from "@insite/client-framework/Common/Utilities/getPageMetadataProperties";
 
 setResolver(serverSiteMessageResolver);
 
@@ -100,6 +101,11 @@ const diagnostics = async (request: Request, response: Response) => {
     });
 };
 
+const redirectTo = async ({ originalUrl, path }: Request, response: Response) => {
+    const destination = await getPageUrlByType(path.substr("/RedirectTo/".length)) || "/";
+    response.redirect(destination + originalUrl.substring(path.length));
+};
+
 export default function server(request: Request, response: Response, domain: any) {
     setDomain(domain);
     setSessionCookies(request.headers.cookie);
@@ -113,10 +119,17 @@ export default function server(request: Request, response: Response, domain: any
             return diagnostics(request, response);
     }
 
-    const endpoint = request.path.split("/")[1]; // '/blah'.split('/') = ['', 'blah']
+    let endpoint = request.path.split("/")[1]; // '/blah'.split('/') = ['', 'blah']
+    if (endpoint.match(/^sitemap.*\.xml/i)) {
+        endpoint = "sitemap";
+    }
     const relayMethod = Relay[endpoint.toLowerCase()];
     if (relayMethod) {
         return relayMethod(request, response);
+    }
+
+    if (request.path.toLowerCase().startsWith("/redirectto/")) {
+        return redirectTo(request, response);
     }
 
     return pageRenderer(request, response);
@@ -270,12 +283,54 @@ async function pageRenderer(request: Request, response: Response) {
 
     const storefrontFont = <link href={theme.typography.fontFamilyImportUrl} rel="stylesheet" />;
 
+    const state = store.getState();
+    const websiteName = isShellRequest ? "" : (state as any).context.website.name;
+
+    let metaDescription: string;
+    let metaKeywords: string;
+    let openGraphImage = "";
+    let openGraphTitle: string;
+    let openGraphUrl = "";
+    let canonicalPath: string | undefined;
+    let title = websiteName;
+
+    if (!isShellRequest && pageByUrlResult?.page) {
+        const { page: { fields, type } } = pageByUrlResult;
+        const pages = (state as any).pages;
+        ({
+            metaDescription,
+            metaKeywords,
+            openGraphImage,
+            openGraphTitle,
+            openGraphUrl,
+            canonicalPath,
+            title,
+        } = getPageMetadataProperties(
+            type,
+            pages,
+            websiteName,
+            fields,
+        ));
+    }
+
+    const currentUrl = `https://${request.headers.host}${canonicalPath || request.path}`;
+    const domainUri = `https://${request.headers.host}`;
+    openGraphImage = !openGraphImage ? "" : (openGraphImage.toLowerCase().startsWith("http") ? openGraphImage
+        : `${domainUri}${openGraphImage.startsWith("/") ? openGraphImage : `/${openGraphImage}`}`);
+    openGraphUrl = !openGraphUrl ? currentUrl : (openGraphUrl.toLowerCase().startsWith("http") ? openGraphUrl
+        : `${domainUri}${openGraphUrl.startsWith("/") ? openGraphUrl : `/${openGraphUrl}`}`);
+
     const app = (rawHtml: string) => (
         <html lang={languageCode}>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
-                <title>{isShellRequest ? "Content Administration" : "InsiteCommerce"}</title>
+                <title>{isShellRequest ? "Content Administration" : title}</title>
+                <meta id="ogTitle" property="og:title" content={openGraphTitle || title} />
+                <meta id="ogImage" property="og:image" content={openGraphImage} />
+                <meta id="ogUrl" property="og:url" content={openGraphUrl} />
+                <meta name="keywords" content={metaKeywords} />
+                <meta name="description" content={metaDescription} />
                 <base href="/" />
                 {shellFont}
                 {storefrontFont}
@@ -289,7 +344,7 @@ async function pageRenderer(request: Request, response: Response) {
                 <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
                 {(!isShellRequest && <script dangerouslySetInnerHTML={{ __html: `var siteMessages = ${JSON.stringify(siteMessages)};` }}></script>)}
                 {(renderStorefrontServerSide
-                    && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(store.getState()).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
+                    && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(state).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
                 )}
                 <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
                 {/* eslint-enable react/no-danger */}
@@ -305,6 +360,8 @@ async function pageRenderer(request: Request, response: Response) {
     response.send(renderedApp);
 }
 
+let pageByUrlResult: RetrievePageResult;
+
 async function loadPageAndSetInitialCookies(request: Request, response: Response) {
     let pageByUrlResponse;
     try {
@@ -316,7 +373,7 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
     }
 
     if (pageByUrlResponse) {
-        const pageByUrlResult = await pageByUrlResponse.json();
+        pageByUrlResult = await pageByUrlResponse.json();
         setInitialPage(pageByUrlResult, request.url);
 
         const existingCookies = request.cookies;

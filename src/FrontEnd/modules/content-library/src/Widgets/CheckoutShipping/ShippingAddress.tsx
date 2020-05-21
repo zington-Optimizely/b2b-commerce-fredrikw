@@ -139,7 +139,8 @@ const ShippingAddress: FC<Props> = ({
     shippingAddressFormState,
     showUseBillingAddress,
     isShippingAddressUpdateRequired,
-    ...otherProps
+    countries,
+    addressFieldDisplayCollection,
 }) => {
     const [isCustomerSelectorModalOpen, setIsCustomerSelectorModalOpen] = useState(false);
     const [isCreateNewAddressModalOpen, setIsCreateNewAddressModalOpen] = useState(false);
@@ -285,7 +286,7 @@ const ShippingAddress: FC<Props> = ({
                         value={shippingAddressFormState ? (shippingAddressFormState.address.oneTimeAddress ? "onetime" : (shippingAddressFormState.address.id === currentBillToId ? "billing" : "")) : ""}
                         onChangeHandler={addressTypeChangeHandler}
                     >
-                        <Radio value="onetime">{translate("Ship to One-Time Address")}</Radio>
+                        <Radio value="onetime" data-test-selector="checkoutShipping_useOneTimeAddress">{translate("Ship to One-Time Address")}</Radio>
                         <Radio value="billing">{translate("Use Billing Address")}</Radio>
                     </RadioGroup>
                 </GridItem>
@@ -298,7 +299,6 @@ const ShippingAddress: FC<Props> = ({
                                     onChange={oneTimeAddressChangeHandler}
                                     checked={useOneTimeAddress}
                                     disabled={currentUserIsGuest}
-                                    data-test-selector="checkoutShipping_useOneTimeAddress"
                                 >
                                     {translate("Ship to One-Time Address")}
                                 </Checkbox>
@@ -324,8 +324,8 @@ const ShippingAddress: FC<Props> = ({
             <GridItem {...styles.addressDisplayAndFormGridItem}>
                 {(useOneTimeAddress || currentUserIsGuest || isShippingAddressUpdateRequired)
                     && <ShippingAddressForm
-                        countries={otherProps.countries}
-                        fieldDisplay={otherProps.addressFieldDisplayCollection}
+                        countries={countries}
+                        fieldDisplay={addressFieldDisplayCollection}
                     />
                 }
                 {!useOneTimeAddress && !currentUserIsGuest && !isShippingAddressUpdateRequired

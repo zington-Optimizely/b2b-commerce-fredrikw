@@ -6,18 +6,22 @@ import Button from './Button';
 import Typography from '../Typography';
 import Icon from '../Icon';
 import CreditCard from '../Icons/CreditCard';
+import DisablerContext from '../utilities/DisablerContext';
 
 describe('Button', () => {
     let props;
     let buttonText;
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <Button {...props}>
-                        {buttonText}
-                    </Button>
+                    <DisablerContext.Provider value={disablerValue}>
+                        <Button {...props}>
+                            {buttonText}
+                        </Button>
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -98,6 +102,25 @@ describe('Button', () => {
             props = { shape: 'pill', sizeVariant: 'small' };
             const button = wrapper().find('button');
             expect(button).toHaveStyleRule('border-radius', '15px');
+        });
+    });
+
+    describe('is appropriately disabled', () => {
+        test("if DisablerContext is true", () => {
+            buttonText = 'hi there';
+            disablerValue = { disable: true };
+            expect(wrapper().find("button").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is true", () => {
+            buttonText = 'hi there';
+            props = { disabled: true };
+            disablerValue = { disable: false };
+            expect(wrapper().find("button").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is false", () => {
+            buttonText = 'hi there';
+            disablerValue = { disable: false };
+            expect(wrapper().find("button").prop("disabled")).toBe(false);
         });
     });
 });

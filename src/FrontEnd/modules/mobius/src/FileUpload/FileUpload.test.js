@@ -4,15 +4,19 @@ import { mount } from 'enzyme';
 import ThemeProvider from '../ThemeProvider';
 import FileUpload from './FileUpload';
 import Icon from '../Icon';
+import DisablerContext from '../utilities/DisablerContext';
 
 describe('FileUpload', () => {
     let props;
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <FileUpload {...props} />
+                    <DisablerContext.Provider value={disablerValue}>
+                        <FileUpload {...props} />
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -59,6 +63,28 @@ describe('FileUpload', () => {
             const root = wrapper();
             root.find('input').first().simulate('change', { target: { files: [file] } });
             expect(root.find('input[data-id="visualInput"]').prop('value')).toEqual('chucknorris.png');
+        });
+        describe('is appropriately disabled', () => {
+            test("if DisablerContext is true", () => {
+                disablerValue = { disable: true };
+                const root = wrapper();
+                expect(root.find("input[data-id='functionalInput']").prop("disabled")).toBe(true);
+                expect(root.find("button").prop("disabled")).toBe(true);
+            });
+            test("if DisablerContext is false and disabled is true", () => {
+                props = { disabled: true };
+                disablerValue = { disable: false };
+                const root = wrapper();
+                expect(root.find("input[data-id='functionalInput']").prop("disabled")).toBe(true);
+                expect(root.find("button").prop("disabled")).toBe(true);
+            });
+            test("if DisablerContext is false and disabled is false", () => {
+                disablerValue = { disable: false };
+                const root = wrapper();
+                expect(root.find("input[data-id='functionalInput']").prop("disabled")).toBe(false);
+                // display button is a label when the form is disabled
+                expect(root.find("button").exists()).toBe(false);
+            });
         });
     });
 });

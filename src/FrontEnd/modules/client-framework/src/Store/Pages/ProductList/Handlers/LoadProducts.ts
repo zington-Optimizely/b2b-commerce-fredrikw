@@ -191,8 +191,8 @@ export const DispatchCompleteLoadProducts: HandlerType = props => {
     });
 };
 
-export const LoadRealTimePrices: HandlerType = props => {
-    if (props.apiResult.productCollection?.products) {
+export const LoadRealTimePrices : HandlerType = props => {
+    if (props.apiResult.productCollection?.products?.length) {
         props.dispatch(loadRealTimePricing({
             parameter: { products: props.apiResult.productCollection.products },
             onSuccess: realTimePricing => {
@@ -210,8 +210,8 @@ export const LoadRealTimePrices: HandlerType = props => {
     }
 };
 
-export const LoadRealTimeInventory: HandlerType = props => {
-    if (props.apiResult.productCollection?.products) {
+export const LoadRealTimeInventory : HandlerType = props => {
+    if (props.apiResult.productCollection?.products?.length) {
         props.dispatch(loadRealTimeInventory({
             parameter: { products: props.apiResult.productCollection.products },
             onSuccess: realTimeInventory => {

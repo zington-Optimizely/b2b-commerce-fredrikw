@@ -60,6 +60,7 @@ type ColorPickerProps = {
     firstInput?: boolean,
     isInPopover?: boolean,
     popoverProps?: PopoverPresentationProps,
+    preventColorReset?: boolean,
 };
 
 class ColorPicker extends React.Component<ColorPickerProps> {
@@ -75,6 +76,7 @@ class ColorPicker extends React.Component<ColorPickerProps> {
             presetColors,
             isInPopover,
             popoverProps,
+            preventColorReset,
         } = this.props;
         const labelId = `${id}-label`;
         return (
@@ -107,9 +109,9 @@ class ColorPicker extends React.Component<ColorPickerProps> {
                         onChangeComplete={onChange}
                         presetColors={presetColors || []}
                         // terrible formatting because definitely-typed erroneously excludes the below prop
-                        {...{ styles: { controls: { width: "85%", display: "flex" } } } as any}
+                        {...{ styles: { controls: { width: preventColorReset ? "100%" : "85%", display: "flex" } } } as any}
                     />
-                    <Button
+                    {!preventColorReset && <Button
                         onClick={() => onChange({
                             rgb: { r: 0, g: 0, b: 0, a: 100 },
                             hex: "unset",
@@ -127,7 +129,7 @@ class ColorPicker extends React.Component<ColorPickerProps> {
                                 color: black;
                             }
                         `}
-                    ><ButtonIcon src={X}/></Button>
+                    ><ButtonIcon src={X}/></Button>}
                 </Popover>
             </LabelWithInputAtEnd>
         );

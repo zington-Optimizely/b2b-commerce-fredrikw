@@ -37,13 +37,13 @@ export const smallHeadingAndTextStyles: SmallHeadingAndTextStyles = {
     },
 };
 
-const SmallHeadingAndText: React.FunctionComponent<OwnProps> = ({ heading, text, extendedStyles }) => {
+const SmallHeadingAndText: React.FunctionComponent<OwnProps> = ({ heading, text, extendedStyles, ...otherProps }) => {
     const [styles] = React.useState(() => mergeToNew(smallHeadingAndTextStyles, extendedStyles));
 
     return (
-        <StyledWrapper {...styles.wrapper}>
-            <Typography as="p" {...styles.heading}>{heading}</Typography>
-            <Typography as="p" {...styles.text}>{text}</Typography>
+        <StyledWrapper {...styles.wrapper} {...otherProps}>
+            <Typography as="p" {...styles.heading} data-test-selector="heading">{heading}</Typography>
+            <Typography as="p" {...styles.text} data-test-selector="text">{text}</Typography>
         </StyledWrapper>
     );
 };

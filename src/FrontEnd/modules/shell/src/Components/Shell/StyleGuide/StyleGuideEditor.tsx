@@ -38,6 +38,7 @@ import ShellState from "@insite/shell/Store/ShellState";
 import { State, LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 import ConfigMenu, { configFormFieldStyles, configCheckboxStyles } from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
 
 const setTheme = (dispatch: Dispatch<AnyShellAction>, theme: BaseTheme, update: Updater) => {
     dispatch({
@@ -51,7 +52,8 @@ const createColorPreset = (
     name: string,
     currentValue: string,
     update: (draft: BaseTheme, newValue: string) => void,
-) => ({ displayAs, name, currentValue, update });
+    preventColorReset?: boolean,
+) => ({ displayAs, name, currentValue, update, preventColorReset });
 
 const undefinedIfFunction = (value: string | undefined | Function) => typeof value === "function" ? undefined : value;
 
@@ -180,7 +182,7 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
         createColorPreset("Text Main", "text.main", colors.text.main, (draft, color) => { draft.colors.text.main = color; }),
         createColorPreset("Text Accent", "text.accent", colors.text.accent, (draft, color) => { draft.colors.text.accent = color; }),
         createColorPreset("Text Disabled", "text.disabled", colors.text.disabled, (draft, color) => { draft.colors.text.disabled = color; }),
-        createColorPreset("Text Link", "text.link", colors.text.link, (draft, color) => { draft.colors.text.link = color; }),
+        createColorPreset("Text Link", "text.link", colors.text.link, (draft, color) => { draft.colors.text.link = color; }, true),
     ];
 
     const presetColors: string[] = [];
@@ -228,6 +230,7 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
                 label={preset.displayAs}
                 id={preset.name}
                 color={preset.currentValue}
+                preventColorReset={preset.preventColorReset}
                 onChange={color => update(draft => preset.update(draft, colorResultToString(color)))}
             />)}
             <Typography variant="h2" transform="uppercase">Site Typography</Typography>
@@ -257,6 +260,7 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
                             draft.link.defaultProps.color = tryMatchColorResultToPresetName(color);
                         })}
                         presetColors={presetColors}
+                        preventColorReset
                     />
                     <Select
                         label="Hover Mode"
@@ -539,15 +543,14 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
                     />
                 </SideBarAccordionSection>
                 <SideBarAccordionSection title="Checkbox">
-                    {/* TODO ISC-12199 actually make icons display in relevant components, then swap textfield for iconselector */}
-                    <TextField
-                        label="Icon Source"
+                    <IconSelector
+                        label="Icon"
                         value={undefinedIfFunction(
                             theme.checkbox.defaultProps
                             && theme.checkbox.defaultProps.iconProps
                             && theme.checkbox.defaultProps.iconProps.src,
                         )}
-                        onChange={event => update(draft => {
+                        onTextFieldChange={event => update(draft => {
                             if (!draft.checkbox.defaultProps) {
                                 draft.checkbox.defaultProps = {};
                             }
@@ -561,16 +564,6 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
                                 draft.checkbox.defaultProps.iconProps.src = event.currentTarget.value;
                             }
                         })}
-                        {...configFormFieldStyles}
-                    />
-                    {/* TODO ISC-12199
-                    <IconSelector
-                        label="Icon"
-                        value={undefinedIfFunction(
-                            theme.checkbox.defaultProps &&
-                            theme.checkbox.defaultProps.iconProps &&
-                            theme.checkbox.defaultProps.iconProps.src,
-                        )}
                         onSelectionChange={value => update(draft => {
                             if (!draft.checkbox.defaultProps) {
                                 draft.checkbox.defaultProps = {};
@@ -587,7 +580,7 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & DispatchProp
                         })}
                         {...configFormFieldStyles}
                         labelPosition="top"
-                    /> */}
+                    />
                 </SideBarAccordionSection>
                 <SideBarAccordionSection title="Date Picker">
                     <TextField

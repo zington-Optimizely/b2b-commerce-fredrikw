@@ -3,6 +3,7 @@ import { connect, ResolveThunks } from "react-redux";
 import ShellState from "@insite/shell/Store/ShellState";
 import { selectCategory, loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import sortBy from "lodash/sortBy";
+import styled from "styled-components";
 
 interface OwnProps {
 
@@ -40,7 +41,7 @@ class CategorySelection extends React.Component<Props> {
             return null;
         }
 
-        return <div>
+        return <Wrapper>
             <label>
                 Category:
                 <select onChange={this.onChange} value={this.getValue()}>
@@ -50,8 +51,16 @@ class CategorySelection extends React.Component<Props> {
                     )}
                 </select>
             </label>
-        </div>;
+        </Wrapper>;
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategorySelection);
+
+const Wrapper = styled.div`
+    white-space: nowrap;
+    max-width: 50%;
+    select {
+        max-width: 100%;
+    }
+`;

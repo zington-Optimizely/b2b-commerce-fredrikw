@@ -35,7 +35,11 @@ const styles: ProductListProductImageStyles = {
             width: 100%;
         `,
     },
-    compareCheckbox: { css: css` align-self: center; ` },
+    compareCheckbox: {
+        css: css`
+            align-self: center;
+            padding-top: 20px;
+        ` },
     productImage: {
         image: {
             width: "100%",

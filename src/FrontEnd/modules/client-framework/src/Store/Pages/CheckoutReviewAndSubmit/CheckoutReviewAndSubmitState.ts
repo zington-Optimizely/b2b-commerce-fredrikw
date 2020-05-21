@@ -7,4 +7,5 @@ export default interface CheckoutReviewAndSubmitState {
     payPalRedirectUri?: string;
     requestedDeliveryDate?: Date | null;
     requestedPickupDate?: Date | null;
+    placeOrderErrorMessage?: string;
 }

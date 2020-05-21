@@ -1,7 +1,7 @@
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import sleep from "@insite/client-framework/Common/Sleep";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
-import getStorablePage from "@insite/client-framework/Store/UNSAFE_CurrentPage/ReducerHelpers/GetStorablePage";
+import { getCurrentPageForShell, getStorablePage } from "@insite/shell/Store/ShellSelectors";
 import { AdminServiceGetBrandsApiParameters, getAdminBrands } from "@insite/shell/Services/AdminService";
 import {
     getBrands,
@@ -89,8 +89,10 @@ export const loadCategories = (): ShellThunkAction => dispatch => {
 
 export const savePage = (afterSavePage?: (response: SavePageResponseModel) => void): ShellThunkAction => (dispatch, getState) => {
     (async () => {
-        const { currentPage, shellContext } = getState();
-        const storablePage = getStorablePage(currentPage, shellContext.websiteId);
+        const state = getState();
+        const { shellContext } = state;
+        const currentPage = getCurrentPageForShell(state);
+        const storablePage = getStorablePage(state, shellContext.websiteId);
 
         const savePageResponse = await savePageApi(storablePage);
 
@@ -99,7 +101,7 @@ export const savePage = (afterSavePage?: (response: SavePageResponseModel) => vo
             savePageResponse,
         });
 
-        dispatch(loadPublishInfo(currentPage.page.id));
+        dispatch(loadPublishInfo(currentPage.id));
 
         sendToSite({ type: "ReloadPageLinks" });
 
@@ -111,11 +113,11 @@ export const editPageOptions = (id: string, isNewPage?: boolean, afterEditLoads?
     addTask(async function () {
         // TODO ISC-11025 we should actually load the page we want here instead of doing this hacky thing that
         // waits for it to hopefully have been loaded before this action was called
-        while (getState().currentPage.page.id !== id) {
+        while (getCurrentPageForShell(getState()).id !== id) {
             await sleep(100);
         }
 
-        const page = getState().currentPage.page;
+        const page = getCurrentPageForShell(getState());
         dispatch({
             type: "PageEditor/EditItem",
             id: page.id,
@@ -134,7 +136,7 @@ export const editWidget = (id: string, removeIfCanceled?: boolean): ShellThunkAc
         type: "PageEditor/EditItem",
         id,
         removeIfCanceled,
-        item: getState().currentPage.widgetsById[id],
+        item: getState().data.pages.widgetsById[id],
     });
 };
 
@@ -151,7 +153,7 @@ export const doneEditingItem = (): ShellThunkAction => (dispatch, getState) => {
 
         dispatch({ type: "PageEditor/DoneEditingItem" });
 
-        if (state.pageEditor.editingId === state.currentPage.page.id) {
+        if (state.pageEditor.editingId === getCurrentPageForShell(state).id) {
             dispatch(loadTreeNodes());
         }
     }));

@@ -7,11 +7,12 @@ import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
 import Scrim from "@insite/mobius/Overlay/Scrim";
 import styled from "styled-components";
 import { doneEditingItem, cancelEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { updateField, replaceItem, removeWidget } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { updateField, replaceItem, removeWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
 import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 interface OwnProps {}
 
@@ -19,11 +20,12 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     let item: PageProps | WidgetProps | undefined;
     let definition: LoadedPageDefinition | LoadedWidgetDefinition | undefined;
     if (state.pageEditor.editingId) {
-        if (state.pageEditor.editingId === state.currentPage.page.id) {
-            item = state.currentPage.page;
-            definition = getPageDefinition(item.type);
+        const currentPage = getCurrentPageForShell(state);
+        if (state.pageEditor.editingId === currentPage.id) {
+            item = currentPage;
+            definition = getPageDefinition(currentPage.type);
         } else {
-            item = state.currentPage.widgetsById[state.pageEditor.editingId];
+            item = state.data.pages.widgetsById[state.pageEditor.editingId];
             definition = getWidgetDefinition(item.type);
         }
     }

@@ -1,30 +1,47 @@
 /* eslint-disable */
 import * as React from 'react';
 import styled from 'styled-components';
-import { IconMemo } from '../Icon';
-import Typography from '../Typography';
-import ImageIcon from '../Icons/Image';
+import { IconMemo, IconPresentationProps } from '../Icon';
+import Typography, { TypographyPresentationProps } from '../Typography';
+import applyPropBuilder from "../utilities/applyPropBuilder";
 import getProp from '../utilities/getProp';
 import injectCss from '../utilities/injectCss';
 import resolveColor from '../utilities/resolveColor';
 import { StyledProp } from '../utilities/InjectableCss';
 import MobiusStyledComponentProps from '../utilities/MobiusStyledComponentProps';
 
-export type LazyImageProps = MobiusStyledComponentProps<"div", {
-    /** CSS string or styled-components function to be injected into this component. */
+export type LazyImagePresentationProps = {
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
     css?: StyledProp<LazyImageProps>;
-    /** The height of the image. */
+    /** Optional content to show while image is loading.
+     * @themable */
+    placeholder?: React.ReactNode;
+    /** The height of the image.
+     * @themable */
     height?: string;
+    /** The width of the image.
+     * @themable */
+    width?: string;
+     /** Props passed to the icon component that displays when the image fails to load.
+      * @themable */
+    errorIconProps?: IconPresentationProps;
+     /** Props passed to the typography component that displays when the image fails to load.
+      * @themable */
+    errorTypographyProps?: TypographyPresentationProps;
+}
+
+export type LazyImageProps = MobiusStyledComponentProps<"div", LazyImagePresentationProps & {
     /** Props to be passed into the inner `img` element. */
     imgProps?: JSX.IntrinsicElements['img'];
-    /** Optional content to show while image is loading. */
-    placeholder?: React.ReactNode;
     /** The URL to fetch the image from. If not provided, LazyImage renders `null`. */
     src?: string;
-    /** The width of the image. */
-    width?: string;
     /** The alternative text to display in place of the image. */
     altText?: string;
+    /** Callback function that will be called when the image has finished loading. */
+    onLoad?: () => void;
+    /** Callback function that will be called if an error occurs when loading an image. */
+    onError?: () => void;
 }>;
 
 // if the image loads in under this number of milliseconds, it doesn't fade in.
@@ -99,13 +116,13 @@ class LazyImage extends React.Component<LazyImageProps, State> {
                 imageShouldFade: (Date.now() - currentState.startTime) > fadeInThreshold,
                 loaded: true,
                 src: this.props.src,
-            }));
+            }), this.props.onLoad);
         };
         image.onerror = () => {
             this.setState({
                 loaded: true,
                 error: true,
-            });
+            }, this.props.onError);
         };
     };
 
@@ -129,18 +146,19 @@ class LazyImage extends React.Component<LazyImageProps, State> {
 
         if (!propSrc) return null;
 
+        const { spreadProps } = applyPropBuilder(this.props, { component: "lazyImage" });
         return (
             <LazyImageStyle {...{ css, error, imageShouldFade, loaded }} {...otherProps}>
                 {showPlaceholder && (
                     <span className="LazyImage-Placeholder">{placeholder}</span>
                 )}
-                {loaded && error && <IconMemo src={ImageIcon} color="text.accent" title={altText} />}
+                {loaded && error && <IconMemo {...spreadProps("errorIconProps")} title={altText} />}
                 {!error && <img
                     alt={altText}
                     src={(loaded && !error) ? stateSrc : undefined}
                     {...imgProps}
                 />}
-                {error && <Typography variant="legend" as="p" color="text.accent">{altText}</Typography>}
+                {error && <Typography {...spreadProps('errorTypographyProps')} as="p" >{altText}</Typography>}
             </LazyImageStyle>
         );
     }

@@ -1,5 +1,5 @@
 ﻿[% capture SignOutLink %]
-<a href="javascript:void(0)" ng-click="vm.signOut('[[Model.Drop.SignOutReturnUrl]]')">
+<a href="javascript:void(0)" class="sign-out fastClick" ng-click="vm.signOut('[[Model.Drop.SignOutReturnUrl]]')">
     <span>[[Model.Drop.SignOutText]]</span>
 </a>
 [% endcapture %]
@@ -33,12 +33,6 @@
             <span class="sign-in-label">[% translate 'Sign In' %]</span>
         </a>
     </li>
-     <li role="fulfillment-method" ng-cloak id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
-        <a href="" id="tst_header_fulfillMethodLink" class="btn fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
-            <i class="foundicon-location"></i>
-            [[DeliveryLabel]]
-        </a>
-    </li>
     <li role="user-options" ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
         <a href="#" class="user-button fastClick btn" id="tst_userNav_userName_button">
             <i ng-cloak class="social foundicon-torso"></i>
@@ -47,6 +41,12 @@
         </a>
         <a class="ex fastClick">
             <i class="foundicon-remove"></i>
+        </a>
+    </li>
+     <li role="fulfillment-method" ng-cloak id="tst_fulfillmentMethod" ng-if="vm.accountSettings.enableWarehousePickup && vm.session">
+        <a href="" id="tst_header_fulfillMethodLink" class="btn fulfillment-method" ng-click="vm.openDeliveryMethodPopup()">
+            <i class="foundicon-location"></i>
+            [[DeliveryLabel]]
         </a>
     </li>
     <li role="account-menu" ng-cloak ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">

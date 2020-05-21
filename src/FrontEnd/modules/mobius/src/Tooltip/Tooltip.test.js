@@ -45,7 +45,7 @@ describe('Tooltip', () => {
             const text = 'words and more words';
             props = { text };
             const root = wrapper();
-            root.find(Icon).first().simulate('click');
+            root.find('button').first().simulate('click');
             expect(root.find(Typography).text()).toContain(text);
         });
 
@@ -59,7 +59,7 @@ describe('Tooltip', () => {
             props = { text, onClose: fn };
             const root = wrapper();
             expect(root.find(Typography)).toHaveLength(0);
-            root.find(Icon).first().simulate('click');
+            root.find('button').first().simulate('click');
             expect(root.find(Tooltip).find(Typography).text()).toContain(text);
             documentEvents.mousedown();
             expect(fn).toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe('Tooltip', () => {
                 const text = 'words and more words';
                 props = { text };
                 const root = wrapper();
-                root.find(Icon).first().simulate('keyDown', {
+                root.find('button').first().simulate('keyDown', {
                     keyCode: 13,
                     which: 13,
                     key: 'enter',
@@ -81,13 +81,13 @@ describe('Tooltip', () => {
                 const text = 'some other words';
                 props = { text };
                 const root = wrapper();
-                root.find(Icon).first().simulate('keyDown', {
+                root.find('button').first().simulate('keyDown', {
                     keyCode: 13,
                     which: 13,
                     key: 'enter',
                 });
                 expect(root.find(Typography).text()).toContain(text);
-                root.find(Icon).first().simulate('keyDown', {
+                root.find('button').first().simulate('keyDown', {
                     keyCode: 27,
                     which: 27,
                     key: 'escape',
@@ -108,7 +108,7 @@ describe('Tooltip', () => {
                     },
                 };
                 const root = wrapper();
-                root.find(Icon).first().simulate('click');
+                root.find('button').first().simulate('click');
                 expect(root.find(Tooltip)).toHaveStyleRule('background', 'red');
                 expect(root.find('[data-id="tooltipBody"]')).toHaveStyleRule('border', '5px solid deeppink');
             });
@@ -133,7 +133,7 @@ describe('Tooltip', () => {
                     },
                 });
                 const root = wrapper();
-                root.find(Icon).first().simulate('click');
+                root.find('button').first().simulate('click');
                 expect(root.find(Tooltip)).toHaveStyleRule('border', '1px solid green');
                 expect(root.find(Tooltip)).not.toHaveStyleRule('border', '3px dashed blue');
                 expect(root.find(Clickable)).toHaveStyleRule('display', 'block');
@@ -144,21 +144,21 @@ describe('Tooltip', () => {
             test('instance with no theme applies instance', () => {
                 props = { text: 'hiya', typographyProps: { weight: 800 } };
                 const root = wrapper();
-                root.find(Icon).first().simulate('click');
+                root.find('button').first().simulate('click');
                 expect(root.find(Typography)).toHaveStyleRule('font-weight', '800');
             });
             test('theme with no instance applies theme', () => {
                 props = { text: 'hiya' };
                 theme = themeGenerator({ typographyProps: { italic: true } });
                 const root = wrapper();
-                root.find(Icon).first().simulate('click');
+                root.find('button').first().simulate('click');
                 expect(root.find(Typography)).toHaveStyleRule('font-style', 'italic');
             });
             test('theme and instance applies instance', () => {
                 theme = themeGenerator({ typographyProps: { weight: 500, italic: true } });
                 props = { text: 'hiya', typographyProps: { weight: 800 } };
                 const root = wrapper();
-                root.find(Icon).first().simulate('click');
+                root.find('button').first().simulate('click');
                 expect(root.find(Typography)).toHaveStyleRule('font-weight', '800');
                 expect(root.find(Typography)).toHaveStyleRule('font-style', 'italic');
                 expect(root.find(Typography)).not.toHaveStyleRule('font-weight', '500');
@@ -167,23 +167,30 @@ describe('Tooltip', () => {
         describe('iconProps', () => {
             test('instance with no theme applies instance', () => {
                 props = { text: 'human being', iconProps: { color: '#efefef' } };
-                expect(wrapper().find(Icon)).toHaveStyleRule('color', '#efefef');
+                setTimeout(() => {
+                    expect(wrapper().find(Icon)).toHaveStyleRule('color', '#efefef');
+                }, 200);
             });
             test('theme with no instance applies theme', () => {
                 props = { text: 'human being' };
                 theme = themeGenerator({ iconProps: { size: 100 } });
                 const root = wrapper();
-                expect(root.find(Icon)).toHaveStyleRule('height', '100px');
-                expect(root.find(Icon)).toHaveStyleRule('width', '100px');
+                setTimeout(() => {
+                    expect(root.find(Icon)).toHaveStyleRule('height', '100px');
+                    expect(root.find(Icon)).toHaveStyleRule('width', '100px');
+                }, 200);
             });
             test('theme and instance applies instance', () => {
                 props = { text: 'human being', iconProps: { color: '#efefef' } };
                 theme = themeGenerator({ iconProps: { size: 100, color: 'blue' } });
                 const root = wrapper();
-                expect(root.find(Icon)).toHaveStyleRule('height', '100px');
-                expect(root.find(Icon)).toHaveStyleRule('width', '100px');
-                expect(root.find(Icon)).toHaveStyleRule('color', '#efefef');
-                expect(root.find(Icon)).not.toHaveStyleRule('color', 'blue');
+                console.log(root.find(Icon).debug())
+                setTimeout(() => {
+                    expect(root.find(Icon)).toHaveStyleRule('height', '100px');
+                    expect(root.find(Icon)).toHaveStyleRule('width', '100px');
+                    expect(root.find(Icon)).toHaveStyleRule('color', '#efefef');
+                    expect(root.find(Icon)).not.toHaveStyleRule('color', 'blue');
+                }, 200);
             });
         });
     });

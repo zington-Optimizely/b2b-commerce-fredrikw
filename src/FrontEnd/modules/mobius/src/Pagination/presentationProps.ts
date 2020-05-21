@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 import resolveColor from "../utilities/resolveColor";
 import { ComponentThemeProps } from "../globals/baseTheme";
+import { ButtonProps } from "../Button";
 
 const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["defaultProps"] = {
     buttonProps: {
@@ -9,7 +10,7 @@ const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["def
         hoverMode: "darken",
         buttonType: "outline",
         typographyProps: { size: 15, weight: 400, lineHeight: "20px" },
-        css: css`
+        css: css<ButtonProps>`
             border: none;
             &:not(:disabled):hover {
                 color: ${({ theme }) => resolveColor("text.main", theme)};
@@ -38,6 +39,12 @@ const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["def
             formInputWrapper: css` max-width: 75px; `,
         },
         labelProps: { css: css` width: 155px; ` },
+    },
+    navIconsSrc: {
+        firstPage: "ChevronsLeft",
+        previousPage: "ChevronLeft",
+        nextPage: "ChevronRight",
+        lastPage: "ChevronsRight",
     },
 };
 

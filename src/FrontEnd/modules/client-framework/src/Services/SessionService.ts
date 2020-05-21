@@ -1,12 +1,14 @@
 import { get, patch, ApiParameter, del, ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { BillToModel, SessionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
+import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 
 export interface UpdateSessionApiParameter extends ApiParameter {
     session: Partial<Session>;
 }
 
 export interface GetSessionApiParameter extends ApiParameter {
+    setContextLanguageCode?: string;
 }
 
 export interface ForgotPasswordApiParameter extends ApiParameter {
@@ -66,6 +68,7 @@ export async function createSession(parameter: CreateSessionApiParameter): Promi
 
     const sessionModel = await (response.json() as Promise<SessionModel>);
     cleanSession(sessionModel);
+    informShell(sessionModel);
     return {
         successful: true,
         result: sessionModel,
@@ -75,6 +78,7 @@ export async function createSession(parameter: CreateSessionApiParameter): Promi
 export async function getSession(parameter: GetSessionApiParameter) {
     const session = await get<SessionModel>("/api/v1/sessions/current", parameter);
     cleanSession(session);
+    informShell(session);
     return session;
 }
 
@@ -92,6 +96,7 @@ export async function updateSession(parameter: UpdateSessionApiParameter) {
     }
     const session = await patch<SessionModel>("/api/v1/sessions/current", patchedSession);
     cleanSession(session);
+    informShell(session);
     return session;
 }
 
@@ -153,4 +158,11 @@ function cleanSession(session: SessionModel) {
         (session as Session).shipToId = session.shipTo.id;
         delete session.shipTo;
     }
+}
+
+function informShell(session: SessionModel) {
+    sendToShell({
+        type: "FrontEndSessionLoaded",
+        personas: session.personas,
+    });
 }

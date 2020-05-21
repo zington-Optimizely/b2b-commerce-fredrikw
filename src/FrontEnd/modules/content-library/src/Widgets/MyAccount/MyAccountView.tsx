@@ -20,8 +20,8 @@ export interface MyAccountViewStyles {
 }
 
 const styles: MyAccountViewStyles = {
-    quickLinksGridItem: { width: 2 },
-    mainSectionGridItem: { width: 10 },
+    quickLinksGridItem: { width: [12, 12, 12, 2, 2] },
+    mainSectionGridItem: { width: [12, 12, 12, 10, 10] },
     accountMessagesGridItem: { width: 12 },
     dashboardWidgetsGridItem: { width: 12 },
 };

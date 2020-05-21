@@ -5,11 +5,6 @@ import styled, { withTheme, css } from "styled-components";
 import Button, { ButtonPresentationProps } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import AlertCircle from "../Icons/AlertCircle";
-import AlertTriangle from "../Icons/AlertTriangle";
-import Check from "../Icons/Check";
-import Info from "../Icons/Info";
-import X from "../Icons/X";
 import ToasterContext from "./ToasterContext";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -30,6 +25,9 @@ export interface ToastPresentationProps {
     /** Props to be passed down to the close button component.
      * @themable */
     closeButtonProps?: ButtonPresentationProps;
+    /** Props to be passed down to the close button icon component.
+     * @themable */
+    closeButtonIconProps?: IconPresentationProps;
     /** CSS strings or styled-components functions to be injected into nested components,
      * these will override the theme defaults.
      * @themable */
@@ -43,6 +41,14 @@ export interface ToastPresentationProps {
     /** Description of the transition duration as available in the theme.
      * @themable */
     transitionDuration?: "short" | "regular" | "long";
+    /** Source for icons that will be rendered based on the type of message in the toast.
+     * @themable */
+    iconSrcByMessage?: {
+        success?: React.ComponentType | string,
+        warning?: React.ComponentType | string,
+        danger?: React.ComponentType | string,
+        info?: React.ComponentType | string,
+    }
 }
 
 export type ToastComponentProps = MobiusStyledComponentProps<"div", {
@@ -59,13 +65,6 @@ export type ToastComponentProps = MobiusStyledComponentProps<"div", {
 }>;
 
 export type ToastProps = ToastComponentProps & ToastPresentationProps;
-
-const iconByMessage = {
-    success: Check,
-    warning: AlertTriangle,
-    danger: AlertCircle,
-    info: Info,
-};
 
 type ToastStyleProps = {
     transitionState: TransitionStatus
@@ -146,6 +145,7 @@ const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
 }) => {
     const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "toast" });
     const cssOverrides = spreadProps("cssOverrides");
+    const iconSrcByMessage = spreadProps("iconSrcByMessage");
     const transitionLength = get(otherProps.theme, `transition.duration.${applyProp("transitionDuration")}`);
     return (
         <Transition
@@ -166,7 +166,7 @@ const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
                 >
                     <ToastBody css={cssOverrides.toastBody} data-id="toast-body">
                         <IconMemo
-                            src={messageType && iconByMessage[messageType]}
+                            src={messageType && iconSrcByMessage[messageType]}
                             color={messageType}
                             size={40}
                             css={css` margin-right: 10px; `}
@@ -182,7 +182,7 @@ const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
                                 aria-labelledby={`close-toast${toastId}`}
                                 {...spreadProps("closeButtonProps")}
                             >
-                                <IconMemo src={X} color="common.border" size={24} />
+                                <IconMemo {...spreadProps("closeButtonIconProps")} />
                                 <VisuallyHidden id={`close-toast${toastId}`}>{otherProps.theme!.translate("close toast")}</VisuallyHidden>
                             </Button>
                         )}

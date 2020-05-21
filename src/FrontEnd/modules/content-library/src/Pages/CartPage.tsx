@@ -11,6 +11,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
 
 interface OwnProps extends PageProps {
 }
@@ -58,6 +59,7 @@ class CartPage extends Component<Props> {
                 <LoadingOverlay {...styles.loadingOverlay} loading={this.props.isPreloadingData}>
                     <Zone contentId={this.props.id} zoneName="Content"></Zone>
                 </LoadingOverlay>
+                <AddToListModal />
             </Page>
         );
     }

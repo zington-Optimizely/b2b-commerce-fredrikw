@@ -3,6 +3,7 @@ import styled from "styled-components";
 import FormField, { FormFieldIcon, FormFieldPresentationProps, FormFieldComponentProps } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import injectCss from "../utilities/injectCss";
 import uniqueId from "../utilities/uniqueId";
 import { IconPresentationProps } from "../Icon";
@@ -47,9 +48,12 @@ const TokenExFrameWrapper = styled.div<{_sizeVariant: keyof typeof sizeVariantVa
  * A component that accepts a tokenExIFrameContainer to style as a visually compliant FormField element.
  * NOTE: accessibility on this component is poor due to limitations on passing values to the framed input.
  */
-const TokenExFrame: React.FC<TokenExFrameProps> = ({
-    id, tokenExIFrameContainer, ...otherProps
+const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
+    disable, disabled, id, tokenExIFrameContainer, ...otherProps
 }) => {
+    // Because disabled html attribute doesn't accept undefined
+    // eslint-disable-next-line no-unneeded-ternary
+    const isDisabled = (disable || disabled) ? true : false;
     const inputId = id || uniqueId();
     const descriptionId = `${inputId}-description`;
     const hasDescription = !!otherProps.error || !!otherProps.hint;
@@ -68,15 +72,15 @@ const TokenExFrame: React.FC<TokenExFrameProps> = ({
             _sizeVariant={sizeVariant}
             aria-describedby={hasDescription ? descriptionId : undefined}
             aria-invalid={!!otherProps.error}
-            aria-required={!otherProps.disabled && otherProps.required}
+            aria-required={!isDisabled && otherProps.required}
             {...inputLabelObj}
         >
-            {otherProps.disabled ? <input disabled /> : tokenExIFrameContainer}
+            {isDisabled ? <input disabled /> : tokenExIFrameContainer}
             {iconProps ? (
                 <FormFieldIcon
                     {...iconProps}
                     size={sizeVariantValues[sizeVariant].icon}
-                    color={otherProps.disabled ? "text.disabled" : iconProps.color}
+                    color={isDisabled ? "text.disabled" : iconProps.color}
                 />
             ) : null}
         </TokenExFrameWrapper>
@@ -87,9 +91,10 @@ const TokenExFrame: React.FC<TokenExFrameProps> = ({
         formInput={frameComponent}
         inputId={inputId}
         labelId={labelId}
+        disabled={isDisabled}
         {...otherProps as any}
     />;
 };
 
 /** @component */
-export default TokenExFrame;
+export default withDisabler(TokenExFrame);

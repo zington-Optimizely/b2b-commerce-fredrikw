@@ -13,14 +13,20 @@ import styled, { css } from "styled-components";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { GetBillTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { getBillTosDataView } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSettingsCollection, getDefaultPageSize } from "@insite/client-framework/Store/Context/ContextSelectors";
 
-interface Props {
+interface OwnProps {
     currentBillTo?: BillToModel;
     onSelect: (billTo: BillToModel) => void;
     onEdit?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, billTo: BillToModel) => void;
     extendedStyles?: BillToSelectorStyles;
 }
+
+const mapStateToProps = (state: ApplicationState) => ({
+    defaultPageSize: getDefaultPageSize(state),
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface BillToSelectorStyles {
     customerSelectorToolbar?: CustomerSelectorToolbarStyles;
@@ -46,14 +52,15 @@ export const billToSelectorStyles: BillToSelectorStyles = {
 
 const CenteringWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
 
-const BillToSelector: FC<Props> = ({
+const billToSelector: FC<Props> = ({
                                        currentBillTo,
                                        onSelect,
                                        extendedStyles,
                                        onEdit,
+                                       defaultPageSize,
                                    }) => {
 
-    const [parameter, setParameter] = useState<GetBillTosApiParameter>({ page: 1, pageSize: 8 });
+    const [parameter, setParameter] = useState<GetBillTosApiParameter>({ page: 1, pageSize: defaultPageSize });
 
     return <WrappedBillToSelector
                 currentBillTo={currentBillTo}
@@ -65,21 +72,27 @@ const BillToSelector: FC<Props> = ({
             />;
 };
 
-interface OwnWrappedProps {
+const BillToSelector = connect(mapStateToProps)(billToSelector);
+
+interface WrappedBillToSelectorProps {
+    currentBillTo?: BillToModel;
+    onSelect: (billTo: BillToModel) => void;
+    onEdit?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, billTo: BillToModel) => void;
+    extendedStyles?: BillToSelectorStyles;
     setParameter: (parameter: GetBillTosApiParameter) => void;
     parameter: GetBillTosApiParameter;
 }
 
-const mapStateToProps = (state: ApplicationState, props: OwnWrappedProps) => ({
+const mapStateToPropsWrapped = (state: ApplicationState, props: WrappedBillToSelectorProps) => ({
     billTosDataView: getBillTosDataView(state, props.parameter),
     customerSettings: getSettingsCollection(state).customerSettings,
 });
 
-const mapDispatchToProps = {
+const mapDispatchToPropsWrapped = {
     loadBillTos,
 };
 
-type WrappedProps = Props & OwnWrappedProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
+type WrappedProps = WrappedBillToSelectorProps & ResolveThunks<typeof mapDispatchToPropsWrapped> & ReturnType<typeof mapStateToPropsWrapped>;
 
 const wrappedBillToSelector: FC<WrappedProps> = ({
                                                      currentBillTo,
@@ -94,12 +107,6 @@ const wrappedBillToSelector: FC<WrappedProps> = ({
                                                  }) => {
     const [styles] = useState(() => mergeToNew(billToSelectorStyles, extendedStyles));
     const [searchText, setSearchText] = useState("");
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(8);
-    useEffect(
-        () => doLoadBillTos(),
-        [page, pageSize],
-    );
 
     useEffect(
         () => {
@@ -109,28 +116,36 @@ const wrappedBillToSelector: FC<WrappedProps> = ({
         },
     );
 
-    const searchHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => doLoadBillTos();
+    const searchHandler = () => {
+        setParameter({
+            ...parameter,
+            page: 1,
+            filter: searchText || undefined,
+        });
+    };
 
     const selectCustomerHandler = (customer: BaseAddressModel) => onSelect(customer as BillToModel);
 
-    const editCustomerHandler = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
-        if (customerSettings?.allowBillToAddressEdit) {
-            onEdit?.(event, customer as BillToModel);
-        }
-    };
+    const editCustomerHandler = (customerSettings?.allowBillToAddressEdit && onEdit)
+    ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
+        onEdit?.(event, customer as BillToModel);
+    }
+    : undefined;
 
-    const changePageHandler = (page: number) => setPage(page);
+    const changePageHandler = (page: number) => {
+        setParameter({
+            ...parameter,
+            page,
+        });
+    };
 
     const changeResultsPerPageHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPage(1);
-        setPageSize(Number(event.currentTarget.value));
+        setParameter({
+            ...parameter,
+            page: 1,
+            pageSize: Number(event.currentTarget.value),
+        });
     };
-
-    const doLoadBillTos = () => setParameter({
-        page,
-        pageSize,
-        filter: searchText,
-    });
 
     return <>
         <CustomerSelectorToolbar
@@ -168,6 +183,6 @@ const wrappedBillToSelector: FC<WrappedProps> = ({
     </>;
 };
 
-const WrappedBillToSelector = connect(mapStateToProps, mapDispatchToProps)(wrappedBillToSelector);
+const WrappedBillToSelector = connect(mapStateToPropsWrapped, mapDispatchToPropsWrapped)(wrappedBillToSelector);
 
 export default BillToSelector;

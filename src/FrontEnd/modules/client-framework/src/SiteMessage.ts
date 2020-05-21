@@ -1,7 +1,7 @@
 import { SiteMessageModel } from "@insite/client-framework/Types/ApiModels";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { throwIfClientSide } from "@insite/client-framework/ServerSideRendering";
-import parse from "html-react-parser";
+import parse, { HTMLReactParserOptions } from "html-react-parser";
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 
 /** Produces a site message dictionary from a site message list. */
@@ -61,6 +61,11 @@ export const setResolver = (newResolver: typeof resolver) => { resolver = newRes
 const siteMessage = (messageName: string, ...replacementValues: string[]) => {
     const message = resolver(messageName) ?? messageName;
     return parse(replacer(message, replacementValues), parserOptions);
+};
+
+export const siteMessageWithCustomParserOptions = (messageName: string, customParserOptions: HTMLReactParserOptions, ...replacementValues: string[]) => {
+    const message = resolver(messageName) ?? messageName;
+    return parse(replacer(message, replacementValues), customParserOptions);
 };
 
 const replacer = (message: string, replacementValues: string[]) => {

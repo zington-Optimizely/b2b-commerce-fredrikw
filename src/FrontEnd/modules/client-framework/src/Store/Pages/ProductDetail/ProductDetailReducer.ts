@@ -64,10 +64,12 @@ const reducer = {
         product: ProductModelExtended,
         variantSelection: (TraitValueModel | undefined)[];
         variantSelectionCompleted: boolean;
+        variantImage?: ImageModel;
     }) => {
         draft.product = action.product;
         draft.variantSelection = action.variantSelection;
         draft.variantSelectionCompleted = action.variantSelectionCompleted;
+        draft.selectedImage = action.variantImage;
     },
     "Pages/ProductDetail/BeginFilterVariantTraits": () => {
     },

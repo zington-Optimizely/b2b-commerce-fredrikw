@@ -11,7 +11,8 @@ import CurrentCategory from "@insite/content-library/Components/CurrentCategory"
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { getSelectedProductPath } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
@@ -20,6 +21,9 @@ const mapStateToProps = (state: ApplicationState) => {
         product: state.pages.productDetail.product,
         productPath,
         lastProductPath: state.pages.productDetail.lastProductPath,
+        websiteName: state.context.website.name,
+        page: getCurrentPage(state),
+        pages: state.pages,
         location,
     });
 };
@@ -37,6 +41,7 @@ class ProductDetailPage extends React.Component<Props> {
 
     componentDidUpdate(prevProps: Props): void {
         this.loadProductIfNeeded();
+        setOpenGraphInfo(this.props.pages, this.props.page.type, null, this.props.websiteName);
     }
 
     loadProductIfNeeded() {

@@ -26,7 +26,7 @@ const styles: ProductListProductGridCardStyles = {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            padding-bottom: 30px;
+            padding-bottom: 10px;
         `,
     },
     imageWrapper: {

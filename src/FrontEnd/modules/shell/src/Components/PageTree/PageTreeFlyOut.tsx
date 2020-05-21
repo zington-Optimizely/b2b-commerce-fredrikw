@@ -14,6 +14,7 @@ import Edit from "@insite/shell/Components/Icons/Edit";
 import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import { RouteComponentProps, withRouter } from "react-router";
 
 interface OwnProps {
@@ -32,7 +33,7 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: ShellState) => ({
-    currentPageId: state.currentPage.page.id,
+    currentPageId: getCurrentPageForShell(state).id,
 });
 
 type Props = RouteComponentProps

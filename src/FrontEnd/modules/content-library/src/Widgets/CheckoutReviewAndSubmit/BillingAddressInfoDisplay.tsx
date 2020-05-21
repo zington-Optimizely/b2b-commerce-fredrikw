@@ -46,7 +46,7 @@ const BillingAddressInfoDisplay = ({
         <GridContainer {...styles.container}>
             <GridItem {...styles.headingGridItem}>
                 <Typography {...styles.heading}>{translate("Billing Address")}</Typography>
-                <Link {...styles.editLink} onClick={onEdit}>
+                <Link {...styles.editLink} onClick={onEdit} data-test-selector="checkoutReviewAndSubmit_changeBilling">
                     {translate("Edit")}
                 </Link>
             </GridItem>

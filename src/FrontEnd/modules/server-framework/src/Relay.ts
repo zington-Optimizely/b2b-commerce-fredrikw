@@ -112,6 +112,7 @@ const relay: Relay = {
     userfiles: relayMethod,
     email: relayMethod,
     excel: relayMethod,
+    sitemap: relayMethod,
 };
 
 export default relay;

@@ -1,3 +1,4 @@
+import merge from "lodash/merge";
 import * as React from "react";
 import { connect } from "react-redux";
 import styled, { css } from "styled-components";
@@ -26,6 +27,7 @@ import Typography from "@insite/mobius/Typography";
 import Stage from "@insite/shell/Components/Shell/Stage";
 import StagePositioner from "@insite/shell/Components/Shell/StagePositioner";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import ShellState from "@insite/shell/Store/ShellState";
 import { LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 import translate from "@insite/client-framework/Translate";
@@ -54,10 +56,13 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
     // Being from redux, the theme is frozen.
     // `ThemeProvider` wants to write the `translate` property, which is root-level, so a shallow clone allows this.
     const shallowClonedTheme = { ...props.theme };
+    // While the theme will originate with the Mobius theme, it immediately diverges, and therefore should be layered
+    // atop the Mobius theme when rendering in the preview. We may at some point want this to reference the code themes.
+    const theme = merge({}, defaultTheme, shallowClonedTheme);
 
     return <StagePositioner><Stage>
     <PreviewWrapper>
-    <ThemeProvider theme={shallowClonedTheme} translate={translate}>
+    <ThemeProvider theme={theme} translate={translate}>
         <PreviewH1>Style Guide</PreviewH1>
         <PreviewP>
             This style guide allows you to quickly update all styles, colors, and components in one place.

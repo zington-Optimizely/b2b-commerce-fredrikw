@@ -7,7 +7,10 @@ const AccordionPresentationPropsDefault: ComponentThemeProps["accordion"]["secti
         weight: "bold",
         color: "text.main",
     },
-    toggleIconProps: { color: "text.main" },
+    toggleIconProps: {
+        color: "text.main",
+        src: "ChevronDown",
+    },
 };
 
 export default AccordionPresentationPropsDefault;

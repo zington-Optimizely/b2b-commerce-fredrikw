@@ -97,7 +97,7 @@ const OrderConfirmationBillingInformation: FC<Props> = ({ cart, extendedStyles, 
                     extendedStyles={styles.billingAddress}
                 />
             </GridItem>
-            {cart.creditCardBillingAddress && <GridItem {...styles.billingInformationCreditCardAddressGridItem}>
+            {cart.creditCardBillingAddress && <GridItem {...styles.billingInformationCreditCardAddressGridItem} data-test-selector="creditCardBillingAddress">
                 <Typography {...styles.billingCreditCardAddressTitle}>{translate("Credit Card Address")}</Typography>
                 <AddressInfoDisplay
                     address1={cart.creditCardBillingAddress.address1}

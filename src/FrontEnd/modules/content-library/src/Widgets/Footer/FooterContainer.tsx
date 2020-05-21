@@ -35,6 +35,7 @@ export const footerContainerStyles: FooterContainerStyles = {
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                img { height: 78px; }
             `,
     },
     linkList1GridItem: {

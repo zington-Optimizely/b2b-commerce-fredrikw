@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
+import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -53,7 +53,6 @@ interface OwnProps extends WidgetProps {
 const mapStateToProps = (state: ApplicationState) => ({
     productsState: state.pages.productList.productsState,
     view: state.pages.productList.view || getSettingsCollection(state).productSettings.defaultViewType,
-    navRef: state.pages.productList.navRef,
 });
 
 type Props =  ReturnType<typeof mapStateToProps> & OwnProps;
@@ -110,7 +109,7 @@ const styles: ProductListCardListStyles = {
 
 export const listStyles = styles;
 
-const ProductListCardList: FC<Props> = ({ productsState, view, navRef, fields }) => {
+const ProductListCardList: FC<Props> = ({ productsState, view, fields }) => {
     if (productsState.isLoading && !productsState.value) {
         return <StyledWrapper {...styles.centeringWrapper}>
             <LoadingSpinner {...styles.spinner} data-test-selector="productListCardListSpinner"/>
@@ -133,9 +132,11 @@ const ProductListCardList: FC<Props> = ({ productsState, view, navRef, fields })
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            {/* // TODO ISC-12820 - A different approach is needed: this directly modifies a redux object
-            <span ref={navRef} tabIndex={-1}/>
-            */}
+            <ProductListPageDataContext.Consumer>
+                {({ ref }) => {
+                    return (ref ? <span ref={ref} tabIndex={-1}/> : undefined);
+                }}
+            </ProductListPageDataContext.Consumer>
             <LoadingOverlay loading={productsState.isLoading}>
                 <Hidden below="md">
                     <CardList extendedStyles={styles.cardList} data-test-selector={`productListCardContainer${view}`}>

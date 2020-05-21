@@ -2,7 +2,7 @@ import { PublishablePageInfoModel } from "@insite/shell/Services/ContentAdminSer
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import ContentMode from "@insite/client-framework/Common/ContentMode";
-import { BasicLanguageModel } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import LoadedState from "@insite/client-framework/Types/LoadedState";
 
 export interface LanguageModel extends BasicLanguageModel {

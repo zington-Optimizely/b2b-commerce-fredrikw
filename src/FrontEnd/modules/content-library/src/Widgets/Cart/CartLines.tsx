@@ -193,6 +193,7 @@ const CartLines: FC<Props> = ({
 
     const cartLinesDisplay = cartLines.map(cartLine => {
         const matchingPromotions = promotions ? promotions.filter(promo => promo.orderLineId === cartLine.id) : [];
+        const showRemoveAction = !cartLine.isPromotionItem && cart.canModifyOrder;
         return (
             <CartLineContext.Provider value={cartLine} key={cartLine.id}>
                 {isCondensed
@@ -203,7 +204,9 @@ const CartLines: FC<Props> = ({
                         showInventoryAvailability={true}
                         extendedStyles={styles.cardCondensed}
                         updateCartLine={updateCartLine}
-                        removeCartLine={removeCartLine} />
+                        removeCartLine={removeCartLine}
+                        showRemoveAction={showRemoveAction}
+                    />
                     : <CartLineCardExpanded
                         cart={cart}
                         promotions={matchingPromotions}
@@ -212,7 +215,9 @@ const CartLines: FC<Props> = ({
                         showLineNotes={fields.showLineNotes}
                         extendedStyles={styles.cardExpanded}
                         updateCartLine={updateCartLine}
-                        removeCartLine={removeCartLine} />
+                        removeCartLine={removeCartLine}
+                        showRemoveAction={showRemoveAction}
+                    />
                 }
             </CartLineContext.Provider>
         );

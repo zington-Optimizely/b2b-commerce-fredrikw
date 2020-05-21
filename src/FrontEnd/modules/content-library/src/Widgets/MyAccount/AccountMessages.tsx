@@ -26,10 +26,10 @@ import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getL
 const messagesParameter = {};
 
 const mapStateToProps = (state: ApplicationState) => ({
-        messagesDataView: getMessagesDataView(state, messagesParameter),
-        byId: state.data.messages.byId,
-        language: state.context.session.language,
-    });
+    messagesDataView: getMessagesDataView(state, messagesParameter),
+    byId: state.data.messages.byId,
+    language: state.context.session.language,
+});
 
 const mapDispatchToProps = {
     updateMessageIsRead,
@@ -83,8 +83,22 @@ const styles: AccountMessagesStyles = {
     messagesAccordion: { css: css` width: 100%; ` },
     messagesGridContainer: { gap: 15 },
     messageFilterGridItem: { width: 12 },
+    messageFilter: {
+        radioGroup: {
+            css: css`
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        `,
+        },
+        radioButton: {
+            css: css` margin-top: 10px; `,
+        },
+    },
     messageCardGridItem: { width: 12 },
     messageCard: {
+        gridContainer: { gap: 5 },
         article: { css: css` width: 100%; ` },
         dateTimeGridItem: { width: 12 },
         dateTimeText: { weight: "bold" },
@@ -93,6 +107,9 @@ const styles: AccountMessagesStyles = {
         actionButtonGridItem: {
             width: 12,
             css: css` justify-content: flex-end; `,
+        },
+        actionButton: {
+            variant: "secondary",
         },
         bottomBorderGridItem: { width: 12 },
         bottomBorder: {
@@ -125,6 +142,7 @@ const StyledArticle = getStyledWrapper("article");
 
 interface State {
     messagesFilterType: string,
+    isMessagesPreview: boolean,
 }
 
 class AccountMessages extends React.Component<Props, State> {
@@ -133,6 +151,7 @@ class AccountMessages extends React.Component<Props, State> {
 
         this.state = {
             messagesFilterType: "All",
+            isMessagesPreview: true,
         };
     }
 
@@ -145,7 +164,7 @@ class AccountMessages extends React.Component<Props, State> {
     render() {
         let title = "Messages";
         const { messagesDataView, updateMessageIsRead, language } = this.props;
-        const { messagesFilterType } = this.state;
+        const { messagesFilterType, isMessagesPreview } = this.state;
         const messages = messagesDataView.value ? messagesDataView.value : [];
 
         if (messagesDataView.value) {
@@ -153,8 +172,10 @@ class AccountMessages extends React.Component<Props, State> {
             title = `Messages (${countUnreadMessages})`;
         }
 
-        const filteredMessages = filterMessagesBasedOnFilterType(messages, messagesFilterType);
-
+        let filteredMessages = filterMessagesBasedOnFilterType(messages, messagesFilterType);
+        if (isMessagesPreview) {
+            filteredMessages = filteredMessages.slice(0, 3);
+        }
         const componentStyles: MessageFilterStyles = styles.messageFilter || {};
 
         return (
@@ -165,6 +186,7 @@ class AccountMessages extends React.Component<Props, State> {
                 >
                     <AccordionSection
                         title={title}
+                        onTogglePanel={() => { this.setState({ isMessagesPreview: false }); }}
                         {...styles.messagesAccordionSection}
                         expanded
                     >
@@ -188,7 +210,7 @@ class AccountMessages extends React.Component<Props, State> {
                         </GridContainer>
                         {messagesDataView.isLoading
                         && <StyledWrapper {...styles.centeringWrapper}>
-                            <LoadingSpinner/>
+                            <LoadingSpinner />
                         </StyledWrapper>
                         }
                     </AccordionSection>

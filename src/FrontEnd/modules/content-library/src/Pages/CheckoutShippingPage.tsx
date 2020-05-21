@@ -107,7 +107,7 @@ class CheckoutShippingPage extends Component<Props, State> {
 
     render() {
         return (
-            <Page>
+            <Page data-test-selector="checkoutShipping">
                 <CheckoutShippingFormContext.Provider value={this.state}>
                     <form id="checkoutShippingForm" onSubmit={this.handleFormSubmit} noValidate>
                         <Zone zoneName="Content" contentId={this.props.id} />

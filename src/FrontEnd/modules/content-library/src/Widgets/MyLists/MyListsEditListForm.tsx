@@ -22,6 +22,7 @@ interface State {
     name: string;
     nameError?: React.ReactNode;
     description: string;
+    descriptionError?: React.ReactNode;
 }
 
 const mapDispatchToProps = {
@@ -107,28 +108,30 @@ class MyListsEditListForm extends React.Component<Props, State> {
     nameChangeHandler = (e: any) => {
         this.setState({
             name: e.target.value,
-            nameError: "",
+            nameError: e.target.value.length > 100 ? siteMessage("Lists_List_Name_Too_Long", "100") : "",
         });
     };
 
     descriptionChangeHandler = (e: any) => {
         this.setState({
             description: e.target.value,
+            descriptionError: e.target.value.length > 300 ? siteMessage("Lists_List_Description_Too_Long", "300") : "",
         });
     };
 
     render() {
+        const { name, nameError, description, descriptionError } = this.state;
         return (
-            <GridContainer {...styles.container}>
+            <GridContainer {...styles.container} data-test-selector="editListForm">
                 <GridItem {...styles.nameGridItem}>
                     <TextField
                         data-test-selector="myListsEditListFormName"
                         label={translate("List Name")}
                         {...styles.nameTextField}
                         name="name"
-                        error={this.state.nameError}
+                        error={nameError}
                         required
-                        defaultValue={this.state.name}
+                        defaultValue={name}
                         onChange={this.nameChangeHandler}>
                     </TextField>
                 </GridItem>
@@ -138,7 +141,8 @@ class MyListsEditListForm extends React.Component<Props, State> {
                         label={translate("Description")}
                         {...styles.descriptionTextField}
                         name="description"
-                        defaultValue={this.state.description}
+                        error={descriptionError}
+                        defaultValue={description}
                         onChange={this.descriptionChangeHandler}>
                     </TextField>
                 </GridItem>
@@ -148,7 +152,11 @@ class MyListsEditListForm extends React.Component<Props, State> {
                         onClick={this.props.onCancel}>
                         {translate("Cancel")}
                     </Button>
-                    <Button {...styles.createButton} onClick={this.submitHandler} data-test-selector="myListsEditListFormSubmit">
+                    <Button
+                        {...styles.createButton}
+                        onClick={this.submitHandler}
+                        disabled={name.length > 100 || description.length > 300}
+                        data-test-selector="myListsEditListFormSubmit">
                         {translate(this.props.wishList ? "Save" : "Create List")}
                     </Button>
                 </GridItem>

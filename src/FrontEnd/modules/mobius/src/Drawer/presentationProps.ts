@@ -11,6 +11,10 @@ const DrawerPresentationPropsDefault = {
         size: 24,
         lineHeight: "33px",
     },
+    closeButtonIconProps: {
+        src: "X",
+        size: 24,
+    },
     transitions: {
         left: {
             enabled: true,

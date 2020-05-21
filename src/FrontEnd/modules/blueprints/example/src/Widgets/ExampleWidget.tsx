@@ -28,7 +28,7 @@ interface Props extends WidgetProps {
     };
 }
 
-const ExampleWidget: React.FC<Props> = (props: Props) => {
+const ExampleWidget: React.FC<Props> = (props) => {
     return <div>
         <div>Checkbox value:
             {props.fields.checkboxFieldValue.toString()}

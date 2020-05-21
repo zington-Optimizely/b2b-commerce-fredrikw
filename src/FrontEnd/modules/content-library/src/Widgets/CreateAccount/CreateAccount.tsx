@@ -14,7 +14,7 @@ import { CreateAccountPageContext } from "@insite/content-library/Pages/CreateAc
 import EyeOff from "@insite/mobius/Icons/EyeOff";
 import Eye from "@insite/mobius/Icons/Eye";
 import { IconPresentationProps } from "@insite/mobius/Icon";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
@@ -26,7 +26,7 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import validatePassword, { numberPasswordLengthMessage, lowerCasePasswordLengthMessage, upperCasePasswordLengthMessage, specialPasswordLengthMessage } from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getCreateAccountReturnUrl } from "@insite/client-framework/Store/Pages/CreateAccount/CreateAccountSelectors";
 
 interface OwnProps extends WidgetProps {
 }
@@ -39,7 +39,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: ApplicationState) => ({
     accountSettings: getSettingsCollection(state).accountSettings,
-    location: getLocation(state),
+    returnUrl: getCreateAccountReturnUrl(state),
 });
 
 type Props =
@@ -147,6 +147,7 @@ const CreateAccount: FC<Props> = ({
     signIn,
     validatePassword,
     accountSettings,
+    returnUrl,
 }) => {
     const [email, setEmail] = React.useState("");
     const [userName, setUserName] = React.useState("");
@@ -221,7 +222,12 @@ const CreateAccount: FC<Props> = ({
         setErrorMessage("");
         toasterContext.addToast({ body: translate("Account created successfully!"), messageType: "success" });
         setTimeout(() => {
-            signIn({ userName, password, rememberMe: false });
+            signIn({
+                userName,
+                password,
+                rememberMe: false,
+                returnUrl,
+            });
         }, 500);
     };
 
@@ -273,7 +279,7 @@ const CreateAccount: FC<Props> = ({
                         <TextField
                             id="password"
                             {...styles.passwordTextField}
-                            type={showPassword ? "password" : undefined}
+                            type={showPassword ? undefined : "password"}
                             label={translate("Password")}
                             value={password}
                             onChange={(e) => passwordChangeHandler(e.currentTarget.value)}
@@ -292,7 +298,7 @@ const CreateAccount: FC<Props> = ({
                         <TextField
                             id="confirm-password"
                             {...styles.confirmPasswordTextField}
-                            type={showConfirmPassword ? "password" : undefined}
+                            type={showConfirmPassword ? undefined : "password"}
                             label={translate("Confirm Password")}
                             value={confirmPassword}
                             onChange={(e) => confirmPasswordChangeHandler(e.currentTarget.value)}
@@ -322,8 +328,14 @@ const CreateAccount: FC<Props> = ({
                         <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
                     </GridItem>}
                     <GridItem {...styles.submitGridItem}>
-                        <Button {...styles.submitButton} onClick={submitHandler}
-                            disabled={isSubmitted && !isSubmitEnabled}>{translate("Create")}</Button>
+                        <Button
+                            {...styles.submitButton}
+                            onClick={submitHandler}
+                            disabled={isSubmitted && !isSubmitEnabled}
+                            data-test-selector="createAccount_createButton"
+                        >
+                            {translate("Create")}
+                        </Button>
                     </GridItem>
                 </GridContainer>
             </GridItem>

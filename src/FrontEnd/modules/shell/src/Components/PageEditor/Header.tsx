@@ -59,6 +59,7 @@ class Header extends React.Component<Props> {
                 <HeaderPublishStatus />
                 {contentMode === "Editing"
                     && <>
+                        <Icon src={Spacer} color="#999" />
                         <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage"><Icon src={Edit} size={20} color="#fff"/></PageHeaderButton>
                         <PageHeaderButton onClick={toggleShowGeneratedPageCreator}><DebugMenu color1="#fff" size={16}/></PageHeaderButton>
                     </>

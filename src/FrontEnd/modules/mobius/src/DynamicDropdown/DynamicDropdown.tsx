@@ -5,17 +5,17 @@ import filter from "./filter";
 import FormField, {
     FormFieldIcon,
     FormFieldPresentationProps,
-    FormFieldComponentProps,
     FormFieldSizeVariant,
+    FormFieldComponentProps,
 } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
-import ChevronDown from "../Icons/ChevronDown";
 import LoadingSpinner, { LoadingSpinnerProps } from "../LoadingSpinner";
 import Popover, { ContentBodyProps, OverflowWrapperProps } from "../Popover";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import get from "../utilities/get";
 import getColor from "../utilities/getColor";
 import { StyledProp } from "../utilities/InjectableCss";
@@ -23,7 +23,7 @@ import injectCss from "../utilities/injectCss";
 import safeColor from "../utilities/safeColor";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
-import MobiusStyledComponentProps, { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
+import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 
 export interface DynamicDropdownPresentationProps extends FormFieldPresentationProps<DynamicDropdownComponentProps> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
@@ -84,8 +84,7 @@ interface DynamicDropdownComponentProps extends Partial<FormFieldComponentProps>
     uid?: string;
     /** Label to be displayed above the input. */
     label?: React.ReactNode;
-    /** Adds an asterisk to the input's label (if provided). Additionally, governs whether an error if the date
-     * field is empty or a disabled day is selected */
+    /** Adds an asterisk to the input's label (if provided). Additionally, governs whether an error if a disabled option is selected */
     required?: boolean;
     /** An optional final list item for the dynamic dropdown. If only a subset of options is displayed on load, this component
      * can be used to indicate 'search for more options' or can contain a link, etcetera, to provide further functionality. */
@@ -203,7 +202,7 @@ const listCssBuilder = (
 /**
  * A searchable dropdown.
  */
-class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropdownState> {
+class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisablerContext, DynamicDropdownState> {
     private spreadProps: Function;
     private sizeVariant: FormFieldSizeVariant;
 
@@ -213,7 +212,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
         placeholder: "Type to search",
     };
 
-    constructor(props: DynamicDropdownProps) {
+    constructor(props: DynamicDropdownProps & HasDisablerContext) {
         super(props);
         const { applyProp, spreadProps } = applyPropBuilder(props, { component: "dynamicDropdown", category: "formField" });
         this.spreadProps = spreadProps;
@@ -230,7 +229,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
 
     input = React.createRef<HTMLElement>();
 
-    list = React.createRef<HTMLElement>();
+    list = React.createRef<HTMLUListElement>();
 
     focused = React.createRef<HTMLDivElement>();
 
@@ -443,15 +442,17 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
 
     render = () => {
         const {
-            isLoading,
+            disable,
+            disabled,
             error,
             filterOption,
             hint,
+            isLoading,
             moreOption,
+            onKeyPress,
             options,
             placeholder,
             sizeVariant,
-            onKeyPress,
             theme,
             ...otherProps
         } = this.props;
@@ -463,6 +464,9 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
             dropdownWrapper, loading, list, moreOption: moreOptionCss, noOptions, option, selectedText, ..._cssOverrides
         } = this.spreadProps("cssOverrides");
 
+        // Because disabled html attribute doesn't accept undefined
+        // eslint-disable-next-line no-unneeded-ternary
+        const isDisabled = (disable || disabled) ? true : false;
         const listboxId = `${uid}-listbox`;
         const descriptionId = `${uid}-description`;
         const labelId = `${uid}-label`;
@@ -506,16 +510,18 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
                 onKeyPress={onKeyPress}
                 value={typedInput}
                 placeholder={selected ? "" : placeholder}
+                disabled={isDisabled}
+                data-test-selector={`${(otherProps as any)["data-test-selector"]}-input`}
                 {...inputLabelObj}
             />);
 
         const triggerSiblings = (<>
             {typedInput
                 ? null
-                : <SelectedText _sizeVariant={this.sizeVariant} css={selectedText}>{selectedString}</SelectedText>
+                : <SelectedText _sizeVariant={this.sizeVariant} css={selectedText} data-test-selector={`${(otherProps as any)["data-test-selector"]}-selectedText`}>{selectedString}</SelectedText>
             }
             <VisuallyHidden>{isOpen ? theme.translate("hide options") : theme.translate("show options")}</VisuallyHidden>
-            <FormFieldIcon src={ChevronDown} {...this.spreadProps("iconProps")} />
+            <FormFieldIcon {...this.spreadProps("iconProps")} />
         </>);
 
         const comboBox = (
@@ -549,8 +555,10 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
                         role: "listbox",
                         "aria-labelledby": labelId,
                         css: listCssBuilder(list, this.sizeVariant) as any,
-                        _width: 400,
+                        width: 400,
+
                     } as ContentBodyProps}
+                    data-test-selector={`${(otherProps as any)["data-test-selector"]}-listbox`}
                 >
                     {renderList}
                     {!isLoading && moreOption
@@ -576,6 +584,6 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps, DynamicDropd
 }
 
 /** @component */
-export default withTheme(DynamicDropdown);
+export default withDisabler(withTheme(DynamicDropdown));
 
 export { Option };

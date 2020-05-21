@@ -24,10 +24,13 @@ import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHan
 import updateCarouselProduct from "@insite/client-framework/Store/Components/ProductCarousel/Handlers/UpdateCarouselProduct";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import translate from "@insite/client-framework/Translate";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
 
 const mapDispatchToProps = {
     changeProductUnitOfMeasure,
     updateCarouselProduct,
+    changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
 };
 
 interface OwnProps {
@@ -130,14 +133,17 @@ const ProductCarouselProduct: React.FC<Props> = ({
     showAddToList,
     changeProductUnitOfMeasure,
     updateCarouselProduct,
+    changeProductQtyOrdered,
     extendedStyles,
 }) => {
     const [styles] = React.useState(() => mergeToNew(productCarouselProductStyles, extendedStyles));
 
     const [quantity, setQuantity] = React.useState(product.minimumOrderQty || 1);
-    const updateQuantity = (value: string) => {
-        updateCarouselProduct({ carouselId, product: { ...product, qtyOrdered: parseFloat(value) } });
+    const updateQuantity = async (value: string) => {
         setQuantity(value as any as number);
+
+        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: parseFloat(value) });
+        updateCarouselProduct({ carouselId, product: productToUpdate });
     };
 
     const [uom, setUOM] = React.useState(product.selectedUnitOfMeasure);

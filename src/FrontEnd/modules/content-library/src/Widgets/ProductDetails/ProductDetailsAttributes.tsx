@@ -49,7 +49,7 @@ const ProductDetailsAttributes: React.FC<OwnProps> = ({ product, attributeTypes 
                 <span data-test-selector="brand_item_value" >{product.brand.name}</span>
             </Typography>
         }
-        {attributeTypes && attributeTypes.map(attributeType =>
+        {attributeTypes && attributeTypes.slice(0, 5).map(attributeType =>
             <Typography key={attributeType.id.toString()} data-test-selector="attributes_item" data-attributetypeid={attributeType.id} {...styles.attributeTypeValuesText} as="p">
                 <Typography data-test-selector="attributes_item_label" {...styles.attributeTypeLabelText}>{attributeType.label}&nbsp;:&nbsp;</Typography>
                 <span data-test-selector="attributes_item_value">{attributeType.attributeValues!.map(attributeValue => attributeValue.valueDisplay).join(", ")}</span>

@@ -4,16 +4,20 @@ import React from 'react';
 import { mount } from 'enzyme';
 import ThemeProvider from '../ThemeProvider';
 import DatePicker from './DatePicker';
-import Calendar from '../Icons/Calendar';
+import Icon from '../Icon';
+import DisablerContext from '../utilities/DisablerContext';
 
 describe('DatePicker', () => {
     let props;
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <DatePicker {...props} />
+                    <DisablerContext.Provider value={disablerValue}>
+                        <DatePicker {...props} />
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -26,7 +30,7 @@ describe('DatePicker', () => {
     });
 
     test('displays a calendar icon by default', () => {
-        expect(wrapper().find(Calendar)).toHaveLength(1);
+        expect(wrapper().find(Icon).find("[src='Calendar']")).toHaveLength(1);
     });
 
     test('renders the placeholder text', () => {
@@ -105,6 +109,31 @@ describe('DatePicker', () => {
                 props = { selectedDay: undefined, required: true };
                 expect(wrapper().find('div[role="group"]').prop('aria-invalid')).toEqual(true);
             });
+        });
+    });
+
+    describe('is appropriately disabled', () => {
+        test("if DisablerContext is true", () => {
+            disablerValue = { disable: true };
+            const root = wrapper();
+            expect(root.find("input[name='month']").prop("disabled")).toBe(true);
+            expect(root.find("input[name='day']").prop("disabled")).toBe(true);
+            expect(root.find("input[name='year']").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is true", () => {
+            props = { disabled: true };
+            disablerValue = { disable: false };
+            const root = wrapper();
+            expect(root.find("input[name='month']").prop("disabled")).toBe(true);
+            expect(root.find("input[name='day']").prop("disabled")).toBe(true);
+            expect(root.find("input[name='year']").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is false", () => {
+            disablerValue = { disable: false };
+            const root = wrapper();
+            expect(root.find("input[name='month']").prop("disabled")).toBe(false);
+            expect(root.find("input[name='day']").prop("disabled")).toBe(false);
+            expect(root.find("input[name='year']").prop("disabled")).toBe(false);
         });
     });
 });

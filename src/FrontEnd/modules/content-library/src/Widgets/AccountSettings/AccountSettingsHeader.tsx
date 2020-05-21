@@ -13,6 +13,10 @@ import saveCurrentAccount from "@insite/client-framework/Store/Pages/AccountSett
 import { hasChanges } from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsSelectors";
 import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import OverflowMenu from "@insite/mobius/OverflowMenu";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
 
 interface OwnProps extends WidgetProps {
 }
@@ -36,8 +40,12 @@ type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<ty
 export interface AccountSettingsHeaderStyles {
     title: TypographyProps;
     titleWrapper: GridItemProps;
+    buttonSetHidden?: HiddenProps;
     saveButton?: ButtonPresentationProps;
     cancelButton?: ButtonPresentationProps;
+    menuHidden?: HiddenProps;
+    saveClickable?: ClickablePresentationProps;
+    cancelClickable?: ClickablePresentationProps;
     buttonSet?: GridItemProps;
 }
 
@@ -45,12 +53,18 @@ const styles: AccountSettingsHeaderStyles = {
     saveButton: {
         css: css` margin-left: 10px; `,
     },
+    buttonSetHidden: {
+        below: "md",
+    },
+    menuHidden: {
+        above: "sm",
+    },
     buttonSet: {
         css: css` justify-content: flex-end; `,
-        width: [12, 6, 6, 6, 6],
+        width: [1, 1, 4, 3, 3],
     },
     titleWrapper: {
-        width: [12, 6, 6, 6, 6],
+        width: [11, 11, 8, 9, 9],
     },
     title: {
         variant: "h2",
@@ -81,20 +95,40 @@ const AccountSettingsHeader: FC<Props> = props => {
                 <Typography {...styles.title}>{pageTitle}</Typography>
             </GridItem>
             <GridItem {...styles.buttonSet}>
-                {hasChanges
-                    && <Button
-                        {...styles.cancelButton}
-                        onClick={props.setInitialValues}
+                <Hidden {...styles.buttonSetHidden}>
+                    {hasChanges
+                        && <Button
+                            {...styles.cancelButton}
+                            onClick={props.setInitialValues}
+                        >
+                            {translate("Cancel")}
+                        </Button>}
+                    <Button {...styles.saveButton}
+                        onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => updateSettingsHandler(event, props)}
+                        disabled={!enableSaveButton}
+                        data-test-selector="accountSettings_save"
                     >
-                        {translate("Cancel")}
-                    </Button>}
-                <Button {...styles.saveButton}
-                    onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => updateSettingsHandler(event, props)}
-                    disabled={!enableSaveButton}
-                    data-test-selector="accountSettings_save"
-                >
-                    {translate("Save")}
-                </Button>
+                        {translate("Save")}
+                    </Button>
+                </Hidden>
+                <Hidden {...styles.menuHidden}>
+                    <OverflowMenu>
+                        <Clickable
+                            {...styles.cancelClickable}
+                            onClick={props.setInitialValues}
+                            disabled={!hasChanges}
+                        >
+                            {translate("Cancel")}
+                        </Clickable>
+                        <Clickable
+                            {...styles.saveClickable}
+                            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => updateSettingsHandler(event, props)}
+                            disabled={!enableSaveButton}
+                        >
+                            {translate("Save")}
+                        </Clickable>
+                    </OverflowMenu>
+                </Hidden>
             </GridItem>
         </GridContainer>
     );
@@ -104,7 +138,7 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(AccountSettingsHeader),
     definition: {
         group: "Account Settings",
-        allowedContexts: [],
+        allowedContexts: [AccountSettingsPageContext],
         fieldDefinitions: [],
     },
 };

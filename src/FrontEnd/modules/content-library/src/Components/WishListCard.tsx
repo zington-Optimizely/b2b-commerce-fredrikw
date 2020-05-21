@@ -59,6 +59,9 @@ export interface WishListCardStyles {
 }
 
 export const wishListCardStyles: WishListCardStyles = {
+    gridContainer: {
+        gap: 5,
+    },
     wishListInfoGridItem: {
         width: [10, 10, 8, 10, 10],
         align: "middle",
@@ -187,6 +190,7 @@ const WishListCard: React.FunctionComponent<Props> = ({
                     <Button
                         {...styles.actionAddToCartButton}
                         disabled={!canAddToCart}
+                        data-test-selector={`wishListAddToCartButton_${wishList.id}`}
                         onClick={clickAddToCartHandler}>
                         {translate("Add List to Cart")}
                     </Button>

@@ -8,7 +8,7 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 const HomePage: React.FunctionComponent<PageProps> = ({
     id,
 }: PageProps) => (
-    <Page>
+    <Page data-test-selector="homePage">
         <Zone contentId={id} zoneName="Content" requireRows />
         <AddToListModal />
     </Page>
@@ -24,3 +24,5 @@ const pageModule: PageModule = {
 };
 
 export default pageModule;
+
+export const HomePageContext = "HomePage";

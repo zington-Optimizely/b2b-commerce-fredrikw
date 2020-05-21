@@ -9,12 +9,13 @@ import {
     addWidget,
     moveWidgetTo,
     removeWidget,
-} from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+    changeContext,
+} from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { displayAddWidgetModal, editWidget, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { PageModel } from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
+import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
 
 interface OwnProps {
     pageId: string;
@@ -29,7 +30,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     currentLanguageId: state.shellContext.currentLanguageId,
     currentPersonaId: state.shellContext.currentPersonaId,
     currentDeviceType: state.shellContext.currentDeviceType,
-    draggingWidgetId: state.currentPage.draggingWidgetId,
+    draggingWidgetId: state.data.pages.draggingWidgetId,
 });
 
 const mapDispatchToProps = {
@@ -39,6 +40,7 @@ const mapDispatchToProps = {
     editWidget,
     savePage,
     removeWidget,
+    changeContext,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps & RouteComponentProps & HasConfirmationContext;
@@ -138,17 +140,17 @@ class SiteFrame extends React.Component<Props, State> {
         bubbleEvent("mousedown");
 
         setSiteFrame(iframe, {
-            LoadPageComplete: (data: { page: PageModel }) => {
-                const url = `/ContentAdmin/Page/${data.page.id}`;
-                this.framePageId = data.page.id;
+            LoadPageComplete: (data: { pageId: string }) => {
+                const url = `/ContentAdmin/Page/${data.pageId}`;
+                this.framePageId = data.pageId;
                 this.props.history.push(url);
             },
             MoveWidgetTo: (data: { id: string, parentId: string, zoneName: string, index: number}) => {
                 this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index);
                 this.props.savePage();
             },
-            AddWidget: (data: { widget: WidgetProps, index: number}) => {
-                this.props.addWidget(data.widget, data.index);
+            AddWidget: (data: { widget: WidgetProps, index: number, pageId: string }) => {
+                this.props.addWidget(data.widget, data.index, data.pageId);
                 this.props.editWidget(data.widget.id, true);
             },
             AddRow: (data: AddWidgetData) => {
@@ -173,6 +175,13 @@ class SiteFrame extends React.Component<Props, State> {
                         this.props.savePage();
                     },
                 });
+            },
+            ChangeWebsiteLanguage: (data: { languageId: string }) => {
+                this.props.changeContext(data.languageId, this.props.currentPersonaId, this.props.currentDeviceType);
+            },
+            FrontEndSessionLoaded: (data: { personas: PersonaModel[] }) => {
+                if (!data.personas.length) return;
+                this.props.changeContext(this.props.currentLanguageId, data.personas[0].id, this.props.currentDeviceType);
             },
         });
     };

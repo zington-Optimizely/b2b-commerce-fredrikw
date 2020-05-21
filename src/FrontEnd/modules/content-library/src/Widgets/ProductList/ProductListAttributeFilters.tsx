@@ -53,20 +53,20 @@ const ProductListAttributeFilters: FC<Props> = ({ attributeTypeFacets, addProduc
 
     return <>
         {attributeTypeFacets?.map(a => a.attributeValueFacets
-            ? <div key={a.attributeTypeId}>
-                <ProductListFiltersAccordionSection
-                    title={a.nameDisplay}
-                    facets={a.attributeValueFacets?.map<FacetModel>(av => ({
-                        ...av,
-                        id: av.attributeValueId,
-                        name: av.valueDisplay,
-                    }))}
-                    onChangeFacet={onChangeFacet}
-                    showMoreLimit={showMoreLimit}
-                    expandByDefault={fields.expandByDefault}
-                    extendedStyles={productListCategoryFiltersStyles}
-                />
-            </div> : null)}
+            ? <ProductListFiltersAccordionSection
+                key={a.attributeTypeId}
+                title={a.nameDisplay}
+                facets={a.attributeValueFacets?.map<FacetModel>(av => ({
+                    ...av,
+                    id: av.attributeValueId,
+                    name: av.valueDisplay,
+                }))}
+                onChangeFacet={onChangeFacet}
+                showMoreLimit={showMoreLimit}
+                expandByDefault={fields.expandByDefault}
+                extendedStyles={productListCategoryFiltersStyles}
+            />
+            : null)}
         </>;
 };
 

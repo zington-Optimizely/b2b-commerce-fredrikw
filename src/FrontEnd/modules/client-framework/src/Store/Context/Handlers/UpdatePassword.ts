@@ -40,5 +40,5 @@ export const chain = [
     UpdateSession,
 ];
 
-const loadAccountSettings = createHandlerChainRunner(chain, "LoadAccountSettings");
-export default loadAccountSettings;
+const updatePassword = createHandlerChainRunner(chain, "UpdatePassword");
+export default updatePassword;

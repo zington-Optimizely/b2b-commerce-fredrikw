@@ -1,5 +1,6 @@
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import {
+    ImageModel,
     TraitValueModel,
     UnitOfMeasureModel,
 } from "@insite/client-framework/Types/ApiModels";
@@ -19,6 +20,7 @@ type HandlerType = HandlerWithResult<
         variantSelection: (TraitValueModel | undefined)[];
         variantSelectionCompleted: boolean;
         needUpdateUnitOfMeasure?: boolean;
+        variantImage?: ImageModel;
     }
 >;
 
@@ -58,6 +60,7 @@ export const SelectVariantProduct: HandlerType = ({ result, getState }) => {
     product.smallImagePath = selectedVariantProduct.smallImagePath;
     product.mediumImagePath = selectedVariantProduct.mediumImagePath;
     product.largeImagePath = selectedVariantProduct.largeImagePath;
+    product.imageAltText = selectedVariantProduct.imageAltText;
     product.id = selectedVariantProduct.id;
     product.quoteRequired = selectedVariantProduct.quoteRequired;
     product.productTitle = selectedVariantProduct.productTitle;
@@ -109,12 +112,26 @@ export const SelectParentProduct: HandlerType = ({ result, getState }) => {
     }
 };
 
+export const SetVariantImage: HandlerType = ({ result, result: { product } }) => {
+    result.variantImage = product.images?.length ? product.images![0] : {
+        id: product.id,
+        imageAltText: product.imageAltText,
+        imageType: "Static",
+        largeImagePath: product.largeImagePath,
+        mediumImagePath: product.mediumImagePath,
+        name: "",
+        smallImagePath: product.smallImagePath,
+        sortOrder: 0,
+    };
+};
+
 export const DispatchUpdateVariantSelection: HandlerType = ({ result, dispatch }) => {
     dispatch({
         type: "Pages/ProductDetail/UpdateVariantSelection",
         product: result.product,
         variantSelection: result.variantSelection,
         variantSelectionCompleted: result.variantSelectionCompleted,
+        variantImage: result.variantImage,
     });
 };
 
@@ -160,6 +177,7 @@ export const chain = [
     SetVariantSelectionCompleted,
     SelectVariantProduct,
     SelectParentProduct,
+    SetVariantImage,
     DispatchUpdateVariantSelection,
     FilterVariantTraits,
     UpdateUnitOfMeasure,

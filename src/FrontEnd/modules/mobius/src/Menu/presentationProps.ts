@@ -10,6 +10,8 @@ const MenuDefaultProps: ComponentThemeProps["menu"]["defaultProps"] = {
             top: 10px;
             right: 0;
         `,
+        src: "ChevronRight",
+        color: "common.backgroundContrast",
     },
     menuItemTypographyProps: {
         size: 15,

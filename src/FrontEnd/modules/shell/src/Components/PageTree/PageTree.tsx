@@ -16,12 +16,13 @@ import Typography from "@insite/mobius/Typography";
 import PageTreeFlyOut from "@insite/shell/Components/PageTree/PageTreeFlyOut";
 import SectionCollapse from "@insite/shell/Components/Icons/SectionCollapse";
 import Move from "@insite/shell/Components/Icons/Move";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 interface OwnProps {
 }
 
 const mapStateToProps = (state: ShellState) => ({
-    selectedPageId: state.currentPage.page.id,
+    selectedPageId: getCurrentPageForShell(state).id,
     isEditMode: state.shellContext.contentMode === "Editing",
     nodesByParentId: state.pageTree.treeNodesByParentId,
     allowRootAddPage: state.pageTree.appliedTreeFilters.length === 0 && state.shellContext.contentMode === "Editing",
@@ -112,7 +113,7 @@ class PageTree extends ClickOutside<Props, State> {
         const { allowRootAddPage, hasExpandedNodes, expandedNodes, headerNodesByParentId, nodesByParentId, footerNodesByParentId, isEditMode, selectedPageId } = this.props;
 
         return (
-            <PageTreeStyle ref={this.setWrapperRef}>
+            <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
                 <Typography variant="h2" css={pagesH2}>Pages
                     {hasExpandedNodes && <CollapseTreeStyle onClick={this.closeAll}><SectionCollapse/></CollapseTreeStyle>}
                     {allowRootAddPage && <ReorderStyle onClick={this.reorderPages}><Move height={19} /></ReorderStyle>}

@@ -69,23 +69,27 @@ const ToolbarStyled = styled.div<InjectableCss>` ${({ css }) => css} `;
 const CustomerSelectorToolbar: FC<OwnProps> = ({
     allowCreateAddress = false,
     onCreateNewAddressClick,
-    ...otherProps
+    extendedStyles,
+    searchText,
+    onSearchTextChanged,
+    onSearch,
+    isSearchDisabled,
 }) => {
-    const [styles] = useState(() => mergeToNew(customerSelectorToolbarStyles, otherProps.extendedStyles));
+    const [styles] = useState(() => mergeToNew(customerSelectorToolbarStyles, extendedStyles));
 
     return (
         <ToolbarStyled {...styles.wrapper}>
             <TextField
                 {...styles.searchTextField}
                 placeholder="Search Addresses"
-                value={otherProps.searchText}
+                value={searchText}
                 iconProps={{ src: Search }}
-                onChange={otherProps.onSearchTextChanged}
+                onChange={onSearchTextChanged}
             />
             <Button
                 {...styles.searchButton}
-                onClick={otherProps.onSearch}
-                disabled={otherProps.isSearchDisabled}
+                onClick={onSearch}
+                disabled={isSearchDisabled}
             >
                 {translate("Search")}
             </Button>

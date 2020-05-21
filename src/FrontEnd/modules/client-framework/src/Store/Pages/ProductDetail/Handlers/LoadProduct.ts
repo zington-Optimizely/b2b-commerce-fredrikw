@@ -59,7 +59,7 @@ export const SortAndLimitAttributes: HandlerType = ({ apiResult: { product } }) 
             attributeType.attributeValues = sortBy(attributeType.attributeValues, o => o.sortOrder, o => o.valueDisplay);
         });
 
-        product.attributeTypes = attributeTypes.slice(0, 5);
+        product.attributeTypes = attributeTypes;
     }
 };
 

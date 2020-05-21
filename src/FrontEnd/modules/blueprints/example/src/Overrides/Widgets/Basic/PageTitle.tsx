@@ -18,7 +18,7 @@ type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 
 const PageTitle: React.FunctionComponent<Props> = ({
     pageTitle,
-}: Props) => (
+}) => (
     <Typography variant="h2">
         🐶 {pageTitle}!!
     </Typography>

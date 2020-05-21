@@ -16,6 +16,7 @@ import PaymentProfilesReducer from "@insite/client-framework/Store/Data/PaymentP
 import QuotesReducer from "@insite/client-framework/Store/Data/Quotes/QuotesReducer";
 import WishListsReducer from "@insite/client-framework/Store/Data/WishLists/WishListsReducer";
 import WishListLinesReducer from "@insite/client-framework/Store/Data/WishListLines/WishListLinesReducer";
+import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 
 const dataReducers = {
     accounts: AccountsReducer,
@@ -28,6 +29,7 @@ const dataReducers = {
     messages: MessagesReducer,
     orders: OrdersReducer,
     orderStatusMappings: OrderStatusMappingReducer,
+    pages: PagesReducer,
     paymentProfiles: PaymentProfilesReducer,
     promotions: PromotionsReducer,
     quotes: QuotesReducer,

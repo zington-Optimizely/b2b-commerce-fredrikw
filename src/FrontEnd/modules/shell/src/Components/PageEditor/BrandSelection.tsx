@@ -2,6 +2,7 @@ import { loadBrands, selectBrand } from "@insite/shell/Store/PageEditor/PageEdit
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 interface OwnProps {
 
@@ -39,7 +40,7 @@ class BrandSelection extends React.Component<Props> {
             return null;
         }
 
-        return <div>
+        return <Wrapper>
             <label>
                 Brand:
                 <select onChange={this.onChange} value={this.getValue()}>
@@ -49,8 +50,16 @@ class BrandSelection extends React.Component<Props> {
                     )}
                 </select>
             </label>
-        </div>;
+        </Wrapper>;
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrandSelection);
+
+const Wrapper = styled.div`
+    white-space: nowrap;
+    max-width: 50%;
+    select {
+        max-width: 100%;
+    }
+`;

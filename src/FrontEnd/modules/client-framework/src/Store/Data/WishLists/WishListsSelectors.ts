@@ -22,7 +22,7 @@ export function getWishListTotal(wishListLinesDataView: ReturnType<typeof getWis
 
     let total = 0;
     wishListLinesDataView.products.forEach((product => {
-        if (product.pricing) {
+        if (!product.quoteRequired && product.pricing) {
             total += Math.round(getUnitNetPrice(product.pricing, product.qtyOrdered).price * product.qtyOrdered * 100) / 100;
         }
     }));

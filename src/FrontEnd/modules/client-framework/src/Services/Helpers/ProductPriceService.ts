@@ -41,7 +41,7 @@ const conditionBreakPrice = (breaks: BreakPriceDto[] | null, count: number) => {
     return !breaks || breaks.length === 0 || count === 0;
 };
 
-const getBreakPrice = (breaks: BreakPriceDto[] | null, count: number) => {
+export const getBreakPrice = (breaks: BreakPriceDto[] | null, count: number) => {
     if (!breaks) {
         return null;
     }

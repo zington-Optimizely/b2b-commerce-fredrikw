@@ -12,11 +12,10 @@ import CustomerSelector, { CustomerSelectorStyles } from "@insite/content-librar
 import styled, { css } from "styled-components";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-
+import { getSettingsCollection, getDefaultPageSize } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 
-interface Props {
+interface OwnProps {
     currentShipTo?: ShipToModel;
     currentBillToId?: string;
     allowSelectBillTo?: boolean;
@@ -25,6 +24,12 @@ interface Props {
     onCreateNewAddressClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     extendedStyles?: ShipToSelectorStyles;
 }
+
+const mapStateToProps = (state: ApplicationState) => ({
+    defaultPageSize: getDefaultPageSize(state),
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface ShipToSelectorStyles {
     customerSelectorToolbar?: CustomerSelectorToolbarStyles;
@@ -50,7 +55,7 @@ export const shipToSelectorStyles: ShipToSelectorStyles = {
 
 const CenteringWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
 
-const ShipToSelector: FC<Props> = ({
+const shipToSelector: FC<Props> = ({
                                        currentShipTo,
                                        currentBillToId,
                                        onCreateNewAddressClick,
@@ -58,41 +63,52 @@ const ShipToSelector: FC<Props> = ({
                                        extendedStyles,
                                        onSelect,
                                        allowSelectBillTo,
+                                       defaultPageSize,
                                    }) => {
-    const [parameter, setParameter] = useState<GetShipTosApiParameter>({ page: 1, pageSize: 8 });
+    const [parameter, setParameter] = useState<GetShipTosApiParameter>({
+        page: 1,
+        pageSize: defaultPageSize,
+        billToId: currentBillToId,
+        expand: ["validation"],
+        exclude: allowSelectBillTo ? ["showAll", "oneTime", "createNew"] : ["showAll", "billTo", "oneTime", "createNew"],
+    });
 
     return <WrappedShipToSelector
         currentShipTo={currentShipTo}
-        currentBillToId={currentBillToId}
         onCreateNewAddressClick={onCreateNewAddressClick}
         onEdit={onEdit}
         extendedStyles={extendedStyles}
         onSelect={onSelect}
-        allowSelectBillTo={allowSelectBillTo}
         parameter={parameter}
         setParameter={setParameter}
     />;
 };
 
-interface OwnWrappedProps {
+const ShipToSelector = connect(mapStateToProps)(shipToSelector);
+
+interface WrappedShipToSelectorProps {
+    currentShipTo?: ShipToModel;
+    onSelect: (shipTo: ShipToModel) => void;
+    onEdit?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => void;
+    onCreateNewAddressClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    extendedStyles?: ShipToSelectorStyles;
     setParameter: (parameter: GetShipTosApiParameter) => void;
     parameter: GetShipTosApiParameter;
 }
 
-const mapStateToProps = (state: ApplicationState, props: OwnWrappedProps) => ({
+const mapStateToPropsWrapped = (state: ApplicationState, props: WrappedShipToSelectorProps) => ({
     shipTosDataView: getShipTosDataView(state, props.parameter),
     customerSettings: getSettingsCollection(state).customerSettings,
 });
 
-const mapDispatchToProps = {
+const mapDispatchToPropsWrapped = {
     loadShipTos,
 };
 
-type WrappedProps = Props & OwnWrappedProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
+type WrappedProps = WrappedShipToSelectorProps & ResolveThunks<typeof mapDispatchToPropsWrapped> & ReturnType<typeof mapStateToPropsWrapped>;
 
 const wrappedShipToSelector: FC<WrappedProps> = ({
                                                      currentShipTo,
-                                                     currentBillToId,
                                                      shipTosDataView,
                                                      customerSettings,
                                                      loadShipTos,
@@ -100,19 +116,12 @@ const wrappedShipToSelector: FC<WrappedProps> = ({
                                                      onEdit,
                                                      extendedStyles,
                                                      onSelect,
-                                                     allowSelectBillTo,
                                                      parameter,
                                                      setParameter,
                                                  }) => {
 
     const [styles] = useState(() => mergeToNew(shipToSelectorStyles, extendedStyles));
     const [searchText, setSearchText] = useState("");
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(8);
-    React.useEffect(
-        () => doLoadShipTos(),
-        [currentBillToId, page, pageSize],
-    );
 
     useEffect(
         () => {
@@ -122,36 +131,35 @@ const wrappedShipToSelector: FC<WrappedProps> = ({
         },
     );
 
-    const searchHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => doLoadShipTos();
+    const searchHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setParameter({
+            ...parameter,
+            page: 1,
+            filter: searchText || undefined,
+        });
+    };
 
     const selectCustomerHandler = (customer: BaseAddressModel) => onSelect(customer as ShipToModel);
 
-    const editCustomerHandler = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
-        if (customerSettings?.allowShipToAddressEdit) {
-            onEdit?.(event, customer as ShipToModel);
-        }
-    };
+    const editCustomerHandler = (customerSettings?.allowShipToAddressEdit && onEdit)
+    ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
+        onEdit?.(event, customer as ShipToModel);
+    }
+    : undefined;
 
-    const changePageHandler = (page: number) => setPage(page);
+    const changePageHandler = (page: number) => {
+        setParameter({
+            ...parameter,
+            page,
+        });
+    };
 
     const changeResultsPerPageHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPage(1);
-        setPageSize(Number(event.currentTarget.value));
-    };
-
-    const doLoadShipTos = () => {
-        const apiParameter: GetShipTosApiParameter = {
-            billToId: currentBillToId,
-            page,
-            pageSize,
-            filter: searchText,
-            expand: ["validation"],
-            exclude: ["showAll", "billTo", "oneTime", "createNew"],
-        };
-        if (allowSelectBillTo) {
-            apiParameter.exclude = apiParameter.exclude!.filter(value => value !== "billTo");
-        }
-        setParameter(apiParameter);
+        setParameter({
+            ...parameter,
+            page: 1,
+            pageSize: Number(event.currentTarget.value),
+        });
     };
 
     return (
@@ -194,6 +202,6 @@ const wrappedShipToSelector: FC<WrappedProps> = ({
     );
 };
 
-const WrappedShipToSelector = connect(mapStateToProps, mapDispatchToProps)(wrappedShipToSelector);
+const WrappedShipToSelector = connect(mapStateToPropsWrapped, mapDispatchToPropsWrapped)(wrappedShipToSelector);
 
 export default ShipToSelector;

@@ -10,6 +10,7 @@ const TooltipPresentationPropsDefault: ComponentThemeProps["tooltip"]["defaultPr
             position: relative;
             top: 0.125em;
         `,
+        src: "HelpCircle",
     },
 };
 

@@ -21,6 +21,7 @@ import { PaymentProfilesState } from "@insite/client-framework/Store/Data/Paymen
 import { QuotesState } from "@insite/client-framework/Store/Data/Quotes/QuotesState";
 import { WishListLinesState } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesState";
 import deepFreezeObject from "@insite/client-framework/Common/Utilities/deepFreezeObject";
+import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 
 export interface DataView {
     readonly fetchedDate: Date;
@@ -30,9 +31,12 @@ export interface DataView {
     readonly properties: Dictionary<string>;
 }
 
-export interface DataViewState<Model, DataViewModel extends DataView = DataView> {
+interface HasById<Model> {
     readonly isLoading: Dictionary<boolean>;
     readonly byId: Dictionary<Readonly<Model>>;
+}
+
+export interface DataViewState<Model, DataViewModel extends DataView = DataView> extends HasById<Model> {
     readonly dataViews: Dictionary<DataViewModel>;
 }
 
@@ -47,6 +51,7 @@ export default interface DataState {
     readonly messages: MessagesState;
     readonly orders: OrdersState;
     readonly orderStatusMappings: OrderStatusMappingsState;
+    readonly pages: PagesState;
     readonly paymentProfiles: PaymentProfilesState;
     readonly promotions: PromotionsState;
     readonly quotes: QuotesState;
@@ -140,7 +145,7 @@ const idNotFound = Object.freeze({
     id: undefined,
 } as const);
 
-export function getById<T>(dataViewState: DataViewState<T>, id: string | undefined, mapId?: (id: string) => string) {
+export function getById<T>(dataViewState: HasById<T>, id: string | undefined, mapId?: (id: string) => string) {
     if (!id) {
         return idNotFound;
     }
@@ -155,7 +160,7 @@ export function getById<T>(dataViewState: DataViewState<T>, id: string | undefin
     });
 }
 
-function getOrStoreCachedResult<ModelType, ResultType extends object>(dataViewState: DataViewState<ModelType>, key: string, createResult: () => ResultType) {
+function getOrStoreCachedResult<ModelType, ResultType extends object>(dataViewState: HasById<ModelType>, key: string, createResult: () => ResultType) {
     const cached = cacheMap.get(dataViewState)?.[key];
     if (cached) {
         return cached as Readonly<ResultType>;

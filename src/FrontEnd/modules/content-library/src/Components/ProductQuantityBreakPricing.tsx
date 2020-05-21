@@ -58,7 +58,7 @@ const ProductQuantityBreakPricing: FC<OwnProps> = ({
     extendedStyles,
 }) => {
     const { pricing } = product;
-    if (!pricing || !pricing.unitRegularBreakPrices || pricing.unitRegularBreakPrices.length === 0) {
+    if (!pricing || !pricing.unitRegularBreakPrices || pricing.unitRegularBreakPrices.length < 2) {
         return null;
     }
 

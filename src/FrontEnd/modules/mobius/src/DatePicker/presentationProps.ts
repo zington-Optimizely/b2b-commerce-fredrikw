@@ -5,9 +5,11 @@ const DatePickerPresentationPropsDefault: ComponentThemeProps["datePicker"]["def
     calendarIconProps: {
         color: "text.main",
         css: css` margin-right: -9px; `,
+        src: "Calendar",
     },
     clearIconProps: {
         color: "text.main",
+        src: "X",
     },
     cssOverrides: {
         formField: css` width: unset; `,

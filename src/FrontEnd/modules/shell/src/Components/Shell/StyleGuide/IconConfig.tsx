@@ -4,6 +4,7 @@ import { IconPresentationProps } from "@insite/mobius/Icon";
 import TextField from "@insite/mobius/TextField";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import ConfigMenu, { configFormFieldStyles } from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
+import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
 import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
 import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
 
@@ -48,34 +49,29 @@ const IconConfig: React.FunctionComponent<{
             })}
             presetColors={presetColors}
         />
-        {/* TODO ISC-12199 actually make icons display in relevant components, then swap textfield for iconselector */}
-        {!disableSource && <TextField
-            {...configFormFieldStyles}
-            label="Source"
-            value={undefinedIfFunction(iconProps.src)}
-            onChange={event => update(draft => {
-                const props = getProps(draft);
-                if (!event.currentTarget.value) {
-                    delete props.src;
-                } else {
-                    props.src = event.currentTarget.value;
-                }
-            })}
-        />}
-        {/* TODO ISC-12199
         {!disableSource && <IconSelector
             {...configFormFieldStyles}
             label="Icon"
             value={undefinedIfFunction(iconProps.src)}
-            onChange={event: => update(draft => {
+            onTextFieldChange={event => update(draft => {
                 const props = getProps(draft);
+
                 if (!event.currentTarget.value) {
                     delete props.src;
                 } else {
                     props.src = event.currentTarget.value;
                 }
             })}
-        />} */}
+            onSelectionChange={value => update(draft => {
+                const props = getProps(draft);
+
+                if (!value) {
+                    delete props.src;
+                } else {
+                    props.src = value;
+                }
+            })}
+        />}
         <TextField
             {...configFormFieldStyles}
             label="Size"

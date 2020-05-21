@@ -5,6 +5,7 @@ import logger from "@insite/client-framework/Logger";
 const Handshake = "Handshake";
 const HandshakeReply = "Handshake-Reply";
 const HandshakeAcknowledge = "Handshake-Acknowledge";
+const StopListener = "StopListener";
 
 export interface FrameHole {
     send: (message: FrameHoleMessage) => void;
@@ -29,7 +30,7 @@ export interface HasFrameHole {
     frameHole?: FrameHole;
 }
 
-let listener: (event: MessageEvent) => void;
+let siteHoleListener: (event: MessageEvent) => void;
 
 export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteHole: HasFrameHole, handlers: Dictionary<(data: any) => void>): Promise<void> {
     if (IS_SERVER_SIDE) {
@@ -48,10 +49,12 @@ export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteH
     };
 
     let completedHandshake = false;
-    window.removeEventListener("message", listener);
-    listener = (event: MessageEvent) => {
+    window.removeEventListener("message", siteHoleListener);
+    siteHoleListener = (event: MessageEvent) => {
         if (isValidMessage(event)) {
-            if (event.data.type === Handshake) {
+            if (event.data.type === StopListener) {
+                window.removeEventListener("message", siteHoleListener);
+            } else if (event.data.type === Handshake) {
                 sendMessage(HandshakeReply);
             } else if (event.data.type === HandshakeAcknowledge) {
                 completedHandshake = true;
@@ -68,7 +71,7 @@ export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteH
             }
         }
     };
-    window.addEventListener("message", listener);
+    window.addEventListener("message", siteHoleListener);
 
     let attempts = 0;
     while (!completedHandshake && attempts < 30) {
@@ -82,7 +85,9 @@ export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteH
 
     siteHole.frameHole = {
         send: (data: FrameHoleMessage) => {
-            sendMessage(data.type, data);
+            const type = data.type;
+            delete data.type;
+            sendMessage(type, data);
         },
     };
 };
@@ -91,6 +96,8 @@ export function canSetupShellHole(): boolean {
     return !IS_SERVER_SIDE && !!window.parent;
 }
 
+let shellHoleListener: (event: MessageEvent) => void;
+
 export const setupShellHole = async function (handlers: Dictionary<(data: any) => void>): Promise<FrameHole | void> {
     if (!canSetupShellHole()) {
         return;
@@ -98,7 +105,15 @@ export const setupShellHole = async function (handlers: Dictionary<(data: any) =
 
     let completedHandshake = false;
 
-    window.addEventListener("message", (event) => {
+    const sendMessage = function (type: string, data?: {}) {
+        log(`sending message to shell - ${type} data: ${JSON.stringify(data)}`);
+        window.parent.postMessage({ id: "shell", type, data }, `${window.location.protocol}//${window.location.host}`);
+    };
+
+    sendMessage(StopListener);
+
+    window.removeEventListener("message", shellHoleListener);
+    shellHoleListener = (event: MessageEvent) => {
         if (isValidMessage(event)) {
             if (event.data.type === HandshakeReply) {
                 completedHandshake = true;
@@ -112,15 +127,11 @@ export const setupShellHole = async function (handlers: Dictionary<(data: any) =
                 }
             }
         }
-    });
-
-    const sendMessage = function (type: string, data?: {}) {
-        log(`sending message to shell - ${type} data: ${JSON.stringify(data)}`);
-        window.parent.postMessage({ id: "shell", type, data }, `${window.location.protocol}//${window.location.host}`);
     };
+    window.addEventListener("message", shellHoleListener);
 
     let attempts = 0;
-    while (!completedHandshake && attempts < 10) {
+    while (!completedHandshake && attempts < 100) {
         attempts = attempts + 1;
         sendMessage(Handshake);
         await sleep(200);
@@ -134,7 +145,9 @@ export const setupShellHole = async function (handlers: Dictionary<(data: any) =
 
     return {
         send: (data: FrameHoleMessage) => {
-            sendMessage(data.type,  data);
+            const type = data.type;
+            delete data.type;
+            sendMessage(type, data);
         },
     };
 };

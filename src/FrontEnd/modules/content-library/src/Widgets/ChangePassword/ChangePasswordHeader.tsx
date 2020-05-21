@@ -33,10 +33,10 @@ const styles: ChangePasswordHeaderStyles = {
     },
     buttonGridItem: {
         css: css` justify-content: flex-end; `,
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 4, 3, 3],
     },
     titleGridItem: {
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 8, 9, 9],
     },
     title: {
         variant: "h2",

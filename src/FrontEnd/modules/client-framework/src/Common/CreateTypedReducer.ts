@@ -27,17 +27,19 @@ type ActionUnion<T> =
     | // ...union the result of that with...
     ParameterizedActionHandlers<T>[keyof ParameterizedActionHandlers<T>]; // ...the rotated output of ParameterizedActionHandlers.
 
-    type HandlerFunction<TState> = (state: TState, action: any) => TState;
-type HandlerFunctionMap<TState> = {[key: string]: HandlerFunction<TState>};
+type HandlerFunction<TState> = (state: TState, action: any) => TState;
+type HandlerFunctionMap<TState> = {[key: string]: HandlerFunction<TState> | undefined};
 
 /**
  * Creates a typed reducer function from a function map in the form of 'ActionType': (state: State, <not required>action: any) => State.
  * This is intended for use with conventional-style Redux where a complete state object is returned by the handlers.
+ * @param initialState The initial state for the reducer, used when the provided state is `undefined`.
+ * @param handlers A function map in the form of 'ActionType': (state: State, <not required>action: any) => State.
  */
 export default function createTypedReducer<State extends object, Handlers extends HandlerFunctionMap<State>>(
     initialState: State,
     handlers: Handlers,
-): (state: State, action: ActionUnion<Handlers>) => State {
+): (state: State | undefined, action: ActionUnion<Handlers>) => State {
     return (state = initialState, action) => {
         const handler = handlers[(action as any).type];
         return handler ? deepFreezeObject(handler(state, action)) : state;
@@ -45,16 +47,18 @@ export default function createTypedReducer<State extends object, Handlers extend
 }
 
 type ImmerHandlerFunction<TState> = (draft: Draft<TState>, action: any) => void;
-type ImmerHandlerFunctionMap<TState> = {[key: string]: ImmerHandlerFunction<TState>};
+type ImmerHandlerFunctionMap<TState> = {[key: string]: ImmerHandlerFunction<TState> | undefined};
 
 /**
- * Creates a typed reducer function from a function map in the form of 'ActionType': (state: State, <not required>action: any) => State.
+ * Creates a typed reducer function from a function map in the form of 'ActionType': (state: Draft<State>, <not required>action: any) => State.
  * The handler functions receive a draft created by `immer`, and are expected to directly modify the draft.
+ * @param initialState The initial state for the reducer, used when the provided state is `undefined`.
+ * @param handlers A function map in the form of 'ActionType': (state: Draft<State>, <not required>action: any) => State.
  */
 export function createTypedReducerWithImmer<State extends object, Handlers extends ImmerHandlerFunctionMap<State>>(
     initialState: State,
     handlers: Handlers,
-): (state: State, action: ActionUnion<Handlers>) => State {
+): (state: State | undefined, action: ActionUnion<Handlers>) => State {
     return (state = initialState, action) => {
         const handler = handlers[(action as any).type];
         if (!handler) {

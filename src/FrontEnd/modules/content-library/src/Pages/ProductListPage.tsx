@@ -13,6 +13,7 @@ import dispatchClearProducts from "@insite/client-framework/Store/Pages/ProductL
 import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
@@ -32,6 +33,8 @@ const mapStateToProps = (state: ApplicationState) => {
         path: selectedCategoryPath || location.pathname,
         breadcrumbLinks: state.components.breadcrumbs.links,
         productListCatalogPage: catalogPage,
+        websiteName: state.context.website.name,
+        pages: state.pages,
         location: getLocation(state),
     });
 };
@@ -42,9 +45,12 @@ const mapDispatchToProps = {
     setBreadcrumbs,
 };
 
+export const ProductListPageDataContext = React.createContext<{ ref?: React.RefObject<HTMLSpanElement> }>({ ref: undefined });
+
 type Props = HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext & PageProps;
 
 class ProductListPage extends React.Component<Props> {
+    afterFilters = React.createRef<HTMLSpanElement>();
 
     loadProducts() {
         const { loadProducts, path, search } = this.props;
@@ -79,13 +85,15 @@ class ProductListPage extends React.Component<Props> {
     }
 
     componentDidUpdate(prevProps: Props): void {
+        const { filterQuery, location: { pathname, search } } = this.props;
+
         // handle the query string change requests initiated by the filtering widget setQueryFilter calls
-        if (this.props.filterQuery !== prevProps.filterQuery) {
-            this.props.history.push(`${this.props.location.pathname}?${this.props.filterQuery}`);
+        if (filterQuery !== prevProps.filterQuery) {
+            this.props.history.push(filterQuery ? `${pathname}?${filterQuery}` : pathname);
             return;
         }
 
-        if (this.props.productsState.value && this.props.location.pathname === prevProps.location.pathname) {
+        if (this.props.productsState.value && pathname === prevProps.location.pathname) {
             const productCollection = this.props.productsState.value;
             if (productCollection.searchTermRedirectUrl) {
                 if (productCollection.searchTermRedirectUrl.lastIndexOf("http", 0) === 0) {
@@ -98,7 +106,7 @@ class ProductListPage extends React.Component<Props> {
 
             if (productCollection.exactMatch && !this.props.stockedItemsOnly) {
                 let productDetailUrl = productCollection.products![0].productDetailPath;
-                const parsedQuery = parseQueryString<{ query: string }>(this.props.search);
+                const parsedQuery = parseQueryString<{ query: string }>(search);
                 const query = parsedQuery.query;
                 if (!query) {
                     return;
@@ -114,11 +122,12 @@ class ProductListPage extends React.Component<Props> {
             }
         }
 
-        if (this.props.search !== prevProps.search || this.props.path !== prevProps.path) {
+        if (search !== prevProps.search || this.props.path !== prevProps.path) {
             this.loadProducts();
         }
 
         if (this.props.productListCatalogPage && this.props.productListCatalogPage !== prevProps.productListCatalogPage) {
+            setOpenGraphInfo(this.props.pages, "ProductListPage", null, this.props.websiteName);
             this.setProductListBreadcrumbs();
         }
         if (this.props.isSearchPage && this.props.query !== prevProps.query) {
@@ -141,8 +150,10 @@ class ProductListPage extends React.Component<Props> {
         }
 
         return <Page>
-            <Zone contentId={this.props.id} zoneName="Content"/>
-            <AddToListModal/>
+            <ProductListPageDataContext.Provider value={{ ref: this.afterFilters }}>
+                <Zone contentId={this.props.id} zoneName="Content"/>
+                <AddToListModal/>
+            </ProductListPageDataContext.Provider>
         </Page>;
     }
 }

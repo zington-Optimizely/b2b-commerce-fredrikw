@@ -31,6 +31,7 @@ export const logoLinksSearchStyles: LogoLinksSearchStyles = {
                 return breakpointMediaQueries(theme, [null, null, css` flex-grow: 1; `, null, null], "max");
             }}
             img {
+                height: 78px;
                 ${({ theme }) => {
                     return breakpointMediaQueries(theme, [
                         null,

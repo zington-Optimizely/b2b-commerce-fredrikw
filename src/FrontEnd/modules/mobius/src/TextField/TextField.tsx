@@ -12,6 +12,7 @@ import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden";
@@ -46,17 +47,18 @@ export type TextFieldProps = TextFieldComponentProps & TextFieldPresentationProp
 
 const omitKeys = ["sizeVariant", "border", "label", "labelPosition", "theme", "cssOverrides", "iconProps", "backgroundColor", "labelProps",
     ] as (
-keyof Omit<TextFieldProps, "id" |  "clickableText" | "disabled" | "error" | "hint" | "iconClickableProps" | "id" | "placeholder" | "required">)[];
+keyof Omit<TextFieldProps, "id" |  "clickableText" | "disabled" | "error" | "hint" | "iconClickableProps" | "id" | "placeholder" | "required" | "disable">)[];
 
 /**
  * TextField is a form element with an optional label, hint text, error message and optional icon.
  * Props not contained in the list below get passed into the input component (e.g. event handlers, `value`, etc).
  */
-const TextField: React.FC<TextFieldProps> = React.forwardRef<HTMLInputElement, TextFieldProps>((props, ref) => {
+const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRef<HTMLInputElement, TextFieldProps & HasDisablerContext>((props, ref) => {
     return (<ThemeConsumer>
         {(theme?: BaseTheme) => {
             const {
                 clickableText,
+                disable,
                 disabled,
                 error,
                 hint,
@@ -66,6 +68,9 @@ const TextField: React.FC<TextFieldProps> = React.forwardRef<HTMLInputElement, T
                 required,
                 ...otherProps
             } = props;
+            // Because disabled html attribute doesn't accept undefined
+            // eslint-disable-next-line no-unneeded-ternary
+            const isDisabled = (disable || disabled) ? true : false;
             const { applyProp, spreadProps } = applyPropBuilder({ theme, ...otherProps }, { component: "textField", category: "formField" });
             const inputId = id || uniqueId();
             const labelId = `${inputId}-label`;
@@ -78,10 +83,10 @@ const TextField: React.FC<TextFieldProps> = React.forwardRef<HTMLInputElement, T
             let formIcon = <FormFieldIcon
                 {...iconProps}
                 size={sizeVariantValues[sizeVariant].icon}
-                color={disabled ? "text.disabled" : (iconProps.color || "text.main")}
+                color={isDisabled ? "text.disabled" : (iconProps.color || "text.main")}
             />;
             if (iconClickableProps) {
-                formIcon = (<FormFieldClickable {...iconClickableProps} disabled={disabled}>
+                formIcon = (<FormFieldClickable {...iconClickableProps} disabled={isDisabled}>
                     {formIcon}
                     <VisuallyHidden>{clickableText}</VisuallyHidden>
                 </FormFieldClickable>);
@@ -98,7 +103,7 @@ const TextField: React.FC<TextFieldProps> = React.forwardRef<HTMLInputElement, T
                         aria-invalid={error ? !!error : undefined}
                         aria-required={!disabled && required}
                         tabIndex={0}
-                        {...{ disabled, placeholder, required }}
+                        {...{ disabled: isDisabled, placeholder, required }}
                         {...omitMultiple(otherProps, omitKeys)}
                         {...inputLabelObj}
                     />
@@ -123,4 +128,4 @@ TextField.defaultProps = {
 };
 
 /** @component */
-export default TextField;
+export default withDisabler(TextField);

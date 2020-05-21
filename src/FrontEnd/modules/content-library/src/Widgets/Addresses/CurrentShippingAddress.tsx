@@ -171,7 +171,7 @@ const CurrentShippingAddress: React.FunctionComponent<Props> = (props: Props) =>
                     fax={currentShipTo.fax}
                     email={currentShipTo.email} />
             </GridItem>
-            {billToAsShipTo
+            {(billToAsShipTo && currentShipTo.id !== billToAsShipTo.id)
                 && <GridItem {...styles.useBillingAddressButtonGridItem}>
                     <UseBillingAddressButton onClick={useBillingAddressHandler} />
                 </GridItem>

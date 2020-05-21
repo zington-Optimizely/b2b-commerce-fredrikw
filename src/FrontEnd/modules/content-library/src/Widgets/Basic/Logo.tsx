@@ -7,6 +7,7 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Link from "@insite/mobius/Link";
 import translate from "@insite/client-framework/Translate";
 import { css } from "styled-components";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 
 const enum fields {
     logoImage = "logoImage",
@@ -27,6 +28,7 @@ type Props = OwnProps;
 
 export interface LogoStyles {
     wrapper?: InjectableCss;
+    image?: LazyImageProps;
 }
 
 export const logoStyles: LogoStyles = {
@@ -34,22 +36,22 @@ export const logoStyles: LogoStyles = {
         css: css`
             max-width: 110px;
             max-height: 110px;
-            img {
-                width: 100%;
-            }
         `,
+    },
+    image: {
+        css: css` width: 100%; `,
     },
 };
 
 const Logo: React.FunctionComponent<Props> = ({
     fields,
-    ...otherProps
+    extendedStyles,
 }: Props) => {
-    const [styles] = React.useState(() => mergeToNew(logoStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(logoStyles, extendedStyles));
 
     return <StyledWrapper {...styles.wrapper}>
         <Link href="/">
-            <img src={fields.logoImage} alt={translate("home")}/>
+            <LazyImage src={fields.logoImage} altText={translate("home")} {...styles.image} />
         </Link>
     </StyledWrapper>;
 };

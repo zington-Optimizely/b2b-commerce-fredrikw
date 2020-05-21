@@ -16,32 +16,32 @@
                       "PackageName":  "dotnet SDK",
                       "PackageVersion":  null,
                       "Libraries":  {
-                                        "System.Data":  null,
-                                        "System.Xml.Linq":  null,
                                         "Microsoft.CSharp":  null,
+                                        "mscorlib":  null,
+                                        "System":  null,
+                                        "System.ComponentModel.DataAnnotations":  null,
+                                        "System.Configuration":  null,
+                                        "System.Core":  null,
+                                        "System.Data":  null,
                                         "System.Data.DataSetExtensions":  null,
+                                        "System.Drawing":  null,
+                                        "System.EnterpriseServices":  null,
+                                        "System.IdentityModel":  null,
+                                        "System.Net":  null,
+                                        "System.Runtime.Caching":  null,
+                                        "System.Runtime.Serialization":  null,
+                                        "System.ServiceModel":  null,
+                                        "System.ServiceModel.Web":  null,
                                         "System.Web":  null,
                                         "System.Web.ApplicationServices":  null,
-                                        "System.ComponentModel.DataAnnotations":  null,
+                                        "System.Web.DynamicData":  null,
+                                        "System.Web.Entity":  null,
+                                        "System.Web.Extensions":  null,
                                         "System.Web.Mobile":  null,
                                         "System.Web.Services":  null,
-                                        "System.Net":  null,
-                                        "System.ServiceModel":  null,
                                         "System.Windows.Forms":  null,
                                         "System.Xml":  null,
-                                        "System.Core":  null,
-                                        "System.Drawing":  null,
-                                        "System.Web.Entity":  null,
-                                        "mscorlib":  null,
-                                        "System.Web.DynamicData":  null,
-                                        "System.Web.Extensions":  null,
-                                        "System.ServiceModel.Web":  null,
-                                        "System.IdentityModel":  null,
-                                        "System.Runtime.Serialization":  null,
-                                        "System.Runtime.Caching":  null,
-                                        "System.Configuration":  null,
-                                        "System.EnterpriseServices":  null,
-                                        "System":  null
+                                        "System.Xml.Linq":  null
                                     }
                   }
     },
@@ -86,53 +86,53 @@
                       "PackageVersion":  null,
                       "PackageFramework":  "net48",
                       "Libraries":  {
-                                        "Insite.Data.Entities":  null,
-                                        "Insite.WishLists":  null,
-                                        "Insite.Dealers":  null,
                                         "Avalara.AvaTax.Adapter":  "5.7.3.1",
-                                        "Insite.Public.Integration":  null,
-                                        "Insite.Message":  null,
-                                        "Insite.Cart":  null,
-                                        "Insite.Dashboard":  null,
-                                        "Insite.ContentLibrary":  null,
-                                        "Insite.OrderApproval":  null,
-                                        "Insite.Integration.Connector.Acumatica":  null,
-                                        "Insite.TaxCalculator.Vertex":  null,
-                                        "Insite.RealTimePricing":  null,
-                                        "Insite.Integration.Connector.Facts":  null,
-                                        "Insite.RealTimeInventory":  null,
-                                        "Insite.Websites":  null,
-                                        "Insite.Invoice":  null,
-                                        "Insite.Public.Core":  null,
-                                        "Insite.Promotions":  null,
+                                        "DotLiquid":  "2.0.24.0",
+                                        "GemBox.Spreadsheet":  "33.3.30.1062",
+                                        "Insite.Account":  null,
                                         "Insite.Brands":  null,
-                                        "Insite.Integration.Connector.Ifs":  null,
+                                        "Insite.Budget":  null,
+                                        "Insite.Cart":  null,
                                         "Insite.Catalog":  null,
-                                        "Insite.MobileApp":  null,
-                                        "Insite.Data.Repositories":  null,
-                                        "Insite.Customers":  null,
-                                        "Insite.JobQuote":  null,
-                                        "Insite.Public.WebFramework":  null,
                                         "Insite.Common":  null,
+                                        "Insite.Configurator":  null,
+                                        "Insite.ContentLibrary":  null,
+                                        "Insite.Core.Interfaces":  null,
+                                        "Insite.Customers":  null,
+                                        "Insite.Dashboard":  null,
+                                        "Insite.Data":  null,
+                                        "Insite.Data.Entities":  null,
+                                        "Insite.Data.Providers.EntityFramework":  null,
+                                        "Insite.Data.Repositories":  null,
+                                        "Insite.Dealers":  null,
+                                        "Insite.Email":  null,
+                                        "Insite.Integration.Connector.Acumatica":  null,
+                                        "Insite.Integration.Connector.APlus":  null,
+                                        "Insite.Integration.Connector.Facts":  null,
+                                        "Insite.Integration.Connector.Ifs":  null,
+                                        "Insite.Integration.Connector.Prophet21":  null,
+                                        "Insite.Integration.Connector.SXe":  null,
+                                        "Insite.Invoice":  null,
+                                        "Insite.JobQuote":  null,
+                                        "Insite.Message":  null,
+                                        "Insite.MobileApp":  null,
+                                        "Insite.Order":  null,
+                                        "Insite.OrderApproval":  null,
+                                        "Insite.Payments":  null,
+                                        "Insite.Promotions":  null,
+                                        "Insite.Public.Core":  null,
+                                        "Insite.Public.Integration":  null,
+                                        "Insite.Public.WebFramework":  null,
                                         "Insite.PunchOut":  null,
                                         "Insite.QuickOrder":  null,
-                                        "Insite.Integration.Connector.Prophet21":  null,
-                                        "Insite.Account":  null,
-                                        "Insite.Data.Providers.EntityFramework":  null,
-                                        "Insite.Email":  null,
-                                        "DotLiquid":  "2.0.24.0",
-                                        "Insite.Payments":  null,
-                                        "Insite.Search.Elasticsearch":  null,
-                                        "GemBox.Spreadsheet":  "33.3.30.1062",
-                                        "Insite.Budget":  null,
-                                        "Insite.Configurator":  null,
-                                        "Insite.Rfq":  null,
-                                        "Insite.Order":  null,
-                                        "Insite.Data":  null,
-                                        "Insite.Integration.Connector.APlus":  null,
-                                        "Insite.Core.Interfaces":  null,
+                                        "Insite.RealTimeInventory":  null,
+                                        "Insite.RealTimePricing":  null,
                                         "Insite.Requisition":  null,
-                                        "Insite.Integration.Connector.SXe":  null
+                                        "Insite.Rfq":  null,
+                                        "Insite.Search.Elasticsearch":  null,
+                                        "Insite.TaxCalculator.Vertex":  null,
+                                        "Insite.Websites":  null,
+                                        "Insite.WishLists":  null
                                     }
                   }
     },
@@ -257,6 +257,39 @@
                                         "System.Web.Helpers":  "3.0.0.0",
                                         "System.Web.WebPages.Razor":  "3.0.0.0",
                                         "System.Web.WebPages.Deployment":  "3.0.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.Azure.KeyVault.Core",
+        "Value":  {
+                      "PackageName":  "Microsoft.Azure.KeyVault.Core",
+                      "PackageVersion":  "1.0.0",
+                      "PackageFramework":  "net40",
+                      "Libraries":  {
+                                        "Microsoft.Azure.KeyVault.Core":  "1.0.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.Azure.Storage.Blob",
+        "Value":  {
+                      "PackageName":  "Microsoft.Azure.Storage.Blob",
+                      "PackageVersion":  "9.4.2",
+                      "PackageFramework":  "net452",
+                      "Libraries":  {
+                                        "Microsoft.Azure.Storage.Blob":  "9.4.2.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.Azure.Storage.Common",
+        "Value":  {
+                      "PackageName":  "Microsoft.Azure.Storage.Common",
+                      "PackageVersion":  "9.4.2",
+                      "PackageFramework":  "net452",
+                      "Libraries":  {
+                                        "Microsoft.Azure.Storage.Common":  "9.4.2.0"
                                     }
                   }
     },
@@ -389,6 +422,28 @@
                       "PackageFramework":  "net40",
                       "Libraries":  {
                                         "Owin":  "1.0.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "PgpCore",
+        "Value":  {
+                      "PackageName":  "PgpCore",
+                      "PackageVersion":  "2.2.0",
+                      "PackageFramework":  "netstandard2.0",
+                      "Libraries":  {
+                                        "PgpCore":  "2.0.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Portable.BouncyCastle",
+        "Value":  {
+                      "PackageName":  "Portable.BouncyCastle",
+                      "PackageVersion":  "1.8.5.2",
+                      "PackageFramework":  "net40",
+                      "Libraries":  {
+                                        "BouncyCastle.Crypto":  "1.8.5.0"
                                     }
                   }
     },

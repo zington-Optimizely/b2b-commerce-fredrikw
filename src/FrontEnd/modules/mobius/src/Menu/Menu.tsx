@@ -2,8 +2,7 @@ import React from "react";
 import styled, { ThemeProps, ThemeConsumer, withTheme } from "styled-components";
 import Clickable, { ClickableProps, ClickablePresentationProps } from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconProps } from "../Icon";
-import ChevronRight from "../Icons/ChevronRight";
+import { IconMemo, IconPresentationProps } from "../Icon";
 import focusWithinImportInBrowser from "../utilities/focusWithin";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -44,7 +43,7 @@ export interface MenuPresentationProps {
     menuItemClickableProps?: ClickablePresentationProps;
     /** Props to be passed to the right chevron arrow for menu items with children.
      * @themable */
-    moreIconProps?: IconProps;
+    moreIconProps?: IconPresentationProps;
 }
 
 type MenuComponentProps = MobiusStyledComponentProps<"nav", {
@@ -178,7 +177,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
                                                 {item.title}
                                             </MenuItemText>
                                             {item.children?.length && currentDepth < maxDepth
-                                                ? <IconMemo src={ChevronRight} {...applyProp("moreIconProps")}/>
+                                                ? <IconMemo {...applyProp("moreIconProps")}/>
                                                 : null}
                                         </Clickable>
                                         {hasChildren ?  renderMenuItems(item!.children!, currentDepth + 1) : null}

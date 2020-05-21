@@ -261,9 +261,16 @@ const OrderUploadFileUpload: FC<Props> = ({
         <>
             <Typography as="p" {...styles.uploadLinkTooltipText}>{siteMessage("Lists_UploadLinkTooltip")}</Typography>
             <Button {...styles.downloadTemplateButton} onClick={downloadTemplateHandler}>{translate("Download Template")}</Button>
-            <FileUpload {...styles.fileUploader} accept=".xls,.xlsx,.csv" label={translate("Upload a File")} labelPosition="top"
-                error={incorrectFileExtension ? translate("must be .xls, .xlsx or .csv") : undefined} onFileChange={fileChangeHandler} />
-            <Checkbox {...styles.includeFirstRowCheckbox} onChange={firstRowHeadingChangeHandler} checked={firstRowHeading}>
+            <FileUpload
+                {...styles.fileUploader}
+                accept=".xls,.xlsx,.csv"
+                label={translate("Upload a File")}
+                labelPosition="top"
+                error={incorrectFileExtension ? translate("must be .xls, .xlsx or .csv") : undefined}
+                onFileChange={fileChangeHandler}
+                uid="orderUploadFileUpload"
+            />
+            <Checkbox {...styles.includeFirstRowCheckbox} onChange={firstRowHeadingChangeHandler} checked={firstRowHeading} uid="includeHeading">
                 {translate("Include First Row Column Heading")}
             </Checkbox>
             <Button {...styles.uploadFileButton} onClick={uploadFileHandler}>

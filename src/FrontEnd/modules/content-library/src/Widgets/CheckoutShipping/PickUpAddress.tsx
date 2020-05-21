@@ -47,6 +47,7 @@ const PickUpAddress: FC<{
     const handleWarehouseSelected = (warehouse: WarehouseModel) => {
         if (onChange) {
             onChange(warehouse);
+            setIsFindLocationOpen(false);
         }
     };
     return (

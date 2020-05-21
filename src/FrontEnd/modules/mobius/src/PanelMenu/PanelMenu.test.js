@@ -1,7 +1,6 @@
 import { mount } from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
-import XIcon from '../Icons/X';
 import menuItems, { conciseMenuItems, conciseNames } from '../Menu/menuData';
 import PanelMenu from './PanelMenu';
 import PanelRow from './PanelRow';
@@ -78,9 +77,10 @@ describe('PanelMenu', () => {
         const fn = jest.fn();
         props = createProps({
             closeOverlay: fn,
+            maxDepth: 1,
         });
         const root = wrapper();
-        root.find(PanelRow).find(XIcon).first().simulate('click');
+        root.find("[src='X']").first().simulate('click');
         expect(fn).toHaveBeenCalled();
     });
 });

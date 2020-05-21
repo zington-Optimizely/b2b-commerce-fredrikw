@@ -2,7 +2,6 @@ import * as React from "react";
 import styled, { withTheme, ThemeProps, css } from "styled-components";
 import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
-import X from "../Icons/X";
 import Overlay, { OverlayComponentProps, ScrimProps, Transition } from "../Overlay";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -13,6 +12,7 @@ import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import omitSingle from "../utilities/omitSingle";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
+import { IconPresentationProps } from "@insite/mobius/Icon";
 
 type Position = "left" | "top" | "right" | "bottom";
 
@@ -48,6 +48,9 @@ export interface DrawerPresentationProps {
     /** Props passed into the Drawer's close button.
      * @themable */
     closeButtonProps?: ButtonPresentationProps;
+    /** Props passed into the icon in the Drawer's close button.
+     * @themable */
+    closeButtonIconProps?: IconPresentationProps;
 }
 
 interface DrawerOwnProps {
@@ -180,7 +183,7 @@ const Drawer: React.FC<DrawerProps> = (props) => {
                     onClick={otherProps.handleClose}
                     aria-labelledby="close-drawer"
                 >
-                    <ButtonIcon src={X} size={24}/>
+                    <ButtonIcon {...spreadProps("closeButtonIconProps")} />
                     <VisuallyHidden id="close-drawer">{theme.translate("Close Drawer")}</VisuallyHidden>
                 </Button>
             </DrawerTitle>

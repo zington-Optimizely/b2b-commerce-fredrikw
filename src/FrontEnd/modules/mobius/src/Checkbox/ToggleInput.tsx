@@ -1,9 +1,6 @@
 import * as React from "react";
 import styled, { css } from "styled-components";
 import { IconMemo } from "../Icon";
-import Check from "../Icons/Check";
-import FillCircle from "../Icons/FillCircle";
-import XIcon from "../Icons/X";
 import getColor from "../utilities/getColor";
 import getContrastColor from "../utilities/getContrastColor";
 import getProp from "../utilities/getProp";
@@ -87,17 +84,17 @@ const ToggleInput: React.FC<Props> = ({ _sizeVariant = "default", ...otherProps 
     <SliderFrame _sizeVariant={_sizeVariant} {...otherProps}>
         <Slider>
             <IconMemo
-                src={Check}
+                src="Check"
                 size={toggleSizes[_sizeVariant].iconSize}
                 color="currentColor"
                 css={css` margin-left: -1px; `}/>
             <IconMemo
-                src={FillCircle}
+                src="FillCircle"
                 size={toggleSizes[_sizeVariant].circleSize}
                 color="currentColor"
                 css={css` margin: 0; `}/>
             <IconMemo
-                src={XIcon}
+                src="X"
                 size={toggleSizes[_sizeVariant].iconSize}
                 color="currentColor"
                 css={css` margin-left: 2px; `}/>

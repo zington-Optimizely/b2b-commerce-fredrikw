@@ -9,12 +9,14 @@ import {
     GetProductByIdApiV2Parameter,
     getVariantChildren, getVariantChild,
     ConfigurationType,
+    getProductCollectionV2,
 } from "@insite/client-framework/Services/ProductServiceV2";
 
 interface SetProductParameter {
     product?: ProductModelExtended;
     productId?: string;
     variantId?: string;
+    searchTerm?: string;
     validateProduct?: boolean;
 }
 
@@ -32,7 +34,7 @@ export const DispatchBeginSetProduct: HandlerType = props => {
 };
 
 export const CheckProductForUpdate: HandlerType = props => {
-    if (!props.parameter.productId) {
+    if (!props.parameter.productId && !props.parameter.searchTerm) {
         props.product = props.parameter.product;
     }
 };
@@ -49,14 +51,24 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    if (!props.parameter.productId || props.product) {
+    const { productId, variantId, searchTerm } = props.parameter;
+    if (props.product || (!productId && !searchTerm)) {
         return;
     }
 
-    props.apiResult = props.parameter.variantId && props.parameter.productId
-        ? await getVariantChild({ variantParentId: props.parameter.productId, variantId: props.parameter.variantId })
-        : await getProductById(props.apiParameter);
-    props.product = props.apiResult as ProductModelExtended;
+    if (productId) {
+        props.apiResult = variantId
+            ? await getVariantChild({ variantParentId: productId, variantId })
+            : await getProductById(props.apiParameter);
+        props.product = props.apiResult as ProductModelExtended;
+    } else if (searchTerm) {
+        props.product = (await getProductCollectionV2({ extendedNames: [searchTerm], expand: ["variantTraits"] }))?.products?.[0];
+    }
+
+    if (!props.product) {
+        return;
+    }
+
     props.product.qtyOrdered = Math.max(props.product.minimumOrderQty, 1);
 };
 

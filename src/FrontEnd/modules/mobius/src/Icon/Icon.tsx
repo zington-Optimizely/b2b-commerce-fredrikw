@@ -1,12 +1,14 @@
 import * as React from "react";
 import SVG from "react-inlinesvg";
-import styled, { withTheme } from "styled-components";
+import styled, { ThemeConsumer } from "styled-components";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import injectCss from "../utilities/injectCss";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
+import isUrl from "../utilities/isUrl";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import { BaseTheme } from "../globals/baseTheme";
 
 export interface IconThemableProps {
     /** The color of the icon.
@@ -62,30 +64,62 @@ const IconWrapper = styled.span<IconWrapperProps>`
  * If src is a URL, it uses [react-inlinesvg](https://github.com/gilbarbara/react-inlinesvg) to dynamically load the icon.
  */
 
-const Icon: React.FC<IconProps> = withTheme(({ src, ...otherProps }) => {
-    const { applyProp } = applyPropBuilder(otherProps, { component: "icon" });
-    if (!src) return null;
+class Icon extends React.Component<IconProps> {
+    state = {
+        IconSrc: undefined,
+        iconState: undefined,
+    };
 
-    let Component = src;
-    if (typeof src === "string") {
-        Component = function IconSVG() {
-            return <SVG src={src} />;
-        };
+    componentDidMount() {
+        if (typeof this.props.src === "string") this.loadIcon();
     }
 
-    return (
-        <IconWrapper
-            _color={applyProp("color")}
-            _height={applyProp("height")}
-            _size={applyProp("size")}
-            _width={applyProp("width")}
-            css={applyProp("css")}
-            {...omitMultiple(otherProps, ["color", "size", "height", "width", "css"])}
-        >
-            <Component />
-        </IconWrapper>
-    );
-});
+    loadIcon = ()  => {
+        this.setState({ iconState: "loading" }, async () => {
+            const Icon = await import(/* webpackChunkName: "icons", webpackMode: "lazy-once" */`../Icons/${this.props.src}`);
+            this.setState({ IconSrc: Icon.default, iconState: "loaded" });
+        });
+    };
+
+    render() {
+        return (<ThemeConsumer>
+            {(theme?: BaseTheme) => {
+                const { src, ...otherProps } = this.props;
+                const { applyProp } = applyPropBuilder(otherProps, { component: "icon" });
+                if (!src) return null;
+
+                let Component: React.ComponentType | React.ReactElement = () => <svg focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>;
+
+                if (typeof src !== "string") {
+                    Component = src;
+                } else {
+                    /* eslint-disable no-lonely-if */
+                    if (this.state.iconState === "loaded" && this.state.IconSrc) {
+                        Component = this.state.IconSrc!;
+                    } else if (isUrl(src)) {
+                        Component = function IconSVG() {
+                            return <SVG src={src} />;
+                        };
+                    }
+                    /* eslint-enable no-lonely-if */
+                }
+
+                return (
+                    <IconWrapper
+                        _color={applyProp("color")}
+                        _height={applyProp("height")}
+                        _size={applyProp("size")}
+                        _width={applyProp("width")}
+                        css={applyProp("css")}
+                        {...omitMultiple(otherProps, ["color", "size", "height", "width", "css"])}
+                    >
+                        <Component />
+                    </IconWrapper>
+                );
+            }}
+        </ThemeConsumer>);
+    }
+}
 
 /** @component */
 export default Icon;

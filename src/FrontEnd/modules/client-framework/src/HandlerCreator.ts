@@ -66,6 +66,17 @@ const checkChainForDuplicates = (chain: Function[]) => {
     }
 };
 
+const checkForSyntheticEvent = <Parameter>(parameter: Parameter, name: string) => {
+    if (IS_PRODUCTION) {
+        return;
+    }
+
+    if ((parameter as any)?.nativeEvent) {
+        logger.warn(`Parameter is React.SyntheticEvent for handler ${name}. This causes problems with redux devtools.
+This usually happens if onClick is bound directly to the handler chain. IE onClick={handlerChain} vs onClick={() => handlerChain()}`);
+    }
+};
+
 type HasError = { error: unknown };
 const defaultErrorChain: Handler<HasError>[] = [props => {
     try {
@@ -135,6 +146,7 @@ export const createHandlerChainRunner = <Parameter, Props = {}>(
     checkChainForDuplicates(chain);
 
     return (parameter: Parameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
+        checkForSyntheticEvent(parameter, name);
         addTask(runChain(parameter, dispatch, getState, chain, defaultErrorChain, name));
     };
 };
@@ -152,6 +164,7 @@ export const createHandlerChainRunnerOptionalParameter = <Parameter, Props = {}>
     checkChainForDuplicates(chain);
 
     return (parameter: Parameter = defaultParameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
+        checkForSyntheticEvent(parameter, name);
         addTask(runChain(parameter, dispatch, getState, chain, defaultErrorChain, name));
     };
 };

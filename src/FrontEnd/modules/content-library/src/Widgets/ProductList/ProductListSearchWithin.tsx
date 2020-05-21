@@ -95,7 +95,9 @@ const ProductListSearchWithin: FC<Props> = ({ loaded, addProductFilters, product
                 onKeyDown={handleKeyDown}
                 placeholder={translate("Enter Keywords")}
                 type="text"
-                data-test-selector="productListSearchWithin"/>
+                data-test-selector="productListSearchWithin"
+                id="productsKeywordSearch"
+            />
         </StyledWrapper>
     );
 };

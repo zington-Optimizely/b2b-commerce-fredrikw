@@ -131,7 +131,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, extende
     const [styles] = useState(() => mergeToNew(orderConfirmationShippingInformationStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.shippingInformationGridContainer}>
+        <GridContainer {...styles.shippingInformationGridContainer} data-test-selector="orderConfirmationShippingInformation">
             <GridItem {...styles.shippingInformationTitleGridItem}>
                 <Typography {...styles.shippingInformationTitle}>{translate("Shipping Information")}</Typography>
             </GridItem>
@@ -158,7 +158,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, extende
                     {(cart.requestedDeliveryDate || cart.requestedPickupDate)
                         && <GridItem {...styles.shippingInformationDateRequestedGridItem}>
                             <Typography {...styles.shippingDateRequestedTitle}>{translate("Date Requested")}</Typography>
-                            <Typography {...styles.shippingDateRequestedText}>
+                            <Typography {...styles.shippingDateRequestedText} data-test-selector="orderConfirmation_requestedDate">
                                 <LocalizedDateTime dateTime={cart.requestedDeliveryDateDisplay || cart.requestedPickupDateDisplay} />
                             </Typography>
                         </GridItem>}

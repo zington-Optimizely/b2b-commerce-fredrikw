@@ -3,10 +3,8 @@ import styled, { ThemeProps, ThemeConsumer, css } from "styled-components";
 import Button, { ButtonIcon } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconProps } from "../Icon";
-import ChevronLeft from "../Icons/ChevronLeft";
-import XIcon from "../Icons/X";
 import { MappedLink } from "../Menu";
-import PanelRow from "./PanelRow";
+import PanelRow, { PanelRowPresentationProps } from "./PanelRow";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getProp from "../utilities/getProp";
@@ -40,6 +38,9 @@ export interface PanelMenuPresentationProps {
     /** Color of the background of the menu body.
      * @themable */
     bodyColor?: string;
+    /** Color of the background of the menu body.
+     * @themable */
+    panelRowProps?: PanelRowPresentationProps;
 }
 
 export type PanelMenuComponentProps = MobiusStyledComponentProps<"nav", {
@@ -138,8 +139,8 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
         const typographyProps = applyProp("childTypographyProps");
         return (
             <>
-                {childMenuItems.map(item => {
-                    const renderChildren = item.children?.length && currentDepth < this.props.maxDepth;
+                {childMenuItems.filter(item => !item.excludeFromNavigation).map(item => {
+                    const renderChildren = item.children?.filter(child => !child.excludeFromNavigation).length && currentDepth < this.props.maxDepth;
                     const clickableProps: { href?: string } = { ...item.clickableProps };
                     if (!renderChildren && item.url) clickableProps.href = item.url;
                     const menuItem = (
@@ -150,7 +151,7 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
                             tabIndex={this.state.layer === 0 ? 0 : -1}
                             {...clickableProps}
                         >
-                            <Typography weight="bold" size={15} {...typographyProps}>
+                            <Typography data-test-selector={`${this.props["data-test-selector"]}_${item.title}`} weight="bold" size={15} {...typographyProps}>
                                 {item.title}
                             </Typography>
                         </PanelRow>
@@ -193,12 +194,12 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
                         <PanelChildren displayLayer={layer} aria-hidden={layer > 0} css={cssOverrides?.children} data-layer={layer}>
                             <PanelRow as="div" color={headerColor} header>
                                 <Button color={headerColor} onClick={this.moveNextRight} tabIndex={layer === 0 ? 0 : -1}>
-                                    <ButtonIcon src={ChevronLeft} {...applyProp("backIconProps")}/>
+                                    <ButtonIcon {...spreadProps("backIconProps")}/>
                                     <VisuallyHidden>{translate("back")}</VisuallyHidden>
                                 </Button>
                                 {closeOverlay
                                     && <Button color={headerColor} onClick={closeOverlay} tabIndex={layer === 0 ? 0 : -1}>
-                                        <ButtonIcon src={XIcon} {...applyProp("closeIconProps")}/>
+                                        <ButtonIcon {...spreadProps("closeIconProps")}/>
                                         <VisuallyHidden>{translate("close")}</VisuallyHidden>
                                     </Button>}
                             </PanelRow>

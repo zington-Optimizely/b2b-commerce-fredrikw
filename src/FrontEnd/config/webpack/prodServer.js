@@ -6,27 +6,29 @@ const commonProdConfig = require("./commonProd");
 const webpack = require("webpack");
 const RemovePlugin = require("remove-files-webpack-plugin");
 
-const commonConfig = setupCommonConfig(false);
+module.exports = env => {
+    const commonConfig = setupCommonConfig(false, env);
 
-const serverConfig = merge(commonConfig, commonServerConfig, commonProdConfig, {
-    plugins: [
-        new RemovePlugin({
-            before: {
-                root: ".",
-                test: [
-                    {
-                        folder: "./dist",
-                        method: () => true,
-                        recursive: true,
-                    },
-                ],
-            },
-        }),
-        new webpack.DefinePlugin({
-            IS_PRODUCTION: true,
-            IS_SERVER_SIDE: true,
-        }),
-    ],
-});
+    const serverConfig = merge(commonConfig, commonServerConfig, commonProdConfig, {
+        plugins: [
+            new RemovePlugin({
+                before: {
+                    root: ".",
+                    test: [
+                        {
+                            folder: "./dist",
+                            method: () => true,
+                            recursive: true,
+                        },
+                    ],
+                },
+            }),
+            new webpack.DefinePlugin({
+                IS_PRODUCTION: true,
+                IS_SERVER_SIDE: true,
+            }),
+        ],
+    });
 
-module.exports = serverConfig;
+    return serverConfig;
+};

@@ -2,7 +2,6 @@ import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import Clickable from "../Clickable";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import HelpCircle from "../Icons/HelpCircle";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import get from "../utilities/get";
@@ -165,7 +164,7 @@ class Tooltip extends React.Component<TooltipProps> {
              * is a tabbable component. */
             trigger = React.cloneElement(triggerComponent, { tabIndex: -1 });
         } else {
-            trigger = <IconMemo src={HelpCircle} {...spreadProps("iconProps")} />;
+            trigger = <IconMemo {...spreadProps("iconProps")} />;
         }
 
         const toolTipComponent = (

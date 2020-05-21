@@ -2,7 +2,6 @@ import * as React from "react";
 import styled, { withTheme, ThemeProps, css } from "styled-components";
 import Button, { ButtonPresentationProps, ButtonIcon } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
-import X from "../Icons/X";
 import Overlay, { OverlayComponentProps, Transition } from "../Overlay";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -13,6 +12,7 @@ import omitMultiple from "../utilities/omitMultiple";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import { IconPresentationProps } from "@insite/mobius/Icon";
 
 export type SizeVariant = "small" | "medium" |  "large";
 
@@ -36,6 +36,9 @@ export interface ModalPresentationProps {
     /** Props passed into the Modal's close button.
      * @themable */
     closeButtonProps?: ButtonPresentationProps;
+    /** Props passed into the icon in the Modal's close button.
+     * @themable */
+    closeButtonIconProps?: IconPresentationProps;
     /** Props passed into the Modal's headline Typography component if `headline` is a string.
      * Ignored if `headline` is a node.
      * @themable */
@@ -180,7 +183,7 @@ const Modal: React.FC<ModalProps> = withTheme((props) => {
                 {...spreadProps("closeButtonProps")}
                 data-test-selector="modalCloseButton"
             >
-                <ButtonIcon src={X} size={24}/>
+                <ButtonIcon {...spreadProps("closeButtonIconProps")} />
                 <VisuallyHidden id="close-modal">{theme.translate("Close modal")}</VisuallyHidden>
             </Button>
         );

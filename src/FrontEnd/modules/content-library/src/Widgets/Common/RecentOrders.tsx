@@ -14,6 +14,17 @@ import OrderSummaryCard, { OrderSummaryCardStyles } from "@insite/content-librar
 import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { getOrdersDataView } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
+
+const enum fields {
+    numberOfRecords = "numberOfRecords",
+}
+
+interface OwnProps extends WidgetProps {
+    fields: {
+        [fields.numberOfRecords]: number;
+    };
+}
 
 const mapStateToProps = (state: ApplicationState) => ({
     ordersDataView: getOrdersDataView(state, recentOrdersParameter),
@@ -25,7 +36,7 @@ const mapDispatchToProps = {
     loadOrders,
 };
 
-type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface RecentOrdersStyles {
     cardList?: CardListStyles;
@@ -42,9 +53,8 @@ const styles: RecentOrdersStyles = {
     noOrdersFoundGridItem: { width: 12 },
 };
 
-const recentOrdersParameter = {
+let recentOrdersParameter: GetOrdersApiParameter = {
     page: 1,
-    pageSize: 5,
     sort: "OrderDate DESC",
 };
 
@@ -52,6 +62,7 @@ export const recentOrdersStyles = styles;
 
 class RecentOrders extends React.Component<Props> {
     componentDidMount() {
+        recentOrdersParameter.pageSize = this.props.fields.numberOfRecords;
         if (!this.props.ordersDataView.value) {
             this.props.loadOrders(recentOrdersParameter);
         }
@@ -92,7 +103,17 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        fieldDefinitions: [],
+        fieldDefinitions: [
+            {
+                name: fields.numberOfRecords,
+                displayName: "Number of Recent Orders Displayed",
+                editorTemplate: "IntegerField",
+                min: 1,
+                defaultValue: 5,
+                fieldType: "General",
+                sortOrder: 1,
+            },
+        ],
     },
 };
 

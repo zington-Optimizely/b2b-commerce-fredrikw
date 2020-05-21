@@ -58,9 +58,9 @@ const QuoteSummaryCard: FC<Props> = ({
     quote,
     session,
     quoteSettings,
-    ...otherProps
+    extendedStyles,
 }) => {
-    const [styles] = React.useState(() => mergeToNew(quoteSummaryCardStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(quoteSummaryCardStyles, extendedStyles));
 
     const orderDateDisplay = getLocalizedDateTime({
         dateTime: quote.orderDate!,

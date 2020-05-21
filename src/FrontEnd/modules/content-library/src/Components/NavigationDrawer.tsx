@@ -222,7 +222,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
 
         return (
             <>
-                <Button onClick={this.openDrawer} {...styles.menuTriggerButton}>
+                <Button onClick={this.openDrawer} {...styles.menuTriggerButton} data-test-selector="expandMobileMenu">
                     <ButtonIcon src={Menu} />
                     <VisuallyHidden>{translate("menu")}</VisuallyHidden>
                 </Button>
@@ -333,7 +333,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 <Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography>
                             }
                         />
-                        <SelectorMenu
+                        <SelectorMenu dataTestSelector="mobileLanguageSelector"
                             options={languages?.map((l) => {
                                 return {
                                     title: l.languageCode.toUpperCase(),
@@ -375,9 +375,10 @@ interface SelectorMenuProps {
     closeModal?: () => void;
     currentOption: React.ReactNode;
     currentOptionIcon: React.ReactNode;
+    dataTestSelector?: string;
 }
 
-const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, closeModal, currentOption, currentOptionIcon }) => {
+const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, closeModal, currentOption, currentOptionIcon, dataTestSelector }) => {
     if (!options || options.length <= 1) {
         return null;
     }
@@ -386,13 +387,14 @@ const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, closeModal, curren
         <PanelRow hasChildren {...styles.logoLinks}>
             <StyledSpan {...styles.panelSectionWrapper}>
                 {currentOptionIcon}
-                <Typography {...styles.logoLinks?.typographyProps}>{currentOption}</Typography>
+                <Typography data-test-selector={`${dataTestSelector}_currentOption`} {...styles.logoLinks?.typographyProps}>{currentOption}</Typography>
             </StyledSpan>
         </PanelRow>
     );
 
     return (
         <PanelMenu
+            data-test-selector={dataTestSelector}
             closeOverlay={closeModal}
             panelTrigger={trigger}
             menuItems={options}

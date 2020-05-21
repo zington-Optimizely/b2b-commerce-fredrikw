@@ -23,6 +23,7 @@ import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQuer
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 
 const enum fields {
     useOverflowMenu = "useOverflowMenu",
@@ -45,6 +46,7 @@ const mapDispatchToProps = {
     setAddToListModalIsOpen,
     addCartLines: makeHandlerChainAwaitable(addCartLines),
     clearProducts,
+    loadCurrentCart,
 };
 
 type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps> & HasHistory;
@@ -117,6 +119,7 @@ const QuickOrderActions: FC<Props> = ({
                                           setAddToListModalIsOpen,
                                           addCartLines,
                                           clearProducts,
+                                          loadCurrentCart,
                                       }) => {
     if (!products || products.length === 0) {
         return null;
@@ -147,6 +150,7 @@ const QuickOrderActions: FC<Props> = ({
         }
         clearProducts();
         cartPageLink && history.push(cartPageLink.url);
+        loadCurrentCart({ shouldLoadFullCart: true });
     };
 
     const addToListClickHandler = () => {

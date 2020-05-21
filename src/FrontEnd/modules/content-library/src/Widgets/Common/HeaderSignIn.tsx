@@ -123,7 +123,7 @@ const HeaderSignIn: FC<Props> = ({
                         <Clickable {...styles.titleClickable} data-test-selector="header_signIn">
                             {showIcon && <Icon {...styles.titleIcon} src={icon} />}
                             {showLabel
-                                && <Typography {...styles.titleTypography}>{userName}</Typography>
+                                && <Typography {...styles.titleTypography} data-test-selector="header_userName">{userName}</Typography>
                             }
                         </Clickable>}
                 />

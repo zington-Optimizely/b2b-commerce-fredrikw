@@ -6,7 +6,7 @@ import Modal from "@insite/mobius/Modal";
 import Button from "@insite/mobius/Button";
 import styled from "styled-components";
 import { toggleShowGeneratedPageCreator } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import getStorablePage from "@insite/client-framework/Store/UNSAFE_CurrentPage/ReducerHelpers/GetStorablePage";
+import { getStorablePage } from "@insite/shell/Store/ShellSelectors";
 
 interface OwnProps {}
 
@@ -14,10 +14,10 @@ interface PageEditorState {
     id: string;
 }
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: ShellState) => ({
     show: state.pageEditor.showGeneratedPageCreator,
     getStorablePage: () => {
-        return getStorablePage(state.currentPage, state.shellContext.websiteId);
+        return getStorablePage(state, state.shellContext.websiteId);
     },
 });
 

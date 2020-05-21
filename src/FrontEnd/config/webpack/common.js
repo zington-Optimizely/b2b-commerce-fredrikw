@@ -5,15 +5,17 @@ const BlueprintReplacementPlugin = require("./blueprintReplacementPlugin");
 const path = require("path");
 const setupEntryFiles = require("./setupEntryFiles");
 
-exports.setupCommonConfig = (isDevBuild) => {
-    let blueprint;
-    if (isDevBuild) {
-        const [,, blueprintName] = process.argv;
-        if (blueprintName && blueprintName !== "content-library") {
-            blueprint = `blueprints/${blueprintName}`;
+exports.setupCommonConfig = (isDevBuild, env) => {
+    let blueprint = env && env.BLUEPRINT && `blueprints/${env.BLUEPRINT}`;
+    if (!blueprint) {
+        if (isDevBuild) {
+            const [,, blueprintName] = process.argv;
+            if (blueprintName && blueprintName !== "content-library") {
+                blueprint = `blueprints/${blueprintName}`;
+            }
+        } else {
+            blueprint = process.env.BLUEPRINT;
         }
-    } else {
-        blueprint = process.env.BLUEPRINT;
     }
 
     if (!blueprint) {

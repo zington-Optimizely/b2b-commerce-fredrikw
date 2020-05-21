@@ -26,6 +26,8 @@ import { HasCartLineContext, withCartLine } from "@insite/client-framework/Compo
 import removeCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/RemoveCartLine";
 import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 
 interface OwnProps {
     cart: Cart;
@@ -34,6 +36,7 @@ interface OwnProps {
     showInventoryAvailability?: boolean;
     updateCartLine: HandleThunkActionCreator<typeof updateCartLine>;
     removeCartLine: HandleThunkActionCreator<typeof removeCartLine>;
+    showRemoveAction?: boolean;
     extendedStyles?: CartLineCardCondensedStyles;
 }
 
@@ -69,7 +72,19 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
             padding: 1rem 0;
         `,
     },
-    productImageGridItem: { width: 2 },
+    productImageGridItem: {
+        width: 2,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    css` font-size: 10px; `,
+                    null,
+                ])}
+        `,
+    },
     cartLineInfoGridItem: { width: [8, 8, 8, 9, 9] },
     productBrandAndDescriptionGridItem: {
         width: [12, 12, 12, 6, 5],
@@ -102,6 +117,7 @@ const CartLineCardCondensed: FC<Props> = ({
     removeCartLine,
     updateCartLine,
     extendedStyles,
+    showRemoveAction,
 }) => {
     const qtyOrderedChangeHandler = (qtyOrdered: number) => {
         if (qtyOrdered !== cartLine.qtyOrdered) {
@@ -119,6 +135,10 @@ const CartLineCardCondensed: FC<Props> = ({
     };
 
     const removeCartLineClickHandler = () => {
+        if (!showRemoveAction) {
+            return;
+        }
+
         removeCartLine({ cartLineId: cartLine.id });
     };
 
@@ -195,9 +215,11 @@ const CartLineCardCondensed: FC<Props> = ({
                 </GridContainer>
             </GridItem>
             <GridItem {...styles.removeCartLineGridItem}>
-                <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
-                    <IconMemo {...styles.removeCartLineIcon} />
-                </Clickable>
+                {showRemoveAction
+                    && <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                        <IconMemo {...styles.removeCartLineIcon} />
+                    </Clickable>
+                }
             </GridItem>
         </GridContainer>
     );

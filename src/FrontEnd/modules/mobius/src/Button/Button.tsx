@@ -13,6 +13,7 @@ import getProp from "../utilities/getProp";
 import injectCss from "../utilities/injectCss";
 import omitMultiple from "../utilities/omitMultiple";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import { BaseTheme } from "../globals/baseTheme";
 
 export type ButtonSizeVariants = keyof typeof buttonSizeVariants;
@@ -123,17 +124,21 @@ const ButtonWrapper = styled.button<BWT>`
 
 const omitKeys = ["color", "shape", "size", "sizeVariant"] as const;
 
-const Button: React.FC<ButtonProps & ThemeProps<BaseTheme>> = props => {
+type ButtonContextProps = ThemeProps<BaseTheme> & HasDisablerContext;
+
+const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
     const {
         children,
         css: buttonCss,
+        disable,
+        disabled,
         forwardAs,
         icon,
         typographyProps,
         theme,
         variant,
         ...otherProps
-    } = props as Omit<ButtonProps, "variant"> & Required<Pick<ButtonProps, "variant">> & ThemeProps<BaseTheme>; // Accounts for defaultProps.
+    } = props as Omit<ButtonProps, "variant"> & Required<Pick<ButtonProps, "variant">> & ButtonContextProps; // Accounts for defaultProps.
     const position = icon?.position;
     const src = icon?.src;
 
@@ -155,6 +160,9 @@ const Button: React.FC<ButtonProps & ThemeProps<BaseTheme>> = props => {
             _shape={applyProp("shape", "rectangle")}
             _sizeVariant={sizeVariant}
             _size={size}
+            // Because disabled doesn't accept undefined
+            // eslint-disable-next-line no-unneeded-ternary
+            disabled={(disable || disabled) ? true : false}
             {...omitMultiple(otherProps, omitKeys)}
         >
             {position === "left"
@@ -190,6 +198,6 @@ Button.defaultProps = {
 };
 
 /** @component */
-export default withTheme(Button);
+export default withDisabler(withTheme(Button));
 
 export { ButtonIcon, ButtonWrapper };

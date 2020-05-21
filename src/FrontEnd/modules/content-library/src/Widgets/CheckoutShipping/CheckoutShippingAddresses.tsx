@@ -119,7 +119,12 @@ const CheckoutShippingAddresses: FC<Props> = ({
                                                   loadShipTos,
                                                   updateBillTo,
                                                   billToState,
-                                                  ...otherProps
+                                                  updateShipTo,
+                                                  canUseBillToAsShipTo,
+                                                  isShipToSameAsBillTo,
+                                                  newAddress,
+                                                  oneTimeAddress,
+                                                  children,
                                               }) => {
     const toasterContext = React.useContext(ToasterContext);
 
@@ -155,7 +160,7 @@ const CheckoutShippingAddresses: FC<Props> = ({
             throw new Error("You cannot select a saved address during guest checkout.");
         }
 
-        otherProps.updateShipTo({
+        updateShipTo({
             billToId: billToId!,
             shipTo: address,
         });
@@ -203,11 +208,13 @@ const CheckoutShippingAddresses: FC<Props> = ({
                                 countries={countries}
                                 addressFieldDisplayCollection={shipToAddressFields}
                                 onChange={changeShippingAddressHandler}
-                                showUseBillingAddress={otherProps.canUseBillToAsShipTo}
-                                isUseBillingAddressDisabled={otherProps.isShipToSameAsBillTo}
+                                showUseBillingAddress={canUseBillToAsShipTo}
+                                isUseBillingAddressDisabled={isShipToSameAsBillTo}
                                 onClickUseBillingAddress={useBillingAddressHandler}
                                 extendedStyles={styles.shippingAddress}
-                                {...otherProps} />
+                                newAddress={newAddress}
+                                oneTimeAddress={oneTimeAddress}
+                            >{children}</ShippingAddress>
                         </GridItem>
                     }
                     {fulfillmentMethod === "PickUp" && session.pickUpWarehouse

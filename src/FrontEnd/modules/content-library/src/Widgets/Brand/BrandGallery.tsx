@@ -15,6 +15,7 @@ import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 import FlexWrapContainer, { FlexWrapContainerProps } from "./FlexWrapContainer";
 import { getBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
+import { HomePageContext } from "@insite/content-library/Pages/HomePage";
 
 const enum fields {
     title = "title",
@@ -72,7 +73,10 @@ const styles: BrandListStyles = {
     titleText: {
         variant: "h3",
         transform: "inherit",
-        css: css` border-width: 20px; `,
+        css: css`
+                border-width: 20px;
+                text-align: center;
+            `,
     },
     imageItem: {
         css: css`
@@ -145,7 +149,7 @@ const widgetModule: WidgetModule = {
         group: "Brands",
         icon: "Image",
         displayName: "Brand Gallery",
-        allowedContexts: [BrandsPageContext],
+        allowedContexts: [BrandsPageContext, HomePageContext],
         fieldDefinitions: [
             {
                 name: fields.title,

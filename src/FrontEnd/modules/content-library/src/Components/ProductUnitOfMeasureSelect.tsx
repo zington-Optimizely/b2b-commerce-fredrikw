@@ -34,7 +34,7 @@ const ProductUnitOfMeasureSelect: React.FC<Props> = ({
 }) => {
     const [styles] = React.useState(() => mergeToNew(productUnitOfMeasureSelectStyles, extendedStyles));
 
-    if (!productSettings?.alternateUnitsOfMeasure || productUnitOfMeasures.filter(uom => uom.unitOfMeasure).length < 1) {
+    if (!productSettings?.alternateUnitsOfMeasure || productUnitOfMeasures.filter(uom => uom.unitOfMeasure).length <= 1) {
         return null;
     }
 

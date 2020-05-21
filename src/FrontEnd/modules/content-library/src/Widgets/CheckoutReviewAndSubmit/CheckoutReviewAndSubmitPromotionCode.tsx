@@ -68,14 +68,14 @@ const CheckoutReviewAndSubmitPromotionCode: FC<Props> = ({
 
     const handlePromotionCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => setPromotionCode(event.currentTarget.value);
 
-    const handleApplyPromotionClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleSubmit = (event: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
         event.preventDefault();
         applyPromotion({ promotionCode });
     };
 
     return (
         <>
-            <StyledForm {...styles.form}>
+            <StyledForm {...styles.form} onSubmit={handleSubmit}>
                 <TextField
                     {...styles.promotionCodeTextField}
                     label={translate("Have a Promotion Code?")}
@@ -89,8 +89,8 @@ const CheckoutReviewAndSubmitPromotionCode: FC<Props> = ({
                 }
                 <Button
                     {...styles.applyButton}
+                    type="submit"
                     disabled={isApplyButtonDisabled || promotionCode.length === 0}
-                    onClick={handleApplyPromotionClick}
                     data-test-selector="applyPromotionCodeButton"
                 >
                     {translate("Apply_promotion")}

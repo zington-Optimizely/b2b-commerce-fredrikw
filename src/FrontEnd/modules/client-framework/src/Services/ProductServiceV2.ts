@@ -41,6 +41,7 @@ export interface GetProductsApiV2Parameter extends GetProductApiV2ParameterBase,
     includeSuggestions?: boolean;
     applyPersonalization?: boolean;
     cartId?: string;
+    extendedNames?: string[];
 }
 
 export interface GetProductByPathApiV2Parameter extends GetProductApiV2ParameterBase {

@@ -113,10 +113,34 @@ const SecurityCodeImageWrapper = styled.div<InjectableCss>` ${({ css }) => css} 
 
 const CreditCardDetailsEntry = ({
     useTokenExGateway,
-    ...otherProps
+    extendedStyles,
+    canSaveCard,
+    saveCard,
+    onSaveCardChange,
+    cardHolderName,
+    onCardHolderNameChange,
+    cardHolderNameError,
+    cardNumberError,
+    cardNumber,
+    onCardNumberChange,
+    possibleCardType,
+    onCardTypeChange,
+    cardTypeError,
+    cardType,
+    availableCardTypes,
+    expirationMonth,
+    onExpirationMonthChange,
+    expirationError,
+    availableMonths,
+    expirationYear,
+    onExpirationYearChange,
+    availableYears,
+    securityCodeError,
+    securityCode,
+    onSecurityCodeChange,
 }: OwnProps) => {
     const [isSecurityCodeModalOpen, setIsSecurityCodeModalOpen] = useState(false);
-    const [styles] = React.useState(() => mergeToNew(creditCardDetailsEntryStyles, otherProps.extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(creditCardDetailsEntryStyles, extendedStyles));
 
     const handleSecurityCodeHelpLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         event.preventDefault();
@@ -133,13 +157,13 @@ const CreditCardDetailsEntry = ({
             <GridItem {...styles.creditCardDetailsHeadingGridItem}>
                 <Typography {...styles.creditCardDetailsHeading} as="h2">{translate("Credit Card Details")}</Typography>
             </GridItem>
-            {otherProps.canSaveCard
+            {canSaveCard
                 && <GridItem {...styles.saveCardGridItem}>
                     <CheckboxGroup {...styles.saveCardCheckboxGroup}>
                         <Checkbox
                             {...styles.saveCardCheckbox}
-                            checked={otherProps.saveCard}
-                            onChange={otherProps.onSaveCardChange}
+                            checked={saveCard}
+                            onChange={onSaveCardChange}
                         >
                             {translate("Save card information")}
                         </Checkbox>
@@ -150,11 +174,11 @@ const CreditCardDetailsEntry = ({
                 <TextField
                     {...styles.cardHolderNameText}
                     label={translate("Name on Card")}
-                    value={otherProps.cardHolderName}
-                    onChange={otherProps.onCardHolderNameChange}
+                    value={cardHolderName}
+                    onChange={onCardHolderNameChange}
                     required
                     maxLength={30}
-                    error={otherProps.cardHolderNameError}
+                    error={cardHolderNameError}
                     data-test-selector="checkoutReviewAndSubmit_cardHolderName"
                 />
             </GridItem>
@@ -170,17 +194,17 @@ const CreditCardDetailsEntry = ({
                             ></CardNumberTokenExFrameWrapper>
                         }
                         required
-                        error={otherProps.cardNumberError}
+                        error={cardNumberError}
                         data-test-selector="checkoutReviewAndSubmit_cardNumber"
                     />
                     : <TextField
                         {...styles.cardNumberText}
                         label={translate("Card Number")}
-                        value={otherProps.cardNumber}
-                        onChange={otherProps.onCardNumberChange}
+                        value={cardNumber}
+                        onChange={onCardNumberChange}
                         required
                         maxLength={16}
-                        error={otherProps.cardNumberError}
+                        error={cardNumberError}
                         data-test-selector="checkoutReviewAndSubmit_cardNumber"
                     />
                 }
@@ -196,21 +220,21 @@ const CreditCardDetailsEntry = ({
                         </Typography>
                         <TokenExCardTypeDisplay
                             {...styles.cardTypeTokenExText}
-                            possibleCardType={otherProps.possibleCardType}
+                            possibleCardType={possibleCardType}
                             aria-labelledby="cardTypeTokenEx"
                         />
                     </>
                     : <Select
                         {...styles.cardTypeSelect}
                         label={translate("Card Type")}
-                        value={otherProps.cardType}
-                        onChange={otherProps.onCardTypeChange}
+                        value={cardType}
+                        onChange={onCardTypeChange}
                         required
-                        error={otherProps.cardTypeError}
+                        error={cardTypeError}
                         data-test-selector="checkoutReviewAndSubmit_cardType"
                     >
                         <option value="">{translate("Select Card")}</option>
-                        {otherProps.availableCardTypes.map(ct => (
+                        {availableCardTypes.map(ct => (
                             <option key={ct.value} value={ct.value}>{ct.key}</option>
                         ))}
                     </Select>
@@ -222,13 +246,13 @@ const CreditCardDetailsEntry = ({
                         <Select
                             {...styles.expirationMonthSelect}
                             label={translate("Expiration Month")}
-                            value={otherProps.expirationMonth}
-                            onChange={otherProps.onExpirationMonthChange}
+                            value={expirationMonth}
+                            onChange={onExpirationMonthChange}
                             required
-                            error={otherProps.expirationError}
+                            error={expirationError}
                             data-test-selector="checkoutReviewAndSubmit_expirationMonth"
                         >
-                            {otherProps.availableMonths.map(month => (
+                            {availableMonths.map(month => (
                                 <option key={month.value} value={month.value}>{month.key}</option>
                             ))}
                         </Select>
@@ -237,12 +261,12 @@ const CreditCardDetailsEntry = ({
                         <Select
                             {...styles.expirationYearSelect}
                             label={translate("Expiration Year")}
-                            value={otherProps.expirationYear}
-                            onChange={otherProps.onExpirationYearChange}
+                            value={expirationYear}
+                            onChange={onExpirationYearChange}
                             required
                             data-test-selector="checkoutReviewAndSubmit_expirationYear"
                         >
-                            {otherProps.availableYears.map(year => (
+                            {availableYears.map(year => (
                                 <option key={year.value} value={year.value}>{year.key}</option>
                             ))}
                         </Select>
@@ -262,19 +286,19 @@ const CreditCardDetailsEntry = ({
                             />
                         }
                         required
-                        error={otherProps.securityCodeError}
+                        error={securityCodeError}
                         data-test-selector="checkoutReviewAndSubmit_securityCode"
                     />
                     : <TextField
                         {...styles.securityCodeText}
                         label={translate("Security Code")}
                         hint={securityCodeHint}
-                        value={otherProps.securityCode}
-                        onChange={otherProps.onSecurityCodeChange}
+                        value={securityCode}
+                        onChange={onSecurityCodeChange}
                         required
                         minLength={3}
                         maxLength={4}
-                        error={otherProps.securityCodeError}
+                        error={securityCodeError}
                         data-test-selector="checkoutReviewAndSubmit_securityCode"
                     />
                 }

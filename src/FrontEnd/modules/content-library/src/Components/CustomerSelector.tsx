@@ -51,14 +51,18 @@ const CustomerSelector: FC<OwnProps> = ({
     pagination,
     allowEditCustomer = false,
     extendedStyles,
-    ...otherProps
+    selectedCustomer,
+    onChangePage,
+    onChangeResultsPerPage,
+    onSelect,
+    onEdit,
 }) => {
     const [styles] = React.useState(() => mergeToNew(customerSelectorStyles, extendedStyles));
 
     return (
         <>
             {customers.map(shipTo => {
-                const isCardSelected = shipTo.id === otherProps.selectedCustomer?.id;
+                const isCardSelected = shipTo.id === selectedCustomer?.id;
                 return (
                     <CustomerCard
                         key={shipTo.id.toString()}
@@ -66,7 +70,8 @@ const CustomerSelector: FC<OwnProps> = ({
                         isSelected={isCardSelected}
                         allowEditCustomer={allowEditCustomer}
                         extendedStyles={isCardSelected ? styles.customerCardSelected : styles.customerCard}
-                        {...otherProps}
+                        onSelect={onSelect}
+                        onEdit={onEdit}
                     />
                 );
             })}
@@ -77,8 +82,8 @@ const CustomerSelector: FC<OwnProps> = ({
                     resultsPerPage={pagination.pageSize}
                     resultsCount={pagination.totalItemCount}
                     resultsPerPageOptions={pagination.pageSizeOptions}
-                    onChangePage={otherProps.onChangePage}
-                    onChangeResultsPerPage={otherProps.onChangeResultsPerPage}
+                    onChangePage={onChangePage}
+                    onChangeResultsPerPage={onChangeResultsPerPage}
                 />
             }
         </>

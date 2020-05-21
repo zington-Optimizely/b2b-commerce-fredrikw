@@ -5,6 +5,12 @@ import {
     addAccount as addAccountApi,
 } from "@insite/client-framework/Services/AccountService";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import cloneDeep from "lodash/cloneDeep";
+import { Draft } from "immer";
+import { updateCart } from "@insite/client-framework/Services/CartService";
+import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { deleteSession } from "@insite/client-framework/Services/SessionService";
 
 export interface AddAccountParameter {
     userName: string;
@@ -20,6 +26,32 @@ type HandlerType = ApiHandlerDiscreteParameter<
     AddAccountApiParameter,
     ServiceResult<AccountModel>
 >;
+
+export const UnassignCartFromGuest: HandlerType = async props => {
+    const { value: cart } = getCurrentCartState(props.getState());
+    const currentUserIsGuest = getCurrentUserIsGuest(props.getState());
+    if (!currentUserIsGuest) {
+        return;
+    }
+    if (!cart) {
+        throw new Error("The cart is not loaded. Try reloading the page.");
+    }
+
+    if (cart.lineCount > 0) {
+        const cartClone = cloneDeep(cart) as Draft<typeof cart>;
+        cartClone.unassignCart = true;
+        await updateCart({ cart: cartClone });
+    }
+};
+
+export const SignOutGuest: HandlerType = async props => {
+    const currentUserIsGuest = getCurrentUserIsGuest(props.getState());
+    if (!currentUserIsGuest) {
+        return;
+    }
+
+    await deleteSession();
+};
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
@@ -47,6 +79,8 @@ export const CallOnSuccess: HandlerType = props => {
 };
 
 export const chain = [
+    UnassignCartFromGuest,
+    SignOutGuest,
     PopulateApiParameter,
     AddAccount,
     CallOnError,

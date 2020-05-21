@@ -6,12 +6,15 @@ import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import Typography from "@insite/mobius/Typography";
 import parse from "html-react-parser";
 import styled, { css } from "styled-components";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { connect } from "react-redux";
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { LinkPresentationProps } from "@insite/mobius/Link";
+import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 
 const enum fields {
     background = "background",
@@ -23,6 +26,7 @@ const enum fields {
     subheading = "subheading",
     buttonLabel = "buttonLabel",
     buttonLink = "buttonLink",
+    buttonVariant = "variant",
     bannerWidth = "bannerWidth",
 }
 
@@ -37,6 +41,7 @@ interface OwnProps extends WidgetProps {
         [fields.subheading]: string;
         [fields.buttonLabel]: string;
         [fields.buttonLink]: LinkFieldValue;
+        [fields.buttonVariant]: "primary" | "secondary" | "tertiary";
     };
     extendedStyles?: BannerStyles;
 }
@@ -51,7 +56,11 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
 
 export interface BannerStyles {
     wrapper?: InjectableCss;
-    bannerLink?: LinkPresentationProps;
+    /**
+    * @deprecated Use the `bannerButton` property instead.
+    */
+    bannerLink?: LinkPresentationProps
+    bannerButton?: ButtonPresentationProps;
 }
 
 export const bannerStyles: BannerStyles = {
@@ -60,25 +69,24 @@ export const bannerStyles: BannerStyles = {
             width: 100%;
             color: white;
             text-align: center;
-            padding: 80px 100px 10px 100px;
+            padding: 70px 100px 50px 100px;
         `,
-    },
-    bannerLink: {
-        css: css`
-            border: 1px solid white;
-            padding: 10px;
-            margin-top: 10px;
-        `,
-        color: "white",
     },
 };
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+const onClick = (history: History, link: string | undefined) => {
+    if (link) {
+        history.push(link);
+    }
+};
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
 
 const Banner: React.FC<Props> = ({
     fields,
     url,
     title,
+    history,
     extendedStyles,
 }) => {
     const backgroundStyles = fields.background === "image"
@@ -134,22 +142,27 @@ const Banner: React.FC<Props> = ({
     }
 
     const [styles] = React.useState(() => mergeToNew(bannerStyles, extendedStyles));
-    const Wrapper = styled.div`
-        ${styles.wrapper?.css || ""}
-        ${backgroundStyles}
-        ${focalPointStyles}
-        ${minimumHeightStyles}
-    `;
 
-    return <Wrapper>
+    const wrapperStyles = {
+        css: css`
+            ${styles.wrapper?.css || ""}
+            ${backgroundStyles}
+            ${focalPointStyles}
+            ${minimumHeightStyles}
+        `,
+    };
+
+    return <StyledWrapper {...wrapperStyles}>
         <Typography>{parse(fields.heading, parserOptions)}</Typography>
         <Typography>{parse(fields.subheading, parserOptions)}</Typography>
-        <Link {...styles.bannerLink} href={url}>{fields.buttonLabel || title || url}</Link>
-    </Wrapper>;
+        <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
+            {fields.buttonLabel || title || url}
+        </Button>
+    </StyledWrapper>;
 };
 
 const banner: WidgetModule = {
-    component: connect(mapStateToProps)(Banner),
+    component: connect(mapStateToProps)(withHistory(Banner)),
     definition: {
         group: "Basic",
         icon: "Banner",
@@ -238,6 +251,19 @@ const banner: WidgetModule = {
                 displayName: "Button Link",
                 editorTemplate: "LinkField",
                 defaultValue: { type: "Page", value: "" },
+            },
+            {
+                name: fields.buttonVariant,
+                displayName: "Button Variant",
+                editorTemplate: "DropDownField",
+                options: [
+                    { displayName: "Primary", value: "primary" },
+                    { displayName: "Secondary", value: "secondary" },
+                    { displayName: "Tertiary", value: "tertiary" },
+                ],
+                hideEmptyOption: true,
+                defaultValue: "primary",
+                fieldType: "General",
             },
             {
                 fieldType: "General",

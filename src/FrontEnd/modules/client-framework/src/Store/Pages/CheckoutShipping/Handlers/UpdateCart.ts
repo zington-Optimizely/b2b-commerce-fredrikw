@@ -8,7 +8,7 @@ import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 
 type HandlerType = ApiHandlerDiscreteParameter<HasOnSuccess, UpdateCartApiParameter, CartResult, {
     shipTo?: ShipToModel
@@ -63,20 +63,16 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const AddOrUpdateShipTo: HandlerType = async props => {
-    const state = props.getState();
-    const { pages: { checkoutShipping: { shippingAddressFormState, useBillingAddress, useOneTimeAddress } } } = state;
+    const { dispatch, getState, cart } = props;
+    const state = getState();
+    const { pages: { checkoutShipping: { shippingAddressFormState } } } = state;
 
     if (!shippingAddressFormState) {
         return;
     }
 
-    const cart = getCurrentCartState(state).value;
-    if (!cart) {
-        throw new Error("There was no current cart available while trying to update the current cart.");
-    }
-
     const shipTo = getShipToState(state, cart.shipToId).value;
-    const billTo = getShipToState(state, cart.billToId).value;
+    const billTo = getBillToState(state, cart.billToId).value;
     if (!shipTo || !billTo) {
         throw new Error("There was no shipTo or billTo loaded for the current cart");
     }
@@ -88,26 +84,21 @@ export const AddOrUpdateShipTo: HandlerType = async props => {
             ? await createShipTo({ shipTo: localModifiedShipTo })
             : await updateShipTo({ shipTo: localModifiedShipTo, billToId: billTo.id });
 
-        props.dispatch(loadShipTo({ shipToId: props.updatedShipTo.id, billToId: billTo.id }));
+        dispatch(loadShipTo({ shipToId: props.updatedShipTo.id, billToId: billTo.id }));
 
         props.apiParameter.cart.shipToId = props.updatedShipTo.id;
     }
 };
 
 export const UpdateBillTo: HandlerType = async props => {
-    const state = props.getState();
-    const currentUserIsGuest = getCurrentUserIsGuest(state);
+    const { dispatch, getState, cart } = props;
+    const state = getState();
     const { pages: { checkoutShipping: { billingAddressFormState } } } = state;
     if (!billingAddressFormState) {
         return;
     }
 
-    const cart = getCurrentCartState(state).value;
-    if (!cart) {
-        throw new Error("There was no current cart available while trying to update the current cart.");
-    }
-
-    const billTo = getShipToState(state, cart.billToId).value;
+    const billTo = getBillToState(state, cart.billToId).value;
     if (!billTo) {
         throw new Error("There was no shipTo or billTo loaded for the current cart");
     }
@@ -119,7 +110,7 @@ export const UpdateBillTo: HandlerType = async props => {
             billTo: localModifiedBillTo,
         });
 
-        props.dispatch(loadBillTo({ billToId: billTo.id }));
+        dispatch(loadBillTo({ billToId: billTo.id }));
 
         props.apiParameter.cart.billToId = props.updatedBillTo.id;
     }

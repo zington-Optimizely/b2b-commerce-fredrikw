@@ -7,6 +7,7 @@ const OverflowMenuPresentationPropsDefault: ComponentThemeProps["overflowMenu"][
         buttonType: "solid",
         shadow: false,
     },
+    iconProps: { src: "MoreVertical" },
 };
 
 export default OverflowMenuPresentationPropsDefault;

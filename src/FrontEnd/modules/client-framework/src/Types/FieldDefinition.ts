@@ -179,7 +179,7 @@ export const AdvancedTab: TabDefinition = {
 };
 
 function field(name: string,
-    editorTemplate: "CheckboxField" | "TextField" | "HorizontalRule",
+    editorTemplate: "CheckboxField" | "TextField" | "HorizontalRule" | "ImagePickerField",
     defaultValue: any,
     fieldType: FieldType,
     sortOrder: number,
@@ -198,7 +198,7 @@ export const MetaKeywords: FieldDefinition = field("metaKeywords", "TextField", 
 export const MetaDescription: FieldDefinition = field("metaDescription", "TextField", "", "Translatable", 210);
 export const OpenGraphTitle: FieldDefinition = field("openGraphTitle", "TextField", "", "Translatable", 100, AdvancedTab);
 export const OpenGraphUrl: FieldDefinition = field("openGraphUrl", "TextField", "", "Translatable", 110, AdvancedTab);
-export const OpenGraphImage: FieldDefinition = field("openGraphImage", "TextField", "", "Translatable", 110, AdvancedTab);
+export const OpenGraphImage: FieldDefinition = field("openGraphImage", "ImagePickerField", "", "Translatable", 110, AdvancedTab);
 export const HideHeader: FieldDefinition = field("hideHeader", "CheckboxField", false, "General", 200, AdvancedTab);
 export const HideFooter: FieldDefinition = field("hideFooter", "CheckboxField", false, "General", 210, AdvancedTab);
 export const HideFromSearchEngines: FieldDefinition = field("hideFromSearchEngines", "CheckboxField", false, "General", 220, AdvancedTab);

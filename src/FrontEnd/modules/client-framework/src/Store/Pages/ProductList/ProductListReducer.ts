@@ -3,7 +3,6 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import ProductListState, {
     ProductFilters,
     ProductListViewType,
-    ProductListNavRefState,
 } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import {
     UpdateProductParameter,
@@ -49,9 +48,6 @@ const reducer = {
     },
     "Pages/ProductList/SetView": (draft: Draft<ProductListState>, action: { parameter: { view: ProductListViewType}}) => {
         draft.view = action.parameter.view;
-    },
-    "Pages/ProductList/SetNavRef": (draft: Draft<ProductListState>, action: { parameter: { navRef: ProductListNavRefState }}) => {
-        draft.navRef = action.parameter.navRef;
     },
     "Pages/ProductList/UpdateProduct": (draft: Draft<ProductListState>, action: { parameter: UpdateProductParameter }) => {
         if (draft.productsState.value) {

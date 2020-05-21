@@ -16,8 +16,16 @@ import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handler
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
 import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import { css } from "styled-components";
+
+const enum fields {
+    numberOfRecords = "numberOfRecords",
+}
 
 interface OwnProps extends WidgetProps {
+    fields: {
+        [fields.numberOfRecords]: number;
+    };
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -25,7 +33,8 @@ const mapStateToProps = (state: ApplicationState) => ({
     myListsPageNavLink: getPageLinkByPageType(state, "MyListsPage"),
 });
 
-const recentWishListsParameter = {
+let recentWishListsParameter = {
+    page: 1,
     sort: "ModifiedOn DESC",
     expand: ["top3products"],
 } as GetWishListsApiParameter;
@@ -44,13 +53,24 @@ export interface RecentWishListsStyles {
 }
 
 const styles: RecentWishListsStyles = {
-    wishListCardGridItem: { width: 12 },
+    wishListCardGridItem: {
+        width: 12,
+        css: css` padding: 0; `,
+    },
+    wishListCard: {
+        actionAddToCartButton: {
+            typographyProps: {
+                size: 14,
+            },
+        },
+    },
 };
 
 export const recentWishListsStyles = styles;
 
 class RecentWishLists extends React.Component<Props> {
     componentDidMount() {
+        recentWishListsParameter.pageSize = this.props.fields.numberOfRecords;
         if (!this.props.recentWishListsDataView.value && !this.props.recentWishListsDataView.isLoading) {
             this.props.loadWishLists(recentWishListsParameter);
         }
@@ -89,7 +109,17 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        fieldDefinitions: [],
+        fieldDefinitions: [
+            {
+                name: fields.numberOfRecords,
+                displayName: "Number of Lists Displayed",
+                editorTemplate: "IntegerField",
+                min: 1,
+                defaultValue: 3,
+                fieldType: "General",
+                sortOrder: 1,
+            },
+        ],
     },
 };
 

@@ -3,7 +3,6 @@ import styled, { ThemeProps, withTheme } from "styled-components";
 import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
 import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import MoreVertical from "../Icons/MoreVertical";
 import Popover, { PopoverProps } from "../Popover";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getColor from "../utilities/getColor";
@@ -143,8 +142,8 @@ class OverflowMenu extends React.Component<Props, State> {
                 data-test-selector="popoverOverflowTrigger"
             >
                 {iconProps.color
-                    ? <IconMemo src={MoreVertical} {...iconProps} />
-                    : <ButtonIcon src={MoreVertical} {...iconProps} />
+                    ? <IconMemo {...iconProps} />
+                    : <ButtonIcon {...iconProps} />
                 }
                 <VisuallyHidden>{otherProps.theme.translate("Menu")}</VisuallyHidden>
             </OverflowButton>

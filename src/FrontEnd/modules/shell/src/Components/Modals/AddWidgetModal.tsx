@@ -10,7 +10,7 @@ import {
     editWidget,
     hideAddWidgetModal,
 } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { addWidget } from "@insite/client-framework/Store/UNSAFE_CurrentPage/CurrentPageActionCreators";
+import { addWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -23,6 +23,7 @@ import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
 import shellIconsObject from "../Icons/CompatibleIcons/shellIcons";
 import Icon from "@insite/mobius/Icon";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 const iconsObject = { ...shellIconsObject, ...mobiusIconsObject };
 
@@ -32,7 +33,8 @@ interface OwnProps {
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
-    const pageType = state.currentPage.page.type;
+    const currentPage = getCurrentPageForShell(state);
+    const pageType = currentPage.type;
     const groups: WidgetGroup[] = [];
     const widgetsByGroup: Dictionary<LoadedWidgetDefinition[]> = {};
 
@@ -53,7 +55,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     }
 
     return {
-        page: state.currentPage.page,
+        page: currentPage,
         currentLanguage: state.shellContext.languagesById[state.shellContext.currentLanguageId]!,
         defaultLanguageId: state.shellContext.defaultLanguageId,
         currentPersonaId: state.shellContext.currentPersonaId,
@@ -115,7 +117,7 @@ class AddWidgetModal extends React.Component<Props, State> {
 
     addWidget = (widgetDefinition: LoadedWidgetDefinition) => {
         const { addWidgetData, addWidget, currentLanguage, defaultLanguageId, currentPersonaId, defaultPersonaId,
-                currentDeviceType, savePage, editWidget, hideAddWidgetModal } = this.props;
+                currentDeviceType, savePage, editWidget, hideAddWidgetModal, page } = this.props;
         if (!addWidgetData) {
             return;
         }
@@ -126,7 +128,7 @@ class AddWidgetModal extends React.Component<Props, State> {
             widget: newWidget,
             sortOrder: addWidgetData.sortOrder,
         });
-        addWidget(newWidget, addWidgetData.sortOrder);
+        addWidget(newWidget, addWidgetData.sortOrder, page.id);
         editWidget(newWidget.id, true);
         hideAddWidgetModal();
         savePage();

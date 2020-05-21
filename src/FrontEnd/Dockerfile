@@ -49,7 +49,8 @@ COPY ./config/webpack/ ./config/webpack/
 # These files will change frequently, so useful caching is limited to different build arguments.
 COPY ./modules/ ./modules/
 
-# ESLint & Stylelint results don't vary by extension path but require all code to be present.
+# Tests, ESLint and Stylelint results don't vary by extension path but require all code to be present.
+RUN ["npm", "test"]
 RUN ["npm", "run", "eslint"]
 RUN ["npm", "run", "stylelint"]
 
@@ -78,6 +79,8 @@ COPY --from=build /app/dist/. ./dist/
 COPY --from=build /app/wwwroot/. ./wwwroot/
 
 ARG BUILD_INFO=None
+# Valid values for compression are `true` and `false, with `true` (the default) indicating to compress HTTP content.
+ARG ISC_ENABLE_COMPRESSION=true
 
 USER node
 CMD ["node", "dist/server.js"]

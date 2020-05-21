@@ -1,5 +1,7 @@
 # Changelog
 
+AccordionSection: added onTogglePanel event.
+
 - Accessibility improvements: 
     - `RadioGroup` and `CheckboxGroup` will not render fieldsets with only one radio or checkbox
     - `Tooltip` accepts a prop named `triggerAltText` and includes it as alt text for the trigger icon if not provided. 
@@ -11,7 +13,19 @@
 `Link` - iconProps was moved to icon property of Link.
 `Toast` - body parameter type was changed to 'React.ReactNode' to have ability to pass siteMessage (which return 'React.ReactNode' type).
 `Menu` - focuses on adjacent element when item in menu is clicked, to close menu while still using CSS-based appearance.
-`CheckBoxGroup` - modified `onChange` type into to `onChangeHandler` 
+`LazyImage` - added onLoad and onError callback functions to LazyImageProps.
+`CheckBoxGroup` - modified `onChange` type into to `onChangeHandler`
+`Icon` prop `src` will interpret a string matching the filename in `Icons/*.tsx` and render the corresponding icon. This is especially useful for theme and style extensions.
+`PanelMenu` - menu items are filtered by `excludeFromNavigation` property, only not excluded should be rendered.
+`PanelMenu` - `dataTestSelector` prop removed in lieu of using `data-test-selector` HTML attribute internally.
+
+Added theme and prop extension points for: 
+- `PanelRow` within `PanelMenu`.
+- `Toast` close button icon and icon source per toast type.
+- `Pagination` accepts a prop to change the navigation button icons.
+- `Modal` close button icon icon.
+- `LazyImage` is now themable.  
+- `Drawer` close button icon is now themable.  
 
 ## 1.0.0-beta.3
 

@@ -3,15 +3,19 @@ import React from 'react';
 import { mount } from 'enzyme';
 import Select from './Select';
 import ThemeProvider from '../ThemeProvider';
+import DisablerContext from '../utilities/DisablerContext';
 
 describe('Select', () => {
     let props;
     let mountedWrapper;
+    let disablerValue;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <Select {...props} />
+                    <DisablerContext.Provider value={disablerValue}>
+                        <Select {...props} />
+                    </DisablerContext.Provider>
                 </ThemeProvider>
             );
         }
@@ -48,5 +52,21 @@ describe('Select', () => {
         props = { hint: 'props.hint' };
         const hintText = wrapper().find(Select).find('[id$="-description"] span').getDOMNode().innerHTML;
         expect(hintText).toBe(props.hint);
+    });
+
+    describe('is appropriately disabled', () => {
+        test("if DisablerContext is true", () => {
+            disablerValue = { disable: true };
+            expect(wrapper().find("select").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is true", () => {
+            props = { disabled: true };
+            disablerValue = { disable: false };
+            expect(wrapper().find("select").prop("disabled")).toBe(true);
+        });
+        test("if DisablerContext is false and disabled is false", () => {
+            disablerValue = { disable: false };
+            expect(wrapper().find("select").prop("disabled")).toBe(false);
+        });
     });
 });
