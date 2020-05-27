@@ -14,15 +14,9 @@ export default function getProp<T>(path = "", defaultValue?: T) {
     return (props: any) => {
         const [pathRoot, ...restOfPath] = path.split(".");
         const valueFromProps = get(props, path);
-        if (pathRoot === "theme") {
-            const valueFromTheme = get(props.theme, restOfPath);
+        if (pathRoot === "theme" && !valueFromProps && !defaultValue) {
             const valueFromBaseTheme = get(baseTheme, restOfPath);
-            if (isUndefined(valueFromProps) && isUndefined(defaultValue) && isUndefined(valueFromTheme)) {
-                if (isUndefined(valueFromBaseTheme)) {
-                    console.error(`getProp: ${path} not found. Check that the object path exists in the global theme.`);
-                }
-            }
-            return valueFromProps || valueFromTheme || defaultValue || valueFromBaseTheme;
+            return valueFromBaseTheme;
         }
         return valueFromProps || defaultValue;
     };

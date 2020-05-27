@@ -70,6 +70,8 @@ const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
             font-size: 11px !important;
         }
     }
+
+    ${getProp("theme.globalStyle.css")};
 ` as GlobalStyleComponent<GlobalStyleProps, ExtendedTheme>;
 
 export const ChildGlobals = styled.div`

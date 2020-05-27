@@ -59,7 +59,7 @@ import FieldSetPresentationProps, {
     FieldSetPropsMock,
     FieldSetGroupPresentationProps,
 } from "../utilities/fieldSetProps";
-import { StyledProp } from "../utilities/InjectableCss";
+import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 
 export interface ThemeBreakpoints {
     keys: string[];
@@ -226,6 +226,7 @@ export interface BaseTheme extends ComponentThemeProps, CategoryThemeProps {
         3: string;
     };
     transition: ThemeTransition;
+    globalStyle: InjectableCss;
     typography: ThemeTypography & {
         fontFamilyImportUrl: string;
     };
@@ -296,6 +297,7 @@ const baseTheme: BaseTheme = {
             long: 500,
         },
     },
+    globalStyle: {},
     typography: {
         fontFamilyImportUrl: "https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap",
         body: {
