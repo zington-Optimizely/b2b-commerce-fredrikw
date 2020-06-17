@@ -1,0 +1,26 @@
+http:
+  routers:
+    site-router:
+      entryPoints:
+        - "web"
+      rule: "Host(`traefik`)"
+      middlewares:
+        - hostHeader
+      service: "site-service"
+    site-router-localhost:
+      entryPoints:
+        - "web"
+      rule: "Host(`localhost`)"
+      middlewares:
+        - hostHeader
+      service: "site-service"
+  middlewares:
+    hostHeader:
+      headers:
+        customRequestHeaders:
+          Host: "{{TARGET_SITE}}"
+  services:
+    site-service:
+      loadBalancer:
+        servers:
+          - url: "https://{{TARGET_SITE}}"

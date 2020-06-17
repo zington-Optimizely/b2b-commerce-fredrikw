@@ -13,4 +13,4 @@ scrape_configs:
       username: "{{METRICS_USERNAME}}"
       password: "{{METRICS_PASSWORD}}"
     static_configs:
-      - targets: ['host.docker.internal:10000']
+      - targets: ['traefik:10000']

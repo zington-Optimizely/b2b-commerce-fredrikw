@@ -13,7 +13,7 @@ services:
         METRICS_USERNAME: ${METRICS_USERNAME?METRICS_USERNAME}
         METRICS_PASSWORD: ${METRICS_PASSWORD?METRICS_PASSWORD}
     depends_on:
-      - envoy-proxy
+      - traefik
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -35,10 +35,11 @@ services:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
 
-  envoy-proxy:
+  traefik:
     build:
-      context: ./proxy
+      context: ./traefik
       args:
         TARGET_SITE: ${TARGET_SITE?TARGET_SITE}
+    image: traefik
     ports:
       - 10000:10000
