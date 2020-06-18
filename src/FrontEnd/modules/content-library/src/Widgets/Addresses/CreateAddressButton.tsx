@@ -99,7 +99,7 @@ const CreateAddressButton: React.FunctionComponent<Props> = (props: Props) => {
         <GridContainer {...styles.gridContainer}>
             <GridItem {...styles.createNewAddressButtonGridItem}>
                 <Hidden above="sm">
-                    <OverflowMenu {...styles.overflowMenu}>
+                    <OverflowMenu position="end" {...styles.overflowMenu}>
                         <Clickable onClick={editClickHandler}>{translate("Create New Address")}</Clickable>
                     </OverflowMenu>
                 </Hidden>
@@ -131,8 +131,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Addresses",
         icon: "Button",
-        fieldDefinitions: [],
         allowedContexts: [AddressesPageContext],
+        isSystem: true,
     },
 };
 

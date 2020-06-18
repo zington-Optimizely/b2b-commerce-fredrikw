@@ -7,6 +7,8 @@ import {
     removeWidget,
     replaceItem,
     UpdateFieldParameter, endDraggingWidget, beginDraggingWidget,
+    setWidgetDefinitions,
+    setPageDefinitions,
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { cleanupAfterDragging } from "@insite/client-framework/WidgetReordering";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
@@ -14,9 +16,12 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ItemProps } from "@insite/client-framework/Types/PageProps";
 import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
 import { initializeSiteHole } from "@insite/client-framework/Components/ShellHole";
-import { selectBrand, selectCategory, selectProduct } from "@insite/client-framework/Store/Context/ContextActionCreators";
+import { selectBrand, selectCategory, selectProduct, setCMSPermissions } from "@insite/client-framework/Store/Context/ContextActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { History } from "@insite/mobius/utilities/HistoryContext";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 
 interface OwnProps {
     history: History;
@@ -38,6 +43,9 @@ const mapDispatchToProps = {
     selectCategory,
     selectBrand,
     loadPageLinks,
+    setCMSPermissions,
+    setWidgetDefinitions,
+    setPageDefinitions,
 };
 
 type Props =
@@ -106,6 +114,15 @@ class ShellHoleProvider extends React.Component<Props> {
             },
             ReloadPageLinks: () => {
                 this.props.loadPageLinks();
+            },
+            CMSPermissions: ({ permissions }: { permissions: PermissionsModel; }) => {
+                this.props.setCMSPermissions(permissions);
+            },
+            WidgetDefinitions: ({ widgetDefinitionsByType }: { widgetDefinitionsByType: SafeDictionary<WidgetDefinition>; }) => {
+                this.props.setWidgetDefinitions(widgetDefinitionsByType);
+            },
+            PageDefinitions: ({ pageDefinitionsByType }: { pageDefinitionsByType: SafeDictionary<PageDefinition>; }) => {
+                this.props.setPageDefinitions(pageDefinitionsByType);
             },
         });
     }

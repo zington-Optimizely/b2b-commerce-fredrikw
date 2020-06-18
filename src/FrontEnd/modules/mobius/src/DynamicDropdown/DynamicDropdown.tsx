@@ -25,14 +25,11 @@ import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 
-export interface DynamicDropdownPresentationProps extends FormFieldPresentationProps<DynamicDropdownComponentProps> {
+export interface DynamicDropdownPresentationProps extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable */
-    cssOverrides?: {
-        descriptionWrapper?: StyledProp<DynamicDropdownComponentProps>;
+    cssOverrides?: Pick<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> & {
         dropdownWrapper?: StyledProp<DynamicDropdownComponentProps>;
-        formField?: StyledProp<DynamicDropdownComponentProps>;
-        formInputWrapper?: StyledProp<DynamicDropdownComponentProps>;
         list?: StyledProp<ContentBodyProps>;
         /** Specific style options for loading row, if not provided, falls back on 'option'. */
         loading?: StyledProp<DynamicDropdownComponentProps>;
@@ -168,7 +165,7 @@ const Option = styled.div<OptionProps>`
                 background: ${hover};
                 color: ${get(theme, "colors.common.backgroundContrast")};
             }`}
-            ${disabled && "cursor: not-allowed;"}
+            ${disabled ? "cursor: not-allowed;" : "cursor: pointer;"}
         `;
     }}
     transition: all 0.3s ease-in-out;
@@ -183,6 +180,9 @@ const SelectedText = styled(Typography as any)<SizeVariant>`
     padding: ${({ _sizeVariant }) => (_sizeVariant === "small" ? "5px 0 5px 11px" : "9px 0 9px 11px")};
     top: 0;
     left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
     ${injectCss}
 `;
 
@@ -503,6 +503,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 type="text"
                 role="searchbox"
                 aria-autocomplete="list"
+                autoComplete="no"
                 aria-activedescendant={focusedOption && `${uid}-${focusedOption.optionText}`}
                 aria-describedby={hasDescription ? descriptionId : undefined}
                 aria-labelledby={labelId}

@@ -138,7 +138,7 @@ export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -157,7 +157,7 @@ export const chain = [
     UpdateSession,
     UpdateCart,
     LoadCart,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
     DispatchCompleteUpdateCart,
 ];
 

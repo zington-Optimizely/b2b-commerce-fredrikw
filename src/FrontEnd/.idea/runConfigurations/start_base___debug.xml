@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start base - debug" type="NodeJSConfigurationType" node-parameters="--inspect=5858" path-to-js-file="$PROJECT_DIR$/startDevelopment.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="start base - debug" type="NodeJSConfigurationType" node-parameters="--inspect=5858" path-to-js-file="startDevelopment.js" working-dir="$PROJECT_DIR$">
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
       <browser with-js-debugger="true" url="http://localhost:3000" />
     </EXTENSION>

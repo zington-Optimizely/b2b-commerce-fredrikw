@@ -110,7 +110,7 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         displayName: "Fulfillment Method Selector",
         allowedContexts: [CheckoutShippingPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

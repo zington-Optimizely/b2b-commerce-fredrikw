@@ -74,7 +74,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Stocked Items Filter",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -16,7 +16,7 @@ import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setO
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
-    const productPath = getSelectedProductPath(state) || location.pathname;
+    const productPath = getSelectedProductPath(state) || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
     return ({
         product: state.pages.productDetail.product,
         productPath,
@@ -74,8 +74,8 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: false,
         hasEditableTitle: false,
-        fieldDefinitions: [],
         supportsProductSelection: true,
+        isSystemPage: true,
     },
 };
 

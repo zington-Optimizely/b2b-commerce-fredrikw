@@ -36,6 +36,10 @@ const reducer = {
         assignById(draft, action.model);
     },
 
+    "Data/BillTos/CompleteUpdateBillTo": (draft: Draft<BillTosState>, action: { model: BillToModel }) => {
+        assignById(draft, action.model);
+    },
+
     "Data/BillTos/Reset": () => {
         return initialState;
     },

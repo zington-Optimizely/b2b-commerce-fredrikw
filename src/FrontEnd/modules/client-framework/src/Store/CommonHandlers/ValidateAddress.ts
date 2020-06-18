@@ -171,7 +171,7 @@ export const ValidateFax: HandlerType = props => {
     }
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(props.addressErrors);
 };
 
@@ -192,7 +192,7 @@ export const chain = [
     ValidatePhone,
     ValidateEmail,
     ValidateFax,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const validateAddress = createHandlerChainRunner(chain, "ValidateAddress");

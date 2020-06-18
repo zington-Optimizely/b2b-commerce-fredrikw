@@ -4,6 +4,9 @@ import translate from "@insite/client-framework/Translate";
 import TextField, { TextFieldProps, TextFieldPresentationProps } from "@insite/mobius/TextField";
 import { css } from "styled-components";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { connect } from "react-redux";
 
 interface OwnProps extends TextFieldProps {
     product: ProductModelExtended;
@@ -15,6 +18,12 @@ interface OwnProps extends TextFieldProps {
     labelOverride?: React.ReactNode;
     extendedStyles?: TextFieldPresentationProps;
 }
+
+const mapStateToProps = (state: ApplicationState) => ({
+    productSettings: getSettingsCollection(state).productSettings,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export const productQuantityOrderedStyles: TextFieldPresentationProps = {
     cssOverrides: {
@@ -35,7 +44,8 @@ export const productQuantityOrderedStyles: TextFieldPresentationProps = {
     },
 };
 
-const ProductQuantityOrdered: React.FC<OwnProps> = ({
+const ProductQuantityOrdered: React.FC<Props> = ({
+    productSettings,
     product,
     quantity,
     configurationCompleted,
@@ -53,8 +63,17 @@ const ProductQuantityOrdered: React.FC<OwnProps> = ({
         if (quantity === Number(productQty)) {
             return;
         }
-        setProductQty(quantity.toString());
+        setProductQty(`${quantity || ""}`);
     }, [quantity]);
+
+    if (!productSettings || !productSettings.canAddToCart) {
+        return null;
+    }
+
+    const isEnoughInventory = productSettings.allowBackOrder || !product.trackInventory || (product.qtyOnHand && product.qtyOnHand > 0);
+    if (!isEnoughInventory) {
+        return null;
+    }
 
     const showQtyInput = product.canAddToCart
         || (product.canConfigure && configurationCompleted)
@@ -97,4 +116,4 @@ const ProductQuantityOrdered: React.FC<OwnProps> = ({
         {...styles} />;
 };
 
-export default ProductQuantityOrdered;
+export default connect(mapStateToProps)(ProductQuantityOrdered);

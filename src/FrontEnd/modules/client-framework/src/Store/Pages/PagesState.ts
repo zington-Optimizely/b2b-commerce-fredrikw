@@ -15,18 +15,23 @@ import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderCo
 import OrderUploadState from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadState";
 import ProductDetailState from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailState";
 import ProductListState from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
+import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
+import BudgetManagementState from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
+import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 
 export default interface PagesState {
     readonly accountSettings: AccountSettingsState;
     readonly addresses: AddressesState;
     readonly brands: BrandsState;
+    readonly budgetManagement: BudgetManagementState;
     readonly cart: CartState;
     readonly checkoutReviewAndSubmit: CheckoutReviewAndSubmitState;
     readonly checkoutShipping: CheckoutShippingState;
     readonly invoiceDetails: InvoiceDetailsState;
     readonly invoiceHistory: InvoiceHistoryState;
+    readonly locationFinder: LocationFinderState;
     readonly myLists: MyListsState;
     readonly myListDetails: MyListDetailsState;
     readonly orderDetails: OrderDetailsState;
@@ -35,6 +40,7 @@ export default interface PagesState {
     readonly orderUpload: OrderUploadState;
     readonly productDetail: ProductDetailState;
     readonly productList: ProductListState;
+    readonly requestRma: RequestRmaState;
     readonly quickOrder: QuickOrderState;
     readonly savedPayments: SavedPaymentsState;
     readonly signIn: SignInState;

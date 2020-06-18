@@ -79,8 +79,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Product List",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        fieldDefinitions: [],
         group: "Checkout - Review & Submit",
+        isSystem: true,
     },
 };
 

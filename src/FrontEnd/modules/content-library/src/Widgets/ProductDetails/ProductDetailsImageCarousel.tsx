@@ -213,7 +213,7 @@ const widgetModule: WidgetModule = {
         displayName: "Image Carousel",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

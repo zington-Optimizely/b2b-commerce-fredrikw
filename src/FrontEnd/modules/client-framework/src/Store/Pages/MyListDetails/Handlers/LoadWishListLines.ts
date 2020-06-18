@@ -118,9 +118,14 @@ export const DispatchCompleteLoadWishListLines: HandlerType = ({ dispatch, apiPa
         result: apiResult,
         products,
     });
+    dispatch({
+        type: "Data/WishLists/CompleteLoadWishListLines",
+        parameter: apiParameter,
+        result: apiResult,
+    });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -147,7 +152,7 @@ export const chain = [
     LoadRealTimeInventory,
     WaitForData,
     DispatchCompleteLoadWishListLines,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const loadWishListLines = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadWishListLines");

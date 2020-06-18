@@ -51,7 +51,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Form",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

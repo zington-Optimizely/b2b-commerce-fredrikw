@@ -39,7 +39,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Result Count",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -63,7 +63,7 @@ class MyListsCreateListButton extends React.Component<Props, State> {
         return (
             <StyledWrapper {...styles.wrapper}>
                 <Hidden above="sm">
-                    <OverflowMenu>
+                    <OverflowMenu position="end">
                         <Clickable onClick={this.buttonClickHandler}>{translate("Create List")}</Clickable>
                     </OverflowMenu>
                 </Hidden>
@@ -93,7 +93,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Create List Button",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

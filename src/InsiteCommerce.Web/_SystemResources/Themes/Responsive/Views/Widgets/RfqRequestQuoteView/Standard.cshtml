@@ -23,7 +23,8 @@
                             <input class="isc-isJobQuote" id="IsJobQuote" name="IsJobQuote" type="checkbox" ng-model="vm.isJobQuote" value="true">[% translate 'Quote for a Job' %]
                         </label>
                         <div class="card-name">
-                            <input data-val="true" data-val-required="[% siteMessage 'Rfq_Job_Name_required' %]" required ng-disabled="!vm.isJobQuote" ng-model="vm.jobName" id="jobName" name="JobName" placeholder="[% translate 'Job Name' %]" type="text">
+                            <input ng-model="vm.jobName" ng-disabled="!vm.isJobQuote" id="jobName" name="JobName" type="text" required maxlength="50"
+                                   placeholder="[% translate 'Job Name' %]" data-val="true" data-val-required="[% siteMessage 'Rfq_Job_Name_required' %]" />
                             <span class="field-validation-valid" data-valmsg-for="JobName" data-valmsg-replace="true"></span>
                         </div>
                     </div>

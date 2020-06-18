@@ -87,7 +87,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Search Box",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -40,8 +40,9 @@
                                 </label>
                             </div>
                             <div class="cost-code sto-dcc">
-                                <select ng-model="shipTo.costCode" ng-options="cc.costCode as cc.costCode for cc in vm.costCodeCollection">
+                                <select ng-model="shipTo.costCode">
                                     <option value="">[% translate 'Select Cost Code' %]</option>
+                                    <option ng-repeat="cc in vm.costCodeCollection" value="{{cc.costCode}}" ng-bind="cc.costCode"></option>
                                 </select>
                             </div>
                         </td>

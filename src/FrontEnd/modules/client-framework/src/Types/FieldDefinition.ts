@@ -26,8 +26,12 @@ export interface IntegerFieldDefinition extends BaseFieldDefinition<"IntegerFiel
 }
 
 export interface DropDownFieldDefinition<TValue> extends BaseFieldDefinition<"DropDownField", TValue> {
-    options: Option<TValue>[];
+    options: Option<TValue>[] | (() => Promise<Option<TValue>[]>);
     hideEmptyOption?: boolean;
+}
+
+export interface SystemListDropDownFieldDefinition extends BaseFieldDefinition<"SystemListDropDownField", string> {
+    systemListName: string;
 }
 
 export interface RadioButtonsDefinition<TValue> extends BaseFieldDefinition<"RadioButtonsField", TValue> {
@@ -128,6 +132,7 @@ type FieldDefinition =
     | IntegerFieldDefinition
     | DropDownFieldDefinition<string>
     | DropDownFieldDefinition<number>
+    | SystemListDropDownFieldDefinition
     | RadioButtonsDefinition<string>
     | RadioButtonsDefinition<number>
     | CheckboxFieldDefinition
@@ -153,6 +158,7 @@ export type ChildFieldDefinition = // Omit<FieldDefinition, "fieldType"> would b
     | Omit<IntegerFieldDefinition, "fieldType">
     | Omit<DropDownFieldDefinition<string>, "fieldType">
     | Omit<DropDownFieldDefinition<number>, "fieldType">
+    | Omit<SystemListDropDownFieldDefinition, "fieldType">
     | Omit<RadioButtonsDefinition<string>, "fieldType">
     | Omit<RadioButtonsDefinition<number>, "fieldType">
     | Omit<CheckboxFieldDefinition, "fieldType">
@@ -176,6 +182,7 @@ export type FieldType = "General" | "Contextual" | "Translatable";
 export const AdvancedTab: TabDefinition = {
     displayName: "Advanced",
     sortOrder: 10,
+    dataTestSelector: "advancedTab",
 };
 
 function field(name: string,

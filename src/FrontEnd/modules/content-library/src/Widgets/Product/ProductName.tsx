@@ -24,8 +24,8 @@ const productNameModule: WidgetModule = {
     component: withProduct(ProductName),
     definition: {
         group: "Products",
-        fieldDefinitions: [],
         allowedContexts: [ProductDetailPageContext],
+        isSystem: true,
     },
 };
 

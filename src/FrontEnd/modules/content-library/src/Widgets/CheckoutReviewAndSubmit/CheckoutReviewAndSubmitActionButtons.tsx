@@ -111,8 +111,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        fieldDefinitions: [],
         displayName: "Action Buttons",
+        isSystem: true,
     },
 };
 

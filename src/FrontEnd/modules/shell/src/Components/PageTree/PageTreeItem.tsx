@@ -9,6 +9,8 @@ import Page from "@insite/shell/Components/Icons/Page";
 import ChevronDown from "@insite/mobius/Icons/ChevronDown";
 import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import Icon from "@insite/mobius/Icon";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { pageTreeFlyOutMenuHasItems } from "@insite/shell/Components/PageTree/PageTreeFlyOut";
 
 interface Props {
     isEditMode: boolean;
@@ -19,6 +21,7 @@ interface Props {
     onExpandNode: (node: TreeNodeModel) => void;
     flyOutNode?: TreeNodeModel;
     selectedPageId: string;
+    permissions?: PermissionsModel;
 }
 
 class PageTreeItem extends React.Component<Props> {
@@ -40,6 +43,7 @@ class PageTreeItem extends React.Component<Props> {
             flyOutNode,
             isEditMode,
             selectedPageId,
+            permissions,
         } = this.props;
 
         const isExpanded = expandedNodes[node.key];
@@ -69,7 +73,7 @@ class PageTreeItem extends React.Component<Props> {
                     <NavLink to={`/ContentAdmin/Page/${node.pageId}`} data-test-selector={`pageTreeLink_${node.displayName}`}>
                         {node.displayName}
                     </NavLink>
-                    {flyOutMenu}
+                    {pageTreeFlyOutMenuHasItems(node, permissions) && flyOutMenu}
                 </PageTreeTitle>
                 {isExpanded && (
                     <PageTreePages
@@ -81,6 +85,7 @@ class PageTreeItem extends React.Component<Props> {
                         onExpandNode={onExpandNode}
                         onFlyOutNode={onFlyOutNode}
                         flyOutNode={flyOutNode}
+                        permissions={permissions}
                     />
                 )}
             </PageTreePage>

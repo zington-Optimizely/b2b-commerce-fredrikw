@@ -186,7 +186,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             wishListId: wishList.id,
             wishListLineId: wishListLineToUpdate.id,
             wishListLine: wishListLineToUpdate,
-            reloadWishListLines: true,
+            reloadWishListLines: false,
             onSuccess: () => { setEditNotesModalIsOpen(false); },
         });
     };
@@ -204,7 +204,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             {wishListLines.map((wishListLine, index) =>
                 <GridItem
                     {...styles.lineGridItem}
-                    key={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}
+                    key={wishListLine.id}
                     data-test-selector="lineContainer"
                 >
                     <MyListsDetailsProductListLine
@@ -290,7 +290,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Product List",
         allowedContexts: [MyListsDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

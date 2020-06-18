@@ -14,7 +14,7 @@ import { hasChanges } from "@insite/client-framework/Store/Pages/AccountSettings
 import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import OverflowMenu from "@insite/mobius/OverflowMenu";
+import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
 
@@ -44,6 +44,7 @@ export interface AccountSettingsHeaderStyles {
     saveButton?: ButtonPresentationProps;
     cancelButton?: ButtonPresentationProps;
     menuHidden?: HiddenProps;
+    overflowMenu?: OverflowMenuPresentationProps;
     saveClickable?: ClickablePresentationProps;
     cancelClickable?: ClickablePresentationProps;
     buttonSet?: GridItemProps;
@@ -112,7 +113,7 @@ const AccountSettingsHeader: FC<Props> = props => {
                     </Button>
                 </Hidden>
                 <Hidden {...styles.menuHidden}>
-                    <OverflowMenu>
+                    <OverflowMenu position="end" {...styles.overflowMenu}>
                         <Clickable
                             {...styles.cancelClickable}
                             onClick={props.setInitialValues}
@@ -139,7 +140,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Account Settings",
         allowedContexts: [AccountSettingsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

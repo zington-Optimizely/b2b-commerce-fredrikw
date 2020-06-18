@@ -67,7 +67,7 @@ const widgetModule: WidgetModule = {
         displayName: "Unit of Measure Select",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

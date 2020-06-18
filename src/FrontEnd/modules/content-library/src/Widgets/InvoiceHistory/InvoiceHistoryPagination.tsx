@@ -64,7 +64,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Pagination",
         allowedContexts: [InvoiceHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

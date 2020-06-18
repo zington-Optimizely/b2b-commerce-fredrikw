@@ -12,6 +12,7 @@ interface OwnProps extends SelectProps {
     selectedUnitOfMeasure: string;
     onChangeHandler?: (value: string) => void;
     labelOverride?: React.ReactNode;
+    disabled?: boolean;
     extendedStyles?: SelectPresentationProps;
 }
 
@@ -29,6 +30,7 @@ const ProductUnitOfMeasureSelect: React.FC<Props> = ({
      productSettings,
      onChangeHandler,
      labelOverride,
+     disabled,
      extendedStyles,
      ...otherProps
 }) => {
@@ -48,6 +50,7 @@ const ProductUnitOfMeasureSelect: React.FC<Props> = ({
         label={labelOverride ?? translate("U/M")}
         value={selectedUnitOfMeasure}
         onChange={uomChangeHandler}
+        disabled={disabled}
         data-test-selector="product_unitOfMeasureSelect"
         {...styles}
         {...otherProps}

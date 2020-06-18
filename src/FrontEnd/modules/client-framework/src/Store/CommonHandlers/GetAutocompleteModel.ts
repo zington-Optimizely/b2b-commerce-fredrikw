@@ -14,14 +14,14 @@ export const RequestDataFromApi: HandlerType = async props => {
     }
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(props.apiResult);
 };
 
 export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const getAutocompleteModel = createHandlerChainRunner(chain, "GetAutocompleteModel");

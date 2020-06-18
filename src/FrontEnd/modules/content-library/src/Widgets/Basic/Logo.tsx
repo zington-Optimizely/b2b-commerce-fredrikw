@@ -61,6 +61,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Logo",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.logoImage,

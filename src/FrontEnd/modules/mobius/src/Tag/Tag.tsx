@@ -7,10 +7,10 @@ import { IconProps } from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getContrastColor from "../utilities/getContrastColor";
+import resolveColor from "../utilities/resolveColor";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import omitSingle from "../utilities/omitSingle";
-import resolveColor from "../utilities/resolveColor";
 import safeColor from "../utilities/safeColor";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
@@ -41,7 +41,7 @@ export type TagProps = TagComponentProps & TagPresentationProps;
 
 const TagIcon = styled(ButtonIcon)``;
 
-const TagStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { disabled: boolean, _color: string, iconSize?: number }>`
+const TagStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { disabled: boolean, _color: string, iconSize?: number, iconColor: string }>`
     max-width: 250px;
     min-height: 34px;
     box-sizing: border-box;
@@ -59,7 +59,7 @@ const TagStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { disabled: 
         border-radius: 5px;
     }
     ${TagIcon} {
-        color: ${({ _color, theme }) => getContrastColor(_color, theme)};
+        color: ${({ _color, iconColor, theme }) => iconColor ? resolveColor(iconColor, theme) : getContrastColor(_color, theme)};
         top: 0;
         ${/* sc-block */({ theme, disabled, _color }) => {
             const tagContrast = getContrastColor(_color, theme);
@@ -98,7 +98,7 @@ const Tag: React.FC<TagProps> = withTheme(({ children, css, deletable, disabled,
     const iconProps = spreadProps("iconProps");
     return (
         <TagWrapper>
-            <TagStyle css={applyProp("css")} disabled={!!disabled} _color={color} iconSize={iconProps?.size} {...omitSingle(otherProps, "color")}>
+            <TagStyle css={applyProp("css")} disabled={!!disabled} _color={color} iconSize={iconProps?.size} iconColor={iconProps?.color} {...omitSingle(otherProps, "color")}>
                 <Typography {...spreadProps("typographyProps")}>{children}</Typography>
                 {(deletable && !disabled)
                     && <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>

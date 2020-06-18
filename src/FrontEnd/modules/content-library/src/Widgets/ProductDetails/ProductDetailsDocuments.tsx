@@ -74,7 +74,7 @@ const widgetModule: WidgetModule = {
         displayName: "Documents",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

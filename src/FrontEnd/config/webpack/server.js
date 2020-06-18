@@ -11,7 +11,6 @@ module.exports = {
         path: path.join(__dirname, "../../dist"),
     },
     target: "node",
-    devtool: false, // Node, at least as of v12.6.0, doesn't support source maps.
     optimization: {
         minimize: false, // No need to minify on the server side.
     },

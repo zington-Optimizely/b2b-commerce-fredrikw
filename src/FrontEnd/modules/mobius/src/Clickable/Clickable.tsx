@@ -109,7 +109,7 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(({
                         && !(e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) // ignore clicks with modifier keys
                     ) {
                         e.preventDefault();
-                        if (history && isRelativeLink && !spaOptOut) {
+                        if (history && isRelativeLink && !spaOptOut && !href.startsWith("/RedirectTo/")) {
                             history.push(href);
                         } else {
                             window.location.href = href;
@@ -130,6 +130,7 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(({
                 <StyledButton
                     className={className}
                     css={applyProp("css")}
+                    target={target}
                     {...forwardProps}
                     {...otherProps}
                     // Because disabled doesn't accept undefined

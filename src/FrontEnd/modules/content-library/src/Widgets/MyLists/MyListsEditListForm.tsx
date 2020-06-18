@@ -6,7 +6,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
-import updateWishList from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishList";
+import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
 import { ResolveThunks, connect } from "react-redux";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import siteMessage from "@insite/client-framework/SiteMessage";
@@ -82,7 +82,13 @@ class MyListsEditListForm extends React.Component<Props, State> {
 
         if (this.props.wishList) {
             this.props.updateWishList({
-                apiParameter: { wishListId: this.props.wishList.id, name: this.state.name, description: this.state.description },
+                apiParameter: {
+                    wishList: {
+                        ...this.props.wishList,
+                        name: this.state.name,
+                        description: this.state.description,
+                    },
+                },
                 onSuccess: this.onSubmitSuccess,
                 onError: this.onSubmitError,
             });

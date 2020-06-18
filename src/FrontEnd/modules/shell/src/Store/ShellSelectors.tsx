@@ -4,8 +4,11 @@ import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { cleanPage, PageModel } from "@insite/client-framework/Types/PageProps";
 
-export const colorResultToString = (color: ColorResult) => {
-    return color.rgb.a && color.rgb.a < 1 ? `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})` : color.hex.toUpperCase();
+export const colorResultToString = (color: ColorResult): undefined | string => {
+    let returnValue: undefined | string = color.hex.toUpperCase();
+    if (color.hex === "unset") returnValue = undefined;
+    if (color.rgb.a && color.rgb.a < 1) returnValue = `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`;
+    return  returnValue;
 };
 
 export function getCurrentPageForShell(state: ShellState) {

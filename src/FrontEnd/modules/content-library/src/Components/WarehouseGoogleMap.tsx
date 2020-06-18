@@ -124,9 +124,9 @@ const WarehouseGoogleMap: React.FC<Props> = ({
         onUnmount={handleUnmount}
     >
         {mapMarkerElements.map(marker => <>
-            {marker.type === "WAREHOUSE" && <Marker {...marker} {...styles.warehouseMarker} />}
-            {marker.type === "CURRENT_LOCATION" && <Marker {...marker} {...styles.currentLocationMarker} />}
-            {marker.type === "SELECTED" && <Marker {...marker} {...styles.selectedMarker} />}
+            {marker.type === "WAREHOUSE" && <Marker key={marker.key} {...marker} {...styles.warehouseMarker} />}
+            {marker.type === "CURRENT_LOCATION" && <Marker key={marker.key} {...marker} {...styles.currentLocationMarker} />}
+            {marker.type === "SELECTED" && <Marker key={marker.key} {...marker} {...styles.selectedMarker} />}
         </>)}
         {warehouseInfoWindow && <InfoWindow {...styles.warehouseInfoWindow} key={newGuid()} position={warehouseInfoWindow?.position}>
             {warehouseInfoWindow && <GridContainer {...styles.infoWindowGridContainer}>

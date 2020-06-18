@@ -31,6 +31,10 @@ import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import ShellState from "@insite/shell/Store/ShellState";
 import { LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 import translate from "@insite/client-framework/Translate";
+import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
+import get from "@insite/mobius/utilities/get";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 
 const mapStateToProps = (state: ShellState) => {
     const styleGuide = state.styleGuide;
@@ -43,6 +47,14 @@ const mapStateToProps = (state: ShellState) => {
         loadStatus: styleGuide.loadStatus,
         theme: styleGuide.theme,
     };
+};
+
+const generateIconSrc = (theme: BaseTheme, iconPropsPath: string) => {
+    const iconSrc = get(theme, `${iconPropsPath}.src`);
+    // eslint-disable-next-line no-prototype-builtins
+    return typeof iconSrc === "string" && mobiusIconsObject.hasOwnProperty(iconSrc)
+        ? { src: mobiusIconsObject[iconSrc] }
+        : undefined;
 };
 
 const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof mapStateToProps>> = props => {
@@ -58,7 +70,9 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
     const shallowClonedTheme = { ...props.theme };
     // While the theme will originate with the Mobius theme, it immediately diverges, and therefore should be layered
     // atop the Mobius theme when rendering in the preview. We may at some point want this to reference the code themes.
-    const theme = merge({}, defaultTheme, shallowClonedTheme);
+    const theme = merge({}, defaultTheme, preStyleGuideTheme, shallowClonedTheme, postStyleGuideTheme);
+    const checkboxIconProps = generateIconSrc(theme, "checkbox.defaultProps.iconProps");
+    const accordionToggleIconProps = generateIconSrc(theme, "accordion.sectionDefaultProps.toggleIconProps");
 
     return <StagePositioner><Stage>
     <PreviewWrapper>
@@ -73,26 +87,26 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
             The storefront uses a range of default colors, which are based on a theme and can be changed within the CMS.
         </PreviewP>
         <ul>
-            <ColorDemo caption="Primary" color={props.theme.colors.primary.main} contrast={props.theme.colors.primary.contrast} />
-            <ColorDemo caption="Secondary" color={props.theme.colors.secondary.main} contrast={props.theme.colors.secondary.contrast} />
+            <ColorDemo caption="Primary" color={theme.colors.primary.main} contrast={theme.colors.primary.contrast} />
+            <ColorDemo caption="Secondary" color={theme.colors.secondary.main} contrast={theme.colors.secondary.contrast} />
         </ul>
         <ul>
-            <ColorDemo caption="Success" color={props.theme.colors.success.main} contrast={props.theme.colors.success.contrast} />
-            <ColorDemo caption="Danger" color={props.theme.colors.danger.main} contrast={props.theme.colors.danger.contrast} />
-            <ColorDemo caption="Warning" color={props.theme.colors.warning.main} contrast={props.theme.colors.warning.contrast} />
-            <ColorDemo caption="Info" color={props.theme.colors.info.main} contrast={props.theme.colors.info.contrast} />
+            <ColorDemo caption="Success" color={theme.colors.success.main} contrast={theme.colors.success.contrast} />
+            <ColorDemo caption="Danger" color={theme.colors.danger.main} contrast={theme.colors.danger.contrast} />
+            <ColorDemo caption="Warning" color={theme.colors.warning.main} contrast={theme.colors.warning.contrast} />
+            <ColorDemo caption="Info" color={theme.colors.info.main} contrast={theme.colors.info.contrast} />
         </ul>
         <ul>
-            <ColorDemo caption="Background" color={props.theme.colors.common.background} contrast={props.theme.colors.common.backgroundContrast} />
-            <ColorDemo caption="Accent" color={props.theme.colors.common.accent} contrast={props.theme.colors.common.accentContrast} />
-            <ColorDemo caption="Border" color={props.theme.colors.common.border} />
-            <ColorDemo caption="Disabled" color={props.theme.colors.common.disabled} />
+            <ColorDemo caption="Background" color={theme.colors.common.background} contrast={theme.colors.common.backgroundContrast} />
+            <ColorDemo caption="Accent" color={theme.colors.common.accent} contrast={theme.colors.common.accentContrast} />
+            <ColorDemo caption="Border" color={theme.colors.common.border} />
+            <ColorDemo caption="Disabled" color={theme.colors.common.disabled} />
         </ul>
         <ul>
-            <ColorDemo caption="Text Main" color={props.theme.colors.text.main} />
-            <ColorDemo caption="Text Accent" color={props.theme.colors.text.accent} />
-            <ColorDemo caption="Text Disabled" color={props.theme.colors.text.disabled} />
-            <ColorDemo caption="Text Link" color={props.theme.colors.text.link} />
+            <ColorDemo caption="Text Main" color={theme.colors.text.main} />
+            <ColorDemo caption="Text Accent" color={theme.colors.text.accent} />
+            <ColorDemo caption="Text Disabled" color={theme.colors.text.disabled} />
+            <ColorDemo caption="Text Link" color={theme.colors.text.link} />
         </ul>
         <PreviewH2>Foundations</PreviewH2>
         <PreviewP>
@@ -159,13 +173,13 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
         <PreviewH3 id="accordion-preview">Accordion</PreviewH3>
         <PageStage>
             <Accordion headingLevel={2}>
-                <AccordionSection title="Initially Expanded Section" expanded>
+                <AccordionSection title="Initially Expanded Section" expanded toggleIconProps={accordionToggleIconProps}>
                     <Typography variant="p">Section text - {loremIpsum}</Typography>
                 </AccordionSection>
-                <AccordionSection title="Initially Closed Section 1">
+                <AccordionSection title="Initially Closed Section 1" toggleIconProps={accordionToggleIconProps}>
                     <Typography variant="p">Section text - {loremIpsum}</Typography>
                     </AccordionSection>
-                <AccordionSection title="Initially Closed Section 2">
+                <AccordionSection title="Initially Closed Section 2" toggleIconProps={accordionToggleIconProps}>
                     <Typography variant="p">Section text - {loremIpsum}</Typography>
                 </AccordionSection>
             </Accordion>
@@ -208,15 +222,22 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
                 /><Spacer/>
                 <TextArea label="Text Area" /><Spacer/>
                 <CheckboxGroup label="Check Box Group">
-                    <Checkbox checked>Item 1</Checkbox>
-                    <Checkbox>Item 2</Checkbox>
+                    <Checkbox checked iconProps={checkboxIconProps}>Item 1</Checkbox>
+                    <Checkbox iconProps={checkboxIconProps}>Item 2</Checkbox>
                 </CheckboxGroup><Spacer/>
                 <CheckboxGroup label="Check Box Disabled Group">
-                    <Checkbox disabled checked>Item 1</Checkbox>
-                    <Checkbox disabled>Item 2</Checkbox>
+                    <Checkbox disabled checked iconProps={checkboxIconProps}>Item 1</Checkbox>
+                    <Checkbox disabled iconProps={checkboxIconProps}>Item 2</Checkbox>
                 </CheckboxGroup><Spacer/>
-                <DatePicker label="Date Picker" /><Spacer/>
-                <FileUpload label="File Upload" /><Spacer/>
+                <DatePicker
+                    clearIconProps={generateIconSrc(theme, "datePicker.defaultProps.clearIconProps")}
+                    calendarIconProps={generateIconSrc(theme, "datePicker.defaultProps.calendarIconProps")}
+                    label="Date Picker"
+                /><Spacer/>
+                <FileUpload
+                    label="File Upload"
+                    iconProps={generateIconSrc(theme, "fileUpload.defaultProps.iconProps")}
+                /><Spacer/>
                 <RadioGroup label="Radio Group" value="Item 1">
                     <Radio>Item 1</Radio>
                     <Radio>Item 2</Radio>
@@ -252,7 +273,7 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
         </PageStage>
         <PreviewH3>Overflow Menu</PreviewH3>
         <PageStage>
-            <OverflowMenu position="start">
+            <OverflowMenu position="start" iconProps={generateIconSrc(theme, "overflowMenu.defaultProps.iconProps")}>
                 <Clickable>Item 1</Clickable>
                 <Clickable>Item 2</Clickable>
             </OverflowMenu>
@@ -270,11 +291,15 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
         </PageStage>
         <PreviewH3>Tag</PreviewH3>
         <PageStage>
-            <Tag>Ordered before: 1/12/2019</Tag>
+            <Tag iconProps={generateIconSrc(theme, "tag.defaultProps.iconProps")}>Ordered before: 1/12/2019</Tag>
         </PageStage>
         <PreviewH3>Tool Tip</PreviewH3>
         <PageStage>
-            <Typography>Information</Typography><ToolTip text={`${loremIpsum.slice(0, 39)}.`} />
+            <Typography>Information</Typography>
+            <ToolTip
+                text={`${loremIpsum.slice(0, 39)}.`}
+                iconProps={generateIconSrc(theme, "tooltip.defaultProps.iconProps")}
+            />
         </PageStage>
     </ThemeProvider>
     </PreviewWrapper>

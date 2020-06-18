@@ -35,7 +35,7 @@ import { ProductModelExtended } from "@insite/client-framework/Services/ProductS
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
+import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListIfNeeded";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
@@ -47,7 +47,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 const mapDispatchToProps = {
     updateLoadWishListLinesParameter,
-    loadWishLists,
+    loadWishListIfNeeded,
     loadWishListLines,
     setAllWishListLinesIsSelected,
     addToWishList,
@@ -152,7 +152,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                                                     loadWishListLinesParameter,
                                                     selectedWishListLineIds,
                                                     updateLoadWishListLinesParameter,
-                                                    loadWishLists,
+                                                    loadWishListIfNeeded,
                                                     loadWishListLines,
                                                     setAllWishListLinesIsSelected,
                                                     addToWishList,
@@ -204,11 +204,12 @@ const MyListsDetailsOptions: React.FC<Props> = ({
             selectedWishList: wishList,
             onSuccess: () => {
                 toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
-                loadWishLists();
-                loadWishListLines();
+                loadWishListIfNeeded({ wishListId: wishList.id });
             },
         });
     };
+
+    const canEditWishList = wishList.allowEdit || !wishList.isSharedList;
 
     return (
         <StyledWrapper {...styles.wrapper}>
@@ -228,14 +229,16 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                         <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler} data-test-selector="selectAllItems">
                             {translate("Select All")}
                         </Checkbox>
-                        {loadWishListLinesParameter.sort === "SortOrder"
-                        && <Checkbox {...styles.editSortOrder}>{translate("Edit Sort Order")}</Checkbox>
+                        {loadWishListLinesParameter.sort === "SortOrder" && !query && canEditWishList
+                        && <Checkbox {...styles.editSortOrder} data-test-selector="editSortOrder">{translate("Edit Sort Order")}</Checkbox>
                         }
                     </GridItem>
                     <GridItem {...styles.addItemsGridItem}>
-                        <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
-                            {translate("Add Items To List")}
-                        </Link>
+                        {canEditWishList
+                            && <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
+                                {translate("Add Items To List")}
+                            </Link>
+                        }
                     </GridItem>
                 </GridContainer>
                 }
@@ -250,7 +253,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
             </StyledWrapper>
             <StyledWrapper {...styles.rightColumnWrapper}>
                 {!addItemsToListIsOpen
-                && <OverflowMenu {...styles.sortByOverflowMenu}>
+                && <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
                     {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions.map(sortOption =>
                         <Clickable
                             {...(sortOption.sortType === loadWishListLinesParameter.sort ? styles.selectedSortByClickable : styles.sortByClickable)}
@@ -278,7 +281,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Options",
         allowedContexts: [MyListsDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

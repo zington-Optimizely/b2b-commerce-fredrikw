@@ -1,30 +1,24 @@
 import * as React from "react";
-import { ThemeTypography, BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { ThemeTypography } from "@insite/mobius/globals/baseTheme";
 import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
 
 const ElementTypographyConfig: React.FunctionComponent<{
     element: keyof ThemeTypography;
     elementDisplayName?: string;
-    theme: BaseTheme;
+    disabled?: boolean;
 } & PresetHelpers> = ({
     element,
     elementDisplayName,
-    theme,
-    update,
-    tryMatchColorStringToPresetValue,
-    tryMatchColorResultToPresetName,
-    presetColors,
+    disabled,
+    ...presetHelpers
 }) => <TypographyConfig
     title={`${elementDisplayName || element.toUpperCase()} Text`}
     idPrefix={element}
-    typography={theme.typography[element]}
-    getTypography={draft => draft.typography[element]}
+    locationInTheme={`typography.${element}`}
     enableColorPresets
-    update={update}
-    tryMatchColorStringToPresetValue={tryMatchColorStringToPresetValue}
-    tryMatchColorResultToPresetName={tryMatchColorResultToPresetName}
-    presetColors={presetColors}
+    disabled={disabled}
+    {...presetHelpers}
 />;
 
 export default ElementTypographyConfig;

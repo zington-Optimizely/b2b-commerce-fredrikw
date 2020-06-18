@@ -231,7 +231,7 @@ const ProductCarousel: React.FC<Props> = ({
             fields.displayProductsFrom,
             fields.selectedCategoryIds,
             fields.numberOfProductsToDisplay,
-            parentProduct,
+            parentProduct?.id,
             category,
             brand,
         ],
@@ -248,7 +248,7 @@ const ProductCarousel: React.FC<Props> = ({
             fields.displayProductsFrom,
             fields.selectedCategoryIds,
             fields.numberOfProductsToDisplay,
-            parentProduct,
+            parentProduct?.id,
             category,
             brand,
         ],
@@ -335,7 +335,7 @@ const ProductCarousel: React.FC<Props> = ({
 
     React.useEffect(
         () => {
-            if (!embla || !products) {
+            if (!embla || !products || products.length === 0) {
                 return;
             }
 
@@ -423,6 +423,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "Carousel",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,
@@ -467,11 +468,8 @@ const widgetModule: WidgetModule = {
             {
                 name: fields.relatedProductType,
                 displayName: "Related Product Type",
-                editorTemplate: "DropDownField",
-                options: [
-                    { value: "CrossSell", displayName: "Cross Sell" },
-                    { value: "Accessory", displayName: "Accessory" },
-                ],
+                editorTemplate: "SystemListDropDownField",
+                systemListName: "ProductRelationship",
                 defaultValue: "",
                 fieldType: "General",
                 isVisible: (item) => item.fields[fields.carouselType] === "relatedProducts",
@@ -491,12 +489,8 @@ const widgetModule: WidgetModule = {
             {
                 name: fields.seedWithManuallyAssigned,
                 displayName: "Seed With Manually Assigned",
-                editorTemplate: "DropDownField",
-                options: [
-                    { value: "ProductRelationship", displayName: "Product Relationship" },
-                    { value: "CrossSell", displayName: "Cross Sell" },
-                    { value: "Accessory", displayName: "Accessory" },
-                ],
+                editorTemplate: "SystemListDropDownField",
+                systemListName: "ProductRelationship",
                 defaultValue: "",
                 fieldType: "General",
                 isVisible: (item) => item.fields[fields.carouselType] === "customersAlsoPurchased",

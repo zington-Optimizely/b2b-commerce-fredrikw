@@ -1,7 +1,7 @@
 import { Draft } from "immer";
 import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { setDataViewLoaded, setDataViewLoading, getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import { setDataViewLoaded, setDataViewLoading, getDataViewKey, assignById } from "@insite/client-framework/Store/Data/DataState";
 import { WishListLinesDataView, WishListLinesState } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesState";
 import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
@@ -24,12 +24,16 @@ const reducer = {
     "Data/WishListLines/Reset": () => {
         return initialState;
     },
-    "Data/WishListLines/UpdateProduct": (draft: Draft<WishListLinesState>, action: { parameter: GetWishListLinesApiParameter, product: ProductModelExtended }) => {
+    "Data/WishListLines/UpdateProduct": (draft: Draft<WishListLinesState>, action: { parameter: GetWishListLinesApiParameter, product: ProductModelExtended, originalProduct?: ProductModelExtended }) => {
         const products = draft.dataViews[getDataViewKey(action.parameter)].products;
-        const index = products.findIndex(o => o.id === action.product.id && o.unitOfMeasure === action.product.unitOfMeasure);
+        const unitOfMeasure = action.originalProduct ? action.originalProduct.unitOfMeasure : action.product.unitOfMeasure;
+        const index = products.findIndex(o => o.id === action.product.id && o.unitOfMeasure === unitOfMeasure);
         if (index > -1) {
             products[index] = action.product;
         }
+    },
+    "Data/WishListLines/UpdateWishListLine": (draft: Draft<WishListLinesState>, action: { model: WishListLineModel }) => {
+        assignById(draft, action.model);
     },
 };
 

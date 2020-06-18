@@ -234,7 +234,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Filter List",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

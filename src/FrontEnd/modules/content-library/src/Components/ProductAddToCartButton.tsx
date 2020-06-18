@@ -51,10 +51,14 @@ const ProductAddToCartButton: React.FC<Props> = ({
         return null;
     }
 
+    const isEnoughInventory = productSettings.allowBackOrder || !product.trackInventory || (product.qtyOnHand && product.qtyOnHand > 0);
+    if (!isEnoughInventory) {
+        return null;
+    }
+
     const showAddToCartButton = product.canAddToCart
         || (product.canConfigure && configurationCompleted)
-        || (!product.canConfigure && variantSelectionCompleted && (productSettings.allowBackOrder
-            || (product.availability && product.availability.messageType !== 2)));
+        || (!product.canConfigure && variantSelectionCompleted);
     if (!showAddToCartButton) {
         return null;
     }

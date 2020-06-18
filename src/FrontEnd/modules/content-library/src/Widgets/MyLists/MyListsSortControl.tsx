@@ -60,7 +60,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Sort Control",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

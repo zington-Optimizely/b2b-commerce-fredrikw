@@ -22,7 +22,6 @@ import {
     WishListLineModel,
     WishListModel,
     AvailabilityMessageType,
-    ProductUnitOfMeasureDto,
 } from "@insite/client-framework/Types/ApiModels";
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
@@ -35,13 +34,13 @@ import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
-import updateWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLine";
 import setWishListLineIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineIsSelected";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
 import updateProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateProduct";
+import updateWishListLineProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineProduct";
 
 interface OwnProps {
     wishList: WishListModel;
@@ -59,7 +58,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
 const mapDispatchToProps = {
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
-    updateWishListLine,
+    updateWishListLineProduct,
     changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
     updateProduct,
 };
@@ -284,9 +283,9 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     onEditNotesClick,
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
-    updateWishListLine,
     changeProductQtyOrdered,
     updateProduct,
+    updateWishListLineProduct,
 }) => {
     const [quantity, setQuantity] = React.useState(product.qtyOrdered);
     const quantityChangeHandler = async (value: string) => {
@@ -304,28 +303,12 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
         changeProductUnitOfMeasure({
             product,
             selectedUnitOfMeasure: value,
-            onSuccess: (product) => {
-                const wishListLineToUpdate = { ...wishListLine };
-                if (product.unitOfMeasures) {
-                    wishListLineToUpdate.productUnitOfMeasures = product.unitOfMeasures
-                        .map(u => ({
-                            productUnitOfMeasureId: u.id,
-                            availability: null,
-                            ...u,
-                        } as ProductUnitOfMeasureDto));
-                }
-                wishListLineToUpdate.unitOfMeasureDisplay = product.unitOfMeasureDisplay;
-                wishListLineToUpdate.unitOfMeasureDescription = product.unitOfMeasureDescription;
-                wishListLineToUpdate.unitOfMeasure = product.unitOfMeasure;
-                wishListLineToUpdate.canShowUnitOfMeasure = product.canShowUnitOfMeasure;
-                wishListLineToUpdate.selectedUnitOfMeasure = product.selectedUnitOfMeasure;
-
-                updateWishListLine({
+            onSuccess: (updatedProduct) => {
+                updateWishListLineProduct({
                     wishListId: wishList.id,
-                    wishListLineId: wishListLineToUpdate.id,
-                    wishListLine: wishListLineToUpdate,
-                    reloadWishListLines: true,
-                });
+                    wishListLineId: wishListLine.id,
+                    originalProduct: product,
+                    product: updatedProduct });
             },
         });
     };
@@ -441,7 +424,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
             </GridItem>
             {canEditWishList
                 && <GridItem {...styles.overflowMenuGridItem}>
-                    <OverflowMenu>
+                    <OverflowMenu position="end">
                         <Clickable onClick={() => onEditNotesClick(wishListLine)}>{translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}</Clickable>
                         <Clickable onClick={() => deleteClickHandler(wishListLine)}>{translate("Delete")}</Clickable>
                     </OverflowMenu>
@@ -476,6 +459,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                                         productUnitOfMeasures={product.unitOfMeasures}
                                         selectedUnitOfMeasure={product.selectedUnitOfMeasure}
                                         onChangeHandler={uomChangeHandler}
+                                        disabled={!canEditWishList}
                                         extendedStyles={styles.productUnitOfMeasureSelectStyles} />
                                 </GridItem>
                             }
@@ -515,18 +499,18 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     extendedStyles={styles.addToCartButton}
                     data-test-selector="addToCart"
                 />
-                <Hidden {...styles.deleteLinkHidden}>
-                    {canEditWishList
-                        && <Link
+                {canEditWishList
+                    && <Hidden {...styles.deleteLinkHidden}>
+                        <Link
                             {...styles.deleteLink}
                             onClick={() => deleteClickHandler(wishListLine)}
                             data-test-selector="deleteListItem"
                         >
                             {translate("Delete")}
                         </Link>
-                    }
-                    <Link {...styles.updateSavedQuantityLink}>{translate("Update Saved Quantity")}</Link>
-                </Hidden>
+                        <Link {...styles.updateSavedQuantityLink}>{translate("Update Saved Quantity")}</Link>
+                    </Hidden>
+                }
             </GridItem>
         </GridContainer>
     );

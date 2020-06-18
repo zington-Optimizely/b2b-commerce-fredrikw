@@ -304,15 +304,17 @@
                     <div class="small-12 columns budget-selections">
                         <div>
                             <label>[% translate 'Select User' %]</label>
-                            <select id="tst_budgetManagement_userSelector" ng-model="user" ng-change="switchFilterInput({ selectedValue:user, param:'user' })" class="user-selector" ng-options="account.userName for account in accounts | orderBy:'userName'">
+                            <select id="tst_budgetManagement_userSelector" ng-model="user.id" ng-change="switchFilterInput({ selectedValue:user, param:'user' })" class="user-selector">
                                 <option value="">[% translate 'Select User' %]</option>
+                                <option ng-repeat="account in accounts | orderBy:'userName'" value="{{account.id}}" ng-bind="account.userName"></option>
                             </select>
                         </div>
                         <div class="select-step">
                             <span>[% translate 'Or' %]</span>
                             <label>[% translate 'Select Ship To Address' %]</label>
-                            <select id="tst_budgetManagement_shiptoSelector" ng-model="shipTo" ng-change="switchFilterInput({ selectedValue:shipTo, param:'shipTo' })" class="shipto-selector" ng-options="shipTo.label for shipTo in shipToList | filter:{customerSequence: '!-1'}">
+                            <select id="tst_budgetManagement_shiptoSelector" ng-model="shipTo.id" ng-change="switchFilterInput({ selectedValue:shipTo, param:'shipTo' })" class="shipto-selector">
                                 <option value="">[% translate 'Select Ship To' %]</option>
+                                <option ng-repeat="shipTo in shipToList | filter:{customerSequence: '!-1'}" value="{{shipTo.id}}" ng-bind="shipTo.label"></option>
                             </select>
                         </div>
                     </div>

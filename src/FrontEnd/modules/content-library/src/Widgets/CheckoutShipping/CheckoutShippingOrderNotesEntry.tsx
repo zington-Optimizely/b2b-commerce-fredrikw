@@ -83,7 +83,7 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         displayName: "Order Notes Entry",
         allowedContexts: [CheckoutShippingPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

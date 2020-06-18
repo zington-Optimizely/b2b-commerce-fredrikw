@@ -72,7 +72,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

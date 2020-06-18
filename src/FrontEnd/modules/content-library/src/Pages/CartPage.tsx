@@ -12,6 +12,7 @@ import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/C
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
 
 interface OwnProps extends PageProps {
 }
@@ -19,6 +20,7 @@ interface OwnProps extends PageProps {
 const mapDispatchToProps = {
     loadCurrentCart,
     loadCurrentPromotions,
+    setIsPreloadingData,
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -50,6 +52,8 @@ class CartPage extends Component<Props> {
         if (shouldLoadPromotions) {
             loadCurrentPromotions();
         }
+
+        this.props.setIsPreloadingData({ isPreloadingData: false });
     }
 
     render() {
@@ -70,7 +74,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        fieldDefinitions: [],
+        isSystemPage: true,
     },
 };
 

@@ -20,7 +20,7 @@ module insite {
     }
 
     export class AppRunService implements IAppRunService {
-        static $inject = ["coreService", "$localStorage", "$window", "$rootScope", "$urlRouter", "spinnerService", "$location"];
+        static $inject = ["coreService", "$localStorage", "$window", "$rootScope", "$urlRouter", "spinnerService", "$location","$anchorScroll"];
 
         constructor(
             protected coreService: core.ICoreService,
@@ -29,7 +29,8 @@ module insite {
             protected $rootScope: IAppRootScope,
             protected $urlRouter: angular.ui.IUrlRouterService,
             protected spinnerService: core.ISpinnerService,
-            protected $location: ng.ILocationService) {
+            protected $location: ng.ILocationService,
+            protected $anchorScroll: ng.IAnchorScrollService) {
         }
 
         run(): void {
@@ -92,6 +93,7 @@ module insite {
                 this.sendGoogleAnalytics();
             }
             this.sendVirtualPageView();
+            this.$anchorScroll();
         }
 
         sendGoogleAnalytics(): void {

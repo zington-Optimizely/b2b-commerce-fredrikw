@@ -69,7 +69,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Header",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

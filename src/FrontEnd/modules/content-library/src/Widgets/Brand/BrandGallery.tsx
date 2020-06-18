@@ -150,6 +150,7 @@ const widgetModule: WidgetModule = {
         icon: "Image",
         displayName: "Brand Gallery",
         allowedContexts: [BrandsPageContext, HomePageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

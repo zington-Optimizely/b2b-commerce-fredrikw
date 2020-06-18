@@ -63,7 +63,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Header",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

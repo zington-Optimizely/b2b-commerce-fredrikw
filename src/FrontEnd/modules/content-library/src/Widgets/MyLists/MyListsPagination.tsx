@@ -75,7 +75,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Pagination",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

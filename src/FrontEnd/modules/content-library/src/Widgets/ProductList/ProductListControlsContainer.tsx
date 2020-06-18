@@ -71,7 +71,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "List Controls Container",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

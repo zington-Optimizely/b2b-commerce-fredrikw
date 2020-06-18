@@ -23,7 +23,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "PageTitle",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

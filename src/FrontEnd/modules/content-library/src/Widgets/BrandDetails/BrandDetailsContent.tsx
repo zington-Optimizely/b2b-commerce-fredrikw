@@ -44,7 +44,7 @@ const widgetModule: WidgetModule = {
         group: "Brand Details",
         displayName: "Content",
         allowedContexts: [BrandDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

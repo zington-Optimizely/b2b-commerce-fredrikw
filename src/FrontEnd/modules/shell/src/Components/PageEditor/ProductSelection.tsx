@@ -44,7 +44,7 @@ class ProductSelection extends React.Component<Props> {
             <label>
                 Product:
                 <select onChange={this.onChange} value={this.getValue()}>
-                    <option key="">Select Product</option>
+                    <option key="" value="">Select Product</option>
                     {this.props.products.map(product =>
                         <option key={product.id} value={product.path}>{product.shortDescription}</option>,
                     )}

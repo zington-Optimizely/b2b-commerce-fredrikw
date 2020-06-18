@@ -20,7 +20,7 @@ const widgetModule: WidgetModule = {
         group: "Header",
         displayName: "Search Input",
         allowedContexts: ["Header"],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

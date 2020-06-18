@@ -75,8 +75,7 @@ export interface FormFieldPresentationPropsCommon {
 
 export interface FormFieldPresentationProps<T> extends FormFieldPresentationPropsCommon {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
-     * @themable
-    */
+     * @themable */
     cssOverrides?: {
         formInputWrapper?: StyledProp<any>;
         descriptionWrapper?: StyledProp<any>;
@@ -88,8 +87,8 @@ export interface FormFieldPresentationProps<T> extends FormFieldPresentationProp
 export type FormFieldProps = FormFieldPresentationProps<FormFieldComponentProps> & FormFieldComponentProps & ThemeProps<BaseTheme>;
 
 // below "as any" necessary to prevent deep type instantiation errors on `formStyles`
-export const FormFieldIcon = styled(Icon)<IconPresentationProps>`` as any;
-export const FormFieldClickable = styled(Clickable)<any>``;
+export const FormFieldIcon = styled(Icon)<IconPresentationProps>` ${injectCss} ` as any;
+export const FormFieldClickable = styled(Clickable)<any>` ${injectCss} `;
 
 /* eslint-disable indent */
 const DescriptionWrapper = styled.div<InjectableCss<any> & { _sizeVariant: keyof typeof sizeVariantValues, id: string | number }>`
@@ -280,6 +279,7 @@ const FormField: React.ComponentType<FormFieldProps> = ({
                 labelPosition={labelPosition}
                 htmlFor={inputId}
                 id={labelId || null}
+                disabled
             >
                 {label}{required && !disabled && " *"}
             </FormFieldLabel>

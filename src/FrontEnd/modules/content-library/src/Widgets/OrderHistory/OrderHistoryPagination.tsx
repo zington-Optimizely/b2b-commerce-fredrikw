@@ -72,7 +72,7 @@ const widgetModule: WidgetModule = {
         displayName: "Pagination",
         group: "Order History",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

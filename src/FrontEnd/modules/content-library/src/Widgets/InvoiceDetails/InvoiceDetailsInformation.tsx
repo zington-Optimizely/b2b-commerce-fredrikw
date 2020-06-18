@@ -155,7 +155,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Information",
         allowedContexts: [InvoiceDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

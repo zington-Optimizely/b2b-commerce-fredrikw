@@ -1,0 +1,23 @@
+{
+  "name": "Home",
+  "pages": [
+    {
+      "name": "About Us",
+      "type": "Page",
+      "urlSegment": "AboutUs",
+      "excludeFromNavigation": true
+    },
+    {
+      "name": "Contact Us",
+      "type": "Page",
+      "urlSegment": "ContactUs",
+      "excludeFromNavigation": true
+    },
+    {
+      "urlSegment": "Locations",
+      "name": "Locations",
+      "type": "Page",
+      "excludeFromNavigation": true
+    }
+  ]
+}

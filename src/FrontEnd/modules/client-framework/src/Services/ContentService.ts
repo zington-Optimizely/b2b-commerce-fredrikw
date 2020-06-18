@@ -1,5 +1,5 @@
 import { PageModel } from "@insite/client-framework/Types/PageProps";
-import { Dictionary } from "@insite/client-framework/Common/Types";
+import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { request } from "@insite/client-framework/Services/ApiService";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
@@ -15,7 +15,10 @@ export const getWebsiteRequiresGeneration = () => get<{
     defaultLanguage: BasicLanguageModel,
     defaultPersonaId: string,
     websiteId: string,
+    pageTypeToNodeId: SafeDictionary<string>,
 }>("websiteRequiresGeneration");
+
+export const getNodeIdForPageName = (pageName: string) => get<string>("getNodeIdForPageName", { pageName });
 
 export const saveInitialPages = (pages: PageModel[]) => post<PageModel[]>("saveInitialPages", pages);
 

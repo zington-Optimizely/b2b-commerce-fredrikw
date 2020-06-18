@@ -38,7 +38,7 @@ const widgetModule: WidgetModule = {
         displayName: "Quantity Break Pricing",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

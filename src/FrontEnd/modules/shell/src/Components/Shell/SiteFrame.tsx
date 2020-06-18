@@ -16,6 +16,9 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
 import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
+import { getWidgetDefinitions, getPageDefinitions } from "@insite/shell/DefinitionLoader";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 
 interface OwnProps {
     pageId: string;
@@ -31,6 +34,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     currentPersonaId: state.shellContext.currentPersonaId,
     currentDeviceType: state.shellContext.currentDeviceType,
     draggingWidgetId: state.data.pages.draggingWidgetId,
+    permissions: state.shellContext.permissions,
 });
 
 const mapDispatchToProps = {
@@ -96,7 +100,7 @@ class SiteFrame extends React.Component<Props, State> {
     }
 
     render() {
-        const { pageId, stageMode, isEditMode, history: { location: { search } } } = this.props;
+        const { pageId, stageMode, isEditMode, history: { location: { search } }, permissions } = this.props;
 
         const url = pageId.startsWith("SwitchTo") ? (pageId.replace("SwitchTo", "") + search) : `/Content/Page/${pageId}`;
 
@@ -108,7 +112,7 @@ class SiteFrame extends React.Component<Props, State> {
         }
 
         return <SiteFrameStyle stageMode={stageMode}>
-            {isEditMode
+            {isEditMode && permissions?.canAddWidget
                 && <>
                 <AddWidgetModal/>
                 </>
@@ -144,6 +148,32 @@ class SiteFrame extends React.Component<Props, State> {
                 const url = `/ContentAdmin/Page/${data.pageId}`;
                 this.framePageId = data.pageId;
                 this.props.history.push(url);
+
+                let attempts = 15;
+                const widgetDefinitions = getWidgetDefinitions();
+                const widgetDefinitionsByType: SafeDictionary<WidgetDefinition> = {};
+                widgetDefinitions.forEach(definition => {
+                    widgetDefinitionsByType[definition.type] = { isSystem: definition.isSystem } as WidgetDefinition;
+                });
+
+                const pageDefinitions = getPageDefinitions();
+                const pageDefinitionsByType: SafeDictionary<PageDefinition> = {};
+                pageDefinitions.forEach(definition => {
+                    pageDefinitionsByType[definition.type] = { isSystemPage: definition.isSystemPage } as PageDefinition;
+                });
+
+                const interval = setInterval(() => {
+                    if ((sendToSite({
+                        type: "CMSPermissions",
+                        permissions: this.props.permissions,
+                    }) && sendToSite({
+                        type: "WidgetDefinitions",
+                        widgetDefinitionsByType,
+                    }) && sendToSite({
+                        type: "PageDefinitions",
+                        pageDefinitionsByType,
+                    })) || !attempts--) clearInterval(interval);
+                }, 200);
             },
             MoveWidgetTo: (data: { id: string, parentId: string, zoneName: string, index: number}) => {
                 this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index);

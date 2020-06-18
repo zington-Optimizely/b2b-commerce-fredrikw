@@ -23,14 +23,14 @@ export const RequestDataFromApi: HandlerType = async props => {
     props.apiResult = await getProductCollectionRealTimeInventory(props.apiParameter.parameter);
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(props.apiResult);
 };
 
 export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const loadRealTimeInventory = createHandlerChainRunner(chain, "LoadRealTimeInventory");

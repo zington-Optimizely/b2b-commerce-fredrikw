@@ -12,6 +12,8 @@ import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
+import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 
 const initialState: PagesState = {
     isLoading: {},
@@ -289,6 +291,14 @@ const reducer = {
         for (const widgetId in draft.widgetsById) {
             prepareFields(draft.widgetsById[widgetId], languageId, defaultLanguageId, contextualIds);
         }
+    },
+
+    "Data/Pages/WidgetDefinitions": (draft: Draft<PagesState>, action: { widgetDefinitionsByType: SafeDictionary<WidgetDefinition>; }) => {
+        draft.widgetDefinitionsByType = action.widgetDefinitionsByType;
+    },
+
+    "Data/Pages/PageDefinitions": (draft: Draft<PagesState>, action: { pageDefinitionsByType: SafeDictionary<PageDefinition>; }) => {
+        draft.pageDefinitionsByType = action.pageDefinitionsByType;
     },
 };
 

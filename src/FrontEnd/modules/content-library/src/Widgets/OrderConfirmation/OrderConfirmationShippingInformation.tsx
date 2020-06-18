@@ -5,7 +5,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import translate from "@insite/client-framework/Translate";
-import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import { ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import { css } from "styled-components";
 import { Cart } from "@insite/client-framework/Services/CartService";
 import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
@@ -13,6 +13,7 @@ import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateT
 interface OwnProps {
     cart: Cart;
     shipTo: ShipToModel;
+    pickUpWarehouse?: WarehouseModel | null;
     extendedStyles?: OrderConfirmationShippingInformationStyles;
 }
 
@@ -127,7 +128,12 @@ export const orderConfirmationShippingInformationStyles: OrderConfirmationShippi
 
 type Props = OwnProps;
 
-const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, extendedStyles }) => {
+const OrderConfirmationShippingInformation: FC<Props> = ({
+    cart,
+    shipTo,
+    pickUpWarehouse,
+    extendedStyles,
+}) => {
     const [styles] = useState(() => mergeToNew(orderConfirmationShippingInformationStyles, extendedStyles));
 
     return (
@@ -135,26 +141,40 @@ const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, extende
             <GridItem {...styles.shippingInformationTitleGridItem}>
                 <Typography {...styles.shippingInformationTitle}>{translate("Shipping Information")}</Typography>
             </GridItem>
-            <GridItem {...styles.shippingInformationAddressGridItem}>
-                <Typography {...styles.shippingAddressTitle}>{translate("Shipping Address")}</Typography>
-                <AddressInfoDisplay
-                    companyName={shipTo.companyName}
-                    address1={shipTo.address1}
-                    address2={shipTo.address2}
-                    address3={shipTo.address3}
-                    address4={shipTo.address4}
-                    city={shipTo.city}
-                    postalCode={shipTo.postalCode}
-                    state={shipTo.state ? shipTo.state.abbreviation : undefined}
-                    extendedStyles={styles.shippingAddress}
-                />
-            </GridItem>
+            {cart.fulfillmentMethod === "Ship"
+                && <GridItem {...styles.shippingInformationAddressGridItem}>
+                    <Typography {...styles.shippingAddressTitle}>{translate("Shipping Address")}</Typography>
+                    <AddressInfoDisplay
+                        companyName={shipTo.companyName}
+                        address1={shipTo.address1}
+                        address2={shipTo.address2}
+                        address3={shipTo.address3}
+                        address4={shipTo.address4}
+                        city={shipTo.city}
+                        postalCode={shipTo.postalCode}
+                        state={shipTo.state ? shipTo.state.abbreviation : undefined}
+                        extendedStyles={styles.shippingAddress}
+                    />
+                </GridItem>
+            }
+            {cart.fulfillmentMethod === "PickUp" && pickUpWarehouse
+                && <GridItem {...styles.shippingInformationAddressGridItem}>
+                    <Typography {...styles.shippingAddressTitle}>{translate("Pick Up Location")}</Typography>
+                    <AddressInfoDisplay
+                        {...pickUpWarehouse}
+                        companyName={pickUpWarehouse.description || pickUpWarehouse.name}
+                        extendedStyles={styles.shippingAddress}
+                    />
+                </GridItem>
+            }
             <GridItem {...styles.shippingOtherInformationGridItem}>
                 <GridContainer {...styles.shippingOtherInformationGridContainer}>
-                    {cart.fulfillmentMethod === "Ship" && <GridItem {...styles.shippingInformationCarrierGridItem}>
-                        <Typography {...styles.shippingCarrierTitle}>{translate("Carrier")}</Typography>
-                        <Typography {...styles.shippingCarrierDescription}>{cart.carrier!.description}</Typography>
-                    </GridItem>}
+                    {cart.fulfillmentMethod === "Ship"
+                        && <GridItem {...styles.shippingInformationCarrierGridItem}>
+                            <Typography {...styles.shippingCarrierTitle}>{translate("Carrier")}</Typography>
+                            <Typography {...styles.shippingCarrierDescription}>{cart.carrier!.description}</Typography>
+                        </GridItem>
+                    }
                     {(cart.requestedDeliveryDate || cart.requestedPickupDate)
                         && <GridItem {...styles.shippingInformationDateRequestedGridItem}>
                             <Typography {...styles.shippingDateRequestedTitle}>{translate("Date Requested")}</Typography>
@@ -162,10 +182,12 @@ const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, extende
                                 <LocalizedDateTime dateTime={cart.requestedDeliveryDateDisplay || cart.requestedPickupDateDisplay} />
                             </Typography>
                         </GridItem>}
-                    {cart.fulfillmentMethod === "Ship" && <GridItem {...styles.shippingInformationServiceGridItem}>
-                        <Typography {...styles.shippingServiceTitle}>{translate("Service")}</Typography>
-                        <Typography {...styles.shippingServiceDescription}>{cart.shipVia!.description}</Typography>
-                    </GridItem>}
+                    {cart.fulfillmentMethod === "Ship"
+                        && <GridItem {...styles.shippingInformationServiceGridItem}>
+                            <Typography {...styles.shippingServiceTitle}>{translate("Service")}</Typography>
+                            <Typography {...styles.shippingServiceDescription}>{cart.shipVia?.description}</Typography>
+                        </GridItem>
+                    }
                     <GridItem {...styles.shippingInformationPoNumberGridItem}>
                         <Typography {...styles.shippingPoNumberTitle}>{translate("PO Number")}</Typography>
                         <Typography {...styles.shippingPoNumberText}>{cart.poNumber}</Typography>

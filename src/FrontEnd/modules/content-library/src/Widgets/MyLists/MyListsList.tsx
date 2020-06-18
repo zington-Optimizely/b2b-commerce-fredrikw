@@ -12,6 +12,7 @@ import CardContainer, { CardContainerStyles } from "@insite/content-library/Comp
 import WishListCard from "@insite/content-library/Components/WishListCard";
 import TwoButtonModal from "@insite/content-library/Components/TwoButtonModal";
 import deleteWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/DeleteWishList";
+import deleteWishListShare from "@insite/client-framework/Store/Pages/MyLists/Handlers/DeleteWishListShare";
 import { ModalPresentationProps } from "@insite/mobius/Modal";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
@@ -25,8 +26,9 @@ import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLi
 interface OwnProps extends WidgetProps {
 }
 interface State {
-    wishListToDelete?: WishListModel;
+    wishListToAction?: WishListModel;
     deleteListModalIsOpen: boolean;
+    leaveListModalIsOpen: boolean;
 }
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -39,6 +41,7 @@ const mapStateToProps = (state: ApplicationState) => {
 const mapDispatchToProps = {
     addWishListToCart,
     deleteWishList,
+    deleteWishListShare,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -86,29 +89,52 @@ class MyListsList extends React.Component<Props, State> {
         super(props);
         this.state = {
             deleteListModalIsOpen: false,
+            leaveListModalIsOpen: false,
         };
     }
 
     deleteButtonClickHandler = (wishList: WishListModel) => {
         this.setState({
-            wishListToDelete: wishList,
+            wishListToAction: wishList,
             deleteListModalIsOpen: true,
         });
     };
 
-    formCancelHandler = () => {
+    deleteCancelHandler = () => {
         this.setState({ deleteListModalIsOpen: false });
     };
 
-    formSubmitHandler = () => {
+    deleteSubmitHandler = () => {
         this.setState({ deleteListModalIsOpen: false });
-        if (this.state.wishListToDelete) {
-            this.props.deleteWishList({ wishListId: this.state.wishListToDelete.id, onSuccess: this.onDeleteSuccess, reloadWishLists: true });
+        if (this.state.wishListToAction) {
+            this.props.deleteWishList({ wishListId: this.state.wishListToAction.id, onSuccess: this.onDeleteSuccess, reloadWishLists: true });
         }
     };
 
     onDeleteSuccess = () => {
         this.context.addToast({ body: translate("List Deleted"), messageType: "success" });
+    };
+
+    leaveButtonClickHandler = (wishList: WishListModel) => {
+        this.setState({
+            wishListToAction: wishList,
+            leaveListModalIsOpen: true,
+        });
+    };
+
+    leaveCancelHandler = () => {
+        this.setState({ leaveListModalIsOpen: false });
+    };
+
+    leaveSubmitHandler = () => {
+        this.setState({ leaveListModalIsOpen: false });
+        if (this.state.wishListToAction) {
+            this.props.deleteWishListShare({ wishList: this.state.wishListToAction, onSuccess: this.onLeaveSuccess });
+        }
+    };
+
+    onLeaveSuccess = () => {
+        this.context.addToast({ body: translate("You left the list"), messageType: "success" });
     };
 
     render() {
@@ -134,19 +160,31 @@ class MyListsList extends React.Component<Props, State> {
                             <WishListCard
                                 wishList={wishList}
                                 addWishListToCart={this.props.addWishListToCart}
-                                deleteWishList={() => this.deleteButtonClickHandler(wishList)} />
+                                deleteWishList={() => this.deleteButtonClickHandler(wishList)}
+                                leaveWishList={() => this.leaveButtonClickHandler(wishList)}
+                            />
                         </CardContainer>
                     ))}
                 </CardList>
                 <TwoButtonModal
                     modalIsOpen={this.state.deleteListModalIsOpen}
                     headlineText={translate("Delete List")}
-                    messageText={`${translate("Are you sure you want to delete")} ${this.state.wishListToDelete ? this.state.wishListToDelete.name : ""}?`}
+                    messageText={`${translate("Are you sure you want to delete")} ${this.state.wishListToAction ? this.state.wishListToAction.name : ""}?`}
                     cancelButtonText={translate("Cancel")}
                     submitButtonText={translate("Delete")}
-                    onCancel={this.formCancelHandler}
-                    onSubmit={this.formSubmitHandler}
+                    onCancel={this.deleteCancelHandler}
+                    onSubmit={this.deleteSubmitHandler}
                     submitTestSelector="myListsListSubmitDelete">
+                </TwoButtonModal>
+                <TwoButtonModal
+                    modalIsOpen={this.state.leaveListModalIsOpen}
+                    headlineText={translate("Leave List")}
+                    messageText={`${translate("Are you sure you want to leave")} ${this.state.wishListToAction ? this.state.wishListToAction.name : ""}?`}
+                    cancelButtonText={translate("Cancel")}
+                    submitButtonText={translate("Leave")}
+                    onCancel={this.leaveCancelHandler}
+                    onSubmit={this.leaveSubmitHandler}
+                    submitTestSelector="myListsListSubmitLeave">
                 </TwoButtonModal>
             </>
         );
@@ -160,7 +198,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "List",
         allowedContexts: [MyListsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

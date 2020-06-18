@@ -1,4 +1,4 @@
-import React, { FC, useState, useContext } from "react";
+import React, { FC, useState, useContext, useRef } from "react";
 import { css } from "styled-components";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { connect, ResolveThunks } from "react-redux";
@@ -134,6 +134,7 @@ const OrderUploadFileUpload: FC<Props> = ({
     setErrorsModalIsOpen,
 }) => {
     const toasterContext = useContext(ToasterContext);
+    const fileUploadRef = useRef({ value: "" } as HTMLInputElement);
 
     const [file, setFile] = useState<any>(null);
     const [incorrectFileExtension, setIncorrectFileExtension] = React.useState(false);
@@ -168,7 +169,7 @@ const OrderUploadFileUpload: FC<Props> = ({
         setIsUploading({ isUploading: false });
         cleanupUploadData();
         setFile(null);
-        // TODO ISC-12204 Clear File Uploader value
+        if (fileUploadRef.current?.value) fileUploadRef.current.value = "";
         setFirstRowHeading(false);
     };
 
@@ -250,11 +251,13 @@ const OrderUploadFileUpload: FC<Props> = ({
     const fileChangeHandler = (event: React.ChangeEvent<any>) => {
         const uploadedFile = event.target.files[0];
         setFile(uploadedFile);
-        const fileExtension = getFileExtension(uploadedFile.name);
-        const incorrectFileExtension = ["xls", "xlsx", "csv"].indexOf(fileExtension) === -1;
-        setIncorrectFileExtension(incorrectFileExtension);
-        setIsBadFile({ isBadFile: incorrectFileExtension });
-        setUploadLimitExceeded({ uploadLimitExceeded: false });
+        if (uploadedFile) {
+            const fileExtension = getFileExtension(uploadedFile.name);
+            const incorrectFileExtension = ["xls", "xlsx", "csv"].indexOf(fileExtension) === -1;
+            setIncorrectFileExtension(incorrectFileExtension);
+            setIsBadFile({ isBadFile: incorrectFileExtension });
+            setUploadLimitExceeded({ uploadLimitExceeded: false });
+        }
     };
 
     return (
@@ -263,6 +266,8 @@ const OrderUploadFileUpload: FC<Props> = ({
             <Button {...styles.downloadTemplateButton} onClick={downloadTemplateHandler}>{translate("Download Template")}</Button>
             <FileUpload
                 {...styles.fileUploader}
+                inputRef={fileUploadRef}
+                fileName={file?.name || ""}
                 accept=".xls,.xlsx,.csv"
                 label={translate("Upload a File")}
                 labelPosition="top"
@@ -273,7 +278,7 @@ const OrderUploadFileUpload: FC<Props> = ({
             <Checkbox {...styles.includeFirstRowCheckbox} onChange={firstRowHeadingChangeHandler} checked={firstRowHeading} uid="includeHeading">
                 {translate("Include First Row Column Heading")}
             </Checkbox>
-            <Button {...styles.uploadFileButton} onClick={uploadFileHandler}>
+            <Button {...styles.uploadFileButton} disabled={!file || isUploading} onClick={uploadFileHandler}>
                 {isUploading
                     && <>
                         <LoadingSpinner {...styles.spinner} />
@@ -294,7 +299,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Order Upload",
         allowedContexts: [OrderUploadPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

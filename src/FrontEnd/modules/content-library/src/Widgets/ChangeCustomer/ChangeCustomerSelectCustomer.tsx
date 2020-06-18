@@ -44,7 +44,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Change Customer",
         allowedContexts: [ChangeCustomerPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

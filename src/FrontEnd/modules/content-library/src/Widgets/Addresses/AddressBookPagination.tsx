@@ -71,7 +71,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Addresses",
         icon: "LinkList",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

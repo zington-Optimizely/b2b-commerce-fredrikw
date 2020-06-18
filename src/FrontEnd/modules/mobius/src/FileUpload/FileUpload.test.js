@@ -31,7 +31,7 @@ describe('FileUpload', () => {
     describe('render html elements', () => {
         test('file input field with icon', () => {
             const root = wrapper();
-            expect(root.find('input')).toHaveLength(2);
+            expect(root.find('input')).toHaveLength(1);
             expect(root.find(Icon)).toHaveLength(1);
         });
         test('file input label if enabled', () => {
@@ -61,9 +61,34 @@ describe('FileUpload', () => {
                 type: 'image/png',
             });
             const root = wrapper();
+            expect(root.find('input')).toHaveLength(1);
             root.find('input').first().simulate('change', { target: { files: [file] } });
+            expect(root.find('input')).toHaveLength(2);
             expect(root.find('input[data-id="visualInput"]').prop('value')).toEqual('chucknorris.png');
         });
+        describe('clear button', () => {
+            test('appears when file is added', () => {
+                props = { inputId: 'hat' };
+                const file = new File(['(⌐□_□)'], 'chucknorris.png', {
+                    type: 'image/png',
+                });
+                const root = wrapper();
+                expect(root.find(Icon)).toHaveLength(1);
+                root.find('input').first().simulate('change', { target: { files: [file] } });
+                expect(root.find(Icon)).toHaveLength(2);
+            });
+            test('removes the file visually and in element when clicked', () => {
+                props = { inputId: 'hat' };
+                const file = new File(['(⌐□_□)'], 'chucknorris.png', {
+                    type: 'image/png',
+                });
+                const root = wrapper();
+                root.find('input').first().simulate('change', { target: { files: [file] } });
+                expect(root.find('input[data-id="visualInput"]').prop('value')).toEqual('chucknorris.png');
+                root.find('button').first().simulate('click');
+                expect(root.find('input[data-id="visualInput"]').prop('value')).not.toEqual('chucknorris.png');
+            });
+        })
         describe('is appropriately disabled', () => {
             test("if DisablerContext is true", () => {
                 disablerValue = { disable: true };

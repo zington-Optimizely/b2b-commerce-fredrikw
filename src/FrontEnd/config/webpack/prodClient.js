@@ -38,7 +38,6 @@ module.exports = env => {
                 reportFilename: "webpack-bundle-analyzer.html",
             }),
         ],
-        devtool: "source-map",
     });
 
     return clientConfig;

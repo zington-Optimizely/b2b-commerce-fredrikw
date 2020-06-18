@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@insite/mobius/Typography";
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
+import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { getDiagnostics } from "@insite/shell/Services/SpireService";
 
 const About: React.FC = () => {
-    const [spireStuff, update] = useState<{ [key: string]: string } | undefined>();
+    const [spireStuff, update] = useState<SafeDictionary<string> | undefined>();
 
     useEffect(() => {
         if (spireStuff) {
@@ -12,13 +14,8 @@ const About: React.FC = () => {
 
         update({ Loading: "..." });
 
-        rawRequest("/.spire/diagnostics")
-        .then(response => response.json())
-        .then(parsed => {
-            update(parsed ?? { Response: "Empty" });
-        })
-        .catch(() => {
-            update({ Loading: "Failed" });
+        getDiagnostics().then(diagnostics => {
+            update(diagnostics);
         });
     });
 

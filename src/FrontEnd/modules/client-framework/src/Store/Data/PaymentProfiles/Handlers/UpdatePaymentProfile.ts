@@ -12,22 +12,21 @@ export const RequestDataFromApi: HandlerType = async props => {
     props.apiResult = await updatePaymentProfileApi(props.parameter);
 };
 
-export const DispatchCompleteLoadPaymentProfile: HandlerType = props => {
+export const DispatchResetPaymentProfiles: HandlerType = props => {
     props.dispatch({
-        type: "Data/PaymentProfiles/CompleteLoadPaymentProfile",
-        model: props.apiResult,
+        type: "Data/PaymentProfiles/Reset",
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
 export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
-    DispatchCompleteLoadPaymentProfile,
-    FireOnSuccess,
+    DispatchResetPaymentProfiles,
+    ExecuteOnSuccessCallback,
 ];
 
 const updatePaymentProfile = createHandlerChainRunner(chain, "UpdatePaymentProfile");

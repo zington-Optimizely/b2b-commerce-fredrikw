@@ -76,6 +76,9 @@ const reducer = {
         draft.variantSelectionCompleted = action.variantSelectionCompleted;
         draft.filteredVariantTraits = action.filteredVariantTraits;
     },
+    "Components/ProductSelector/Reset": (draft: Draft<ProductSelectorState>) => {
+        return { ...initialState };
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

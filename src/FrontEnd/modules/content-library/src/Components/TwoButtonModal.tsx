@@ -17,6 +17,7 @@ interface OwnProps {
     onCancel: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     onSubmit: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     submitTestSelector?: string;
+    dataTestSelector?: string;
 }
 
 type Props = OwnProps;
@@ -78,6 +79,7 @@ class TwoButtonModal extends React.Component<Props> {
                 headline={this.props.headlineText}
                 {...styles.modal}
                 isOpen={this.props.modalIsOpen}
+                data-test-selector={this.props.dataTestSelector}
                 handleClose={this.formCancelHandler}>
                 <GridContainer {...styles.container}>
                     <GridItem {...styles.textGridItem}>

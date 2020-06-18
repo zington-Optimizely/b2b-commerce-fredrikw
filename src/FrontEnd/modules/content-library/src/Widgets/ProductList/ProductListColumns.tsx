@@ -51,7 +51,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Columns",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -108,7 +108,7 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
             <RadioGroupStyle
                 css={applyProp("css")}
                 {...labelProps}
-                {...omitMultiple(otherProps, ["sizeVariant", "onChange"])}
+                {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
             >
                 {renderLabel}
                 <RadioGroupContext.Provider value={{

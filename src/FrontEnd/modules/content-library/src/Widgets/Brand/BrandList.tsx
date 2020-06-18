@@ -220,7 +220,7 @@ const widgetModule: WidgetModule = {
         group: "Brands",
         icon: "List",
         allowedContexts: [BrandsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

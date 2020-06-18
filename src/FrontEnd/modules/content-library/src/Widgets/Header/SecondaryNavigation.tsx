@@ -53,7 +53,7 @@ const secondaryNavigation: WidgetModule = {
     definition: {
         group: "Common",
         icon: "NavigationList",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

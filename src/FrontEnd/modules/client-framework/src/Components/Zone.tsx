@@ -10,6 +10,7 @@ import { moveWidgetTo } from "@insite/client-framework/Store/Data/Pages/PagesAct
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import Icon from "@insite/mobius/Icon";
 import PlusCircle from "@insite/mobius/Icons/PlusCircle";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 export interface OwnProps {
     contentId: string;
@@ -21,6 +22,9 @@ export interface OwnProps {
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     widgets: getWidgetsByIdAndZone(state, ownProps.contentId, ownProps.zoneName),
     draggingWidgetId: state.data.pages.draggingWidgetId,
+    permissions: state.context.permissions,
+    currentPageType: getCurrentPage(state).type,
+    pageDefinitionsByType: state.data.pages.pageDefinitionsByType,
 });
 
 const mapDispatchToProps = {
@@ -48,14 +52,14 @@ class Zone extends React.Component<Props> {
     };
 
     private dragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        if (this.props.fixed) {
+        if (this.props.fixed || !this.props.permissions?.canMoveWidgets) {
             return;
         }
         dragWidgetOverZone(event);
     };
 
     private dragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-        if (this.props.fixed) {
+        if (this.props.fixed || !this.props.permissions?.canMoveWidgets) {
             return;
         }
         dragLeaveZone(event);
@@ -74,12 +78,13 @@ class Zone extends React.Component<Props> {
     };
 
     render() {
-        const { contentId, fixed, widgets, draggingWidgetId, zoneName, shellContext: { isEditing, isCurrentPage } } = this.props;
+        const { contentId, fixed, widgets, draggingWidgetId, zoneName, shellContext: { isEditing, isCurrentPage }, permissions, currentPageType, pageDefinitionsByType } = this.props;
 
         if (!contentId) {
             return null;
         }
 
+        const pageDefinition = pageDefinitionsByType?.[currentPageType];
         const renderedWidgets = widgets.length === 0 && isEditing && isCurrentPage
             ? (draggingWidgetId ? <ZonePlaceholder data-zoneplaceholder /> : null)
             : widgets.map(widget => <WidgetRenderer key={widget.id} id={widget.id} type={widget.type} fixed={!!fixed}/>);
@@ -92,7 +97,8 @@ class Zone extends React.Component<Props> {
             >
                 <ZoneWrapper data-dragging={!!draggingWidgetId} data-empty={widgets.length === 0} data-zone>
                     {renderedWidgets}
-                    {!draggingWidgetId && !this.props.fixed
+                    {!draggingWidgetId && !fixed && ((permissions?.canAddWidget && !pageDefinition?.isSystemPage)
+                        || (permissions?.canAddSystemWidget && pageDefinition?.isSystemPage))
                         && <AddContainer fullHeight={widgets.length === 0}>
                             <AddButton onClick={this.add} data-test-selector={`shell_addWidget_${zoneName}`}>
                                 <Icon src={PlusCircle} size={26} color="#4A4A4A" />

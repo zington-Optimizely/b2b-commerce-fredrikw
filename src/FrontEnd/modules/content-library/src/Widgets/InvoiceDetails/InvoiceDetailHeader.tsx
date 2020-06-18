@@ -76,7 +76,7 @@ const InvoiceDetailHeader: FC = () => {
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
                 <Hidden {...styles.menuHiddenContainer}>
-                    <OverflowMenu  {...styles.narrowOverflowMenu}>
+                    <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
                         <Clickable {...styles.printClickable} onClick={openPrintDialog} data-test-selector="invoiceDetails_print">{printLabel}</Clickable>
                         <ShareEntityButton
                             entityId={invoice.invoiceNumber}
@@ -104,8 +104,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Page Header",
         allowedContexts: [InvoiceDetailsPageContext],
-        fieldDefinitions: [],
         group: "Invoice History",
+        isSystem: true,
     },
 };
 

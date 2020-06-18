@@ -50,6 +50,7 @@ export type ApiHandlerNoParameter<Model = never, Props = {}> = Handler<{}, Props
 
 /** An extension of Handler that adds an unknown-typed `error` property and optionally any additional properties. */
 export type ErrorHandler<MoreProps extends {} = {}> = Handler<HasError & MoreProps>;
+type HasError = { error: unknown };
 
 const devTools = !IS_PRODUCTION && typeof window !== "undefined" && (window as any).__REDUX_DEVTOOLS_EXTENSION__
     ? (window as any).__REDUX_DEVTOOLS_EXTENSION__.connect({ name: "Typed Handlers" }) : null;
@@ -77,22 +78,18 @@ This usually happens if onClick is bound directly to the handler chain. IE onCli
     }
 };
 
-type HasError = { error: unknown };
-const defaultErrorChain: Handler<HasError>[] = [props => {
-    try {
-        logger.error(props.parameter.error);
-        // TODO ISC-12460 this is where we should redirect/show an error modal
-    } catch (e) {
-        // Need to make this error-proof to prevent the chance for infinite recursion.
-    }
-}];
+let errorHandler: (parameter: { error: unknown }) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => void;
+
+// we can't import handleError directly or we end up with circular imports
+export function setErrorHandler(value: typeof errorHandler) {
+    errorHandler = value;
+}
 
 const runChain = async <Parameter, Props = {}>(
     parameter: Parameter,
     dispatch: StrictInputDispatch,
     getState: () => ApplicationState,
     chain: Handler<Parameter, Props>[],
-    errorChain: Handler<Parameter & HasError, Props>[],
     name: string,
 ) => {
     // An "initial props" parameter would make the props value below correct, but no handlers written so far require it.
@@ -123,8 +120,10 @@ const runChain = async <Parameter, Props = {}>(
                 break;
             }
         } catch (e) {
-            logger.warn(e);
-            runChain({ ...parameter, error: e }, dispatch, getState, errorChain, defaultErrorChain, name);
+            if (IS_SERVER_SIDE && !IS_PRODUCTION) {
+                throw e;
+            }
+            dispatch(errorHandler({ error: e }));
             break;
         }
         x += 1;
@@ -147,7 +146,7 @@ export const createHandlerChainRunner = <Parameter, Props = {}>(
 
     return (parameter: Parameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
         checkForSyntheticEvent(parameter, name);
-        addTask(runChain(parameter, dispatch, getState, chain, defaultErrorChain, name));
+        addTask(runChain(parameter, dispatch, getState, chain, name));
     };
 };
 
@@ -165,7 +164,7 @@ export const createHandlerChainRunnerOptionalParameter = <Parameter, Props = {}>
 
     return (parameter: Parameter = defaultParameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
         checkForSyntheticEvent(parameter, name);
-        addTask(runChain(parameter, dispatch, getState, chain, defaultErrorChain, name));
+        addTask(runChain(parameter, dispatch, getState, chain, name));
     };
 };
 

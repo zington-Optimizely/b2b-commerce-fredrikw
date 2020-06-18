@@ -106,6 +106,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "LinkList",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.direction,

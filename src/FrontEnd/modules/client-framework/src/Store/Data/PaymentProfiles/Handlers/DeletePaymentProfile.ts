@@ -11,21 +11,21 @@ export const RequestDataFromApi: HandlerType = props => {
     return deletePaymentProfileApi(props.parameter);
 };
 
-export const DispatchCompleteDeleteSavedPayment: HandlerType = props => {
+export const DispatchResetPaymentProfiles: HandlerType = props => {
     props.dispatch({
         type: "Data/PaymentProfiles/Reset",
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
 export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
-    DispatchCompleteDeleteSavedPayment,
-    FireOnSuccess,
+    DispatchResetPaymentProfiles,
+    ExecuteOnSuccessCallback,
 ];
 
 const deletePaymentProfile = createHandlerChainRunner(chain, "DeletePaymentProfile");

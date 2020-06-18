@@ -9,6 +9,7 @@ import {
     getProductCollectionRealTimePrices,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import logger from "@insite/client-framework/Logger";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 export interface LoadRealTimePricingParameter extends HasOnSuccess<RealTimePricingModel> {
     parameter: GetProductsRealTimePriceApiV2Parameter;
@@ -24,6 +25,11 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
+
+    if (!getSettingsCollection(props.getState()).productSettings.canSeePrices) {
+        return false;
+    }
+
     try {
         props.apiResult = await getProductCollectionRealTimePrices(props.apiParameter.parameter);
     } catch (error) {
@@ -32,13 +38,13 @@ export const RequestDataFromApi: HandlerType = async props => {
     }
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.error) {
         props.parameter.onSuccess?.(props.apiResult);
     }
 };
 
-export const FireOnError: HandlerType = props => {
+export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.error) {
         props.parameter.onError?.(props.apiResult);
     }
@@ -47,8 +53,8 @@ export const FireOnError: HandlerType = props => {
 export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
-    FireOnSuccess,
-    FireOnError,
+    ExecuteOnSuccessCallback,
+    ExecuteOnErrorCallback,
 ];
 
 const loadRealTimePricing = createHandlerChainRunner(chain, "LoadRealTimePricing");

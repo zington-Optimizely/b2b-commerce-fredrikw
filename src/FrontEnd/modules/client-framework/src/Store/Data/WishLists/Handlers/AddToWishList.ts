@@ -58,13 +58,13 @@ export const ResetWishListData: HandlerType = props => {
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.result?.errorMessage && props.parameter.onSuccess) {
         props.parameter.onSuccess(props.result.wishList!);
     }
 };
 
-export const FireOnError: HandlerType = props => {
+export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.result?.errorMessage) {
         props.parameter.onError?.(props.result.errorMessage);
     }
@@ -74,8 +74,8 @@ export const chain = [
     AddWishList,
     AddLineToWishList,
     ResetWishListData,
-    FireOnSuccess,
-    FireOnError,
+    ExecuteOnSuccessCallback,
+    ExecuteOnErrorCallback,
 ];
 
 const addToWishList = createHandlerChainRunner(chain, "AddToWishList");

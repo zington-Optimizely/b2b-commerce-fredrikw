@@ -11,6 +11,7 @@ import ContentMode, {
 } from "@insite/client-framework/Common/ContentMode";
 import { adminAccessTokenName } from "@insite/shell/Store/BearerToken";
 import { getCookie, removeCookie } from "@insite/client-framework/Common/Cookies";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 
 const initialState: ShellContextState = {
     languages: [],
@@ -83,10 +84,12 @@ const reducer = {
         personaId: string;
         deviceType: DeviceType;
         defaultLanguageId: string;
+        permissions: PermissionsModel;
     }) => {
         draft.currentLanguageId = action.languageId;
         draft.currentPersonaId = action.personaId;
         draft.currentDeviceType = action.deviceType;
+        if (action.permissions) draft.permissions = action.permissions;
     },
 
     "ShellContext/ChangeStageMode": (draft: Draft<ShellContextState>, action: Pick<ShellContextState, "stageMode">) => {

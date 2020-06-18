@@ -183,6 +183,7 @@ const widgetModule: WidgetModule = {
         allowedContexts: [SignInPageContext],
         group: "Sign In",
         icon: "User",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.text,

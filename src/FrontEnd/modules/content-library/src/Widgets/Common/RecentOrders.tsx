@@ -103,6 +103,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.numberOfRecords,

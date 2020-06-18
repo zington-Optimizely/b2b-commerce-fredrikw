@@ -144,6 +144,7 @@ const widgetModule: WidgetModule = {
         displayName: "Specification",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showDocuments,

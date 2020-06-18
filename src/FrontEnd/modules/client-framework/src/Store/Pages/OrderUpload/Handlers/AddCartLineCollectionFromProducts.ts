@@ -2,6 +2,7 @@ import { CartLineCollectionModel, ProductDto, CartLineModel } from "@insite/clie
 import { addLineCollection, AddCartLinesApiParameter } from "@insite/client-framework/Services/CartService";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 
 type HandlerType =
     ApiHandlerDiscreteParameter<{
@@ -42,6 +43,10 @@ export const SendDataToApi: HandlerType = async props => {
     props.apiResult = await addLineCollection(props.apiParameter);
 };
 
+export const LoadCart: HandlerType = props => {
+    props.dispatch(loadCurrentCart());
+};
+
 export const DispatchCompleteAddCartLineCollectionFromProducts: HandlerType = props => {
     props.dispatch({
         type: "Pages/OrderUpload/CompleteAddCartLineCollectionFromProducts",
@@ -49,7 +54,7 @@ export const DispatchCompleteAddCartLineCollectionFromProducts: HandlerType = pr
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -57,8 +62,9 @@ export const chain = [
     DispatchBeginAddCartLineCollectionFromProducts,
     PopulateApiParameter,
     SendDataToApi,
+    LoadCart,
     DispatchCompleteAddCartLineCollectionFromProducts,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const addCartLineCollectionFromProducts = createHandlerChainRunner(chain, "AddCartLineCollectionFromProducts");

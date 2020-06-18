@@ -48,7 +48,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

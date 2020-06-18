@@ -66,13 +66,13 @@ export const AddAccount: HandlerType = async props => {
     props.apiResult = await addAccountApi(props.apiParameter);
 };
 
-export const CallOnError: HandlerType = props => {
+export const ExecuteOnErrorCallback: HandlerType = props => {
     if (!props.apiResult.successful) {
         props.parameter.onError?.(props.apiResult.errorMessage!);
     }
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.apiResult.successful) {
         props.parameter.onSuccess?.();
     }
@@ -83,8 +83,8 @@ export const chain = [
     SignOutGuest,
     PopulateApiParameter,
     AddAccount,
-    CallOnError,
-    CallOnSuccess,
+    ExecuteOnErrorCallback,
+    ExecuteOnSuccessCallback,
 ];
 
 const addAccount = createHandlerChainRunner(chain, "AddAccount");

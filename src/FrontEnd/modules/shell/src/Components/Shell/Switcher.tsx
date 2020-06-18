@@ -23,7 +23,7 @@ export const Switcher: React.FC<{ disabled?: boolean}> = ({ disabled }) => {
                 <ViewPortClicker targetStageMode="Tablet" icon={Tablet} disabled={disabled} />
                 <ViewPortClicker targetStageMode="Desktop" icon={Monitor} disabled={disabled} />
             </div>
-            <Icon src={Spacer} />
+            <Icon src={Spacer} color="#999" />
             <LogOutClicker />
         </SwitcherStyle>;
 };

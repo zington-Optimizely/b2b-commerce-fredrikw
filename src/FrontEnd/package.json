@@ -2,7 +2,6 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "@comment build": "webpack building both configs together would randomly not build the server.js file. Splitting them into two webpack builds got rid of the issue.",
     "@comment build": "Optionally pass a blueprint name. IE npm run build example",
     "build": "npm-run-all \"build:server {1}\" \"build:client {1}\" --",
     "build:server": "npm-run-all \"node-build:server -- --env.BLUEPRINT={1}\" --",
@@ -19,7 +18,7 @@
     "start": "node startDevelopment.js",
     "@comment start": "Optionally pass a blueprint name and port. IE npm run start example 8080",
     "start:example": "node startDevelopment.js example 4000",
-    "start:prod": "CLS && SET ISC_API_URL=http://commerce.local.com && SET ISC_FRONT_END_PORT=3000 && ECHO Starting... && node dist/server.js",
+    "start:prod": "CLS && SET ISC_API_URL=http://commerce.local.com && SET ISC_FRONT_END_PORT=3000 && ECHO Starting... && node -r source-map-support/register dist/server.js",
     "start:styleguide": "npm start --prefix ./modules/mobius-styleguide",
     "stylelint": "stylelint \"./modules/**/*.tsx\"",
     "test": "cd modules && jest"
@@ -46,6 +45,7 @@
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3",
     "@types/set-cookie-parser": "^0.0.6",
+    "@types/source-map-support": "^0.5.1",
     "@types/styled-components": "^4.4.2",
     "@types/webpack": "^4.41.6",
     "@types/webpack-env": "^1.15.1",
@@ -75,6 +75,7 @@
     "react-router": "^5.1.2",
     "redux-thunk": "^2.3.0",
     "remove-files-webpack-plugin": "^1.4.0",
+    "source-map-support": "^0.5.19",
     "style-loader": "^1.1.3",
     "stylelint": "^13.1.0",
     "stylelint-config-standard": "^19.0.0",

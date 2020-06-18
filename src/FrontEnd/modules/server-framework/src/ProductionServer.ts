@@ -10,7 +10,9 @@ import server from "@insite/server-framework/Server";
 import logger from "@insite/client-framework/Logger";
 import { decodeCookie } from "@insite/client-framework/Common/Cookies";
 import ErrorHandler from "@insite/server-framework/ErrorHandler";
+import sourceMapSupport from "source-map-support"; // this isn't supposed to be needed, but trying to use node's newish --enable-source-maps option wasn't working when running the production server
 
+sourceMapSupport.install();
 const { ISC_FRONT_END_PORT, ISC_ENABLE_COMPRESSION } = process.env;
 let port: number;
 if (!ISC_FRONT_END_PORT) {

@@ -73,7 +73,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Page Header",
         allowedContexts: [InvoiceHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

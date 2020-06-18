@@ -304,18 +304,21 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
         this.state = {
             selectedDay: this.props.selectedDay || undefined,
             isEmpty: !this.props.selectedDay,
-            selectedDayDisabled: this.isSelectedDayDisabled(this.props.selectedDay),
+            selectedDayDisabled: this.isSelectedDayDisabled(this.props.selectedDay, this.props.dateTimePickerProps),
         };
     }
 
     UNSAFE_componentWillReceiveProps(nextProps: DatePickerProps) { // eslint-disable-line camelcase
         if (nextProps.selectedDay !== this.props.selectedDay) {
-            this.handleDayChange(nextProps.selectedDay, true);
+            this.setState({
+                isEmpty: !nextProps.selectedDay,
+                selectedDay: nextProps.selectedDay,
+                selectedDayDisabled: this.isSelectedDayDisabled(nextProps.selectedDay, nextProps.dateTimePickerProps),
+            });
         }
     }
 
-    isSelectedDayDisabled = (value: Date | undefined) => {
-        const { dateTimePickerProps } = this.props;
+    isSelectedDayDisabled = (value: Date | undefined, dateTimePickerProps?: DateTimePickerProps) => {
         let selectedDayDisabled = false;
         if (value && typeof dateTimePickerProps?.tileDisabled === "function") {
             selectedDayDisabled = dateTimePickerProps?.tileDisabled({ date: value });
@@ -329,20 +332,19 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
         return selectedDayDisabled;
     };
 
-    handleDayChange = (value: Date | undefined, validateOnRender?: boolean) => {
-        const callback = !validateOnRender ? () => {
-            if (typeof this.props.onDayChange === "function") {
-                this.props.onDayChange(this.state);
-            }
-        } : undefined;
-        const selectedDayDisabled = this.isSelectedDayDisabled(value);
+    handleDayChange = (value: Date | undefined) => {
+        const selectedDayDisabled = this.isSelectedDayDisabled(value, this.props.dateTimePickerProps);
         this.setState(
             {
                 isEmpty: !value,
                 selectedDay: value,
                 selectedDayDisabled,
             },
-            callback);
+            () => {
+                if (typeof this.props.onDayChange === "function") {
+                    this.props.onDayChange(this.state);
+                }
+            });
     };
 
     render() {

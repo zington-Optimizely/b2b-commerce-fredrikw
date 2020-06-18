@@ -235,8 +235,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
-        fieldDefinitions: [],
         displayName: "Addresses",
+        isSystem: true,
     },
 };
 

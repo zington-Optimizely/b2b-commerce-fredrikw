@@ -75,8 +75,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Product List",
         allowedContexts: [OrderConfirmationPageContext],
-        fieldDefinitions: [],
         group: "Order Confirmation",
+        isSystem: true,
     },
 };
 

@@ -57,7 +57,7 @@ class AccordionSection extends React.Component<Props, State> {
         }
         return {
             expanded,
-            id: nextProps.uid || (prevState && prevState.uid) || uniqueId(),
+            uid: nextProps.uid || (prevState && prevState.uid) || uniqueId(),
         };
     }
 

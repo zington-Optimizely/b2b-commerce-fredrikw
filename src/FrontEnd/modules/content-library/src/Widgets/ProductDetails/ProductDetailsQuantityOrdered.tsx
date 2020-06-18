@@ -70,7 +70,7 @@ const widgetModule: WidgetModule = {
         displayName: "Quantity Ordered",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

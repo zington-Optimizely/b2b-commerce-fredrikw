@@ -1,37 +1,41 @@
 import * as React from "react";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { IconPresentationProps } from "@insite/mobius/Icon";
 import TextField from "@insite/mobius/TextField";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
-import ConfigMenu, { configFormFieldStyles } from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
+import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
 import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
 import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
 import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
-
-const undefinedIfFunction = (value: string | undefined | Function) => typeof value === "function" ? undefined : value;
+import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
+import { createSetParentIfUndefined, undefinedIfFunction, configFormFieldStyles } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
+import get from "@insite/mobius/utilities/get";
 
 const IconConfig: React.FunctionComponent<{
     idPrefix: string;
-    iconProps: IconPresentationProps;
-    getProps: (draft: BaseTheme) => IconPresentationProps;
     disableSource?: true;
     insideForm?: boolean;
     title?: string;
     variant?: "accordion" | "popover";
+    locationInTheme: string;
+    disabled?: boolean;
 } & PresetHelpers> = ({
     idPrefix,
-    iconProps,
-    getProps,
+    locationInTheme,
     disableSource,
     update,
     tryMatchColorStringToPresetValue,
     tryMatchColorResultToPresetName,
+    postStyleGuideTheme,
+    theme,
     presetColors,
     title,
     insideForm,
     variant,
+    disabled,
 }) => {
     const ConfigWrapper = variant === "accordion" ? SideBarAccordionSection : ConfigMenu;
+    const getProps = createSetParentIfUndefined(locationInTheme);
+    const codeOverrideProps = get(postStyleGuideTheme, locationInTheme) || {};
+    const iconProps = get(theme, locationInTheme) || {};
 
     return (
     <ConfigWrapper
@@ -44,18 +48,17 @@ const IconConfig: React.FunctionComponent<{
             isInPopover
             id={`${idPrefix}-icon-color`}
             color={tryMatchColorStringToPresetValue(iconProps.color)}
-            onChange={color => update(draft => {
-                getProps(draft).color = tryMatchColorResultToPresetName(color);
-            })}
+            onChange={color => update(draft => { getProps(draft).color = tryMatchColorResultToPresetName(color); })}
+            disabled={!!codeOverrideProps.color || disabled}
             presetColors={presetColors}
         />
         {!disableSource && <IconSelector
             {...configFormFieldStyles}
+            disabled={!!codeOverrideProps.src || disabled}
             label="Icon"
             value={undefinedIfFunction(iconProps.src)}
             onTextFieldChange={event => update(draft => {
                 const props = getProps(draft);
-
                 if (!event.currentTarget.value) {
                     delete props.src;
                 } else {
@@ -64,7 +67,6 @@ const IconConfig: React.FunctionComponent<{
             })}
             onSelectionChange={value => update(draft => {
                 const props = getProps(draft);
-
                 if (!value) {
                     delete props.src;
                 } else {
@@ -74,11 +76,11 @@ const IconConfig: React.FunctionComponent<{
         />}
         <TextField
             {...configFormFieldStyles}
-            label="Size"
+            label={codeOverrideProps.size ? <><span>Size </span><DisabledInCodeTooltip /></> : "Size"}
+            disabled={!!codeOverrideProps.size || disabled}
             value={iconProps.size}
             onChange={event => update(draft => {
                 const props = getProps(draft);
-
                 if (!event.currentTarget.value) {
                     delete props.size;
                 } else {

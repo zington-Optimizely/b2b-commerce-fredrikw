@@ -71,6 +71,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Product Line Filters",
         allowedContexts: [ProductListPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.expandByDefault,

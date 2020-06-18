@@ -213,7 +213,7 @@ const widgetModule: WidgetModule = {
         allowedContexts: [SignInPageContext],
         group: "Sign In",
         icon: "LogIn",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

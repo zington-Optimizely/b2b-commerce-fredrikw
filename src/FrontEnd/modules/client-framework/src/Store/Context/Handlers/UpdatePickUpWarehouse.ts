@@ -35,7 +35,7 @@ export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -44,7 +44,7 @@ const chain = [
     UpdateSession,
     DispatchCompleteLoadSession,
     LoadCart,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const updatePickUpWarehouse = createHandlerChainRunner(chain, "UpdatePickUpWarehouse");

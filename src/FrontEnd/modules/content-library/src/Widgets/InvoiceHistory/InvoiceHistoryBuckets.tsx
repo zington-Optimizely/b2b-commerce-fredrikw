@@ -88,7 +88,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Aging Buckets",
         allowedContexts: [InvoiceHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

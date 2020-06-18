@@ -30,6 +30,7 @@ const mapStateToProps = (state: ShellState) => ({
     footerNodesByParentId: state.pageTree.footerTreeNodesByParentId,
     expandedNodes: state.pageTree.expandedNodes,
     hasExpandedNodes: Object.keys(state.pageTree.expandedNodes).length > 0,
+    permissions: state.shellContext.permissions,
 });
 
 const mapDispatchToProps = {
@@ -110,13 +111,13 @@ class PageTree extends ClickOutside<Props, State> {
 
     render() {
         const { flyOutNode, flyOutElement } = this.state;
-        const { allowRootAddPage, hasExpandedNodes, expandedNodes, headerNodesByParentId, nodesByParentId, footerNodesByParentId, isEditMode, selectedPageId } = this.props;
+        const { allowRootAddPage, hasExpandedNodes, expandedNodes, headerNodesByParentId, nodesByParentId, footerNodesByParentId, isEditMode, selectedPageId, permissions } = this.props;
 
         return (
             <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
                 <Typography variant="h2" css={pagesH2}>Pages
                     {hasExpandedNodes && <CollapseTreeStyle onClick={this.closeAll}><SectionCollapse/></CollapseTreeStyle>}
-                    {allowRootAddPage && <ReorderStyle onClick={this.reorderPages}><Move height={19} /></ReorderStyle>}
+                    {allowRootAddPage && permissions?.canMovePages && <ReorderStyle onClick={this.reorderPages}><Move height={19} /></ReorderStyle>}
                 </Typography>
                 <PageTreePages
                     isEditMode={isEditMode}
@@ -127,6 +128,7 @@ class PageTree extends ClickOutside<Props, State> {
                     onExpandNode={this.handleExpandPage}
                     onFlyOutNode={this.handleFlyOutNode}
                     flyOutNode={flyOutNode}
+                    permissions={permissions}
                 />
                 <PageTreePages
                     isEditMode={isEditMode}
@@ -137,6 +139,7 @@ class PageTree extends ClickOutside<Props, State> {
                     onExpandNode={this.handleExpandPage}
                     onFlyOutNode={this.handleFlyOutNode}
                     flyOutNode={flyOutNode}
+                    permissions={permissions}
                 />
                 <PageTreePages
                     isEditMode={isEditMode}
@@ -147,6 +150,7 @@ class PageTree extends ClickOutside<Props, State> {
                     onExpandNode={this.handleExpandPage}
                     onFlyOutNode={this.handleFlyOutNode}
                     flyOutNode={flyOutNode}
+                    permissions={permissions}
                 />
 
                 {flyOutNode && flyOutElement

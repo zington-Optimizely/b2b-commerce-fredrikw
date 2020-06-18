@@ -208,7 +208,7 @@ class OrderHistoryTable extends React.Component<Props> {
 
         if (ordersDataView.value.length === 0) {
             return  <StyledWrapper {...styles.noResultsContainer}>
-                <Typography as="p" {...styles.noResultsText}>{translate("No orders found")}</Typography>
+                <Typography as="p" {...styles.noResultsText} data-test-selector="orderHistoryTable_noOrdersFound">{translate("No orders found")}</Typography>
             </StyledWrapper>;
         }
 
@@ -294,6 +294,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Results Table",
         allowedContexts: [OrderHistoryPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showReorderProducts,

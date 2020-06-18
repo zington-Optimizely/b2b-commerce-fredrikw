@@ -27,6 +27,8 @@
         previousPath: string;
         saveState: boolean;
         contextPersonaIds: string;
+        previousBodyPaddingRight: string;
+        previousBodyOverflowSetting: string;
 
         static $inject = ["$rootScope", "$http", "$filter", "$window", "$location", "$sessionStorage", "$timeout", "$templateCache", "ipCookie", "$state", "$stateParams"];
 
@@ -75,6 +77,40 @@
                 }
             });
         }
+
+        // beginning of scroll lock methods, a highly stripped down version of https://github.com/willmcpo/body-scroll-lock
+        // without iOS specific fixes, see ISC-13116
+        protected setOverflowHidden() {
+            setTimeout(() => {
+                if (this.previousBodyPaddingRight === undefined) {
+                    const scrollBarGap = this.$window.innerWidth - this.$window.document.documentElement.clientWidth;
+                    if (scrollBarGap > 0) {
+                        this.previousBodyPaddingRight = this.$window.document.body.style.paddingRight;
+                        this.$window.document.body.style.paddingRight = `${scrollBarGap}px`;
+                    }
+                }
+
+                if (this.previousBodyOverflowSetting === undefined) {
+                    this.previousBodyOverflowSetting = this.$window.document.body.style.overflow;
+                    this.$window.document.body.style.overflow = 'hidden';
+                }
+            });
+        };
+
+        protected restoreOverflowSetting() {
+            setTimeout(() => {
+                if (this.previousBodyPaddingRight !== undefined) {
+                    this.$window.document.body.style.paddingRight = this.previousBodyPaddingRight;
+                    this.previousBodyPaddingRight = undefined;
+                }
+
+                if (this.previousBodyOverflowSetting !== undefined) {
+                    this.$window.document.body.style.overflow = this.previousBodyOverflowSetting;
+                    this.previousBodyOverflowSetting = undefined;
+                }
+            });
+        };
+        // end of Scroll lock members
 
         protected onStateChangeSuccess(event: ng.IAngularEvent, to: any, toParams: any, from: any, fromParams: any): void {
             if (this.isSafari()) {
@@ -176,12 +212,14 @@
 
         displayModal(html: any, onClose: any): void {
             const $html = $(html);
+            this.setOverflowHidden();
             if ($html.parents("body").length === 0) {
                 $html.appendTo($("body"));
             }
 
             ($html as any).foundation("reveal", "open");
             $(document).on("closed", $html, () => {
+                this.restoreOverflowSetting();
                 if (typeof onClose === "function") {
                     onClose();
                 }

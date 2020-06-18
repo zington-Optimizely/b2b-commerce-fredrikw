@@ -1,9 +1,11 @@
-import { get, patch, ApiParameter, HasPagingParameters, doesNotHaveExpand } from "@insite/client-framework/Services/ApiService";
+import { get, patch, ApiParameter, HasPagingParameters, doesNotHaveExpand, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
 import {
     OrderCollectionModel,
     OrderModel,
     OrderStatusMappingCollectionModel,
+    RmaModel,
 } from "@insite/client-framework/Types/ApiModels";
+import isApiError from "@insite/client-framework/Common/isApiError";
 
 export interface GetOrdersApiParameter extends ApiParameter, HasPagingParameters {
     orderNumber?: string;
@@ -34,6 +36,12 @@ export interface UpdateOrderApiParameter extends ApiParameter {
     order: OrderModel;
 }
 
+export interface AddRmaApiParameter extends ApiParameter {
+    rmaModel: RmaModel;
+}
+
+const ordersUrl = "/api/v1/orders";
+
 export async function getOrders(parameter: GetOrdersApiParameter): Promise<OrderCollectionModel> {
 
     // can't send empty status array to API
@@ -41,7 +49,7 @@ export async function getOrders(parameter: GetOrdersApiParameter): Promise<Order
         delete parameter.status;
     }
 
-    const orders = await get<OrderCollectionModel>("/api/v1/orders", parameter);
+    const orders = await get<OrderCollectionModel>(ordersUrl, parameter);
     orders.orders?.forEach(o => {
         cleanOrder(o);
     });
@@ -57,7 +65,7 @@ export async function getOrder(parameter: GetOrderApiParameter): Promise<OrderMo
     const orderNumber = parameter.orderNumber;
     delete parameter.orderNumber;
 
-    const order = await get<OrderModel>(`/api/v1/orders/${orderNumber}`, parameter);
+    const order = await get<OrderModel>(`${ordersUrl}/${orderNumber}`, parameter);
     cleanOrder(order, parameter);
     return order;
 }
@@ -65,9 +73,27 @@ export async function getOrder(parameter: GetOrderApiParameter): Promise<OrderMo
 export async function updateOrder(parameter: UpdateOrderApiParameter) {
     const order = parameter.order;
     const orderNumber = order.erpOrderNumber || order.webOrderNumber;
-    const orderModel = await patch<OrderModel>(`/api/v1/orders/${orderNumber}`, order);
+    const orderModel = await patch<OrderModel>(`${ordersUrl}/${orderNumber}`, order);
     cleanOrder(orderModel);
     return orderModel;
+}
+
+export async function addRma(parameter: AddRmaApiParameter): Promise<ServiceResult<RmaModel>> {
+    try {
+        const rmaModel = await post<RmaModel>(`${ordersUrl}/${parameter.rmaModel.orderNumber}/returns`, parameter.rmaModel);
+        return {
+            successful: true,
+            result: rmaModel,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
 }
 
 function cleanOrder(orderModel: OrderModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {

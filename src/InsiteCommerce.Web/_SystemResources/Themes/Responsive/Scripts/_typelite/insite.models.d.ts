@@ -494,6 +494,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 	interface WebsiteSettingsModel extends Insite.Core.WebApi.BaseModel {
 		mobileAppEnabled: boolean;
 		useTokenExGateway: boolean;
+		usePaymetricGateway: boolean;
 		defaultPageSize: number;
 		enableCookiePrivacyPolicyPopup: boolean;
 		enableDynamicRecommendations: boolean;

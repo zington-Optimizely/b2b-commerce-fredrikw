@@ -4,6 +4,7 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const BlueprintReplacementPlugin = require("./blueprintReplacementPlugin");
 const path = require("path");
 const setupEntryFiles = require("./setupEntryFiles");
+const webpack = require("webpack");
 
 exports.setupCommonConfig = (isDevBuild, env) => {
     let blueprint = env && env.BLUEPRINT && `blueprints/${env.BLUEPRINT}`;
@@ -43,6 +44,10 @@ exports.setupCommonConfig = (isDevBuild, env) => {
         },
         plugins: [
             new BlueprintReplacementPlugin(blueprint),
+            new webpack.DefinePlugin({
+                BUILD_DATE: new Date().getTime(),
+                BLUEPRINT_NAME: JSON.stringify(blueprint.replace("blueprints/", "")),
+            }),
         ],
         stats: {
             builtAt: false,

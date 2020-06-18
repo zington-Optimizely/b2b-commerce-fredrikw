@@ -65,7 +65,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Order Total Operator",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

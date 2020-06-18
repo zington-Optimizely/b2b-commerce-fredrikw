@@ -15,6 +15,7 @@ export interface ShellColors extends ThemeColors {
     custom: {
         mainHeader: string;
         nonmatchingTreeLinks: string;
+        accentSecondary: string;
     };
 }
 
@@ -22,6 +23,7 @@ const colors: ShellColors = {
     custom: {
         mainHeader: "#e5e5e5",
         nonmatchingTreeLinks: "#bbb",
+        accentSecondary: "#cccccc",
     },
     primary: {
         main: "#78BC21",
@@ -36,11 +38,11 @@ const colors: ShellColors = {
         backgroundContrast: "#4A4A4A",
         accent: "#ffffff",
         accentContrast: "#4A4A4A",
-        border: "#cccccc",
+        border: "#000000",
         disabled: "#888888",
     },
     text: {
-        main: "#4A4A4A",
+        main: "#000000",
         disabled: "#888888",
         accent: "#9B9B9B",
         link: "#275AA8",
@@ -137,6 +139,11 @@ const shellTheme = {
                 transform: "uppercase",
                 weight: "bold",
                 lineHeight: "21px",
+                css: css`
+                    overflow: visible;
+                    white-space: nowrap;
+                `,
+                ellipsis: false,
             },
         },
     },

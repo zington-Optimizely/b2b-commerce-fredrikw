@@ -83,6 +83,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Header",
         icon: "LinkList",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.links,

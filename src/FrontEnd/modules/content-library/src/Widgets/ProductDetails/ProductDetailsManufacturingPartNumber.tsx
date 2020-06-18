@@ -42,7 +42,7 @@ const widgetModule: WidgetModule = {
         displayName: "Manufacturing Part Number",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

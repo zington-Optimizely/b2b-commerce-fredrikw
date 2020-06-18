@@ -6,6 +6,11 @@ export interface FieldSetPropsMock {
     disabled?: boolean;
 }
 
+interface FieldSetLabelProps extends TypographyPresentationProps {
+    errorColor?: string;
+    disabledColor?: string;
+}
+
 export default interface FieldSetPresentationProps<T> {
     /** The background color of the checkbox.
      * @themable */
@@ -18,7 +23,7 @@ export default interface FieldSetPresentationProps<T> {
     errorProps?: TypographyPresentationProps;
     /** Props to be passed into the inner Typography component (label).
      * @themable */
-    typographyProps?: TypographyPresentationProps;
+    typographyProps?: FieldSetLabelProps;
 }
 
 export interface FieldSetGroupPresentationProps<T = {}> {

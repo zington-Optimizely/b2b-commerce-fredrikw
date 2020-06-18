@@ -141,8 +141,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        fieldDefinitions: [],
         displayName: "Page Header",
+        isSystem: true,
     },
 };
 

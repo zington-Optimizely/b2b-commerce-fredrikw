@@ -174,6 +174,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         allowedContexts: [CategoryListPageContext, HomePageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImages,

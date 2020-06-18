@@ -160,8 +160,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Cart",
         icon: "ShoppingCart",
-        fieldDefinitions: [],
         allowedContexts: [CartPageContext],
+        isSystem: true,
     },
 };
 

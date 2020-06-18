@@ -90,7 +90,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

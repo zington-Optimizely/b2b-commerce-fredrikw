@@ -285,7 +285,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [ResetPasswordPageContext],
         group: "Reset Password",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

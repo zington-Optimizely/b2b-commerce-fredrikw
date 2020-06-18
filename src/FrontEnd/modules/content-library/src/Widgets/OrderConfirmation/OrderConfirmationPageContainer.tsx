@@ -85,7 +85,7 @@ const widgetModule: WidgetModule = {
         displayName: "Page Container",
         group: "Order Confirmation",
         allowedContexts: [OrderConfirmationPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 export default widgetModule;

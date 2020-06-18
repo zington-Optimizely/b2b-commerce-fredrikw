@@ -26,7 +26,7 @@ export const PopulateApiParameter: HandlerType = props => {
         productImage: props.parameter.product.mediumImagePath,
         productShortDescription: props.parameter.product.productTitle,
         altText: props.parameter.product.imageAltText,
-        productUrl: props.parameter.product.productDetailPath,
+        productUrl: props.parameter.product.productDetailPath || props.parameter.product.canonicalUrl,
     } as TellAFriendModel;
     props.apiParameter = { tellAFriendModel };
 };
@@ -35,14 +35,14 @@ export const SendDataToApi: HandlerType = async props => {
     props.apiResult = await tellAFriend(props.apiParameter);
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
 export const chain = [
     PopulateApiParameter,
     SendDataToApi,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const shareProduct = createHandlerChainRunner(chain, "ShareProduct");

@@ -70,7 +70,7 @@ const widgetModule: WidgetModule = {
         displayName: "Page Title",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

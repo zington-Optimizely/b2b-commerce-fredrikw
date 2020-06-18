@@ -55,7 +55,7 @@ const widgetModule: WidgetModule = {
         displayName: "Add to List Link",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

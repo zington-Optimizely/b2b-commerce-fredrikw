@@ -48,7 +48,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

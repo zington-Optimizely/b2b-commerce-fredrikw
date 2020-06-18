@@ -7,6 +7,8 @@ import loadSettings from "@insite/client-framework/Store/Context/Handlers/LoadSe
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { setErrorHandler } from "@insite/client-framework/HandlerCreator";
+import handleError from "@insite/client-framework/Store/Context/Handlers/HandleError";
 
 interface OwnProps {
     location: Location;
@@ -36,6 +38,8 @@ type Props = ReturnType<typeof mapStateToProps>
 
 class SessionLoader extends React.Component<Props> {
     UNSAFE_componentWillMount() {
+        setErrorHandler(handleError);
+
         const props = this.props;
 
         const parsedQuery = parseQueryString<{ setcontextlanguagecode: string }>(props.location.search);

@@ -30,6 +30,7 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     contentMode: state.shellContext.contentMode,
+    permissions: state.shellContext.permissions,
 });
 
 const mapDispatchToProps = {
@@ -49,6 +50,7 @@ class Header extends React.Component<Props> {
             pageDefinition,
             toggleShowGeneratedPageCreator,
             contentMode,
+            permissions,
         } = this.props;
 
         return (
@@ -60,7 +62,8 @@ class Header extends React.Component<Props> {
                 {contentMode === "Editing"
                     && <>
                         <Icon src={Spacer} color="#999" />
-                        <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage"><Icon src={Edit} size={20} color="#fff"/></PageHeaderButton>
+                        {permissions?.canEditWidget
+                        && <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage"><Icon src={Edit} size={20} color="#fff"/></PageHeaderButton>}
                         <PageHeaderButton onClick={toggleShowGeneratedPageCreator}><DebugMenu color1="#fff" size={16}/></PageHeaderButton>
                     </>
                 }
@@ -78,7 +81,7 @@ class Header extends React.Component<Props> {
                     && <BrandSelection />
                 }
                 {contentMode !== "Viewing"
-                    && <PublishDropDownStyle>
+                    && permissions?.canPublishContent && <PublishDropDownStyle>
                         <PublishDropDown />
                     </PublishDropDownStyle>
                 }
@@ -90,14 +93,14 @@ class Header extends React.Component<Props> {
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 const PageHeaderStyle = styled.div`
-    background-color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
+    background-color: ${(props: ShellThemeProps) => props.theme.colors.common.accentContrast};
     height: 48px;
     display: flex;
     align-items: center;
 `;
 
 const PageHeaderTitle = styled.h2`
-    color: #fff;
+    color: ${(props: ShellThemeProps) => props.theme.colors.common.accent};
     align-content: center;
     padding-left: 16px;
     font-size: 18px;

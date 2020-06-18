@@ -19,10 +19,12 @@ import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import searchProducts from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SearchProducts";
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
+import reset from "@insite/client-framework/Store/Components/ProductSelector/Handlers/Reset";
 import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
 import debounce from "lodash/debounce";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 interface OwnProps {
     onSelectProduct: (product: ProductModelExtended) => void;
@@ -40,6 +42,7 @@ const mapStateToProps = (state: ApplicationState) => {
         searchResults,
         selectedProduct,
         errorType,
+        location: getLocation(state),
     });
 };
 
@@ -47,6 +50,7 @@ const mapDispatchToProps = {
     searchProducts,
     setProduct,
     changeProductUnitOfMeasure,
+    reset,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -128,14 +132,6 @@ const styles: ProductSelectorStyles = {
                 breakpointMediaQueries(theme, [null, css` width: 100%; `], "max")}
         `,
     },
-    searchDynamicDropdown: {
-        cssOverrides: {
-            selectedText: css`
-                width: 100%;
-                overflow: hidden;
-            `,
-        },
-    },
 };
 
 const ENTER_KEY = 13;
@@ -154,6 +150,8 @@ const ProductSelector: React.FC<Props> = ({
     customErrorMessage,
     productIsConfigurableMessage,
     productIsUnavailableMessage,
+    location,
+    reset,
 }) => {
     const [qty, setQty] = React.useState("1");
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
@@ -161,6 +159,10 @@ const ProductSelector: React.FC<Props> = ({
     const [options, setOptions] = React.useState<OptionObject[]>([]);
     const [searchTerm, setSearchTerm] = React.useState("");
     const [mergedStyles] = React.useState(() => mergeToNew(styles, extendedStyles));
+
+    React.useEffect(() => {
+        reset();
+    }, [location.pathname]);
 
     React.useEffect(() => {
         if (!searchResults) {
@@ -256,10 +258,7 @@ const ProductSelector: React.FC<Props> = ({
         if (event.charCode === ENTER_KEY) {
             if (selectedProduct) {
                 selectProduct();
-            } else if (searchResults && searchResults.length === 1) {
-                const productId = searchResults[0].id ?? "";
-                setProduct({ productId, validateProduct: true });
-            } else if (searchTerm) {
+            }  else if (searchTerm && (!searchResults || searchResults.length === 0)) {
                 setProduct({ searchTerm });
             }
         }

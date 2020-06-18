@@ -261,7 +261,7 @@ const widgetModule: WidgetModule = {
         displayName: "Default Card",
         group: "Saved Payments",
         allowedContexts: [SavedPaymentsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

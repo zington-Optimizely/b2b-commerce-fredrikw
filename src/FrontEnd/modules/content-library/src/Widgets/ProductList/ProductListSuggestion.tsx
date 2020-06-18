@@ -68,7 +68,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Suggestion",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

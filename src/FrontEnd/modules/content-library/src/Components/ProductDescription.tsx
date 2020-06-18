@@ -1,13 +1,14 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import React, { FC } from "react";
-import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
+import { CartLineModel, OrderLineModel } from "@insite/client-framework/Types/ApiModels";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import { css } from "styled-components";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 
 interface OwnProps {
-    product: CartLineModel | ProductModelExtended;
+    product: CartLineModel | ProductModelExtended | OrderLineModel;
     extendedStyles?: ProductDescriptionStyles;
 }
 
@@ -15,6 +16,7 @@ type Props = OwnProps;
 
 export interface ProductDescriptionStyles {
     productDetailLink?: LinkPresentationProps;
+    productDetailDescription?: TypographyProps;
 }
 
 export const productDescriptionStyles: ProductDescriptionStyles = {
@@ -35,15 +37,16 @@ const ProductDescription: FC<Props> = ({
 }) => {
     const [styles] = React.useState(() => mergeToNew(productDescriptionStyles, extendedStyles));
 
+    const description = ("productTitle" in product)
+        ? product.productTitle
+        : product.shortDescription || ("description" in product ? product.description : "");
     const productDetailPath = ("productDetailPath" in product || "canonicalUrl" in product)
         ? product.productDetailPath || product.canonicalUrl
         : product.productUri;
 
-    return (
-        <Link {...styles.productDetailLink} href={productDetailPath} data-test-selector="productDescriptionLink">
-            {("productTitle" in product) ? product.productTitle : product.shortDescription}
-        </Link>
-    );
+    return productDetailPath && (!("isActiveProduct" in product) || product.isActiveProduct)
+        ? <Link {...styles.productDetailLink} href={productDetailPath} data-test-selector="productDescriptionLink">{description}</Link>
+        : <Typography {...styles.productDetailDescription}>{description}</Typography>;
 };
 
 export default ProductDescription;

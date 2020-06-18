@@ -63,6 +63,8 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps)(Image),
     definition: {
         group: "Basic",
+        icon: "Image",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.imageUrl,

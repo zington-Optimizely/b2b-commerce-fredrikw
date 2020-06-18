@@ -152,7 +152,13 @@ class Menu extends React.Component<MenuProps, MenuState> {
     closeMenu = () => {
         this.setState({ isOpen: false },
             () => setTimeout(
-                () => { this.setState({ isOpen: true }); },
+                () => {
+                    // The make the all browsers act the same on item click.
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                    this.setState({ isOpen: true });
+                },
                 100,
             ));
     };

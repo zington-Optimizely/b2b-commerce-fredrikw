@@ -28,7 +28,6 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps)(PageTitle),
     definition: {
         group: "Basic",
-        fieldDefinitions: [],
     },
 };
 

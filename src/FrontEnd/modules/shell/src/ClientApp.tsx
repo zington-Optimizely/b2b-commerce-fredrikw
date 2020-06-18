@@ -14,7 +14,7 @@ import shellTheme from "@insite/shell/ShellTheme";
 import { parseAdminTokenFromLocalStorage } from "@insite/shell/Store/BearerToken";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import ConfirmationProvider from "@insite/shell/Components/Modals/ConfirmationProvider";
-import { setReduxDispatcher } from "@insite/shell/Services/ContentAdminService";
+import { setReduxDispatcher } from "@insite/shell/Services/ServiceBase";
 import { clearCookiesAndStorage } from "@insite/shell/Store/ShellContext/ShellContextReducer";
 import { trackUserEvents } from "@insite/shell/Services/AccessTokenService";
 import translate from "@insite/client-framework/Translate";

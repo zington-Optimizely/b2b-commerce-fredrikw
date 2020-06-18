@@ -123,7 +123,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        fieldDefinitions: [],
+        isSystemPage: true,
     },
 };
 

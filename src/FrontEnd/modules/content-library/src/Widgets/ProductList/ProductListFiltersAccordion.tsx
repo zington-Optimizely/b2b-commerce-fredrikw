@@ -35,7 +35,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Filters Accordion",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -20,7 +20,6 @@ const pageModule: PageModule = {
     definition: {
         hasEditableTitle: true,
         hasEditableUrlSegment: false,
-        fieldDefinitions: [],
     },
 };
 

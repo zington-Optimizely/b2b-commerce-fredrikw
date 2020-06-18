@@ -2,7 +2,7 @@ import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import sleep from "@insite/client-framework/Common/Sleep";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
 import { getCurrentPageForShell, getStorablePage } from "@insite/shell/Store/ShellSelectors";
-import { AdminServiceGetBrandsApiParameters, getAdminBrands } from "@insite/shell/Services/AdminService";
+import { AdminODataApiParameter, getAdminBrands } from "@insite/shell/Services/AdminService";
 import {
     getBrands,
     getCategories,
@@ -49,9 +49,9 @@ export const loadBrands = (): ShellThunkAction => dispatch => {
     }());
 };
 
-export const loadSelectBrands = (parameters?: AdminServiceGetBrandsApiParameters): ShellThunkAction => dispatch => {
+export const loadSelectBrands = (parameter?: AdminODataApiParameter): ShellThunkAction => dispatch => {
     addTask(async function () {
-        const brands = await getAdminBrands(parameters);
+        const brands = await getAdminBrands(parameter);
 
         dispatch({
             brands,
@@ -60,9 +60,9 @@ export const loadSelectBrands = (parameters?: AdminServiceGetBrandsApiParameters
     }());
 };
 
-export const loadSelectedBrands = (parameters?: AdminServiceGetBrandsApiParameters): ShellThunkAction => dispatch => {
+export const loadSelectedBrands = (parameter?: AdminODataApiParameter): ShellThunkAction => dispatch => {
     addTask(async function () {
-        const brands = await getAdminBrands(parameters);
+        const brands = await getAdminBrands(parameter);
 
         dispatch({
             brands,

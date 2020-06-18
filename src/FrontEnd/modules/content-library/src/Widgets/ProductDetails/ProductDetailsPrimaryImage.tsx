@@ -149,7 +149,7 @@ const widgetModule: WidgetModule = {
         displayName: "Primary Image",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

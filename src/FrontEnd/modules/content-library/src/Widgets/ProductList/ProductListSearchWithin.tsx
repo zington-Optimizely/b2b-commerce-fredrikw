@@ -109,7 +109,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Search Within",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

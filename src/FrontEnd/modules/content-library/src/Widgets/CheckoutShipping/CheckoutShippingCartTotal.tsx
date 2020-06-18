@@ -101,8 +101,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
-        fieldDefinitions: [],
         displayName: "Cart Total",
+        isSystem: true,
     },
 };
 

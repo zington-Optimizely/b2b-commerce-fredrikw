@@ -32,7 +32,7 @@ export const DispatchCompleteLoadOrder: HandlerType = props => {
     });
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -41,7 +41,7 @@ export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
     DispatchCompleteLoadOrder,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const loadShipTo = createHandlerChainRunner(chain, "LoadShipTo");

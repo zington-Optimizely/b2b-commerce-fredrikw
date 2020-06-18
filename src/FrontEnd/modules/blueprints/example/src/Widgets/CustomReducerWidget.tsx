@@ -29,7 +29,6 @@ const CustomReducerWidget: React.FC<Props> = ({ dispatch, immerCount, traditiona
 
 export const definition: WidgetDefinition = {
     group: "Testing Extensions" as any, // Extend the standard groups with `as any`.
-    fieldDefinitions: [],
 };
 
 const widgetModule: WidgetModule = {

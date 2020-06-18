@@ -30,7 +30,7 @@ const mapStateToProps = (state: ApplicationState) => {
         filterQuery,
         isSearchPage,
         search: location.search,
-        path: selectedCategoryPath || location.pathname,
+        path: selectedCategoryPath || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname),
         breadcrumbLinks: state.components.breadcrumbs.links,
         productListCatalogPage: catalogPage,
         websiteName: state.context.website.name,
@@ -163,8 +163,8 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: false,
         hasEditableTitle: false,
-        fieldDefinitions: [],
         supportsCategorySelection: true,
+        isSystemPage: true,
     },
 };
 

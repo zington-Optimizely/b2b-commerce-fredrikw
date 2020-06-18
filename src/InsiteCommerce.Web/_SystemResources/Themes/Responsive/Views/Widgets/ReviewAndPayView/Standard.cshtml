@@ -172,7 +172,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard">
+                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard && vm.usePaymetricGateway">
+                            <iframe id="paymetricIframe" class="paymetric-iframe-block" style="width:100%;" ></iframe>
+                        </div>
+                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard && !vm.usePaymetricGateway">
                             <div class="card-type">
                                 <label for="cardType">[% translate 'Card Type' %]</label>
                                 <select id="cardType" name="cardType"

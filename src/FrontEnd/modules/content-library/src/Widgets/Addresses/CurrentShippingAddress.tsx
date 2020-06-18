@@ -200,9 +200,9 @@ const UseBillingAddressButton: React.FunctionComponent<UseBillingAddressButtonPr
 const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(CurrentShippingAddress),
     definition: {
-        fieldDefinitions: [],
         group: "Addresses",
         allowedContexts: [AddressesPageContext],
+        isSystem: true,
     },
 };
 

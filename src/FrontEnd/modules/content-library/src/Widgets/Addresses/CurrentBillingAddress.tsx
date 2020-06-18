@@ -137,9 +137,9 @@ const CurrentBillingAddress: React.FunctionComponent<Props> = (props: Props) => 
 const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(CurrentBillingAddress),
     definition: {
-        fieldDefinitions: [],
         group: "Addresses",
         allowedContexts: [AddressesPageContext],
+        isSystem: true,
     },
 };
 

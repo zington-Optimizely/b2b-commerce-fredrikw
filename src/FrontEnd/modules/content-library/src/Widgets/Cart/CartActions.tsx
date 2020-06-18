@@ -133,11 +133,11 @@ const CartActions: FC<Props> = ({
     return (
         <>
             <Hidden {...styles.narrowHidden} data-test-selector="cartActionsNarrow">
-                <OverflowMenu {...styles.narrowOverflowMenu}>
+                <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
                     <Clickable {...styles.saveOrderClickable}
                         disabled={!canSaveOrder}
                         data-test-selector="cartlineSaveOrder">
-                        {translate("Save Order")}
+                            {translate("Save Order")}
                     </Clickable>
                     {overflowItems}
                 </OverflowMenu>
@@ -160,7 +160,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

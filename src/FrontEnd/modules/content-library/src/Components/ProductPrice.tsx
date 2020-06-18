@@ -13,6 +13,7 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps {
     product: ProductModelExtended | CartLineModel;
@@ -26,6 +27,7 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     currencySymbol: ownProps.currencySymbol ?? state.context.session.currency?.currencySymbol ?? "",
+    canSeePrices: getSettingsCollection(state).productSettings.canSeePrices,
 });
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
@@ -50,6 +52,7 @@ interface RequiresQuoteMessageStyle {
 
 interface PriceStyles {
     priceText?: TypographyPresentationProps;
+    signInText?: TypographyPresentationProps;
     errorText?: TypographyPresentationProps;
     realTimeText?: TypographyPresentationProps;
     unitOfMeasureText?: TypographyPresentationProps;
@@ -122,6 +125,7 @@ const SectionWrapper = getStyledWrapper("section");
 const ProductPrice: FC<Props> = ({
                                      product,
                                      currencySymbol,
+                                     canSeePrices,
                                      showLabel = true,
                                      showSavings = false,
                                      showSavingsAmount = false,
@@ -137,6 +141,14 @@ const ProductPrice: FC<Props> = ({
 
     const quoteStyles = styles.quoteMessage || {};
     const priceStyles = styles.price || {};
+
+    if (!canSeePrices) {
+        return (
+            <StyledWrapper {...styles.wrapper}>
+                <Typography {...priceStyles.signInText}>{siteMessage("Pricing_SignInForPrice")}</Typography>
+            </StyledWrapper>
+        );
+    }
 
     if ((product as ProductModelExtended).failedToLoadPricing) {
         return (

@@ -265,7 +265,7 @@ const CartLinesHeader: FC<CartLinesHeaderProps> = ({
                 </Checkbox>
             </CheckboxGroup>
             <Hidden above="md">
-                <OverflowMenu {...headerStyles.overflowMenu}>
+                <OverflowMenu position="end" {...headerStyles.overflowMenu}>
                     <Clickable onClick={onRemoveAllClick}>{translate("Remove All")}</Clickable>
                 </OverflowMenu>
             </Hidden>
@@ -299,6 +299,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showLineNotes,

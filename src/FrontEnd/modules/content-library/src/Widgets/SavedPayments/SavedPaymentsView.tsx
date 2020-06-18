@@ -145,7 +145,7 @@ const widgetModule: WidgetModule = {
         displayName: "View",
         group: "Saved Payments",
         allowedContexts: [SavedPaymentsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

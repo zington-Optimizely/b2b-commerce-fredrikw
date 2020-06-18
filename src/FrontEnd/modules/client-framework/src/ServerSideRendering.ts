@@ -16,24 +16,27 @@ let domain: undefined | {
          * Insite-specific extensions to the `domain.active` feature.
          * Using `domain.active` this way is not explicitly supported, but seems to work the way we need.
          */
-        insiteSession: {
-            /** Ensures that we have the url available when needed for server side rendering. */
-            url?: URL;
-            redirectTo?: string;
-            trackedPromises: Promise<any>[];
-            /** Callback for tracking added promises. */
-            promiseAddedCallback?: (stack: string) => void;
-            cookies?: string | undefined;
-            userAgent?: string | undefined;
-            statusCode?: number;
-            messagesByName: SafeDictionary<string>;
-            initialPage?: {
-                result: RetrievePageResult,
-                url: string,
-            } | undefined
-        }
+        insiteSession: InsiteSession,
     }
 };
+
+interface InsiteSession {
+    /** Ensures that we have the url available when needed for server side rendering. */
+    url?: URL;
+    redirectTo?: string;
+    trackedPromises: Promise<any>[];
+    /** Callback for tracking added promises. */
+    promiseAddedCallback?: (stack: string) => void;
+    cookies?: string | undefined;
+    userAgent?: string | undefined;
+    statusCode?: number;
+    messagesByName: SafeDictionary<string>;
+    displayErrorPage?: true | undefined;
+    initialPage?: {
+        result: RetrievePageResult,
+        url: string,
+    } | undefined
+}
 
 export const throwIfClientSide = () => {
     if (!IS_SERVER_SIDE) {
@@ -91,55 +94,41 @@ const getSession = () => {
     return data;
 };
 
-export function getInitialPage() {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
+export function setDisplayErrorPage() {
+    throwIfClientSide();
 
-    return getSession().initialPage;
+    getSession().displayErrorPage = true;
+}
+
+export function getDisplayErrorPage() {
+    return getSessionValue("displayErrorPage");
+}
+
+export function getInitialPage() {
+    return getSessionValue("initialPage");
 }
 
 export function setInitialPage(result: RetrievePageResult, url: string) {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
-
-    getSession().initialPage = {
+    setSessionValue("initialPage", {
         result,
         url,
-    };
+    });
 }
 
 export function clearInitialPage() {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
-
-    getSession().initialPage = undefined;
+    setSessionValue("initialPage", undefined);
 }
 
 export function setStatusCode(statusCode: number) {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
-
-    getSession().statusCode = statusCode;
+    setSessionValue("statusCode", statusCode);
 }
 
 export function getStatusCode() {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
-
-    return getSession().statusCode;
+    return getSessionValue("statusCode");
 }
 
 export function setSessionCookies(cookies: string | undefined) {
-    if (IS_SERVER_SIDE === false) {
-        return;
-    }
-
-    getSession().cookies = cookies;
+    setSessionValue("cookies", cookies);
 }
 
 /** Ensures that we have the url available when needed for server side rendering */
@@ -159,30 +148,38 @@ export function setUrl(url: string) {
     session.trackedPromises = [];
 }
 
+export function getUrl() {
+    return getSessionValue("url");
+}
+
 /** The list of tracked promises that are blocking SSR completion. */
 export function getTrackedPromises() {
-    if (IS_SERVER_SIDE === false) {
-        return [];
-    }
-
-    return getSession().trackedPromises;
+    return getSessionValue("trackedPromises");
 }
 
 /** Sets a calback that receives notifications when promises are added. */
 export function setPromiseAddedCallback(promiseAddedCallback: (stack: string) => void) {
-    if (!IS_SERVER_SIDE) {
-        return;
-    }
-
-    getSession().promiseAddedCallback = promiseAddedCallback;
+    setSessionValue("promiseAddedCallback", promiseAddedCallback);
 }
 
 export function setUserAgent(userAgent?: string) {
+    setSessionValue("userAgent", userAgent);
+}
+
+function getSessionValue<P extends keyof InsiteSession>(property: P) {
     if (!IS_SERVER_SIDE) {
         return;
     }
 
-    getSession().userAgent = userAgent;
+    return getSession()[property];
+}
+
+function setSessionValue<P extends keyof InsiteSession, V extends InsiteSession[P]>(property: P, value: V) {
+    if (!IS_SERVER_SIDE) {
+        return;
+    }
+
+    getSession()[property] = value;
 }
 
 /** Used in place of `history.push` when server-side rendering. */

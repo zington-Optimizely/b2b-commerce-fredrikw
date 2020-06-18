@@ -26,14 +26,14 @@ export const SetFormErrors: HandlerType = props => {
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(Object.keys(props.formErrors).length === 0);
 };
 
 export const chain = [
     ValidateAddress,
     SetFormErrors,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const validateShippingAddressForm = createHandlerChainRunner(chain, "ValidateShippingAddressForm");

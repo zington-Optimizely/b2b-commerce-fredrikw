@@ -31,75 +31,20 @@ import logger from "@insite/client-framework/Logger";
 import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import setCookie from "set-cookie-parser";
-import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/server-framework/ServerConfiguration";
+import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
 import { encodeCookie } from "@insite/client-framework/Common/Cookies";
 import { setResolver, processSiteMessages } from "@insite/client-framework/SiteMessage";
 import { getSiteMessages } from "@insite/client-framework/Services/WebsiteService";
 import translate from "@insite/client-framework/Translate";
 import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
 import getPageMetadataProperties from "@insite/client-framework/Common/Utilities/getPageMetadataProperties";
+import getTemplate from "@insite/server-framework/getTemplate";
+import diagnostics from "@insite/server-framework/diagnostics";
+import healthCheck from "@insite/server-framework/healthCheck";
 
 setResolver(serverSiteMessageResolver);
 
 let checkedForSiteGeneration = false;
-
-const healthCheck = (() => {
-    let activeQuickPing: Promise<{ status: number, text: () => Promise<string> }> | undefined;
-
-    return async (request: Request, response: Response) => {
-        const quickPing = activeQuickPing ?? (activeQuickPing = fetch(`${process.env.ISC_API_URL}/QuickPing.aspx`)
-        .catch(() => {
-            activeQuickPing = undefined;
-            return {
-                status: 500,
-                text: () => new Promise<string>(resolve => resolve("")),
-            };
-        })
-        .then(value => {
-            value.text(); // Consume the data to fully complete the request, don't need to wait for this.
-            activeQuickPing = undefined;
-            return value;
-        }));
-        const quickPingResponse = await quickPing;
-
-        const { status } = quickPingResponse;
-        response.status(status).json({
-            nodeVersion: process.version, // Resolves any ambiguity about what version of Node is being used.
-            checks: {
-                quickPing: status === 200,
-            },
-        });
-    };
-})();
-
-const diagnostics = async (request: Request, response: Response) => {
-    const { authorization } = request.headers;
-    if (!authorization) {
-        response.status(401).send();
-        return;
-    }
-
-    const authenticationResponse = await fetch(`${process.env.ISC_API_URL}/api/v2/contentadmin/CheckAuthentication`, { headers: { authorization } });
-    const text = await authenticationResponse.text();
-
-    const { status } = authenticationResponse;
-    if (status !== 200) {
-        response
-            .status(status)
-            .contentType(authenticationResponse.headers.get("Content-Type") ?? "text/plain")
-            .send(text);
-        return;
-    }
-
-    const { ISC_API_URL, BLUEPRINT, BUILD_INFO } = process.env;
-
-    response.json({
-        Node: process.version,
-        ISC_API_URL,
-        BLUEPRINT,
-        BUILD_INFO,
-    });
-};
 
 const redirectTo = async ({ originalUrl, path }: Request, response: Response) => {
     const destination = await getPageUrlByType(path.substr("/RedirectTo/".length)) || "/";
@@ -117,6 +62,10 @@ export default function server(request: Request, response: Response, domain: any
             return healthCheck(request, response);
         case "/.spire/diagnostics":
             return diagnostics(request, response);
+    }
+
+    if (request.path.toLowerCase().startsWith("/.spire/content/getTemplate".toLowerCase())) {
+        return getTemplate(request, response);
     }
 
     let endpoint = request.path.split("/")[1]; // '/blah'.split('/') = ['', 'blah']
@@ -229,7 +178,7 @@ async function pageRenderer(request: Request, response: Response) {
 
         renderRawAndStyles();
 
-        const trackedPromises = getTrackedPromises();
+        const trackedPromises = getTrackedPromises() ?? [];
         let promiseLoops = 0; // After a certain number of loops, there may be a problem.
         let redirect = getRedirectTo();
         while (trackedPromises.length !== 0 && promiseLoops < 10 && !redirect) {
@@ -348,7 +297,7 @@ async function pageRenderer(request: Request, response: Response) {
                 )}
                 <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
                 {/* eslint-enable react/no-danger */}
-                <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js`} />
+                <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js?v=${BUILD_DATE}`} />
                 <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
                 {isShellRequest  && <script src="/SystemResources/Scripts/Libraries/ckfinder/3.4.1/ckfinder.js"></script>}
             </body>

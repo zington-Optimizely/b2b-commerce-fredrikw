@@ -18,7 +18,7 @@ export const DispatchResetPaymentProfiles: HandlerType = props => {
     });
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -26,7 +26,7 @@ export const chain = [
     PopulateApiParameter,
     RequestDataFromApi,
     DispatchResetPaymentProfiles,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const addPaymentProfile = createHandlerChainRunner(chain, "AddPaymentProfile");

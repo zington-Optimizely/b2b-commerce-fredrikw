@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */ // Node, at the time of writing, doesn't support `import`.
+/* eslint-disable @typescript-eslint/no-var-requires,no-console */ // Node, at the time of writing, doesn't support `import`.
 const timerName = "Startup time";
 console.time(timerName);
 console.log("Starting.");

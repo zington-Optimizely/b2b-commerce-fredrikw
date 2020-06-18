@@ -17,8 +17,8 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: false,
         hasEditableTitle: true,
-        fieldDefinitions: [],
         supportsCategorySelection: true,
+        isSystemPage: true,
     },
 };
 

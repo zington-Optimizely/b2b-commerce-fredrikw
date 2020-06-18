@@ -20,7 +20,7 @@ const clientConfig = merge(commonConfig, commonClientConfig, {
             IS_SERVER_SIDE: false,
         }),
     ],
-    devtool: "inline-source-map",
+    devtool: "inline-source-map", // slowest build/slowest rebuild but shows proper source, eval-cheap-source-map is only like 2 seconds faster and gives us transpiled code
 });
 
 const serverConfig = merge(commonConfig, commonServerConfig, {
@@ -31,6 +31,7 @@ const serverConfig = merge(commonConfig, commonServerConfig, {
             IS_SERVER_SIDE: true,
         }),
     ],
+    devtool: "eval-cheap-source-map", // fast build/faster rebuild - line numbers slightly off because they are from transpiled source. inline-source-map wasn't working
 });
 
 

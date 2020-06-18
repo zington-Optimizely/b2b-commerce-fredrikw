@@ -125,7 +125,7 @@ const widgetModule: WidgetModule = {
         icon: "Image",
         displayName: "Brand Image",
         allowedContexts: [BrandDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -39,13 +39,10 @@ const OrderDetailsShippingAddress: React.FunctionComponent = () => {
     }
 
     const hasShippingAddress = order.fulfillmentMethod === "Ship" || !order.fulfillmentMethod;
-    if (!hasShippingAddress) {
-        return null;
-    }
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.titleText}>{translate("Shipping Address")}</Typography>
+            <Typography {...styles.titleText}>{translate(hasShippingAddress ? "Shipping Address" : "Pick Up Location")}</Typography>
             <AddressInfoDisplay
                 companyName={order.stCompanyName}
                 address1={order.stAddress1}
@@ -64,7 +61,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

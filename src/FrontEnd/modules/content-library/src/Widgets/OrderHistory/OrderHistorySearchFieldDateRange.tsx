@@ -109,7 +109,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         allowedContexts: [OrderHistoryPageContext],
         displayName: "Date Range",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

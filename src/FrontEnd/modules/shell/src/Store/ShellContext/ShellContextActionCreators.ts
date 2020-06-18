@@ -25,6 +25,7 @@ export const loadShellContext = (): ShellThunkAction => dispatch => {
             personaId: shellContext.defaultPersonaId,
             deviceType: "Desktop",
             defaultLanguageId: shellContext.defaultLanguageId,
+            permissions: shellContext.permissions,
         });
     }());
 };

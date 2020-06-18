@@ -17,6 +17,7 @@ import {
 import Icon from "@insite/mobius/Icon";
 import Trash2 from "@insite/mobius/Icons/Trash2";
 import Edit from "@insite/mobius/Icons/Edit";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 interface OwnProps {
     id: string;
@@ -29,10 +30,15 @@ interface State {
     error?: Error;
 }
 
-const mapStateToProps = ({ data: { pages: { widgetsById, draggingWidgetId } } }: ApplicationState, { id }: OwnProps) => {
+const mapStateToProps = (state: ApplicationState, { id }: OwnProps) => {
+    const { data: { pages: { widgetsById, draggingWidgetId, widgetDefinitionsByType, pageDefinitionsByType } }, context: { permissions } } = state;
     return {
         widget: widgetsById[id],
         draggingWidgetId,
+        permissions,
+        widgetDefinitionsByType,
+        currentPageType: getCurrentPage(state).type,
+        pageDefinitionsByType,
     };
 };
 
@@ -98,7 +104,7 @@ class WidgetRenderer extends React.Component<Props, State> {
     };
 
     dragHandleMouseDown = () => {
-        if (this.props.fixed) {
+        if (this.props.fixed || !this.canMoveWidget()) {
             return;
         }
         this.widgetHover.current!.setAttribute("draggable", "true");
@@ -119,6 +125,22 @@ class WidgetRenderer extends React.Component<Props, State> {
         current!.parentElement!.parentElement!.removeAttribute("data-dragging");
         current!.style.display = "";
         this.props.endDraggingWidget();
+    };
+
+    private canEditWidget = () => {
+        return this.props.permissions?.canEditWidget;
+    };
+
+    private canMoveWidget = () => {
+        const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
+        return pageDefinition && ((this.props.permissions?.canMoveWidgets && !pageDefinition.isSystemPage)
+            || (this.props.permissions?.canMoveSystemWidgets && pageDefinition.isSystemPage));
+    };
+
+    private canDeleteWidget = () => {
+        const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
+        return pageDefinition && ((this.props.permissions?.canDeleteWidget && !pageDefinition.isSystemPage)
+            || (this.props.permissions?.canDeleteSystemWidget && pageDefinition.isSystemPage));
     };
 
     render() {
@@ -144,11 +166,13 @@ class WidgetRenderer extends React.Component<Props, State> {
                 <WidgetStyle>
                     {(!draggingWidgetId || draggingWidgetId === widget.id)
                         && <HoverStyle ref={this.widgetHover} onDragStart={this.dragStart} onDragEnd={this.dragEnd} data-test-selector={`widgetHover_${type}`}>
-                            <WidgetHoverNameStyle fixed={fixed} onMouseDown={this.dragHandleMouseDown} data-test-selector="widgetHover_title">{widget.type}</WidgetHoverNameStyle>
-                            <IconLink onClick={this.editWidget} data-test-selector="widgetHover_edit" title="Edit">
+                            <WidgetHoverNameStyle fixed={fixed || !this.canMoveWidget()} onMouseDown={this.dragHandleMouseDown} data-test-selector="widgetHover_title">{widget.type}</WidgetHoverNameStyle>
+                            {this.canEditWidget()
+                            && <IconLink onClick={this.editWidget} data-test-selector="widgetHover_edit" title="Edit">
                                 <Icon src={Edit} size={20} color="#fff" />
                             </IconLink>
-                            {!fixed
+                            }
+                            {!fixed && this.canDeleteWidget()
                             && <IconLink onClick={this.removeWidget} title="Delete" data-test-selector="widgetHover_delete">
                                 <Icon src={Trash2} size={20} color="#fff" />
                             </IconLink>

@@ -13,10 +13,12 @@ import {
     OpenGraphTitle,
     OpenGraphUrl,
 } from "@insite/client-framework/Types/FieldDefinition";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
 
 const Page: React.FunctionComponent<PageProps> = ({ id }) => (
     <MobiusPage>
         <Zone contentId={id} zoneName="Content" requireRows />
+        <AddToListModal />
     </MobiusPage>
 );
 

@@ -39,7 +39,7 @@ export const ReloadData: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -49,7 +49,7 @@ export const chain = [
     UpdateContext,
     DispatchCompleteLoadSession,
     ReloadData,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const setCurrentShipTo = createHandlerChainRunner(chain, "SetCurrentShipTo");

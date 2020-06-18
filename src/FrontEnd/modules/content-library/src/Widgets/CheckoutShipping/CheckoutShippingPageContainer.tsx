@@ -106,8 +106,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Page Container",
         group: "Checkout - Shipping",
-        fieldDefinitions: [],
         allowedContexts: [CheckoutShippingPageContext],
+        isSystem: true,
     },
 };
 

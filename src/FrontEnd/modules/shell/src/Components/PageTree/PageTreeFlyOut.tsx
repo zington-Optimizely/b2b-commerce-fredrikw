@@ -16,6 +16,8 @@ import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextAct
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import { RouteComponentProps, withRouter } from "react-router";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { getPageDefinition, LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
 
 interface OwnProps {
     flyOutNode: TreeNodeModel;
@@ -34,6 +36,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: ShellState) => ({
     currentPageId: getCurrentPageForShell(state).id,
+    permissions: state.shellContext.permissions,
 });
 
 type Props = RouteComponentProps
@@ -86,14 +89,15 @@ class PageTreeFlyOut extends React.Component<Props> {
     };
 
     render() {
-        const { flyOutNode } = this.props;
+        const { flyOutNode, permissions } = this.props;
         const style = this.getFlyOutStyle();
+        const pageDefinition = getPageDefinition(flyOutNode.type);
 
         return <PageTreeFlyOutMenu style={style}>
-            {canEditPage(flyOutNode) && flyOutOption(this.handleEditPage, <Edit/>, "Edit Page")}
-            {canAddChildPage(flyOutNode) && flyOutOption(this.handleAddPage, <OverflowAddPage/>, "Add Page")}
-            {canCopyPage(flyOutNode) && flyOutOption(this.handleCopyPage, <OverflowCopyPage/>, "Copy Page")}
-            {canDeletePage(flyOutNode) && flyOutOption(this.handleDeletePage, <Trash color1="#9b9b9b"/>, "Delete")}
+            {pageDefinition && permissions && canEditPage(pageDefinition, permissions) && flyOutOption(this.handleEditPage, <Edit/>, "Edit Page")}
+            {permissions && canAddChildPage(pageDefinition, permissions, flyOutNode) && flyOutOption(this.handleAddPage, <OverflowAddPage/>, "Add Page")}
+            {pageDefinition && permissions?.canCopyPage && flyOutOption(this.handleCopyPage, <OverflowCopyPage/>, "Copy Page")}
+            {pageDefinition && permissions && canDeletePage(pageDefinition, permissions, flyOutNode) && flyOutOption(this.handleDeletePage, <Trash color1="#9b9b9b"/>, "Delete")}
         </PageTreeFlyOutMenu>;
     }
 
@@ -113,23 +117,29 @@ class PageTreeFlyOut extends React.Component<Props> {
     }
 }
 
-function canEditPage(treeNode: TreeNodeModel): boolean {
-    return true;
+export const pageTreeFlyOutMenuHasItems = (flyOutNode: TreeNodeModel, permissions: PermissionsModel | undefined): boolean => {
+    const pageDefinition = getPageDefinition(flyOutNode.type);
+    return !!permissions && pageDefinition
+        && (canEditPage(pageDefinition, permissions)
+        || canAddChildPage(pageDefinition, permissions, flyOutNode)
+        || permissions.canCopyPage
+        || canDeletePage(pageDefinition, permissions, flyOutNode));
+};
+
+function canAddChildPage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel, treeNode: TreeNodeModel): boolean {
+    return permissions.canCreatePage && treeNode.displayName !== "Header" && treeNode.displayName !== "Footer";
 }
 
-function canAddChildPage(treeNode: TreeNodeModel): boolean {
-    return treeNode.displayName !== "Header" && treeNode.displayName !== "Footer";
+function canEditPage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel): boolean {
+    return ((permissions.canEditWidget && !pageDefinition.isSystemPage) || (permissions.canEditSystemWidget && pageDefinition.isSystemPage === true));
 }
 
-function canDeletePage(treeNode: TreeNodeModel): boolean {
-    return treeNode.displayName !== "Header" && treeNode.displayName !== "Footer" && pageDefinitions[treeNode.type]?.isDeletable === true;
+function canDeletePage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel, treeNode: TreeNodeModel): boolean {
+    return permissions.canDeletePage && !pageDefinition.isSystemPage && pageDefinition.isDeletable === true
+        && treeNode.displayName !== "Header" && treeNode.displayName !== "Footer";
 }
 
 function canEditOptions(treeNode: TreeNodeModel): boolean {
-    return true;
-}
-
-function canCopyPage(treeNode: TreeNodeModel): boolean {
     return true;
 }
 
@@ -175,8 +185,8 @@ const FlyoutOption = styled.div`
     }
 
     &:hover {
-        background-color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
-        color: ${(props: ShellThemeProps) => props.theme.colors.text.accent};
+        background-color: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
+        color: ${(props: ShellThemeProps) => props.theme.colors.common.background};
     }
 
     &:first-child {

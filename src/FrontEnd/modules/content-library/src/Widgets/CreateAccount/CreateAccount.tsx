@@ -363,7 +363,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [CreateAccountPageContext],
         group: "Create Account",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

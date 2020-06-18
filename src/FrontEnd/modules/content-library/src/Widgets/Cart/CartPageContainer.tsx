@@ -192,8 +192,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],
-        fieldDefinitions: [],
         displayName: "Page Container",
+        isSystem: true,
     },
 };
 

@@ -15,6 +15,8 @@ import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { History } from "@insite/mobius/utilities/HistoryContext";
 import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 
 export const beginDraggingWidget = (id: string): AnyAction => ({
     type: "Data/Pages/BeginDraggingWidget",
@@ -137,7 +139,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             logger.error(ex);
             const pageLink = getPageLinkByPageType(getState(), "UnhandledErrorPage");
             if (pageLink) {
-                history?.push(pageLink.url);
+                redirectTo(pageLink.url);
             }
             return;
         }
@@ -164,6 +166,16 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
         }
     }());
 };
+
+export const setWidgetDefinitions = (widgetDefinitionsByType: SafeDictionary<WidgetDefinition>): AnyAction => ({
+    type: "Data/Pages/WidgetDefinitions",
+    widgetDefinitionsByType,
+});
+
+export const setPageDefinitions = (pageDefinitionsByType: SafeDictionary<PageDefinition>): AnyAction => ({
+    type: "Data/Pages/PageDefinitions",
+    pageDefinitionsByType,
+});
 
 function getContextData(state: ApplicationState) {
     const { context } = state;

@@ -4,7 +4,6 @@ import styled, { withTheme, ThemeProps, css } from "styled-components";
 import CheckboxGroupContext, { CheckboxGroupContextData } from "../CheckboxGroup/CheckboxGroupContext";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps, IconProps } from "../Icon";
-import Check from "../Icons/Check";
 import ToggleInput from "./ToggleInput";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
@@ -106,7 +105,6 @@ const IconCheck: React.FC<{ iconProps: IconProps }> = ({ iconProps, ...thisOther
 
 type Props = CheckboxProps & ThemeProps<BaseTheme>;
 
-
 type State = Pick<Props, "checked" | "uid">;
 
 const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<Props, "children" |  "disabled" | "disable" | "error" | "variant">)[];
@@ -178,6 +176,7 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     const color = applyProp("color", "primary");
                     const labelPosition = applyProp("labelPosition")
                         || (applyProp("variant", "default") === "toggle" ? "left" : "right");
+                    const spreadTypographyProps = spreadProps("typographyProps");
                     const typographyProps = combineTypographyProps({
                         theme: otherProps.theme,
                         passedProps: spreadProps("typographyProps"),
@@ -191,8 +190,8 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     let renderLabel;
                     if (children === 0 || children) {
                         let labelColor = typographyProps.color;
-                        if (error) labelColor = "danger";
-                        if (isDisabled) labelColor = "text.disabled";
+                        if (error) labelColor = spreadTypographyProps.errorColor || "danger";
+                        if (isDisabled) labelColor = spreadTypographyProps.disabledColor || "text.disabled";
                         renderLabel = (
                             <Typography
                                 as="label"

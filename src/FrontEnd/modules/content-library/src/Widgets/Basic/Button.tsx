@@ -61,6 +61,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Button",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.variant,

@@ -68,7 +68,7 @@ const widgetModule: WidgetModule = {
         displayName: "Page Container",
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

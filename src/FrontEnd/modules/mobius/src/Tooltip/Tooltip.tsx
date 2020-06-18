@@ -46,10 +46,10 @@ type TooltipProps = TooltipComponentProps & TooltipPresentationProps;
 const ESC_KEY = 27;
 const ENTER_KEY = 13;
 
-const TooltipContainer = styled.span<InjectableCss<any>>`
+const TooltipContainer = styled.div<InjectableCss<any>>`
     width: 220px;
     position: absolute;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     bottom: 100%;
     left: 50%;
@@ -69,7 +69,8 @@ const TooltipContainer = styled.span<InjectableCss<any>>`
     ${injectCss}
 `;
 
-const TooltipBody = styled.span<InjectableCss<any>>`
+const TooltipBody = styled.div<InjectableCss<any>>`
+    display: inline;
     padding: 10px;
     text-align: center;
     min-width: 100px;
@@ -174,7 +175,7 @@ class Tooltip extends React.Component<TooltipProps> {
                 {...otherProps}
             >
                 <TooltipBody data-id="tooltipBody" css={get(cssOverrides, "tooltipBody")}>
-                    <Typography as="span" {...spreadProps("typographyProps")}>{text}</Typography>
+                    <Typography as="p" {...spreadProps("typographyProps")}>{text}</Typography>
                 </TooltipBody>
             </TooltipContainer>
         );

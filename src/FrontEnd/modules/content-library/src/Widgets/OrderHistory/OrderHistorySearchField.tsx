@@ -56,6 +56,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Field",
         allowedContexts: [OrderHistoryPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.parameterField,

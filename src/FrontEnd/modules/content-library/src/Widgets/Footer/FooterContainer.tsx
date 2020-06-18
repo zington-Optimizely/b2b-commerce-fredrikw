@@ -110,8 +110,8 @@ const footerContainer: WidgetModule = {
     component: FooterContainer,
     definition: {
         group: "Footer",
-        fieldDefinitions: [],
         allowedContexts: [FooterContext],
+        isSystem: true,
     },
 };
 

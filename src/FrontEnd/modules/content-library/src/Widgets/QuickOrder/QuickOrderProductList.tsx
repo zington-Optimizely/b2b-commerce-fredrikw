@@ -277,7 +277,7 @@ const widgetModule: WidgetModule = {
         group: "Quick Order",
         icon: "List",
         allowedContexts: [QuickOrderPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

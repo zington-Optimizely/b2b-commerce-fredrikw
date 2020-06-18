@@ -29,9 +29,9 @@ export const UpdateSession: HandlerType = async props => {
     try {
         props.apiResult = await updateSession(props.apiParameter);
         props.parameter.onApiResponse();
-    } catch (e) {
-        const content = JSON.parse(e.body);
-        props.parameter.onApiResponse(content.message);
+    } catch (error) {
+        const errorMessage = JSON.parse(error.body || "{}").message || error.message;
+        props.parameter.onApiResponse(errorMessage);
     }
 };
 

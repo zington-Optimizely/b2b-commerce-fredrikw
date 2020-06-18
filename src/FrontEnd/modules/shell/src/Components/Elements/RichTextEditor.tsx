@@ -53,6 +53,7 @@ import FroalaEditor from "react-froala-wysiwyg";
 import { connect, DispatchProp } from "react-redux";
 import styled, { css, ThemeProps } from "styled-components";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import { rawRequest } from "@insite/client-framework/Services/ApiService";
 
 const expandArrows = `M15 4.2C14.6 4.2 14.3 4.5 14.3 5s0.3 0.8 0.8 0.8h2.2L12.8 10.1c-0.3 0.3-0.3 0.8 0 1.1 0.1 0.1 0.3
  0.2 0.5 0.2s0.4-0.1 0.5-0.2L18.3 6.8v2.2c0 0.4 0.3 0.8 0.8 0.8s0.8-0.3 0.8-0.8V4.2H15zM11.2 12.8c-0.3-0.3-0.8-0.3-1.1
@@ -105,6 +106,7 @@ interface State {
     modalIsOpen: boolean;
     initControls?: any;
     imagePickerIsOpen?: true;
+    editedImage?: string;
 }
 
 class RichTextEditor extends React.Component<Props, State> {
@@ -143,7 +145,15 @@ class RichTextEditor extends React.Component<Props, State> {
             // eslint-disable-next-line object-shorthand
             callback: function () { // Shorthand format doesn't work because Froala provides its own `this` parameter.
                 editorThis.setState({ imagePickerIsOpen: true });
-                const hideOverlay = () => editorThis.setState({ imagePickerIsOpen: undefined });
+                const hideOverlay = () => {
+                    if (editorThis.state.editedImage) {
+                        const text = this.html.get();
+                        this.html.set(text);
+                        editorThis.setState({ imagePickerIsOpen: undefined, editedImage: undefined });
+                    } else {
+                        editorThis.setState({ imagePickerIsOpen: undefined });
+                    }
+                };
                 this.undo.saveStep();
                 (window as any).CKFinder.modal({
                     chooseFiles: true,
@@ -151,14 +161,27 @@ class RichTextEditor extends React.Component<Props, State> {
                     onInit: (finder: any) => {
                         document.getElementById("ckf-modal-close")?.addEventListener("click", hideOverlay);
                         finder.on("files:choose", (evt: any) => {
-                            hideOverlay();
                             this.html.insert(`<img src="${evt.data.files.first().getUrl()}" />`);
+                            hideOverlay();
                             this.undo.saveStep();
                         });
                         finder.on("file:choose:resizedImage", (evt: any) => {
-                            hideOverlay();
                             this.html.insert(`<img src="${evt.data.resizedUrl}" />`);
+                            hideOverlay();
                             this.undo.saveStep();
+                        });
+                        finder.on("command:after:SaveImage", (evt: any) => {
+                            if (evt.data.response.currentFolder.url && editorThis.state.editedImage) {
+                                rawRequest(`${evt.data.response.currentFolder.url}${editorThis.state.editedImage}`, "GET", {
+                                    "Cache-Control": "no-cache",
+                                    Pragma: "no-cache",
+                                });
+                            }
+                        });
+                        finder.on("command:before:SaveImage", (evt: any) => {
+                            if (evt.data.params.fileName) {
+                                editorThis.setState({ editedImage: evt.data.params.fileName });
+                            }
                         });
                     },
                 });
@@ -337,7 +360,7 @@ class RichTextEditor extends React.Component<Props, State> {
                         modalBody: css`
                             overflow: hidden;
                             ${({ theme }: ThemeProps<BaseTheme>) => (breakpointMediaQueries(
-                                theme, [null, null, null, modalScreenSize, null], "min")
+                            theme, [null, null, null, modalScreenSize, null], "min")
                             )}
                         `,
                         modalContent: css`
@@ -357,15 +380,15 @@ class RichTextEditor extends React.Component<Props, State> {
     }
 }
 
-const EditorStyles = styled.div<{sidebar: boolean, siteTheme: BaseTheme}>`
+const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme: BaseTheme }>`
     ${({ sidebar }) => sidebar ? "margin-top: 10px;" : ""}
     ${({ siteTheme }) => siteTheme && themeTypographyStyleString({ theme: siteTheme })}
     a {
         color:
             ${({ siteTheme }) => {
-                const linkColor = get(siteTheme, "link.defaultProps.color");
-                return linkColor && resolveColor(linkColor, siteTheme);
-            }};
+        const linkColor = get(siteTheme, "link.defaultProps.color");
+        return linkColor && resolveColor(linkColor, siteTheme);
+    }};
     }
     .fr-toolbar.dark-theme.fr-toolbar.fr-top {
         color: #fff;
@@ -420,21 +443,21 @@ const EditorStyles = styled.div<{sidebar: boolean, siteTheme: BaseTheme}>`
             fill: #fff;
         }
         .fr-wrapper {
-            background: ${({ sidebar, siteTheme }) => sidebar ? "#fff" : siteTheme.colors.common.background};
-            border: none;
+            background: ${({ siteTheme }) => siteTheme.colors.common.background};
+            border: 1px solid ${({ theme }) => theme.colors.common.border};
+            border-width: 0 1px 1px 1px;
             border-radius: 0 0 4px 4px;
-            overflow: auto;
+            overflow: hidden;
             ${({ sidebar }) => {
-                return sidebar ? "" : "height: calc(100vh - 33px) !important;";
-            }}
+        return sidebar ? "" : "height: calc(100vh - 33px) !important;";
+    }}
         }
         .fr-element.fr-view {
-            border: 1px solid ${({ siteTheme }) => siteTheme.colors.common.border};
             border-top: none;
             border-radius: 0 0 4px 4px;
             ${({ sidebar }) => {
-                return sidebar ? "" : "height: calc(100vh - 33px) !important;";
-            }}
+        return sidebar ? "" : "height: calc(100vh - 33px) !important;";
+    }}
         }
         .second-toolbar {
             border: 0;

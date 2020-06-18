@@ -179,6 +179,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Card List",
         allowedContexts: [ProductListPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImage,

@@ -5,7 +5,7 @@ import { BaseTheme } from "../globals/baseTheme";
 import { FormFieldPresentationPropsCommon, FormFieldIcon } from "./FormField";
 import { ButtonSizeVariants } from "../Button";
 
-interface VariantValues {
+export interface VariantValues {
     fontSize: number;
     height: number;
     icon: number;

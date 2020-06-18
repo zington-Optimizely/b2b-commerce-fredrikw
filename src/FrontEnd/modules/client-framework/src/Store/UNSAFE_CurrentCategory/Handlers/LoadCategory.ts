@@ -33,6 +33,7 @@ export const DispatchBeginLoadCategory: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
+    if (!props.parameter.path) return false;
     const catalogPage = await getCatalogPageByPath(props.parameter as GetCatalogPageByPathApiParameter);
     props.catalogPage = catalogPage;
 };

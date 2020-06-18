@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 import ShellState from "@insite/shell/Store/ShellState";
@@ -10,12 +10,14 @@ import Checkbox from "@insite/mobius/Checkbox";
 import DatePicker from "@insite/mobius/DatePicker";
 import Tooltip from "@insite/mobius/Tooltip";
 import getColor from "@insite/mobius/utilities/getColor";
-import { getPagePublishInfo, publishPages } from "@insite/shell/Services/ContentAdminService";
+import { getPagePublishInfo, publishPages, ContentContextModel } from "@insite/shell/Services/ContentAdminService";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import Typography from "@insite/mobius/Typography";
 import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 
 const mapStateToProps = (state: ShellState) => {
     const {
@@ -37,6 +39,7 @@ const mapStateToProps = (state: ShellState) => {
         pagePublishInfo,
         languagesById,
         personasById,
+        permissions: state.shellContext.permissions,
     });
 };
 
@@ -47,8 +50,8 @@ const mapDispatchToProps = {
     togglePublishInTheFuture: (): AnyShellAction => ({
         type: "ShellContext/TogglePublishInTheFuture",
     }),
-    publish: (pageId: string, publishOn?: Date): ShellThunkAction => async dispatch => {
-        await publishPages({ pages: [{ pageId }], publishOn });
+    publish: (pageId: string, contexts: ContentContextModel[], publishOn?: Date): ShellThunkAction => async dispatch => {
+        await publishPages({ pages: [{ pageId, contexts }], publishOn });
 
         dispatch(loadPublishInfo(pageId));
 
@@ -80,22 +83,25 @@ const PublishModal: React.FC<Props> = ({
                                            publishImmediately,
                                            togglePublishInTheFuture,
                                            pagePublishInfo,
-                                           page,
+                                           page: { id, fields: { title } },
                                            publish,
                                            languagesById,
                                            personasById,
+                                           permissions,
                                        }) => {
-    const { id, fields: { title } } = page;
+    const [contextsToPublish, setContextsToPublish] = useState<SafeDictionary<ContentContextModel>>({});
 
     useEffect(
         () => {
             if (!visible) {
+                setContextsToPublish({});
                 return;
             }
 
             refresh(id);
         },
-        [visible, id]);
+        [visible, id],
+    );
 
     const nothingToPublish = pagePublishInfo.value
         && pagePublishInfo.value.length < 1
@@ -116,6 +122,7 @@ const PublishModal: React.FC<Props> = ({
             <PublishableContextTable cellSpacing={0} data-test-selector="publishModal">
                 <thead>
                 <tr>
+                    <th></th>
                     <th>Page</th>
                     <th>Language</th>
                     <th>Customer Segment</th>
@@ -125,27 +132,43 @@ const PublishModal: React.FC<Props> = ({
                     <th>Compare</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody data-test-selector="publishModal_contextsAvailableToPublish">
                 {
-                    !pagePublishInfo ? <tr>
-                            <td>...</td>
-                        </tr>
-                        : pagePublishInfo.value && pagePublishInfo.value.map(({ unpublishedContexts }) =>
-                        // eslint-disable-next-line react/no-array-index-key
-                        unpublishedContexts.map(({ languageId, personaId, deviceType, modifiedBy, modifiedOn }, index) => <tr key={index}>
-                            <td>{title} <BadgeDefault/></td>
-                            <td>{!languageId ? "All" : languagesById[languageId]?.description ?? languageId}</td>
-                            <td>{!personaId ? "All" : personasById[personaId]?.name ?? personaId}</td>
-                            <td>{deviceType || "All"}</td>
-                            <td>{modifiedBy}</td>
-                            <td>{new Date(modifiedOn).toLocaleString()}</td>
-                            <td>
-                                <ButtonInTable
-                                    variant="tertiary"
-                                    disabled // TODO ISC-11132
-                                >Compare</ButtonInTable>
-                            </td>
-                        </tr>))
+                    pagePublishInfo?.value?.map(({ unpublishedContexts }) =>
+                        unpublishedContexts.map(context => {
+                            const { languageId, personaId, deviceType, modifiedBy, modifiedOn } = context;
+                            const contextString = getContextualId(languageId, deviceType, personaId);
+                            return <tr key={contextString} data-test-selector={contextString}>
+                                <td>
+                                    <Checkbox
+                                        data-test-selector={`${contextString}_check`}
+                                        checked={!!contextsToPublish[contextString]}
+                                        onChange={(_, value) => {
+                                            const clone = { ...contextsToPublish };
+                                            if (value) {
+                                                clone[contextString] = context;
+                                            } else {
+                                                delete clone[contextString];
+                                            }
+                                            setContextsToPublish(clone);
+                                        }}
+                                    />
+                                    </td>
+                                <td data-test-selector={`${contextString}_title`}>{title} <BadgeDefault/></td>
+                                <td data-test-selector={`${contextString}_language`}>{!languageId ? "All" : languagesById[languageId]?.description ?? languageId}</td>
+                                <td data-test-selector={`${contextString}_persona`}>{!personaId ? "All" : personasById[personaId]?.name ?? personaId}</td>
+                                <td data-test-selector={`${contextString}_device`}>{deviceType || "All"}</td>
+                                <td data-test-selector={`${contextString}_modifiedBy`}>{modifiedBy}</td>
+                                <td data-test-selector={`${contextString}_modifiedOn`}>{new Date(modifiedOn).toLocaleString()}</td>
+                                <td>
+                                    <ButtonInTable
+                                        data-test-selector={`${contextString}_compareButton`}
+                                        variant="tertiary"
+                                        disabled // TODO ISC-11132
+                                    >Compare</ButtonInTable>
+                                </td>
+                            </tr>;
+                        }))
                 }
                 </tbody>
             </PublishableContextTable>
@@ -157,14 +180,14 @@ const PublishModal: React.FC<Props> = ({
             <PublishLaterContainer>
                 <div>
                     <DatePicker
-                        disabled={publishImmediately}
+                        disabled={publishImmediately || !permissions?.canPublishContent}
                         label="Publish On"
                         format="MM/dd/y hh:mm a"
                     />
                 </div>
                 <div>
                     <DatePicker
-                        disabled={publishImmediately}
+                        disabled={publishImmediately || !permissions?.canRollbackContent}
                         format="MM/dd/y hh:mm a"
                         label={<>
                             Rollback On (Optional)
@@ -202,9 +225,9 @@ const PublishModal: React.FC<Props> = ({
                 <Button
                     variant="primary"
                     data-test-selector="publishModal_publish"
-                    disabled={!pagePublishInfo.value || !!nothingToPublish}
+                    disabled={!pagePublishInfo.value || !!nothingToPublish || !permissions?.canPublishContent || Object.keys(contextsToPublish).length === 0}
                     onClick={() => {
-                        publish(page.id);
+                        publish(id, Object.keys(contextsToPublish).map(key => contextsToPublish[key]!));
                     }}
                 >Publish</Button>
             </PublishCancelButtonContainer>

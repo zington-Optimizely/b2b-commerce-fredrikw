@@ -2,7 +2,7 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import { Draft } from "immer";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductCarouselState from "@insite/client-framework/Store/Components/ProductCarousel/ProductCarouselState";
-import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
+import { RealTimePricingModel, RealTimeInventoryModel, ProductInventoryDto } from "@insite/client-framework/Types/ApiModels";
 
 const initialState: ProductCarouselState = {
     carouselProducts: {},
@@ -50,6 +50,20 @@ const reducer = {
         const products = draft.carouselProducts[action.carouselId]?.value;
         if (products) {
             products.forEach(o => { o.failedToLoadPricing = true; });
+        }
+    },
+    "Components/ProductCarousel/CompleteLoadRealTimeInventory": (draft: Draft<ProductCarouselState>, action: { realTimeInventory: RealTimeInventoryModel, carouselId: string }) => {
+        const products = draft.carouselProducts[action.carouselId]?.value;
+        if (products) {
+            action.realTimeInventory.realTimeInventoryResults?.forEach((inventory: ProductInventoryDto) => {
+                const product = products.find(p => inventory.productId === p!.id);
+                if (product) {
+                    product.qtyOnHand = inventory.qtyOnHand;
+                    product.availability = inventory.inventoryAvailabilityDtos
+                        ?.find(o => o.unitOfMeasure.toLowerCase() === (product.unitOfMeasure?.toLowerCase() || ""))?.availability || undefined;
+                    product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;
+                }
+            });
         }
     },
 };

@@ -78,7 +78,7 @@ const Buttons = styled.div`
     button {
         margin-left: 10px;
     }
-    background-color: ${props => props.theme.colors.common.border};
+    background-color: ${props => props.theme.colors.common.backgroundContrast};
     z-index: 5;
 `;
 

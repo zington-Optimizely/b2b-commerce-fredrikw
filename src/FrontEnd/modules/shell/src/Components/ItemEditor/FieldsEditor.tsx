@@ -117,7 +117,13 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
                     : tabs.length > 1
                     ? <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }}>
                         {tabs.map(tab =>
-                            <Tab key={tab.displayName} tabKey={tab.displayName} headline={tab.displayName} css={tabCss}>
+                            <Tab
+                                key={tab.displayName}
+                                tabKey={tab.displayName}
+                                headline={tab.displayName}
+                                css={tabCss}
+                                data-test-selector={`editItem_${tab.dataTestSelector}`}
+                            >
                                 {renderFields(tab)}
                             </Tab>,
                         )}

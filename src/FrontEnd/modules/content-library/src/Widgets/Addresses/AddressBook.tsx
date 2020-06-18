@@ -333,7 +333,7 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
     return (
         <>
             <Hidden above="sm">
-                <OverflowMenu {...componentStyles.overflowMenu}>
+                <OverflowMenu position="end"  {...componentStyles.overflowMenu}>
                     <Clickable
                         onClick={useAsShippingAddressHandler}
                         disabled={addressBookContext.isSettingShipTo || shipTo.id === currentShipTo?.id}
@@ -380,9 +380,9 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
 const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(AddressBook),
     definition: {
-        fieldDefinitions: [],
         group: "Addresses",
         allowedContexts: [AddressesPageContext],
+        isSystem: true,
     },
 };
 

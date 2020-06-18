@@ -27,6 +27,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Rtf",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.content,

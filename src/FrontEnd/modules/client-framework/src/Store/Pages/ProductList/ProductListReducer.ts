@@ -100,6 +100,7 @@ const reducer = {
             const index = draftProducts.findIndex(p => p.id === inventory.productId);
             if (index > -1) {
                 const product = draftProducts[index];
+                product.qtyOnHand = inventory.qtyOnHand;
                 product.availability = inventory.inventoryAvailabilityDtos
                     ?.find(o => o.unitOfMeasure.toLowerCase() === product.unitOfMeasure.toLowerCase())?.availability || undefined;
                 product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;

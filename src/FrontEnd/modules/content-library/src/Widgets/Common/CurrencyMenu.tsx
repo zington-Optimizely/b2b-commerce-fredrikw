@@ -96,6 +96,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Currency Menu",
         icon: "Menu",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showIcon,

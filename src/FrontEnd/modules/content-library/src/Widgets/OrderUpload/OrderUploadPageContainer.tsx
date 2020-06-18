@@ -37,8 +37,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Order Upload",
         allowedContexts: [OrderUploadPageContext],
-        fieldDefinitions: [],
         displayName: "Page Container",
+        isSystem: true,
     },
 };
 

@@ -1,9 +1,12 @@
 declare let TokenEx: any;
+declare let $XIFrame: any;
 
 module insite.cart {
     "use strict";
     import StateModel = Insite.Websites.WebApi.V1.ApiModels.StateModel;
     import TokenExDto = insite.core.TokenExDto;
+    import PaymetricDto = insite.core.PaymetricDto;
+    import CreditCardDto = Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
     import WarehouseModel = Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
     import SessionModel = Insite.Account.WebApi.V1.ApiModels.SessionModel;
     import PaymentMethodDto = Insite.Cart.Services.Dtos.PaymentMethodDto;
@@ -34,6 +37,9 @@ module insite.cart {
         submitSuccessUri: string;
         useTokenExGateway: boolean;
         tokenExIframe: any;
+        usePaymetricGateway: boolean;
+        paymetricIframe: any;
+        paymetricDto: PaymetricDto;
         isInvalidCardNumber: boolean;
         isInvalidSecurityCode: boolean;
         session: SessionModel;
@@ -45,6 +51,7 @@ module insite.cart {
         ppIsInvalidSecurityCode: boolean;
 
         static $inject = [
+            "$http",
             "$scope",
             "$window",
             "cartService",
@@ -62,6 +69,7 @@ module insite.cart {
         ];
 
         constructor(
+            protected $http: ng.IHttpService,
             protected $scope: ng.IScope,
             protected $window: ng.IWindowService,
             protected cartService: ICartService,
@@ -91,6 +99,9 @@ module insite.cart {
             this.$scope.$watch("vm.cart.paymentMethod", (paymentMethod: PaymentMethodDto) => {
                 if (paymentMethod && paymentMethod.isPaymentProfile) {
                     this.setUpPPTokenExGateway();
+                }
+                if (paymentMethod && paymentMethod.isCreditCard && this.usePaymetricGateway) {
+                    this.setUpPaymetricGateway();
                 }
             });
             this.$scope.$watch("vm.cart.paymentOptions.creditCard.expirationYear", (year: number) => {
@@ -132,7 +143,7 @@ module insite.cart {
             if (year) {
                 const now = new Date();
                 const minMonth = now.getFullYear() === year ? now.getMonth() : 0;
-                jQuery("#expirationMonth").rules("add", {angularmin: minMonth});
+                jQuery("#expirationMonth").rules("add", { angularmin: minMonth });
                 jQuery("#expirationMonth").valid();
             }
         }
@@ -183,6 +194,7 @@ module insite.cart {
             this.cartSettings = settingsCollection.cartSettings;
             this.customerSettings = settingsCollection.customerSettings;
             this.useTokenExGateway = settingsCollection.websiteSettings.useTokenExGateway;
+            this.usePaymetricGateway = settingsCollection.websiteSettings.usePaymetricGateway;
             this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
 
             this.sessionService.getSession().then(
@@ -270,10 +282,12 @@ module insite.cart {
             this.setUpPaymentMethod(isInit, paymentMethod || this.cart.paymentMethod);
             this.setUpPayPal(isInit);
 
-            if (isInit)
-            {
+            if (isInit) {
                 setTimeout(() => {
                     this.setUpTokenExGateway();
+                }, 0, false);
+                setTimeout(() => {
+                    this.setUpPaymetricGateway();
                 }, 0, false);
             }
 
@@ -440,7 +454,7 @@ module insite.cart {
                 return;
             }
 
-           this.sessionService.getIsAuthenticated().then(
+            this.sessionService.getIsAuthenticated().then(
                 (isAuthenticated: boolean) => { this.getIsAuthenticatedForSubmitCompleted(isAuthenticated, submitSuccessUri, signInUri); },
                 (error: any) => { this.getIsAuthenticatedForSubmitFailed(error); });
         }
@@ -450,14 +464,6 @@ module insite.cart {
                 this.coreService.redirectToPathAndRefreshPage(`${signInUri}?returnUrl=${this.coreService.getCurrentPath()}`);
                 return;
             }
-
-            if (this.cart.requiresApproval) {
-                this.cart.status = "AwaitingApproval";
-            } else {
-                this.cart.status = "Submitted";
-            }
-
-            this.cart.requestedDeliveryDate = this.formatWithTimezone(this.cart.requestedDeliveryDate);
 
             this.spinnerService.show("mainLayout", true);
 
@@ -485,12 +491,21 @@ module insite.cart {
                     return;
                 }
             }
+            if (this.usePaymetricGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal) {
+                if (this.cart.paymentMethod.isCreditCard) {
+                    this.submitPaymetric();
+                    return;
+                }
+            }
 
             this.submitCart();
         }
 
         protected submitCart(): void {
-             this.cartService.updateCart(this.cart, true).then(
+            this.cart.requestedDeliveryDate = this.formatWithTimezone(this.cart.requestedDeliveryDate);
+            this.cart.status = this.cart.requiresApproval ? "AwaitingApproval" : "Submitted";
+
+            this.cartService.updateCart(this.cart, true).then(
                 (cart: CartModel) => {
                     this.submitCompleted(cart, this.submitSuccessUri);
                 },
@@ -836,6 +851,140 @@ module insite.cart {
             } else {
                 return cardType;
             }
+        }
+
+
+        /**
+         * Setup Paymetric Gateway
+         * */
+        setUpPaymetricGateway(): void {
+            if (!this.usePaymetricGateway || !this.cart.paymentMethod.isCreditCard) {
+                return;
+            }
+            // Reset the frame, Paymetric could init against an already existing iFrame.
+            $("#paymetricIframe").attr("src", "");
+
+            this.settingsService.getPaymetricConfig().then(
+                (paymetricDto: PaymetricDto) => {
+                    this.getPaymetricConfigCompleted(paymetricDto);
+                },
+                (error: any) => {
+                    this.getPaymetricConfigFailed(error);
+                });
+        }
+
+        protected getPaymetricConfigCompleted(paymetricDto: PaymetricDto) {
+            this.paymetricDto = paymetricDto;
+            this.setUpPaymetricIframe(paymetricDto);
+        }
+
+        protected setUpPaymetricIframe(paymetricDto: PaymetricDto) {
+            $("#paymetricIframe").attr("src", paymetricDto.message).on("load", () => {
+                // After the IFrame finishes loading, setup the Paymetric IFrame.
+                this.paymetricIframe = $XIFrame(this.getPaymetricIframeConfig(paymetricDto));
+                this.paymetricIframe.onload();
+            });
+        }
+
+        protected getPaymetricConfigFailed(_: any): void {
+        }
+
+        protected getPaymetricIframeConfig(paymetricDto: PaymetricDto): any {
+            return {
+                iFrameId: "paymetricIframe",
+                targetUrl: paymetricDto.message,
+                autosizewidth: false,
+                autosizeheight: true,
+            };
+        }
+
+        protected submitPaymetric() {
+            if (!this.paymetricIframe) {
+                return;
+            }
+            this.paymetricIframe.validate({
+                onValidate: (success) => {
+                    this.handlePaymetricValidateSuccess(success);
+                },
+                onError: function () {
+                    this.spinnerService.hide();
+                    this.scrollToTopOfForm();
+                    this.submitting = false;
+                },
+            });
+        }
+
+        protected handlePaymetricValidateSuccess(success: boolean) {
+            if (success) {
+                this.paymetricIframe.submit({
+                    onSuccess: (msg) => {
+                        var message = JSON.parse(msg);
+                        // The HasPassed is case sensitive, and not starndard json.
+                        if (message.data.HasPassed) {
+                            this.handleSuccessSubmitPaymetricIframe();
+                        }
+                    },
+                    onError: (msg) => {
+                        var message = JSON.parse(msg);
+                        // Code = 150 -> Already submitted
+                        if (message.data.Code === 150) {
+                            this.handleSuccessSubmitPaymetricIframe();
+                            return;
+                        }
+                        // Unlock Cart, error on submit of Paymetric
+                        this.spinnerService.hide();
+                        this.scrollToTopOfForm();
+                        this.submitting = false;
+                    },
+                });
+            } else {
+                // Unlock Cart
+                // Paymetric should be showing error messages.
+                this.spinnerService.hide();
+                this.scrollToTopOfForm();
+                this.submitting = false;
+            }
+        }
+
+        protected handleSuccessSubmitPaymetricIframe() {
+
+            this.$http({
+                method: "GET",
+                url: `api/v1/paymetric/responsepacket?accessToken=${this.paymetricDto.accessToken}`
+            }).then((result: ng.IHttpPromiseCallbackArg<{ success: boolean; message: string, creditCard: CreditCardDto }>) => {
+                // Success
+                if (!result.data.success) {
+                    this.spinnerService.hide();
+                    this.scrollToTopOfForm();
+                    this.submitting = false;
+                    return;
+                }
+                // Set result with CC details 
+                this.cart.paymentOptions.creditCard.cardType = result.data.creditCard.cardType;
+                this.cart.paymentOptions.creditCard.expirationMonth = result.data.creditCard.expirationMonth;
+                this.cart.paymentOptions.creditCard.expirationYear = result.data.creditCard.expirationYear;
+                this.cart.paymentOptions.creditCard.cardNumber = result.data.creditCard.cardNumber;
+                this.cart.paymentOptions.creditCard.securityCode = result.data.creditCard.securityCode;
+                this.cart.paymentOptions.creditCard.cardHolderName = result.data.creditCard.cardHolderName;
+                this.submitCart();
+            }, () => {
+                // Error
+                this.spinnerService.hide();
+                this.scrollToTopOfForm();
+                this.submitting = false;
+            });
+        }
+
+        protected getPaymetricIframeSubmitConfig(paymetricDto: PaymetricDto): any {
+            return {
+                iFrameId: "paymetricIframe",
+                targetUrl: paymetricDto.message,
+                autosizewidth: false,
+                autosizeheight: true,
+                onError: () => {
+                    alert("error")
+                }
+            };
         }
 
         protected openDeliveryMethodPopup() {

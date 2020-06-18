@@ -36,12 +36,16 @@ import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import ScheduleReminderModal, { ScheduleReminderModalStyles } from "@insite/content-library/Components/ScheduleReminderModal";
+import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
+import { ShareOptions } from "@insite/client-framework/Services/WishListService";
 
 interface State {
     updateListModalIsOpen: boolean;
     deleteListModalIsOpen: boolean;
     copyListModalIsOpen: boolean;
     printAllModalIsOpen: boolean;
+    scheduleReminderModalIsOpen: boolean;
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -50,6 +54,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
     selectedWishListLineIds: state.pages.myListDetails.selectedWishListLineIds,
     myListsPageLink: getPageLinkByPageType(state, "MyListsPage"),
+    allowEditingOfWishLists: getSettingsCollection(state).wishListSettings.allowEditingOfWishLists,
 });
 
 const mapDispatchToProps = {
@@ -61,6 +66,7 @@ const mapDispatchToProps = {
     loadWishListLines: makeHandlerChainAwaitable(loadWishListLines),
     updateLoadParameter,
     updateLoadWishListLinesParameter,
+    setShareListModalIsOpen,
 };
 
 type Props = WidgetProps & HasHistory & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
@@ -83,6 +89,7 @@ export interface MyListsDetailsActionStyles {
     deleteListModal?: TwoButtonModalStyles;
     printListModal?: TwoButtonModalStyles;
     copyListModal?: ModalPresentationProps;
+    scheduleReminderModal?: ScheduleReminderModalStyles;
 }
 
 const styles: MyListsDetailsActionStyles = {
@@ -192,6 +199,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
             printAllModalIsOpen: false,
             deleteListModalIsOpen: false,
             copyListModalIsOpen: false,
+            scheduleReminderModalIsOpen: false,
         };
     }
 
@@ -215,6 +223,10 @@ class MyListsDetailsActions extends React.Component<Props, State> {
 
     editClickHandler = () => {
         this.setState({ updateListModalIsOpen: true });
+    };
+
+    shareClickHandler = () => {
+        this.props.setShareListModalIsOpen({ modalIsOpen: true, wishListId: this.props.wishList?.id });
     };
 
     printOrOpenPrintAllModal = () => {
@@ -323,8 +335,16 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         this.setState({ copyListModalIsOpen: false });
     };
 
+    scheduleReminderClickHandler = () => {
+        this.setState({ scheduleReminderModalIsOpen: true });
+    };
+
+    closeScheduleReminderModalHandler = () => {
+        this.setState({ scheduleReminderModalIsOpen: false });
+    };
+
     render() {
-        const { wishList, wishListSettings, wishListLinesDataView } = this.props;
+        const { wishList, wishListSettings, wishListLinesDataView, allowEditingOfWishLists } = this.props;
         if (!wishList) {
             return null;
         }
@@ -332,37 +352,38 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         const showEdit = (wishList.allowEdit || !wishList.isSharedList);
         const showShare = !wishList.isSharedList && wishListSettings.allowMultipleWishLists && wishListSettings.allowListSharing;
         const showRemoveSelected = (wishList.allowEdit || !wishList.isSharedList) && this.linesSelected();
-        const showSchedule = wishListSettings.allowListSharing;
+        const showSchedule = wishListSettings.enableWishListReminders;
         const showAddToCart = (wishListLinesDataView.value?.length || 0) > 0;
         const showCopy = wishListSettings.allowMultipleWishLists && showAddToCart;
         const addListToCartButtonText = this.linesSelected() ? translate("Add Selected to Cart") : translate("Add List To Cart");
         const scheduleButtonText = wishList.schedule ? translate("Edit Reminder") : translate("Schedule Reminder");
+        const showDelete = allowEditingOfWishLists && !wishList.isSharedList;
 
         return (
             <StyledWrapper {...styles.wrapper}>
                 <Typography {...styles.nameText} data-test-selector="listName">{wishList.name}</Typography>
                 <StyledWrapper {...styles.buttonWrapper} data-test-selector="menuWrapper">
                     <Hidden {...styles.narrowHidden}>
-                        <OverflowMenu {...styles.overflowMenu} >
+                        <OverflowMenu position="end" {...styles.overflowMenu} >
                             {showAddToCart ? <Clickable onClick={this.addToCartClickHandler}>{addListToCartButtonText}</Clickable> : null}
                             {showRemoveSelected ? <Clickable onClick={this.removeSelectedClickHandler}>{translate("Remove Selected")}</Clickable> : null}
-                            {showShare ? <Clickable>{translate("Share")}</Clickable> : null}
+                            {showShare ? <Clickable onClick={this.shareClickHandler}>{translate("Share")}</Clickable> : null}
                             <Clickable onClick={this.printOrOpenPrintAllModal}>{translate("Print")}</Clickable>
                             {showEdit ? <Clickable onClick={this.editClickHandler}>{translate("Edit")}</Clickable> : null}
-                            {showSchedule ? <Clickable>{scheduleButtonText}</Clickable> : null}
+                            {showSchedule ? <Clickable onClick={this.scheduleReminderClickHandler}>{scheduleButtonText}</Clickable> : null}
                             {showCopy ? <Clickable onClick={this.copyClickHandler}>{translate("Copy")}</Clickable> : null}
-                            {showEdit ? <Clickable onClick={this.deleteClickHandler}>{translate("Delete")}</Clickable> : null}
+                            {showDelete ? <Clickable onClick={this.deleteClickHandler}>{translate("Delete")}</Clickable> : null}
                         </OverflowMenu>
                     </Hidden>
                     <Hidden {...styles.wideHidden} data-test-selector="wideHidden">
                         <OverflowMenu {...styles.overflowMenu}>
                             {showCopy ? <Clickable onClick={this.copyClickHandler} data-test-selector="copyList">{translate("Copy")}</Clickable> : null}
-                            {showEdit ? <Clickable onClick={this.deleteClickHandler} data-test-selector="deleteList">{translate("Delete")}</Clickable> : null}
+                            {showDelete ? <Clickable onClick={this.deleteClickHandler} data-test-selector="deleteList">{translate("Delete")}</Clickable> : null}
                         </OverflowMenu>
                         <Button {...styles.printButton} onClick={this.printOrOpenPrintAllModal}>{translate("Print")}</Button>
-                        {showSchedule ? <Button {...styles.scheduleButton}>{scheduleButtonText}</Button> : null}
+                        {showSchedule ? <Button {...styles.scheduleButton} onClick={this.scheduleReminderClickHandler}>{scheduleButtonText}</Button> : null}
                         {showEdit ? <Button {...styles.editButton} onClick={this.editClickHandler} data-test-selector="editList">{translate("Edit")}</Button> : null}
-                        {showShare ? <Button {...styles.shareButton}>{translate("Share")}</Button> : null}
+                        {showShare ? <Button {...styles.shareButton} onClick={this.shareClickHandler} data-test-selector="shareList">{translate("Share")}</Button> : null}
                         {showRemoveSelected ? <Button {...styles.removeSelectedButton} onClick={this.removeSelectedClickHandler} data-test-selector="removeSelected">
                             {translate("Remove Selected")}</Button> : null}
                         <Button disabled={!this.enableAddToCart() || !showAddToCart} {...styles.addListButton}
@@ -392,16 +413,18 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                     submitTestSelector="submitDeleteList"
                 >
                 </TwoButtonModal>
-                <PrintAllPagesModal
-                    isOpen={this.state.printAllModalIsOpen}
-                    handleClose={this.closePrintModal}
-                    updateParameterFunction={(pageSize) => this.props.updateLoadWishListLinesParameter({ wishListId: wishList.id, pageSize })}
-                    awaitableLoader={this.props.loadWishListLines}
-                    initialPageSize={(wishListLinesDataView.value ? wishListLinesDataView.pagination?.pageSize || 8 : 8)}
-                    reloading={false}
-                    lineCollection={{ pagination: (wishListLinesDataView.value ? wishListLinesDataView?.pagination || null : null) }}
-                    styles={styles.printListModal}
-                />
+                {wishListLinesDataView.value
+                    && <PrintAllPagesModal
+                        isOpen={this.state.printAllModalIsOpen}
+                        handleClose={this.closePrintModal}
+                        updateParameterFunction={(pageSize) => this.props.updateLoadWishListLinesParameter({ wishListId: wishList.id, pageSize })}
+                        awaitableLoader={this.props.loadWishListLines}
+                        initialPageSize={(wishListLinesDataView.value ? wishListLinesDataView.pagination?.pageSize || 8 : 8)}
+                        reloading={false}
+                        lineCollection={{ pagination: (wishListLinesDataView.value ? wishListLinesDataView?.pagination || null : null) }}
+                        styles={styles.printListModal}
+                    />
+                }
                 <Modal
                     headline={translate("Copy List")}
                     isOpen={this.state.copyListModalIsOpen}
@@ -412,6 +435,12 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                         onSubmit={this.copySubmitHandler}>
                     </MyListsDetailsCopyListForm>
                 </Modal>
+                <ScheduleReminderModal
+                    wishList={wishList}
+                    isOpen={this.state.scheduleReminderModalIsOpen}
+                    handleClose={this.closeScheduleReminderModalHandler}
+                    extendedStyles={styles.scheduleReminderModal}
+                />
             </StyledWrapper>
         );
     }
@@ -424,7 +453,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Actions",
         allowedContexts: [MyListsDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

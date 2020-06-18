@@ -72,6 +72,7 @@ export const DispatchCompleteLoadCart: HandlerType = props => {
 export const DispatchLoadCustomers: HandlerType = props => {
     if (props.apiResult.billTo) {
         delete props.apiResult.billTo.accountsReceivable;
+        delete props.apiResult.billTo.costCodes;
         props.dispatch({
             type: "Data/BillTos/CompleteLoadBillTo",
             model: props.apiResult.billTo,
@@ -85,7 +86,7 @@ export const DispatchLoadCustomers: HandlerType = props => {
     }
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -97,7 +98,7 @@ export const chain = [
     SetCarrier,
     DispatchCompleteLoadCart,
     DispatchLoadCustomers,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const loadCurrentCart = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentCart");

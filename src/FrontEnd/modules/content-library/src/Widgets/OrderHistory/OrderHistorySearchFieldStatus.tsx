@@ -70,7 +70,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Status",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

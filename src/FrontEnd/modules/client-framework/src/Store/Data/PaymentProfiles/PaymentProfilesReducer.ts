@@ -20,10 +20,6 @@ const reducer = {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.accountPaymentProfiles!);
     },
 
-    "Data/PaymentProfiles/CompleteLoadPaymentProfile": (draft: Draft<PaymentProfilesState>, action: { model: AccountPaymentProfileModel }) => {
-        draft.byId[action.model.id] = action.model;
-    },
-
     "Data/PaymentProfiles/Reset": () => {
         return initialState;
     },

@@ -30,6 +30,7 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import SearchInput, { SearchInputStyles } from "@insite/content-library/Widgets/Header/SearchInput";
 import X from "@insite/mobius/Icons/X";
+import Logger from "@insite/client-framework/Logger";
 
 const enum fields {
     links = "links",
@@ -109,6 +110,10 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
                     };
                 } else {
                     const categoryLinkModel = getCategoryLink(state, value);
+                    if (!categoryLinkModel) {
+                        Logger.error(`Category ${value} missing link model, excluding from navigation.`);
+                        continue;
+                    }
                     mappedLink = {
                         url: categoryLinkModel.path,
                         title: overrideTitle || categoryLinkModel.shortDescription,
@@ -152,6 +157,10 @@ const loadChildren = (mappedLink: MappedLink, categoryId: string, currentDepth: 
     }
     for (const childId of childIdentifiers) {
         const categoryLinkModel = getCategoryLink(state, childId);
+        if (!categoryLinkModel) {
+            Logger.error(`Category ${childId} missing link model, excluding from navigation.`);
+            continue;
+        }
         const childLink: MappedLink = {
             url: categoryLinkModel.path,
             title: categoryLinkModel.shortDescription,
@@ -503,6 +512,7 @@ const mainNavigation: WidgetModule = {
     definition: {
         group: "Header",
         allowedContexts: ["Header"],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.links,

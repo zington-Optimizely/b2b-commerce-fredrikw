@@ -81,7 +81,7 @@ const logoLinksSearch: WidgetModule = {
     definition: {
         group: "Common",
         icon: "Filter",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -53,7 +53,7 @@ const myAccountViewWidget: WidgetModule = {
     definition: {
         allowedContexts: [MyAccountPageContext],
         group: "My Account",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

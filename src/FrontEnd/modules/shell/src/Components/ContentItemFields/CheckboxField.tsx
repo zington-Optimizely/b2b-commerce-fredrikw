@@ -26,7 +26,9 @@ export default class CheckboxField extends React.Component<ContentItemFieldProps
                 checked={value}
                 disabled={this.props.fieldDefinition.isEnabled && !this.props.fieldDefinition.isEnabled()}
                 onChange={this.onChange}
-                variant={this.props.fieldDefinition.variant || "default"}>
+                variant={this.props.fieldDefinition.variant || "default"}
+                data-test-selector={`controlFor_${this.props.fieldDefinition.name}`}
+            >
                 {this.props.fieldDefinition.displayName}
             </Checkbox>
             {this.props.fieldDefinition.tooltip

@@ -121,6 +121,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "LinkList",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImages,

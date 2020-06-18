@@ -2,6 +2,7 @@ import * as React from "react";
 import PageTreeItem from "@insite/shell/Components/PageTree/PageTreeItem";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 
 interface Props {
     isEditMode: boolean;
@@ -12,6 +13,7 @@ interface Props {
     onFlyOutNode: (pageElement: HTMLElement, node: TreeNodeModel) => void;
     onExpandNode: (node: TreeNodeModel) => void;
     flyOutNode?: TreeNodeModel;
+    permissions?: PermissionsModel;
 }
 
 const PageTreePages: React.FC<Props> = ({
@@ -23,6 +25,7 @@ const PageTreePages: React.FC<Props> = ({
     flyOutNode,
     isEditMode,
     selectedPageId,
+    permissions,
 }) => <ul>
     {nodesByParentId[parentId] && nodesByParentId[parentId].map(node =>
         <PageTreeItem
@@ -35,6 +38,7 @@ const PageTreePages: React.FC<Props> = ({
             node={node}
             onFlyOutNode={onFlyOutNode}
             flyOutNode={flyOutNode}
+            permissions={permissions}
         />,
     )}
 </ul>;

@@ -23,6 +23,7 @@ import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { History } from "history";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import { getTemplate } from "@insite/shell/Services/SpireService";
 
 export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch => {
     addTask(async function () {
@@ -119,7 +120,7 @@ export const addPage = (pageType: string, pageName: string, parentId: string, co
             const result = await getPageByUrl(`/Content/Page/${copyPageId}`, true);
             pageModel = result.page;
         } else {
-            pageModel = await fetch(`/Creators/${pageType}.json`).then(response => response.json());
+            pageModel = await getTemplate(pageType);
         }
 
         const { currentLanguageId, currentPersonaId, websiteId, languagesById, defaultPersonaId } = getState().shellContext;

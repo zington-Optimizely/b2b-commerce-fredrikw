@@ -8,6 +8,8 @@ import { connect, ResolveThunks } from "react-redux";
 import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import ShareListModal from "@insite/content-library/Components/ShareListModal";
+import ManageShareListModal from "@insite/content-library/Components/ManageShareListModal";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListsDataView: getWishListsDataView(state, state.pages.myLists.getWishListsParameter),
@@ -36,6 +38,8 @@ const MyListListsPage : React.FC<Props> = ({
     return (
         <Page>
             <Zone contentId={id} zoneName="Content"/>
+            <ShareListModal />
+            <ManageShareListModal />
         </Page>
     );
 };
@@ -45,7 +49,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        fieldDefinitions: [],
+        isSystemPage: true,
     },
 };
 

@@ -47,7 +47,7 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         displayName: "Page Header",
         allowedContexts: [CartPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -1,5 +1,10 @@
 # Changelog
 
+DynamicDropdown:
+- added white-space: nowrap for selected text
+- added cursor: pointer for the options default mouse cursor
+- added autocomplete="no" to disable browser's AutoFill feature
+
 AccordionSection: added onTogglePanel event.
 
 - Accessibility improvements: 
@@ -18,6 +23,9 @@ AccordionSection: added onTogglePanel event.
 `Icon` prop `src` will interpret a string matching the filename in `Icons/*.tsx` and render the corresponding icon. This is especially useful for theme and style extensions.
 `PanelMenu` - menu items are filtered by `excludeFromNavigation` property, only not excluded should be rendered.
 `PanelMenu` - `dataTestSelector` prop removed in lieu of using `data-test-selector` HTML attribute internally.
+`FileUpload` now has a "clear" button and provides a visual transition for file name appearance and clear button appearance. Both are style extensible.
+`Tag` - now respects iconProp color when set.
+`Tooltip` - semantic improvements to the tooltip elements to allow for correct styling. 
 
 Added theme and prop extension points for: 
 - `PanelRow` within `PanelMenu`.

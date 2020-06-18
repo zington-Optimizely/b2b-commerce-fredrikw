@@ -83,8 +83,9 @@
                             <a class="close-reveal-modal">&#215;</a>
                         </div>
                     </div>
-                    <select id="tst_userSetupView_role" class="sel" ng-model="vm.user.role" name="role" ng-options="role for role in vm.user.availableRoles track by role">
+                    <select id="tst_userSetupView_role" class="sel" ng-model="vm.user.role" name="role">
                         <option value="">[% translate 'Select User Role' %]</option>
+                        <option ng-repeat="role in vm.user.availableRoles" value="{{role}}" ng-bind="role"></option>
                     </select>
                 </div>
 
@@ -98,8 +99,9 @@
                             <a class="close-reveal-modal">&#215;</a>
                         </div>
                     </div>
-                    <select id="tst_userSetupView_approver" class="sel" ng-model="vm.user.approver" name="approver" ng-options="approver for approver in vm.user.availableApprovers track by approver">
+                    <select id="tst_userSetupView_approver" class="sel" ng-model="vm.user.approver" name="approver">
                         <option value="">[% translate 'Select an Approver' %]</option>
+                        <option ng-repeat="approver in vm.user.availableApprovers" value="{{approver}}" ng-bind="approver"></option>
                     </select>
                 </div>
                 <div class="usersetup-form-assign">

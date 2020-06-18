@@ -194,7 +194,7 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         displayName: "Fulfillment Method Selector",
         allowedContexts: [CartPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

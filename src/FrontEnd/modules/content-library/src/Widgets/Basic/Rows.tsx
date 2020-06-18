@@ -32,6 +32,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Row",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: "rowCount",

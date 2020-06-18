@@ -93,7 +93,7 @@ const widgetModule: WidgetModule = {
         displayName: "Page Header",
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

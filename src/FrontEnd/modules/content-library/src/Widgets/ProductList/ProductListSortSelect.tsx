@@ -73,7 +73,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Sort Select",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

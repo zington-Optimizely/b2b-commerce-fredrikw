@@ -1,34 +1,38 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { request } from "@insite/client-framework/Services/ApiService";
 import { SelectBrandModel } from "@insite/shell/Store/PageEditor/PageEditorState";
-import { stringify } from "qs";
-import { showErrorModal } from "@insite/shell/Services/ContentAdminService";
+import { get } from "@insite/shell/Services/ServiceBase";
 
-export const getAdminBrands = (parameters?: AdminServiceGetBrandsApiParameters) => get<SelectBrandModel[]>("brands", { ...parameters });
+export const getAdminBrands = (parameter?: AdminODataApiParameter) => getOData<SelectBrandModel[]>("brands", { ...parameter });
 
-export interface AdminServiceGetBrandsApiParameters {
+export const getAdminSystemListValues = (parameter?: AdminODataApiParameter) => getOData<SystemListValue[]>("systemListValues", { ...parameter });
+
+export interface AdminODataApiParameter {
+    archiveFilter?: ArchiveFilter;
     $filter?: string;
     $orderBy?: string;
+    $skip?: string;
     $top?: string;
     $select?: string;
+    $count?: boolean;
 }
-function get<T>(endpoint: string, parameter?: Dictionary<any>) {
-    let queryString = stringify(parameter || {}, { encode: false });
-
-    if (queryString !== "") {
-        queryString = (endpoint.indexOf("?") < 0 ? "?" : "&") + queryString;
-    }
-
-    return requestJson<T>(endpoint + queryString, "GET");
-}
-function requestJson<T>(endpoint: string, method: string, headers: Dictionary<string> = {}, body?: string) {
+function getOData<T>(endpoint: string, parameter?: Dictionary<any>) {
     return new Promise<T>(resolve => {
-        request<AdminODataResult<T>>(`/api/v1/admin/${endpoint}`, method, headers, body).then(data => {
+        get<AdminODataApiResult<T>>(`/api/v1/admin/${endpoint}`, parameter).then(data => {
             resolve(data.value);
-        }).catch(showErrorModal);
+        });
     });
 }
 
-interface AdminODataResult<T> {
+interface AdminODataApiResult<T> {
     value: T;
+}
+
+export enum ArchiveFilter {
+    Active = 0,
+    Archived = 1,
+    Both = 2,
+}
+
+export interface SystemListValue {
+    name: string;
 }

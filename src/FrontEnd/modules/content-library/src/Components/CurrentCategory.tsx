@@ -9,7 +9,7 @@ import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelec
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
-    const categoryPath = getSelectedCategoryPath(state) || location.pathname;
+    const categoryPath = getSelectedCategoryPath(state) || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
 
     return ({
         lastCategoryPath: state.UNSAFE_currentCategory.lastCategoryPath,

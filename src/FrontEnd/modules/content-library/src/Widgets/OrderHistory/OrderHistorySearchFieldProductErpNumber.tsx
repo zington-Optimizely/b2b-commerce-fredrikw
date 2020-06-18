@@ -27,7 +27,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Product ERP Number",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

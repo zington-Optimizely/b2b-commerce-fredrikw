@@ -15,8 +15,8 @@ const widgetModule: WidgetModule = {
     component: withProduct(ProductImage),
     definition: {
         group: "Products",
-        fieldDefinitions: [],
         allowedContexts: [ProductDetailPageContext],
+        isSystem: true,
     },
 };
 

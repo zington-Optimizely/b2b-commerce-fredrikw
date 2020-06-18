@@ -4,6 +4,7 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import ContentMode from "@insite/client-framework/Common/ContentMode";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import LoadedState from "@insite/client-framework/Types/LoadedState";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 
 export interface LanguageModel extends BasicLanguageModel {
     description: string;
@@ -29,6 +30,7 @@ export interface ShellContextState {
     stageMode: DeviceType;
     contentMode: ContentMode;
     homePageId: string;
+    permissions?: PermissionsModel;
 
     /** When true, the pop-out menu next to the Publish button containing additional options is shown. */
     publishExpanded?: true;

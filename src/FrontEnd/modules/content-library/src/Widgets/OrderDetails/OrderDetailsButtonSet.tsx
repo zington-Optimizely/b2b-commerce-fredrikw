@@ -217,7 +217,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     };
 
     const onClickRma = (url: string) => {
-        history.push(url);
+        history.push(`${url}?orderNumber=${order.webOrderNumber}`);
     };
 
     const buttonList: ButtonMapper = {};
@@ -252,7 +252,9 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
 
     if (allowRma && rmaLink) {
         buttonList[buttons.rma] = {
-            button: <Button {...styles.rmaButton} onClick={() => onClickRma(rmaLink.url)} >{translate("Return Request")}</Button>,
+            button: <Button {...styles.rmaButton} onClick={() => onClickRma(rmaLink.url)} data-test-selector="orderDetails_returnRequestButton">
+                {translate("Return Request")}
+            </Button>,
             clickable: <Clickable {...styles.rmaClickable} onClick={() => onClickRma(rmaLink.url)} >{translate("Return Request")}</Clickable>,
         };
     }
@@ -288,7 +290,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                 }
             </Hidden>
             <Hidden {...styles.tabletMenuHidden}>
-                <OverflowMenu {...styles.overflowMenu}>
+                <OverflowMenu position="end" {...styles.overflowMenu}>
                     {buttonsToRender.filter(o => !o.showButtonOnTablet).map((button, index) =>
                         // eslint-disable-next-line react/no-array-index-key
                         <div key={index}>
@@ -298,7 +300,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.menuHidden}>
-                <OverflowMenu {...styles.overflowMenu}>
+                <OverflowMenu position="end" {...styles.overflowMenu}>
                     {buttonsToRender.map((button, index) =>
                         // eslint-disable-next-line react/no-array-index-key
                         <div key={index}>
@@ -316,6 +318,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.buttonsOrder,

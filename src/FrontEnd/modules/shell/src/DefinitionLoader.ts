@@ -111,6 +111,7 @@ function cleanupField(fieldDefinition: FieldDefinition) {
         fieldDefinition.tab = {
             displayName: "Basic",
             sortOrder: 0,
+            dataTestSelector: "editPage_basicTab",
         };
     }
     if (typeof fieldDefinition.sortOrder === "undefined") {
@@ -132,6 +133,10 @@ function cleanup(definition: ContentItemDefinition & HasType) {
         definition.displayName = splitCamelCase(displayName);
     }
 
+    if (!definition.fieldDefinitions) {
+        definition.fieldDefinitions = [];
+    }
+
     for (const fieldDefinition of definition.fieldDefinitions) {
         cleanupField(fieldDefinition);
     }
@@ -140,8 +145,13 @@ function cleanup(definition: ContentItemDefinition & HasType) {
 }
 
 function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
+    let { fieldDefinitions } = pageDefinition;
+    if (!fieldDefinitions) {
+        fieldDefinitions = pageDefinition.fieldDefinitions = [];
+    }
+
     if (pageDefinition.hasEditableTitle) {
-        pageDefinition.fieldDefinitions.push(
+        fieldDefinitions.push(
             {
                 name: "title",
                 displayName: "SEO Title",
@@ -153,7 +163,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
             });
     }
     if (pageDefinition.hasEditableUrlSegment) {
-        pageDefinition.fieldDefinitions.push({
+        fieldDefinitions.push({
             name: "urlSegment",
             editorTemplate: "TextField",
             defaultValue: "",
@@ -166,7 +176,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
         });
     }
 
-    pageDefinition.fieldDefinitions.push({
+    fieldDefinitions.push({
         name: "horizontalRule",
         editorTemplate: "HorizontalRule",
         defaultValue: "",
@@ -174,7 +184,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
         sortOrder: 9998,
     });
 
-    pageDefinition.fieldDefinitions.push({
+    fieldDefinitions.push({
         name: "tags",
         editorTemplate: "TagsField",
         defaultValue: [],
@@ -182,7 +192,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
         sortOrder: 9999,
     });
 
-    pageDefinition.fieldDefinitions.push({
+    fieldDefinitions.push({
         name: "hideBreadcrumbs",
         editorTemplate: "CheckboxField",
         displayName: "Hide Breadcrumbs",

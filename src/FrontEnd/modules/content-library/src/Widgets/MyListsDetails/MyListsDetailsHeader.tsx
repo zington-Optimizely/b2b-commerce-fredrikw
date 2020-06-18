@@ -96,10 +96,9 @@ const MyListsDetailsHeader: FC<Props> = ({
             <GridItem  {...styles.infoGridItem}>
                 <Typography {...styles.lastUpdateText} data-test-selector="lastUpdate">{lastUpdatedDisplay}</Typography>
                 <WishListSharingStatus extendedStyles={styles.sharingStatus}
-                                       isSharedList={wishList.isSharedList}
-                                       wishListSharesCount={wishList.wishListSharesCount}
-                                       sharedByDisplayName={wishList.sharedByDisplayName}/>
-                {wishListTotal !== undefined
+                                       showNoPermissionsTooltip={true}
+                                       wishList={wishList}/>
+                {(wishListTotal !== undefined)
                 && <Typography {...styles.totalText}>
                     {translate("List Total")}: <LocalizedCurrency amount={wishListTotal}/>
                 </Typography>
@@ -123,7 +122,7 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Header",
         allowedContexts: [MyListsDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

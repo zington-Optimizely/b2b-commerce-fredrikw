@@ -1,0 +1,126 @@
+{
+  "nodeId": "85ad1e88-4032-475f-b6b9-79c6766eeda1",
+  "name": "My Account",
+  "type": "MyAccountPage",
+  "parentId": "a4452283-c96b-44b6-9f48-70abb7b7ddc9",
+  "sortOrder": 0,
+  "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+  "widgets": [
+    {
+      "parentId": "93bf4bf5-d855-482c-bb29-df3a73d2b3a6",
+      "type": "Basic/PageTitle",
+      "zone": "Content",
+      "id": "f30ef140-beea-421e-9525-a35df34e9b83",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "93bf4bf5-d855-482c-bb29-df3a73d2b3a6",
+      "type": "MyAccount/MyAccountView",
+      "zone": "Content",
+      "id": "46b38262-75fe-4398-a3bb-ce1134e54b4d",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "46b38262-75fe-4398-a3bb-ce1134e54b4d",
+      "type": "Basic/Row",
+      "zone": "DashboardWidgets",
+      "id": "2fa1bc06-07c5-4c9e-946f-0ae5783390ad",
+      "generalFields": {
+        "columns": [
+          [
+            12,
+            12,
+            6,
+            6,
+            6
+          ],
+          [
+            12,
+            12,
+            6,
+            6,
+            6
+          ],
+          12
+        ],
+        "alignment": [],
+        "gap": 30,
+        "reflow": true
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "46b38262-75fe-4398-a3bb-ce1134e54b4d",
+      "zone": "NavigationList",
+      "type": "Basic/RichContent",
+      "id": "ccdb980c-c438-4de5-a6d7-7db326d13f40",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {
+        "content": {
+          "a26095ef-c714-e311-ba31-d43d7e4e88b2|Desktop|d06988c0-9358-4dbb-aa3d-b7be5b6a7fd9": "<p><strong>Quick Links</strong></p>"
+        }
+      }
+    },
+    {
+      "parentId": "46b38262-75fe-4398-a3bb-ce1134e54b4d",
+      "zone": "NavigationList",
+      "type": "Basic/NavigationList",
+      "id": "3cd12f73-9e96-4eb9-97e2-1926810c25ab",
+      "generalFields": {
+        "depth": 1,
+        "leftMargin": 0,
+        "marginBottom": 10
+      },
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "2fa1bc06-07c5-4c9e-946f-0ae5783390ad",
+      "type": "Common/RecentOrders",
+      "zone": "Content0",
+      "id": "1d5157f3-7424-4d4c-8ced-bcae24ddbf47",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "2fa1bc06-07c5-4c9e-946f-0ae5783390ad",
+      "type": "Common/RecentQuotes",
+      "zone": "Content1",
+      "id": "acdf5a58-e29f-4aa7-ae1c-3cf62179d1ad",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "2fa1bc06-07c5-4c9e-946f-0ae5783390ad",
+      "type": "Common/RecentWishLists",
+      "zone": "Content2",
+      "id": "caebdff3-2e77-45c2-9b7b-911afdeebd0e",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    }
+  ],
+  "id": "93bf4bf5-d855-482c-bb29-df3a73d2b3a6",
+  "generalFields": {
+    "horizontalRule": "",
+    "tags": [],
+    "hideBreadcrumbs": false
+  },
+  "translatableFields": {
+    "title": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "My Account"
+    },
+    "urlSegment": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "MyAccount"
+    }
+  },
+  "contextualFields": {}
+}

@@ -27,6 +27,7 @@ import { css } from "styled-components";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 
 interface OwnProps extends WidgetProps {}
 
@@ -75,6 +76,7 @@ export interface OrderDetailSummaryTableStyles {
     productInfoBrandDescriptionGridContainer?: GridContainerProps;
     productInfoBrandGridItem?: GridItemProps;
     productInfoDescriptionGridItem?: GridItemProps;
+    productDescriptionStyles?: ProductDescriptionStyles;
     productInfoErpNumberGridItem?: GridItemProps;
     productInfoManufacturerItemGridItem?: GridItemProps;
     productInfoCustomerProductGridItem?: GridItemProps;
@@ -208,13 +210,6 @@ const styles: OrderDetailSummaryTableStyles = {
 
 const ProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
 
-    const description = orderLine.shortDescription || orderLine.description;
-    const descriptionDisplay = (orderLine.productUri && orderLine.isActiveProduct)
-        ? <Link {...styles.productInfoLink} href={orderLine.productUri}>
-            {description}
-        </Link>
-        : <Typography {...styles.productInfoDescription}>{description}</Typography>;
-
     let sectionOptions: JSX.Element[] = [];
     if (orderLine.sectionOptions && orderLine.sectionOptions) {
         sectionOptions = orderLine.sectionOptions.map(option => (
@@ -235,7 +230,7 @@ const ProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
                             </GridItem>
                         }
                         <GridItem {...styles.productInfoDescriptionGridItem}>
-                            {descriptionDisplay}
+                            <ProductDescription product={orderLine} extendedStyles={styles.productDescriptionStyles} />
                         </GridItem>
                     </GridContainer>
                 </GridItem>
@@ -283,7 +278,9 @@ const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel, order:
         <GridItem {...styles.orderLineInfoGridItem}>
             <GridContainer {...styles.orderLineInfoGridContainer}>
                 <GridItem {...styles.orderLinePriceGridItem}>
-                    <SmallHeadingAndText heading={translate("Price")} text={orderLine.unitPriceDisplay} />
+                    <SmallHeadingAndText
+                        heading={translate("Price")}
+                        text={orderLine.unitPriceDisplay + (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")} />
                 </GridItem>
                 {promotions.length > 0
                     && <GridItem {...styles.orderLineInfoPromotionList}>
@@ -368,7 +365,7 @@ const OrderLineCard = (props: {
             </GridItem>
             <GridItem {...styles.orderLineCardAddToListGridItem}>
                 <Hidden {...styles.orderLineCardActionsWide}>
-                    <OverflowMenu {...styles.overflowMenu}>
+                    <OverflowMenu position="end" {...styles.overflowMenu}>
                         <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>{translate("Add to List")}</Clickable>
                     </OverflowMenu>
                 </Hidden>
@@ -413,7 +410,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

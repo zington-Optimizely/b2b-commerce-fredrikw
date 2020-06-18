@@ -60,6 +60,7 @@ const gridModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Grid",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.extraLargeColumnCount,

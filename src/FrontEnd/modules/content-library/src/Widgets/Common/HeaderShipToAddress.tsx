@@ -59,8 +59,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Header Ship To Address Menu",
         icon: "MapPin",
-        fieldDefinitions: [],
         group: "Common",
+        isSystem: true,
     },
 };
 

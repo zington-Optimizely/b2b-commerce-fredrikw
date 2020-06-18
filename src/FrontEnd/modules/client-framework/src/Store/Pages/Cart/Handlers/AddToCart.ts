@@ -4,6 +4,7 @@ import {
     ApiHandler, createHandlerChainRunner, HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
 
 type AddToCartParameter = {
     onError?: (error: string) => void;
@@ -12,6 +13,8 @@ type AddToCartParameter = {
 type HandlerType = ApiHandler<AddToCartParameter, CartLineModel>;
 
 export const PopulateApiParameter: HandlerType = props => {
+    throwErrorIfTesting();
+
     props.apiParameter = props.parameter;
 };
 
@@ -29,7 +32,7 @@ export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
@@ -37,7 +40,7 @@ export const chain = [
     PopulateApiParameter,
     SendDataToApi,
     LoadCart,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const addToCart = createHandlerChainRunner(chain, "AddToCart");

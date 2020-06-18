@@ -53,7 +53,7 @@ export const WaitForData: HandlerType = async props => {
     }
 };
 
-export const CallOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess();
 };
 
@@ -61,7 +61,7 @@ export const chain = [
     DispatchBeginPreloadingData,
     PreloadData,
     WaitForData,
-    CallOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const preloadOrderConfirmationData = createHandlerChainRunner(chain, "PreloadOrderConfirmationData");

@@ -11,7 +11,7 @@ import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/Pa
 export function setupPageModel(pageModel: PageModel,
                                name: string,
                                urlSegment: string,
-                               parentId: string,
+                               parentNodeId: string,
                                sortOrder: number,
                                language: BasicLanguageModel,
                                personaId: string,
@@ -24,7 +24,7 @@ export function setupPageModel(pageModel: PageModel,
     pageModel.name = name;
     pageModel.sortOrder = sortOrder;
     pageModel.websiteId = websiteId;
-    pageModel.parentId = parentId;
+    pageModel.parentId = parentNodeId;
 
     // clean up any properties that we don't want at the root level anymore
     delete (pageModel as any)["url"];
@@ -65,6 +65,7 @@ export function setupPageModel(pageModel: PageModel,
         setDefaultFieldValues(widget, widgetDefinition.fieldDefinitions, language.id, contextualId);
     }
 
+    // I believe this is here because generic content pages all use a creator that has a generic title, and when someone creates a page the title should get auto set to match the name they enter
     if (pageDefinition.hasEditableTitle) {
         pageModel.translatableFields["title"][language.id] = name;
     }
@@ -107,9 +108,13 @@ function setFieldsToExistingValuesWithProperContext(item: WidgetProps | PageMode
     doWork(contextualFields, contextualId);
 }
 
-export function setDefaultFieldValues(item: WidgetProps | PageModel, fieldDefinitions: FieldDefinition[], currentLanguageId: string, contextualId: string) {
+export function setDefaultFieldValues(item: WidgetProps | PageModel, fieldDefinitions: FieldDefinition[] | undefined, currentLanguageId: string, contextualId: string) {
     initializeFields(item);
     const { fields, translatableFields, contextualFields, generalFields } = item;
+
+    if (!fieldDefinitions) {
+        return;
+    }
 
     for (const fieldDefinition of fieldDefinitions) {
         const { name, fieldType } = fieldDefinition;

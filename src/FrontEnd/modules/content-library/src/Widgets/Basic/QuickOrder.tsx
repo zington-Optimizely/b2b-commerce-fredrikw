@@ -139,7 +139,7 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(withToaster(QuickOrder)),
     definition: {
         group: "Basic",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

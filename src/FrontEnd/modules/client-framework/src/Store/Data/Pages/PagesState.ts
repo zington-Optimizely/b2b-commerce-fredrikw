@@ -2,6 +2,7 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
+import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 
 export interface PagesState {
     readonly isLoading: Dictionary<boolean>;
@@ -13,6 +14,8 @@ export interface PagesState {
     readonly widgetIdsByParentIdAndZone: Dictionary<Dictionary<readonly string[]>>;
     readonly location: Location;
     readonly draggingWidgetId?: string;
+    readonly widgetDefinitionsByType?: SafeDictionary<WidgetDefinition>;
+    readonly pageDefinitionsByType?: SafeDictionary<PageDefinition>;
 }
 
 const frozenEmptyObject = Object.freeze({});

@@ -1,6 +1,7 @@
-import { addWidgetsFromContext } from "@insite/client-framework/Configuration";
+import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Configuration";
 import "./Store/Reducers"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
-import { setPreStyleGuideTheme, setPostStyleGuideTheme } from "@insite/server-framework/ServerConfiguration";
+import { setPreStyleGuideTheme, setPostStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import baseTheme from "@insite/mobius/globals/baseTheme";
 
 // load all widgets. Without this they won't be included in the bundle
 const widgets = require.context("./Widgets", true, /\.tsx$/);
@@ -9,6 +10,15 @@ const onHotWidgetReplace = addWidgetsFromContext(widgets);
 // ensure HMR works for custom widgets
 if (module.hot) {
     module.hot.accept(widgets.id, () => onHotWidgetReplace(require.context("./Widgets", true, /\.tsx$/)));
+}
+
+// load all pages. Without this they won't be included in the bundle
+const pages = require.context("./Pages", true, /\.tsx$/);
+const onHotPageReplace = addPagesFromContext(pages);
+
+// ensure HMR works for custom pages
+if (module.hot) {
+    module.hot.accept(widgets.id, () => onHotPageReplace(require.context("./Pages", true, /\.tsx$/)));
 }
 
 // load all handlers. They could be loaded individually instead.
@@ -25,6 +35,12 @@ setPreStyleGuideTheme({
             main: "#080",
         },
     },
+    typography: {
+        h2: {
+            weight: 26,
+            transform: "lowercase",
+        },
+    },
 });
 
 setPostStyleGuideTheme({
@@ -33,4 +49,25 @@ setPostStyleGuideTheme({
             main: "#b00",
         },
     },
+    typography: {
+        h1: {
+            weight: 42,
+            italic: true,
+            size: "84px",
+            lineHeight: 1.2,
+            transform: "uppercase",
+        },
+    },
+    link: { defaultProps: { icon: { iconProps: { color: "secondary", size: 48 } } } },
+    button: {
+        primary: {
+            color: "primary",
+            hoverMode: "lighten",
+            sizeVariant: "medium",
+        },
+    },
+    formField: { defaultProps: {
+        border: "underline",
+        backgroundColor: "common.accent",
+    } },
 });

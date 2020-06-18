@@ -12,7 +12,7 @@ type LoadState<T extends LoadStatus> = {
 };
 
 type HasTheme = {
-    theme: BaseTheme;
+    theme: Partial<BaseTheme>;
 };
 
 export type State =
@@ -20,7 +20,7 @@ export type State =
     | LoadState<LoadStatus.Loading>
     | (LoadState<LoadStatus.Loaded> & HasTheme & {
         saving?: true;
-        history: BaseTheme[];
+        history: Partial<BaseTheme>[];
         historyIndex: number,
     });
 

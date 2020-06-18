@@ -223,8 +223,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Carrier & Service",
         group: "Checkout - Review & Submit",
-        fieldDefinitions: [],
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
+        isSystem: true,
     },
 };
 

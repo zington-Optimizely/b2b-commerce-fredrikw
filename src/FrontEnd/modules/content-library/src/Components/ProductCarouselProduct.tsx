@@ -140,9 +140,10 @@ const ProductCarouselProduct: React.FC<Props> = ({
 
     const [quantity, setQuantity] = React.useState(product.minimumOrderQty || 1);
     const updateQuantity = async (value: string) => {
-        setQuantity(value as any as number);
+        const newQuantity = parseFloat(value);
+        setQuantity(newQuantity);
 
-        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: parseFloat(value) });
+        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: newQuantity });
         updateCarouselProduct({ carouselId, product: productToUpdate });
     };
 

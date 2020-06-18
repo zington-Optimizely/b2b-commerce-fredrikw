@@ -5,11 +5,12 @@ export interface WidgetDefinition<T = FieldDefinition> extends ContentItemDefini
     allowedContexts?: string[];
     group: WidgetGroup;
     icon?: string;
+    isSystem?: boolean;
 }
 
 export interface ContentItemDefinition<T = FieldDefinition> {
     displayName?: string;
-    fieldDefinitions: T[];
+    fieldDefinitions?: T[];
 }
 
 export interface PageDefinition<T = FieldDefinition> extends ContentItemDefinition<T> {
@@ -19,4 +20,5 @@ export interface PageDefinition<T = FieldDefinition> extends ContentItemDefiniti
     supportsCategorySelection?: true;
     supportsBrandSelection?: true;
     isDeletable?: true;
+    isSystemPage?: true;
 }

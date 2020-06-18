@@ -306,7 +306,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Search Results Filter",
         allowedContexts: [InvoiceHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -26,7 +26,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "PO Number",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

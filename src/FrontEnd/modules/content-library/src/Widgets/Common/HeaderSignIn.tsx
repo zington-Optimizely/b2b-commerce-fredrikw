@@ -154,6 +154,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Header Sign In",
         icon: "User",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.visibilityState,

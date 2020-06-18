@@ -51,7 +51,7 @@ const widgetModule: WidgetModule = {
         displayName: "Share Link",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

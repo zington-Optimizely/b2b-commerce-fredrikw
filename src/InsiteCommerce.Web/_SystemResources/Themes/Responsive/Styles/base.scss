@@ -1255,6 +1255,20 @@ body [role="main"] div.pbtm {
     display: none;
 }
 
+/* Modal - Quote Item */
+
+#quoteLineCalculatorForm {
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+}
+
+/* Modal - Assign role */
+
+.tip-role {
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+}
+
 /* Modal - Add Wishlist */
 
 .popup-add-wishlist {

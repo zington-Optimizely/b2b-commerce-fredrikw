@@ -91,7 +91,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "View Select",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

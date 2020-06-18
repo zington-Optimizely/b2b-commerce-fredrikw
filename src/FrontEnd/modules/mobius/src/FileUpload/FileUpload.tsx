@@ -1,14 +1,17 @@
 import * as React from "react";
+import { Transition } from "react-transition-group";
+import { TransitionStatus } from "react-transition-group/Transition";
 import styled, { AnyStyledComponent, ThemeConsumer, css } from "styled-components";
 import Button, { ButtonPresentationProps } from "../Button";
 import FormField, {
     FormFieldIcon,
+    FormFieldClickable,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
     FormFieldComponentProps,
 } from "../FormField";
-import { sizeVariantValues } from "../FormField/formStyles";
-import { BaseTheme } from "../globals/baseTheme";
+import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
+import { sizeVariantValues, VariantValues, borderTypes } from "../FormField/formStyles";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
@@ -16,14 +19,31 @@ import injectCss from "../utilities/injectCss";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import VisuallyHidden from "../VisuallyHidden";
+import get from "../utilities/get";
+import getProp from "../utilities/getProp";
+import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 
-export interface FileUploadPresentationProps extends FormFieldPresentationProps<FileUploadComponentProps> {
+interface FileUploadCssOverrides extends Pick<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
+    appearanceTransition?: StyledProp<any>;
+}
+
+export interface FileUploadPresentationProps extends Omit<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
     /** Props to be passed into the file upload's Button component.
      * @themable */
     buttonProps?: ButtonPresentationProps;
     /** Props to be passed into the input's Icon component.
      * @themable */
     iconProps?: IconPresentationProps;
+    /** Props to be passed into the clearIcon component.
+     * @themable */
+    clearIconProps?: IconPresentationProps;
+     /** Length of fade in and fade out transition on file name appearance.
+      * @themable */
+    transitionLength?: keyof ThemeTransitionDuration;
+     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
+     * @themable */
+    cssOverrides?: FileUploadCssOverrides;
 }
 
 type FileUploadComponentProps = MobiusStyledComponentProps<"input", {
@@ -43,7 +63,7 @@ type FileUploadComponentProps = MobiusStyledComponentProps<"input", {
      */
     uid?: string | number;
     /** React reference used to display and reference the file input element. */
-    inputRef?: React.RefObject<AnyStyledComponent>;
+    inputRef?: React.RefObject<HTMLInputElement> | React.MutableRefObject<HTMLInputElement>;
     /** Label text to be displayed above the input. */
     label?: React.ReactNode;
     /** Function that will be executed after the file is changed. */
@@ -52,18 +72,54 @@ type FileUploadComponentProps = MobiusStyledComponentProps<"input", {
     placeholder?: string;
     /** Adds an asterisk to the input's label (if provided). */
     required?: boolean;
+    /** If handling the file external to the upload component, provide the file name here. */
+    fileName?: string;
 } & Partial<FormFieldComponentProps>>;
 
 export type FileUploadProps = FileUploadPresentationProps & FileUploadComponentProps;
 
 interface FileUploadState {
-    fileInput: React.RefObject<AnyStyledComponent>;
     fileName: string;
 }
 
-const FileUploadStyle = styled.div`
+const AppearanceTransition = styled.div<{
+    transitionState?: TransitionStatus,
+    transitionLength?: keyof ThemeTransitionDuration,
+    css?: InjectableCss,
+}>`
+    transition: opacity ease-in-out ${getProp("transitionLength", 200)}ms;
+    ${({ transitionState }) => {
+        switch (transitionState) {
+        case "entering":
+            return "opacity: 0;";
+        case "entered":
+            return "opacity: 1;";
+        case "exiting":
+        case "exited":
+            return "opacity: 0;";
+        default:
+            return "";
+        }
+    }}
+    ${injectCss}
+`;
+
+const FileUploadStyle = styled.div<{ sizeValues: VariantValues, border: "underline" | "rectangle" | "rounded" }>`
     position: relative;
     cursor: pointer;
+    &:focus-within, &:focus {
+        ${AppearanceTransition} {
+            ${({ border }) => border !== "underline" && "margin-top: -1px;"}
+        }
+        ${FormFieldClickable} {
+            ${({ border }) => border !== "underline" && "margin-top: -1px;"}
+            /* stylelint-disable declaration-colon-newline-after */
+            right: ${({ border, sizeValues }) => {
+                return sizeValues.icon + (2 * (sizeValues.iconPadding - 2)) - (border !== "underline" ? 1 : 0);
+            }}px;
+            /* stylelint-enable */
+        }
+    }
     ${injectCss}
 `;
 
@@ -103,14 +159,30 @@ class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, F
         buttonText: "Choose file",
     };
 
+    fileInput = this.props.inputRef || React.createRef();
+
+    UNSAFE_componentWillReceiveProps(nextProps: FileUploadProps) { // eslint-disable-line camelcase
+        if (nextProps.fileName !== this.props.fileName) {
+            const nextFileName = nextProps.fileName ?? "";
+            this.setState({ fileName: nextFileName });
+        }
+    }
+
     state = {
-        fileInput: this.props.inputRef || React.createRef(),
-        fileName: "",
+        fileName: this.props.fileName || "",
     };
 
     handleFiles = (event: React.ChangeEvent<any>) => {
-        this.setState({ fileName: event?.target.files[0].name });
-        this.props.onFileChange && this.props.onFileChange(event);
+        if (event?.target.files[0]) {
+            this.setState({ fileName: event?.target.files[0]?.name });
+            this.props.onFileChange && this.props.onFileChange(event);
+        }
+    };
+
+    removeFile = () => {
+        if (this.fileInput.current?.value) this.fileInput.current.value = "";
+        this.props.onFileChange && this.props.onFileChange({ target: { files: [null] } } as React.ChangeEvent<any>);
+        this.setState({ fileName: "" });
     };
 
     render() {
@@ -139,22 +211,24 @@ class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, F
                 const { css: buttonCss, ...otherButtonProps } = spreadProps("buttonProps");
                 const labelProps = spreadProps("labelProps");
                 labelProps.forwardAs = "span";
-                const { inputSelect, ..._cssOverrides } = spreadProps("cssOverrides");
+                const { inputSelect, formInputWrapper, appearanceTransition, ..._cssOverrides } = spreadProps("cssOverrides");
                 const sizeVariant: FormFieldSizeVariant = applyProp("sizeVariant", "default");
+                const sizeValues = sizeVariantValues[sizeVariant];
 
                 const inputId = uid?.toString() || uniqueId();
                 const labelId = `${inputId}-label`;
                 const inputLabelObj = label === 0 || label ? { "aria-labelledby": labelId } : {};
                 const descriptionId = `${inputId}-description`;
                 const hasDescription = !!error || !!hint;
+                const transitionLength = get(otherProps.theme, "transition.duration.short") || 200;
 
                 const input = (
                     <>
-                        <FileUploadStyle className="mobiusFileUpload">
+                        <FileUploadStyle className="mobiusFileUpload" sizeValues={sizeValues} border={applyProp("border")}>
                             <UploadFunctionality
                                 id={inputId}
                                 type="file"
-                                ref={this.state.fileInput as any}
+                                ref={this.fileInput}
                                 aria-describedby={hasDescription ? descriptionId : undefined}
                                 aria-invalid={!!error}
                                 aria-required={!isDisabled && required}
@@ -164,16 +238,38 @@ class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, F
                                 {...inputLabelObj}
                                 {...omitMultiple(otherProps, uploadOmitProps)}
                             />
-                            <UploadAppearance
-                                className="mobiusFileVisual"
-                                value={this.state.fileName}
-                                placeholder={this.props.placeholder}
-                                readOnly
-                                tabIndex={-1}
-                                data-id="visualInput"/>
+                            <Transition
+                                mountOnEnter
+                                unmountOnExit
+                                in={!!(this.state.fileName)}
+                                timeout={{
+                                    enter: 200,
+                                    exit: 200,
+                                }}
+                            >
+                                {state => (
+                                    <AppearanceTransition
+                                        transitionState={state}
+                                        transitionLength={transitionLength}
+                                        css={appearanceTransition}
+                                    >
+                                        <UploadAppearance
+                                            className="mobiusFileVisual"
+                                            value={this.state.fileName}
+                                            placeholder={this.props.placeholder}
+                                            readOnly
+                                            tabIndex={-1}
+                                            data-id="visualInput"/>
+                                        <FormFieldClickable onClick={this.removeFile}>
+                                            <FormFieldIcon size={sizeValues.icon} {...spreadProps("clearIconProps")}/>
+                                            <VisuallyHidden>{theme?.translate("remove file")}</VisuallyHidden>
+                                        </FormFieldClickable>
+                                    </AppearanceTransition>
+                                )}
+                            </Transition>
                         </FileUploadStyle>
                         <FormFieldIcon
-                            size={sizeVariantValues[sizeVariant].icon}
+                            size={sizeValues.icon}
                             color={isDisabled ? "text.disabled" : "text.main"}
                             {...spreadProps("iconProps")}
                         />
@@ -186,21 +282,33 @@ class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, F
                             formInput={input}
                             labelId={labelId}
                             inputId={inputId}
-                            cssOverrides={{ ..._cssOverrides, inputSelect: `padding-right: ${sizeVariantValues[sizeVariant].height}px; ${inputSelect}` }}
+                            cssOverrides={{ ..._cssOverrides,
+                                inputSelect: css`
+                                    padding-right: ${sizeValues.height}px;
+                                    ${inputSelect}
+                                `,
+                                formInputWrapper: css`
+                                    ${FormFieldClickable as any} {
+                                        top: -1px;
+                                        right: ${sizeValues.icon + (2 * (sizeValues.iconPadding - 2))}px;
+                                    }
+                                    ${formInputWrapper}
+                                `,
+                            }}
                             labelProps={labelProps}
                             {...omitMultiple(this.props, formFieldOmitProps)}
                         />
                         {hideButton
                             ? null : <Button
-                                sizeVariant={sizeVariantValues[sizeVariant].button}
+                                sizeVariant={sizeValues.button}
                                 htmlFor={inputId}
                                 forwardAs={isDisabled ? "button" : "label"}
                                 css={css`
                                     white-space: noWrap;
                                     display: inline-block;
                                     box-sizing: border-box;
-                                    line-height: ${sizeVariantValues[sizeVariant].height - 3}px;
-                                    margin: ${label && (labelPosition !== "left") ? sizeVariantValues[sizeVariant].labelHeight : 0}px 0 0 15px;
+                                    line-height: ${sizeValues.height - 3}px;
+                                    margin: ${label && (labelPosition !== "left") ? sizeValues.labelHeight : 0}px 0 0 15px;
                                     ${buttonCss}
                                 `}
                                 disabled={isDisabled}

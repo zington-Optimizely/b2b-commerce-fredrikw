@@ -21,8 +21,12 @@ export const DispatchSetWishListId: HandlerType = props => {
 
 export const DispatchLoadWishListIfNeeded: HandlerType = props => {
     const wishListState = getWishListState(props.getState(), props.parameter.wishListId);
-    if (!wishListState.value) {
-        props.dispatch(loadWishList({ wishListId: props.parameter.wishListId, exclude: "listlines" }));
+    if (!wishListState.value || wishListState.value.schedule === undefined) {
+        props.dispatch(loadWishList({
+            wishListId: props.parameter.wishListId,
+            exclude: ["listLines"],
+            expand: ["schedule", "sharedUsers"],
+        }));
     }
 };
 

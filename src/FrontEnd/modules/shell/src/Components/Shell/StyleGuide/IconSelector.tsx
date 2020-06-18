@@ -8,6 +8,7 @@ import DynamicDropdown, { DynamicDropdownProps } from "@insite/mobius/DynamicDro
 import { FormFieldProps } from "@insite/mobius/FormField";
 import iconsObject from "@insite/mobius/Icons/commonIcons";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
 
 const OptionRow = styled.div`
     display: flex;
@@ -19,8 +20,9 @@ const IconSelector: React.FunctionComponent<Pick<DynamicDropdownProps, "onSelect
     & {
         onTextFieldChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
         value?: string;
+        disabled?: boolean;
     }
-> = ({ value, ...otherProps }) => {
+> = ({ value, disabled, label, ...otherProps }) => {
     /* eslint-disable no-prototype-builtins */
     const valueIsIconKey = value ? iconsObject.hasOwnProperty(value) : false;
     const [useDirectSource, setUseDirectSource] = React.useState(value ? !iconsObject.hasOwnProperty(value) : false);
@@ -40,18 +42,20 @@ const IconSelector: React.FunctionComponent<Pick<DynamicDropdownProps, "onSelect
     return (<>
         {useDirectSource
             ? <TextField
+                label={disabled ? <><span>{label} </span><DisabledInCodeTooltip /></> : label}
                 {...textFieldProps}
                 {...omitMultiple(otherProps, ["onTextFieldChange", "onSelectionChange"] as const)}
                 onChange={otherProps.onTextFieldChange}
-                disabled={!useDirectSource}
+                disabled={disabled || !useDirectSource}
             /> : <DynamicDropdown
+                label={disabled ? <><span>{label} </span><DisabledInCodeTooltip /></> : label}
                 options={options}
                 selected={value || ""}
-                disabled={useDirectSource}
-                {...otherProps}
+                disabled={disabled || useDirectSource}
+                {...otherProps as Partial<DynamicDropdownProps>}
             />
         }
-        <Checkbox
+        {disabled || <Checkbox
             variant="toggle"
             labelPosition="right"
             checked={useDirectSource}
@@ -59,7 +63,7 @@ const IconSelector: React.FunctionComponent<Pick<DynamicDropdownProps, "onSelect
             css={css` margin-top: 10px; `}
         >
             Use direct source
-        </Checkbox>
+        </Checkbox>}
     </>);
 };
 

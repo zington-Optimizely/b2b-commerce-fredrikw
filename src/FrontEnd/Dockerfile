@@ -1,3 +1,11 @@
+# Docker for dummies
+# use this to build the example blueprint. Exclude the two build args to build content-library
+# docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example -t spire
+# use this to run the built image, the site will run at http://localhost:3000, and your website domainNames needs to include host.docker.internal
+# docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire
+# docker ps to list running containers
+# docker stop [containerId] to stop a running container
+
 # Command to build the base site with automatic Node/Linux image update:
 # docker build --pull .
 
@@ -66,6 +74,14 @@ COPY ./modules/blueprints ./modules/blueprints/
 # Create the JS bundles for the application.
 ARG BLUEPRINT=content-library
 RUN ["npm", "run", "build:docker"]
+
+ARG BLUEPRINT_NAME=content-library
+RUN mkdir -p /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageCreators \
+  && mkdir -p /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates \
+  && mkdir -p /app/wwwroot/AppData/PageCreators/${BLUEPRINT_NAME} \
+  && mkdir -p /app/wwwroot/AppData/PageTemplates/${BLUEPRINT_NAME} \
+  && cp -a /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageCreators/. /app/wwwroot/AppData/PageCreators/${BLUEPRINT_NAME}/ \
+  && cp -a /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates/. /app/wwwroot/AppData/PageTemplates/${BLUEPRINT_NAME}/
 
 FROM $NODE_BASE_IMAGE AS runtime-base
 # This is just here for automation so we can push our runtime-base image to the registry as it evolves

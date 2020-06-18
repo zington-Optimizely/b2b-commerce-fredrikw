@@ -45,7 +45,7 @@ class CategorySelection extends React.Component<Props> {
             <label>
                 Category:
                 <select onChange={this.onChange} value={this.getValue()}>
-                    <option key="">Select Category</option>
+                    <option key="" value="">Select Category</option>
                     {sortBy(this.props.categories, [o => o.displayName]).map(category =>
                         <option key={category.id} value={category.path}>{category.displayName}</option>,
                     )}

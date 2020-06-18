@@ -44,6 +44,7 @@ const pageTypeLink: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Link",
+        isSystem: true,
         fieldDefinitions: [
             {
                 fieldType: "General",

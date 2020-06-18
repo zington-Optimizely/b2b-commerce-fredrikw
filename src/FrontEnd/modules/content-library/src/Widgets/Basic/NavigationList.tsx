@@ -75,6 +75,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "NavigationList",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.depth,

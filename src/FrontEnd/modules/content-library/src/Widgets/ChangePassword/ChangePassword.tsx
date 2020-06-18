@@ -159,7 +159,7 @@ const ChangePasswordView: FC<Props> = (props) => {
             <GridContainer {...styles.passwordGridContainer}>
                 <GridItem {...styles.userInformationGridItem}>
                     <TextField
-                        type={showPasswords ? "password" : "text"}
+                        type={showPasswords ? "text" : "password"}
                         label={translate("Current Password")}
                         onInput={currentPasswordChangeHandler}
                         autoComplete="current-password"
@@ -167,7 +167,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                 </GridItem>
                 <GridItem {...styles.userInformationGridItem}>
                     <TextField
-                        type={showPasswords ? "password" : "text"}
+                        type={showPasswords ? "text" : "password"}
                         label={translate("New Password")}
                         onInput={newPasswordChangeHandler}
                         autoComplete="new-password"
@@ -175,7 +175,7 @@ const ChangePasswordView: FC<Props> = (props) => {
                 </GridItem>
                 <GridItem {...styles.userInformationGridItem}>
                     <TextField
-                        type={showPasswords ? "password" : "text"}
+                        type={showPasswords ? "text" : "password"}
                         label={translate("Confirm New Password")}
                         onInput={confirmNewPasswordChangeHandler}
                         error={confirmNewPasswordError}
@@ -211,7 +211,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [ChangePasswordPageContext],
         group: "Change Password",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

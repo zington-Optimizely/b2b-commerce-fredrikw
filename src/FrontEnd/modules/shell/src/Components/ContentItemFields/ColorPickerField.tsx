@@ -9,8 +9,8 @@ import { colorResultToString } from "@insite/shell/Store/ShellSelectors";
 export default class ColorPickerField extends React.Component<ContentItemFieldProps<string, ColorPickerFieldDefinition>> {
 
     onChange = (color: ColorResult) => {
-        const value: string = colorResultToString(color);
-        this.props.updateField(this.props.fieldDefinition.name, value);
+        const value = colorResultToString(color);
+        this.props.updateField(this.props.fieldDefinition.name, value ?? "");
     };
 
     render() {

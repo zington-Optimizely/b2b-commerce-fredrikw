@@ -18,14 +18,14 @@ export const SendDataToApi: HandlerType = async props => {
     props.apiResult = await shareEntityApi(props.apiParameter);
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
 export const chain = [
     PopulateApiParameter,
     SendDataToApi,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const shareEntity = createHandlerChainRunner(chain, "ShareEntity");

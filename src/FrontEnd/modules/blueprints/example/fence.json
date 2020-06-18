@@ -3,7 +3,6 @@
     "imports": [
         "mobius",
         "client-framework",
-        "content-library",
-        "server-framework"
+        "content-library"
     ]
 }

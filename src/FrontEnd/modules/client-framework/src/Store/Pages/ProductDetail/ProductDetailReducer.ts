@@ -103,6 +103,7 @@ const reducer = {
         action.realTimeInventory.realTimeInventoryResults?.forEach((inventory: ProductInventoryDto) => {
             const product = productsToUpdate.find(p => inventory.productId === p!.id);
             if (product) {
+                product.qtyOnHand = inventory.qtyOnHand;
                 product.availability = inventory.inventoryAvailabilityDtos
                     ?.find(o => o.unitOfMeasure.toLowerCase() === (product.unitOfMeasure?.toLowerCase() || ""))?.availability || undefined;
                 product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;

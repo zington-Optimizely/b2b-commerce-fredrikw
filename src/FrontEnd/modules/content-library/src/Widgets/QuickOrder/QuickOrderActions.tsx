@@ -182,7 +182,7 @@ const QuickOrderActions: FC<Props> = ({
             </Button>
             {fields.useOverflowMenu
             && <Hidden below="md" above="md" {...styles.menuHidden}>
-                <OverflowMenu {...styles.overflowMenu}>
+                <OverflowMenu position="end" {...styles.overflowMenu}>
                     <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
                     <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>{translate("Add To List")}</Clickable>
                 </OverflowMenu>
@@ -199,6 +199,7 @@ const widgetModule: WidgetModule = {
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
         displayName: "Actions",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.useOverflowMenu,

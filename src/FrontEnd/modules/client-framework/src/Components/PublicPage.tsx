@@ -13,9 +13,13 @@ import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import Page from "@insite/mobius/Page";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import PageBreadcrumbs from "@insite/client-framework/Components/PageBreadcrumbs";
+import ErrorModal from "@insite/client-framework/Components/ErrorModal";
+import { getDisplayErrorPage, redirectTo } from "@insite/client-framework/ServerSideRendering";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     page: getCurrentPage(state),
+    errorPageLink: getPageLinkByPageType(state, "UnhandledErrorPage"),
 });
 
 type Props = ReturnType<typeof mapStateToProps> & HasShellContext;
@@ -50,22 +54,31 @@ class PublicPage extends React.Component<Props> {
         const { isInShell } = shellContext;
 
         return <>
-            <ShellContext.Provider value={{ isInShell }}>
-                <Header />
-            </ShellContext.Provider>
+                {!page.fields.hideHeader
+                    && <ShellContext.Provider value={{ isInShell }}>
+                        <Header />
+                    </ShellContext.Provider>
+                }
                 {!page.fields.hideBreadcrumbs
                     && <Page as="div">
                         <PageBreadcrumbs />
                     </Page>
                 }
                 {content}
-            <ShellContext.Provider value={{ isInShell }}>
-                <Footer />
-            </ShellContext.Provider>
+                <ErrorModal/>
+                {!page.fields.hideFooter
+                    && <ShellContext.Provider value={{ isInShell }}>
+                        <Footer />
+                    </ShellContext.Provider>
+                }
         </>;
     }
 
     render() {
+        if (getDisplayErrorPage() && this.props.errorPageLink) {
+            redirectTo(this.props.errorPageLink.url);
+        }
+
         const { page } = this.props;
         if (page.id === "") {
             return this.wrapContent(<p>Loading</p>);

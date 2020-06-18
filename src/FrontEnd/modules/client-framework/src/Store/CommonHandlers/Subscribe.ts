@@ -16,14 +16,14 @@ export const SendDataToApi: HandlerType = async props => {
     await subscribeToList(props.apiParameter);
 };
 
-export const FireOnSuccess: HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
 export const chain = [
     PopulateApiParameter,
     SendDataToApi,
-    FireOnSuccess,
+    ExecuteOnSuccessCallback,
 ];
 
 const subscribeHandler = createHandlerChainRunner(chain, "SubscribeHandler");

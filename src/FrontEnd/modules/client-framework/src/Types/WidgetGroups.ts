@@ -12,7 +12,7 @@ const WidgetGroups = [
     "Product Details",
     "Order History",
     "Order Details",
-    "Request RMA",
+    "Return Request (RMA)",
     "My Account",
     "Wish Lists",
     "RFQ",
@@ -23,6 +23,7 @@ const WidgetGroups = [
     "Account Settings",
     "Checkout - Shipping",
     "Invoice History",
+    "BudgetManagement",
     "Checkout - Review & Submit",
     "Sign In",
     "Product List",
@@ -38,6 +39,7 @@ const WidgetGroups = [
     "Footer",
     "Reset Password",
     "Change Customer",
+    "Location Finder",
 ] as const;
 
 export default WidgetGroups;

@@ -25,6 +25,7 @@ const mapStateToProps = (state: ApplicationState) => {
         cart,
         billTo: getBillToState(state, cart?.billToId).value,
         shipTo: getShipToState(state, cart?.shipToId).value,
+        pickUpWarehouse: state.context.session.pickUpWarehouse,
     });
 };
 
@@ -114,6 +115,7 @@ const OrderConfirmationOrderInformation: FC<Props> = props => {
                 <OrderConfirmationShippingInformation
                     cart={props.cart}
                     shipTo={props.shipTo}
+                    pickUpWarehouse={props.pickUpWarehouse}
                     extendedStyles={styles.orderConfirmationShippingInformation}
                 />
             </GridItem>
@@ -136,8 +138,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Order Information",
         allowedContexts: [OrderConfirmationPageContext],
-        fieldDefinitions: [],
         group: "Order Confirmation",
+        isSystem: true,
     },
 };
 

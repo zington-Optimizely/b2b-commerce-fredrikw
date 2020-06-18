@@ -170,6 +170,7 @@ const widgetModule: WidgetModule = {
     component: connect(null, mapDispatchToProps)(CmsSubscribe),
     definition: {
         group: "Basic",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.alignment,

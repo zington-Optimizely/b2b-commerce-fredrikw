@@ -29,14 +29,22 @@
         authenticationKey: string;
     }
 
+    export class PaymetricDto {
+        success: boolean;
+        message: string;
+        accessToken: string;
+    }
+
     export interface ISettingsService {
         getSettings(): ng.IPromise<SettingsCollection>;
         getTokenExConfig(token?: string): ng.IPromise<TokenExDto>;
+        getPaymetricConfig(token?: string): ng.IPromise<PaymetricDto>;
     }
 
     export class SettingsService implements ISettingsService {
         settingsUri = "/api/v1/settings";
         tokenExConfigUri = "/api/v1/tokenexconfig";
+        paymetricConfigUri = "/api/v1/paymetric/config";
         settingsCollections = {} as any;
         deferredRequests = {} as any;
 
@@ -102,6 +110,22 @@
         }
 
         protected getTokenExConfigFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
+        }
+
+        getPaymetricConfig(): ng.IPromise<PaymetricDto> {
+            var url = this.paymetricConfigUri;
+            return this.httpWrapperService.executeHttpRequest(
+                this,
+                this.$http.post(url, {}),
+                this.getPaymetricConfigCompleted,
+                this.getPaymetricConfigFailed
+            );
+        }
+
+        protected getPaymetricConfigCompleted(response: ng.IHttpPromiseCallbackArg<PaymetricDto>): void {
+        }
+
+        protected getPaymetricConfigFailed(error: ng.IHttpPromiseCallbackArg<any>): void {
         }
     }
 

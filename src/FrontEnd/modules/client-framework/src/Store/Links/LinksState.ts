@@ -8,7 +8,7 @@ export default interface LinksState {
     readonly pageLinks: readonly Readonly<PageLinkModel>[];
     readonly pageTypesToNodeId: Dictionary<string>;
     readonly nodeIdToPageLinkPath: Dictionary<readonly number[]>;
-    readonly UNSAFE_categoryLinksById: Dictionary<Readonly<CategoryLinkModel>>;
+    readonly UNSAFE_categoryLinksById: SafeDictionary<Readonly<CategoryLinkModel>>;
     readonly UNSAFE_categoryDepthLoaded: Dictionary<number>;
     readonly parentCategoryIdToChildrenIds: SafeDictionary<readonly string[]>;
 }

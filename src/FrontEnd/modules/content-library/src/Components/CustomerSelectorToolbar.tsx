@@ -105,7 +105,7 @@ const CustomerSelectorToolbar: FC<OwnProps> = ({
                         </Button>
                     </Hidden>
                     <Hidden {...styles.narrowHidden}>
-                        <OverflowMenu {...styles.overflowMenu}>
+                        <OverflowMenu position="end" {...styles.overflowMenu}>
                             <Clickable
                                 {...styles.narrowCreateNewAddressClickable}
                                 onClick={onCreateNewAddressClick}

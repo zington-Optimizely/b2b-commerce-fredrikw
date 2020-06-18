@@ -26,7 +26,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "Image",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

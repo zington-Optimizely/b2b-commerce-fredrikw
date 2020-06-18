@@ -105,8 +105,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        fieldDefinitions: [],
         displayName: "Promotion Code Form",
+        isSystem: true,
     },
 };
 

@@ -67,7 +67,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Pagination",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

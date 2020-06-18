@@ -69,8 +69,8 @@ const widgetModule: WidgetModule = {
     component: connect(null, mapDispatchToProps)(AddressBookSearchBox),
     definition: {
         group: "Addresses",
-        fieldDefinitions: [],
         allowedContexts: [AddressesPageContext],
+        isSystem: true,
     },
 };
 

@@ -74,7 +74,7 @@ class ItemEditor extends React.Component<Props, State> {
 
     updateField = (fieldName: string, value: any) => {
         const { item, definition, language, defaultLanguageId, personaId, defaultPersonaId, deviceType } = this.props;
-        if (!item || !definition) {
+        if (!item || !definition || !definition.fieldDefinitions) {
             return;
         }
 
@@ -139,13 +139,15 @@ class ItemEditor extends React.Component<Props, State> {
             return null;
         }
 
+        const fieldDefinitions = definition.fieldDefinitions ?? [];
+
         return (
             <>
                 <Scrim zIndexLevel="modal" />
                 <SideBarForm title={`Edit ${definition.displayName}`} save={this.doneEditingItem} name="EditItem"
                              cancel={this.cancelEditingItem}
                              disableSave={this.state.hasValidationErrors}>
-                    <FieldsEditor fieldDefinitions={definition.fieldDefinitions}
+                    <FieldsEditor fieldDefinitions={fieldDefinitions}
                                   item={item}
                                   updateField={this.updateField}
                                   registerHasValidationErrors={this.registerHasValidationErrors}

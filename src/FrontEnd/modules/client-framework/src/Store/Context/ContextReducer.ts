@@ -5,6 +5,7 @@ import { Website } from "@insite/client-framework/Services/WebsiteService";
 import { SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import assign from "lodash/assign";
 import { Session } from "@insite/client-framework/Services/SessionService";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 
 const initialState: ContextState = {
     website: {} as Website,
@@ -15,6 +16,7 @@ const initialState: ContextState = {
     areSettingsLoaded: false,
     tokenExConfigs: {},
     isSigningIn: false,
+    isErrorModalOpen: false,
 };
 
 const reducer = {
@@ -47,6 +49,12 @@ const reducer = {
     },
     "Context/CompleteSelectBrand": (draft: Draft<ContextState>, action: { brandPath: string; }) => {
         draft.selectedBrandPath = action.brandPath;
+    },
+    "Context/CMSPermissions": (draft: Draft<ContextState>, action: { permissions: PermissionsModel; }) => {
+        draft.permissions = action.permissions;
+    },
+    "Context/SetErrorModalIsOpen": (draft: Draft<ContextState>, action: { isErrorModalOpen: boolean }) => {
+        draft.isErrorModalOpen = action.isErrorModalOpen;
     },
 };
 

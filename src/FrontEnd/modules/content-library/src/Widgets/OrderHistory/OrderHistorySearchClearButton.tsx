@@ -55,7 +55,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Clear Filters Button",
         allowedContexts: [OrderHistoryPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

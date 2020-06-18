@@ -70,7 +70,7 @@ const widgetModule: WidgetModule = {
         icon: "Logo",
         displayName: "Brand Logo",
         allowedContexts: [BrandDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

@@ -69,7 +69,7 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Product List Count",
         allowedContexts: [ProductListPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

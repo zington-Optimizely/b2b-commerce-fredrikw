@@ -215,6 +215,7 @@ const widgetModule: WidgetModule = {
         group: "Brand Details",
         displayName: "Brand Product Lines",
         allowedContexts: [BrandDetailsPageContext],
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

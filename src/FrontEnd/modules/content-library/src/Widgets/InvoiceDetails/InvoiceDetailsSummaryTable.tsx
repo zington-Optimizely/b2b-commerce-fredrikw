@@ -109,7 +109,7 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Summary Table",
         allowedContexts: [InvoiceDetailsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

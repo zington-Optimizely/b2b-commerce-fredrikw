@@ -118,6 +118,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Cart",
         icon: "Link",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.visibilityState,

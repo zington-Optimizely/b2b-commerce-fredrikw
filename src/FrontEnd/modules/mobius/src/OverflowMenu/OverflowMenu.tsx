@@ -132,7 +132,7 @@ class OverflowMenu extends React.Component<Props, State> {
 
         const popoverBodyProps = {
             uid: controlsId,
-            width: 191,
+            _width: 191,
             css: cssOverrides.menu,
             ...omitSingle(otherProps, "cssOverrides"),
         };

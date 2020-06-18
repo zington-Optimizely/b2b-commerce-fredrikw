@@ -28,6 +28,7 @@ const enum fields {
     buttonLink = "buttonLink",
     buttonVariant = "variant",
     bannerWidth = "bannerWidth",
+    imageOverlay = "imageOverlay",
 }
 
 interface OwnProps extends WidgetProps {
@@ -42,6 +43,7 @@ interface OwnProps extends WidgetProps {
         [fields.buttonLabel]: string;
         [fields.buttonLink]: LinkFieldValue;
         [fields.buttonVariant]: "primary" | "secondary" | "tertiary";
+        [fields.imageOverlay]: string;
     };
     extendedStyles?: BannerStyles;
 }
@@ -56,6 +58,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
 
 export interface BannerStyles {
     wrapper?: InjectableCss;
+    overlayWrapper?: InjectableCss;
     /**
     * @deprecated Use the `bannerButton` property instead.
     */
@@ -67,6 +70,12 @@ export const bannerStyles: BannerStyles = {
     wrapper: {
         css: css`
             width: 100%;
+        `,
+    },
+    overlayWrapper: {
+        css: css`
+            width: 100%;
+            height: 100%;
             color: white;
             text-align: center;
             padding: 70px 100px 50px 100px;
@@ -96,49 +105,49 @@ const Banner: React.FC<Props> = ({
 
     let focalPointStyles;
     switch (fields.focalPoint) {
-    case "topLeft":
-        focalPointStyles = "background-position: left top;";
-        break;
-    case "topCenter":
-        focalPointStyles = "background-position: center top;";
-        break;
-    case "topRight":
-        focalPointStyles = "background-position: right top;";
-        break;
-    case "centerLeft":
-        focalPointStyles = "background-position: left center;";
-        break;
-    case "center":
-        focalPointStyles = "background-position: center center;";
-        break;
-    case "centerRight":
-        focalPointStyles = "background-position: right center;";
-        break;
-    case "bottomLeft":
-        focalPointStyles = "background-position: left bottom;";
-        break;
-    case "bottomCenter":
-        focalPointStyles = "background-position: center bottom;";
-        break;
-    case "bottomRight":
-        focalPointStyles = "background-position: right bottom;";
-        break;
+        case "topLeft":
+            focalPointStyles = "background-position: left top;";
+            break;
+        case "topCenter":
+            focalPointStyles = "background-position: center top;";
+            break;
+        case "topRight":
+            focalPointStyles = "background-position: right top;";
+            break;
+        case "centerLeft":
+            focalPointStyles = "background-position: left center;";
+            break;
+        case "center":
+            focalPointStyles = "background-position: center center;";
+            break;
+        case "centerRight":
+            focalPointStyles = "background-position: right center;";
+            break;
+        case "bottomLeft":
+            focalPointStyles = "background-position: left bottom;";
+            break;
+        case "bottomCenter":
+            focalPointStyles = "background-position: center bottom;";
+            break;
+        case "bottomRight":
+            focalPointStyles = "background-position: right bottom;";
+            break;
     }
 
     let minimumHeightStyles;
     switch (fields.minimumHeight) {
-    case "1/4 viewport":
-        minimumHeightStyles = "min-height: 25vh;";
-        break;
-    case "1/2 viewport":
-        minimumHeightStyles = "min-height: 50vh;";
-        break;
-    case "3/4 viewport":
-        minimumHeightStyles = "min-height: 75vh;";
-        break;
-    case "fullViewport":
-        minimumHeightStyles = "min-height: 100vh;";
-        break;
+        case "1/4 viewport":
+            minimumHeightStyles = "min-height: 25vh;";
+            break;
+        case "1/2 viewport":
+            minimumHeightStyles = "min-height: 50vh;";
+            break;
+        case "3/4 viewport":
+            minimumHeightStyles = "min-height: 75vh;";
+            break;
+        case "fullViewport":
+            minimumHeightStyles = "min-height: 100vh;";
+            break;
     }
 
     const [styles] = React.useState(() => mergeToNew(bannerStyles, extendedStyles));
@@ -148,16 +157,25 @@ const Banner: React.FC<Props> = ({
             ${styles.wrapper?.css || ""}
             ${backgroundStyles}
             ${focalPointStyles}
+        `,
+    };
+
+    const overlayWrapperStyles = {
+        css: css`
+            ${styles.overlayWrapper?.css || ""}
+            background-color: ${fields.background === "image" ? fields.imageOverlay : ""};
             ${minimumHeightStyles}
         `,
     };
 
     return <StyledWrapper {...wrapperStyles}>
-        <Typography>{parse(fields.heading, parserOptions)}</Typography>
-        <Typography>{parse(fields.subheading, parserOptions)}</Typography>
-        <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
-            {fields.buttonLabel || title || url}
-        </Button>
+        <StyledWrapper {...overlayWrapperStyles}>
+            <Typography>{parse(fields.heading, parserOptions)}</Typography>
+            <Typography>{parse(fields.subheading, parserOptions)}</Typography>
+            <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
+                {fields.buttonLabel || title || url}
+            </Button>
+        </StyledWrapper>
     </StyledWrapper>;
 };
 
@@ -166,6 +184,7 @@ const banner: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Banner",
+        isSystem: true,
         fieldDefinitions: [
             {
                 fieldType: "General",
@@ -183,6 +202,14 @@ const banner: WidgetModule = {
                 fieldType: "Translatable",
                 name: fields.image,
                 editorTemplate: "ImagePickerField",
+                defaultValue: "",
+                isVisible: widget => widget.fields.background === "image",
+            },
+            {
+                fieldType: "General",
+                name: fields.imageOverlay,
+                displayName: "Image Color Overlay",
+                editorTemplate: "ColorPickerField",
                 defaultValue: "",
                 isVisible: widget => widget.fields.background === "image",
             },

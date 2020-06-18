@@ -12,6 +12,7 @@ import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers
 import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
 import sleep from "@insite/client-framework/Common/Sleep";
 import sortBy from "lodash/sortBy";
+import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
 
 export interface LoadProductResult {
     product: ProductModelExtended,
@@ -26,6 +27,8 @@ type HandlerType = ApiHandlerDiscreteParameter<LoadProductParameter, GetProductB
 }>;
 
 export const DispatchBeginLoadProduct: HandlerType = props => {
+    throwErrorIfTesting();
+
     props.dispatch({
         type: "Pages/ProductDetail/BeginLoadProduct",
         path: "path" in props.parameter ? props.parameter.path : undefined,
@@ -41,7 +44,9 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestProductFromApi: HandlerType = async props => {
-    const product = await getProductByPath(props.apiParameter as GetProductByPathApiV2Parameter);
+    const parameter = props.apiParameter as GetProductByPathApiV2Parameter;
+    if (!parameter.path) return false;
+    const product = await getProductByPath(parameter);
     props.apiResult = { product };
 };
 

@@ -206,6 +206,8 @@ const settingsTab = {
 
 const definition: WidgetDefinition = {
     group: "Basic",
+    icon: "Link",
+    isSystem: true,
     fieldDefinitions: [
         {
             name: fields.links,

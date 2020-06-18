@@ -103,6 +103,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Language Menu",
         icon: "Menu",
+        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showIcon,

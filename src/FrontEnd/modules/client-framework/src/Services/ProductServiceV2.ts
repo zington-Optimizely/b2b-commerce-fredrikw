@@ -111,6 +111,7 @@ export interface ProductModelExtended extends ProductModel {
     unitOfMeasureDescription: string;
     unitOfMeasureDisplay: string;
     qtyOrdered: number;
+    qtyOnHand?: number;
     productDetailPath: string;
 }
 

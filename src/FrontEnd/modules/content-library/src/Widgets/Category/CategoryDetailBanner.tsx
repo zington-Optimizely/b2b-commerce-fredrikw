@@ -33,7 +33,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "Banner",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

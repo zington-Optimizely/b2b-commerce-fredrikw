@@ -97,7 +97,7 @@ const OrderConfirmationHeader: FC<Props> = props => {
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
                 <Hidden {...styles.menuHiddenContainer}>
-                    <OverflowMenu  {...styles.narrowOverflowMenu}>
+                    <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
                         <Clickable {...styles.printClickable} onClick={printOrOpenPrintAllModal}>{printLabel}</Clickable>
                         <Clickable {...styles.continueClickable} onClick={continueClickHandler}>{continueLabel}</Clickable>
                     </OverflowMenu>
@@ -116,8 +116,8 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Page Header",
         allowedContexts: [OrderConfirmationPageContext],
-        fieldDefinitions: [],
         group: "Order Confirmation",
+        isSystem: true,
     },
 };
 

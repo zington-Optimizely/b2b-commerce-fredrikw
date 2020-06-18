@@ -27,7 +27,7 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         allowedContexts: [OrderHistoryPageContext],
         displayName: "Order Number",
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

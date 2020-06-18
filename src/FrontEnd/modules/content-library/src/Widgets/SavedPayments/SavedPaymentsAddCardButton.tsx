@@ -62,7 +62,7 @@ const widgetModule: WidgetModule = {
         displayName: "Add Card Button",
         group: "Saved Payments",
         allowedContexts: [SavedPaymentsPageContext],
-        fieldDefinitions: [],
+        isSystem: true,
     },
 };
 

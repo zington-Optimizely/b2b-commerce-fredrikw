@@ -17,4 +17,5 @@ module.exports = {
         // Only run it with production builds to reduce load on developer systems.
         new GoodFencesPlugin(),
     ],
+    devtool: "source-map",
 };

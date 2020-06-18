@@ -63,8 +63,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Order Confirmation",
         allowedContexts: [OrderConfirmationPageContext],
-        fieldDefinitions: [],
         displayName: "Order Confirmation Total",
+        isSystem: true,
     },
 };
 

@@ -63,6 +63,9 @@ export const ResetBillTosAndShipTosData: HandlerType = props => {
     props.dispatch({
         type: "Data/Carts/Reset",
     });
+    props.dispatch({
+        type: "Data/Orders/Reset",
+    });
 };
 
 export const chain = [

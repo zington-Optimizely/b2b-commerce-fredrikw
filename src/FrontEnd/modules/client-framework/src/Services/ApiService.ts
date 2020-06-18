@@ -132,8 +132,8 @@ export const rawRequest = async (
         let message: string;
         let errorJson: any;
         if (response.headers.get("Content-Type")?.startsWith("application/json")) {
-            errorJson = await response.json() as { message: string };
-            message = errorJson.message;
+            errorJson = await response.json() as { message: string, exceptionMessage?: string, };
+            message = errorJson.exceptionMessage ?? errorJson.message;
         } else {
             message = await response.text();
         }

@@ -18,16 +18,21 @@ import ProductListReducer from "@insite/client-framework/Store/Pages/ProductList
 import ProductDetailReducer from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailReducer";
 import QuickOrderReducer from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderReducer";
 import SignInReducer from "@insite/client-framework/Store/Pages/SignIn/SignInReducer";
+import BudgetManagementReducer from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
+import LocationFinderReducer from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderReducer";
+import RequestRmaReducer from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaReducer";
 
 const reducers = {
     accountSettings: AccountSettingsReducer,
     addresses: AddressesReducer,
     brands: BrandsReducer,
+    budgetManagement: BudgetManagementReducer,
     cart: CartReducer,
     checkoutReviewAndSubmit: CheckoutReviewAndSubmitReducer,
     checkoutShipping: CheckoutShippingReducer,
     invoiceDetails: InvoiceDetailsReducer,
     invoiceHistory: InvoiceHistoryReducer,
+    locationFinder: LocationFinderReducer,
     myLists: MyListsReducer,
     myListDetails: MyListDetailsReducer,
     orderDetails: OrderDetailsReducer,
@@ -37,6 +42,7 @@ const reducers = {
     productList: ProductListReducer,
     productDetail: ProductDetailReducer,
     quickOrder: QuickOrderReducer,
+    requestRma: RequestRmaReducer,
     savedPayments: SavedPaymentsReducer,
     signIn: SignInReducer,
 };

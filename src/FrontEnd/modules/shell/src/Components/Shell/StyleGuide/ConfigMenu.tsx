@@ -1,13 +1,13 @@
 import * as React from "react";
 import styled, { css } from "styled-components";
 import { FormFieldProps } from "@insite/mobius/FormField";
-import { CheckboxProps } from "@insite/mobius/Checkbox";
+import { CheckboxProps, CheckboxPresentationProps } from "@insite/mobius/Checkbox";
 import Clickable from "@insite/mobius/Clickable";
 import Typography from "@insite/mobius/Typography";
 import Popover from "@insite/mobius/Popover";
-import FieldSetPresentationProps from "@insite/mobius/utilities/fieldSetProps";
 import getColor from "@insite/mobius/utilities/getColor";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 
 type Props = {
     title: string;
@@ -34,9 +34,25 @@ export const configFormFieldStyles: Partial<FormFieldProps> = {
             text-align: left;
         `,
     },
+    cssOverrides: {
+        inputSelect: css`
+            &:disabled {
+                border-color: transparent;
+                color: ${getColor("text.main")};
+            }
+        `,
+        formField: css<FormFieldProps>`
+            margin-top: 10px;
+            &:hover {
+                label {
+                    color: ${({ theme, disabled }) => disabled ? "inherit" : theme.colors.primary.main};
+                }
+            }
+        `,
+    },
 };
 
-export const configCheckboxStyles: Partial<CheckboxProps> & FieldSetPresentationProps<CheckboxProps> = {
+export const configCheckboxStyles: Partial<CheckboxProps> & CheckboxPresentationProps = {
     labelPosition: "left",
     variant: "toggle",
     typographyProps: {
@@ -48,10 +64,16 @@ export const configCheckboxStyles: Partial<CheckboxProps> & FieldSetPresentation
             margin-right: 10px;
         `,
     },
-    css: css`
+    css: css<FormFieldProps>`
         margin-left: 0;
         height: 40px;
-    `,
+        width: 100%;
+        &:hover {
+            label {
+                color: ${({ theme, disabled }) => disabled ? "inherit" : theme.colors.primary.main};
+            }
+        }
+    ` as any,
 };
 
 class ConfigMenu extends React.Component<Props> {

@@ -1,6 +1,7 @@
 import { HandlerWithResult, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { CategoryModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import {
     getProductCollectionV2,
     getRelatedProductsCollectionV2,
@@ -234,6 +235,21 @@ export const LoadRealTimePrices: HandlerType = props => {
     }
 };
 
+export const LoadRealTimeInventory: HandlerType = props => {
+    if (props.result.products?.length) {
+        props.dispatch(loadRealTimeInventory({
+            parameter: { products: props.result.products },
+            onSuccess: realTimeInventory => {
+                props.dispatch({
+                    type: "Components/ProductCarousel/CompleteLoadRealTimeInventory",
+                    carouselId: props.parameter.carouselId,
+                    realTimeInventory,
+                });
+            },
+        }));
+    }
+};
+
 export const chain = [
     DispatchBeginLoadCarouselProducts,
     InitializeResult,
@@ -246,6 +262,7 @@ export const chain = [
     ExcludeParentProduct,
     DispatchCompleteLoadCarouselProducts,
     LoadRealTimePrices,
+    LoadRealTimeInventory,
 ];
 
 const loadCarouselProducts = createHandlerChainRunner(chain, "LoadCarouselProducts");

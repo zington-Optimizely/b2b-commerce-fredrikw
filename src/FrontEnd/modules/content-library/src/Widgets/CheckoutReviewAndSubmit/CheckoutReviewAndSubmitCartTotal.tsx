@@ -246,8 +246,8 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        fieldDefinitions: [],
         displayName: "Cart Total",
+        isSystem: true,
     },
 };
 

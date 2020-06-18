@@ -10,12 +10,13 @@ interface SiteHole {
 
 let siteHole: SiteHole;
 
-export const sendToSite = (message: any) => {
+export const sendToSite = (message: any): boolean => {
     if (!siteHole || !siteHole.frameHole) {
-        return;
+        return false;
     }
 
     siteHole.frameHole.send(message as any);
+    return true;
 };
 
 export const setSiteFrame = (frame: HTMLIFrameElement, handlers: Dictionary<(data: any) => void>) => {

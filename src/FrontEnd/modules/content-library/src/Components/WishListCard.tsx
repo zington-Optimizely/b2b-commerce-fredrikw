@@ -7,21 +7,25 @@ import translate from "@insite/client-framework/Translate";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
+import { IconPresentationProps } from "@insite/mobius/Icon";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import MoreVertical from "@insite/mobius/Icons/MoreVertical";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import React, { useContext } from "react";
-import { WishListSharingStatus, WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
+import WishListSharingStatus, { WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
 import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
 import { HandleThunkActionCreator, connect } from "react-redux";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import { ShareOptions } from "@insite/client-framework/Services/WishListService";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 
 const mapStateToProps = (state: ApplicationState) => ({
     language: state.context.session.language,
+    allowEditingOfWishLists: getSettingsCollection(state).wishListSettings.allowEditingOfWishLists,
 });
 
 interface OwnProps {
@@ -29,6 +33,7 @@ interface OwnProps {
     extendedStyles?: WishListCardStyles;
     addWishListToCart: HandleThunkActionCreator<typeof addWishListToCart>;
     deleteWishList?: () => void;
+    leaveWishList?: () => void;
 }
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
@@ -54,8 +59,13 @@ export interface WishListCardStyles {
     actionGridItem?: GridItemProps;
     actionGridMediumHidden?: HiddenProps;
     actionOverflowIcon?: IconPresentationProps;
+    actionOverflowMenu?: OverflowMenuPresentationProps;
+    actionAddToCartClickable?: ClickablePresentationProps;
+    actionDeleteClickable?: ClickablePresentationProps;
+    actionLeaveClickable?: ClickablePresentationProps;
     actionAddToCartButton?: ButtonPresentationProps;
     actionDeleteButton?: ButtonPresentationProps;
+    actionLeaveButton?: ButtonPresentationProps;
 }
 
 export const wishListCardStyles: WishListCardStyles = {
@@ -82,16 +92,28 @@ export const wishListCardStyles: WishListCardStyles = {
         width: [12, 12, 12, 8, 8],
         css: css` flex-wrap: wrap; `,
     },
-    productImage: { css: css`
-        max-width: 75px;
-        img {
-            height: 100%;
-        }
-    ` },
+    productImage: {
+        css: css`
+            max-width: 75px;
+            img {
+                height: 100%;
+            }
+        `,
+        errorTypographyProps: {
+            size: 11,
+            css: css` max-height: 65px; `,
+        },
+    },
     sharingStatusGridItem: { width: [12, 12, 12, 4, 4] },
     actionGridItem: {
         width: [2, 2, 4, 2, 2],
-        align: "middle",
+        align: "top",
+        css: css`
+            justify-content: flex-end;
+        `,
+    },
+    actionGridMediumHidden: {
+        css: css` width: 100%; `,
     },
     actionAddToCartButton: {
         color: "secondary",
@@ -108,14 +130,23 @@ export const wishListCardStyles: WishListCardStyles = {
             margin-top: 10px;
         `,
     },
+    actionLeaveButton: {
+        variant: "secondary",
+        css: css`
+            width: 100%;
+            margin-top: 10px;
+        `,
+    },
 };
 
 const WishListCard: React.FunctionComponent<Props> = ({
     language,
+    allowEditingOfWishLists,
     extendedStyles,
     wishList,
     addWishListToCart,
     deleteWishList,
+    leaveWishList,
 }: Props) => {
     const toasterContext = useContext(ToasterContext);
 
@@ -168,15 +199,13 @@ const WishListCard: React.FunctionComponent<Props> = ({
                             <GridItem {...styles.productImagesGridItem}>
                                 {wishList.wishListLineCollection && wishList.wishListLineCollection.length > 0 && wishList.wishListLineCollection!.map((line: WishListLineModel) => (
                                     <Link key={line.id.toString()} {...styles.productImageLink} href={line.productUri}>
-                                        <LazyImage {...styles.productImage} src={line.smallImagePath} />
+                                        <LazyImage {...styles.productImage} src={line.smallImagePath} altText={line.altText} />
                                     </Link>
                                 ))}
                             </GridItem>
                             <GridItem {...styles.sharingStatusGridItem}>
-                            <WishListSharingStatus extendedStyles={styles.sharingStatus}
-                                isSharedList={wishList.isSharedList}
-                                wishListSharesCount={wishList.wishListSharesCount}
-                                sharedByDisplayName={wishList.sharedByDisplayName}/>
+                                <WishListSharingStatus extendedStyles={styles.sharingStatus}
+                                    wishList={wishList} />
                             </GridItem>
                         </GridContainer>
                     </GridItem>
@@ -184,7 +213,15 @@ const WishListCard: React.FunctionComponent<Props> = ({
             </GridItem>
             <GridItem {...styles.actionGridItem}>
                 <Hidden above="sm">
-                    <Icon src={MoreVertical} {...styles.actionOverflowIcon} />
+                    <OverflowMenu position="end" {...styles.actionOverflowMenu}>
+                        <Clickable {...styles.actionAddToCartClickable} disabled={!canAddToCart} onClick={clickAddToCartHandler}>{translate("Add List to Cart")}</Clickable>
+                        {allowEditingOfWishLists && !wishList.isSharedList
+                            && <Clickable {...styles.actionDeleteClickable} onClick={() => deleteWishList && deleteWishList()}>{translate("Delete")}</Clickable>
+                        }
+                        {allowEditingOfWishLists && wishList.isSharedList && wishList.shareOption !== ShareOptions.AllCustomerUsers
+                            && <Clickable {...styles.actionLeaveClickable} onClick={() => leaveWishList && leaveWishList()}>{translate("Leave List")}</Clickable>
+                        }
+                    </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.actionGridMediumHidden} below="md">
                     <Button
@@ -194,12 +231,20 @@ const WishListCard: React.FunctionComponent<Props> = ({
                         onClick={clickAddToCartHandler}>
                         {translate("Add List to Cart")}
                     </Button>
-                    {deleteWishList
+                    {allowEditingOfWishLists && !wishList.isSharedList
                         && <Button
                             {...styles.actionDeleteButton}
                             onClick={() => deleteWishList && deleteWishList()}
                             data-test-selector={`wishListCardDeleteButton_${wishList.id}`}>
-                                {translate("Delete")}
+                            {translate("Delete")}
+                        </Button>
+                    }
+                    {allowEditingOfWishLists && wishList.isSharedList && wishList.shareOption !== ShareOptions.AllCustomerUsers
+                        && <Button
+                            {...styles.actionLeaveButton}
+                            onClick={() => leaveWishList && leaveWishList()}
+                            data-test-selector={`wishListCardLeaveButton_${wishList.id}`}>
+                            {translate("Leave List")}
                         </Button>
                     }
                 </Hidden>

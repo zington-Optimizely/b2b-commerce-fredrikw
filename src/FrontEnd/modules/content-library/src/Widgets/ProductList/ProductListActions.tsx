@@ -73,7 +73,6 @@ const styles: ProductListActionsStyles = {
             display: flex;
             align-items: flex-end;
             margin-top: 10px;
-            min-height: 6rem;
         `,
     },
     addToCartButton: { css: css` width: 80%; ` },
@@ -88,8 +87,7 @@ const styles: ProductListActionsStyles = {
     },
     addToListWrapper: {
         css: css`
-            text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
             min-height: 2rem;
         `,
     },
