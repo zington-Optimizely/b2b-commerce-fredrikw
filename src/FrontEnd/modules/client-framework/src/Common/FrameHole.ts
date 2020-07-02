@@ -53,7 +53,11 @@ export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteH
     siteHoleListener = (event: MessageEvent) => {
         if (isValidMessage(event)) {
             if (event.data.type === StopListener) {
-                window.removeEventListener("message", siteHoleListener);
+                // if we haven't yet completed the handshake and we stop the listener, then we will never complete the handshake.
+                // this can occur if the shell is ready before the site tries to establish communication
+                if (completedHandshake) {
+                    window.removeEventListener("message", siteHoleListener);
+                }
             } else if (event.data.type === Handshake) {
                 sendMessage(HandshakeReply);
             } else if (event.data.type === HandshakeAcknowledge) {

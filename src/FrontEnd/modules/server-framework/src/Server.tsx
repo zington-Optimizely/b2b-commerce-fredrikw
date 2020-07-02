@@ -86,7 +86,11 @@ export default function server(request: Request, response: Response, domain: any
 
 async function pageRenderer(request: Request, response: Response) {
     if (!checkedForSiteGeneration || !IS_PRODUCTION || request.url.toLowerCase().indexOf("generateIfNeeded=true".toLowerCase()) >= 0) {
-        await generateSiteIfNeeded();
+        try {
+            await generateSiteIfNeeded();
+        } catch (e) {
+            logger.error(`Site generation failed: ${e}`);
+        }
         checkedForSiteGeneration = true;
     }
 
