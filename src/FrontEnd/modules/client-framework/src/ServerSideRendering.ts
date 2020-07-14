@@ -3,6 +3,7 @@ import { URL } from "url";
 import logger from "@insite/client-framework/Logger";
 import { RetrievePageResult } from "@insite/client-framework/Services/ContentService";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Request } from "express";
 // 'isomorphic-fetch' makes node and client-side have a similar 'fetch', but causes an 'iconv-loader' warning...
 
 /**
@@ -27,7 +28,14 @@ interface InsiteSession {
     trackedPromises: Promise<any>[];
     /** Callback for tracking added promises. */
     promiseAddedCallback?: (stack: string) => void;
+    headers?: Request["headers"];
+    /**
+     * @deprecated Use headers["cookie"] instead
+     */
     cookies?: string | undefined;
+    /**
+     * @deprecated Use headers["user-agent"] instead
+     */
     userAgent?: string | undefined;
     statusCode?: number;
     messagesByName: SafeDictionary<string>;
@@ -129,6 +137,12 @@ export function getStatusCode() {
 
 export function setSessionCookies(cookies: string | undefined) {
     setSessionValue("cookies", cookies);
+
+    const { headers } = getSession();
+    if (!headers) {
+        return;
+    }
+    headers["cookie"] = cookies;
 }
 
 /** Ensures that we have the url available when needed for server side rendering */
@@ -162,8 +176,20 @@ export function setPromiseAddedCallback(promiseAddedCallback: (stack: string) =>
     setSessionValue("promiseAddedCallback", promiseAddedCallback);
 }
 
+export function setHeaders(headers: Request["headers"]) {
+    setSessionValue("headers", headers);
+}
+
+/**
+ * @deprecated Use setHeaders to store all headers instead
+ */
 export function setUserAgent(userAgent?: string) {
     setSessionValue("userAgent", userAgent);
+    const { headers } = getSession();
+    if (!headers) {
+        return;
+    }
+    headers["user-agent"] = userAgent;
 }
 
 function getSessionValue<P extends keyof InsiteSession>(property: P) {
@@ -220,7 +246,7 @@ export const fetch: typeof window.fetch = (input, init) => {
         return window.fetch(input, init);
     }
 
-    const { url, cookies } = getSession();
+    const { url, headers } = getSession();
     if (!url) {
         throw new Error("`setUrl` must be called before server-side fetch can be used.");
     }
@@ -252,16 +278,34 @@ export const fetch: typeof window.fetch = (input, init) => {
         preparedInit = {};
     }
     if (!preparedInit.headers) {
-        preparedInit.headers = {};
+        preparedInit.headers = { };
+    }
+
+    const preparedHeaders = preparedInit.headers as any;
+
+    for (const key in headers) {
+        // Naively forwarding all headers can conflict with Node/Express behavior.
+        switch (key) {
+        case "host":
+        case "origin":
+        case "referer":
+            continue;
+        }
+
+        if (key === "cookie" && !sendCookies) {
+            continue;
+        }
+
+        if (typeof preparedHeaders[key] !== "undefined") {
+            continue;
+        }
+
+        preparedHeaders[key] = headers[key];
     }
 
     preparedInit.referrer = url.href;
     // node-fetch does not currently support setting referrer, we should fall back to looking for this if we can't find a referrer
-    (preparedInit.headers as any)["x-referer"] = url.href;
-    (preparedInit.headers as any)["user-agent"] = getSession().userAgent;
-    if (sendCookies) {
-        (preparedInit.headers as any)["cookie"] = cookies;
-    }
+    preparedHeaders["x-referer"] = url.href;
 
     logger.debug(`making request ${JSON.stringify(preparedInput)}`);
 

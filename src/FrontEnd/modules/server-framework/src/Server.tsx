@@ -17,7 +17,7 @@ import {
     setInitialPage,
     serverSiteMessageResolver,
     setServerSiteMessages,
-    setUserAgent,
+    setHeaders,
 } from "@insite/client-framework/ServerSideRendering";
 import Relay from "@insite/server-framework/Relay";
 import { ServerStyleSheet } from "styled-components";
@@ -52,10 +52,7 @@ const redirectTo = async ({ originalUrl, path }: Request, response: Response) =>
 };
 
 export default function server(request: Request, response: Response, domain: any) {
-    setDomain(domain);
-    setSessionCookies(request.headers.cookie);
-    setUserAgent(request.headers["user-agent"]);
-    setUrl(`${request.protocol}://${request.get("host")}${request.originalUrl}`);
+    setupSSR(request, domain);
 
     switch (request.path) {
         case "/.spire/health":
@@ -82,6 +79,18 @@ export default function server(request: Request, response: Response, domain: any
     }
 
     return pageRenderer(request, response);
+}
+
+function setupSSR(request: Request, domain: any) {
+    setDomain(domain);
+
+    const { headers } = request;
+    const ip = (headers["x-forwarded-for"] || "").toString().split(",").pop()?.trim()
+        || request.connection.remoteAddress
+        || request.socket.remoteAddress;
+    headers["x-forwarded-for"] = ip;
+    setHeaders(headers);
+    setUrl(`${request.protocol}://${request.get("host")}${request.originalUrl}`);
 }
 
 async function pageRenderer(request: Request, response: Response) {
