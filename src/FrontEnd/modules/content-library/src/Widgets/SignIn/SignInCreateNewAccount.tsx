@@ -1,23 +1,23 @@
-import React, { FC } from "react";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import translate from "@insite/client-framework/Translate";
-import Typography, { TypographyProps } from "@insite/mobius/Typography/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { SignInPageContext } from "@insite/content-library/Pages/SignInPage";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import signInAsGuest from "@insite/client-framework/Store/Pages/SignIn/Handlers/SignInAsGuest";
-import { css } from "styled-components";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import { getLocation, getReturnUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import signInAsGuest from "@insite/client-framework/Store/Pages/SignIn/Handlers/SignInAsGuest";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { SignInPageContext } from "@insite/content-library/Pages/SignInPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyProps } from "@insite/mobius/Typography/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     text = "text",
@@ -183,7 +183,6 @@ const widgetModule: WidgetModule = {
         allowedContexts: [SignInPageContext],
         group: "Sign In",
         icon: "User",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.text,

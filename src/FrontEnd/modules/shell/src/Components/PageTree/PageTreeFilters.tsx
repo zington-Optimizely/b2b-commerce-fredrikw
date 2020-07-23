@@ -1,21 +1,21 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import styled, { css } from "styled-components";
-import {
-    loadFiltersForQuery,
-    addFilter,
-    removeFilter,
-    clearFilters,
-} from "@insite/shell/Store/PageTree/PageTreeActionCreators";
-import ClickOutside from "@insite/shell/Components/ClickOutside";
-import { TreeFilterModel } from "@insite/shell/Services/ContentAdminService";
-import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import X from "@insite/shell/Components/Icons/X";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import Clickable from "@insite/mobius/Clickable";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import getColor from "@insite/mobius/utilities/getColor";
 import safeColor from "@insite/mobius/utilities/safeColor";
+import ClickOutside from "@insite/shell/Components/ClickOutside";
+import X from "@insite/shell/Components/Icons/X";
+import { TreeFilterModel } from "@insite/shell/Services/ContentAdminService";
+import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import {
+    addFilter,
+    clearFilters,
+    loadFiltersForQuery,
+    removeFilter,
+} from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
 }

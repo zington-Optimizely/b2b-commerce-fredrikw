@@ -1,29 +1,29 @@
-import React, { FC, useState } from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import addCartLines from "@insite/client-framework/Store/Data/Carts/Handlers/AddCartLines";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import clearProducts from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ClearProducts";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import Clickable from "@insite/mobius/Clickable";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import addCartLines from "@insite/client-framework/Store/Data/Carts/Handlers/AddCartLines";
-import clearProducts from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ClearProducts";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable from "@insite/mobius/Clickable";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     useOverflowMenu = "useOverflowMenu",
@@ -35,12 +35,16 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    products: state.pages.quickOrder.products,
-    orderUploadPageLink: getPageLinkByPageType(state, "OrderUploadPage"),
-    cartPageLink: getPageLinkByPageType(state, "CartPage"),
-    showAddToCartConfirmationDialog: getSettingsCollection(state).productSettings.showAddToCartConfirmationDialog,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const settingsCollection = getSettingsCollection(state);
+    return {
+        products: state.pages.quickOrder.products,
+        orderUploadPageLink: getPageLinkByPageType(state, "OrderUploadPage"),
+        cartPageLink: getPageLinkByPageType(state, "CartPage"),
+        showAddToCartConfirmationDialog: settingsCollection.productSettings.showAddToCartConfirmationDialog,
+        canOrderUpload: settingsCollection.orderSettings.canOrderUpload,
+    };
+};
 
 const mapDispatchToProps = {
     setAddToListModalIsOpen,
@@ -116,6 +120,7 @@ const QuickOrderActions: FC<Props> = ({
                                           orderUploadPageLink,
                                           cartPageLink,
                                           showAddToCartConfirmationDialog,
+                                          canOrderUpload,
                                           setAddToListModalIsOpen,
                                           addCartLines,
                                           clearProducts,
@@ -158,7 +163,9 @@ const QuickOrderActions: FC<Props> = ({
     };
 
     const buttons = <>
-        <Button {...styles.uploadOrderButton} onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Button>
+        {canOrderUpload
+            && <Button {...styles.uploadOrderButton} onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Button>
+        }
         <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>{translate("Add To List")}</Button>
     </>;
 
@@ -183,7 +190,9 @@ const QuickOrderActions: FC<Props> = ({
             {fields.useOverflowMenu
             && <Hidden below="md" above="md" {...styles.menuHidden}>
                 <OverflowMenu position="end" {...styles.overflowMenu}>
-                    <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
+                    {canOrderUpload
+                        && <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
+                    }
                     <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>{translate("Add To List")}</Clickable>
                 </OverflowMenu>
             </Hidden>
@@ -199,7 +208,6 @@ const widgetModule: WidgetModule = {
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
         displayName: "Actions",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.useOverflowMenu,

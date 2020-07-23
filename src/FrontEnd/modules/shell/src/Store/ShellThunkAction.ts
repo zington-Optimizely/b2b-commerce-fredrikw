@@ -1,7 +1,7 @@
-import { RouterAction } from "connected-react-router";
-import ShellState from "@insite/shell/Store/ShellState";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import AppThunkAction from "@insite/client-framework/Common/AppThunkAction";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import ShellState from "@insite/shell/Store/ShellState";
+import { RouterAction } from "connected-react-router";
 
 type ShellDispatch = (action: AnyShellAction | ShellThunkAction | RouterAction | AppThunkAction) => void;
 

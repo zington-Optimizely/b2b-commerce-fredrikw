@@ -1,22 +1,22 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import logger from "@insite/client-framework/Logger";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import Icon, { IconPresentationProps } from "@insite/mobius/Icon/Icon";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import User from "@insite/mobius/Icons/User";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography/Typography";
-import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import translate from "@insite/client-framework/Translate";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import Icon, { IconPresentationProps } from "@insite/mobius/Icon/Icon";
+import User from "@insite/mobius/Icons/User";
 import Menu from "@insite/mobius/Menu";
-import logger from "@insite/client-framework/Logger";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     visibilityState = "visibilityState",
@@ -55,11 +55,16 @@ const styles: HeaderSignInStyles = {
         size: 22,
     },
     titleTypography: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+            max-width: 150px;
+        `,
+        ellipsis: true,
         transform: "uppercase",
     },
     signOutClickable: {
         css: css`
+            flex: 0 0 auto;
             margin-left: 30px;
             text-transform: uppercase;
         `,
@@ -126,6 +131,12 @@ const HeaderSignIn: FC<Props> = ({
                                 && <Typography {...styles.titleTypography} data-test-selector="header_userName">{userName}</Typography>
                             }
                         </Clickable>}
+                    cssOverrides={{
+                        wrapper: css`
+                            flex: 0 1 auto;
+                            min-width: 0;
+                        `,
+                    }}
                 />
             }
             {(!fields.includeAccountMenu || !userName || (userName && currentUserIsGuest))
@@ -154,7 +165,6 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Header Sign In",
         icon: "User",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.visibilityState,

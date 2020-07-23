@@ -1,12 +1,12 @@
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import Modal from "@insite/mobius/Modal";
-import { getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { useEffect, useState } from "react";
 import { createPageElement } from "@insite/client-framework/Components/ContentItemStore";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import closeErrorModal from "@insite/client-framework/Store/Context/Handlers/CloseErrorModal";
+import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import Modal from "@insite/mobius/Modal";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     modalIsOpen: !!state.context.isErrorModalOpen,

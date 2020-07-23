@@ -1,22 +1,22 @@
 import AppThunkAction from "@insite/client-framework/Common/AppThunkAction";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import { sendToShell } from "@insite/client-framework/Components/ShellHole";
+import { Location } from "@insite/client-framework/Components/SpireRouter";
+import logger from "@insite/client-framework/Logger";
 import { addTask, clearInitialPage, getInitialPage, redirectTo, setStatusCode } from "@insite/client-framework/ServerSideRendering";
 import { getPageByType, getPageByUrl } from "@insite/client-framework/Services/ContentService";
-import logger from "@insite/client-framework/Logger";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import { getPageStateByPath } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageStateByPath, getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { FieldType } from "@insite/client-framework/Types/FieldDefinition";
 import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
-import { Location } from "@insite/client-framework/Components/SpireRouter";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { History } from "@insite/mobius/utilities/HistoryContext";
-import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 
 export const beginDraggingWidget = (id: string): AnyAction => ({
     type: "Data/Pages/BeginDraggingWidget",
@@ -98,6 +98,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             sendToShell({
                 type: "LoadPageComplete",
                 pageId: page.id,
+                parentId: page.parentId,
             });
             dispatch({
                 type: "Data/Pages/SetLocation",
@@ -111,7 +112,8 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             }
         };
 
-        const page = getPageStateByPath(getState(), location.pathname);
+        const currentState = getState();
+        const page = getPageStateByPath(currentState, location.pathname);
         if (page.value) {
             finished(page.value);
             return;
@@ -144,6 +146,8 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             return;
         }
 
+        const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
+
         setStatusCode(result.statusCode);
         if (result.redirectTo) {
             if (IS_SERVER_SIDE) {
@@ -154,6 +158,15 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 history.push(result.redirectTo);
                 onSuccess?.();
             }
+        } else if (hasPageByType) {
+            dispatch({
+                type: "Data/Pages/SetPageIsLoaded",
+                pageType: result.page.type,
+                page: result.page,
+                path: location.pathname,
+            });
+
+            finished(result.page);
         } else {
             dispatch({
                 type: "Data/Pages/CompleteLoadPage",
@@ -167,12 +180,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
     }());
 };
 
-export const setWidgetDefinitions = (widgetDefinitionsByType: SafeDictionary<WidgetDefinition>): AnyAction => ({
-    type: "Data/Pages/WidgetDefinitions",
-    widgetDefinitionsByType,
-});
-
-export const setPageDefinitions = (pageDefinitionsByType: SafeDictionary<PageDefinition>): AnyAction => ({
+export const setPageDefinitions = (pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>): AnyAction => ({
     type: "Data/Pages/PageDefinitions",
     pageDefinitionsByType,
 });

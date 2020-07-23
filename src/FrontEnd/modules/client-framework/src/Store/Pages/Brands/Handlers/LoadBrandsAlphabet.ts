@@ -1,8 +1,8 @@
+import isNumeric from "@insite/client-framework/Common/isNumeric";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { createHandlerChainRunnerOptionalParameter, Handler, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import { getBrandAlphabet } from "@insite/client-framework/Services/BrandService";
 import { BrandAlphabetLetterModel, BrandAlphabetModel } from "@insite/client-framework/Types/ApiModels";
-import isNumeric from "@insite/client-framework/Common/isNumeric";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
 
 type HandlerType = HandlerWithResult<{}, {
     apiResult: BrandAlphabetModel,

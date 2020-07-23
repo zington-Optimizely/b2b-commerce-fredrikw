@@ -1,21 +1,21 @@
-import * as React from "react";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import { HasShellContext } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import dispatchClearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/DispatchClearProducts";
+import loadProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
+import translate from "@insite/client-framework/Translate";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import loadProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
-import { connect, ResolveThunks } from "react-redux";
-import { HasShellContext } from "@insite/client-framework/Components/IsInShell";
-import dispatchClearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/DispatchClearProducts";
-import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
-import translate from "@insite/client-framework/Translate";
-import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
-import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
@@ -164,7 +164,7 @@ const pageModule: PageModule = {
         hasEditableUrlSegment: false,
         hasEditableTitle: false,
         supportsCategorySelection: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

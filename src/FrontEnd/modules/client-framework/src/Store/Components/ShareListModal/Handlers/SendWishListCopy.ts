@@ -1,9 +1,9 @@
-import { SendWishListCopyApiParameter, sendWishListCopy as sendWishListCopyApi } from "@insite/client-framework/Services/WishListService";
 import {
+    ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
-    ApiHandlerDiscreteParameter,
 } from "@insite/client-framework/HandlerCreator";
+import { sendWishListCopy as sendWishListCopyApi, SendWishListCopyApiParameter } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
 type SendWishListCopyParameter = {

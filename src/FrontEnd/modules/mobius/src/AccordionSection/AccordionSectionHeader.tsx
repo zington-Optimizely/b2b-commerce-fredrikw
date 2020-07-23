@@ -1,13 +1,13 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import AccordionSectionPanel from "./AccordionSectionPanel";
+import { AccordionContextData } from "../Accordion/AccordionContext";
 import { IconWrapper } from "../Icon";
 import getColor from "../utilities/getColor";
 import getProp from "../utilities/getProp";
-import injectCss from "../utilities/injectCss";
-import { AccordionContextData } from "../Accordion/AccordionContext";
 import InjectableCss from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import AccordionSectionPanel from "./AccordionSectionPanel";
 
 export type AccordionSectionHeaderProps = MobiusStyledComponentProps<"dt", {
     /** Sets the initial expanded state of the section. */
@@ -22,7 +22,7 @@ const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderPro
         padding-left: 15px;
         height: 100%;
         width: 100%;
-        background: transparent;
+        background: ${getColor("common.accent")};
         font-family: inherit;
         display: flex;
         text-align: left;

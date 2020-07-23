@@ -1,9 +1,9 @@
-import * as React from "react";
 import logger from "@insite/client-framework/Logger";
-import DropDownField from "@insite/shell/Components/ContentItemFields/DropDownField";
 import { SystemListDropDownFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
+import DropDownField from "@insite/shell/Components/ContentItemFields/DropDownField";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import { getAdminSystemListValues, ArchiveFilter } from "@insite/shell/Services/AdminService";
+import { ArchiveFilter, getAdminSystemListValues } from "@insite/shell/Services/AdminService";
+import * as React from "react";
 
 type Props = ContentItemFieldProps<string, SystemListDropDownFieldDefinition>;
 

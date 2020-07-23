@@ -1,12 +1,14 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import loadBrands from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrands";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { BrandsPageContext } from "@insite/content-library/Pages/BrandsPage";
+import { HomePageContext } from "@insite/content-library/Pages/HomePage";
 import FlexItem, { FlexItemProps } from "@insite/content-library/Widgets/Brand/FlexItem";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Clickable from "@insite/mobius/Clickable";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import { LinkProps } from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -14,8 +16,6 @@ import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 import FlexWrapContainer, { FlexWrapContainerProps } from "./FlexWrapContainer";
-import { getBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
-import { HomePageContext } from "@insite/content-library/Pages/HomePage";
 
 const enum fields {
     title = "title",
@@ -150,7 +150,6 @@ const widgetModule: WidgetModule = {
         icon: "Image",
         displayName: "Brand Gallery",
         allowedContexts: [BrandsPageContext, HomePageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

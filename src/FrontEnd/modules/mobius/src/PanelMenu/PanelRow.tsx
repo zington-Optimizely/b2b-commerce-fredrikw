@@ -3,11 +3,11 @@ import styled, { ThemeConsumer } from "styled-components";
 import Clickable, { ClickableProps } from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "../Icon";
+import applyPropBuilder from "../utilities/applyPropBuilder";
 import getContrastColor from "../utilities/getContrastColor";
 import { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import resolveColor from "../utilities/resolveColor";
-import applyPropBuilder from "../utilities/applyPropBuilder";
 
 export type PanelRowPresentationProps = {
     /** The background color of the panel.
@@ -19,6 +19,9 @@ export type PanelRowPresentationProps = {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp; // using this construction instead of InjectableCss to avoid deep type instantiation
+    /** CSS string or styled-components function to be injected into row representing current location.
+     * @themable */
+    isCurrentCss?: StyledProp; // using this construction instead of InjectableCss to avoid deep type instantiation
 };
 
 type PanelRowComponentProps = ClickableProps & {
@@ -26,6 +29,8 @@ type PanelRowComponentProps = ClickableProps & {
     header?: boolean;
     /** Flag governing whether this row represents a menu option with children, in which case a chevron will be included. */
     hasChildren?: boolean;
+    /** Is this the current page? */
+    isCurrent?: boolean;
 };
 
 // In the below type, MobiusStyledComponentProps is provided by `ClickableProps`
@@ -46,7 +51,14 @@ const PanelRowStyle = styled(Clickable)<any>`
         ${({ hasChildren }) => hasChildren && "width: calc(100% - 24px);"}
     }
     ${injectCss}
+    ${({ isCurrent, isCurrentCss, theme }) => isCurrent && `
+        background: ${resolveColor("primary.main", theme)};
+        color: ${resolveColor("primary.contrast", theme)};
+        margin: 0;
+        ${isCurrentCss}
+    `}
 `;
+
 
 /**
  * A building block for the `PanelMenu` and surrounding UIs.
@@ -61,7 +73,7 @@ const PanelRow: React.FC<PanelRowProps> = ({
         const panelRowThemeProps = spreadProps("panelRowProps");
         const appliedColor = panelRowThemeProps.color ?? "common.accent";
         return (
-            <PanelRowStyle {...otherProps} color={appliedColor}>
+            <PanelRowStyle {...panelRowThemeProps} {...otherProps} color={appliedColor}>
                 {children}
                 {otherProps.hasChildren && <IconMemo {...panelRowThemeProps.moreIconProps} color={getContrastColor(appliedColor, theme)} />}
             </PanelRowStyle>

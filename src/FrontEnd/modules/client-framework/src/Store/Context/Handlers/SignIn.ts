@@ -1,8 +1,12 @@
+import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
-import { createHandlerChainRunner, ApiHandler } from "@insite/client-framework/HandlerCreator";
-import { createSession } from "@insite/client-framework/Services/SessionService";
+import { createSession, Session } from "@insite/client-framework/Services/SessionService";
+import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
-type HandlerType = ApiHandler<SignInParameter, SignInResult>;
+type HandlerType = ApiHandler<SignInParameter, SignInResult, {
+    authenticatedSession?: Session;
+}>;
 
 export interface SignInParameter {
     userName: string;
@@ -24,11 +28,11 @@ export const RequestAccessToken: HandlerType = async props => {
     data.append("grant_type", "password");
     data.append("userName", props.parameter.userName);
     data.append("password", props.parameter.password);
-    data.append("scope", "iscapi");
+    data.append("scope", "iscapi offline_access");
 
     const response = await fetch("/identity/connect/token", {
         method: "POST",
-        body: `${data.toString()} offline_access`,
+        body: data.toString(),
         headers: new Headers({
             "content-type": "application/x-www-form-urlencoded",
             Authorization: `Basic ${btoa("isc:009AC476-B28E-4E33-8BAE-B5F103A142BC")}`,
@@ -73,12 +77,30 @@ export const RequestSession: HandlerType = async props => {
 
         return false;
     }
+
+    props.authenticatedSession = session.result;
 };
 
 export const DispatchCompleteSignIn: HandlerType = props => {
     props.dispatch({
         type: "Context/CompleteSignIn",
     });
+};
+
+export const RedirectToChangeCustomer: HandlerType = props => {
+    if (!props.authenticatedSession) {
+        return;
+    }
+
+    if (props.authenticatedSession.redirectToChangeCustomerPageOnSignIn) {
+        const homePageUrl = getPageLinkByPageType(props.getState(), "HomePage")?.url;
+        const changeCustomerPageUrl = getPageLinkByPageType(props.getState(), "ChangeCustomerPage")?.url;
+        if (homePageUrl && changeCustomerPageUrl) {
+            const shouldAddReturnUrl = props.parameter.returnUrl && props.parameter.returnUrl !== homePageUrl;
+            window.location.href = changeCustomerPageUrl + (shouldAddReturnUrl && props.parameter.returnUrl ? `?returnUrl=${encodeURIComponent(props.parameter.returnUrl)}` : "");
+            return false;
+        }
+    }
 };
 
 export const NavigateToReturnUrl: HandlerType = props => {
@@ -89,6 +111,7 @@ export const chain = [
     RequestAccessToken,
     RequestSession,
     DispatchCompleteSignIn,
+    RedirectToChangeCustomer,
     NavigateToReturnUrl,
 ];
 

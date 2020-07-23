@@ -1,6 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useState } from "react";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import React, { FC, useState } from "react";
 
 export interface CardListStyles {
     gridContainer?: GridContainerProps;

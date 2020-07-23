@@ -1,12 +1,12 @@
-import * as React from "react";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect } from "react-redux";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 export interface ProductDetailsViewStyles {
@@ -64,7 +64,6 @@ const widgetModule: WidgetModule = {
         displayName: "View",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

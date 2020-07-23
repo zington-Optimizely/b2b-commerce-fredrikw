@@ -1,5 +1,5 @@
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<Partial<GetWishListLinesApiParameter>>;
 

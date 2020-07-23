@@ -1,29 +1,29 @@
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { push } from "connected-react-router";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import {
     addTask,
     fetch,
 } from "@insite/client-framework/ServerSideRendering";
+import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
-import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
-import { setupPageModel } from "@insite/shell/Services/PageCreation";
+import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import {
-    deletePage as deletePageApi,
-    getPageStates, getReorderingPages,
-    getTreeFilters, PageReorderModel, addPage as addPageApi, saveReorderPages as saveReorderPagesApi,
+    addPage as addPageApi,
+    deletePage as deletePageApi, getPageStates,
+    getReorderingPages, getTreeFilters, PageReorderModel, SavePageResponseModel,
+    saveReorderPages as saveReorderPagesApi,
     TreeFilterModel,
-    SavePageResponseModel,
 } from "@insite/shell/Services/ContentAdminService";
+import { setupPageModel } from "@insite/shell/Services/PageCreation";
+import { getTemplate } from "@insite/shell/Services/SpireService";
 import {
     editPageOptions,
 } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import ShellState from "../ShellState";
-import { Dictionary } from "@insite/client-framework/Common/Types";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
-import { History } from "history";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
-import { getTemplate } from "@insite/shell/Services/SpireService";
+import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
+import { push } from "connected-react-router";
+import { History } from "history";
+import ShellState from "../ShellState";
 
 export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch => {
     addTask(async function () {
@@ -125,7 +125,7 @@ export const addPage = (pageType: string, pageName: string, parentId: string, co
 
         const { currentLanguageId, currentPersonaId, websiteId, languagesById, defaultPersonaId } = getState().shellContext;
 
-        setupPageModel(pageModel, pageName, pageName, parentId, -1, languagesById[currentLanguageId]!, currentPersonaId, defaultPersonaId, websiteId);
+        setupPageModel(pageModel, pageName, pageName.replace(/ /g, ""), parentId, -1, languagesById[currentLanguageId]!, currentPersonaId, defaultPersonaId, websiteId);
 
         const savePageResponse = await addPageApi(pageModel);
 

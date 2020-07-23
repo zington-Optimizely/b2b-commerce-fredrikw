@@ -1,32 +1,32 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import setManageShareListModalIsOpen from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/SetManageShareListModalIsOpen";
-import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
-import removeWishListShare from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/RemoveWishListShare";
-import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
-import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
-import Radio, { RadioProps } from "@insite/mobius/Radio";
-import DataTable, { DataTablePresentationProps } from "@insite/mobius/DataTable";
-import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
-import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
-import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
-import DataTableRow from "@insite/mobius/DataTable/DataTableRow";
-import DataTableCell, { DataTableCellProps } from "@insite/mobius/DataTable/DataTableCell";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { ShareOptions } from "@insite/client-framework/Services/WishListService";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import removeWishListShare from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/RemoveWishListShare";
+import setManageShareListModalIsOpen from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/SetManageShareListModalIsOpen";
+import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
+import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import translate from "@insite/client-framework/Translate";
+import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import DataTable, { DataTablePresentationProps } from "@insite/mobius/DataTable";
+import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
+import DataTableCell, { DataTableCellProps } from "@insite/mobius/DataTable/DataTableCell";
+import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
+import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
+import DataTableRow from "@insite/mobius/DataTable/DataTableRow";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import Radio, { RadioProps } from "@insite/mobius/Radio";
+import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: ManageShareListModalStyles;
@@ -160,11 +160,16 @@ const ManageShareListModal: React.FC<Props> = ({
     };
 
     const inviteClickHandler = () => {
-        setShareListModalIsOpen({ modalIsOpen: true, wishListId: wishList.id });
+        setShareListModalIsOpen({ modalIsOpen: true, wishListId: wishList.id, fromManage: true });
+        setManageShareListModalIsOpen({ modalIsOpen: false });
     };
 
     const userRemoveHandler = (userId: string) => {
+        const isLastUser = wishList.sharedUsers?.length === 1;
         removeWishListShare({ wishList, userId });
+        if (isLastUser) {
+            setManageShareListModalIsOpen({ modalIsOpen: false });
+        }
     };
 
     const handleMakeListPrivateClick = async () => {
@@ -178,6 +183,7 @@ const ManageShareListModal: React.FC<Props> = ({
             },
         });
         setMakeListPrivateModalVisible(false);
+        setManageShareListModalIsOpen({ modalIsOpen: false });
     };
 
     const handleOpenMakeListPrivateClick = () => {

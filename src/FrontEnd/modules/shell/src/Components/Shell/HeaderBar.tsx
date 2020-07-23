@@ -1,18 +1,18 @@
-import React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
 import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import styled from "styled-components";
-import { loadShellContext } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
-import shellTheme from "@insite/shell/ShellTheme";
-import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import { updateShellContext } from "@insite/shell/Services/ContentAdminService";
 import Icon from "@insite/mobius/Icon";
-import Users from "@insite/mobius/Icons/Users";
 import Globe from "@insite/mobius/Icons/Globe";
 import Monitor from "@insite/mobius/Icons/Monitor";
+import Users from "@insite/mobius/Icons/Users";
 import getColor from "@insite/mobius/utilities/getColor";
+import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
+import { updateShellContext } from "@insite/shell/Services/ContentAdminService";
+import shellTheme from "@insite/shell/ShellTheme";
+import { loadShellContext } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 interface OwnProps {
     disabled?: boolean;

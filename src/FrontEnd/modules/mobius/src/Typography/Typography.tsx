@@ -1,10 +1,10 @@
+import { FontWeightProperty, TextTransformProperty } from "csstype";
 import * as React from "react";
 import { ThemeConsumer } from "styled-components";
 import { BaseTheme, ThemeTypography } from "../globals/baseTheme";
+import { StyledProp } from "../utilities/InjectableCss";
 import TypographyEllipsis from "./TypographyEllipsis";
 import TypographyStyle from "./TypographyStyle";
-import { FontWeightProperty, TextTransformProperty } from "csstype";
-import { StyledProp } from "../utilities/InjectableCss";
 
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 

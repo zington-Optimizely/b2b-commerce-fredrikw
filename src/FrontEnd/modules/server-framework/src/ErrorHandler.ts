@@ -1,7 +1,7 @@
-import { IncomingMessage } from "connect";
-import * as http from "http";
-import { NextFunction } from "express";
 import logger from "@insite/client-framework/Logger";
+import { IncomingMessage } from "connect";
+import { NextFunction } from "express";
+import * as http from "http";
 import { inspect } from "util";
 
 export default function errorHandler(error: unknown, request: IncomingMessage, response: http.ServerResponse, next: NextFunction) {

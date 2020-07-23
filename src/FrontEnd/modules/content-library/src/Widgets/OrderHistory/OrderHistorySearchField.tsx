@@ -1,12 +1,12 @@
-import * as React from "react";
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
 import SearchTextField, { SearchTextFieldStyles } from "@insite/content-library/Widgets/OrderHistory/SearchTextField";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const enum fields {
     parameterField = "parameterField",
@@ -56,7 +56,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Field",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.parameterField,

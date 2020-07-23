@@ -1,10 +1,10 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import getColor from "@insite/mobius/utilities/getColor";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 
 export interface CardContainerStyles {
     cardDivider?: InjectableCss;

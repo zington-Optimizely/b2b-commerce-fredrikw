@@ -1,15 +1,15 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
+import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
-import Page from "@insite/mobius/Page";
-import { connect, ResolveThunks } from "react-redux";
-import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
-import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import ShareListModal from "@insite/content-library/Components/ShareListModal";
 import ManageShareListModal from "@insite/content-library/Components/ManageShareListModal";
+import ShareListModal from "@insite/content-library/Components/ShareListModal";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListsDataView: getWishListsDataView(state, state.pages.myLists.getWishListsParameter),
@@ -49,7 +49,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

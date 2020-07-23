@@ -1,9 +1,9 @@
-import * as React from "react";
-import { DropDownFieldDefinition, Option } from "@insite/client-framework/Types/FieldDefinition";
 import logger from "@insite/client-framework/Logger";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import { DropDownFieldDefinition, Option } from "@insite/client-framework/Types/FieldDefinition";
 import Select from "@insite/mobius/Select";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 interface State {
     options: Option<string | number>[];

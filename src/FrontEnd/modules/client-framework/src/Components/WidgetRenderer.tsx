@@ -1,23 +1,23 @@
-import * as React from "react";
 import {
     createWidgetElement,
     registerWidgetUpdate,
     unregisterWidgetUpdate,
 } from "@insite/client-framework/Components/ContentItemStore";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import styled from "styled-components";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import logger from "@insite/client-framework/Logger";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import {
     beginDraggingWidget,
     endDraggingWidget,
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import Icon from "@insite/mobius/Icon";
-import Trash2 from "@insite/mobius/Icons/Trash2";
-import Edit from "@insite/mobius/Icons/Edit";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import Icon from "@insite/mobius/Icon";
+import Edit from "@insite/mobius/Icons/Edit";
+import Trash2 from "@insite/mobius/Icons/Trash2";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 interface OwnProps {
     id: string;
@@ -31,12 +31,12 @@ interface State {
 }
 
 const mapStateToProps = (state: ApplicationState, { id }: OwnProps) => {
-    const { data: { pages: { widgetsById, draggingWidgetId, widgetDefinitionsByType, pageDefinitionsByType } }, context: { permissions } } = state;
+    const { data: { pages: { widgetsById, draggingWidgetId, pageDefinitionsByType } }, context: { permissions, canChangePage } } = state;
     return {
         widget: widgetsById[id],
         draggingWidgetId,
         permissions,
-        widgetDefinitionsByType,
+        canChangePage,
         currentPageType: getCurrentPage(state).type,
         pageDefinitionsByType,
     };
@@ -53,7 +53,7 @@ const ErrorWithWidgetStyle = styled.div`
     color: red;
 `;
 
-class WidgetRenderer extends React.Component<Props, State> {
+class WidgetRenderer extends React.PureComponent<Props, State> {
     private readonly widgetHover = React.createRef<HTMLDivElement>();
 
     constructor(props: Props) {
@@ -128,19 +128,19 @@ class WidgetRenderer extends React.Component<Props, State> {
     };
 
     private canEditWidget = () => {
-        return this.props.permissions?.canEditWidget;
+        return this.props.canChangePage && this.props.permissions?.canEditWidget;
     };
 
     private canMoveWidget = () => {
         const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
-        return pageDefinition && ((this.props.permissions?.canMoveWidgets && !pageDefinition.isSystemPage)
-            || (this.props.permissions?.canMoveSystemWidgets && pageDefinition.isSystemPage));
+        return pageDefinition && this.props.canChangePage && ((this.props.permissions?.canMoveWidgets && pageDefinition.pageType === "Content")
+            || (this.props.permissions?.canMoveSystemWidgets && pageDefinition.pageType === "System"));
     };
 
     private canDeleteWidget = () => {
         const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
-        return pageDefinition && ((this.props.permissions?.canDeleteWidget && !pageDefinition.isSystemPage)
-            || (this.props.permissions?.canDeleteSystemWidget && pageDefinition.isSystemPage));
+        return pageDefinition && this.props.canChangePage && ((this.props.permissions?.canDeleteWidget && pageDefinition.pageType === "Content")
+            || (this.props.permissions?.canDeleteSystemWidget && pageDefinition.pageType === "System"));
     };
 
     render() {

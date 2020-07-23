@@ -1,22 +1,22 @@
+import isApiError from "@insite/client-framework/Common/isApiError";
 import {
-    get,
-    post,
-    patch,
-    del,
     ApiParameter,
     API_URL_CURRENT_FRAGMENT,
-    doesNotHaveExpand, ServiceResult, ApiError,
+    del,
+    doesNotHaveExpand,
+    get,
+    patch,
+    post, ServiceResult,
 } from "@insite/client-framework/Services/ApiService";
 import {
-    CartModel,
-    CartLineCollectionModel,
-    PromotionCollectionModel,
-    CartLineModel,
-    PromotionModel,
     BillToModel,
+    CartLineCollectionModel,
+    CartLineModel,
+    CartModel,
+    PromotionCollectionModel,
+    PromotionModel,
     ShipToModel,
 } from "@insite/client-framework/Types/ApiModels";
-import isApiError from "@insite/client-framework/Common/isApiError";
 
 export interface GetCartApiParameter extends ApiParameter {
     cartId: string;
@@ -42,6 +42,7 @@ export interface AddCartLinesApiParameter extends ApiParameter {
 
 export interface AddWishListToCartApiParameter extends ApiParameter {
     wishListId: string;
+    changedSharedListLinesQuantities?: { [key: string]: number };
 }
 
 export interface ClearCartApiParameter extends ApiParameter {
@@ -213,7 +214,8 @@ export async function addProductWithResult(parameter: AddProductApiParameter): P
 }
 
 export function addWishListToCart(parameter: AddWishListToCartApiParameter) {
-    return post<CartLineCollectionModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines/wishlist/${parameter.wishListId}`);
+    const { wishListId, ...data } = { ...parameter };
+    return post<CartLineCollectionModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines/wishlist/${wishListId}`, data as any);
 }
 
 export function clearCart(parameter: ClearCartApiParameter) {

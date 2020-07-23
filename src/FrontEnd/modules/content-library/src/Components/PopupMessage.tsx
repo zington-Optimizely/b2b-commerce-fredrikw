@@ -1,6 +1,6 @@
-import * as React from "react";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
 
 interface OwnProps {
     modalIsOpen: boolean;

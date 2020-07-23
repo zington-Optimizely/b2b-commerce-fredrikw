@@ -1,18 +1,18 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
+import InvoiceDetailsLineCard, { InvoiceDetailsLineCardStyles } from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsLineCard";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import InvoiceDetailsLineCard, { InvoiceDetailsLineCardStyles } from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsLineCard";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
-import { css } from "styled-components";
-import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
 import { useContext } from "react";
+import { css } from "styled-components";
 
 export interface InvoiceDetailsSummaryTableStyles {
     centeringWrapper?: InjectableCss;
@@ -109,7 +109,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Summary Table",
         allowedContexts: [InvoiceDetailsPageContext],
-        isSystem: true,
     },
 };
 

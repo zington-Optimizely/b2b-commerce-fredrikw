@@ -1,10 +1,10 @@
-import React, { FC } from "react";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Zone from "@insite/client-framework/Components/Zone";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderUploadPageContext } from "@insite/content-library/Pages/OrderUploadPage";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import React, { FC } from "react";
 
 export interface OrderUploadPageContainerStyles {
     container?: GridContainerProps;
@@ -38,7 +38,6 @@ const widgetModule: WidgetModule = {
         group: "Order Upload",
         allowedContexts: [OrderUploadPageContext],
         displayName: "Page Container",
-        isSystem: true,
     },
 };
 

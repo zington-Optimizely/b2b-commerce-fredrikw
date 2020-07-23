@@ -1,5 +1,5 @@
-import { ComponentThemeProps } from "../globals/baseTheme";
 import { css } from "styled-components";
+import { ComponentThemeProps } from "../globals/baseTheme";
 
 const TooltipPresentationPropsDefault: ComponentThemeProps["tooltip"]["defaultProps"] = {
     typographyProps: { size: 13, lineHeight: "18px", css: css` display: block; ` },

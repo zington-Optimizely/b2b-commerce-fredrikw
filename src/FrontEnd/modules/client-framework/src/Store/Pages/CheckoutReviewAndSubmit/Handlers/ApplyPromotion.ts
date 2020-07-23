@@ -1,9 +1,9 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { addCartPromotion, AddCartPromotionApiParameter } from "@insite/client-framework/Services/CartService";
-import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{
     promotionCode: string;

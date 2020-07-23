@@ -2,6 +2,7 @@
 
 ```jsx
 const AccordionSection = require('../AccordionSection').default;
+const ManagedAccordionSection = require('../AccordionSection/ManagedAccordionSection').default;
 const Button = require('../Button').default;
 const TextField = require('../TextField').default;
 const Typography = require('../Typography').default;
@@ -14,7 +15,7 @@ const typographyProps = {
 };
 
 <Accordion headingLevel={4}>
-    <AccordionSection title="Accessibility" expanded={true}>
+    <ManagedAccordionSection title="Accessibility" initialExpanded={true} onTogglePanel={() => console.log('toggling')}>
         <Typography {...typographyProps}>
             The title of each accordion header is contained in an element with role button.
         </Typography>
@@ -27,7 +28,7 @@ const typographyProps = {
             placeholder="Hooray for keyboard navigation!"
             hint="When the panel is collapsed, this input is not focusable."
         />
-    </AccordionSection>
+    </ManagedAccordionSection>
     <AccordionSection title="Details">
         <Typography {...typographyProps}>
             If the native host language has an element with an implicit heading and aria-level, such as an HTML heading
@@ -65,4 +66,47 @@ const typographyProps = {
         </Typography>
     </AccordionSection>
 </Accordion>
+```
+
+### Controlled Accordion
+
+```jsx
+const AccordionSection = require('../AccordionSection').default;
+const Button = require('../Button/Button.tsx').default;
+const TextField = require('../TextField').default;
+const Typography = require('../Typography').default;
+
+const Spacer = () => <div style={{ width: 50 }} />;
+
+class Example extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { expanded: true };
+        this.toggle = () => {
+            this.setState(({expanded}) => {
+                return { expanded: !expanded };
+            });
+        };
+    }
+
+    render() {
+        return (
+            <div style={{ display: 'flex' }}>
+                <Accordion headingLevel={4}>
+                    <AccordionSection title="Controlled Panel" expanded={this.state.expanded} onTogglePanel={this.toggle}>
+                        <Typography>
+                            Panel content.
+                        </Typography>
+                    </AccordionSection>
+                </Accordion>
+                <Spacer/>
+                <Button onClick={this.toggle}>Toggle Expanded</Button>
+                <Spacer/>
+                <Typography style={{ whiteSpace: 'nowrap', width: '180px' }}>Expanded: {this.state.expanded ? "true" : "false"}</Typography>
+            </div>
+        );
+    }
+}
+
+<Example />
 ```

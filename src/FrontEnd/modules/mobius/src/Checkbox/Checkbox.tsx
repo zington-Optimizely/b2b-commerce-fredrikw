@@ -1,33 +1,39 @@
 import Color from "color";
 import * as React from "react";
-import styled, { withTheme, ThemeProps, css } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 import CheckboxGroupContext, { CheckboxGroupContextData } from "../CheckboxGroup/CheckboxGroupContext";
 import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps, IconProps } from "../Icon";
-import ToggleInput from "./ToggleInput";
+import Icon, { IconMemo, IconPresentationProps, IconProps } from "../Icon";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import combineTypographyProps from "../utilities/combineTypographyProps";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import FieldSetPresentationProps from "../utilities/fieldSetProps";
 import get from "../utilities/get";
 import getColor from "../utilities/getColor";
 import getContrastColor from "../utilities/getContrastColor";
-import injectCss from "../utilities/injectCss";
 import InjectableCss from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
 import uniqueId from "../utilities/uniqueId";
+import ToggleInput from "./ToggleInput";
 
 export interface CheckboxPresentationProps extends FieldSetPresentationProps<CheckboxProps & StyleProps>, CheckboxGroupContextData {
     /** Props to be passed into the inner Icon component.
      * @themable */
     iconProps?: IconPresentationProps;
+    /** Props to be passed into the indeterminate Icon component.
+     * @themable */
+    indeterminateIconProps?: IconPresentationProps;
+    /** The background color of the indeterminate checkbox.
+     * @themable */
+    indeterminateColor?: string;
 }
 
 export interface CheckboxProps extends CheckboxPresentationProps {
-    /** Sets the initial checked state of this Checkbox. */
-    checked?: boolean;
+    /** Sets the initial checked state of this Checkbox. Please note, "indeterminate" value is valid only for "default" checkbox variant. */
+    checked?: boolean | "indeterminate";
     /** Disables the checkbox. */
     disabled?: boolean;
     /** Indicates an error by changing the color of the checkbox label. */
@@ -37,7 +43,7 @@ export interface CheckboxProps extends CheckboxPresentationProps {
     /** Handler for the change event. The value of the select is exposed as the second parameter: (event, value) => void */
     onChange?: (event: React.SyntheticEvent, value: boolean) => void;
     /** Display variants. */
-    variant?: "default" | "toggle";
+    variant?: "toggle" | "default";
     uid?: string;
 }
 
@@ -66,6 +72,7 @@ const CheckboxStyle = styled.div<InjectableCss & StyleProps>`
     align-items: center;
     cursor: ${({ disabled }) => (disabled ? "not-allowed" : "default")};
     ${({ _labelPosition }) => _labelPosition === "left" && css`
+        width: 100%;
         display: flex;
         justify-content: space-between;
         margin-left: 10px;
@@ -75,7 +82,7 @@ const CheckboxStyle = styled.div<InjectableCss & StyleProps>`
         min-width: ${({ _sizeVariant }) => checkboxSizes[_sizeVariant].iconSize}px;
         border: 1px solid ${getColor("common.border")};
         border-radius: ${({ _sizeVariant }) => checkboxSizes[_sizeVariant].borderRadius}px;
-        &[aria-checked=true]:not([aria-disabled=true]) {
+        &[aria-checked=true]:not([aria-disabled=true]), &[aria-checked=mixed]:not([aria-disabled=true]) {
             background: ${({ _color, theme }) => resolveColor(_color, theme)};
             border: 0;
             color: ${({ _color, theme }) => getContrastColor(_color, theme)};
@@ -105,22 +112,22 @@ const IconCheck: React.FC<{ iconProps: IconProps }> = ({ iconProps, ...thisOther
 
 type Props = CheckboxProps & ThemeProps<BaseTheme>;
 
-type State = Pick<Props, "checked" | "uid">;
+type State = Required<Pick<Props, "checked" | "uid">>;
 
-const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<Props, "children" |  "disabled" | "disable" | "error" | "variant">)[];
+const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<Props, "children" |  "disabled" | "disable" | "error" | "variant" | "indeterminate">)[];
 
 class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     state: State = {
-        checked: this.props.checked,
+        checked: this.props.checked || false,
         uid: this.props.uid || uniqueId(),
     };
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        let checked = prevState.checked || false;
-        if (nextProps.onChange && nextProps.checked !== prevState.checked) {
-            checked = !!nextProps.checked; // eslint-disable-line prefer-destructuring
+    static getDerivedStateFromProps({ checked, onChange }: Props, prevState: State) {
+        let nextChecked = prevState.checked || false;
+        if (onChange && checked !== prevState.checked) {
+            nextChecked = checked === "indeterminate" ? checked : !!checked; // eslint-disable-line prefer-destructuring
         }
-        return { checked };
+        return { checked: nextChecked };
     }
 
     toggleCheck = (e: React.SyntheticEvent<HTMLSpanElement>) => {
@@ -162,6 +169,7 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
             variant = "default",
             ...otherProps
         } = this.props;
+        const isIndeterminate = this.state.checked === "indeterminate";
 
         return (
             <CheckboxGroupContext.Consumer>
@@ -173,7 +181,7 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     const isDisabled = (disable || disabled) ? true : false;
                     const { applyProp, spreadProps } = applyPropBuilder({ sizeVariant, ...this.props }, { component: "checkbox", category: "fieldSet" });
                     const sizeVariantApplied = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
-                    const color = applyProp("color", "primary");
+                    const color = applyProp(isIndeterminate ? "indeterminateColor" : "color", "primary");
                     const labelPosition = applyProp("labelPosition")
                         || (applyProp("variant", "default") === "toggle" ? "left" : "right");
                     const spreadTypographyProps = spreadProps("typographyProps");
@@ -213,6 +221,21 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     }
 
                     const CheckInput = variant === "toggle" ? ToggleInput : IconCheck;
+                    let ariaChecked: boolean | "mixed" = !!this.state.checked;
+                    if (isIndeterminate) ariaChecked = "mixed";
+                    const checkInputProps = {
+                        _color: color,
+                        id: this.state.uid,
+                        role: "checkbox",
+                        _sizeVariant: sizeVariantApplied,
+                        tabIndex: isDisabled ? -1 : 0,
+                        "aria-checked": ariaChecked, /* needed for when the `checked` prop is undefined or null */
+                        "aria-disabled": isDisabled,
+                        disabled: isDisabled,
+                        "aria-labelledby": labelId,
+                        "data-checkbox-only": (children !== 0 && !children) ? true : null, /* ship this attribute if no children */
+                        onKeyUp: this.handleKeyUp,
+                    };
 
                     return (
                         <CheckboxStyle
@@ -221,28 +244,27 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                             _sizeVariant={sizeVariantApplied}
                             _labelPosition={labelPosition}
                             disabled={isDisabled}
+                            data-id="checkbox"
                             onClick={this.toggleCheck}
                             {...omitMultiple(otherProps, omitList)}
                         >
                             {labelPosition === "left" && renderLabel}
-                            <CheckInput
-                                _color={color}
-                                id={this.state.uid}
-                                role="checkbox"
-                                _sizeVariant={sizeVariantApplied}
-                                tabIndex={isDisabled ? -1 : 0}
-                                aria-checked={!!this.state.checked} /* needed for when the `checked` prop is undefined or null */
-                                aria-disabled={isDisabled}
-                                disabled={isDisabled}
-                                aria-labelledby={labelId}
-                                data-checkbox-only={(children !== 0 && !children) ? true : null} /* ship this attribute if no children */
-                                onKeyUp={this.handleKeyUp}
+                            {isIndeterminate && <IconCheck
+                                {...checkInputProps}
+                                iconProps={{
+                                    size: checkboxSizes[sizeVariantApplied].iconSize,
+                                    color: "currentColor",
+                                    ...spreadProps("indeterminateIconProps"),
+                                }}
+                            />}
+                            {!isIndeterminate && <CheckInput
+                                {...checkInputProps}
                                 iconProps={{
                                     size: checkboxSizes[sizeVariantApplied].iconSize,
                                     color: "currentColor",
                                     ...spreadProps("iconProps"),
                                 }}
-                            />
+                            />}
                             {labelPosition !== "left" && renderLabel}
                         </CheckboxStyle>
                     );

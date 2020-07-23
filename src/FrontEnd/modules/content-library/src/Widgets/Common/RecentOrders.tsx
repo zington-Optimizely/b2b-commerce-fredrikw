@@ -1,20 +1,20 @@
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
+import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
-import CardListHeading from "@insite/content-library/Components/CardListHeading";
-import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
-import OrderSummaryCard, { OrderSummaryCardStyles } from "@insite/content-library/Components/OrderSummaryCard";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { getOrdersDataView } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
+import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
+import CardListHeading from "@insite/content-library/Components/CardListHeading";
+import OrderSummaryCard, { OrderSummaryCardStyles } from "@insite/content-library/Components/OrderSummaryCard";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const enum fields {
     numberOfRecords = "numberOfRecords",
@@ -103,7 +103,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.numberOfRecords,

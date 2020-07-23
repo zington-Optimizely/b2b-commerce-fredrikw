@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import get from "./get";
 import baseTheme from "../globals/baseTheme";
+import get from "./get";
 
 const isUndefined = (val: unknown) => val === undefined;
 

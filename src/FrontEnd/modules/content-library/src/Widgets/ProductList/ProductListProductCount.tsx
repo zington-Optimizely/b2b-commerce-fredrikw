@@ -1,13 +1,13 @@
-import React, { FC } from "react";
-import { connect } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
@@ -69,7 +69,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Product List Count",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

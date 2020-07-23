@@ -1,11 +1,11 @@
-import React, { FC, useContext } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -72,7 +72,6 @@ const widgetModule: WidgetModule = {
         displayName: "Pagination",
         group: "Order History",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

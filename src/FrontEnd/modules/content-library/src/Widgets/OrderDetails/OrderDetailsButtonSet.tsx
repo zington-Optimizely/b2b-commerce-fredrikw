@@ -1,31 +1,31 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
-import ShareEntityButton, { ShareEntityButtonStyles } from "@insite/content-library/Components/ShareEntityButton";
-import { GridContainerProps } from "@insite/mobius/GridContainer";
-import cancelOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/CancelOrder";
-import { canCancelOrder, canRmaOrder } from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsSelectors";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import reorder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/Reorder";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
-import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import { css } from "styled-components";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
-import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import OrderDetailPageTypeLink from "@insite/content-library/Components/OrderDetailPageTypeLink";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import cancelOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/CancelOrder";
+import reorder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/Reorder";
+import { canCancelOrder, canRmaOrder } from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsSelectors";
+import translate from "@insite/client-framework/Translate";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import OrderDetailPageTypeLink from "@insite/content-library/Components/OrderDetailPageTypeLink";
+import ShareEntityButton, { ShareEntityButtonStyles } from "@insite/content-library/Components/ShareEntityButton";
+import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import { GridContainerProps } from "@insite/mobius/GridContainer";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     buttonsOrder = "buttonsOrder",
@@ -318,7 +318,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.buttonsOrder,

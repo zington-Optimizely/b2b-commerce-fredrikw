@@ -1,8 +1,8 @@
+import { loadCategories, selectCategory } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import sortBy from "lodash/sortBy";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { selectCategory, loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import sortBy from "lodash/sortBy";
 import styled from "styled-components";
 
 interface OwnProps {

@@ -47,7 +47,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

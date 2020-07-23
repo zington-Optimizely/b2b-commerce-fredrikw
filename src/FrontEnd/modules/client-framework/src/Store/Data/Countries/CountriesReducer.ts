@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { CountryCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetCurrentCountriesApiParameter } from "@insite/client-framework/Services/WebsiteService";
 import { CountriesState } from "@insite/client-framework/Store/Data/Countries/CountriesState";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { GetCurrentCountriesApiParameter } from "@insite/client-framework/Services/WebsiteService";
+import { CountryCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: CountriesState = {
     isLoading: {},

@@ -1,7 +1,7 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { BudgetPeriodType } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
-import setCustomBudgetPeriodNumber from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetCustomBudgetPeriodNumber";
 import setBudgetCalendar from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetBudgetCalendar";
+import setCustomBudgetPeriodNumber from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetCustomBudgetPeriodNumber";
 
 type HandlerType = Handler<{
     budgetPeriodType?: BudgetPeriodType;

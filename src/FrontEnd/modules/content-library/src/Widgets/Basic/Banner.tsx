@@ -1,20 +1,20 @@
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import Typography from "@insite/mobius/Typography";
-import parse from "html-react-parser";
-import styled, { css } from "styled-components";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography from "@insite/mobius/Typography";
 import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import parse from "html-react-parser";
+import React from "react";
+import { connect } from "react-redux";
+import styled, { css } from "styled-components";
 
 const enum fields {
     background = "background",
@@ -184,7 +184,6 @@ const banner: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Banner",
-        isSystem: true,
         fieldDefinitions: [
             {
                 fieldType: "General",

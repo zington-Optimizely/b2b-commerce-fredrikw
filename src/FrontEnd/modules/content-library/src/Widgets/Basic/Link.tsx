@@ -1,11 +1,11 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import MobiusLink from "@insite/mobius/Link";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const enum fields {
     destination = "destination",
@@ -43,7 +43,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Link",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.destination,

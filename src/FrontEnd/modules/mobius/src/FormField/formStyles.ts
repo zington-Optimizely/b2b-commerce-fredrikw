@@ -1,9 +1,9 @@
 import Color from "color";
 import { css } from "styled-components";
-import get from "../utilities/get";
-import { BaseTheme } from "../globals/baseTheme";
-import { FormFieldPresentationPropsCommon, FormFieldIcon } from "./FormField";
 import { ButtonSizeVariants } from "../Button";
+import { BaseTheme } from "../globals/baseTheme";
+import get from "../utilities/get";
+import { FormFieldIcon, FormFieldPresentationPropsCommon } from "./FormField";
 
 export interface VariantValues {
     fontSize: number;

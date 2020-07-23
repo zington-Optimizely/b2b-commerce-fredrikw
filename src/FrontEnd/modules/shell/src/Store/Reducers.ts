@@ -1,12 +1,12 @@
-import { combineReducers } from "redux";
-import PageTreeReducer from "@insite/shell/Store/PageTree/PageTreeReducer";
+import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
-import PageEditorReducer from "@insite/shell/Store/PageEditor/PageEditorReducer";
-import StyleGuideReducer from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
-import ShellContextReducer from "@insite/shell/Store/ShellContext/ShellContextReducer";
 import ErrorModalReducer from "@insite/shell/Store/ErrorModal/ErrorModalReducer";
 import LogoutWarningModalReducer from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalReducer";
-import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
+import PageEditorReducer from "@insite/shell/Store/PageEditor/PageEditorReducer";
+import PageTreeReducer from "@insite/shell/Store/PageTree/PageTreeReducer";
+import ShellContextReducer from "@insite/shell/Store/ShellContext/ShellContextReducer";
+import StyleGuideReducer from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
+import { combineReducers } from "redux";
 
 const dataReducers = {
     pages: PagesReducer,

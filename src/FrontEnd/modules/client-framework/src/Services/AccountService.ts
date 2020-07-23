@@ -1,16 +1,16 @@
 import {
-    get,
-    post,
-    patch,
-    del,
     ApiParameter,
-    HasPagingParameters,
     API_URL_CURRENT_FRAGMENT,
+    del,
+    get,
+    HasPagingParameters,
+    patch,
+    post,
     ServiceResult,
 } from "@insite/client-framework/Services/ApiService";
 import {
-    AccountModel,
     AccountCollectionModel,
+    AccountModel,
     AccountPaymentProfileCollectionModel,
     AccountPaymentProfileModel,
 } from "@insite/client-framework/Types/ApiModels";

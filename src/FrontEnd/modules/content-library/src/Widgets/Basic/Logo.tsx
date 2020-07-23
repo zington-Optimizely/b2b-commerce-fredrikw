@@ -1,13 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Link from "@insite/mobius/Link";
-import translate from "@insite/client-framework/Translate";
-import { css } from "styled-components";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import Link from "@insite/mobius/Link";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { css } from "styled-components";
 
 const enum fields {
     logoImage = "logoImage",
@@ -61,7 +61,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Logo",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.logoImage,

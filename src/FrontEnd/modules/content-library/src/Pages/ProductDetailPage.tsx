@@ -1,18 +1,18 @@
-import * as React from "react";
-import Zone from "@insite/client-framework/Components/Zone";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import loadProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/LoadProduct";
-import { ProductContext } from "@insite/client-framework/Components/ProductContext";
-import Page from "@insite/mobius/Page";
-import CurrentCategory from "@insite/content-library/Components/CurrentCategory";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import { ProductContext } from "@insite/client-framework/Components/ProductContext";
+import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSelectedProductPath } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import loadProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/LoadProduct";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import CurrentCategory from "@insite/content-library/Components/CurrentCategory";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
@@ -49,7 +49,7 @@ class ProductDetailPage extends React.Component<Props> {
         if (productPath.toLowerCase() !== lastProductPath?.toLowerCase()) {
             const queryParams = parseQueryString<{ option?: string; criteria?: string; }>(search.replace("?", ""));
             const styledOption = (queryParams.option?.toString() || queryParams.criteria?.toString() || "").toLocaleLowerCase();
-            this.props.loadProduct({ path: productPath, styledOption });
+            this.props.loadProduct({ path: productPath, styledOption, addToRecentlyViewed: true });
         }
     }
 
@@ -75,7 +75,7 @@ const pageModule: PageModule = {
         hasEditableUrlSegment: false,
         hasEditableTitle: false,
         supportsProductSelection: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

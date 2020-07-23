@@ -1,13 +1,13 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -71,7 +71,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "List Controls Container",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

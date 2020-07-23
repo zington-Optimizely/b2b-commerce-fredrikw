@@ -1,6 +1,6 @@
 import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 import { addPaymentProfile as addPaymentProfileApi, AddPaymentProfileApiParameter } from "@insite/client-framework/Services/AccountService";
+import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<AddPaymentProfileApiParameter & HasOnSuccess, AccountPaymentProfileModel>;
 

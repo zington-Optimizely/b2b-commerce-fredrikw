@@ -1,4 +1,11 @@
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { canAddAllToList, canSaveOrder, getCurrentCartState, isCartEmpty } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -7,16 +14,11 @@ import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentCartState, isCartEmpty, canAddAllToList, canSaveOrder } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCurrentCartState(state).value;
@@ -26,6 +28,7 @@ const mapStateToProps = (state: ApplicationState) => {
         isCartEmpty: isCartEmpty(cart),
         canSaveOrder: canSaveOrder(cart),
         canAddAllToList: canAddAllToList(cart),
+        rfqRequestQuotePageUrl: getPageLinkByPageType(state, "RfqRequestQuotePage")?.url,
     });
 };
 
@@ -34,7 +37,7 @@ const mapDispatchToProps = {
     addToWishList,
 };
 
-type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CartActionsStyles {
     narrowHidden?: HiddenProps;
@@ -82,6 +85,8 @@ const CartActions: FC<Props> = ({
     wishListSettings,
     setAddToListModalIsOpen,
     addToWishList,
+    history,
+    rfqRequestQuotePageUrl,
 }) => {
     if (!cart) {
         return null;
@@ -116,18 +121,35 @@ const CartActions: FC<Props> = ({
         setAddToListModalIsOpen({ modalIsOpen: true, products });
     };
 
+    const requestAQuoteClickHandler = () => {
+        if (rfqRequestQuotePageUrl) {
+            history.push(rfqRequestQuotePageUrl);
+        }
+    };
+
     if (!isCartEmpty) {
         overflowItems.push(<Clickable {...styles.addAllToListClickable}
             key="addAll"
             disabled={!canAddAllToList}
             onClick={addAllToListClickHandler}
-            data-test-selector="cartlineAddAllToList">
+            data-test-selector="cartActionsAddAllToList">
             {translate("Add All to List")}
         </Clickable>);
         if (showRequestAQuote) {
-            overflowItems.push(<Clickable key="requestQuote" {...styles.requestAQuoteClickable}>{requestAQuoteLabel}</Clickable>);
+            overflowItems.push(<Clickable
+                key="requestQuote"
+                {...styles.requestAQuoteClickable}
+                onClick={requestAQuoteClickHandler}
+                data-test-selector="cartActionsRequestAQuote">
+                {requestAQuoteLabel}
+            </Clickable>);
         }
-        wideHiddenOverflowMenu.push(<OverflowMenu key="overflow" {...styles.wideOverflowMenu}>{overflowItems}</OverflowMenu>);
+        wideHiddenOverflowMenu.push(<OverflowMenu
+            key="overflow"
+            {...styles.wideOverflowMenu}
+            data-test-selector="cartActionsOverflowMenu">
+            {overflowItems}
+        </OverflowMenu>);
     }
 
     return (
@@ -156,11 +178,10 @@ const CartActions: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(CartActions),
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(CartActions)),
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],
-        isSystem: true,
     },
 };
 

@@ -1,5 +1,5 @@
-import loadWishListsData from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
 import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
+import loadWishListsData from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
 
 type HandlerType = Handler;
 

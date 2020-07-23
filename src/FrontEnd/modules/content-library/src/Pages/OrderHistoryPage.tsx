@@ -1,22 +1,22 @@
-import * as React from "react";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import { connect, ResolveThunks } from "react-redux";
-import Page from "@insite/mobius/Page";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
+import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { getOrdersDataView, OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import loadOrderStatusMappings from "@insite/client-framework/Store/Data/OrderStatusMappings/Handlers/LoadOrderStatusMappings";
 import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
-import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
-import { useEffect } from "react";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
-import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import * as React from "react";
+import { useEffect } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     settings: getSettingsCollection(state),
@@ -91,7 +91,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

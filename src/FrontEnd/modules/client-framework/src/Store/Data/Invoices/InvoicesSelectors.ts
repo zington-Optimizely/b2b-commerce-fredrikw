@@ -1,6 +1,6 @@
-import { getById, getDataView } from "@insite/client-framework/Store/Data/DataState";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getById, getDataView } from "@insite/client-framework/Store/Data/DataState";
 import { createContext } from "react";
 
 export function getInvoiceState(state: ApplicationState, invoiceNumber: string | undefined) {

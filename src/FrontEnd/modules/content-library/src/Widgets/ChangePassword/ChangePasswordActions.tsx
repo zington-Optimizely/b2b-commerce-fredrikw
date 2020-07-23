@@ -1,16 +1,17 @@
-import React, { FC, useContext } from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button/Button";
-import updatePassword from "@insite/client-framework/Store/Context/Handlers/UpdatePassword";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import { AccountSettingsModel } from "@insite/client-framework/Types/ApiModels";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { css } from "styled-components";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import updatePassword from "@insite/client-framework/Store/Context/Handlers/UpdatePassword";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import { AccountSettingsModel } from "@insite/client-framework/Types/ApiModels";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button/Button";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     password: string;
@@ -23,6 +24,7 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     accountSettings: getSettingsCollection(state).accountSettings,
+    accountSettingsPageLink: getPageLinkByPageType(state, "AccountSettingsPage"),
 });
 
 const mapDispatchToProps = {
@@ -92,7 +94,18 @@ const validatePassword = (password: string, settings: AccountSettingsModel) => {
     return passwordError;
 };
 
-const ChangePasswordActions: FC<Props> = props => {
+const ChangePasswordActions: FC<Props> = ({
+    accountSettings,
+    accountSettingsPageLink,
+    password,
+    newPassword,
+    confirmNewPassword,
+    error,
+    showValidation,
+    setShowValidation,
+    updatePassword,
+    history,
+}) => {
     const toasterContext = useContext(ToasterContext);
     const onSaveClick = (error?: string) => {
         if (error) {
@@ -109,38 +122,36 @@ const ChangePasswordActions: FC<Props> = props => {
             messageType: "success",
         });
 
-        props.history.push("AccountSettings");
+        history.push(accountSettingsPageLink!.url);
     };
 
     const updatePasswordHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>, onApiResponse: (error?: string) => void) => {
         e.preventDefault();
-        if (props.error) {
-            props.setShowValidation(true);
+        if (error) {
+            setShowValidation(true);
             return;
         }
 
-        const error = validatePassword(props.newPassword, props.accountSettings);
+        const errorMessage = validatePassword(newPassword, accountSettings);
         if (error) {
             toasterContext.addToast({
-                body: error,
+                body: errorMessage,
                 messageType: "danger",
             });
-            props.setShowValidation(true);
+            setShowValidation(true);
             return;
         }
 
-        props.updatePassword({
-            password: props.password,
-            newPassword: props.newPassword,
+        updatePassword({
+            password,
+            newPassword,
             onApiResponse,
         });
     };
 
     const onCancelClick = () => {
-        props.history.push("AccountSettings");
+        history.push(accountSettingsPageLink!.url);
     };
-
-    const { password, newPassword, confirmNewPassword, error, showValidation } = props;
 
     const disableSaveButton = !password || !newPassword || !confirmNewPassword || (error && showValidation);
 

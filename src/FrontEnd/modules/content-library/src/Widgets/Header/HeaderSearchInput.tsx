@@ -1,7 +1,7 @@
-import React from "react";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import SearchInput, { SearchInputStyles } from "@insite/content-library/Widgets/Header/SearchInput";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import SearchInput, { SearchInputStyles } from "@insite/content-library/Widgets/Header/SearchInput";
+import React from "react";
 
 export interface HeaderSearchInputStyles {
     searchInputStyles?: SearchInputStyles;
@@ -20,7 +20,6 @@ const widgetModule: WidgetModule = {
         group: "Header",
         displayName: "Search Input",
         allowedContexts: ["Header"],
-        isSystem: true,
     },
 };
 

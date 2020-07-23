@@ -1,7 +1,7 @@
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import cloneDeep from "lodash/cloneDeep";
 import { getProductRealTimePrice, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import cloneDeep from "lodash/cloneDeep";
 
 interface ChangeProductQtyParameter {
     product: ProductModelExtended;

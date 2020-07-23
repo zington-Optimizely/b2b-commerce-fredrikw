@@ -1,14 +1,14 @@
-import React from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import Zone from "@insite/client-framework/Components/Zone";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
+import React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     isUpdatingCart: state.pages.checkoutShipping.isUpdatingCart,
@@ -107,7 +107,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Container",
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
-        isSystem: true,
     },
 };
 

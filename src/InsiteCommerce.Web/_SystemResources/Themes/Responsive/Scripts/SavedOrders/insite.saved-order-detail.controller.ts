@@ -11,8 +11,12 @@
         canAddAllToList = false;
         validationMessage: string;
         listPageUri: string;
+        session: SessionModel;
+        cartUri: string;
+        isAddressSet: boolean;
+        useCustomerFrom = "session";
 
-        static $inject = ["cartService", "coreService", "spinnerService", "settingsService", "queryString", "addToWishlistPopupService"];
+        static $inject = ["cartService", "coreService", "spinnerService", "settingsService", "queryString", "addToWishlistPopupService", "sessionService", "selectSavedOrderAddressPopupService", "$scope"];
 
         constructor(
             protected cartService: cart.ICartService,
@@ -20,7 +24,10 @@
             protected spinnerService: core.ISpinnerService,
             protected settingsService: core.ISettingsService,
             protected queryString: common.IQueryStringService,
-            protected addToWishlistPopupService: wishlist.AddToWishlistPopupService) {
+            protected addToWishlistPopupService: wishlist.AddToWishlistPopupService,
+            protected sessionService: account.ISessionService,
+            protected selectSavedOrderAddressPopupService: SelectSavedOrderAddressPopupService,
+            protected $scope: ng.IScope) {
         }
 
         $onInit(): void {
@@ -28,10 +35,23 @@
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
 
+            if (!this.session) {
+                this.sessionService.getSession().then(
+                    (session: SessionModel) => { this.getSessionCompleted(session); },
+                    (error: any) => { this.getSessionFailed(error); });
+            }
+
             this.cartService.expand = "cartlines,costcodes,hiddenproducts";
             this.cartService.getCart(this.queryString.get("cartid"), true).then(
                 (cart: CartModel) => { this.getCartCompleted(cart); },
                 (error: any) => { this.getCartFailed(error); });
+
+            this.$scope.$on("savedOrderCustomerWasSet",
+                (event, data) => {
+                    this.useCustomerFrom = data.useCustomerFrom;
+                    this.isAddressSet = true;
+                    this.placeSavedOrder(this.cartUri);
+                });
         }
 
         protected getSettingsCompleted(settingsCollection: core.SettingsCollection): void {
@@ -40,6 +60,13 @@
         }
 
         protected getSettingsFailed(error: any): void {
+        }
+
+        protected getSessionCompleted(session: SessionModel): void {
+            this.session = session;
+        }
+
+        protected getSessionFailed(error: any): void {
         }
 
         protected getCartCompleted(cart: CartModel): void {
@@ -96,6 +123,12 @@
                 return;
             }
 
+            if (!this.isAddressSet && this.cart.shipTo.id !== this.session.shipTo.id) {
+                this.cartUri = cartUri;
+                this.selectSavedOrderAddressPopupService.display({ cart: this.cart, session: this.session });
+                return;
+            }
+
             this.spinnerService.show();
             this.cartService.addLineCollection(availableLines, true, false).then(
                 (cartLineCollection: CartLineCollectionModel) => { this.addLineCollectionCompleted(cartLineCollection, cartUri); },
@@ -112,6 +145,9 @@
             }
             if (!currentCart.poNumber) {
                 currentCart.poNumber = this.cart.poNumber;
+            }
+            if (this.isAddressSet && this.useCustomerFrom === "order") {
+                currentCart.shipTo = this.cart.shipTo;
             }
 
             this.cartService.updateCart(currentCart).then(
@@ -136,7 +172,12 @@
         }
 
         protected deleteSavedOrderCompleted(cart: CartModel, redirectUri: string): void {
-            this.coreService.redirectToPath(redirectUri);
+            if (this.isAddressSet) {
+                this.coreService.redirectToPathAndRefreshPage(redirectUri);
+                this.isAddressSet = false;
+            } else {
+                this.coreService.redirectToPath(redirectUri);
+            }
         }
 
         protected deleteSavedOrderFailed(error: any): void {

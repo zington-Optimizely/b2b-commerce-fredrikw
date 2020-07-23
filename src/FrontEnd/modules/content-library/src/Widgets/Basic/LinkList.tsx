@@ -1,17 +1,17 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLink, getPageLinkByNodeId, LinkModel, mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import { getLink, LinkModel, mapLinks, getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import Link from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { css } from "styled-components";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     direction = "direction",
@@ -106,7 +106,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "LinkList",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.direction,

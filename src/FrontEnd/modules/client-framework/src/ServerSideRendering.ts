@@ -1,9 +1,8 @@
-import "isomorphic-fetch";
-import { URL } from "url";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
 import { RetrievePageResult } from "@insite/client-framework/Services/ContentService";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { Request } from "express";
+import "isomorphic-fetch";
+import { URL } from "url";
 // 'isomorphic-fetch' makes node and client-side have a similar 'fetch', but causes an 'iconv-loader' warning...
 
 /**
@@ -28,7 +27,7 @@ interface InsiteSession {
     trackedPromises: Promise<any>[];
     /** Callback for tracking added promises. */
     promiseAddedCallback?: (stack: string) => void;
-    headers?: Request["headers"];
+    headers?: SafeDictionary<string | string[]>;
     /**
      * @deprecated Use headers["cookie"] instead
      */
@@ -39,6 +38,7 @@ interface InsiteSession {
     userAgent?: string | undefined;
     statusCode?: number;
     messagesByName: SafeDictionary<string>;
+    translationsByKeyword: SafeDictionary<string>;
     displayErrorPage?: true | undefined;
     initialPage?: {
         result: RetrievePageResult,
@@ -68,6 +68,22 @@ export const setServerSiteMessages = (messagesByName: SafeDictionary<string>) =>
     domain.active.insiteSession.messagesByName = messagesByName;
 };
 
+export const serverTranslationResolver = (keyword: string) => {
+    throwIfClientSide();
+
+    return domain?.active.insiteSession.translationsByKeyword[keyword];
+};
+
+export const setServerTranslations = (translationsByKeyword: SafeDictionary<string>) => {
+    throwIfClientSide();
+
+    if (!domain) {
+        throw new Error("Domain not set.");
+    }
+
+    domain.active.insiteSession.translationsByKeyword = translationsByKeyword;
+};
+
 /** Sets the `domain` module reference for use with session data storage. */
 export const setDomain = (newDomain: typeof domain) => {
     throwIfClientSide();
@@ -85,6 +101,7 @@ export const setDomain = (newDomain: typeof domain) => {
     newDomain.active.insiteSession = {
         trackedPromises: [],
         messagesByName: {},
+        translationsByKeyword: {},
     };
 
     domain = newDomain;
@@ -176,7 +193,7 @@ export function setPromiseAddedCallback(promiseAddedCallback: (stack: string) =>
     setSessionValue("promiseAddedCallback", promiseAddedCallback);
 }
 
-export function setHeaders(headers: Request["headers"]) {
+export function setHeaders(headers: SafeDictionary<string | string[]>) {
     setSessionValue("headers", headers);
 }
 

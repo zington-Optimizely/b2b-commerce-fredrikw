@@ -1,21 +1,21 @@
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import shareEntity from "@insite/client-framework/Store/CommonHandlers/ShareEntity";
 import translate from "@insite/client-framework/Translate";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import { ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import { ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
-import shareEntity from "@insite/client-framework/Store/CommonHandlers/ShareEntity";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 
 interface OwnProps {
     entityId: string;

@@ -1,5 +1,5 @@
-import { Dictionary } from "@insite/client-framework/Common/Types";
 import sleep from "@insite/client-framework/Common/Sleep";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
 
 const Handshake = "Handshake";

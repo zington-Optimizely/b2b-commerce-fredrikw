@@ -1,8 +1,13 @@
-import React, { FC } from "react";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import {
+    getCurrentPromotionsDataView,
+    getDiscountTotal,
+    getOrderPromotions,
+    getShippingPromotions,
+} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect } from "react-redux";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
 import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
@@ -11,14 +16,9 @@ import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import {
-    getCurrentPromotionsDataView,
-    getDiscountTotal,
-    getOrderPromotions,
-    getShippingPromotions,
-} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCurrentCartState(state);
@@ -102,7 +102,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
         displayName: "Cart Total",
-        isSystem: true,
     },
 };
 

@@ -4,16 +4,16 @@ import { checkboxSizes } from "../Checkbox";
 import RadioGroupContext from "../RadioGroup/RadioGroupContext";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import combineTypographyProps from "../utilities/combineTypographyProps";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
+import FieldSetPresentationProps from "../utilities/fieldSetProps";
 import getColor from "../utilities/getColor";
 import getContrastColor from "../utilities/getContrastColor";
+import InjectableCss from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
-import InjectableCss from "../utilities/InjectableCss";
-import FieldSetPresentationProps from "../utilities/fieldSetProps";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type RadioComponentProps = MobiusStyledComponentProps<"div", {
     /** Disables the radio button. */
@@ -46,6 +46,9 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color
                 border: 1px solid ${getColor("common.border")};
                 margin-right: 10px;
             }
+        }
+        &:disabled + label {
+            cursor: not-allowed;
         }
         &:focus + label::before {
             box-shadow: 0 0 0 2px ${getColor("common.backgroundContrast")};

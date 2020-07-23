@@ -1,9 +1,9 @@
 import "core-js/fn/array/includes"; // needed for IE
 import styled, { ThemeProps } from "styled-components";
-import resolveColor from "../utilities/resolveColor";
 import { BaseTheme } from "../globals/baseTheme";
-import { TypographyProps, TypographyPresentationProps } from "./Typography";
 import { StyledProp } from "../utilities/InjectableCss";
+import resolveColor from "../utilities/resolveColor";
+import { TypographyPresentationProps, TypographyProps } from "./Typography";
 
 const typographyStyleStringGenerator = ({
     _color,

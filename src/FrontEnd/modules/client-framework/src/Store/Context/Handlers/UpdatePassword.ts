@@ -1,5 +1,5 @@
-import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 
 export interface UpdatePasswordParameter {
     password: string;

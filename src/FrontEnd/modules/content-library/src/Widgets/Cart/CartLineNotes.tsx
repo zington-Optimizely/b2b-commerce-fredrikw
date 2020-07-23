@@ -1,14 +1,14 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useState } from "react";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import translate from "@insite/client-framework/Translate";
-import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import translate from "@insite/client-framework/Translate";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC, useState } from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     cart: Cart;

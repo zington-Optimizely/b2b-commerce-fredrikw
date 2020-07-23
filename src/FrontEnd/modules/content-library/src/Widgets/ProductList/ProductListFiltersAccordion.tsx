@@ -1,10 +1,10 @@
-import React, { FC } from "react";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
 import Accordion, { AccordionPresentationProps } from "@insite/mobius/Accordion";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import Zone from "@insite/client-framework/Components/Zone";
 
 interface OwnProps extends WidgetProps {
 }
@@ -35,7 +35,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Filters Accordion",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

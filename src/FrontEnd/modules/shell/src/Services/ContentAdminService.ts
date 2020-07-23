@@ -1,18 +1,20 @@
+import ContentMode from "@insite/client-framework/Common/ContentMode";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { get as baseGet, post as basePost, postVoid as basePostVoid, requestJson as baseRequestJson } from "@insite/shell/Services/ServiceBase";
 import {
+    SelectBrandModel,
     SelectCategoryModel,
     SelectProductModel,
-    SelectBrandModel,
 } from "@insite/shell/Store/PageEditor/PageEditorState";
+import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import { LanguageModel, PersonaModel } from "@insite/shell/Store/ShellContext/ShellContextState";
-import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import ContentMode from "@insite/client-framework/Common/ContentMode";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
-import { get as baseGet, post as basePost, postVoid as basePostVoid, requestJson as baseRequestJson } from "@insite/shell/Services/ServiceBase";
 
 const convertToContentAdminEndpoint = <Arguments extends Array<unknown>, Result>(fn: (endpoint: string, ...args: Arguments) => Result) => {
-    return (endpoint: string, ...args: Arguments): Result => fn(`/api/v2/contentadmin/${endpoint}`, ...args);
+    return (endpoint: string, ...args: Arguments): Result => fn(`/api/internal/contentadmin/${endpoint}`, ...args);
 };
 
 const get = convertToContentAdminEndpoint(baseGet);
@@ -70,7 +72,8 @@ export const getPagePublishInfo = (pageId: string) => post<PublishablePageInfoMo
 
 export const getPageBulkPublishInfo = () => get<PublishablePageInfoModel[]>("getPageBulkPublishInfo");
 
-export const publishPages = (publishInfo: { pages: { pageId: string, contexts?: ContentContextModel[] }[], publishOn?: Date }) => post("publishPages", publishInfo);
+export const publishPages = (publishInfo: { pages: { pageId: string, contexts?: ContentContextModel[] }[], futurePublish: boolean, publishOn?: Date, rollbackOn?: Date }) =>
+    post<PublishResultModel>("publishPages", publishInfo);
 
 export const switchContentMode = (contentMode: ContentMode) => post("switchContentMode", contentMode);
 
@@ -85,12 +88,51 @@ export type ContentContextModel = {
 export type PublishablePageInfoContextModel = ContentContextModel & {
     modifiedOn: string,
     modifiedBy: string,
+    publishOn: string;
+    futurePublishOn: string;
+    rollbackOn: string;
 };
 
 export type PublishablePageInfoModel = {
     pageId: string;
     name: string;
     unpublishedContexts: PublishablePageInfoContextModel[],
+};
+
+export type PublishResultModel = {
+    success: boolean;
+    ErrorInfos: PublishPageErrorInfo[];
+};
+
+export type PublishPageErrorInfo = {
+    pageId: string;
+    errorMessage: string;
+};
+
+export const getPageStateFromDictionaries = (pageId: string, ...treeNodeModelDictionaries: SafeDictionary<TreeNodeModel[]>[]) => {
+    for (const treeNodeModelDictionary of treeNodeModelDictionaries) {
+        for (const parentId in treeNodeModelDictionary) {
+            const pageStates = treeNodeModelDictionary[parentId];
+            if (!pageStates) continue;
+            for (const pageState of pageStates) {
+                if (pageState.pageId === pageId) return pageState;
+            }
+        }
+    }
+
+    return null;
+};
+
+export const getPageState = (pageId: string, ...treeNodeModels: TreeNodeModel[][]) => {
+    for (const pageStates of treeNodeModels) {
+        if (!pageStates) continue;
+
+        for (const pageState of pageStates) {
+            if (pageState.pageId === pageId) return pageState;
+        }
+    }
+
+    return null;
 };
 
 export interface TreeFilterCollectionModel {
@@ -113,6 +155,7 @@ export interface PageStateModel {
     nodeId: string;
     attributes: PageStateModelAttribute[];
     type: string;
+    futurePublishOn: string;
 }
 
 export type PageStateModelAttribute = "NonMatching";

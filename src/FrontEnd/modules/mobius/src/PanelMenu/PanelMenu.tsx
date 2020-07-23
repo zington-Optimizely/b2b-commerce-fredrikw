@@ -1,19 +1,19 @@
 import React from "react";
-import styled, { ThemeProps, ThemeConsumer, css } from "styled-components";
+import styled, { css, ThemeConsumer, ThemeProps } from "styled-components";
 import Button, { ButtonIcon } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconProps } from "../Icon";
 import { MappedLink } from "../Menu";
-import PanelRow, { PanelRowPresentationProps } from "./PanelRow";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getProp from "../utilities/getProp";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import resolveColor from "../utilities/resolveColor";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import PanelRow, { PanelRowPresentationProps } from "./PanelRow";
 
 export interface PanelMenuPresentationProps {
     /** CSS string or styled-components function to be injected into this component
@@ -38,7 +38,7 @@ export interface PanelMenuPresentationProps {
     /** Color of the background of the menu body.
      * @themable */
     bodyColor?: string;
-    /** Color of the background of the menu body.
+    /** Props to be passed into the panel row component.
      * @themable */
     panelRowProps?: PanelRowPresentationProps;
 }
@@ -48,12 +48,18 @@ export type PanelMenuComponentProps = MobiusStyledComponentProps<"nav", {
     panelTrigger: React.ReactElement;
     /** Aria attributes used internally require an `id`. If not provided, a random id is generated. */
     descriptionId?: string;
-    /** The nested child structure that will be rendered by the menu. */
-    menuItems: MappedLink[];
+    /**
+     * The nested child structure that will be rendered by the menu.
+     * If menu items are provided, children organically passed to the component
+     * will not be rendered.
+    */
+    menuItems?: MappedLink[];
     /** Maximum number of menus that will appear in submenu panels. */
     maxDepth?: number;
     /** Function called to close overlay (Drawer) in which menu resides. Governs presence of `x` icons in headers. */
     closeOverlay?: () => void;
+    /** The current URL of the application, used to apply 'current page' styles to the menu item */
+    currentUrl?: string;
     /** @ignore internal prop */
     layer: number;
 }>;
@@ -71,7 +77,7 @@ const PanelMenuWrapper = styled.nav<ThemeProps<BaseTheme> & InjectableCss>`
 `;
 
 const PanelMenuStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { color?: string }>`
-    height: calc(100% - 60px);
+    height: calc(100% - 50px);
     overflow-y: auto;
     background: ${({ color, theme }) => resolveColor(color, theme)};
     ${injectCss}
@@ -104,7 +110,7 @@ export type PanelMenuProps = PanelMenuComponentProps & PanelMenuPresentationProp
 type PanelMenuPropsCompleted = PanelMenuPresentationProps & Omit<PanelMenuComponentProps, "maxDepth"> & Required<Pick<PanelMenuComponentProps, "maxDepth">>;
 
 class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
-    static defaultProps = { maxDepth: 3 };
+    static defaultProps = { maxDepth: 3, closeOverlayOnClick: true };
 
     state = {
         layer: this.props.layer + 1,
@@ -112,7 +118,7 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
     };
 
     UNSAFE_componentWillReceiveProps(nextProps: PanelMenuPropsCompleted) { // eslint-disable-line camelcase
-        if (nextProps.layer !== this.props.layer + 1) {
+        if (nextProps.layer !== this.props.layer + 1 && !nextProps.children && !this.props.children) {
             this.setState({ layer: nextProps.layer + 1 }, () => {
             });
         }
@@ -136,20 +142,25 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
 
     renderMenuItems(childMenuItems: MappedLink[], currentDepth: number, propBuilder: any) {
         const { applyProp } = propBuilder;
+        const { currentUrl } = this.props;
         const typographyProps = applyProp("childTypographyProps");
+        const panelRowProps = applyProp("panelRowProps");
         return (
             <>
                 {childMenuItems.filter(item => !item.excludeFromNavigation).map(item => {
                     const renderChildren = item.children?.filter(child => !child.excludeFromNavigation).length && currentDepth < this.props.maxDepth;
-                    const clickableProps: { href?: string } = { ...item.clickableProps };
+                    const clickableProps: { href?: string; } = { ...item.clickableProps };
                     if (!renderChildren && item.url) clickableProps.href = item.url;
                     const menuItem = (
                         <PanelRow
                             key={item.title}
+                            isCurrent={currentUrl === item.url}
+                            onClick={currentUrl ===  item.url ? this.props.closeOverlay : undefined}
                             color={applyProp("bodyColor")}
                             hasChildren={(renderChildren) || false}
                             tabIndex={this.state.layer === 0 ? 0 : -1}
                             {...clickableProps}
+                            {...panelRowProps}
                         >
                             <Typography data-test-selector={`${this.props["data-test-selector"]}_${item.title}`} weight="bold" size={15} {...typographyProps}>
                                 {item.title}
@@ -176,7 +187,7 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
     render() {
         return (<ThemeConsumer>
             {(theme) => {
-                const { descriptionId, menuItems, panelTrigger, closeOverlay, ...otherProps } = this.props;
+                const { currentUrl, descriptionId, menuItems, panelTrigger, closeOverlay, ...otherProps } = this.props;
                 const propBuilder = applyPropBuilder({ ...this.props, theme }, { component: "panelMenu" });
                 const { translate } = theme;
                 const { layer, descriptionId: navId } = this.state;
@@ -204,7 +215,10 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
                                     </Button>}
                             </PanelRow>
                             <PanelMenuStyle css={cssOverrides?.menu} color={applyProp("bodyColor", "common.accent")}>
-                                {this.renderMenuItems(menuItems, 1, propBuilder)}
+                                {menuItems
+                                    ? this.renderMenuItems(menuItems, 1, propBuilder)
+                                    : <>{this.props.children}</>
+                                }
                             </PanelMenuStyle>
                         </PanelChildren>
                     </PanelMenuWrapper>
@@ -222,6 +236,7 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
 
 PanelMenu.defaultProps = {
     maxDepth: 3,
+    closeOverlayOnClick: true,
 };
 
 /** @component */

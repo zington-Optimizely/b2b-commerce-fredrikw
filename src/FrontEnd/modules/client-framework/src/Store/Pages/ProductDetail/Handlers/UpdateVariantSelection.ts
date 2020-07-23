@@ -1,14 +1,14 @@
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
+import filterVariantTraits from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/FilterVariantTraits";
+import updateProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateProduct";
 import {
     ImageModel,
     TraitValueModel,
     UnitOfMeasureModel,
 } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
-import filterVariantTraits from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/FilterVariantTraits";
-import updateProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateProduct";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 type HandlerType = HandlerWithResult<
     {

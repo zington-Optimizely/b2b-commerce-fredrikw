@@ -1,4 +1,4 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ errorMessage?: string; }>;
 

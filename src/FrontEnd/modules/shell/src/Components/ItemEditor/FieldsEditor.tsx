@@ -1,14 +1,14 @@
-import * as React from "react";
+import { Dictionary } from "@insite/client-framework/Common/Types";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import { TabDefinition } from "@insite/client-framework/Types/TabDefinition";
-import sortBy from "lodash/sortBy";
-import { Dictionary } from "@insite/client-framework/Common/Types";
-import styled, { css, FlattenSimpleInterpolation } from "styled-components";
 import Tab, { TabProps } from "@insite/mobius/Tab";
 import TabGroup from "@insite/mobius/TabGroup";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { getEditorTemplate } from "@insite/shell/Components/ItemEditor/ContentItemFieldTemplateLoader";
 import { validateField, validateItem } from "@insite/shell/Services/ItemValidation";
+import sortBy from "lodash/sortBy";
+import * as React from "react";
+import styled, { css, FlattenSimpleInterpolation } from "styled-components";
 
 interface OwnProps {
     fieldDefinitions: ChildFieldDefinition[];

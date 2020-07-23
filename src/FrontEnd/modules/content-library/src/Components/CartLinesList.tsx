@@ -1,19 +1,20 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { CartLineContext } from "@insite/client-framework/Components/CartLineContext";
+import { Cart } from "@insite/client-framework/Services/CartService";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import CartLineCardCondensed, { CartLineCardCondensedStyles } from "@insite/content-library/Components/CartLineCardCondensed";
 import CartLineCardExpanded, { CartLineCardExpandedStyles } from "@insite/content-library/Components/CartLineCardExpanded";
 import CartLinesListHeader, { CartLinesListHeaderStyles } from "@insite/content-library/Components/CartLinesListHeader";
 import { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import React, { FC } from "react";
 import { css } from "styled-components";
-import { CartLineContext } from "@insite/client-framework/Components/CartLineContext";
-import { Cart } from "@insite/client-framework/Services/CartService";
 
 interface OwnProps {
     cart: Cart;
     promotions: PromotionModel[];
     isCondensed: boolean;
-    onChangeIsCondensed: (event: React.SyntheticEvent<Element, Event>, value: boolean) => void;
+    hideCondensedSelector?: boolean;
+    onChangeIsCondensed?: (event: React.SyntheticEvent<Element, Event>, value: boolean) => void;
     editable: boolean;
     showSavingsAmount: boolean;
     showSavingsPercent: boolean;
@@ -39,6 +40,7 @@ const CartLinesList: FC<OwnProps> = ({
                                          cart,
                                          promotions,
                                          isCondensed,
+                                         hideCondensedSelector,
                                          onChangeIsCondensed,
                                          editable,
                                          showSavingsAmount,
@@ -58,6 +60,7 @@ const CartLinesList: FC<OwnProps> = ({
             <CartLinesListHeader
                 productsCount={cart.cartLines.length}
                 isCondensed={isCondensed}
+                hideCondensedSelector={hideCondensedSelector}
                 onChangeIsCondensed={onChangeIsCondensed}
                 extendedStyles={styles.header}
             />
@@ -71,6 +74,7 @@ const CartLinesList: FC<OwnProps> = ({
                             editable={editable}
                             showSavingsAmount={showSavingsAmount}
                             showSavingsPercent={showSavingsPercent}
+                            extendedStyles={isCondensed ? styles.cardCondensed : styles.cardExpanded}
                         />
                     </CartLineContext.Provider>
                 );

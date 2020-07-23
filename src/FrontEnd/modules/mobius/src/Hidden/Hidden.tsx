@@ -1,8 +1,8 @@
 import * as React from "react";
 import styled, { css } from "styled-components";
-import breakpointMediaQueries, { breakpointKeys, BreakpointKey } from "../utilities/breakpointMediaQueries";
-import injectCss from "../utilities/injectCss";
+import breakpointMediaQueries, { BreakpointKey, breakpointKeys } from "../utilities/breakpointMediaQueries";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type HiddenProps = MobiusStyledComponentProps<"div", {

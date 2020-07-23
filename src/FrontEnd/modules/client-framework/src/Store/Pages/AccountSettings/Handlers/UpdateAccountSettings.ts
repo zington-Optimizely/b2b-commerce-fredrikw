@@ -1,6 +1,6 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import translate from "@insite/client-framework/Translate";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import translate from "@insite/client-framework/Translate";
 
 type HandlerType = Handler<{
     isSubscribed?: boolean;

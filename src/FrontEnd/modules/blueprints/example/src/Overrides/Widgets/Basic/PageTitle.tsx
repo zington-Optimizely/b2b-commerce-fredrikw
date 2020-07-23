@@ -2,13 +2,13 @@
  * This is a custom version of the PageTitle widget. See ../config.js for how to get this to replace the standard one.
  */
 
-import React from "react";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Typography from "@insite/mobius/Typography";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import React from "react";
 import { connect } from "react-redux";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     pageTitle: getCurrentPage(state).fields.title,

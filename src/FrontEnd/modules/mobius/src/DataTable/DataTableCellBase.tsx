@@ -1,8 +1,8 @@
+import { DataTableHeaderProps } from "mobius/src/DataTable/DataTableHeader";
 import styled from "styled-components";
 import getColor from "../utilities/getColor";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
-import { DataTableHeaderProps } from "mobius/src/DataTable/DataTableHeader";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type DataTableCellBaseProps = MobiusStyledComponentProps<"td", {

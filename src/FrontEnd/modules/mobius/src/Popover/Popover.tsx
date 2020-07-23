@@ -4,13 +4,13 @@ import { TransitionStatus } from "react-transition-group/Transition";
 import styled, { withTheme } from "styled-components";
 import { ThemeTransitionDuration, ZIndex } from "../globals/baseTheme";
 import get from "../utilities/get";
-import getProp from "../utilities/getProp";
 import getColor from "../utilities/getColor";
+import getProp from "../utilities/getProp";
 import InjectableCss from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
-import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 
 export type OverflowWrapperProps = MobiusStyledComponentPropsWithRef<"nav", { ref?: React.RefObject<HTMLElement>; },
     InjectableCss & {

@@ -2,8 +2,8 @@ import {
     createHandlerChainRunnerOptionalParameter,
     HandlerWithResult,
 } from "@insite/client-framework/HandlerCreator";
-import qs from "qs";
 import cloneDeep from "lodash/cloneDeep";
+import qs from "qs";
 
 type HandlerType = HandlerWithResult<{}, string>;
 

@@ -1,10 +1,10 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 interface OwnProps {
     product: ProductModelExtended;

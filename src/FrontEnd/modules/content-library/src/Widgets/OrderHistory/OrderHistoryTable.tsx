@@ -1,23 +1,24 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import reorder from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/Reorder";
 import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import OrderDetailPageTypeLink from "@insite/content-library/Components/OrderDetailPageTypeLink";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
-import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
+import { ClickableProps } from "@insite/mobius/Clickable";
+import DataTable, { DataTableProps, SortOrderOptions } from "@insite/mobius/DataTable";
 import DataTableBody from "@insite/mobius/DataTable/DataTableBody";
 import DataTableCell, { DataTableCellProps } from "@insite/mobius/DataTable/DataTableCell";
 import DataTableHead from "@insite/mobius/DataTable/DataTableHead";
 import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
 import DataTableRow from "@insite/mobius/DataTable/DataTableRow";
-import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
-import ChevronDown from "@insite/mobius/Icons/ChevronDown";
-import ChevronUp from "@insite/mobius/Icons/ChevronUp";
+import { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
@@ -25,10 +26,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { LinkPresentationProps } from "@insite/mobius/Link";
-import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 
 const enum fields {
     showReorderProducts = "showReorderProducts",
@@ -60,8 +57,6 @@ export interface OrderHistoryTableStyles {
     container?: InjectableCss;
     headerClickable?: ClickableProps;
     headerText?: TypographyProps;
-    sortAscendingIcon?: IconPresentationProps;
-    sortDescendingIcon?: IconPresentationProps;
     centeringWrapper?: InjectableCss;
     spinner?: LoadingSpinnerProps;
     noResultsContainer?: InjectableCss;
@@ -89,14 +84,6 @@ export interface OrderHistoryTableStyles {
 const styles: OrderHistoryTableStyles = {
     container: {
         css: css` overflow: auto; `,
-    },
-    sortAscendingIcon: {
-        src: ChevronUp,
-        size: 14,
-    },
-    sortDescendingIcon: {
-        src: ChevronDown,
-        size: 14,
     },
     centeringWrapper: {
         css: css`
@@ -171,15 +158,15 @@ class OrderHistoryTable extends React.Component<Props> {
         this.props.updateSearchFields({ sort });
     }
 
-    sortingHeaderLabel = (label: string, sortField: string) =>
-        <Clickable {...styles.headerClickable}
-            onClick={() => this.headerClick(sortField)}>
-            <Typography {...styles.headerText}>{translate(label)}</Typography>
-            {this.props.parameter.sort === sortField
-                ? <Icon {...styles.sortAscendingIcon}/>
-                : this.props.parameter.sort === `${sortField} DESC`
-                    ? <Icon {...styles.sortDescendingIcon}/> : null}
-        </Clickable>;
+    sorted = (sortField: string) => {
+        let sorted: boolean | string = false;
+        if (this.props.parameter.sort === sortField) {
+            sorted = "ascending";
+        } else if (this.props.parameter.sort === `${sortField} DESC`) {
+            sorted = "descending";
+        }
+        return sorted as SortOrderOptions;
+    };
 
     onReorderSuccess = (orderNumber: string, linkOrderNumber: string) => {
         if (!this.props.showAddToCartConfirmationDialog) {
@@ -232,23 +219,49 @@ class OrderHistoryTable extends React.Component<Props> {
             <StyledWrapper {...styles.container} data-test-selector="orderHistoryTable">
                 <DataTable {...styles.dataTable}>
                     <DataTableHead>
-                        <DataTableHeader {...styles.orderNumberHeader} title={translate("Order Number")}>
-                            {this.sortingHeaderLabel("Order #", "webOrderNumber")}
+                        <DataTableHeader
+                            {...styles.orderNumberHeader}
+                            title={translate("Order Number")}
+                            sorted={this.sorted("webOrderNumber")}
+                            onSortClick={() => this.headerClick("webOrderNumber")}
+                        >
+                            {translate("Order #", "webOrderNumber")}
                         </DataTableHeader>
-                        <DataTableHeader {...styles.orderDateHeader}>
-                            {this.sortingHeaderLabel("Date", "orderDate")}
+                        <DataTableHeader
+                            {...styles.orderDateHeader}
+                            sorted={this.sorted("orderDate")}
+                            onSortClick={() => this.headerClick("orderDate")}
+                        >
+                            {translate("Date", "orderDate")}
                         </DataTableHeader>
-                        <DataTableHeader {...styles.orderTotalHeader}>
-                            {this.sortingHeaderLabel("Order Total", "orderTotal")}
+                        <DataTableHeader
+                            {...styles.orderTotalHeader}
+                            sorted={this.sorted("orderTotal")}
+                            onSortClick={() => this.headerClick("orderTotal")}
+                        >
+                            {translate("Order Total", "orderTotal")}
                         </DataTableHeader>
-                        <DataTableHeader {...styles.statusHeader}>
-                            {this.sortingHeaderLabel("Status", "status")}
+                        <DataTableHeader
+                            {...styles.statusHeader}
+                            sorted={this.sorted("status")}
+                            onSortClick={() => this.headerClick("status")}
+                        >
+                            {translate("Status", "status")}
                         </DataTableHeader>
-                        <DataTableHeader {...styles.shipToHeader}>
-                            {this.sortingHeaderLabel("Ship To / Pick Up", "stCompanyName")}
+                        <DataTableHeader
+                            {...styles.shipToHeader}
+                            sorted={this.sorted("stCompanyName")}
+                            onSortClick={() => this.headerClick("stCompanyName")}
+                        >
+                            {translate("Ship To / Pick Up", "stCompanyName")}
                         </DataTableHeader>
-                        <DataTableHeader {...styles.customerPOHeader} title={translate("Purchase Order Number")}>
-                            {this.sortingHeaderLabel("PO #", "customerPO")}
+                        <DataTableHeader
+                            {...styles.customerPOHeader}
+                            title={translate("Purchase Order Number")}
+                            sorted={this.sorted("customerPO")}
+                            onSortClick={() => this.headerClick("customerPO")}
+                        >
+                            {translate("PO #", "customerPO")}
                         </DataTableHeader>
                         {this.props.fields.showReorderProducts
                             && <DataTableHeader {...styles.reorderHeader} title={translate("reorder")} />
@@ -294,7 +307,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Results Table",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showReorderProducts,

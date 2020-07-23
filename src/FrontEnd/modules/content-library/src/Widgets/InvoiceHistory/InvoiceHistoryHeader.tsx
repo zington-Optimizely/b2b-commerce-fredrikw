@@ -1,20 +1,20 @@
-import * as React from "react";
+import Zone from "@insite/client-framework/Components/Zone";
+import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import toggleFiltersOpen from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/ToggleFiltersOpen";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect, ResolveThunks } from "react-redux";
+import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
+import Clickable from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Icon, { IconProps } from "@insite/mobius/Icon";
 import Filter from "@insite/mobius/Icons/Filter";
-import Clickable from "@insite/mobius/Clickable";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
-import Zone from "@insite/client-framework/Components/Zone";
-import { css } from "styled-components";
-import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import * as React from "react";
 import { useContext } from "react";
-import toggleFiltersOpen from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/ToggleFiltersOpen";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapDispatchToProps = {
     toggleFiltersOpen,
@@ -73,7 +73,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Page Header",
         allowedContexts: [InvoiceHistoryPageContext],
-        isSystem: true,
     },
 };
 

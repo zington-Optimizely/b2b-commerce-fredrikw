@@ -1,30 +1,30 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import {
     canCheckoutWithCart,
+    getCurrentCartState,
     isCartCheckoutDisabled,
     isCartEmpty,
-    getCurrentCartState,
 } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
 import { CartPageContext } from "@insite/content-library/Pages/CartPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
-import preloadCheckoutShippingData
-    from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import {
     getCurrentPromotionsDataView, getDiscountTotal,
     getOrderPromotions, getShippingPromotions,
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import preloadCheckoutShippingData
+    from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import get from "@insite/mobius/utilities/get";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 
@@ -161,7 +161,6 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         icon: "ShoppingCart",
         allowedContexts: [CartPageContext],
-        isSystem: true,
     },
 };
 

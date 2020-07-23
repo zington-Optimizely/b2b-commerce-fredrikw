@@ -1,21 +1,21 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import {
     createPageElement,
     registerPageUpdate,
     unregisterPageUpdate,
 } from "@insite/client-framework/Components/ContentItemStore";
+import ErrorModal from "@insite/client-framework/Components/ErrorModal";
 import Footer from "@insite/client-framework/Components/Footer";
 import Header from "@insite/client-framework/Components/Header";
-import { HasShellContext, ShellContext, withIsInShell } from "./IsInShell";
-import { sendToShell } from "@insite/client-framework/Components/ShellHole";
-import Page from "@insite/mobius/Page";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import PageBreadcrumbs from "@insite/client-framework/Components/PageBreadcrumbs";
-import ErrorModal from "@insite/client-framework/Components/ErrorModal";
+import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { getDisplayErrorPage, redirectTo } from "@insite/client-framework/ServerSideRendering";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect } from "react-redux";
+import { HasShellContext, ShellContext, withIsInShell } from "./IsInShell";
 
 const mapStateToProps = (state: ApplicationState) => ({
     page: getCurrentPage(state),
@@ -34,6 +34,7 @@ class PublicPage extends React.Component<Props> {
         sendToShell({
             type: "LoadPageComplete",
             pageId: this.props.page.id,
+            parentId: this.props.page.parentId,
         });
     }
 

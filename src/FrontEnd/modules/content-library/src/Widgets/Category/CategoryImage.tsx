@@ -1,8 +1,8 @@
-import * as React from "react";
+import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import * as React from "react";
 
 interface Props extends WidgetProps, HasCategoryContext {
 }
@@ -26,7 +26,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "Image",
-        isSystem: true,
     },
 };
 

@@ -1,9 +1,8 @@
-import React, { FC, useEffect } from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -13,8 +12,9 @@ import ShoppingCart from "@insite/mobius/Icons/ShoppingCart";
 import Truck from "@insite/mobius/Icons/Truck";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import React, { FC, useEffect } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     visibilityState = "visibilityState",
@@ -118,7 +118,6 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Cart",
         icon: "Link",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.visibilityState,

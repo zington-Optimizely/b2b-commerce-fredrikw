@@ -1,13 +1,13 @@
-import * as React from "react";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
-import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
-import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
-import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import Select from "@insite/mobius/Select";
-import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
-import { createSetParentIfUndefined, configFormFieldStyles } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
-import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
 import get from "@insite/mobius/utilities/get";
+import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
+import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
+import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
+import { configFormFieldStyles, createSetParentIfUndefined } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
+import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
+import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
+import * as React from "react";
 
 const ButtonConfig: React.FunctionComponent<{
     title: string;

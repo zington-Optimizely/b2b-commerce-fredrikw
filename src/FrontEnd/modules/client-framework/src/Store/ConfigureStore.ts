@@ -1,3 +1,5 @@
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import * as StoreModule from "@insite/client-framework/Store/Reducers";
 import {
     applyMiddleware,
     combineReducers,
@@ -7,8 +9,6 @@ import {
     StoreEnhancerStoreCreator,
 } from "redux";
 import reduxThunk from "redux-thunk";
-import * as StoreModule from "@insite/client-framework/Store/Reducers";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 
 const reducers = StoreModule.reducers;
 

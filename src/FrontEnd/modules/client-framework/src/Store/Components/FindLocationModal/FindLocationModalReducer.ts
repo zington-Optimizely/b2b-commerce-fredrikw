@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import { GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
 import FindLocationModalState from "@insite/client-framework/Store/Components/FindLocationModal/FindLocationModalState";
+import { Draft } from "immer";
 
 const initialState: FindLocationModalState = {
 };

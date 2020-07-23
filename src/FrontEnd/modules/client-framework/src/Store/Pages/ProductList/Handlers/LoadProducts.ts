@@ -1,19 +1,19 @@
-import {
-    GetProductsApiV2Parameter,
-    getProductCollectionV2, ProductCollectionModelExtended,
-} from "@insite/client-framework/Services/ProductServiceV2";
-import { CatalogPageModel, FacetModel } from "@insite/client-framework/Types/ApiModels";
+import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
-import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
-import qs from "qs";
-import sortBy from "lodash/sortBy";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
-import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import { getCatalogPageByPath } from "@insite/client-framework/Services/CategoryService";
+import {
+    getProductCollectionV2,
+    GetProductsApiV2Parameter, ProductCollectionModelExtended,
+} from "@insite/client-framework/Services/ProductServiceV2";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
+import { CatalogPageModel, FacetModel } from "@insite/client-framework/Types/ApiModels";
+import sortBy from "lodash/sortBy";
+import qs from "qs";
 
 const productListSortTypeCookie = "productListSortType";
 

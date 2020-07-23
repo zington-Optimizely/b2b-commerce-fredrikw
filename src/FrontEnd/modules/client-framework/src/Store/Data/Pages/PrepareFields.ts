@@ -85,6 +85,7 @@ export function prepareFields(contentItem: ContentItemModel, languageId: string,
     }
 }
 
-export function getContextualId(languageId: string, deviceType: DeviceType, personaId: string) {
-    return `${languageId}|${deviceType}|${personaId}`;
+export function getContextualId(languageId: string, deviceType: DeviceType, personaId: string, pageId = "") {
+    const baseContextualId = `${languageId}|${deviceType}|${personaId}`;
+    return pageId ? `${baseContextualId}|${pageId}` : baseContextualId;
 }

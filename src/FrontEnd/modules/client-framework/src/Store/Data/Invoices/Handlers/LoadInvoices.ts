@@ -1,6 +1,6 @@
-import { GetInvoicesApiParameter, getInvoices } from "@insite/client-framework/Services/InvoiceService";
-import { InvoiceCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandler, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getInvoices, GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import { InvoiceCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetInvoicesApiParameter, InvoiceCollectionModel>;
 

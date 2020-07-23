@@ -1,5 +1,5 @@
-import { AddressFieldDisplayCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { AddressFieldDisplayCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface AddressFieldsState {
     readonly dataViews: Dictionary<DataView>;

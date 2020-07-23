@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useState } from "react";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import Search from "@insite/mobius/Icons/Search";
-import styled, { css } from "styled-components";
-import getColor from "@insite/mobius/utilities/getColor";
 import translate from "@insite/client-framework/Translate";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import Search from "@insite/mobius/Icons/Search";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC, useState } from "react";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
     searchText?: string;

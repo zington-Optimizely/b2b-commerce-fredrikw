@@ -1,9 +1,9 @@
 import { createHandlerChainRunnerOptionalParameter, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import cloneDeep from "lodash/cloneDeep";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import {
     VariantTraitModel,
 } from "@insite/client-framework/Types/ApiModels";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = HandlerWithResult<{}, { filteredVariantTraits: VariantTraitModel[] }>;
 

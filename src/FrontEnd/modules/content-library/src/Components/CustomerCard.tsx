@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import translate from "@insite/client-framework/Translate";
+import { BaseAddressModel } from "@insite/client-framework/Types/ApiModels";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { BaseAddressModel } from "@insite/client-framework/Types/ApiModels";
-import styled, { css } from "styled-components";
-import getColor from "@insite/mobius/utilities/getColor";
-import translate from "@insite/client-framework/Translate";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
     customer: BaseAddressModel;

@@ -1,14 +1,14 @@
-import React, { FC } from "react";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import addProduct from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/AddProduct";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect, ResolveThunks } from "react-redux";
-import addProduct from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/AddProduct";
-import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
+import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapDispatchToProps = {
     addProduct,
@@ -48,7 +48,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
-        isSystem: true,
     },
 };
 

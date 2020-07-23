@@ -1,24 +1,36 @@
+import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
+import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { ShellContext } from "@insite/client-framework/Components/IsInShell";
+import SessionLoader from "@insite/client-framework/Components/SessionLoader";
+import SpireRouter from "@insite/client-framework/Components/SpireRouter";
+import { setResolver } from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { configureStore } from "@insite/client-framework/Store/ConfigureStore";
+import translate, { setTranslationResolver } from "@insite/client-framework/Translate";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
 import "promise-polyfill/src/polyfill";
-import "whatwg-fetch";
-import "./polyfills";
 import * as React from "react";
 import { hydrate, render, Renderer } from "react-dom";
 import { Provider } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import ThemeProvider from "@insite/mobius/ThemeProvider";
-import { configureStore } from "@insite/client-framework/Store/ConfigureStore";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { ShellContext } from "@insite/client-framework/Components/IsInShell";
-import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
-import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
-import { setResolver } from "@insite/client-framework/SiteMessage";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import translate from "@insite/client-framework/Translate";
-import SpireRouter from "@insite/client-framework/Components/SpireRouter";
-import SessionLoader from "@insite/client-framework/Components/SessionLoader";
+import "whatwg-fetch";
+import "./polyfills";
+
+/**
+ * To debug potentially unnecessary rendering, import "@welldone-software/why-did-you-render": "^4.2.5" in
+ * client-framework and frontend. Then attach why-did-you-render to your component as follows:
+ *    * class component, inside the component add `static whyDidYouRender = true;`
+ *    * functional component, after the component add `ComponentName.whyDidYouRender = true;`
+ * if (process.env.NODE_ENV !== "production") {
+ *     const whyDidYouRender = require("@welldone-software/why-did-you-render");
+ *     whyDidYouRender(React, { exclude: [/^ConnectFunction/], trackHooks: true });
+ * }
+ */
 
 type customWindow = {
-    siteMessages: SafeDictionary<string>
+    siteMessages: SafeDictionary<string>;
+    translationDictionaries: SafeDictionary<string>;
     initialReduxState: ApplicationState;
     initialTheme: BaseTheme;
 };
@@ -27,6 +39,7 @@ type customWindow = {
 const theWindow = window as any as customWindow;
 
 setResolver(messageName => theWindow.siteMessages[messageName]);
+setTranslationResolver(keyword => theWindow.translationDictionaries[keyword]);
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = theWindow.initialReduxState;

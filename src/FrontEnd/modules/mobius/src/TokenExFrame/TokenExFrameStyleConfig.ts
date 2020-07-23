@@ -1,7 +1,7 @@
+import borderByState, { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import get from "../utilities/get";
-import borderByState, { sizeVariantValues } from "../FormField/formStyles";
 
 /**
  * Provides a config object that describes the styles of the form field in accordance with the props passed.

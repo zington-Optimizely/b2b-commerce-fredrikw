@@ -1,18 +1,18 @@
-import * as React from "react";
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import subscribe from "@insite/client-framework/Store/CommonHandlers/Subscribe";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import subscribe from "@insite/client-framework/Store/CommonHandlers/Subscribe";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
-import parse from "html-react-parser";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import parse from "html-react-parser";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     label = "label",
@@ -170,7 +170,6 @@ const widgetModule: WidgetModule = {
     component: connect(null, mapDispatchToProps)(CmsSubscribe),
     definition: {
         group: "Basic",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.alignment,

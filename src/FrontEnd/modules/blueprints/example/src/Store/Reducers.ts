@@ -1,7 +1,7 @@
-import { reducers, AnyAction } from "@insite/client-framework/Store/Reducers";
 import createTypedReducer, { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { AnyAction, reducers } from "@insite/client-framework/Store/Reducers";
+import { Draft } from "immer";
 
 type CounterState = Readonly<{
     total: number,

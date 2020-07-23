@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
 import translate from "@insite/client-framework/Translate";
+import { InvoiceLineModel } from "@insite/client-framework/Types/ApiModels";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import { InvoiceLineModel } from "@insite/client-framework/Types/ApiModels";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import { css } from "styled-components";
 import getColor from "@insite/mobius/utilities/getColor";
+import * as React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     invoiceLine: InvoiceLineModel;

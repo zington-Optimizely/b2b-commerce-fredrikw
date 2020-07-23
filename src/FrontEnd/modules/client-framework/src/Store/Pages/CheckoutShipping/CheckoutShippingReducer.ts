@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import CheckoutShippingState from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingState";
-import { ShipToModel, BillToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
-import { Draft } from "immer";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import CheckoutShippingState from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingState";
+import { BillToModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: CheckoutShippingState = {
     isPreloadingData: false,

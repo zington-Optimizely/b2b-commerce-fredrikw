@@ -1,17 +1,17 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getDefaultPageSize, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CartLinesList, { CartLinesListStyles } from "@insite/content-library/Components/CartLinesList";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getDefaultPageSize, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     cartState: getCurrentCartState(state),
@@ -80,7 +80,6 @@ const widgetModule: WidgetModule = {
         displayName: "Product List",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         group: "Checkout - Review & Submit",
-        isSystem: true,
     },
 };
 

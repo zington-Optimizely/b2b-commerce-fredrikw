@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
-import GlobalStyle, { ChildGlobals } from "../GlobalStyle";
 import baseTheme, { BaseTheme } from "../globals/baseTheme";
+import GlobalStyle, { ChildGlobals } from "../GlobalStyle";
 
 export interface ExtendedTheme extends BaseTheme {
     [key: string]: any;

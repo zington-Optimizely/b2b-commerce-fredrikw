@@ -6,6 +6,7 @@ module.exports = {
     plugins: [
         "@typescript-eslint",
         "react-hooks",
+        "ordered-imports",
     ],
     extends: [
         "airbnb",
@@ -99,6 +100,13 @@ module.exports = {
         "object-property-newline": "off", // Should be "error"; questionable formatting.
         "operator-assignment": "off", // Should be "error"; unnecessary syntax.  Might occasionally be suppressed in edge cases.
         "operator-linebreak": ["error", "before"],
+        "ordered-imports/ordered-imports": [
+            "error",
+            {
+                "declaration-ordering": ["source", "case-insensitive"],
+                "specifier-ordering": "case-insensitive",
+            },
+        ],
         "padded-blocks": "off", // Should be "error"; waste.
         "prefer-destructuring": "off", // Should be "error"; destructuring is break-even-or-better than direct access for minification.
         "quotes": ["error", "double"],

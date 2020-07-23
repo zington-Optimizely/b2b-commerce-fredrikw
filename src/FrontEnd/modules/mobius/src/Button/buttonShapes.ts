@@ -1,5 +1,5 @@
-import buttonSizeVariants from "./buttonSizeVariants";
 import get from "../utilities/get";
+import buttonSizeVariants from "./buttonSizeVariants";
 
 const buttonShapes = {
     pill: ({ _sizeVariant, _size }: { _sizeVariant?: keyof typeof buttonSizeVariants, _size?: number }) => {

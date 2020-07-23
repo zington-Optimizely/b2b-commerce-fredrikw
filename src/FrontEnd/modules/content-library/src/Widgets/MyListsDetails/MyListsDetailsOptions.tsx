@@ -1,41 +1,49 @@
-import React from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Zone from "@insite/client-framework/Components/Zone";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { UploadError } from "@insite/client-framework/Store/Components/OrderUpload/Handlers/BatchLoadProducts";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import addToWishList, { AddToWishListParameter } from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListIfNeeded";
+import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
+import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
+import setEditingSortOrder from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetEditingSortOrder";
+import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
+import translate from "@insite/client-framework/Translate";
+import { ProductDto, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import OrderUpload, { OrderUploadStyles } from "@insite/content-library/Components/OrderUpload";
+import OrderUploadErrorsModal, { OrderUploadErrorsModalStyles } from "@insite/content-library/Components/OrderUploadErrorsModal";
+import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
 import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyListsDetailsPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
-import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
-import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
-import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import Search from "@insite/mobius/Icons/Search";
-import debounce from "lodash/debounce";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import PlusCircle from "@insite/mobius/Icons/PlusCircle";
-import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import ChevronsUpDown from "@insite/mobius/Icons/ChevronsUpDown";
-import getColor from "@insite/mobius/utilities/getColor";
-import X from "@insite/mobius/Icons/X";
 import Icon, { IconProps } from "@insite/mobius/Icon";
-import ProductSelector from "@insite/content-library/Components/ProductSelector";
+import ChevronsUpDown from "@insite/mobius/Icons/ChevronsUpDown";
+import PlusCircle from "@insite/mobius/Icons/PlusCircle";
+import Search from "@insite/mobius/Icons/Search";
+import X from "@insite/mobius/Icons/X";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListIfNeeded";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import debounce from "lodash/debounce";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
@@ -43,6 +51,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     wishListLinesDataView: getWishListLinesDataView(state, state.pages.myListDetails.loadWishListLinesParameter),
     loadWishListLinesParameter: state.pages.myListDetails.loadWishListLinesParameter,
     selectedWishListLineIds: state.pages.myListDetails.selectedWishListLineIds,
+    editingSortOrder: state.pages.myListDetails.editingSortOrder,
 });
 
 const mapDispatchToProps = {
@@ -50,7 +59,8 @@ const mapDispatchToProps = {
     loadWishListIfNeeded,
     loadWishListLines,
     setAllWishListLinesIsSelected,
-    addToWishList,
+    addToWishList: makeHandlerChainAwaitable<AddToWishListParameter, WishListModel>(addToWishList),
+    setEditingSortOrder,
 };
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -66,6 +76,14 @@ export interface MyListsDetailsOptionsStyles {
     searchGridItem?: GridItemProps;
     addItemsGridItem?: GridItemProps;
     addItemsLink?: LinkPresentationProps;
+    addItemsGridContainer?: GridContainerProps;
+    productSelectorGridItem?: GridItemProps;
+    productSelectorStyles?: ProductSelectorStyles;
+    uploadItemsGridItem?: GridItemProps;
+    uploadItemsLink?: LinkPresentationProps;
+    uploadItemsModal?: ModalPresentationProps;
+    orderUploadStyles?: OrderUploadStyles;
+    orderUploadErrorsModalStyles?: OrderUploadErrorsModalStyles;
     search?: TextFieldProps;
     sortByGridItem?: GridItemProps;
     sortByOverflowMenu?: OverflowMenuProps;
@@ -83,14 +101,17 @@ const styles: MyListsDetailsOptionsStyles = {
         `,
     },
     leftColumnWrapper: {
-        css: css` width: calc(100% - 40px); `,
+        css: css`
+            display: flex;
+            width: calc(100% - 40px);
+        `,
     },
     rightColumnWrapper: {
         css: css`
             display: flex;
             width: 40px;
             justify-content: center;
-            align-items: flex-end;
+            margin-top: 30px;
         `,
     },
     container: {
@@ -102,7 +123,7 @@ const styles: MyListsDetailsOptionsStyles = {
         css: css`
             align-items: center;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [css` justify-content: space-between; `, css` justify-content: space-between; `, null, null, null])}
+                breakpointMediaQueries(theme, [css` justify-content: space-between; `, css` justify-content: space-between; `, null, null, null])}
         `,
     },
     selectAll: {
@@ -125,6 +146,27 @@ const styles: MyListsDetailsOptionsStyles = {
         },
         typographyProps: { css: css` padding-left: 5px; ` },
     },
+    addItemsGridContainer: { gap: 10 },
+    productSelectorGridItem: {
+        width: [12, 12, 12, 10, 10],
+    },
+    uploadItemsGridItem: {
+        width: [12, 12, 12, 2, 2],
+        css: css` align-items: center; `,
+    },
+    uploadItemsLink: {
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [null, null, null, css` margin-top: 30px; `, css` margin-top: 30px; `])}
+        `,
+    },
+    uploadItemsModal: {
+        sizeVariant: "large",
+        cssOverrides: {
+            modalTitle: css` padding: 10px 30px; `,
+            modalContent: css` padding: 20px 30px; `,
+        },
+    },
     search: {
         iconProps: { src: Search },
     },
@@ -139,6 +181,7 @@ const styles: MyListsDetailsOptionsStyles = {
         css: css`
             margin: 8px;
             cursor: pointer;
+            align-items: flex-start;
         `,
     },
 };
@@ -146,20 +189,24 @@ const styles: MyListsDetailsOptionsStyles = {
 export const myListsDetailsOptionsStyles = styles;
 
 const MyListsDetailsOptions: React.FC<Props> = ({
-                                                    wishListSettings,
-                                                    wishListDataView,
-                                                    wishListLinesDataView,
-                                                    loadWishListLinesParameter,
-                                                    selectedWishListLineIds,
-                                                    updateLoadWishListLinesParameter,
-                                                    loadWishListIfNeeded,
-                                                    loadWishListLines,
-                                                    setAllWishListLinesIsSelected,
-                                                    addToWishList,
-                                                }) => {
+    id,
+    wishListSettings,
+    wishListDataView,
+    wishListLinesDataView,
+    loadWishListLinesParameter,
+    selectedWishListLineIds,
+    editingSortOrder,
+    updateLoadWishListLinesParameter,
+    loadWishListIfNeeded,
+    loadWishListLines,
+    setAllWishListLinesIsSelected,
+    addToWishList,
+    setEditingSortOrder,
+}) => {
     const toasterContext = React.useContext(ToasterContext);
     const [query, setQuery] = React.useState(loadWishListLinesParameter.query);
     const [addItemsToListIsOpen, setAddItemsToListIsOpen] = React.useState(false);
+    const [uploadItemsModalIsOpen, setUploadItemsModalIsOpen] = React.useState(false);
     const debouncedSearch = React.useCallback(debounce((query: string) => {
         if (!wishListDataView.value) {
             return;
@@ -182,6 +229,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     };
 
     const sortByChangeHandler = (sortBy: string) => {
+        setEditingSortOrder({ editingSortOrder: false });
         updateLoadWishListLinesParameter({ sort: sortBy });
         loadWishListLines();
     };
@@ -194,81 +242,140 @@ const MyListsDetailsOptions: React.FC<Props> = ({
         setAllWishListLinesIsSelected({ isSelected: value, wishListLineIds: allWishListLineIds });
     };
 
+    const editingSortOrderChangeHandler: CheckboxProps["onChange"] = (_, value) => {
+        setEditingSortOrder({ editingSortOrder: value });
+    };
+
     const addItemsToListClickHandler = () => {
         setAddItemsToListIsOpen(true);
     };
 
-    const addProductToList = (product: ProductModelExtended) => {
-        addToWishList({
-            products: [product],
-            selectedWishList: wishList,
-            onSuccess: () => {
-                toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
-                loadWishListIfNeeded({ wishListId: wishList.id });
-            },
-        });
+    const selectProductHandler = async (product: ProductModelExtended) => {
+        await addToWishList({ products: [product], selectedWishList: wishList });
+        toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
+    };
+
+    const uploadItemsClickHandler = () => {
+        setUploadItemsModalIsOpen(true);
+    };
+
+    const uploadItemsModalCloseHandler = () => {
+        setUploadItemsModalIsOpen(false);
+    };
+
+    const uploadProductsHandler = async (products: ProductDto[]) => {
+        await addToWishList({ products: products as unknown as ProductModelExtended[], selectedWishList: wishList });
+        setUploadItemsModalIsOpen(false);
+        loadWishListIfNeeded({ wishListId: wishList.id });
     };
 
     const canEditWishList = wishList.allowEdit || !wishList.isSharedList;
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <StyledWrapper {...styles.leftColumnWrapper} >
+            <StyledWrapper {...styles.leftColumnWrapper}>
                 {!addItemsToListIsOpen
-                && <GridContainer {...styles.container}>
-                    <GridItem {...styles.searchGridItem}>
-                        <TextField
-                            {...styles.search}
-                            placeholder={translate("Search products in list")}
-                            value={query}
-                            onChange={searchChangeHandler}
-                            data-test-selector="wishListSearch"
-                        />
-                    </GridItem>
-                    <GridItem {...styles.selectAllGridItem}>
-                        <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler} data-test-selector="selectAllItems">
-                            {translate("Select All")}
-                        </Checkbox>
-                        {loadWishListLinesParameter.sort === "SortOrder" && !query && canEditWishList
-                        && <Checkbox {...styles.editSortOrder} data-test-selector="editSortOrder">{translate("Edit Sort Order")}</Checkbox>
-                        }
-                    </GridItem>
-                    <GridItem {...styles.addItemsGridItem}>
-                        {canEditWishList
-                            && <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
-                                {translate("Add Items To List")}
-                            </Link>
-                        }
-                    </GridItem>
-                </GridContainer>
+                    && <GridContainer {...styles.container}>
+                        <GridItem {...styles.searchGridItem}>
+                            <TextField
+                                {...styles.search}
+                                placeholder={translate("Search products in list")}
+                                value={query}
+                                onChange={searchChangeHandler}
+                                data-test-selector="wishListSearch"
+                            />
+                        </GridItem>
+                        <GridItem {...styles.selectAllGridItem}>
+                            <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler} data-test-selector="selectAllItems">
+                                {translate("Select All")}
+                            </Checkbox>
+                            {loadWishListLinesParameter.sort === "SortOrder" && !query && canEditWishList
+                                && <Checkbox
+                                    {...styles.editSortOrder}
+                                    checked={editingSortOrder}
+                                    onChange={editingSortOrderChangeHandler}
+                                >
+                                    {translate("Edit Sort Order")}
+                                </Checkbox>
+                            }
+                        </GridItem>
+                        <GridItem {...styles.addItemsGridItem}>
+                            {canEditWishList
+                                && <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
+                                    {translate("Add Items To List")}
+                                </Link>
+                            }
+                        </GridItem>
+                    </GridContainer>
                 }
                 {addItemsToListIsOpen
-                && <ProductSelector
-                    selectButtonTitle={translate("Add to List")}
-                    onSelectProduct={addProductToList}
-                    productIsConfigurableMessage={siteMessage("ListUpload_CannotOrderConfigurable")}
-                    productIsUnavailableMessage={siteMessage("Product_NotFound")}
-                />
+                    && <GridContainer {...styles.addItemsGridContainer}>
+                        <GridItem {...styles.productSelectorGridItem}>
+                            <ProductSelector
+                                selectButtonTitle={translate("Add to List")}
+                                onSelectProduct={selectProductHandler}
+                                productIsConfigurableMessage={siteMessage("ListUpload_CannotOrderConfigurable")}
+                                productIsUnavailableMessage={siteMessage("Product_NotFound")}
+                                extendedStyles={styles.productSelectorStyles}
+                            />
+                        </GridItem>
+                        <GridItem {...styles.uploadItemsGridItem}>
+                            <Link {...styles.uploadItemsLink} onClick={uploadItemsClickHandler}>{translate("Upload Items")}</Link>
+                            <Modal
+                                {...styles.uploadItemsModal}
+                                headline={translate("Upload Items To List")}
+                                isOpen={uploadItemsModalIsOpen}
+                                handleClose={uploadItemsModalCloseHandler}
+                            >
+                                <GridContainer>
+                                    <GridItem width={[12, 12, 6, 6, 6]}>
+                                        <OrderUpload
+                                            descriptionText={siteMessage("Lists_UploadLinkTooltip")}
+                                            checkInventory={false}
+                                            templateUrl="/Excel/ListUploadTemplate.xlsx"
+                                            onUploadProducts={uploadProductsHandler}
+                                            extendedStyles={styles.orderUploadStyles}
+                                        />
+                                        <OrderUploadErrorsModal
+                                            descriptionText={siteMessage("ListUpload_UploadError")}
+                                            uploadErrorText={siteMessage("ListUpload_UploadError")}
+                                            rowsLimitExceededText={siteMessage("ListUpload_RowsLimitExceeded")}
+                                            errorReasons={{
+                                                [UploadError.ConfigurableProduct]: siteMessage("ListUpload_CannotOrderConfigurable"),
+                                                [UploadError.StyledProduct]: siteMessage("ListUpload_CannotOrderStyled"),
+                                                [UploadError.InvalidUnit]: translate("Invalid U/M"),
+                                                [UploadError.NotFound]: siteMessage("Product_NotFound"),
+                                            }}
+                                            extendedStyles={styles.orderUploadErrorsModalStyles}
+                                        />
+                                    </GridItem>
+                                    <GridItem width={[12, 12, 6, 6, 6]}>
+                                        <Zone zoneName="UploadInstructions" contentId={id} />
+                                    </GridItem>
+                                </GridContainer>
+                            </Modal>
+                        </GridItem>
+                    </GridContainer>
                 }
             </StyledWrapper>
             <StyledWrapper {...styles.rightColumnWrapper}>
                 {!addItemsToListIsOpen
-                && <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
-                    {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions.map(sortOption =>
-                        <Clickable
-                            {...(sortOption.sortType === loadWishListLinesParameter.sort ? styles.selectedSortByClickable : styles.sortByClickable)}
-                            key={sortOption.sortType}
-                            onClick={() => sortByChangeHandler(sortOption.sortType)}
-                        >
-                            {sortOption.displayName}
-                        </Clickable>)
-                    }
-                </OverflowMenu>
+                    && <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
+                        {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions.map(sortOption =>
+                            <Clickable
+                                {...(sortOption.sortType === loadWishListLinesParameter.sort ? styles.selectedSortByClickable : styles.sortByClickable)}
+                                key={sortOption.sortType}
+                                onClick={() => sortByChangeHandler(sortOption.sortType)}
+                            >
+                                {sortOption.displayName}
+                            </Clickable>)
+                        }
+                    </OverflowMenu>
                 }
                 {addItemsToListIsOpen
-                && <Icon {...styles.closeAddItemsToList} onClick={() => {
-                    setAddItemsToListIsOpen(false);
-                }}/>
+                    && <Icon {...styles.closeAddItemsToList} onClick={() => {
+                        setAddItemsToListIsOpen(false);
+                    }} />
                 }
             </StyledWrapper>
         </StyledWrapper>
@@ -281,7 +388,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Options",
         allowedContexts: [MyListsDetailsPageContext],
-        isSystem: true,
     },
 };
 

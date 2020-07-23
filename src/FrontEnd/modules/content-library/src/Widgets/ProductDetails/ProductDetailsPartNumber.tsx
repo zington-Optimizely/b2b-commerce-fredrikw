@@ -1,11 +1,11 @@
-import * as React from "react";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import translate from "@insite/client-framework/Translate";
-import { css } from "styled-components";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps, HasProductContext {
 }
@@ -43,7 +43,6 @@ const widgetModule: WidgetModule = {
         displayName: "Part Number",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

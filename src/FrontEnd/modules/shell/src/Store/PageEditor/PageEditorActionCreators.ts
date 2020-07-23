@@ -1,7 +1,7 @@
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import sleep from "@insite/client-framework/Common/Sleep";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
-import { getCurrentPageForShell, getStorablePage } from "@insite/shell/Store/ShellSelectors";
+import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { AdminODataApiParameter, getAdminBrands } from "@insite/shell/Services/AdminService";
 import {
     getBrands,
@@ -10,12 +10,12 @@ import {
     savePage as savePageApi,
     SavePageResponseModel,
 } from "@insite/shell/Services/ContentAdminService";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import { getCurrentPageForShell, getStorablePage } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import { push } from "connected-react-router";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 
 export const selectProduct = (path: string): AnyShellAction => ({
     productPath: path,
@@ -169,8 +169,8 @@ export const cancelEditingItem = (): ShellThunkAction => (dispatch, getState) =>
     });
 };
 
-export const toggleShowGeneratedPageCreator = (): AnyShellAction => ({
-    type: "PageEditor/ToggleShowGeneratedPageCreator",
+export const toggleShowGeneratedPageTemplate = (): AnyShellAction => ({
+    type: "PageEditor/ToggleShowGeneratedPageTemplate",
 });
 
 export const displayAddWidgetModal = (data: AddWidgetData): AnyShellAction => ({

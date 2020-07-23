@@ -1,18 +1,18 @@
-import * as React from "react";
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
 import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
-import { useContext } from "react";
-import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
+import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
+import DataTableCell, { DataTableCellProps } from "@insite/mobius/DataTable/DataTableCell";
 import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
 import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
-import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
 import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTableRow";
-import DataTableCell, { DataTableCellProps } from "@insite/mobius/DataTable/DataTableCell";
 import parse from "html-react-parser";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
-import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
+import * as React from "react";
+import { useContext } from "react";
 
 export interface OrderDetailsShipmentPackagesStyles {
     dataTable?: DataTableProps;
@@ -73,7 +73,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
     },
 };
 

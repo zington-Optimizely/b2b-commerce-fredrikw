@@ -1,7 +1,7 @@
-import { CurrencyModel } from "@insite/client-framework/Types/ApiModels";
-import { UpdateSessionApiParameter, updateSession, Session } from "@insite/client-framework/Services/SessionService";
 import { updateContext } from "@insite/client-framework/Context";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
+import { CurrencyModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ currencyId: string; }, UpdateSessionApiParameter, Session>;
 

@@ -1,17 +1,17 @@
-import * as React from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
 import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import MyListsEditListForm from "@insite/content-library/Widgets/MyLists/MyListsEditListForm";
-import Hidden from "@insite/mobius/Hidden";
-import OverflowMenu from "@insite/mobius/OverflowMenu";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable from "@insite/mobius/Clickable";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Hidden from "@insite/mobius/Hidden";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import OverflowMenu from "@insite/mobius/OverflowMenu";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { css } from "styled-components";
 
 interface State {
     createListModalIsOpen: boolean;
@@ -93,7 +93,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Create List Button",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

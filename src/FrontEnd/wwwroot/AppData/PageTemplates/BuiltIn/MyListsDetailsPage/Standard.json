@@ -49,6 +49,22 @@
       "translatableFields": {}
     },
     {
+      "id": "3dfaa0a1-9f34-45fd-9391-d808b46dde12",
+      "parentId": "8a5dbcdd-167b-47ed-8fad-ae0c6a1e40d8",
+      "type": "Basic/RichContent",
+      "zone": "UploadInstructions",
+      "fields": {
+          "content": "<ol><li style=\"line-height: 2;\">Create a spreadsheet<ul style=\"list-style-type: circle;\"><li style=\"margin-left: 20px; line-height: 2;\">First column - add item #s or customer part #s.</li><li style=\"margin-left: 20px; line-height: 2;\">Second column - add quantities (optional).</li><li style=\"margin-left: 20px; line-height: 2;\">Third column - add unit of measure (optional).</li></ul></li><li style=\"line-height: 2;\">Column headings can be added in the first row (optional).</li><li style=\"line-height: 2;\">Save the file in XLS, XLSX or CSV format.</li><li style=\"line-height: 2;\">Select the file to upload and click Upload File.</li><li style=\"line-height: 2;\"><strong>There is a file maximum of 500 rows.</strong></li></ol>"
+      },
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {
+          "content": {
+              "a26095ef-c714-e311-ba31-d43d7e4e88b2|Desktop|d06988c0-9358-4dbb-aa3d-b7be5b6a7fd9": "<ol><li style=\"line-height: 2;\">Create a spreadsheet<ul style=\"list-style-type: circle;\"><li style=\"margin-left: 20px; line-height: 2;\">First column - add item #s or customer part #s.</li><li style=\"margin-left: 20px; line-height: 2;\">Second column - add quantities (optional).</li><li style=\"margin-left: 20px; line-height: 2;\">Third column - add unit of measure (optional).</li></ul></li><li style=\"line-height: 2;\">Column headings can be added in the first row (optional).</li><li style=\"line-height: 2;\">Save the file in XLS, XLSX or CSV format.</li><li style=\"line-height: 2;\">Select the file to upload and click Upload File.</li><li style=\"line-height: 2;\"><strong>There is a file maximum of 500 rows.</strong></li></ol>"
+          }
+      }
+    },
+    {
       "id": "1aea3b3d-ba79-44bc-aed1-7efe3edd4be5",
       "parentId": "5003c680-ae18-4fe2-bf95-142f03ceed3b",
       "type": "MyListsDetails/MyListsDetailsProductList",

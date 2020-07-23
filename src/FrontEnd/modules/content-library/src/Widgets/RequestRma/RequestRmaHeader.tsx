@@ -1,15 +1,15 @@
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaPage";
+import RequestRmaButtons, { RequestRmaButtonsStyles } from "@insite/content-library/Widgets/RequestRma/RequestRmaButtons";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import React, { FC } from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import RequestRmaButtons, { RequestRmaButtonsStyles } from "@insite/content-library/Widgets/RequestRma/RequestRmaButtons";
+import { css } from "styled-components";
 
 
 const mapStateToProps = (state: ApplicationState) => ({

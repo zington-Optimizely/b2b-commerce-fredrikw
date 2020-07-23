@@ -1,7 +1,7 @@
-import * as React from "react";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import { CheckboxFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import * as React from "react";
 import { css } from "styled-components";
 
 export default class CheckboxField extends React.Component<ContentItemFieldProps<boolean, CheckboxFieldDefinition>> {

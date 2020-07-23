@@ -1,8 +1,8 @@
-import { LanguageModel } from "@insite/client-framework/Types/ApiModels";
-import { UpdateSessionApiParameter, updateSession, Session } from "@insite/client-framework/Services/SessionService";
+import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { updateContext } from "@insite/client-framework/Context";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { sendToShell } from "@insite/client-framework/Components/ShellHole";
+import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
+import { LanguageModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ languageId: string; }, UpdateSessionApiParameter, Session>;
 

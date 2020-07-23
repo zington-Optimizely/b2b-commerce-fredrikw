@@ -1,6 +1,6 @@
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import { ThemeProps, css } from "styled-components";
+import { css, ThemeProps } from "styled-components";
 import { BaseTheme, ComponentThemeProps } from "../globals/baseTheme";
+import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
 
 const toasterProps: ComponentThemeProps["toast"]["toasterProps"] = {
     position: "top-right",

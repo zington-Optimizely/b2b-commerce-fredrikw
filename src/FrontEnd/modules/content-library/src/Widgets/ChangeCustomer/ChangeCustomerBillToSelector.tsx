@@ -15,10 +15,10 @@ interface OwnProps {
     noShipToAndCantCreate: boolean;
     setParameter: (parameter: GetBillTosApiParameter) => void;
     parameter: GetBillTosApiParameter;
-
     billTo?: BillToModel;
     onSelect: (billTo: BillToModel) => void;
     extendedStyles?: ChangeCustomerBillToSelectorStyles;
+    isLoading?: boolean;
 }
 
 const mapStateToProps = (state: ApplicationState, props: OwnProps) => ({
@@ -46,6 +46,7 @@ const ChangeCustomerBillToSelector: FC<Props> = ({
     billTo,
     onSelect,
     extendedStyles,
+    isLoading,
     billTosDataView,
 }) => {
     const [styles] = useState(() => mergeToNew(changeCustomerBillToSelectorStyles, extendedStyles));
@@ -91,6 +92,7 @@ const ChangeCustomerBillToSelector: FC<Props> = ({
             selected={billTo?.id}
             options={options}
             placeholder={translate("Search or Select Bill To")}
+            isLoading={isLoading}
             error={noShipToAndCantCreate && siteMessage("SignIn_NoShipToAndCantCreate")}
             data-test-selector="changeCustomerBillToSelector" />
     );

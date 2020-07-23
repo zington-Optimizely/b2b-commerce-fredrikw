@@ -1,4 +1,4 @@
-import { FlattenSimpleInterpolation, FlattenInterpolation, ThemeProps } from "styled-components";
+import { FlattenInterpolation, FlattenSimpleInterpolation, ThemeProps } from "styled-components";
 import { BaseTheme } from "../globals/baseTheme";
 
 export type StyledProp<T extends {} = {}> = FlattenSimpleInterpolation | FlattenInterpolation<T & ThemeProps<BaseTheme>>;

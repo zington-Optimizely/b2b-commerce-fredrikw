@@ -1,5 +1,5 @@
-import { ColorResult } from "react-color";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { ColorResult } from "react-color";
 
 export type RecursivePartial<T> = {
     [P in keyof T]?:

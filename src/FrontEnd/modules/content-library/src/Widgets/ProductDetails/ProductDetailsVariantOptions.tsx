@@ -1,17 +1,17 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
 import translate from "@insite/client-framework/Translate";
 import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import Select, { SelectProps } from "@insite/mobius/Select";
-import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -84,7 +84,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

@@ -1,18 +1,18 @@
-import { css } from "styled-components";
 import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
+import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
 import Page from "@insite/mobius/Page";
 import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
-import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
-import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
+import { css } from "styled-components";
 
 interface OwnProps extends PageProps {
 }
@@ -74,7 +74,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

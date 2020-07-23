@@ -1,31 +1,31 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import deletePaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/DeletePaymentProfile";
+import updatePaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/UpdatePaymentProfile";
+import updateEditModal from "@insite/client-framework/Store/Pages/SavedPayments/Handlers/UpdateEditModal";
+import translate from "@insite/client-framework/Translate";
+import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { connect, ResolveThunks } from "react-redux";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import { PaymentProfilesContext, SavedPaymentsPageContext } from "@insite/content-library/Pages/SavedPaymentsPage";
 import Accordion from "@insite/mobius/Accordion";
-import AccordionSection from "@insite/mobius/AccordionSection";
-import Select, { SelectProps } from "@insite/mobius/Select";
-import sortBy from "lodash/sortBy";
+import { ManagedAccordionSection } from "@insite/mobius/AccordionSection";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import updateEditModal from "@insite/client-framework/Store/Pages/SavedPayments/Handlers/UpdateEditModal";
-import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
-import updatePaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/UpdatePaymentProfile";
-import deletePaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/DeletePaymentProfile";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Select, { SelectProps } from "@insite/mobius/Select";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import sortBy from "lodash/sortBy";
+import * as React from "react";
 import { useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapDispatchToProps = {
     updateEditModal,
@@ -276,17 +276,21 @@ const SavedPaymentsCardList: React.FC<Props> = ({
         </GridContainer>
         <Accordion headingLevel={4} aria-labelledby="listTitle" data-test-selector="cardList">
             {sortedAndFilteredSavedPayments.map((savedPayment, index) =>
-                <AccordionSection key={savedPayment.id.toString()} title={
-                    <StyledWrapper {...styles.cardHeaderWrapper} data-test-selector={`cardHeader-${savedPayment.id}`}>
-                        <LazyImage {...styles.cardTypeImage} src={`/images/card-types/${getImageName(savedPayment.cardType)}.png`} altText=""/>
-                        <Typography {...styles.descriptionText}>
-                            {savedPayment.description
-                            && <>{savedPayment.description}&nbsp;&mdash;&nbsp;</>
-                            }
-                            {`${savedPayment.cardType} ${translate("ending in")} ${savedPayment.maskedCardNumber.substring(savedPayment.maskedCardNumber.length - 4)}`}
-                        </Typography>
-                    </StyledWrapper>
-                } expanded={index === 0}>
+                <ManagedAccordionSection
+                    key={savedPayment.id.toString()}
+                    initialExpanded={index === 0}
+                    title={
+                        <StyledWrapper {...styles.cardHeaderWrapper} data-test-selector={`cardHeader-${savedPayment.id}`}>
+                            <LazyImage {...styles.cardTypeImage} src={`/images/card-types/${getImageName(savedPayment.cardType)}.png`} altText=""/>
+                            <Typography {...styles.descriptionText}>
+                                {savedPayment.description
+                                && <>{savedPayment.description}&nbsp;&mdash;&nbsp;</>
+                                }
+                                {`${savedPayment.cardType} ${translate("ending in")} ${savedPayment.maskedCardNumber.substring(savedPayment.maskedCardNumber.length - 4)}`}
+                            </Typography>
+                        </StyledWrapper>
+                    }
+                >
                     <GridContainer {...styles.cardInfoContainer} data-test-selector={`cardBody-${savedPayment.id}`}>
                         <GridItem {...styles.leftColumnGridItem}>
                             <Typography {...styles.nameOnCardLabelText} id="nameOnCard">{translate("Name on Card")}</Typography>
@@ -329,7 +333,7 @@ const SavedPaymentsCardList: React.FC<Props> = ({
                             </GridContainer>
                         </GridItem>
                     </GridContainer>
-                </AccordionSection>)
+                </ManagedAccordionSection>)
             }
         </Accordion>
         <TwoButtonModal
@@ -351,7 +355,6 @@ const widgetModule: WidgetModule = {
         displayName: "Card List",
         group: "Saved Payments",
         allowedContexts: [SavedPaymentsPageContext],
-        isSystem: true,
     },
 };
 

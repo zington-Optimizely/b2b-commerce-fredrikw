@@ -1,7 +1,7 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import * as React from "react";
 import { css } from "styled-components";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 
 export interface SkipNavStyles {
     skipToContent?: ButtonPresentationProps;

@@ -3,8 +3,8 @@ import styled, { withTheme } from "styled-components";
 import Link, { LinkProps } from "../Link";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type BreadcrumbsProps = MobiusStyledComponentProps<"nav", {

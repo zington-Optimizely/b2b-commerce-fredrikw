@@ -1,48 +1,51 @@
-import * as React from "react";
-import { Provider } from "react-redux";
-import { renderToStaticMarkup, renderToString } from "react-dom/server";
-import { createMemoryHistory } from "history";
-import merge from "lodash/merge";
-import { configureStore as publicConfigureStore } from "@insite/client-framework/Store/ConfigureStore";
-import { configureStore as shellConfigureStore } from "@insite/shell/Store/ConfigureStore";
-import { Request, Response } from "express";
+import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
+import { encodeCookie } from "@insite/client-framework/Common/Cookies";
+import getPageMetadataProperties from "@insite/client-framework/Common/Utilities/getPageMetadataProperties";
+import { ShellContext } from "@insite/client-framework/Components/IsInShell";
+import SessionLoader from "@insite/client-framework/Components/SessionLoader";
+import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
+import logger from "@insite/client-framework/Logger";
 import {
     getRedirectTo,
-    setDomain,
-    setUrl,
-    getTrackedPromises,
-    setPromiseAddedCallback,
-    setSessionCookies,
     getStatusCode,
-    setInitialPage,
+    getTrackedPromises,
     serverSiteMessageResolver,
-    setServerSiteMessages,
+    serverTranslationResolver,
+    setDomain,
     setHeaders,
+    setInitialPage,
+    setPromiseAddedCallback,
+    setServerSiteMessages,
+    setServerTranslations,
+    setSessionCookies, setUrl,
 } from "@insite/client-framework/ServerSideRendering";
-import Relay from "@insite/server-framework/Relay";
-import { ServerStyleSheet } from "styled-components";
-import ThemeProvider from "@insite/mobius/ThemeProvider";
-import { theme as defaultTheme } from "@insite/client-framework/Theme";
-import { ShellContext } from "@insite/client-framework/Components/IsInShell";
-import { generateSiteIfNeeded } from "@insite/server-framework/SiteGeneration";
-import SessionLoader from "@insite/client-framework/Components/SessionLoader";
-import { getTheme, RetrievePageResult, getPageUrlByType } from "@insite/client-framework/Services/ContentService";
-import logger from "@insite/client-framework/Logger";
-import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
-import setCookie from "set-cookie-parser";
-import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
-import { encodeCookie } from "@insite/client-framework/Common/Cookies";
-import { setResolver, processSiteMessages } from "@insite/client-framework/SiteMessage";
-import { getSiteMessages } from "@insite/client-framework/Services/WebsiteService";
-import translate from "@insite/client-framework/Translate";
-import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
-import getPageMetadataProperties from "@insite/client-framework/Common/Utilities/getPageMetadataProperties";
-import getTemplate from "@insite/server-framework/getTemplate";
+import { getPageUrlByType, getTheme, RetrievePageResult } from "@insite/client-framework/Services/ContentService";
+import { getSiteMessages, getTranslationDictionaries } from "@insite/client-framework/Services/WebsiteService";
+import { processSiteMessages, setResolver } from "@insite/client-framework/SiteMessage";
+import { configureStore as publicConfigureStore } from "@insite/client-framework/Store/ConfigureStore";
+import { theme as defaultTheme } from "@insite/client-framework/Theme";
+import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import translate, { processTranslationDictionaries, setTranslationResolver } from "@insite/client-framework/Translate";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
 import diagnostics from "@insite/server-framework/diagnostics";
+import getTemplate from "@insite/server-framework/getTemplate";
 import healthCheck from "@insite/server-framework/healthCheck";
+import Relay from "@insite/server-framework/Relay";
+import robots from "@insite/server-framework/Robots";
+import { generateSiteIfNeeded } from "@insite/server-framework/SiteGeneration";
+import { configureStore as shellConfigureStore } from "@insite/shell/Store/ConfigureStore";
+import { Request, Response } from "express";
+import { createMemoryHistory } from "history";
+import merge from "lodash/merge";
+import * as React from "react";
+import { renderToStaticMarkup, renderToString } from "react-dom/server";
+import { Provider } from "react-redux";
+import setCookie from "set-cookie-parser";
+import { ServerStyleSheet } from "styled-components";
 
 setResolver(serverSiteMessageResolver);
+setTranslationResolver(serverTranslationResolver);
 
 let checkedForSiteGeneration = false;
 
@@ -51,14 +54,16 @@ const redirectTo = async ({ originalUrl, path }: Request, response: Response) =>
     response.redirect(destination + originalUrl.substring(path.length));
 };
 
-export default function server(request: Request, response: Response, domain: any) {
+export default function server(request: Request, response: Response, domain: Parameters<typeof setDomain>[0]) {
     setupSSR(request, domain);
 
-    switch (request.path) {
+    switch (request.path.toLowerCase()) {
         case "/.spire/health":
             return healthCheck(request, response);
         case "/.spire/diagnostics":
             return diagnostics(request, response);
+        case "/robots.txt":
+            return robots(request, response);
     }
 
     if (request.path.toLowerCase().startsWith("/.spire/content/getTemplate".toLowerCase())) {
@@ -81,7 +86,7 @@ export default function server(request: Request, response: Response, domain: any
     return pageRenderer(request, response);
 }
 
-function setupSSR(request: Request, domain: any) {
+function setupSSR(request: Request, domain: Parameters<typeof setDomain>[0]) {
     setDomain(domain);
 
     const { headers } = request;
@@ -129,6 +134,11 @@ async function pageRenderer(request: Request, response: Response) {
         languageCode: languageCode ? `${languageCode},null` : undefined,
     });
 
+    const getTranslationDictionariesPromise = getTranslationDictionaries({
+        languageCode: languageCode ? `${languageCode}` : undefined,
+        pageSize: 131072, // 2 ** 17
+    });
+
     let responseCookies;
     if (isShellRequest) {
         const memoryHistory = createMemoryHistory({
@@ -163,6 +173,13 @@ async function pageRenderer(request: Request, response: Response) {
 
     if (siteMessages) {
         setServerSiteMessages(siteMessages);
+    }
+
+    const translationDictionaries = getTranslationDictionariesPromise && processTranslationDictionaries((await getTranslationDictionariesPromise).translationDictionaries,
+        languageCode ?? responseLanguageCode);
+
+    if (translationDictionaries) {
+        setServerTranslations(translationDictionaries);
     }
 
     const renderStorefrontServerSide = Object.keys(request.query).filter(param => param.toLowerCase() === "disablessr").length === 0 && !isShellRequest;
@@ -304,7 +321,9 @@ async function pageRenderer(request: Request, response: Response) {
             <body>
                 {/* eslint-disable react/no-danger */}
                 <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
-                {(!isShellRequest && <script dangerouslySetInnerHTML={{ __html: `var siteMessages = ${JSON.stringify(siteMessages)};` }}></script>)}
+                {(!isShellRequest && <script dangerouslySetInnerHTML={{ __html: `
+                var siteMessages = ${JSON.stringify(siteMessages)};
+                var translationDictionaries = ${JSON.stringify(translationDictionaries)};` }}></script>)}
                 {(renderStorefrontServerSide
                     && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(state).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
                 )}

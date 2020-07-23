@@ -1,13 +1,13 @@
 import {
-    get,
-    patch,
-    post,
     ApiParameter,
-    HasPagingParameters,
     API_URL_CURRENT_FRAGMENT,
     doesNotHaveExpand,
+    get,
+    HasPagingParameters,
+    patch,
+    post,
 } from "@insite/client-framework/Services/ApiService";
-import { ShipToCollectionModel, BillToModel, ShipToModel, BillToCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { BillToCollectionModel, BillToModel, ShipToCollectionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetBillToApiParameter extends ApiParameter {
     billToId: string;

@@ -1,12 +1,12 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import translate from "@insite/client-framework/Translate";
+import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import React from "react";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { css } from "styled-components";
 
 interface OwnProps {
@@ -47,7 +47,7 @@ const PickUpLocationAddressInfoDisplay = ({
 }: OwnProps) => {
     const styles = mergeToNew(baseStyles, extendedStyles);
     return (
-        <GridContainer {...styles.container}>
+        <GridContainer {...styles.container} data-test-selector="pickUpLocationAddressInfoDisplay_container">
             <GridItem {...styles.headingGridItem}>
                 <Typography {...styles.headingText}>{translate("Pick Up Location")}</Typography>
                 <Link {...styles.editLink} onClick={onEdit}>

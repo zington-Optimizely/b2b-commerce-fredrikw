@@ -1,5 +1,5 @@
-import warning from "tiny-warning";
 import { canUseDOM } from "exenv";
+import warning from "tiny-warning";
 
 let globalElement: string | HTMLElement | null = null;
 

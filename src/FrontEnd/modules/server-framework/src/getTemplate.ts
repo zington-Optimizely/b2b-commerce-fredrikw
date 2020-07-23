@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
 import { getTemplatePathForPageType } from "@insite/server-framework/SiteGeneration";
-import { promisify } from "util";
+import { Request, Response } from "express";
 import { readFile } from "fs";
+import { promisify } from "util";
 
 const readFileAsync = promisify(readFile);
 

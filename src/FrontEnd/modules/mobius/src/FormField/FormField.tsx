@@ -1,17 +1,17 @@
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import Clickable from "../Clickable";
-import borderByState, { sizeVariantValues, disabledByType } from "./formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps } from "../Icon";
 import Typography, { TypographyPresentationProps }  from "../Typography";
 import TypographyStyle from "../Typography/TypographyStyle";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import focusWithinImportInBrowser from "../utilities/focusWithin";
 import combineTypographyProps from "../utilities/combineTypographyProps";
-import resolveColor from "../utilities/resolveColor";
+import focusWithinImportInBrowser from "../utilities/focusWithin";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import resolveColor from "../utilities/resolveColor";
+import borderByState, { disabledByType, sizeVariantValues } from "./formStyles";
 
 focusWithinImportInBrowser();
 

@@ -1,14 +1,14 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
+import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import Search from "@insite/mobius/Icons/Search";
-import translate from "@insite/client-framework/Translate";
-import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
-import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -87,7 +87,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Search Box",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

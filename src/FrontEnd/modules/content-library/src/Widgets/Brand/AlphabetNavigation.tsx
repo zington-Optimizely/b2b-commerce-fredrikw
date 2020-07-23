@@ -55,7 +55,7 @@ export const alphabetNavigationStyles: AlphabetNavigationStyles = {
         transform: "uppercase",
         variant: "headerTertiary",
         forwardAs: "span",
-        css: css` opacity: 0.5; `,
+        color: "text.disabled",
     },
 };
 

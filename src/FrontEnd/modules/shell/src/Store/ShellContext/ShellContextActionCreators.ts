@@ -1,14 +1,14 @@
-import { addTask } from "@insite/client-framework/ServerSideRendering";
-import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
-import { getShellContext, switchContentMode, getPagePublishInfo } from "@insite/shell/Services/ContentAdminService";
-import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import ContentMode from "@insite/client-framework/Common/ContentMode";
+import { addTask } from "@insite/client-framework/ServerSideRendering";
+import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
+import { getPagePublishInfo, getShellContext, switchContentMode } from "@insite/shell/Services/ContentAdminService";
 import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { Location } from "history";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
+import { Location } from "history";
 
 export const loadShellContext = (): ShellThunkAction => dispatch => {
     addTask(async function () {

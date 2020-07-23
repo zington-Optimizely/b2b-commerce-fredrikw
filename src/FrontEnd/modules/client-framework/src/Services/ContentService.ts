@@ -1,8 +1,9 @@
+/* eslint-disable ordered-imports/ordered-imports */
+// if we sort these imports, then we get weird build errors.
 import { PageModel } from "@insite/client-framework/Types/PageProps";
-import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import { request } from "@insite/client-framework/Services/ApiService";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 
 export const getPageByType = (type: string) => get<{ page: PageModel, statusCode: number, redirectTo: string }>("pageByType", { type });
 
@@ -10,17 +11,7 @@ export const getPageByUrl = (url: string, bypassFilters?: boolean) => get<Retrie
 
 export const getPageLinks = () => get<PageLinkModel[]>("pageLinks");
 
-export const getWebsiteRequiresGeneration = () => get<{
-    requiresGeneration: boolean,
-    defaultLanguage: BasicLanguageModel,
-    defaultPersonaId: string,
-    websiteId: string,
-    pageTypeToNodeId: SafeDictionary<string>,
-}>("websiteRequiresGeneration");
-
 export const getNodeIdForPageName = (pageName: string) => get<string>("getNodeIdForPageName", { pageName });
-
-export const saveInitialPages = (pages: PageModel[]) => post<PageModel[]>("saveInitialPages", pages);
 
 export const getTheme = () => get<BaseTheme>("theme");
 

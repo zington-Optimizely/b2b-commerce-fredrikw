@@ -1,5 +1,5 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { Session, updateSession, UpdateSessionApiParameter, getSession } from "@insite/client-framework/Services/SessionService";
+import { getSession, Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 

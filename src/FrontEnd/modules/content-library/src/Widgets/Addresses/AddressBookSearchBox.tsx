@@ -1,12 +1,12 @@
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import translate from "@insite/client-framework/Translate";
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import Search from "@insite/mobius/Icons/Search";
-import { connect, ResolveThunks } from "react-redux";
-import { AddressesPageContext } from "@insite/content-library/Pages/AddressesPage";
 import updateSearchFields from "@insite/client-framework/Store/Pages/Addresses/Handlers/UpdateSearchFields";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { AddressesPageContext } from "@insite/content-library/Pages/AddressesPage";
+import Search from "@insite/mobius/Icons/Search";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 export interface AddressBookSearchBoxStyles {
     searchText?: TextFieldProps;
@@ -70,7 +70,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Addresses",
         allowedContexts: [AddressesPageContext],
-        isSystem: true,
     },
 };
 

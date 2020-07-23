@@ -1,7 +1,7 @@
-import { TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { tellAFriend, TellAFriendApiParameter } from "@insite/client-framework/Services/EmailService";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface ShareProductParameter {
     product: ProductModelExtended;

@@ -1,5 +1,5 @@
-import { BudgetCalendarModel } from "@insite/client-framework/Types/ApiModels";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { BudgetCalendarModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface BudgetCalendarsState {
     readonly dataViews: SafeDictionary<DataView>;

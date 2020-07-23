@@ -1,6 +1,6 @@
+import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import InvoiceDetailsState from "@insite/client-framework/Store/Pages/InvoiceDetails/InvoiceDetailsState";
 import { Draft } from "immer";
-import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 
 const initialState: InvoiceDetailsState = {
 };

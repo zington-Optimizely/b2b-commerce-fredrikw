@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { BrandModel, BrandCategoryCollectionModel, BrandProductLineCollectionModel, BrandCollectionModel, BrandCategoryModel, BrandProductLineModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { BrandsState, DateViewCollection } from "@insite/client-framework/Store/Data/Brands/BrandsState";
 import { GetBrandByIdApiParameter, GetBrandCategoriesApiParameter, GetBrandProductLinesApiParameter, GetBrandsApiParameter } from "@insite/client-framework/Services/BrandService";
-import { setDataViewLoaded, setDataViewLoading, getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import { BrandsState, DateViewCollection } from "@insite/client-framework/Store/Data/Brands/BrandsState";
+import { getDataViewKey, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { BrandCategoryCollectionModel, BrandCategoryModel, BrandCollectionModel, BrandModel, BrandProductLineCollectionModel, BrandProductLineModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 import { __param } from "tslib";
 
 const initialState: BrandsState = {

@@ -1,21 +1,14 @@
-import merge from "lodash/merge";
-import set from "lodash/set";
-import produce from "immer";
-import * as React from "react";
-import { ColorResult } from "react-color";
-import { connect, DispatchProp } from "react-redux";
-import { Dispatch } from "redux";
-import styled, { css } from "styled-components";
 import { getTheme } from "@insite/client-framework/Services/ContentService";
-import { saveTheme } from "@insite/shell/Services/ContentAdminService";
 import { theme as defaultTheme } from "@insite/client-framework/Theme";
+import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import Accordion from "@insite/mobius/Accordion";
 import Button, { ButtonIcon, ButtonVariants } from "@insite/mobius/Button";
 import Checkbox from "@insite/mobius/Checkbox";
 import CheckboxGroup from "@insite/mobius/CheckboxGroup";
 import Clickable from "@insite/mobius/Clickable";
 import { DateTimePickerLibComponentProps } from "@insite/mobius/DatePicker";
-import { FormFieldPresentationProps, FormFieldComponentProps, FormFieldProps } from "@insite/mobius/FormField";
+import { FormFieldComponentProps, FormFieldPresentationProps, FormFieldProps } from "@insite/mobius/FormField";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
@@ -23,32 +16,39 @@ import Select from "@insite/mobius/Select";
 import TextField from "@insite/mobius/TextField";
 import Typography from "@insite/mobius/Typography";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import resolveColor from "@insite/mobius/utilities/resolveColor";
 import get from "@insite/mobius/utilities/get";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import { RedoSrc } from "@insite/shell/Components/Icons/Redo";
 import { UndoSrc } from "@insite/shell/Components/Icons/Undo";
 import { SideBarStyle } from "@insite/shell/Components/Layout";
 import ButtonConfig from "@insite/shell/Components/Shell/StyleGuide/ButtonConfig";
+import ConfigMenu, {
+    configCheckboxStyles as defaultConfigCheckboxStyles,
+    configFormFieldStyles as defaultConfigFormFieldStyles,
+} from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
+import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
 import ElementTypographyConfig from "@insite/shell/Components/Shell/StyleGuide/ElementTypographyConfig";
 import IconConfig from "@insite/shell/Components/Shell/StyleGuide/IconConfig";
+import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
 import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
-import { Updater, RecursivePartial } from "@insite/shell/Components/Shell/StyleGuide/Types";
+import { RecursivePartial, Updater } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
+import { saveTheme } from "@insite/shell/Services/ContentAdminService";
 import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { colorResultToString } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
-import { State, LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
-import ConfigMenu, {
-    configFormFieldStyles as defaultConfigFormFieldStyles,
-    configCheckboxStyles as defaultConfigCheckboxStyles,
-} from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
-import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
-import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
-import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
-import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { LoadStatus, State } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
+import produce from "immer";
+import merge from "lodash/merge";
+import set from "lodash/set";
+import * as React from "react";
+import { ColorResult } from "react-color";
+import { connect, DispatchProp } from "react-redux";
+import { Dispatch } from "redux";
+import styled, { css } from "styled-components";
 
 export const configFormFieldStyles: Pick<FormFieldProps, "cssOverrides" | "labelProps"> = { ...defaultConfigFormFieldStyles,
     cssOverrides: {
@@ -521,6 +521,41 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & {permissions
                             }
                         })}
                         {...configFormFieldStyles}
+                    />
+                    <IconSelector
+                        label="Indeterminate Icon"
+                        disabled={codeOverridden("checkbox.defaultProps.indeterminateIconProps.src") || disableEditGlobalStyleGuide}
+                        labelPosition="top"
+                        value={undefinedIfFunction(theme.checkbox.defaultProps?.indeterminateIconProps?.src)}
+                        onTextFieldChange={event => update(draft => {
+                            const props = createSetParentIfUndefined("checkbox.defaultProps.indeterminateIconProps")(draft);
+                            if (!event.currentTarget.value) {
+                                delete props.src;
+                            } else {
+                                props.src = event.currentTarget.value;
+                            }
+                        })}
+                        onSelectionChange={value => update(draft => {
+                            const props = createSetParentIfUndefined("checkbox.defaultProps.indeterminateIconProps")(draft);
+                            if (!value) {
+                                delete props.src;
+                            } else {
+                                props.src = value;
+                            }
+                        })}
+                        {...configFormFieldStyles}
+                    />
+                    <ColorPicker
+                        firstInput
+                        label="Indeterminate Color"
+                        id="indeterminate-color"
+                        disabled={codeOverridden("checkbox.defaultProps.indeterminateColor") || disableEditGlobalStyleGuide}
+                        color={tryMatchColorStringToPresetValue(theme.checkbox.defaultProps && theme.checkbox.defaultProps.indeterminateColor)}
+                        onChange={color => {
+                            const resultVal = tryMatchColorResultToPresetName(color);
+                            update(draft => createSetNewValueInDraft("checkbox.defaultProps.indeterminateColor")(draft, resultVal));
+                        }}
+                        presetColors={presetColors}
                     />
                 </SideBarAccordionSection>
                 <SideBarAccordionSection title="Date Picker">

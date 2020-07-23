@@ -1,14 +1,14 @@
-import React, { FC } from "react";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Zone from "@insite/client-framework/Components/Zone";
+import { FooterContext } from "@insite/content-library/Pages/Footer";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { css } from "styled-components";
-import { FooterContext } from "@insite/content-library/Pages/Footer";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import React, { FC } from "react";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
     extendedStyles?: FooterContainerStyles;
@@ -111,7 +111,6 @@ const footerContainer: WidgetModule = {
     definition: {
         group: "Footer",
         allowedContexts: [FooterContext],
-        isSystem: true,
     },
 };
 

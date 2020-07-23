@@ -1,3 +1,4 @@
+import { CurrentLocationInfoWindow, WarehouseGoogleMapsMarker, WarehouseInfoWindow } from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
 import translate from "@insite/client-framework/Translate";
@@ -6,7 +7,6 @@ import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import WarehouseHoursLink from "@insite/content-library/Components/WarehouseHoursLink";
-import { CurrentLocationInfoWindow, WarehouseGoogleMapsMarker, WarehouseInfoWindow } from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { LinkPresentationProps } from "@insite/mobius/Link";

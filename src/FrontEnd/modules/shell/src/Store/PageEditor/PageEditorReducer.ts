@@ -1,19 +1,19 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import {
-    PageEditorState,
-    SelectCategoryModel,
-    SelectProductModel,
-    SelectBrandModel,
-} from "@insite/shell/Store/PageEditor/PageEditorState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import PageProps from "@insite/client-framework/Types/PageProps";
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { SavePageResponseModel } from "@insite/shell/Services/ContentAdminService";
+import {
+    PageEditorState,
+    SelectBrandModel,
+    SelectCategoryModel,
+    SelectProductModel,
+} from "@insite/shell/Store/PageEditor/PageEditorState";
+import { Draft } from "immer";
 
 const initialState: PageEditorState = {
-    showGeneratedPageCreator: false,
+    showGeneratedPageTemplate: false,
 };
 
 const reducer = {
@@ -21,8 +21,8 @@ const reducer = {
         draft.savePageResponse = savePageResponse;
     },
 
-    "PageEditor/ToggleShowGeneratedPageCreator": (draft: Draft<PageEditorState>) => {
-        draft.showGeneratedPageCreator = !draft.showGeneratedPageCreator;
+    "PageEditor/ToggleShowGeneratedPageTemplate": (draft: Draft<PageEditorState>) => {
+        draft.showGeneratedPageTemplate = !draft.showGeneratedPageTemplate;
     },
 
     "PageEditor/EditItem": (draft: Draft<PageEditorState>, action: {

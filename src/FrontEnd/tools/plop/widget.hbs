@@ -1,19 +1,19 @@
 {{#if functionComponent}}
     {{#if toast}}
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext } from "react";
     {{else}}
-import React, { FC } from 'react';
+import React, { FC } from "react";
     {{/if}}
 {{else}}
-import React from 'react';
+import React from "react";
 {{/if}}
-import { connect, ResolveThunks } from 'react-redux';
-import WidgetModule from '@insite/client-framework/Types/WidgetModule';
-import WidgetProps from '@insite/client-framework/Types/WidgetProps';
-import { {{pascalCase pageName}}PageContext } from '@insite/content-library/Pages/{{pascalCase pageName}}Page';
-import ApplicationState from '@insite/client-framework/Store/ApplicationState';
+import { connect, ResolveThunks } from "react-redux";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { {{pascalCase pageName}}PageContext } from "@insite/content-library/Pages/{{pascalCase pageName}}Page";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 {{#if toast}}
-import ToasterContext from '@insite/mobius/Toast/ToasterContext';
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 {{/if}}
 
 interface OwnProps extends WidgetProps {
@@ -68,11 +68,10 @@ class {{pascalCase pageName}}{{pascalCase name}} extends React.Component<Props, 
 {{/if}}
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)({{pascalCase pageName}}{{pascalCase name}}),
     definition: {
-        group: '{{titleCase pageName}}',
-        displayName: '{{titleCase name}}',
+        group: "{{titleCase pageName}}",
+        displayName: "{{titleCase name}}",
         allowedContexts: [{{pascalCase pageName}}PageContext],
     },
 };

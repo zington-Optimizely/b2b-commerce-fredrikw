@@ -1,12 +1,12 @@
+import Button, { ButtonIcon } from "@insite/mobius/Button";
+import ChevronDown from "@insite/mobius/Icons/ChevronDown";
+import ChevronUp from "@insite/mobius/Icons/ChevronUp";
+import PublishModal from "@insite/shell/Components/Shell/PublishModal";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import ShellState from "@insite/shell/Store/ShellState";
 import React from "react";
 import { connect, DispatchProp } from "react-redux";
 import styled from "styled-components";
-import ShellState from "@insite/shell/Store/ShellState";
-import Button, { ButtonIcon } from "@insite/mobius/Button";
-import ChevronUp from "@insite/mobius/Icons/ChevronUp";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import ChevronDown from "@insite/mobius/Icons/ChevronDown";
-import PublishModal from "@insite/shell/Components/Shell/PublishModal";
 
 const mapStateToProps = ({ shellContext }: ShellState) => ({
     visible: shellContext.publishExpanded,
@@ -55,6 +55,10 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
     };
 
     onBulkPublish = () => {
+        this.props.dispatch({
+            type: "ShellContext/SetShowModal",
+            showModal: "Bulk Publish",
+        });
     };
 
     render() {
@@ -70,8 +74,8 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
             </PublishButton>
             <PublishModal />
             <div ref={this.element}>
-                {false
-                && <PublishDropDownButton
+                <PublishDropDownButton
+                    data-test-selector="headerBar_expandPublishOptions"
                     expanded={visible}
                     style={{ width: "100%" }}
                     onClick={this.toggle}
@@ -81,12 +85,11 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
                         size={14}
                     />
                 </PublishDropDownButton>
-                }
                 {!visible ? null
                 : <InlinePopUpOuterWrapper>
                     <InlinePopUpInnerWrapper>
-                        <div onClick={this.onPublish}>Publish</div>
-                        <div onClick={this.onBulkPublish}>Bulk Publish</div>
+                        <div data-test-selector="headerBar_publishLine" onClick={this.onPublish}>Publish</div>
+                        <div data-test-selector="headerBar_bulkPublishLine" onClick={this.onBulkPublish}>Bulk Publish</div>
                     </InlinePopUpInnerWrapper>
                 </InlinePopUpOuterWrapper>}
             </div>
@@ -110,6 +113,12 @@ const InlinePopUpInnerWrapper = styled.div`
     right: 0;
     padding: 3px 10px;
     font-size: 14px;
+    div {
+        cursor: pointer;
+        &:hover {
+            opacity: 0.7;
+        }
+    }
 `;
 
 type HasExpanded = { expanded?: boolean };
@@ -123,7 +132,7 @@ const PublishDropDownButton = styled(Button)<HasExpanded>`
     background: #e3971a;
     border: 0;
     border-radius: ${props => props.expanded ? "0 4px 0 0" : "0 4px 4px 0"};
-    height: 22px;
+    height: 27px;
     margin: 1px 0 1px 0;
     padding: 0 1px;
 `;

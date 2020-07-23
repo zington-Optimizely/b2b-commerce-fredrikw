@@ -13,7 +13,7 @@ function doWork(isDevBuild, blueprint) {
     updateFile(path.resolve(__dirname, "../../modules/server-framework/Entry.ts"), `import \"@insite/server-framework/Winston\";
 import \"../${blueprint}/src/Start\";
 
-${isDevBuild ? "export { default } from \"./src/Server\"" : "import \"./src/ProductionServer\""};
+export * from \"./src/StartServer\";
 `);
 
     updateFile(path.resolve(__dirname, "../../modules/shell/Entry.ts"), `import \"../${blueprint}/src/Start\";

@@ -18,9 +18,6 @@ export default interface FieldSetPresentationProps<T> {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp<T>;
-    /** Props to be passed into the error message's Typography component.
-     * @themable */
-    errorProps?: TypographyPresentationProps;
     /** Props to be passed into the inner Typography component (label).
      * @themable */
     typographyProps?: FieldSetLabelProps;
@@ -33,6 +30,9 @@ export interface FieldSetGroupPresentationProps<T = {}> {
     /** Props to be passed into the label's Typography component.
      * @themable */
     labelProps?: TypographyPresentationProps;
+    /** Props to be passed into the error message's Typography component.
+     * @themable */
+    errorProps?: TypographyPresentationProps;
     /** Size variant.
      * @themable */
     sizeVariant?: "default" | "small";

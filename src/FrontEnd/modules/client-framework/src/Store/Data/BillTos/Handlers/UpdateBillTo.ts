@@ -1,6 +1,6 @@
-import { UpdateBillToApiParameter, updateBillTo as updateBillToApi } from "@insite/client-framework/Services/CustomersService";
-import { BillToModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { updateBillTo as updateBillToApi, UpdateBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { BillToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<UpdateBillToApiParameter & HasOnSuccess, BillToModel>;
 

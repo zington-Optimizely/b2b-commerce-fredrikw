@@ -1,11 +1,11 @@
-import translate from "@insite/client-framework/Translate";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import translate from "@insite/client-framework/Translate";
 import Clickable from "@insite/mobius/Clickable";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import React from "react";
 import { css } from "styled-components";
 

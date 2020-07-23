@@ -1,15 +1,15 @@
-import * as React from "react";
-import { css } from "styled-components";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import Zone from "@insite/client-framework/Components/Zone";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
+import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -51,7 +51,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Search Form",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

@@ -1,10 +1,10 @@
-import * as React from "react";
 import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import * as React from "react";
 import { css } from "styled-components";
 
 interface Props extends WidgetProps, HasCategoryContext {
@@ -54,7 +54,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "LinkList",
-        isSystem: true,
     },
 };
 

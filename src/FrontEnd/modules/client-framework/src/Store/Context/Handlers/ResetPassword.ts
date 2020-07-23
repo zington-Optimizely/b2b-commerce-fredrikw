@@ -1,10 +1,10 @@
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import {
     resetPassword as resetPasswordApi,
     ResetPasswordApiParameter,
     Session,
 } from "@insite/client-framework/Services/SessionService";
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 
 type HandlerType = ApiHandlerDiscreteParameter<
     ResetPasswordApiParameter & HasOnSuccess & { onError?: (error: string) => void },

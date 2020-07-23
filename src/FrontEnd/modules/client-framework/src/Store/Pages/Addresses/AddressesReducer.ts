@@ -1,9 +1,9 @@
-import AddressesState from "@insite/client-framework/Store/Pages/Addresses/AddressesState";
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
+import AddressesState from "@insite/client-framework/Store/Pages/Addresses/AddressesState";
+import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: AddressesState = {
     getShipTosParameter: { filter: "", page: 1, expand: ["validation"], exclude: ["showAll", "oneTime", "billTo"] },

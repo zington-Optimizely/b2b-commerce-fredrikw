@@ -1,7 +1,7 @@
+import sleep from "@insite/client-framework/Common/Sleep";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
-import sleep from "@insite/client-framework/Common/Sleep";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 
 type HandlerType = Handler<{ products?: ProductModelExtended[]; modalIsOpen: boolean }>;

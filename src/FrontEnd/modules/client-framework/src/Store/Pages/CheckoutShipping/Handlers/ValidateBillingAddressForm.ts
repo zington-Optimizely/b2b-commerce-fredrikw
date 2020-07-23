@@ -1,6 +1,6 @@
-import { Handler, HasOnSuccess, createHandlerChainRunner, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { CustomerValidationDto, AddressFieldDisplayCollectionModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
+import { createHandlerChainRunner, Handler, HasOnSuccess, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import validateAddress, { AddressErrors } from "@insite/client-framework/Store/CommonHandlers/ValidateAddress";
+import { AddressFieldDisplayCollectionModel, BillToModel, CustomerValidationDto } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{
     address: BillToModel;

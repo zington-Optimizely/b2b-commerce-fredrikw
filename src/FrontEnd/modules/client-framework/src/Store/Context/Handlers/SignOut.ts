@@ -1,5 +1,5 @@
-import { deleteSession } from "@insite/client-framework/Services/SessionService";
 import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
+import { deleteSession } from "@insite/client-framework/Services/SessionService";
 
 type HandlerType = Handler;
 

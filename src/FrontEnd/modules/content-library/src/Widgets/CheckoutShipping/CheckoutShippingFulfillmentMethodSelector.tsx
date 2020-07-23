@@ -1,19 +1,20 @@
-import React from "react";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
 import Radio, { RadioComponentProps, RadioStyle } from "@insite/mobius/Radio";
-import translate from "@insite/client-framework/Translate";
+import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import { css } from "styled-components";
-import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps extends WidgetProps {
 }
@@ -86,14 +87,14 @@ const CheckoutShippingFulfillmentMethodSelector = ({
                 >
                     <Radio
                         {...styles.shipRadio}
-                        value="Ship"
+                        value={FulfillmentMethod.Ship}
                         data-test-selector="fulfillmentMethod_ship"
                     >
                         {translate("Ship to address")}
                     </Radio>
                     <Radio
                         {...styles.pickUpRadio}
-                        value="PickUp"
+                        value={FulfillmentMethod.PickUp}
                         data-test-selector="fulfillmentMethod_pickUp"
                     >
                         {translate("Pick Up")}
@@ -110,7 +111,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         displayName: "Fulfillment Method Selector",
         allowedContexts: [CheckoutShippingPageContext],
-        isSystem: true,
     },
 };
 

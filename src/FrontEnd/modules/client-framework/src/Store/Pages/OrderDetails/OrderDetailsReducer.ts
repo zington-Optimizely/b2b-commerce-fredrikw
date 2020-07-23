@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
-import { Draft } from "immer";
 import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: OrderDetailsState = {
     isReordering: false,

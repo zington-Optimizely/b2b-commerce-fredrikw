@@ -1,6 +1,6 @@
-import { ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { ShareEntityApiParameter, shareEntity as shareEntityApi } from "@insite/client-framework/Services/EmailService";
+import { shareEntity as shareEntityApi, ShareEntityApiParameter } from "@insite/client-framework/Services/EmailService";
+import { ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface ShareEntityParameter {
     shareEntityModel: ShareEntityModel;

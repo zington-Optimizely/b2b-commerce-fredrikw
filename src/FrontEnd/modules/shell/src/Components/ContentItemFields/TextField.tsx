@@ -1,8 +1,8 @@
-import * as React from "react";
 import { TextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import MobiusTextField from "@insite/mobius/TextField";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 export default class TextField extends React.Component<ContentItemFieldProps<string, TextFieldDefinition>> {
 

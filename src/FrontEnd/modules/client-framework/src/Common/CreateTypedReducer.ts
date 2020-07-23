@@ -1,6 +1,6 @@
-import { Action } from "redux";
-import produce, { Draft } from "immer";
 import deepFreezeObject from "@insite/client-framework/Common/Utilities/deepFreezeObject";
+import produce, { Draft } from "immer";
+import { Action } from "redux";
 
 /** Creates a discriminated union of Redux action types from a function map in the form of 'ActionType': (state: State) => State. */
 type SimpleActionHandlers<T> = {

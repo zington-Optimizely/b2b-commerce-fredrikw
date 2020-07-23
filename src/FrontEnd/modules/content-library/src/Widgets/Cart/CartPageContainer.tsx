@@ -1,13 +1,13 @@
-import React from "react";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CartPageContext } from "@insite/content-library/Pages/CartPage";
-import Zone from "@insite/client-framework/Components/Zone";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { css } from "styled-components";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Zone from "@insite/client-framework/Components/Zone";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CartPageContext } from "@insite/content-library/Pages/CartPage";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React from "react";
+import { css } from "styled-components";
 
 export interface CartPageContainerStyles {
     container?: InjectableCss;
@@ -193,7 +193,6 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         allowedContexts: [CartPageContext],
         displayName: "Page Container",
-        isSystem: true,
     },
 };
 

@@ -1,23 +1,23 @@
-import React, { FC } from "react";
-import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps, TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import OrderConfirmationShippingInformation, { OrderConfirmationShippingInformationStyles }
-    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationShippingInformation";
-import OrderConfirmationBillingInformation, { OrderConfirmationBillingInformationStyles }
-    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationBillingInformation";
-import { css } from "styled-components";
-import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
+import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
+import OrderConfirmationBillingInformation, { OrderConfirmationBillingInformationStyles }
+    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationBillingInformation";
+import OrderConfirmationShippingInformation, { OrderConfirmationShippingInformationStyles }
+    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationShippingInformation";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCartState(state, state.pages.orderConfirmation.cartId).value;
@@ -139,7 +139,6 @@ const widgetModule: WidgetModule = {
         displayName: "Order Information",
         allowedContexts: [OrderConfirmationPageContext],
         group: "Order Confirmation",
-        isSystem: true,
     },
 };
 

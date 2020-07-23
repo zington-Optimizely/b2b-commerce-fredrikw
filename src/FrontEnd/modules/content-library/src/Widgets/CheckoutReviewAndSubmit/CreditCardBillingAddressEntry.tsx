@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React from "react";
+import translate from "@insite/client-framework/Translate";
 import { BillToModel, CountryModel, StateModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
+import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
-import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React from "react";
 import { css } from "styled-components";
 
 interface OwnProps {

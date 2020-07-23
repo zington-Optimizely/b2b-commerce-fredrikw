@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import TypographyStyle from "./TypographyStyle";
 import injectCss from "../utilities/injectCss";
+import TypographyStyle from "./TypographyStyle";
 
 export const TypographyEllipsisStyle = styled(TypographyStyle)`
     overflow: hidden;

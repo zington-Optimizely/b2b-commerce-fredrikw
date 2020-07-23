@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { setDataViewLoaded, setDataViewLoading, assignById } from "@insite/client-framework/Store/Data/DataState";
-import { WishListCollectionModel, WishListModel, WishListLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetWishListLinesApiParameter, GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { WishListsState } from "@insite/client-framework/Store/Data/WishLists/WishListsState";
-import { GetWishListsApiParameter, GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
+import { WishListCollectionModel, WishListLineCollectionModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: WishListsState = {
     isLoading: {},
@@ -29,6 +29,9 @@ const reducer = {
         return initialState;
     },
     "Data/WishLists/CompleteLoadWishListLines": (draft: Draft<WishListsState>, action: { parameter: GetWishListLinesApiParameter, result: WishListLineCollectionModel }) => {
+        if (!draft.byId[action.parameter.wishListId]) {
+            return;
+        }
         draft.byId[action.parameter.wishListId].wishListLineCollection = action.result.wishListLines;
         if (action.result.pagination) {
             draft.byId[action.parameter.wishListId].wishListLinesCount = action.result.pagination.totalItemCount;

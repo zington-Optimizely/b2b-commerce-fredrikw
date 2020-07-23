@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import { CartLineModel, OrderLineModel } from "@insite/client-framework/Types/ApiModels";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { css } from "styled-components";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { CartLineModel, OrderLineModel } from "@insite/client-framework/Types/ApiModels";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     product: CartLineModel | ProductModelExtended | OrderLineModel;

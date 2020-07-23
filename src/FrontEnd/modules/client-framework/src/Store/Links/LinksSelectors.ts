@@ -1,6 +1,6 @@
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
-import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 
 export const getPageLinkByNodeId = (state: HasLinksState, nodeId: string) => {

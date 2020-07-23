@@ -1,18 +1,18 @@
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import React, { FC, useContext } from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
-import ShareEntityButton, { ShareEntityButtonStyles } from "@insite/content-library/Components/ShareEntityButton";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import ShareEntityButton, { ShareEntityButtonStyles } from "@insite/content-library/Components/ShareEntityButton";
+import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC, useContext } from "react";
+import { css } from "styled-components";
 
 export interface InvoiceDetailHeaderStyles {
     shareEntityButtonStyles?: ShareEntityButtonStyles;
@@ -105,7 +105,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Header",
         allowedContexts: [InvoiceDetailsPageContext],
         group: "Invoice History",
-        isSystem: true,
     },
 };
 

@@ -44,4 +44,5 @@ Insite.Rfq
 Insite.Search.Elasticsearch
 Insite.TaxCalculator.Vertex
 Insite.Websites
+Insite.WIS.Broker
 Insite.WishLists

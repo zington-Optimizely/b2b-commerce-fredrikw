@@ -1,9 +1,9 @@
-import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
 } from "@insite/client-framework/HandlerCreator";
-import { autocompleteSearch, AutocompleteApiParameter } from "@insite/client-framework/Services/AutocompleteService";
+import { AutocompleteApiParameter, autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
+import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ query: string }, AutocompleteApiParameter, ProductAutocompleteItemModel[] | null>;
 

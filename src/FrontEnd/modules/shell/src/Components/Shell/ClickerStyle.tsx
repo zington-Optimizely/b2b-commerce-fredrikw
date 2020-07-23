@@ -1,6 +1,6 @@
-import styled, { StyledComponent } from "styled-components";
 import Clickable from "@insite/mobius/Clickable";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import styled, { StyledComponent } from "styled-components";
 
 interface StyleProps {
     clickable: boolean;

@@ -1,12 +1,12 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
+import loadAddressFields from "@insite/client-framework/Store/Data/AddressFields/Handlers/LoadAddressFields";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
-import loadAddressFields from "@insite/client-framework/Store/Data/AddressFields/Handlers/LoadAddressFields";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 
 type HandlerType = Handler<{
     onSuccess: () => void,

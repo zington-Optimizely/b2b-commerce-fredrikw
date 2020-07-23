@@ -1,9 +1,9 @@
-import {
-    BudgetModel,
-    BudgetCalendarModel,
-} from "@insite/client-framework/Types/ApiModels";
-import { BudgetPeriodType } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
 import { GetBudgetApiParameter } from "@insite/client-framework/Services/BudgetService";
+import { BudgetPeriodType } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
+import {
+    BudgetCalendarModel,
+    BudgetModel,
+} from "@insite/client-framework/Types/ApiModels";
 
 export type BudgetWidgetNames = "CostCodes" | "AssignBudgets" | "ConfigureBudget" | "ReviewBudget";
 

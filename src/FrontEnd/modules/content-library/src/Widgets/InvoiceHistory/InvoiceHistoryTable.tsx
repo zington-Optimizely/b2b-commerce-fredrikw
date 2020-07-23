@@ -1,32 +1,29 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
+import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Link from "@insite/mobius/Link";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
-import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
+import { ClickableProps } from "@insite/mobius/Clickable";
+import DataTable, { DataTableProps, SortOrderOptions } from "@insite/mobius/DataTable";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
 import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
 import { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
 import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
 import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
 import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTableRow";
-import Icon from "@insite/mobius/Icon";
-import ChevronDown from "@insite/mobius/Icons/ChevronDown";
-import ChevronUp from "@insite/mobius/Icons/ChevronUp";
+import Link from "@insite/mobius/Link";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
-import { useContext } from "react";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 
 const mapStateToProps = (state: ApplicationState) => ({
     getInvoicesParameter: state.pages.invoiceHistory.getInvoicesParameter,
@@ -127,15 +124,15 @@ const InvoiceHistoryTable = (props: Props) => {
         props.updateSearchFields({ sort });
     };
 
-    // TODO ISC-12604 screenreader content for what the click action does
-    const sortingHeaderLabel = (label: string, sortField: string) =>
-        <Clickable {...styles.headerClickables} onClick={() => headerClick(sortField)}>
-            <Typography {...styles.headerText}>{translate(label)}</Typography>
-            {props.getInvoicesParameter.sort === sortField
-                ? <Icon src={ChevronUp} size={14}/>
-                : props.getInvoicesParameter.sort === `${sortField} DESC`
-                    ? <Icon src={ChevronDown} size={14}/> : null}
-        </Clickable>;
+    const sorted = (sortField: string) => {
+        let sorted: boolean | string = false;
+        if (props.getInvoicesParameter.sort === sortField) {
+            sorted = "ascending";
+        } else if (props.getInvoicesParameter.sort === `${sortField} DESC`) {
+            sorted = "descending";
+        }
+        return sorted as SortOrderOptions;
+    };
 
     const invoicesDataView = useContext(InvoicesDataViewContext);
     if (!invoicesDataView.value) {
@@ -178,29 +175,69 @@ const InvoiceHistoryTable = (props: Props) => {
         <StyledWrapper {...styles.container}>
             <DataTable {...styles.dataTable}>
                 <DataTableHead {...styles.dataTableHead}>
-                    <DataTableHeader tight {...styles.invoiceNumberHeader} title={translate("Invoice #")}>
-                        {sortingHeaderLabel("Invoice #", "invoiceNumber")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("invoiceNumber")}
+                        {...styles.invoiceNumberHeader}
+                        onSortClick={() => headerClick("invoiceNumber")}
+                    >
+                        {translate("Invoice #")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.invoiceDateHeader}>
-                        {sortingHeaderLabel("Invoice Date", "invoiceDate")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("invoiceDate")}
+                        {...styles.invoiceDateHeader}
+                        onSortClick={() => headerClick("invoiceDate")}
+                    >
+                        {translate("Invoice Date")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.termsHeader}>
-                        {sortingHeaderLabel("Terms", "terms")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("terms")}
+                        {...styles.termsHeader}
+                        onSortClick={() => headerClick("terms")}
+                    >
+                        {translate("Terms")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.dueDateHeader}>
-                        {sortingHeaderLabel("Due Date", "dueDate")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("dueDate")}
+                        {...styles.dueDateHeader}
+                        onSortClick={() => headerClick("dueDate")}
+                    >
+                        {translate("Due Date")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.shipToHeader}>
-                        {sortingHeaderLabel("Ship To / Pick Up", "stCompanyName")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("stCompanyName")}
+                        {...styles.shipToHeader}
+                        onSortClick={() => headerClick("stCompanyName")}
+                    >
+                        {translate("Ship To / Pick Up")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.statusHeader}>
-                        {sortingHeaderLabel("Status", "status")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("status")}
+                        {...styles.statusHeader}
+                        onSortClick={() => headerClick("status")}
+                    >
+                        {translate("Status")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.totalHeader}>
-                        {sortingHeaderLabel("Invoice Total", "invoiceTotal")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("invoiceTotal")}
+                        {...styles.totalHeader}
+                        onSortClick={() => headerClick("invoiceTotal")}
+                    >
+                        {translate("Invoice Total")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.currentBalanceHeader}>
-                        {sortingHeaderLabel("Current Balance", "currentBalance")}
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("currentBalance")}
+                        {...styles.currentBalanceHeader}
+                        onSortClick={() => headerClick("currentBalance")}
+                    >
+                        {translate("Current Balance")}
                     </DataTableHeader>
                 </DataTableHead>
                 <DataTableBody {...styles.dataTableBody}>
@@ -235,7 +272,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Search Results Table",
         allowedContexts: [InvoiceHistoryPageContext],
-        isSystem: true,
     },
 };
 

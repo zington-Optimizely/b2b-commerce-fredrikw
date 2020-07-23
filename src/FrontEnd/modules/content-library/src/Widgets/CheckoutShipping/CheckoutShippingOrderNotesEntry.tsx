@@ -1,13 +1,13 @@
-import React, { ChangeEvent, Component } from "react";
-import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
-import translate from "@insite/client-framework/Translate";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
-import setNotes from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetNotes";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import setNotes from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetNotes";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
+import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
+import React, { ChangeEvent, Component } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -83,7 +83,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         displayName: "Order Notes Entry",
         allowedContexts: [CheckoutShippingPageContext],
-        isSystem: true,
     },
 };
 

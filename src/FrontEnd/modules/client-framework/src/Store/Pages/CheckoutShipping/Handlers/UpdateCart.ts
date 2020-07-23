@@ -1,14 +1,14 @@
-import { UpdateCartApiParameter, updateCart as updateCartApi, Cart, CartResult } from "@insite/client-framework/Services/CartService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { ShipToModel, BillToModel, BaseAddressModel } from "@insite/client-framework/Types/ApiModels";
+import { Cart, CartResult, updateCart as updateCartApi, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
 import { createShipTo, updateBillTo, updateShipTo } from "@insite/client-framework/Services/CustomersService";
 import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
-import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { BaseAddressModel, BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<HasOnSuccess, UpdateCartApiParameter, CartResult, {
     shipTo?: ShipToModel

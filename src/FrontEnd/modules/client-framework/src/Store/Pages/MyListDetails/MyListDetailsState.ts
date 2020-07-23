@@ -4,4 +4,8 @@ export default interface MyListDetailsState {
     wishListId?: string;
     loadWishListLinesParameter: GetWishListLinesApiParameter;
     selectedWishListLineIds: string[];
+    editingSortOrder: boolean;
+    changedWishListLineQuantities: { [key: string]: number };
+    wishListLinesWithUpdatedQuantity: { [key: string]: boolean };
+    quantityAdjustmentModalIsOpen: boolean;
 }

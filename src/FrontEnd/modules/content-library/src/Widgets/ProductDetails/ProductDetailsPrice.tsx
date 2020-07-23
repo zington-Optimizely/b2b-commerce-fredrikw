@@ -1,12 +1,12 @@
-import * as React from "react";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import * as React from "react";
 import { connect } from "react-redux";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
 
@@ -45,7 +45,6 @@ const widgetModule: WidgetModule = {
         displayName: "Price",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

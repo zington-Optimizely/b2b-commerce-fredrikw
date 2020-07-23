@@ -3,8 +3,18 @@
  * The LoadOrdersHandler is used by the order history page to load order data
  */
 
-import { chain, RequestDataFromApi } from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { addToChainAfter, addToChainBefore, addToEndOfChain, addToStartOfChain, replaceInChain } from "@insite/client-framework/HandlerCreator";
+import { chain, RequestDataFromApi } from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
+
+// this will enable HMR for custom handlers
+if (module.hot) {
+    module.hot.accept();
+    const originalChain = chain.slice();
+    module.hot.dispose(data => {
+        chain.length = 0;
+        originalChain.forEach(o => chain.push(o));
+    });
+}
 
 addToStartOfChain(chain, props => { // The function can be `async` and use `await` in its body.
    // an anonymous function will show up without a name in the redux tools for handlers

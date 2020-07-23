@@ -1,5 +1,5 @@
-import { keyframes, css } from "styled-components";
 import { ComponentThemeProps } from "mobius/src/globals/baseTheme";
+import { css, keyframes } from "styled-components";
 
 const ModalPresentationPropsDefault: ComponentThemeProps["modal"]["defaultProps"] = {
     cssOverrides: {

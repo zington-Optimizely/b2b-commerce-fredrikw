@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { BrandCategoriesStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { BrandCategoryModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -14,7 +15,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { BrandCategoriesStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 const enum fields {
     title = "title",
@@ -211,7 +211,6 @@ const widgetModule: WidgetModule = {
         group: "Brand Details",
         displayName: "Categories",
         allowedContexts: [BrandDetailsPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

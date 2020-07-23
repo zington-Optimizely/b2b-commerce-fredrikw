@@ -1,16 +1,83 @@
-import * as  React from "react";
-import Page from "@insite/mobius/Page";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
+import Zone from "@insite/client-framework/Components/Zone";
+import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import loadQuotes from "@insite/client-framework/Store/Data/Quotes/Handlers/LoadQuotes";
+import { getQuotesDataView } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
+import updateSearchFields from "@insite/client-framework/Store/Pages/RfqMyQuotes/Handlers/UpdateSearchFields";
 import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import { useEffect } from "react";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
-const RfqMyQuotesPage: React.FC = () => <Page></Page>;
+const mapStateToProps = (state: ApplicationState) => ({
+    quotesDataView: getQuotesDataView(state, state.pages.rfqMyQuotes.getQuotesParameter),
+    getQuotesParameter: state.pages.rfqMyQuotes.getQuotesParameter,
+    location: getLocation(state),
+});
+
+const mapDispatchToProps = {
+    loadQuotes,
+    updateSearchFields,
+};
+
+type Props = HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext & PageProps;
+
+const RfqMyQuotesPage = ({
+    id,
+    quotesDataView,
+    getQuotesParameter,
+    loadQuotes,
+    updateSearchFields,
+    history,
+    location,
+}: Props) => {
+    let firstLoad = false;
+
+    useEffect(
+        () => {
+            firstLoad = true;
+            if (location.search) {
+                const getInvoicesApiParameter = parseQueryString<GetInvoicesApiParameter>(location.search);
+                updateSearchFields({ ...getInvoicesApiParameter, type: "Replace" });
+            }
+        },
+        [],
+    );
+
+    useEffect(() => {
+        if (!firstLoad) {
+            history.replace(`${location.pathname}?${getDataViewKey(getQuotesParameter)}`);
+        }
+    }, [getQuotesParameter]);
+
+    React.useEffect(() => {
+        // if this is undefined it means someone changed the filters and we haven't loaded the new collection yet
+        if (!quotesDataView.value && !quotesDataView.isLoading) {
+            loadQuotes(getQuotesParameter);
+        }
+    });
+
+    return <Page>
+        <Zone contentId={id} zoneName="Content"/>
+    </Page>;
+};
 
 const pageModule: PageModule = {
-    component: RfqMyQuotesPage,
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(withIsInShell(RfqMyQuotesPage))),
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 
 export default pageModule;
+
+export const RfqMyQuotesPageContext = "RfqMyQuotesPage";

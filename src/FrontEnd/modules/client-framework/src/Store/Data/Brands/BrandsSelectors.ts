@@ -1,7 +1,7 @@
-import { getById, getDataView, getDataViewKey, dataViewNotFound } from "@insite/client-framework/Store/Data/DataState";
+import { GetBrandCategoriesApiParameter, GetBrandProductLinesApiParameter, GetBrandsApiParameter } from "@insite/client-framework/Services/BrandService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { dataViewNotFound, getById, getDataView, getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { createContext } from "react";
-import { GetBrandProductLinesApiParameter, GetBrandCategoriesApiParameter, GetBrandsApiParameter } from "@insite/client-framework/Services/BrandService";
 
 export function getBrandStateById(state: ApplicationState, brandId: string | undefined) {
     return getById(state.data.brands, brandId);

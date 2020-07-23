@@ -1,16 +1,16 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
-import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
 import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import translate from "@insite/client-framework/Translate";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { css } from "styled-components";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
+import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps  {
 }
@@ -109,7 +109,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         allowedContexts: [OrderHistoryPageContext],
         displayName: "Date Range",
-        isSystem: true,
     },
 };
 

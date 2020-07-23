@@ -2,10 +2,10 @@
  * This illustrates how to create a widget that makes use of a number of different field definition types.
  */
 
-import * as React from "react";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import * as React from "react";
 
 // this is used to help ensure that the names match between props.fields and definition.fieldDefinitions[].name
 const enum fields {

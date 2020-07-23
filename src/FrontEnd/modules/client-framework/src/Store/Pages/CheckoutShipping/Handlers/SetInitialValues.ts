@@ -1,17 +1,18 @@
-import { Handler, createHandlerChainRunnerOptionalParameter, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { BillToModel, ShipToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getShipToState, getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { createHandlerChainRunnerOptionalParameter, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
-import cloneDeep from "lodash/cloneDeep";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
-import loadShipTos from "@insite/client-framework/Store/Pages/Addresses/Handlers/LoadShipTos";
-import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
-import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
-import validateBillingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateBillingAddressForm";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import validateAddress, { AddressErrors } from "@insite/client-framework/Store/CommonHandlers/ValidateAddress";
+import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import loadShipTos from "@insite/client-framework/Store/Pages/Addresses/Handlers/LoadShipTos";
+import validateBillingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateBillingAddressForm";
+import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
+import { BillToModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = Handler<{}, {
     cart: Cart;
@@ -142,7 +143,7 @@ export const ValidateBillingAddress: HandlerType = async ({ dispatch, getState, 
 export const ValidateShippingAddress: HandlerType = async ({ dispatch, getState, shipTo }) => {
     const state = getState();
     const { context: { session } } = state;
-    if (session.fulfillmentMethod === "PickUp") {
+    if (session.fulfillmentMethod === FulfillmentMethod.PickUp) {
         return;
     }
 

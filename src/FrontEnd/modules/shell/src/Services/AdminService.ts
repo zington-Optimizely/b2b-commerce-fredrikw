@@ -1,6 +1,6 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { SelectBrandModel } from "@insite/shell/Store/PageEditor/PageEditorState";
 import { get } from "@insite/shell/Services/ServiceBase";
+import { SelectBrandModel } from "@insite/shell/Store/PageEditor/PageEditorState";
 
 export const getAdminBrands = (parameter?: AdminODataApiParameter) => getOData<SelectBrandModel[]>("brands", { ...parameter });
 

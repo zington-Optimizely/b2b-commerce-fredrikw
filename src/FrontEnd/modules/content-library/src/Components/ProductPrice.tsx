@@ -1,8 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import { getUnitNetPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import ProductPriceSavingsMessage from "@insite/content-library/Components/ProductPriceSavingsMessage";
@@ -12,8 +15,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
-import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps {
     product: ProductModelExtended | CartLineModel;
@@ -134,7 +135,7 @@ const ProductPrice: FC<Props> = ({
                                  }) => {
     const [styles] = React.useState(() => mergeToNew(productPriceStyles, extendedStyles));
 
-    const { pricing, quoteRequired } = product;
+    const { pricing, quoteRequired, qtyOrdered } = product;
     const unitOfMeasure = product.unitOfMeasureDescription || product.unitOfMeasureDisplay;
     const showQtyPerBaseUnitOfMeasure = "baseUnitOfMeasure" in product
         && product.unitOfMeasure !== product.baseUnitOfMeasure && product.qtyPerBaseUnitOfMeasure > 0;
@@ -177,7 +178,7 @@ const ProductPrice: FC<Props> = ({
                             {...priceStyles.priceText}
                             data-test-selector="productPrice_unitNetPrice"
                         >
-                            {pricing.unitNetPriceDisplay}
+                            {getUnitNetPrice(pricing, qtyOrdered || 1).priceDisplay}
                         </Typography>
                         : <Typography
                             {...priceStyles.realTimeText}
@@ -208,6 +209,7 @@ const ProductPrice: FC<Props> = ({
                 {pricing && showSavings
                 && <ProductPriceSavingsMessage
                     pricing={pricing}
+                    qtyOrdered={qtyOrdered || 1}
                     showSavingsAmount={showSavingsAmount}
                     showSavingsPercent={showSavingsPercent}
                     currencySymbol={currencySymbol}

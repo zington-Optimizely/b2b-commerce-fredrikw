@@ -1,8 +1,8 @@
-import { css } from "styled-components";
-import { searchFieldWrapperStyles }  from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import translate from "@insite/client-framework/Translate";
 import { orderTotalOperatorStyles }  from "@insite/content-library/Widgets/OrderHistory/OrderHistorySearchFieldOrderTotalOperator";
 import { orderHistoryTableStyles }  from "@insite/content-library/Widgets/OrderHistory/OrderHistoryTable";
-import translate from "@insite/client-framework/Translate";
+import { searchFieldWrapperStyles }  from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import { css } from "styled-components";
 
 searchFieldWrapperStyles.wrapper = {
     css: css`

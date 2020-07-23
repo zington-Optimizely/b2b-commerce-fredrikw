@@ -1,13 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import { Session } from "@insite/client-framework/Services/SessionService";
 import translate from "@insite/client-framework/Translate";
-import { QuoteSettingsModel, QuoteModel } from "@insite/client-framework/Types/ApiModels";
+import { QuoteModel, QuoteSettingsModel } from "@insite/client-framework/Types/ApiModels";
+import RfqQuoteDetailsPageTypeLink from "@insite/content-library/Components/RfqQuoteDetailsPageTypeLink";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import RfqQuoteDetailsPageTypeLink from "@insite/content-library/Components/RfqQuoteDetailsPageTypeLink";
-import { Session } from "@insite/client-framework/Services/SessionService";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 
 interface OwnProps {
     quote: QuoteModel;

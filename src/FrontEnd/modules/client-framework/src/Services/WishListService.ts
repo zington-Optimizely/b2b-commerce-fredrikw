@@ -1,18 +1,18 @@
 import {
+    ApiParameter,
     del,
+    doesNotHaveExpand,
     get,
     HasPagingParameters,
     patch,
     post,
-    ApiParameter,
     requestVoid,
-    doesNotHaveExpand,
 } from "@insite/client-framework/Services/ApiService";
 import {
-    WishListModel,
     WishListCollectionModel,
     WishListLineCollectionModel,
     WishListLineModel,
+    WishListModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export enum ShareOptions {
@@ -89,6 +89,12 @@ export interface UpdateWishListLineApiParameter extends ApiParameter {
     wishListId: string;
     wishListLineId: string;
     wishListLine: WishListLineModel;
+}
+
+export interface UpdateWishListLinesApiParameter extends ApiParameter {
+    wishListId: string;
+    changedSharedListLinesQuantities?: { [key: string]: number };
+    includeListLines: boolean;
 }
 
 export interface DeleteWishListLineApiParameter extends ApiParameter {
@@ -172,6 +178,10 @@ export function updateWishListLine(parameter: UpdateWishListLineApiParameter) {
     return patch<WishListLineModel>(`${wishListUrl}/${parameter.wishListId}/wishlistlines/${parameter.wishListLineId}`, parameter.wishListLine);
 }
 
+export function updateWishListLines(parameter: UpdateWishListLinesApiParameter) {
+    return patch<WishListLineCollectionModel>(`${wishListUrl}/${parameter.wishListId}/wishlistlines/batch`, parameter as unknown as WishListLineCollectionModel);
+}
+
 export function deleteWishListLine(parameter: DeleteWishListLineApiParameter) {
     return del(`${wishListUrl}/${parameter.wishListId}/wishlistlines/${parameter.wishListLineId}`);
 }
@@ -192,5 +202,8 @@ export function deleteWishListShare(parameter: DeleteWishListShareApiParameter) 
 function cleanWishList(wishList: WishListModel, parameter?: { expand?: string[] }) {
     if (doesNotHaveExpand(parameter, "schedule")) {
         delete wishList.schedule;
+    }
+    if (doesNotHaveExpand(parameter, "sharedUsers")) {
+        delete wishList.sharedUsers;
     }
 }

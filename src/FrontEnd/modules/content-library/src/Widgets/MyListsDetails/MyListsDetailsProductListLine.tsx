@@ -1,46 +1,47 @@
-import React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { ButtonPresentationProps } from "@insite/mobius/Button";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Checkbox, { CheckboxProps, CheckboxPresentationProps } from "@insite/mobius/Checkbox";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { SelectPresentationProps } from "@insite/mobius/Select";
-import { TextFieldProps } from "@insite/mobius/TextField";
-import OverflowMenu from "@insite/mobius/OverflowMenu";
-import Clickable from "@insite/mobius/Clickable";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setWishListLineIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineIsSelected";
+import setWishListLineQuantity from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineQuantity";
+import updateWishListLineProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineProduct";
+import translate from "@insite/client-framework/Translate";
 import {
+    AvailabilityMessageType,
     WishListLineModel,
     WishListModel,
-    AvailabilityMessageType,
 } from "@insite/client-framework/Types/ApiModels";
-import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
-import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
-import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
 import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
-import setWishListLineIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineIsSelected";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
-import updateProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateProduct";
-import updateWishListLineProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineProduct";
+import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
+import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
+import { ButtonPresentationProps } from "@insite/mobius/Button";
+import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
+import Clickable from "@insite/mobius/Clickable";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
+import Check from "@insite/mobius/Icons/Check";
+import RefreshCw from "@insite/mobius/Icons/RefreshCw";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import OverflowMenu from "@insite/mobius/OverflowMenu";
+import { SelectPresentationProps } from "@insite/mobius/Select";
+import { TextFieldProps } from "@insite/mobius/TextField";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     wishList: WishListModel;
@@ -48,19 +49,21 @@ interface OwnProps {
     product: ProductModelExtended;
     onDeleteClick: (wishListLine: WishListLineModel) => void;
     onEditNotesClick: (wishListLine: WishListLineModel) => void;
+    onUpdateQuantityClick: () => void;
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     isSelected: !!state.pages.myListDetails.selectedWishListLineIds.find(o => o === ownProps.wishListLine.id),
     settingsCollection: getSettingsCollection(state),
+    changedQuantity: state.pages.myListDetails.changedWishListLineQuantities[ownProps.wishListLine.id],
+    isQuantityUpdated: state.pages.myListDetails.wishListLinesWithUpdatedQuantity[ownProps.wishListLine.id],
 });
 
 const mapDispatchToProps = {
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
     updateWishListLineProduct,
-    changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
-    updateProduct,
+    setWishListLineQuantity,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -101,7 +104,10 @@ export interface MyListsDetailsProductListLineStyles {
     addToCartButton?: ButtonPresentationProps;
     deleteLinkHidden?: HiddenProps;
     deleteLink?: LinkPresentationProps;
-    updateSavedQuantityLink?: LinkPresentationProps;
+    updateQuantityWrapper?: InjectableCss;
+    updateQuantityLink?: LinkPresentationProps;
+    quantityUpdatedIcon?: IconPresentationProps;
+    quantityUpdatedText?: TypographyPresentationProps;
     restrictedDescriptionGridItem?: GridItemProps;
     restrictedDescriptionText?: TypographyPresentationProps;
     restrictedMessageText?: TypographyPresentationProps;
@@ -256,12 +262,28 @@ const styles: MyListsDetailsProductListLineStyles = {
         typographyProps: { size: 12 },
         css: css` margin-top: 10px; `,
     },
-    updateSavedQuantityLink: {
-        typographyProps: { size: 12 },
+    updateQuantityWrapper: {
         css: css`
+            display: flex;
             margin-top: 10px;
-            text-align: center;
         `,
+    },
+    updateQuantityLink: {
+        typographyProps: { size: 12 },
+        icon: {
+            iconProps: {
+                src: RefreshCw,
+                size: 12,
+            },
+        },
+    },
+    quantityUpdatedIcon: {
+        src: Check,
+        size: 16,
+        css: css` margin-right: 5px; `,
+    },
+    quantityUpdatedText: {
+        size: 12,
     },
     restrictedDescriptionGridItem: {
         width: [12, 12, 6, 6, 5],
@@ -279,25 +301,25 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     product,
     isSelected,
     settingsCollection,
+    changedQuantity,
+    isQuantityUpdated,
     onDeleteClick,
     onEditNotesClick,
+    onUpdateQuantityClick,
     changeProductUnitOfMeasure,
     setWishListLineIsSelected,
-    changeProductQtyOrdered,
-    updateProduct,
+    setWishListLineQuantity,
     updateWishListLineProduct,
 }) => {
-    const [quantity, setQuantity] = React.useState(product.qtyOrdered);
-    const quantityChangeHandler = async (value: string) => {
+    const [quantity, setQuantity] = React.useState(changedQuantity || product.qtyOrdered);
+    const quantityChangeHandler = (value: string) => {
         const newQuantity = parseFloat(value);
         setQuantity(newQuantity);
-
-        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: newQuantity });
-        updateProduct({ product: productToUpdate });
+        setWishListLineQuantity({
+            wishListLineId: wishListLine.id,
+            quantity: newQuantity === product.qtyOrdered || !newQuantity ? undefined : newQuantity,
+        });
     };
-    React.useEffect(() => {
-        setQuantity(product.qtyOrdered);
-    }, [product]);
 
     const uomChangeHandler = (value: string) => {
         changeProductUnitOfMeasure({
@@ -311,10 +333,6 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     product: updatedProduct });
             },
         });
-    };
-
-    const deleteClickHandler = (wishListLine: WishListLineModel) => {
-        onDeleteClick(wishListLine);
     };
 
     const selectChangeHandler: CheckboxProps["onChange"] = (_, value) => {
@@ -371,7 +389,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     {canEditWishList
                         && <Link
                             {...styles.restrictedRemoveItemLink}
-                            onClick={() => deleteClickHandler(wishListLine)}
+                            onClick={() => onDeleteClick(wishListLine)}
                             data-test-selector="removeRestricted"
                         >
                             {translate("Remove item")}
@@ -426,7 +444,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 && <GridItem {...styles.overflowMenuGridItem}>
                     <OverflowMenu position="end">
                         <Clickable onClick={() => onEditNotesClick(wishListLine)}>{translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}</Clickable>
-                        <Clickable onClick={() => deleteClickHandler(wishListLine)}>{translate("Delete")}</Clickable>
+                        <Clickable onClick={() => onDeleteClick(wishListLine)}>{translate("Delete")}</Clickable>
                     </OverflowMenu>
                 </GridItem>
             }
@@ -500,16 +518,30 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     data-test-selector="addToCart"
                 />
                 {canEditWishList
-                    && <Hidden {...styles.deleteLinkHidden}>
-                        <Link
-                            {...styles.deleteLink}
-                            onClick={() => deleteClickHandler(wishListLine)}
-                            data-test-selector="deleteListItem"
-                        >
-                            {translate("Delete")}
-                        </Link>
-                        <Link {...styles.updateSavedQuantityLink}>{translate("Update Saved Quantity")}</Link>
-                    </Hidden>
+                    && <>
+                        <Hidden {...styles.deleteLinkHidden}>
+                            <Link
+                                {...styles.deleteLink}
+                                onClick={() => onDeleteClick(wishListLine)}
+                                data-test-selector="deleteListItem"
+                            >
+                                {translate("Delete")}
+                            </Link>
+                        </Hidden>
+                        <StyledWrapper {...styles.updateQuantityWrapper}>
+                            {changedQuantity
+                                && <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
+                                    {translate("Update QTY")}
+                                </Link>
+                            }
+                            {isQuantityUpdated && !changedQuantity
+                                && <>
+                                    <Icon {...styles.quantityUpdatedIcon} />
+                                    <Typography {...styles.quantityUpdatedText}>{translate("QTY updated")}</Typography>
+                                </>
+                            }
+                        </StyledWrapper>
+                    </>
                 }
             </GridItem>
         </GridContainer>

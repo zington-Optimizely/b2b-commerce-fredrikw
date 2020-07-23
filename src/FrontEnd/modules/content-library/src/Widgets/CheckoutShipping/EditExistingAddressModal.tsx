@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import translate from "@insite/client-framework/Translate";
-import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import CustomerAddressForm, { CustomerAddressFormStyles } from "@insite/content-library/Components/CustomerAddressForm";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import translate from "@insite/client-framework/Translate";
+import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import CustomerAddressForm, { CustomerAddressFormStyles } from "@insite/content-library/Components/CustomerAddressForm";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import React, { useState } from "react";
+import { connect } from "react-redux";
 
 interface OwnProps {
     newAddress: ShipToModel;

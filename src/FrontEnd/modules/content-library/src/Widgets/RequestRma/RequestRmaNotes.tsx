@@ -1,16 +1,16 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetReturnNotes";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import React, { FC, useContext } from "react";
-import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaPage";
 import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ResolveThunks, connect } from "react-redux";
-import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetReturnNotes";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     returnNotes: state.pages.requestRma.returnNotes,

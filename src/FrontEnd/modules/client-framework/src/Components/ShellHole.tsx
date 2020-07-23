@@ -1,9 +1,9 @@
-import * as React from "react";
 import {
-    setupShellHole,
-    FrameHole, FrameHoleMessage,
+    FrameHole,
+    FrameHoleMessage, setupShellHole,
 } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import * as React from "react";
 
 let shellHole: FrameHole;
 const queuedMessages: {}[] = [];

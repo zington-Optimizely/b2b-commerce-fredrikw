@@ -1,9 +1,9 @@
+import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
 import { AddWishListResult } from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
-import { Draft } from "immer";
-import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import MyListsState from "@insite/client-framework/Store/Pages/MyLists/MyListsState";
 import { WishListCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: MyListsState = {
     getWishListsParameter: { page: 1, pageSize: 8, expand: ["top3products"], sort: "ModifiedOn DESC" },

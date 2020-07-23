@@ -2,11 +2,11 @@ import * as React from "react";
 import styled, { css } from "styled-components";
 import baseTheme, { BaseTheme } from "../globals/baseTheme";
 import { GridItemStyle } from "../GridItem/GridItem";
-import GridContext from "./GridContext";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import GridContext from "./GridContext";
 
 export type GridContainerProps = MobiusStyledComponentProps<"div", {
     /** CSS string or styled-components function to be injected into this component. */

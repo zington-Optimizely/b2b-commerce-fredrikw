@@ -1,7 +1,8 @@
+import getLocalizedCurrency from "@insite/client-framework/Common/Utilities/getLocalizedCurrency";
+import { getUnitListPrice, getUnitNetPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import translate from "@insite/client-framework/Translate";
 import { ProductPriceDto } from "@insite/client-framework/Types/ApiModels";
-import getLocalizedCurrency from "@insite/client-framework/Common/Utilities/getLocalizedCurrency";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import React, { FC } from "react";
 import { connect } from "react-redux";
@@ -11,6 +12,7 @@ type OwnProps = TypographyPresentationProps & {
     showSavingsAmount: boolean;
     showSavingsPercent: boolean;
     currencySymbol: string;
+    qtyOrdered?: number;
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -24,41 +26,30 @@ const ProductPriceSavingsMessage: FC<Props> = ({
     showSavingsAmount,
     showSavingsPercent,
     currencySymbol,
+    qtyOrdered = 1,
     language,
     ...otherProps
 }) => {
-    const hasPriceSavings = pricing.unitNetPrice < pricing.unitListPrice;
+    const { price: unitNetPrice } = getUnitNetPrice(pricing, qtyOrdered);
+    const { price: unitListPrice, priceDisplay: unitListPriceDisplay } = getUnitListPrice(pricing, qtyOrdered);
+    const hasPriceSavings = unitNetPrice < unitListPrice;
     if (!language || !pricing || !hasPriceSavings) {
         return null;
     }
 
-    let message = translate("Regular Price: {0}");
-    const savingsAmount = Math.round((pricing.unitListPrice - pricing.unitNetPrice) * 100) / 100;
-    const savingsPercent = Math.round((savingsAmount / pricing.unitListPrice) * 100);
+    const savingsAmount = Math.round((unitListPrice - unitNetPrice) * 100) / 100;
+    const localizedSavingsAmount = getLocalizedCurrency({ amount: savingsAmount, language, currencySymbol });
+    const savingsPercent = Math.round((savingsAmount / unitListPrice) * 100);
 
+    let message = "";
     if (showSavingsAmount && showSavingsPercent) {
-        message = translate("Regular Price: {0}, you save {1} ({2}%)")
-            .replace("{0}", pricing.unitListPriceDisplay)
-            .replace("{1}", getLocalizedCurrency({
-                amount: savingsAmount,
-                language,
-                currencySymbol,
-            }))
-            .replace("{2}", `${savingsPercent}`);
+        message = translate("Regular Price: {0}, you save {1} ({2}%)", unitListPriceDisplay, localizedSavingsAmount, `${savingsPercent}`);
     } else if (showSavingsPercent) {
-        message = translate("Regular Price: {0}, you save {1}%")
-            .replace("{0}", pricing.unitListPriceDisplay)
-            .replace("{1}", `${savingsPercent}`);
+        message = translate("Regular Price: {0}, you save {1}%", unitListPriceDisplay, `${savingsPercent}`);
     } else if (showSavingsAmount) {
-        message = translate("Regular Price: {0}, you save {1}")
-            .replace("{0}", pricing.unitListPriceDisplay)
-            .replace("{1}", getLocalizedCurrency({
-                amount: savingsAmount,
-                language,
-                currencySymbol,
-            }));
+        message = translate("Regular Price: {0}, you save {1}", unitListPriceDisplay, localizedSavingsAmount);
     } else {
-        message = message.replace("{0}", pricing.unitListPriceDisplay);
+        message = translate("Regular Price: {0}", unitListPriceDisplay);
     }
 
     return (<Typography {...otherProps} data-test-selector="productPriceSavingsMessage">

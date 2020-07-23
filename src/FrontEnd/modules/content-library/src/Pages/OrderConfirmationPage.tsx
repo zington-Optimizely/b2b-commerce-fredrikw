@@ -1,15 +1,15 @@
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
-import loadCart from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/LoadCart";
-import setIsPreloadingData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/SetIsPreloadingData";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import loadCart from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/LoadCart";
+import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/PreloadOrderConfirmationData";
+import setIsPreloadingData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/SetIsPreloadingData";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
-import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/PreloadOrderConfirmationData";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 const mapDispatchToProps = {
     loadOrder: loadCart,
@@ -55,7 +55,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

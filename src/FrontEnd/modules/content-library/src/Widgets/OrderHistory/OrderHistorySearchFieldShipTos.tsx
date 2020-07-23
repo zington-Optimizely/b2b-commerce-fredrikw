@@ -1,15 +1,15 @@
-import * as React from "react";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import loadCurrentShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTos";
+import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Select, { SelectProps } from "@insite/mobius/Select";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
-import translate from "@insite/client-framework/Translate";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
-import loadCurrentShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTos";
+import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import Select, { SelectProps } from "@insite/mobius/Select";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -72,7 +72,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Ship To",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

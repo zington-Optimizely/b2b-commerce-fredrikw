@@ -2,10 +2,10 @@ import * as React from "react";
 import styled, { css } from "styled-components";
 import baseTheme from "../globals/baseTheme";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import injectCss from "../utilities/injectCss";
-import resolveColor from "../utilities/resolveColor";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import resolveColor from "../utilities/resolveColor";
 
 export type PageProps = MobiusStyledComponentProps<"main", {
     /** CSS value of the background. */

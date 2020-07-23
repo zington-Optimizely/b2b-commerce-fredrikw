@@ -1,5 +1,5 @@
-import * as React from "react";
 import { CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import * as React from "react";
 
 export interface HasCategoryContext {
     category?: CategoryModel;

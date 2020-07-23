@@ -1,7 +1,7 @@
+import isApiError from "@insite/client-framework/Common/isApiError";
+import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { updateWishList as updateWishListApi, UpdateWishListApiParameter } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import { UpdateWishListApiParameter, updateWishList as updateWishListApi } from "@insite/client-framework/Services/WishListService";
-import { HandlerWithResult, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
 
 export interface UpdateWishListResult {
     wishList?: WishListModel;
@@ -20,9 +20,10 @@ type HandlerType = HandlerWithResult<
 export const DispatchBeginUpdateWishList: HandlerType = props => {
     const wishListId = props.parameter.apiParameter.wishListId || props.parameter.apiParameter.wishList?.id;
     if (!wishListId) {
-        return;
+        return false;
     }
 
+    props.result = {};
     props.dispatch({
         type: "Data/WishLists/BeginLoadWishList",
         wishListId,
@@ -31,13 +32,20 @@ export const DispatchBeginUpdateWishList: HandlerType = props => {
 
 export const CallUpdateWishListApi: HandlerType = async props => {
     try {
-        const wishList = await updateWishListApi(props.parameter.apiParameter);
-        props.result = { wishList };
+        props.result.wishList = await updateWishListApi(props.parameter.apiParameter);
     } catch (error) {
-        props.result = {
-            errorMessage: JSON.parse(error.body || "{}").message || error.message,
-        };
+        if (isApiError(error) && error.status === 400) {
+            props.result.errorMessage = error.errorJson.message;
+            return;
+        }
+        throw error;
     }
+};
+
+export const ResetWishListsData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
@@ -61,23 +69,13 @@ export const DispatchCompleteUpdateWishList: HandlerType = props => {
     }
 };
 
-export const LoadWishList: HandlerType = props => {
-    if (props.result.wishList) {
-        props.dispatch(loadWishList({
-            wishListId: props.result.wishList.id,
-            exclude: ["listLines"],
-            expand: ["schedule", "sharedUsers"],
-        }));
-    }
-};
-
 export const chain = [
     DispatchBeginUpdateWishList,
     CallUpdateWishListApi,
+    ResetWishListsData,
     ExecuteOnSuccessCallback,
     ExecuteOnErrorCallback,
     DispatchCompleteUpdateWishList,
-    LoadWishList,
 ];
 
 const updateWishList = createHandlerChainRunner(chain, "UpdateWishList");

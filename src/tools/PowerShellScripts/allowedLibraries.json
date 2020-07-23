@@ -28,6 +28,7 @@
                                         "System.EnterpriseServices":  null,
                                         "System.IdentityModel":  null,
                                         "System.Net":  null,
+                                        "System.Net.Http":  null,
                                         "System.Runtime.Caching":  null,
                                         "System.Runtime.Serialization":  null,
                                         "System.ServiceModel":  null,
@@ -132,6 +133,7 @@
                                         "Insite.Search.Elasticsearch":  null,
                                         "Insite.TaxCalculator.Vertex":  null,
                                         "Insite.Websites":  null,
+                                        "Insite.WIS.Broker": null,
                                         "Insite.WishLists":  null
                                     }
                   }
@@ -488,17 +490,6 @@
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "System.IdentityModel.Tokens.Jwt":  "4.0.20622.1351"
-                                    }
-                  }
-    },
-    {
-        "Name":  "System.Net.Http",
-        "Value":  {
-                      "PackageName":  "System.Net.Http",
-                      "PackageVersion":  "2.0.20126.16343",
-                      "PackageFramework":  "net40",
-                      "Libraries":  {
-                                        "System.Net.Http":  "2.0.0.0"
                                     }
                   }
     },

@@ -1,8 +1,8 @@
-import * as React from "react";
-import { ConfirmationContext, ConfirmationOptions } from "@insite/shell/Components/Modals/ConfirmationContext";
-import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
 import Button from "@insite/mobius/Button";
 import Modal from "@insite/mobius/Modal";
+import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
+import { ConfirmationContext, ConfirmationOptions } from "@insite/shell/Components/Modals/ConfirmationContext";
+import * as React from "react";
 import styled from "styled-components";
 
 interface State {

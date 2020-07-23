@@ -14,7 +14,7 @@ export const getUnitNetPrice = (pricing: ProductPriceDto, qtyOrdered: number) =>
     return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
 };
 
-const getUnitListPrice = (pricing: ProductPriceDto, qtyOrdered: number) => {
+export const getUnitListPrice = (pricing: ProductPriceDto, qtyOrdered: number) => {
     const price = getPrice(
         pricing.unitListBreakPrices,
         pricing.unitListPrice,

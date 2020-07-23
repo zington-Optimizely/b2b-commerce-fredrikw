@@ -1,8 +1,4 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import MobiusPage from "@insite/mobius/Page";
 import {
     ExcludeFromNavigation,
     ExcludeFromSignInRequired,
@@ -13,7 +9,11 @@ import {
     OpenGraphTitle,
     OpenGraphUrl,
 } from "@insite/client-framework/Types/FieldDefinition";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import MobiusPage from "@insite/mobius/Page";
+import * as React from "react";
 
 const Page: React.FunctionComponent<PageProps> = ({ id }) => (
     <MobiusPage>
@@ -27,7 +27,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableTitle: true,
         hasEditableUrlSegment: true,
-        isDeletable: true,
+        pageType: "Content",
         fieldDefinitions: [
             MetaKeywords,
             MetaDescription,

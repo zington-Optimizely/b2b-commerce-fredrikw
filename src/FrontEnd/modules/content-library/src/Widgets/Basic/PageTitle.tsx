@@ -1,10 +1,10 @@
-import * as React from "react";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Typography from "@insite/mobius/Typography";
+import * as React from "react";
 import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     pageTitle: getCurrentPage(state).fields.title,
@@ -23,7 +23,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "PageTitle",
-        isSystem: true,
     },
 };
 

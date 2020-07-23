@@ -16,7 +16,8 @@ export const selectBrand = (brandPath: string): AnyAction => ({
     brandPath,
 });
 
-export const setCMSPermissions = (permissions: PermissionsModel): AnyAction => ({
+export const setCMSPermissions = (permissions: PermissionsModel, canChangePage: boolean): AnyAction => ({
     type: "Context/CMSPermissions",
     permissions,
+    canChangePage,
 });

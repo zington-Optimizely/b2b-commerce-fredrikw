@@ -1,18 +1,18 @@
-import * as React from "react";
-import { css } from "styled-components";
-import { connect, ResolveThunks } from "react-redux";
-import loadAccountsReceivable from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/LoadAccountsReceivable";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import loadAccountsReceivable from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/LoadAccountsReceivable";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
+import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     accountsReceivable: getCurrentBillToState(state).value?.accountsReceivable,
@@ -88,7 +88,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Aging Buckets",
         allowedContexts: [InvoiceHistoryPageContext],
-        isSystem: true,
     },
 };
 

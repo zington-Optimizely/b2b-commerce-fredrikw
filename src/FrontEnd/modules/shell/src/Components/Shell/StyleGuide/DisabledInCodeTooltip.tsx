@@ -1,6 +1,6 @@
-import React from "react";
 import Tooltip, { TooltipComponentProps } from "@insite/mobius/Tooltip";
 import getColor from "@insite/mobius/utilities/getColor";
+import React from "react";
 import { css } from "styled-components";
 
 const DisabledInCodeTooltip: React.FC<Pick<TooltipComponentProps, "triggerComponent"> & { tooltipPosition?: "top" | "left" }> = (props) => (

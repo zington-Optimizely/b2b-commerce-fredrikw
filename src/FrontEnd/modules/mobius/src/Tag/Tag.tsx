@@ -2,17 +2,17 @@ import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
 import Button, { ButtonIcon } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
-import VisuallyHidden from "../VisuallyHidden";
 import { IconProps } from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getContrastColor from "../utilities/getContrastColor";
-import resolveColor from "../utilities/resolveColor";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
-import omitSingle from "../utilities/omitSingle";
-import safeColor from "../utilities/safeColor";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import omitSingle from "../utilities/omitSingle";
+import resolveColor from "../utilities/resolveColor";
+import safeColor from "../utilities/safeColor";
+import VisuallyHidden from "../VisuallyHidden";
 
 export interface TagPresentationProps {
     /** Props to be passed into the inner Icon component.

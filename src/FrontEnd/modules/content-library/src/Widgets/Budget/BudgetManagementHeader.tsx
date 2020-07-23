@@ -1,19 +1,19 @@
-import * as React from "react";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setDisplayedWidgetName from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetDisplayedWidgetName";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BudgetManagementPageContext } from "@insite/content-library/Pages/BudgetManagementPage";
 import Button, { ButtonProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import setDisplayedWidgetName from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetDisplayedWidgetName";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import { IconPresentationProps } from "@insite/mobius/Icon";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({

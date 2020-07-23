@@ -88,6 +88,33 @@
                                                 <isc-availability-message availability="product.availability" failed-to-get-real-time-inventory="vm.failedToGetRealTimeInventory" product-settings="vm.settings" product-id="product.id" unit-of-measure="product.unitOfMeasure" track-inventory="product.trackInventory"></isc-availability-message>
                                             </div>
                                             <isc-sorted-attribute-value-list ng-if="product.attributeTypes.length > 0 || product.brand" attribute-types="product.attributeTypes" maximum-number="3" class="attribute-list"></isc-sorted-attribute-value-list>
+                                            <div class="search-data" ng-if="vm.showSearchData && (vm.query || vm.searchWithinTerms.length > 0)">
+                                                <div>
+                                                    <span class="search-data-field">[% translate 'Search Data' %]</span>
+                                                    <a ng-click="vm.toggleExpandedSearchData()">{{vm.showExpandedSearchData ? "[% translate 'Show Less' %]" : "[% translate 'View More' %]"}}</a>
+                                                </div>
+                                                <div>
+                                                    <span class="search-data-field tst_search_data_score">[% translate 'Score' %]:</span><span>{{product.score}}</span>
+                                                </div>
+                                                <div ng-if="product.scoreExplanation">
+                                                    <span class="search-data-field tst_search_data_fields">[% translate 'Matching Fields' %]:</span>
+                                                    <span>{{vm.matchingFields(product)}}</span>
+                                                </div>
+                                                <div ng-if="vm.showExpandedSearchData" class="search-data-view-more-section">
+                                                    <div>
+                                                        <span class="search-data-field">[% translate 'Total Boost' %]:</span><span>{{product.scoreExplanation.totalBoost}}</span>
+                                                    </div>
+                                                    <div ng-if="product.isSponsored">
+                                                        <span class="search-data-field">Sponsored Boost Active</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="search-data-field">Field Scores</span>
+                                                    </div>
+                                                    <div ng-repeat="score in product.scoreExplanation.aggregateFieldScores" ng-if="score.score != 0">
+                                                        <span class="search-field-score">{{score.name}}:</span><span>{{score.score}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="item-price" ng-if="!vm.failedToGetRealTimePrices">
                                             <div class="product-info">

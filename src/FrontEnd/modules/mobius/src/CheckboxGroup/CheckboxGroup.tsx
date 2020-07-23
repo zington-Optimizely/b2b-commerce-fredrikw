@@ -1,16 +1,16 @@
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
-import CheckboxGroupContext from "./CheckboxGroupContext";
-import { CheckboxStyle, checkboxSizes } from "../Checkbox";
+import styled, { ThemeProps, withTheme } from "styled-components";
+import { checkboxSizes, CheckboxStyle } from "../Checkbox";
+import { BaseTheme } from "../globals/baseTheme";
 import Typography from "../Typography";
 import TypographyStyle from "../Typography/TypographyStyle";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { FieldSetGroupPresentationProps } from "../utilities/fieldSetProps";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
-import { FieldSetGroupPresentationProps } from "../utilities/fieldSetProps";
-import { BaseTheme } from "../globals/baseTheme";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import CheckboxGroupContext from "./CheckboxGroupContext";
 
 export type CheckboxGroupComponentProps = MobiusStyledComponentProps<"fieldset", {
     /** Error message to be displayed below the CheckboxGroup. */

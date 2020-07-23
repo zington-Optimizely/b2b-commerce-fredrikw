@@ -1,4 +1,5 @@
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { ListFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import Button from "@insite/mobius/Button";
 import Drag from "@insite/shell/Components/Icons/Drag";
@@ -11,7 +12,6 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import styled, { css } from "styled-components";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 
 interface State {
     hasValidationErrors: boolean;

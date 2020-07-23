@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import translate from "@insite/client-framework/Translate";
+import Link from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { css } from "styled-components";
-import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Link from "@insite/mobius/Link";
-import translate from "@insite/client-framework/Translate";
 
 export interface AddressInfoDisplayStyles {
     wrapper?: InjectableCss;

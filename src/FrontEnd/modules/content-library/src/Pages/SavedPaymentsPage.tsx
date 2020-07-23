@@ -1,15 +1,15 @@
-import * as React from "react";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import { connect, ResolveThunks } from "react-redux";
-import Page from "@insite/mobius/Page";
 import Zone from "@insite/client-framework/Components/Zone";
-import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
-import loadPaymentProfiles from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/LoadPaymentProfiles";
-import SavedPaymentsEditCardModal from "@insite/content-library/Widgets/SavedPayments/SavedPaymentsEditCardModal";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
+import loadPaymentProfiles from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/LoadPaymentProfiles";
 import { getPaymentProfilesDataView } from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesSelectors";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import SavedPaymentsEditCardModal from "@insite/content-library/Widgets/SavedPayments/SavedPaymentsEditCardModal";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     countries: getCurrentCountries(state),
@@ -65,7 +65,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

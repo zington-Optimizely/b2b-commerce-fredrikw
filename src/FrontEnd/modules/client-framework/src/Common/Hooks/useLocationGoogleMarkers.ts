@@ -1,6 +1,6 @@
+import { LocationModel } from "@insite/client-framework/Common/Hooks/useLocationFilterSearch";
 import { PaginationModel } from "@insite/client-framework/Types/ApiModels";
 import React from "react";
-import { LocationModel } from "@insite/client-framework/Common/Hooks/useLocationFilterSearch";
 
 interface Props<M extends LocationModel> {
     locations: M[];

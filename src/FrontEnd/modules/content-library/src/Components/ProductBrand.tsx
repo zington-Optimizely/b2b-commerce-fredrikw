@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
+import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
 import { BrandDto } from "@insite/client-framework/Types/ApiModels";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
 
 interface OwnProps {
     brand: BrandDto;

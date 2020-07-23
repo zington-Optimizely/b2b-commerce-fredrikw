@@ -1,12 +1,13 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import { readFile, readdir, access, constants } from "fs";
-import { promisify } from "util";
-import { setupPageModel } from "@insite/shell/Services/PageCreation";
-import { PageModel } from "@insite/client-framework/Types/PageProps";
-import { saveInitialPages, getWebsiteRequiresGeneration, getNodeIdForPageName } from "@insite/client-framework/Services/ContentService";
-import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import logger from "@insite/client-framework/Logger";
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import logger from "@insite/client-framework/Logger";
+import { getNodeIdForPageName } from "@insite/client-framework/Services/ContentService";
+import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { PageModel } from "@insite/client-framework/Types/PageProps";
+import { getSiteGenerationData, saveInitialPages } from "@insite/server-framework/InternalService";
+import { setupPageModel } from "@insite/shell/Services/PageCreation";
+import { access, constants, readdir, readFile } from "fs";
+import { promisify } from "util";
 
 const readFileAsync = promisify(readFile);
 const readDirAsync = promisify(readdir);
@@ -101,7 +102,11 @@ async function loadPageCreators(pageCreatorsPath: string, pageCreatorsByParent: 
         if (pageCreator.parentType === pageCreator.type) {
             logOrThrow(`The pageCreator at ${filePath} had a "parentType" of "${pageCreator.parentType}" which matches the type it is trying to create.`);
         }
-        if (!pageCreator.parentType && pageCreator.type !== "HomePage" && pageCreator.type !== "Header" && pageCreator.type !== "Footer") {
+        if (!pageCreator.parentType
+            && pageCreator.type !== "HomePage"
+            && pageCreator.type !== "Header"
+            && pageCreator.type !== "Footer"
+            && pageCreator.type !== "RobotsTxtPage") {
             logOrThrow(`The pageCreator at ${filePath} did not contain a value for "parentType"`);
             continue;
         }
@@ -117,7 +122,7 @@ async function loadPageCreators(pageCreatorsPath: string, pageCreatorsByParent: 
 }
 
 export async function generateSiteIfNeeded() {
-    const pageGenerationSettings: PageGenerationSettings = { ...(await getWebsiteRequiresGeneration()), pages: [] };
+    const pageGenerationSettings: PageGenerationSettings = { ...(await getSiteGenerationData()), pages: [] };
     const pageTypeToNodeId: SafeDictionary<string> = {};
     for (const pageType in pageGenerationSettings.pageTypeToNodeId) {
         pageTypeToNodeId[pageType.substring(0, 1).toUpperCase() + pageType.substring(1)] = pageGenerationSettings.pageTypeToNodeId[pageType];
@@ -135,7 +140,7 @@ export async function generateSiteIfNeeded() {
         if (pageCreator.parentType) {
             parentId = pageTypeToNodeId[pageCreator.parentType];
             if (!parentId) {
-                logOrThrow(`The pageCreator for ${pageCreator.type} specified a parentType of ${pageCreator.parentType} but that page was not found`);
+                logOrThrow(`The pageCreator for ${pageCreator.type} specified a parentType of ${pageCreator.parentType} but that page was not found.`);
                 continue;
             }
         }
@@ -158,7 +163,7 @@ export async function generateSiteIfNeeded() {
         const pageType = match[1];
         const pageKey = pageTypeToNodeId[pageType];
         if (typeof pageKey === "undefined") {
-            logOrThrow(`A page template specified ${fullThing} but there was no page found for the type ${pageType}`);
+            logOrThrow(`A page template specified ${fullThing} but there was no page found for the type ${pageType}.`);
             return;
         }
         pagesString = pagesString.replace(fullThing, pageKey);

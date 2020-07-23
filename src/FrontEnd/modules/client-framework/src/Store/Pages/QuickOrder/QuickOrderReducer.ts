@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
 import { Draft } from "immer";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 const initialState: QuickOrderState = {
     total: 0,

@@ -1,8 +1,8 @@
-import * as React from "react";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
 import { MultilineTextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import TextArea from "@insite/mobius/TextArea";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 export default class MultilineTextField extends React.Component<ContentItemFieldProps<string, MultilineTextFieldDefinition>> {
 

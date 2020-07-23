@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
-import AddToListModalState from "@insite/client-framework/Store/Components/AddToListModal/AddToListModalState";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import AddToListModalState from "@insite/client-framework/Store/Components/AddToListModal/AddToListModalState";
+import { Draft } from "immer";
 
 const initialState: AddToListModalState = {
     isOpen: false,

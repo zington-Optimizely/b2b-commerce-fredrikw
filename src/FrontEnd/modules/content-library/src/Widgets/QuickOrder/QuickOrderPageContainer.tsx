@@ -1,11 +1,11 @@
-import * as React from "react";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import * as React from "react";
 import { css } from "styled-components";
 
 export interface QuickOrderPageContainerStyles {
@@ -68,7 +68,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Container",
         group: "Quick Order",
         allowedContexts: [QuickOrderPageContext],
-        isSystem: true,
     },
 };
 

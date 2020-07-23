@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { getBreakPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import cloneDeep from "lodash/cloneDeep";
 
 export interface ChangeProductQtyOrderedParameter extends HasOnSuccess<ProductModelExtended> {

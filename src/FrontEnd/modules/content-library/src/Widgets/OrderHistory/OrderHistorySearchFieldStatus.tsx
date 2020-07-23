@@ -1,14 +1,14 @@
-import * as React from "react";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
 import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Select, { SelectProps } from "@insite/mobius/Select";
-import translate from "@insite/client-framework/Translate";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
-import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -70,7 +70,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Status",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

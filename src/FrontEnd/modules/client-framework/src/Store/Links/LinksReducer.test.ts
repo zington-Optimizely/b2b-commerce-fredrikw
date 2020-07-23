@@ -1,5 +1,5 @@
-import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 
 test("CompleteLoadCategories with no root categories doesn't try to load more categories", () => {
     const state = LinksReducer(undefined, {

@@ -1,6 +1,6 @@
-import { GetWishListApiParameter, getWishList } from "@insite/client-framework/Services/WishListService";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { getWishList, GetWishListApiParameter } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 export interface LoadWishListResult {
     apiResult: WishListModel;

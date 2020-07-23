@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { OrderCollectionModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
-import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { OrdersState } from "@insite/client-framework/Store/Data/Orders/OrdersState";
+import { OrderCollectionModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: OrdersState = {
     isLoading: {},

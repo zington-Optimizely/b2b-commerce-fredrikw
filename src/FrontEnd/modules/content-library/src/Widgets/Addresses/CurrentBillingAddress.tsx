@@ -1,22 +1,22 @@
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import * as React from "react";
-import AddressInfoDisplay from "@insite/content-library/Components/AddressInfoDisplay";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import { BillToModel } from "@insite/client-framework/Types/ApiModels";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import CustomerAddressForm from "@insite/content-library/Components/CustomerAddressForm";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import translate from "@insite/client-framework/Translate";
-import { AddressesPageContext } from "@insite/content-library/Pages/AddressesPage";
+import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import updateBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/UpdateBillTo";
-import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import translate from "@insite/client-framework/Translate";
+import { BillToModel } from "@insite/client-framework/Types/ApiModels";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import AddressInfoDisplay from "@insite/content-library/Components/AddressInfoDisplay";
+import CustomerAddressForm from "@insite/content-library/Components/CustomerAddressForm";
+import { AddressesPageContext } from "@insite/content-library/Pages/AddressesPage";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {}
 
@@ -139,7 +139,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Addresses",
         allowedContexts: [AddressesPageContext],
-        isSystem: true,
     },
 };
 

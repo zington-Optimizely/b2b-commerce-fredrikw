@@ -1,22 +1,22 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import shareProduct from "@insite/client-framework/Store/CommonHandlers/ShareProduct";
+import translate from "@insite/client-framework/Translate";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
-import shareProduct from "@insite/client-framework/Store/CommonHandlers/ShareProduct";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends HasProductContext {
     text?: string;

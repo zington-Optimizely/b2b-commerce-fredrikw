@@ -1,15 +1,15 @@
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { FacetModel } from "@insite/client-framework/Types/ApiModels";
-import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
-import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { productListCategoryFiltersStyles } from "@insite/content-library/Widgets/ProductList/ProductListCategoryFilters";
 import ProductListFiltersAccordionSection, { ProductListFilterAccordionSectionStyles }
     from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
-import { productListCategoryFiltersStyles } from "@insite/content-library/Widgets/ProductList/ProductListCategoryFilters";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const enum fields {
     expandByDefault = "expandByDefault",
@@ -77,7 +77,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Attribute Filters",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.expandByDefault,

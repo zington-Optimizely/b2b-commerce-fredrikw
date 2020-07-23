@@ -1,12 +1,12 @@
-import React from "react";
-import { ImagePickerFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import Button from "@insite/mobius/Button";
 import translate from "@insite/client-framework/Translate";
-import styled, { css } from "styled-components";
-import MobiusTextField from "@insite/mobius/TextField";
+import { ImagePickerFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
+import Button from "@insite/mobius/Button";
 import Scrim from "@insite/mobius/Overlay/Scrim";
+import MobiusTextField from "@insite/mobius/TextField";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import React from "react";
+import styled, { css } from "styled-components";
 
 type Props = ContentItemFieldProps<string, ImagePickerFieldDefinition>;
 

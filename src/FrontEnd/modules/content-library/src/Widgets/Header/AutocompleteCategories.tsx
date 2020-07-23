@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
-import translate from "@insite/client-framework/Translate";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { css } from "styled-components";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import translate from "@insite/client-framework/Translate";
 import { AutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React, { Fragment } from "react";
+import { css } from "styled-components";
 
 interface Props {
     categories: AutocompleteItemModel[] | null;

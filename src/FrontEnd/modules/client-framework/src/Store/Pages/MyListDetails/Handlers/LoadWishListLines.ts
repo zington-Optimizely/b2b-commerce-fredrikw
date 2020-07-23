@@ -1,16 +1,16 @@
-import { GetWishListLinesApiParameter, getWishListLines } from "@insite/client-framework/Services/WishListService";
-import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
+import sleep from "@insite/client-framework/Common/Sleep";
 import {
-    HasOnSuccess,
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
+    HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import cloneDeep from "lodash/cloneDeep";
-import sleep from "@insite/client-framework/Common/Sleep";
+import { getWishListLines, GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
+import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
+import cloneDeep from "lodash/cloneDeep";
 
 type GetWishListLinesParameter = HasOnSuccess;
 
@@ -89,6 +89,7 @@ export const LoadRealTimeInventory: HandlerType = props => {
             onSuccess: realTimeInventory => {
                 realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
                     products.filter(p => p.id === inventory.productId).forEach(product => {
+                        product.qtyOnHand = inventory.qtyOnHand;
                         product.availability = inventory.inventoryAvailabilityDtos
                             ?.find(o => o.unitOfMeasure.toLowerCase() === product.unitOfMeasure.toLowerCase())?.availability || undefined;
                         product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;

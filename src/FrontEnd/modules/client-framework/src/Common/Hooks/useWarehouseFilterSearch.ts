@@ -1,6 +1,6 @@
+import { getGeoCodeFromAddress, getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
 import { GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import { getGeoCodeFromAddress, getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
 import * as React from "react";
 
 interface Props {

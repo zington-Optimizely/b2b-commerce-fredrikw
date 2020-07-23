@@ -1,6 +1,6 @@
-import * as React from "react";
 import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import * as React from "react";
 
 const TabbedPropertiesWidget: React.FC = () => <div>Dummy Content</div>;
 

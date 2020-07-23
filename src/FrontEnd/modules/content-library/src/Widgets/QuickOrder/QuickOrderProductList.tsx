@@ -1,37 +1,37 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
 import calculateTotal from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/CalculateTotal";
 import changeProductQty from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ChangeProductQty";
 import removeProduct from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/RemoveProduct";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
 import CardList from "@insite/content-library/Components/CardList";
+import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
+import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
+import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
+import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
+import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
 import XCircle from "@insite/mobius/Icons/XCircle";
-import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
-import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import { TextFieldProps } from "@insite/mobius/TextField";
-import translate from "@insite/client-framework/Translate";
-import getColor from "@insite/mobius/utilities/getColor";
-import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     products: state.pages.quickOrder.products,
@@ -277,7 +277,6 @@ const widgetModule: WidgetModule = {
         group: "Quick Order",
         icon: "List",
         allowedContexts: [QuickOrderPageContext],
-        isSystem: true,
     },
 };
 

@@ -1,19 +1,19 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { CategoriesFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import { SelectCategoryModel } from "@insite/shell/Store/PageEditor/PageEditorState";
-import { loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import Checkbox from "@insite/mobius/Checkbox";
-import styled, { css } from "styled-components";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { Dictionary } from "@insite/client-framework/Common/Types";
+import { CategoriesFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
+import Checkbox from "@insite/mobius/Checkbox";
+import TextField from "@insite/mobius/TextField";
+import Typography from "@insite/mobius/Typography";
 import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import ArrowRight from "@insite/shell/Components/Icons/ArrowRight";
-import TextField from "@insite/mobius/TextField";
-import { Dictionary } from "@insite/client-framework/Common/Types";
-import Typography from "@insite/mobius/Typography";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import { loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { SelectCategoryModel } from "@insite/shell/Store/PageEditor/PageEditorState";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface SelectCategoryModelExtended extends SelectCategoryModel {
     filterStr: string;

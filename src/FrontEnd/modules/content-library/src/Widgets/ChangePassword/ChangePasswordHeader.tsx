@@ -1,10 +1,10 @@
-import React, { FC } from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import translate from "@insite/client-framework/Translate";
 import ChangePasswordActions from "@insite/content-library/Widgets/ChangePassword/ChangePasswordActions";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 import { css } from "styled-components";
 
 interface OwnProps {

@@ -1,17 +1,17 @@
-import React, { FC, useState } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import { css } from "styled-components";
 import Search from "@insite/mobius/Icons/Search";
-import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -109,7 +109,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Search Within",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

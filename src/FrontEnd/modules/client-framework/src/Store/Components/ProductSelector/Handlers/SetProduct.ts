@@ -1,16 +1,16 @@
-import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
 import {
-    getProductById,
-    ProductModelExtended,
-    GetProductByIdApiV2Parameter,
-    getVariantChildren, getVariantChild,
     ConfigurationType,
-    getProductCollectionV2,
+    getProductById,
+    GetProductByIdApiV2Parameter,
+    getProductCollectionV2, getVariantChild,
+    getVariantChildren,
+    ProductModelExtended,
 } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
 interface SetProductParameter {
     product?: ProductModelExtended;

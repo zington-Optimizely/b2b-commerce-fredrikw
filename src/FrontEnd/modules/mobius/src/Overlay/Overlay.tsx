@@ -4,10 +4,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Keyframes }from "styled-components";
 import { ZIndex } from "../globals/baseTheme";
-import * as ariaAppHider from "./helpers/ariaAppHider";
-import OverlayManager from "./OverlayManager";
 import { StyledProp } from "../utilities/InjectableCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import * as ariaAppHider from "./helpers/ariaAppHider";
+import OverlayManager from "./OverlayManager";
 
 export interface Transition {
     enabled: boolean;

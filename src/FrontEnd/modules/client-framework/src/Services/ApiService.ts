@@ -1,7 +1,7 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import logger from "@insite/client-framework/Logger";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { BaseModel } from "@insite/client-framework/Types/ApiModels";
-import logger from "@insite/client-framework/Logger";
 
 /** The API URL fragment used to reference the current resource, relative to the session. */
 export const API_URL_CURRENT_FRAGMENT = "current";
@@ -62,7 +62,7 @@ export function get<T>(endpoint: string, parameter: ApiParameter = {}, queryStri
     return request<T>(endpoint + queryString, "GET");
 }
 
-export function post<Parameter, Result=Parameter>(endpoint: string, model?: Parameter) {
+export function post<Parameter, Result = Parameter>(endpoint: string, model?: Parameter) {
     return request<Result>(endpoint, "POST", { "Content-Type": "application/json" }, model ? JSON.stringify(model) : undefined);
 }
 
@@ -76,23 +76,27 @@ export function del(endpoint: string, isStatusOkay?: (status: number) => boolean
 
 export class ApiError extends Error {
     url: string;
-    message: string;
+    errorMessage: string;
     status: number;
     errorJson: any;
 
-    constructor(url: string, response: Response, message: string, errorJson: any) {
-        super(`${response.status} ${response.statusText} from ${url} is considered an error.`);
+    constructor(url: string, response: Response, errorMessage: string, errorJson: any) {
+        super(`Request to ${url} resulted in a error status ${response.status}. \n`
+            + `${errorMessage !== "" ? `errorMessage: ${errorMessage} \n` : ""}`
+            + `${errorJson ? `errorJson: ${JSON.stringify(errorJson, null, 1)} \n` : ""}`
+            + `response: ${JSON.stringify(response, null, 1)}`);
 
         this.url = url;
-        this.message = message;
+        this.errorMessage = errorMessage;
         this.status = response.status;
         this.errorJson = errorJson;
     }
+
 }
 
 const adminEndpoints = [
     "api/v1/admin",
-    "api/v2/contentadmin/",
+    "api/internal/contentadmin",
     ".spire/",
 ] as const;
 const isAdminEndpoint = (endpoint: string) => adminEndpoints.filter(a => endpoint.toLowerCase().includes(a)).length > 0;

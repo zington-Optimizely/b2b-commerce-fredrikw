@@ -1,21 +1,21 @@
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import * as React from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
+import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
+import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
+import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer from "@insite/content-library/Components/CardContainer";
 import CardList from "@insite/content-library/Components/CardList";
 import CardListHeading from "@insite/content-library/Components/CardListHeading";
-import CardContainer from "@insite/content-library/Components/CardContainer";
-import siteMessage from "@insite/client-framework/SiteMessage";
 import WishListCard, { WishListCardStyles } from "@insite/content-library/Components/WishListCard";
-import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
-import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
-import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
@@ -109,7 +109,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.numberOfRecords,

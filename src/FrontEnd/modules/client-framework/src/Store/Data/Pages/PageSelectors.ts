@@ -1,5 +1,5 @@
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 

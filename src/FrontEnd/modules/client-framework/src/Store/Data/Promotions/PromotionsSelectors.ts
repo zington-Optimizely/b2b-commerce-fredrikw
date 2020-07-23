@@ -1,7 +1,7 @@
-import { getDataView } from "@insite/client-framework/Store/Data/DataState";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
-import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getDataView } from "@insite/client-framework/Store/Data/DataState";
+import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 
 export function getCurrentPromotionsDataView(state: ApplicationState) {
     return getPromotionsDataView(state, API_URL_CURRENT_FRAGMENT);

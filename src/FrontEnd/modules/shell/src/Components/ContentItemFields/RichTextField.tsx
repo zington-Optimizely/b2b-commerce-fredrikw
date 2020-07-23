@@ -1,11 +1,11 @@
 import { RichTextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
+import RichTextEditor from "@insite/shell/Components/Elements/RichTextEditor";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/xml/xml.js";
-import * as React from "react";
 import "font-awesome/css/font-awesome.css";
-import RichTextEditor from "@insite/shell/Components/Elements/RichTextEditor";
+import * as React from "react";
 
 type Props = ContentItemFieldProps<string, RichTextFieldDefinition>;
 

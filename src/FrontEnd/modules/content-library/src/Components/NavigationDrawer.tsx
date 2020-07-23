@@ -1,14 +1,21 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import styled, { css } from "styled-components";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import { createWidgetElement } from "@insite/client-framework/Components/ContentItemStore";
+import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { mapLinks, LinkModel, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import setInitialValues from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetInitialValues";
+import { getCurrencies, getFulfillmentLabel, getLanguages, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
+import { getHeader, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getWidgetsByPageId } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
+import { getPageLinkByPageType, LinkModel, mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
 import Drawer, { DrawerPresentationProps, DrawerProps } from "@insite/mobius/Drawer";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Icon, { IconProps } from "@insite/mobius/Icon";
 import Globe from "@insite/mobius/Icons/Globe";
 import MapPin from "@insite/mobius/Icons/MapPin";
@@ -18,16 +25,14 @@ import { MappedLink } from "@insite/mobius/Menu";
 import PanelMenu, { PanelMenuPresentationProps } from "@insite/mobius/PanelMenu";
 import PanelRow, { PanelRowPresentationProps } from "@insite/mobius/PanelMenu/PanelRow";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import omitSingle from "@insite/mobius/utilities/omitSingle";
-import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
-import { getCurrencies, getLanguages } from "@insite/client-framework/Store/Context/ContextSelectors";
-import translate from "@insite/client-framework/Translate";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { getHeader } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getWidgetsByPageId } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
+
 
 const mapStateToProps = (state: ApplicationState) => {
     const linkListStateLinks = getWidgetsByPageId(state, getHeader(state).id).find(
@@ -42,6 +47,7 @@ const mapStateToProps = (state: ApplicationState) => {
         currentCurrencySymbol: state.context.session.currency?.currencySymbol,
         languages: getLanguages(state),
         currentLanguage: state.context.session.language,
+        currentLocation: getLocation(state),
         isSigningIn: state.context.isSigningIn,
         userName: state.context.session?.userName,
         isGuest: state.context.session?.isGuest,
@@ -50,6 +56,8 @@ const mapStateToProps = (state: ApplicationState) => {
         headerLinkListLinks: mapLinks<LinkModel, { openInNewWindow: boolean }>(state, linkListStateLinks, (widgetLink) => ({
             openInNewWindow: widgetLink.fields.openInNewWindow,
         })),
+        showCustomerMenuItem: getSettingsCollection(state).accountSettings.enableWarehousePickup,
+        fulfillmentLabel: getFulfillmentLabel(state),
     };
 };
 
@@ -57,6 +65,7 @@ const mapDispatchToProps = {
     setCurrency,
     setLanguage,
     signOut,
+    setInitialValues,
 };
 
 interface OwnProps {
@@ -65,7 +74,7 @@ interface OwnProps {
     quickOrderLink: PageLinkModel | undefined;
 }
 
-interface NavigationDrawerState {
+interface NavigationDrawerState extends Pick<NavigationDrawerProps, "currentLocation"> {
     open: boolean;
 }
 
@@ -84,6 +93,12 @@ export interface NavigationDrawerStyles {
     mainNavigationRowTypography?: TypographyPresentationProps;
     logoLinks?: PanelRowPresentationProps & { typographyProps: TypographyPresentationProps };
     currencySymbol?: TypographyPresentationProps;
+    changeCustomerRow?: PanelRowPresentationProps;
+    changeCustomerRowContainer?: GridContainerProps;
+    fulfillmentMethodGridItem?: GridItemProps;
+    addressesGridItem?: GridItemProps;
+    pickUpAddressGridItem?: GridItemProps;
+    applyButtonGridItem?: GridItemProps;
 }
 
 const StyledSection = getStyledWrapper("section");
@@ -97,7 +112,10 @@ const styles: NavigationDrawerStyles = {
     },
     drawer: {
         size: 300,
-        cssOverrides: { drawerContent: css` margin-top: -2px; ` },
+        cssOverrides: { drawerContent: css`
+            margin-top: -2px;
+            overflow-x: hidden;
+        ` },
     },
     drawerSectionWrapper: {
         css: css`
@@ -167,6 +185,7 @@ const styles: NavigationDrawerStyles = {
     logoLinks: {
         color: "common.accent",
         typographyProps: {
+            ellipsis: true,
             transform: "uppercase",
         },
         css: css` margin: 2px; `,
@@ -182,6 +201,14 @@ const styles: NavigationDrawerStyles = {
             vertical-align: middle;
         `,
     },
+    changeCustomerRow: {
+        css: css` &:focus { outline: none; } `,
+    },
+    changeCustomerRowContainer: { gap: 15 },
+    fulfillmentMethodGridItem: { width: 12 },
+    addressesGridItem: { width: 12 },
+    pickUpAddressGridItem: { width: 12 },
+    applyButtonGridItem: { width: 12 },
 };
 
 export const navigationDrawerStyles = styles;
@@ -191,11 +218,23 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
         super(props);
         this.state = {
             open: false,
+            currentLocation: props.currentLocation,
         };
     }
 
+    static getDerivedStateFromProps(nextProps: NavigationDrawerProps, prevState: NavigationDrawerState) {
+        if (prevState.open) {
+            const nextPage = nextProps.currentLocation;
+            const currentPage = prevState.currentLocation;
+            if (nextPage !== currentPage) {
+                return { open: false, currentLocation: nextPage };
+            }
+        }
+        return null;
+    }
+
     openDrawer = () => {
-        this.setState({ open: true });
+        this.setState({ open: true }, () => this.props.setInitialValues({}));
     };
 
     closeDrawer = () => {
@@ -218,7 +257,12 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
             isGuest,
             myAccountPageLink,
             signInUrl,
+            currentLocation,
+            showCustomerMenuItem,
+            fulfillmentLabel,
         } = this.props;
+
+        const currentPageUrl = currentLocation.pathname;
 
         return (
             <>
@@ -236,6 +280,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                     <StyledSection {...styles.drawerSectionWrapper}>
                         {userName && !isGuest
                             ? <PanelMenu
+                                currentUrl={currentPageUrl}
                                 panelTrigger={
                                     <PanelRow hasChildren {...styles.mainNavigationRow}>
                                         <StyledSpan {...styles.panelSectionWrapper}>
@@ -252,7 +297,11 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 layer={0}
                                 {...styles.panelMenu}
                             />
-                            : <PanelRow {...styles.mainNavigationRow} href={signInUrl?.url}>
+                            : <PanelRow
+                                {...styles.mainNavigationRow}
+                                isCurrent={currentPageUrl === signInUrl?.url}
+                                onClick={currentPageUrl === signInUrl?.url ? this.closeDrawer : undefined}
+                                href={signInUrl?.url}>
                                 <StyledSpan {...styles.panelSectionWrapper}>
                                     <Icon src={User} {...styles.mainNavigationRowIcon} />
                                     <Typography {...styles.userRowTypography}>
@@ -268,6 +317,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                     <PanelMenu
                                         // eslint-disable-next-line react/no-array-index-key
                                         key={index}
+                                        currentUrl={currentPageUrl}
                                         closeOverlay={this.closeDrawer}
                                         panelTrigger={
                                             <PanelRow hasChildren {...styles.mainNavigationRow}>
@@ -295,6 +345,8 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                         })}
                         { showQuickOrder && quickOrderLink && (
                             <PanelRow
+                                isCurrent={currentPageUrl === quickOrderLink.url}
+                                onClick={currentPageUrl === quickOrderLink.url ? this.closeDrawer : undefined}
                                 href={quickOrderLink.url}
                                 {...styles.mainNavigationRow}
                             >
@@ -307,6 +359,8 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                             <PanelRow
                                 key={link.title}
                                 {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
+                                isCurrent={currentPageUrl === link.url}
+                                onClick={currentPageUrl === link.url ? this.closeDrawer : undefined}
                                 href={link.url}
                                 target={link.openInNewWindow ? "_blank" : ""}
                             >
@@ -352,12 +406,41 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 : <Icon src={Globe} {...styles.menuRowIcon} />
                             }
                         />
-                        <PanelRow {...styles.logoLinks} color="common.accent">
-                            <Typography {...styles.logoLinks?.typographyProps}>
-                                <Icon src={MapPin} {...styles.menuRowIcon} />
-                                Ship To address
-                            </Typography>
-                        </PanelRow>
+                        {showCustomerMenuItem
+                            && <PanelMenu
+                                {...styles.panelMenu}
+                                panelTrigger={
+                                    <PanelRow hasChildren {...styles.logoLinks} color="common.accent">
+                                        <Typography {...styles.logoLinks?.typographyProps}>
+                                            <Icon src={MapPin} {...styles.menuRowIcon} />
+                                            {fulfillmentLabel}
+                                        </Typography>
+                                    </PanelRow>
+                                }
+                                layer={0}
+                                closeOverlay={this.closeDrawer}
+                            >
+                                <PanelRow
+                                    tabIndex={-1}
+                                    {...styles.changeCustomerRow}
+                                >
+                                    <GridContainer {...styles.changeCustomerRowContainer}>
+                                        <GridItem {...styles.fulfillmentMethodGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", { fields: {} })}
+                                        </GridItem>
+                                        <GridItem {...styles.addressesGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerSelectCustomer", { fields: {} })}
+                                        </GridItem>
+                                        <GridItem {...styles.pickUpAddressGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", { fields: {} })}
+                                        </GridItem>
+                                        <GridItem {...styles.applyButtonGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
+                                        </GridItem>
+                                    </GridContainer>
+                                </PanelRow>
+                            </PanelMenu>
+                        }
                     </StyledSection>
                 </Drawer>
             </>

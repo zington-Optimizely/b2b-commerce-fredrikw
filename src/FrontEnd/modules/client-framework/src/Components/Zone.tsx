@@ -1,16 +1,16 @@
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import { getWidgetsByIdAndZone } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
-import WidgetRenderer from "@insite/client-framework/Components/WidgetRenderer";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
-import { dragLeaveZone, dragWidgetOverZone, dropWidgetOnZone } from "@insite/client-framework/WidgetReordering";
-import styled from "styled-components";
-import { moveWidgetTo } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
+import WidgetRenderer from "@insite/client-framework/Components/WidgetRenderer";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { moveWidgetTo } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getWidgetsByIdAndZone } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
+import { dragLeaveZone, dragWidgetOverZone, dropWidgetOnZone } from "@insite/client-framework/WidgetReordering";
 import Icon from "@insite/mobius/Icon";
 import PlusCircle from "@insite/mobius/Icons/PlusCircle";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 export interface OwnProps {
     contentId: string;
@@ -23,6 +23,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     widgets: getWidgetsByIdAndZone(state, ownProps.contentId, ownProps.zoneName),
     draggingWidgetId: state.data.pages.draggingWidgetId,
     permissions: state.context.permissions,
+    canChangePage: state.context.canChangePage,
     currentPageType: getCurrentPage(state).type,
     pageDefinitionsByType: state.data.pages.pageDefinitionsByType,
 });
@@ -52,14 +53,14 @@ class Zone extends React.Component<Props> {
     };
 
     private dragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        if (this.props.fixed || !this.props.permissions?.canMoveWidgets) {
+        if (this.props.fixed || !this.props.permissions?.canMoveWidgets || !this.props.canChangePage) {
             return;
         }
         dragWidgetOverZone(event);
     };
 
     private dragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-        if (this.props.fixed || !this.props.permissions?.canMoveWidgets) {
+        if (this.props.fixed || !this.props.permissions?.canMoveWidgets || !this.props.canChangePage) {
             return;
         }
         dragLeaveZone(event);
@@ -78,7 +79,7 @@ class Zone extends React.Component<Props> {
     };
 
     render() {
-        const { contentId, fixed, widgets, draggingWidgetId, zoneName, shellContext: { isEditing, isCurrentPage }, permissions, currentPageType, pageDefinitionsByType } = this.props;
+        const { contentId, fixed, widgets, draggingWidgetId, zoneName, shellContext: { isEditing, isCurrentPage }, permissions, canChangePage, currentPageType, pageDefinitionsByType } = this.props;
 
         if (!contentId) {
             return null;
@@ -97,8 +98,8 @@ class Zone extends React.Component<Props> {
             >
                 <ZoneWrapper data-dragging={!!draggingWidgetId} data-empty={widgets.length === 0} data-zone>
                     {renderedWidgets}
-                    {!draggingWidgetId && !fixed && ((permissions?.canAddWidget && !pageDefinition?.isSystemPage)
-                        || (permissions?.canAddSystemWidget && pageDefinition?.isSystemPage))
+                    {!draggingWidgetId && !fixed && canChangePage && ((permissions?.canAddWidget && pageDefinition?.pageType === "Content")
+                        || (permissions?.canAddSystemWidget && pageDefinition?.pageType === "System"))
                         && <AddContainer fullHeight={widgets.length === 0}>
                             <AddButton onClick={this.add} data-test-selector={`shell_addWidget_${zoneName}`}>
                                 <Icon src={PlusCircle} size={26} color="#4A4A4A" />

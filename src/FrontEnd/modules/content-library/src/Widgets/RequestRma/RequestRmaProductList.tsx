@@ -1,27 +1,27 @@
-import translate from "@insite/client-framework/Translate";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { css } from "styled-components";
-import React, { FC, useContext } from "react";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import setCanSendReturnRequest from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetCanSendReturnRequest";
+import setOrderLines from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetOrderLines";
+import translate from "@insite/client-framework/Translate";
+import { OrderLineModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer from "@insite/content-library/Components/CardContainer";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
 import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import CardContainer from "@insite/content-library/Components/CardContainer";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ResolveThunks, connect } from "react-redux";
-import { OrderLineModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
-import setOrderLines from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetOrderLines";
-import setCanSendReturnRequest from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetCanSendReturnRequest";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     orderLines: state.pages.requestRma.orderLines,

@@ -1,29 +1,29 @@
-import React, { FC } from "react";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import translate from "@insite/client-framework/Translate";
-import Typography, { TypographyProps } from "@insite/mobius/Typography/Typography";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { SignInPageContext } from "@insite/content-library/Pages/SignInPage";
+import SignInResetPasswordForm from "@insite/content-library/Widgets/SignIn/SignInResetPasswordForm";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
+import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
-import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { SignInPageContext } from "@insite/content-library/Pages/SignInPage";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { IconProps } from "@insite/mobius/Icon/Icon";
 import Eye from "@insite/mobius/Icons/Eye";
 import EyeOff from "@insite/mobius/Icons/EyeOff";
-import { IconProps } from "@insite/mobius/Icon/Icon";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import { css } from "styled-components";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import SignInResetPasswordForm from "@insite/content-library/Widgets/SignIn/SignInResetPasswordForm";
-import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import Typography, { TypographyProps } from "@insite/mobius/Typography/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 type Props = WidgetProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
@@ -213,7 +213,6 @@ const widgetModule: WidgetModule = {
         allowedContexts: [SignInPageContext],
         group: "Sign In",
         icon: "LogIn",
-        isSystem: true,
     },
 };
 

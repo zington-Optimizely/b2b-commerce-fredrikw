@@ -1,38 +1,34 @@
-import React, { FC, ChangeEvent } from "react";
-import { css } from "styled-components";
-import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import { siteMessageWithCustomParserOptions } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
+import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
+import { canPlaceOrder, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPromotionsDataView, getDiscountTotal, getOrderPromotions, getShippingPromotions } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import translate from "@insite/client-framework/Translate";
+import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
+import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
+import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
+import { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { ButtonPresentationProps } from "@insite/mobius/Button";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
-import { getCurrentCartState, canPlaceOrder } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import {
-    getCurrentPromotionsDataView,
-    getDiscountTotal,
-    getOrderPromotions,
-    getShippingPromotions,
-} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
-import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
-import translate from "@insite/client-framework/Translate";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import Modal from "@insite/mobius/Modal";
-import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
-import Radio, { RadioComponentProps, RadioStyle } from "@insite/mobius/Radio";
-import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import Link from "@insite/mobius/Link";
-import { HTMLReactParserOptions, domToReact } from "html-react-parser";
-import { siteMessageWithCustomParserOptions } from "@insite/client-framework/SiteMessage";
+import Modal from "@insite/mobius/Modal";
+import Radio, { RadioComponentProps, RadioStyle } from "@insite/mobius/Radio";
+import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import { domToReact, HTMLReactParserOptions } from "html-react-parser";
+import React, { ChangeEvent, FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapDispatchToProps = {
     updatePickUpWarehouse,
@@ -227,8 +223,8 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
                                 value={cart.fulfillmentMethod}
                                 onChangeHandler={fulfillmentMethodChangeHandler}
                                 {...styles.defaultFulfillmentMethodRadioGroup}>
-                                <Radio value="Ship" {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
-                                <Radio value="PickUp" {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
+                                <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
+                                <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
                             </RadioGroup>
                     </Modal>
                 </GridItem>
@@ -247,7 +243,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         displayName: "Cart Total",
-        isSystem: true,
     },
 };
 

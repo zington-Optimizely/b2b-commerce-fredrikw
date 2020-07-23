@@ -1,5 +1,5 @@
-import { post, ApiParameter } from "@insite/client-framework/Services/ApiService";
-import { TellAFriendModel, ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
+import { ApiParameter, post } from "@insite/client-framework/Services/ApiService";
+import { ShareEntityModel, TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 
 const emailsUrl = "/api/v1/email";
 const emailSubscriptionUrl = "/email";

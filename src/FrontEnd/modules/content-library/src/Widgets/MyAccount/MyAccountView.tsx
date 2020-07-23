@@ -1,11 +1,11 @@
-import * as React from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import Zone from "@insite/client-framework/Components/Zone";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import AccountMessages from "@insite/content-library/Widgets/MyAccount/AccountMessages";
 import { MyAccountPageContext } from "@insite/content-library/Pages/MyAccountPage";
+import AccountMessages from "@insite/content-library/Widgets/MyAccount/AccountMessages";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import * as React from "react";
 
 interface OwnProps extends WidgetProps {}
 
@@ -53,7 +53,6 @@ const myAccountViewWidget: WidgetModule = {
     definition: {
         allowedContexts: [MyAccountPageContext],
         group: "My Account",
-        isSystem: true,
     },
 };
 

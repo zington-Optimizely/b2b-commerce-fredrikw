@@ -1,12 +1,12 @@
-import { CatalogPageModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import { ApiHandlerNoApiParameter, createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import {
-    getCategoryById,
-    GetCategoryByIdApiParameter,
-    getCategories,
     getCatalogPageByPath,
     GetCatalogPageByPathApiParameter,
+    getCategories,
+    getCategoryById,
+    GetCategoryByIdApiParameter,
 } from "@insite/client-framework/Services/CategoryService";
-import { ApiHandlerNoApiParameter, createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { CatalogPageModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface LoadCategoryParameter {
     path: string;

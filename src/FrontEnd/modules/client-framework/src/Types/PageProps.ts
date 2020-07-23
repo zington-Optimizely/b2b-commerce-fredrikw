@@ -1,6 +1,6 @@
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import ContentItemModel from "@insite/client-framework/Types/ContentItemModel";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { Dictionary } from "@insite/client-framework/Common/Types";
 
 export default interface PageProps extends ContentItemModel {
     name: string;

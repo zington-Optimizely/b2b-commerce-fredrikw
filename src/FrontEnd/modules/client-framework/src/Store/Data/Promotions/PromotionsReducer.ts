@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { PromotionCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { PromotionsState } from "@insite/client-framework/Store/Data/Promotions/PromotionsState";
 import { GetCartPromotionsApiParameter } from "@insite/client-framework/Services/CartService";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { PromotionsState } from "@insite/client-framework/Store/Data/Promotions/PromotionsState";
+import { PromotionCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: PromotionsState = {
     isLoading: {},

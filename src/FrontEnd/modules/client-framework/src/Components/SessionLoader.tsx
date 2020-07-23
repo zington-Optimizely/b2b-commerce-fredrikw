@@ -1,14 +1,14 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { Location } from "@insite/client-framework/Components/SpireRouter";
+import { setErrorHandler } from "@insite/client-framework/HandlerCreator";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import handleError from "@insite/client-framework/Store/Context/Handlers/HandleError";
 import loadCurrentWebsite from "@insite/client-framework/Store/Context/Handlers/LoadCurrentWebsite";
 import loadSession from "@insite/client-framework/Store/Context/Handlers/LoadSession";
 import loadSettings from "@insite/client-framework/Store/Context/Handlers/LoadSettings";
-import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { setErrorHandler } from "@insite/client-framework/HandlerCreator";
-import handleError from "@insite/client-framework/Store/Context/Handlers/HandleError";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps {
     location: Location;

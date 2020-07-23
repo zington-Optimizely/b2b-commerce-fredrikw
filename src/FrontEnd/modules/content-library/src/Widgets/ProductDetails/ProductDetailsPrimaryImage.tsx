@@ -1,16 +1,16 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import { css } from "styled-components";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import LazyImage from "@insite/mobius/LazyImage";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 type Props = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
 
@@ -149,7 +149,6 @@ const widgetModule: WidgetModule = {
         displayName: "Primary Image",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

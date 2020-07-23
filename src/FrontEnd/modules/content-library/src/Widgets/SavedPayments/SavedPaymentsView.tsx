@@ -1,20 +1,20 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Zone from "@insite/client-framework/Components/Zone";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { PaymentProfilesContext, SavedPaymentsPageContext } from "@insite/content-library/Pages/SavedPaymentsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
-import { css } from "styled-components";
-import { PaymentProfilesContext, SavedPaymentsPageContext } from "@insite/content-library/Pages/SavedPaymentsPage";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import Icon, { IconProps } from "@insite/mobius/Icon";
 import CreditCard from "@insite/mobius/Icons/CreditCard";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
 import { useContext } from "react";
+import { css } from "styled-components";
 
 type Props = WidgetProps;
 
@@ -145,7 +145,6 @@ const widgetModule: WidgetModule = {
         displayName: "View",
         group: "Saved Payments",
         allowedContexts: [SavedPaymentsPageContext],
-        isSystem: true,
     },
 };
 

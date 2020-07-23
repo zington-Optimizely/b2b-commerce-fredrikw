@@ -1,7 +1,7 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
+import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: SavedPaymentsState = {
     editModalIsOpen: false,

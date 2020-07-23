@@ -1,10 +1,10 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect } from "react-redux";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Link from "@insite/mobius/Link";
+import * as React from "react";
+import { connect } from "react-redux";
 
 const enum fields {
     pageType = "pageType",
@@ -44,7 +44,6 @@ const pageTypeLink: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Link",
-        isSystem: true,
         fieldDefinitions: [
             {
                 fieldType: "General",

@@ -1,20 +1,20 @@
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import clearAllProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearAllProductFilters";
+import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import Tag, { TagPresentationProps } from "@insite/mobius/Tag";
-import { css } from "styled-components";
-import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import clearAllProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearAllProductFilters";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { formatPriceRangeFacet } from "@insite/content-library/Widgets/ProductList/ProductListPriceFilters";
 import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
+import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
+import { formatPriceRangeFacet } from "@insite/content-library/Widgets/ProductList/ProductListPriceFilters";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Tag, { TagPresentationProps } from "@insite/mobius/Tag";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -234,7 +234,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Filter List",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

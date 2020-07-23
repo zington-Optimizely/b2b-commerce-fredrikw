@@ -1,15 +1,15 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListsDataView: getWishListsDataView(state, state.pages.myLists.getWishListsParameter),
@@ -75,7 +75,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Pagination",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

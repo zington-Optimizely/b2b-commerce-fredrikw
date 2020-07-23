@@ -1,17 +1,17 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect, ResolveThunks } from "react-redux";
 import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
-import { TextFieldProps } from "@insite/mobius/TextField";
-import { css } from "styled-components";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
 import updateProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateProduct";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { TextFieldProps } from "@insite/mobius/TextField";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -70,7 +70,6 @@ const widgetModule: WidgetModule = {
         displayName: "Quantity Ordered",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

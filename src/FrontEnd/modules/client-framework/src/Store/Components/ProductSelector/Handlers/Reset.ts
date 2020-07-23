@@ -1,6 +1,6 @@
 import {
-    Handler,
     createHandlerChainRunnerOptionalParameter,
+    Handler,
 } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler;

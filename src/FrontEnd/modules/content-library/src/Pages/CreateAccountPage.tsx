@@ -1,8 +1,8 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
+import * as React from "react";
 
 const CreateAccountPage = ({ id }: PageProps) =>
     <Page>
@@ -14,7 +14,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

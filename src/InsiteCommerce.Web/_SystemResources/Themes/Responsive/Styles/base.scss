@@ -3186,10 +3186,31 @@ div.remove a.btn {
     font-weight: normal;
 }
 
-.item-block .item-num, ul.attribute-list, .item-details .item-num, .availability, .qo-item .item-num {
+.item-block .item-num, ul.attribute-list, .item-details .item-num, .availability, .qo-item .item-num, .search-data {
     font-size: 0.875rem;
     font-weight: normal;
     color: #8a8a8a;
+}
+
+.search-data {
+    .search-data-field {
+        font-weight: bold;
+        padding-right: 0.5em;
+    }
+
+    a {
+        color: #77BC1F;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .search-data-view-more-section {
+        padding-top: 10px;
+    }
+
+    .search-field-score {
+        padding: 0 0.5em 0 1em;
+    }
 }
 
 .item-block ul.attribute-list {

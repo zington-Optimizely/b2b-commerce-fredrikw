@@ -1,7 +1,7 @@
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import React, { FC } from "react";
 import { connect } from "react-redux";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 
 interface OwnProps {
     dateTime?: Date | null;

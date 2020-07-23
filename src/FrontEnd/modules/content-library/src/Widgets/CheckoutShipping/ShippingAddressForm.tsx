@@ -1,16 +1,16 @@
-import React from "react";
-import { ShipToModel, CountryModel, AddressFieldDisplayCollectionModel, BaseAddressModel } from "@insite/client-framework/Types/ApiModels";
-import CustomerAddressFormFields, { CustomerAddressFormFieldStyles } from "@insite/content-library/Components/CustomerAddressFormFields";
-import { Dispatch } from "redux";
-import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { CheckoutShippingFormContext } from "@insite/content-library/Pages/CheckoutShippingPage";
-import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { TextFieldProps } from "@insite/mobius/TextField";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import resetShippingAddressFormValidation from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ResetShippingAddressFormValidation";
+import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
+import { AnyAction } from "@insite/client-framework/Store/Reducers";
+import { AddressFieldDisplayCollectionModel, BaseAddressModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import CustomerAddressFormFields, { CustomerAddressFormFieldStyles } from "@insite/content-library/Components/CustomerAddressFormFields";
+import { CheckoutShippingFormContext } from "@insite/content-library/Pages/CheckoutShippingPage";
+import { TextFieldProps } from "@insite/mobius/TextField";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { Dispatch } from "redux";
 
 interface OwnProps {
     countries: CountryModel[];

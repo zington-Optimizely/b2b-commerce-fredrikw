@@ -1,8 +1,8 @@
-import * as React from "react";
-import PageTreeItem from "@insite/shell/Components/PageTree/PageTreeItem";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import PageTreeItem from "@insite/shell/Components/PageTree/PageTreeItem";
+import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
+import * as React from "react";
 
 interface Props {
     isEditMode: boolean;

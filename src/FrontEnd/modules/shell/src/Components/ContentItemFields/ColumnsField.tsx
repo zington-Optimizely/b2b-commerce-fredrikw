@@ -1,11 +1,11 @@
-import * as React from "react";
 import { ColumnsDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import MobiusTextField from "@insite/mobius/TextField";
-import GridItem, { GridWidths } from "@insite/mobius/GridItem";
-import styled, { css } from "styled-components";
 import GridContainer from "@insite/mobius/GridContainer";
+import GridItem, { GridWidths } from "@insite/mobius/GridItem";
+import MobiusTextField from "@insite/mobius/TextField";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
+import styled, { css } from "styled-components";
 
 interface State {
     fieldValue: string;

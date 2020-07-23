@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { QuoteCollectionModel } from "@insite/client-framework/Types/ApiModels";
-import { GetQuotesApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetQuotesApiParameter } from "@insite/client-framework/Services/QuoteService";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { QuotesState } from "@insite/client-framework/Store/Data/Quotes/QuotesState";
+import { QuoteCollectionModel, QuoteModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: QuotesState = {
     isLoading: {},
@@ -19,7 +19,13 @@ const reducer = {
     "Data/Quotes/CompleteLoadQuotes": (draft: Draft<QuotesState>, action: { parameter: GetQuotesApiParameter, collection: QuoteCollectionModel }) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.quotes!);
     },
-
+    "Data/Quotes/BeginLoadQuote": (draft: Draft<QuotesState>, action: { quoteId: string }) => {
+        draft.isLoading[action.quoteId] = true;
+    },
+    "Data/Quotes/CompleteLoadQuote": (draft: Draft<QuotesState>, action: { quote: QuoteModel }) => {
+        delete draft.isLoading[action.quote.id];
+        draft.byId[action.quote.id] = action.quote;
+    },
     "Data/Quotes/Reset": () => {
         return initialState;
     },

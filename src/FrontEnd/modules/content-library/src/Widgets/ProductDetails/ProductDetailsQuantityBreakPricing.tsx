@@ -1,9 +1,9 @@
-import * as React from "react";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import * as React from "react";
 import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext;
@@ -38,7 +38,6 @@ const widgetModule: WidgetModule = {
         displayName: "Quantity Break Pricing",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

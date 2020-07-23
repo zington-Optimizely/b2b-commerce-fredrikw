@@ -1,10 +1,10 @@
-import React, { FC } from "react";
 import Zone from "@insite/client-framework/Components/Zone";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CartPageContext } from "@insite/content-library/Pages/CartPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CartPageContext } from "@insite/content-library/Pages/CartPage";
+import React, { FC } from "react";
 
 interface OwnProps extends WidgetProps {
 }
@@ -47,7 +47,6 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         displayName: "Page Header",
         allowedContexts: [CartPageContext],
-        isSystem: true,
     },
 };
 

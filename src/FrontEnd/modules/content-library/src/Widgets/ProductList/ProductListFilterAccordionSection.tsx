@@ -1,12 +1,12 @@
-import React, { FC, useState } from "react";
-import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection/AccordionSection";
-import translate from "@insite/client-framework/Translate";
-import CheckboxGroup, { CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
-import Checkbox, { CheckboxPresentationProps, StyleProps as CheckboxStyleProps } from "@insite/mobius/Checkbox/Checkbox";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link/Link";
-import { css } from "styled-components";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import translate from "@insite/client-framework/Translate";
 import { FacetModel } from "@insite/client-framework/Types/ApiModels";
+import { AccordionSectionPresentationProps, ManagedAccordionSection } from "@insite/mobius/AccordionSection";
+import Checkbox, { CheckboxPresentationProps, StyleProps as CheckboxStyleProps } from "@insite/mobius/Checkbox/Checkbox";
+import CheckboxGroup, { CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link/Link";
+import React, { FC, useState } from "react";
+import { css } from "styled-components";
 
 export interface ProductListFilterAccordionSectionStyles {
     accordionSection?: AccordionSectionPresentationProps;
@@ -83,7 +83,7 @@ const ProductListFiltersAccordionSection: FC<Props> = ({ title, facets, onChange
     const anySelected = facets.find(f => f.selected) !== undefined;
 
     return (
-        <AccordionSection title={title} {...styles.accordionSection} expanded={expandByDefault || anySelected}>
+        <ManagedAccordionSection title={title} {...styles.accordionSection} initialExpanded={expandByDefault || anySelected}>
             {limitedFacets?.map((facet) => (
                 <CheckboxGroup key={facet.id} {...styles.checkBoxGroup}>
                     <Checkbox
@@ -100,7 +100,7 @@ const ProductListFiltersAccordionSection: FC<Props> = ({ title, facets, onChange
                 ? <Link {...styles.seeLessLink} onClick={() => setExpanded(false)}>{translate("See Less")}</Link>
                 : <Link {...styles.seeAllLink} onClick={() => setExpanded(true)}>{translate("See All")}</Link>)
             }
-        </AccordionSection>
+        </ManagedAccordionSection>
     );
 };
 

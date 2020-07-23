@@ -1,12 +1,24 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentUserIsGuest, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
+import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
+import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
+import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import updateBillTo from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateBillTo";
 import updateShipTo from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateShipTo";
 import translate from "@insite/client-framework/Translate";
-import { ShipToModel, WarehouseModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
+import { BillToModel, ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
+import BillingAddress, { BillingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/BillingAddress";
 import PickUpAddress, { PickUpAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/PickUpAddress";
 import ShippingAddress, { ShippingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/ShippingAddress";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -17,17 +29,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
-import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
-import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
-import { getCurrentUserIsGuest, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import BillingAddress, { BillingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/BillingAddress";
-import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
-import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
-import updateBillTo from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateBillTo";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cartState = getCurrentCartState(state);
@@ -200,7 +201,7 @@ const CheckoutShippingAddresses: FC<Props> = ({
                             />
                         </GridItem>
                     }
-                    {fulfillmentMethod === "Ship" && shipToAddressFields
+                    {fulfillmentMethod === FulfillmentMethod.Ship && shipToAddressFields
                         && <GridItem {...styles.shippingAddressGridItem}>
                             <ShippingAddress
                                 address={shipToState.value}
@@ -217,7 +218,7 @@ const CheckoutShippingAddresses: FC<Props> = ({
                             >{children}</ShippingAddress>
                         </GridItem>
                     }
-                    {fulfillmentMethod === "PickUp" && session.pickUpWarehouse
+                    {fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse
                     && <GridItem {...styles.shippingAddressGridItem}>
                         <PickUpAddress address={session.pickUpWarehouse}
                                        onChange={handlePickUpAddressChange}
@@ -236,7 +237,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
         displayName: "Addresses",
-        isSystem: true,
     },
 };
 

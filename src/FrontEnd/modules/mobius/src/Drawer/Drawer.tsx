@@ -1,5 +1,6 @@
+import { IconPresentationProps } from "@insite/mobius/Icon";
 import * as React from "react";
-import styled, { withTheme, ThemeProps, css } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import Overlay, { OverlayComponentProps, ScrimProps, Transition } from "../Overlay";
@@ -12,7 +13,6 @@ import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import omitSingle from "../utilities/omitSingle";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
-import { IconPresentationProps } from "@insite/mobius/Icon";
 
 type Position = "left" | "top" | "right" | "bottom";
 

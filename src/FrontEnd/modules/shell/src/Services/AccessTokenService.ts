@@ -1,7 +1,7 @@
+import { getShellContext } from "@insite/shell/Services/ContentAdminService";
 import { adminAccessTokenName } from "@insite/shell/Store/BearerToken";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { Dispatch } from "react";
-import { getShellContext } from "@insite/shell/Services/ContentAdminService";
 
 const accessTokenExpiresOn = "admin-accessToken-expires";
 const refreshTokenName = "admin-refreshToken";

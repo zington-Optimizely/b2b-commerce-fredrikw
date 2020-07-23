@@ -1,8 +1,8 @@
-import * as React from "react";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import MissingField from "@insite/shell/Components/ItemEditor/MissingField";
-import { Dictionary } from "@insite/client-framework/Common/Types";
+import * as React from "react";
 
 const templatesBeingLoaded: Dictionary<true | undefined> = {};
 

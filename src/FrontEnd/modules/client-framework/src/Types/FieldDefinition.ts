@@ -1,8 +1,8 @@
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { TabDefinition } from "@insite/client-framework/Types/TabDefinition";
-import { ThunkDispatch } from "redux-thunk";
 import { GridWidths } from "@insite/mobius/GridItem";
+import { ThunkDispatch } from "redux-thunk";
 
 export interface MultilineTextFieldDefinition extends BaseFieldDefinition<"MultilineTextField"> {
     placeholder?: string;

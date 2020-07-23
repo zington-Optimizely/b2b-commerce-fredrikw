@@ -1,7 +1,7 @@
 import Color from "color";
+import baseTheme, { BaseTheme } from "../globals/baseTheme";
 import resolveColor from "./resolveColor";
 import safeColor from "./safeColor";
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
 
 /**
  * Reaches into the theme to evaluate whether there is a contrast color defined for the element. If not, returns

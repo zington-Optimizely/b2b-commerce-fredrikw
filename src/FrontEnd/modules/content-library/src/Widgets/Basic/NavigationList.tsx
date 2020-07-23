@@ -1,14 +1,14 @@
-import * as React from "react";
+import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import styled from "styled-components";
-import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import Link from "@insite/mobius/Link";
-import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 const enum fields {
     depth = "depth",
@@ -75,7 +75,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "NavigationList",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.depth,

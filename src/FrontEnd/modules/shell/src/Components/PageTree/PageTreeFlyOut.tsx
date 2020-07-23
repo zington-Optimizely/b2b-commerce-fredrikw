@@ -1,23 +1,23 @@
-import * as React from "react";
-import styled from "styled-components";
-import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import ShellState from "@insite/shell/Store/ShellState";
-import { deletePage, openAddPage, openCopyPage } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
-import { connect, ResolveThunks } from "react-redux";
-import { editPageOptions } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
-import OverflowCopyPage from "@insite/shell/Components/Icons/OverflowCopyPage";
-import OverflowAddPage from "@insite/shell/Components/Icons/OverflowAddPage";
-import Trash from "@insite/shell/Components/Icons/Trash";
-import Edit from "@insite/shell/Components/Icons/Edit";
-import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
-import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
-import { RouteComponentProps, withRouter } from "react-router";
+import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import Edit from "@insite/shell/Components/Icons/Edit";
+import OverflowAddPage from "@insite/shell/Components/Icons/OverflowAddPage";
+import OverflowCopyPage from "@insite/shell/Components/Icons/OverflowCopyPage";
+import Trash from "@insite/shell/Components/Icons/Trash";
+import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
 import { getPageDefinition, LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { editPageOptions } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { deletePage, openAddPage, openCopyPage } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
+import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
+import styled from "styled-components";
 
 interface OwnProps {
     flyOutNode: TreeNodeModel;
@@ -94,7 +94,7 @@ class PageTreeFlyOut extends React.Component<Props> {
         const pageDefinition = getPageDefinition(flyOutNode.type);
 
         return <PageTreeFlyOutMenu style={style}>
-            {pageDefinition && permissions && canEditPage(pageDefinition, permissions) && flyOutOption(this.handleEditPage, <Edit/>, "Edit Page")}
+            {pageDefinition && permissions && canEditPage(pageDefinition, permissions, flyOutNode) && flyOutOption(this.handleEditPage, <Edit/>, "Edit Page")}
             {permissions && canAddChildPage(pageDefinition, permissions, flyOutNode) && flyOutOption(this.handleAddPage, <OverflowAddPage/>, "Add Page")}
             {pageDefinition && permissions?.canCopyPage && flyOutOption(this.handleCopyPage, <OverflowCopyPage/>, "Copy Page")}
             {pageDefinition && permissions && canDeletePage(pageDefinition, permissions, flyOutNode) && flyOutOption(this.handleDeletePage, <Trash color1="#9b9b9b"/>, "Delete")}
@@ -120,7 +120,7 @@ class PageTreeFlyOut extends React.Component<Props> {
 export const pageTreeFlyOutMenuHasItems = (flyOutNode: TreeNodeModel, permissions: PermissionsModel | undefined): boolean => {
     const pageDefinition = getPageDefinition(flyOutNode.type);
     return !!permissions && pageDefinition
-        && (canEditPage(pageDefinition, permissions)
+        && (canEditPage(pageDefinition, permissions, flyOutNode)
         || canAddChildPage(pageDefinition, permissions, flyOutNode)
         || permissions.canCopyPage
         || canDeletePage(pageDefinition, permissions, flyOutNode));
@@ -130,25 +130,14 @@ function canAddChildPage(pageDefinition: LoadedPageDefinition, permissions: Perm
     return permissions.canCreatePage && treeNode.displayName !== "Header" && treeNode.displayName !== "Footer";
 }
 
-function canEditPage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel): boolean {
-    return ((permissions.canEditWidget && !pageDefinition.isSystemPage) || (permissions.canEditSystemWidget && pageDefinition.isSystemPage === true));
+function canEditPage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel, treeNode: TreeNodeModel): boolean {
+    return (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date())
+        && ((permissions.canEditWidget && pageDefinition.pageType === "Content") || (permissions.canEditSystemWidget && pageDefinition.pageType === "System"));
 }
 
 function canDeletePage(pageDefinition: LoadedPageDefinition, permissions: PermissionsModel, treeNode: TreeNodeModel): boolean {
-    return permissions.canDeletePage && !pageDefinition.isSystemPage && pageDefinition.isDeletable === true
-        && treeNode.displayName !== "Header" && treeNode.displayName !== "Footer";
-}
-
-function canEditOptions(treeNode: TreeNodeModel): boolean {
-    return true;
-}
-
-function canCreateVariant(treeNode: TreeNodeModel): boolean {
-    return true;
-}
-
-function canCreateExperiment(treeNode: TreeNodeModel): boolean {
-    return true;
+    return (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date())
+        && permissions.canDeletePage && pageDefinition.pageType === "Content";
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withConfirmation(PageTreeFlyOut)));

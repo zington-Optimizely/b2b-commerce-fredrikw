@@ -1,8 +1,8 @@
 import { CodeSnippetFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/ItemEditor";
-import * as React from "react";
 import RichTextEditor from "@insite/shell/Components/Elements/RichTextEditor";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/ItemEditor";
 import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 type Props = ContentItemFieldProps<string, CodeSnippetFieldDefinition>;
 

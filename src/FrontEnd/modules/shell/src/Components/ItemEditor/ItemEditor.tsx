@@ -1,18 +1,18 @@
+import { removeWidget, replaceItem, updateField } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import Scrim from "@insite/mobius/Overlay/Scrim";
+import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
+import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
+import { getPageDefinition, getWidgetDefinition, LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { cancelEditingItem, doneEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
-import { getPageDefinition, getWidgetDefinition, LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
-import ShellState from "@insite/shell/Store/ShellState";
-import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
-import Scrim from "@insite/mobius/Overlay/Scrim";
 import styled from "styled-components";
-import { doneEditingItem, cancelEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { updateField, replaceItem, removeWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
-import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 interface OwnProps {}
 

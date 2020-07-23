@@ -1,5 +1,5 @@
-import { GetOrderStatusMappingsApiParameter, getOrderStatusMappings } from "@insite/client-framework/Services/OrderService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getOrderStatusMappings, GetOrderStatusMappingsApiParameter } from "@insite/client-framework/Services/OrderService";
 import { OrderStatusMappingCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetOrderStatusMappingsApiParameter, OrderStatusMappingCollectionModel>;

@@ -1,8 +1,8 @@
-import { UpdateAccountApiParameter, updateAccount } from "@insite/client-framework/Services/AccountService";
-import { AccountModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { updateAccount, UpdateAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import loadCurrentAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/LoadCurrentAccount";
 import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
+import { AccountModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, UpdateAccountApiParameter, AccountModel, { account: AccountModel }>;
 

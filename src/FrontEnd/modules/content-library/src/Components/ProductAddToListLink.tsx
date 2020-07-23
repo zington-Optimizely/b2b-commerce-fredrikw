@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
+import { HasProductContext } from "@insite/client-framework/Components/ProductContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import translate from "@insite/client-framework/Translate";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import { HasProductContext } from "@insite/client-framework/Components/ProductContext";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends HasProductContext {
     variantSelectionCompleted?: boolean;

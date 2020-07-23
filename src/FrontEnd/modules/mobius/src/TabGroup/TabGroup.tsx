@@ -1,13 +1,13 @@
+import { ButtonProps } from "mobius/src/Button";
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import Tab, { TabProps } from "../Tab";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import get from "../utilities/get";
 import getColor from "../utilities/getColor";
 import getProp from "../utilities/getProp";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
-import { ButtonProps } from "mobius/src/Button";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export interface TabGroupPresentationProps {

@@ -1,7 +1,7 @@
-import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import { getBillTos, getShipTos } from "@insite/client-framework/Services/CustomersService";
 import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
+import { getBillTos, getShipTos } from "@insite/client-framework/Services/CustomersService";
 import { getCurrentAccountState } from "@insite/client-framework/Store/Data/Accounts/AccountsSelector";
+import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{}, {
     defaultBillTo?: BillToModel,

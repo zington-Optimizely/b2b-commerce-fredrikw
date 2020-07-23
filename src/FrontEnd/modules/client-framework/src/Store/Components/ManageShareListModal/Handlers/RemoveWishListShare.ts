@@ -1,10 +1,10 @@
-import { DeleteWishListShareApiParameter, deleteWishListShare } from "@insite/client-framework/Services/WishListService";
 import {
     createHandlerChainRunner,
     Handler,
 } from "@insite/client-framework/HandlerCreator";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import { deleteWishListShare, DeleteWishListShareApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{ wishList: WishListModel, userId: string }>;
 

@@ -1,10 +1,10 @@
-import * as React from "react";
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
 import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 export interface SearchTextFieldStyles {
     textField?: TextFieldPresentationProps;

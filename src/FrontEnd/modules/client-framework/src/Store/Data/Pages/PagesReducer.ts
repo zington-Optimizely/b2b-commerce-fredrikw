@@ -4,16 +4,16 @@ import {
     createContextualIds, getContextualId,
     prepareFields,
 } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PageProps, { ItemProps, PageModel } from "@insite/client-framework/Types/PageProps";
 import { Draft } from "immer";
-import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { Location } from "@insite/client-framework/Components/SpireRouter";
-import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Location } from "@insite/client-framework/Components/SpireRouter";
+import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 
 const initialState: PagesState = {
     isLoading: {},
@@ -32,10 +32,13 @@ const initialState: PagesState = {
     },
 };
 
-interface LoadPageCompleteAction {
-    page: PageModel;
+interface SetPageIsLoaded {
     path?: string;
     pageType?: string;
+    page: PageModel;
+}
+
+interface LoadPageCompleteAction extends SetPageIsLoaded {
     currentLanguageId: string;
     defaultLanguageId: string;
     currentPersonaIds: string[];
@@ -108,6 +111,16 @@ const reducer = {
             }
 
             draft.widgetIdsByParentIdAndZone[parentId][zone].push(widgetItem.id);
+        }
+    },
+
+    "Data/Pages/SetPageIsLoaded": (draft: Draft<PagesState>, { path, pageType, page }: SetPageIsLoaded) => {
+        if (path) {
+            draft.isLoading[path] = false;
+            draft.idByPath[path.toLowerCase()] = page.id;
+        }
+        if (pageType) {
+            draft.isLoading[pageType] = false;
         }
     },
 
@@ -293,11 +306,7 @@ const reducer = {
         }
     },
 
-    "Data/Pages/WidgetDefinitions": (draft: Draft<PagesState>, action: { widgetDefinitionsByType: SafeDictionary<WidgetDefinition>; }) => {
-        draft.widgetDefinitionsByType = action.widgetDefinitionsByType;
-    },
-
-    "Data/Pages/PageDefinitions": (draft: Draft<PagesState>, action: { pageDefinitionsByType: SafeDictionary<PageDefinition>; }) => {
+    "Data/Pages/PageDefinitions": (draft: Draft<PagesState>, action: { pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>; }) => {
         draft.pageDefinitionsByType = action.pageDefinitionsByType;
     },
 };

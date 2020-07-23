@@ -1,8 +1,8 @@
-import * as React from "react";
 import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import * as React from "react";
 
 const ProductName: React.FC<HasProductContext> = ({ product }) => {
     if (!product) {
@@ -25,7 +25,6 @@ const productNameModule: WidgetModule = {
     definition: {
         group: "Products",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

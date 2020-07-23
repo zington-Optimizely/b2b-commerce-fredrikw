@@ -1,26 +1,26 @@
-import * as React from "react";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
+import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import {
     LinkFieldDefinition,
     LinkFieldValue,
 } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/ItemEditor";
+import Button from "@insite/mobius/Button";
+import Tab, { TabProps } from "@insite/mobius/Tab";
+import TabGroup from "@insite/mobius/TabGroup";
 import TextField from "@insite/mobius/TextField";
-import ShellState from "@insite/shell/Store/ShellState";
-import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
+import ClickOutside from "@insite/shell/Components/ClickOutside";
 import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import ArrowRight from "@insite/shell/Components/Icons/ArrowRight";
-import ClickOutside from "@insite/shell/Components/ClickOutside";
-import TabGroup from "@insite/mobius/TabGroup";
-import Tab, { TabProps } from "@insite/mobius/Tab";
+import Link from "@insite/shell/Components/Icons/Link";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/ItemEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css, FlattenSimpleInterpolation } from "styled-components";
-import Button from "@insite/mobius/Button";
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import Link from "@insite/shell/Components/Icons/Link";
-import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 
 interface State {
     linkSelectorIsOpen: boolean;

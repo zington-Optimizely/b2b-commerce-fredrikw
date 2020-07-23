@@ -1,13 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useState } from "react";
+import { Cart } from "@insite/client-framework/Services/CartService";
+import translate from "@insite/client-framework/Translate";
+import { BillToModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import translate from "@insite/client-framework/Translate";
-import { BillToModel } from "@insite/client-framework/Types/ApiModels";
+import React, { FC, useState } from "react";
 import { css } from "styled-components";
-import { Cart } from "@insite/client-framework/Services/CartService";
 
 interface OwnProps {
     cart: Cart;

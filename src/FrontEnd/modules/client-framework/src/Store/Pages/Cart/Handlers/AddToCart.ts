@@ -1,10 +1,10 @@
-import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
-import { addProductWithResult, AddProductApiParameter } from "@insite/client-framework/Services/CartService";
+import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
 import {
     ApiHandler, createHandlerChainRunner, HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
+import { AddProductApiParameter, addProductWithResult } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
+import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 
 type AddToCartParameter = {
     onError?: (error: string) => void;

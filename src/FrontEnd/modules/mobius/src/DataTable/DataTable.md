@@ -51,11 +51,11 @@ const data = [{
 
 <DataTable>
     <DataTableHead>
-        <DataTableHeader tight>Date</DataTableHeader>
-        <DataTableHeader tight title="Order Number">Order #</DataTableHeader>
+        <DataTableHeader onSortClick={() => console.log('sorting')} tight>Date</DataTableHeader>
+        <DataTableHeader onSortClick={() => console.log('sorting')} tight title="Order Number">Order #</DataTableHeader>
         <DataTableHeader>Ship To</DataTableHeader>
-        <DataTableHeader tight>Status</DataTableHeader>
-        <DataTableHeader tight title="Purchase Order Number">PO #</DataTableHeader>
+        <DataTableHeader onSortClick={() => console.log('sorting')} sorted="descending" tight>Status</DataTableHeader>
+        <DataTableHeader onSortClick={() => console.log('sorting')} tight title="Purchase Order Number">PO #</DataTableHeader>
         <DataTableHeader tight alignX="right">Order Total</DataTableHeader>
         <DataTableHeader tight title="reorder"></DataTableHeader>
     </DataTableHead>

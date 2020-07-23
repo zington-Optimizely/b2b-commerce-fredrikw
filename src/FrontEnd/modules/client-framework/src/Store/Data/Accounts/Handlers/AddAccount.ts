@@ -1,16 +1,16 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { AccountModel } from "@insite/client-framework/Types/ApiModels";
 import {
-    AddAccountApiParameter,
     addAccount as addAccountApi,
+    AddAccountApiParameter,
 } from "@insite/client-framework/Services/AccountService";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import cloneDeep from "lodash/cloneDeep";
-import { Draft } from "immer";
 import { updateCart } from "@insite/client-framework/Services/CartService";
-import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { deleteSession } from "@insite/client-framework/Services/SessionService";
+import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { AccountModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 
 export interface AddAccountParameter {
     userName: string;

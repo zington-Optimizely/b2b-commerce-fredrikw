@@ -1,4 +1,4 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 export interface SetAllWishListLinesIsSelectedParameter {
     isSelected: boolean;

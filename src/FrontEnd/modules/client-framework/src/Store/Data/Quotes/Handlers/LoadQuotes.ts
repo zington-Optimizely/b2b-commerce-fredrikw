@@ -1,6 +1,6 @@
-import { GetQuotesApiParameter, getQuotes } from "@insite/client-framework/Services/QuoteService";
-import { QuoteCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { getQuotes, GetQuotesApiParameter } from "@insite/client-framework/Services/QuoteService";
+import { QuoteCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetQuotesApiParameter, QuoteCollectionModel>;
 

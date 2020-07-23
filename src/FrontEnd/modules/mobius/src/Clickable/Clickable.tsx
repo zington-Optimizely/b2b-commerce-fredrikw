@@ -1,12 +1,12 @@
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import getProp from "../utilities/getProp";
 import HistoryContext from "../utilities/HistoryContext";
+import InjectableCss from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import isRelativeUrl from "../utilities/isRelativeUrl";
-import InjectableCss from "../utilities/InjectableCss";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type ClickablePresentationProps = InjectableCss<ClickableComponentProps>;
@@ -46,9 +46,6 @@ const StyledButton = styled.button`
     text-decoration: none;
     &:disabled {
         cursor: not-allowed;
-    }
-    &:visited, &:active {
-        color: inherit;
     }
     &:focus {
         outline-color: ${getProp("theme.focus.color", "#09f")};

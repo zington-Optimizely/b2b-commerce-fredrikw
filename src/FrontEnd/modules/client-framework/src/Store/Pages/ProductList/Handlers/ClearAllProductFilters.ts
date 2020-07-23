@@ -2,8 +2,8 @@ import {
     createHandlerChainRunnerOptionalParameter,
     HandlerWithResult,
 } from "@insite/client-framework/HandlerCreator";
-import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import setFilterQuery from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetFilterQuery";
+import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = HandlerWithResult<{}, ProductFilters>;

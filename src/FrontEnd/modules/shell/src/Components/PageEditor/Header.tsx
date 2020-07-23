@@ -1,25 +1,26 @@
-import * as React from "react";
-import ProductSelection from "@insite/shell/Components/PageEditor/ProductSelection";
-import { LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import styled from "styled-components";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import CategorySelection from "@insite/shell/Components/PageEditor/CategorySelection";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import {
-    toggleShowGeneratedPageCreator,
-    editPageOptions,
-} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import Icon from "@insite/mobius/Icon";
+import Calendar from "@insite/mobius/Icons/Calendar";
+import Edit from "@insite/mobius/Icons/Edit";
 import DebugMenu from "@insite/shell/Components/Icons/DebugMenu";
 import BrandSelection from "@insite/shell/Components/PageEditor/BrandSelection";
-import Icon from "@insite/mobius/Icon";
-import Edit from "@insite/mobius/Icons/Edit";
-import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import CategorySelection from "@insite/shell/Components/PageEditor/CategorySelection";
+import ProductSelection from "@insite/shell/Components/PageEditor/ProductSelection";
 import PublishDropDown from "@insite/shell/Components/PageEditor/PublishDropDown";
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderPublishStatus from "@insite/shell/Components/Shell/HeaderPublishStatus";
-import Calendar from "@insite/mobius/Icons/Calendar";
+import { LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
+import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import {
+    editPageOptions,
+    toggleShowGeneratedPageTemplate,
+} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled from "styled-components";
 
 interface OwnProps {
     page: PageProps;
@@ -28,13 +29,25 @@ interface OwnProps {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
-    contentMode: state.shellContext.contentMode,
-    permissions: state.shellContext.permissions,
-});
+const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
+    const {
+        pageTree: {
+            treeNodesByParentId,
+            headerTreeNodesByParentId,
+            footerTreeNodesByParentId,
+        },
+    } = state;
+
+    return {
+        contentMode: state.shellContext.contentMode,
+        permissions: state.shellContext.permissions,
+        futurePublishOn: getPageState(ownProps.page.id, treeNodesByParentId[ownProps.page.parentId], headerTreeNodesByParentId[ownProps.page.parentId],
+            footerTreeNodesByParentId[ownProps.page.parentId])?.futurePublishOn,
+    };
+};
 
 const mapDispatchToProps = {
-    toggleShowGeneratedPageCreator,
+    toggleShowGeneratedPageTemplate,
     setContentMode,
     editPageOptions,
 };
@@ -48,9 +61,10 @@ class Header extends React.Component<Props> {
         const {
             page,
             pageDefinition,
-            toggleShowGeneratedPageCreator,
+            toggleShowGeneratedPageTemplate,
             contentMode,
             permissions,
+            futurePublishOn,
         } = this.props;
 
         return (
@@ -62,9 +76,9 @@ class Header extends React.Component<Props> {
                 {contentMode === "Editing"
                     && <>
                         <Icon src={Spacer} color="#999" />
-                        {permissions?.canEditWidget
+                        {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date())
                         && <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage"><Icon src={Edit} size={20} color="#fff"/></PageHeaderButton>}
-                        <PageHeaderButton onClick={toggleShowGeneratedPageCreator}><DebugMenu color1="#fff" size={16}/></PageHeaderButton>
+                        <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}><DebugMenu color1="#fff" size={16}/></PageHeaderButton>
                     </>
                 }
 
@@ -128,4 +142,5 @@ const PageHeaderButton = styled.button<{ active?: boolean }>`
 const PublishDropDownStyle = styled.div`
     margin-left: auto;
     margin-right: 30px;
+    display: flex;
 `;

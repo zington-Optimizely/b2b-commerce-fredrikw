@@ -1,14 +1,14 @@
-import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
 import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
+import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ wishListId: string }, GetWishListsApiParameter, OrderModel>;
 

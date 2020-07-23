@@ -1,14 +1,14 @@
-import { HandlerWithResult, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { CategoryModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import {
     getProductCollectionV2,
     getRelatedProductsCollectionV2,
     ProductModelExtended,
 } from "@insite/client-framework/Services/ProductServiceV2";
-import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { BrandModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface LoadCarouselProductsParameter {
     carouselId: string;

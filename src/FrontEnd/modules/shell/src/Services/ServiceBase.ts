@@ -1,9 +1,9 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { request, requestVoid } from "@insite/client-framework/Services/ApiService";
-import { Dispatch } from "redux";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { stringify } from "qs";
+import { Dispatch } from "redux";
 
 export function get<T>(endpoint: string, parameter?: Dictionary<any>) {
     let queryString = stringify(parameter || {}, { encode: false });

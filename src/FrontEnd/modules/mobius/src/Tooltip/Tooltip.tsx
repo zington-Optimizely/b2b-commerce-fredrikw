@@ -8,8 +8,8 @@ import get from "../utilities/get";
 import getColor from "../utilities/getColor";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
-import VisuallyHidden from "../VisuallyHidden";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import VisuallyHidden from "../VisuallyHidden";
 
 export interface TooltipPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.

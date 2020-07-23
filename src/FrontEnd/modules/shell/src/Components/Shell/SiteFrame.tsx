@@ -1,24 +1,25 @@
-import * as React from "react";
-import styled from "styled-components";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import AddWidgetModal from "@insite/shell/Components/Modals/AddWidgetModal";
-import { sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
-import { RouteComponentProps, withRouter } from "react-router";
+import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import {
     addWidget,
+    changeContext,
     moveWidgetTo,
     removeWidget,
-    changeContext,
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { displayAddWidgetModal, editWidget, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
-import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
 import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
-import { getWidgetDefinitions, getPageDefinitions } from "@insite/shell/DefinitionLoader";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { WidgetDefinition, PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import AddWidgetModal from "@insite/shell/Components/Modals/AddWidgetModal";
+import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
+import { sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
+import { getPageDefinitions } from "@insite/shell/DefinitionLoader";
+import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { displayAddWidgetModal, editWidget, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
+import styled from "styled-components";
 
 interface OwnProps {
     pageId: string;
@@ -35,6 +36,9 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     currentDeviceType: state.shellContext.currentDeviceType,
     draggingWidgetId: state.data.pages.draggingWidgetId,
     permissions: state.shellContext.permissions,
+    nodesByParentId: state.pageTree.treeNodesByParentId,
+    headerNodesByParentId: state.pageTree.headerTreeNodesByParentId,
+    footerNodesByParentId: state.pageTree.footerTreeNodesByParentId,
 });
 
 const mapDispatchToProps = {
@@ -144,31 +148,27 @@ class SiteFrame extends React.Component<Props, State> {
         bubbleEvent("mousedown");
 
         setSiteFrame(iframe, {
-            LoadPageComplete: (data: { pageId: string }) => {
+            LoadPageComplete: (data: { pageId: string; parentId: string; }) => {
                 const url = `/ContentAdmin/Page/${data.pageId}`;
                 this.framePageId = data.pageId;
                 this.props.history.push(url);
 
                 let attempts = 15;
-                const widgetDefinitions = getWidgetDefinitions();
-                const widgetDefinitionsByType: SafeDictionary<WidgetDefinition> = {};
-                widgetDefinitions.forEach(definition => {
-                    widgetDefinitionsByType[definition.type] = { isSystem: definition.isSystem } as WidgetDefinition;
-                });
 
                 const pageDefinitions = getPageDefinitions();
-                const pageDefinitionsByType: SafeDictionary<PageDefinition> = {};
+                const pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">> = {};
                 pageDefinitions.forEach(definition => {
-                    pageDefinitionsByType[definition.type] = { isSystemPage: definition.isSystemPage } as PageDefinition;
+                    pageDefinitionsByType[definition.type] = { pageType: definition.pageType };
                 });
+
+                const pageState = getPageState(data.pageId, this.props.nodesByParentId[data.parentId], this.props.headerNodesByParentId[data.parentId],
+                    this.props.footerNodesByParentId[data.parentId]);
 
                 const interval = setInterval(() => {
                     if ((sendToSite({
                         type: "CMSPermissions",
                         permissions: this.props.permissions,
-                    }) && sendToSite({
-                        type: "WidgetDefinitions",
-                        widgetDefinitionsByType,
+                        canChangePage: (!pageState?.futurePublishOn || pageState.futurePublishOn <= new Date()),
                     }) && sendToSite({
                         type: "PageDefinitions",
                         pageDefinitionsByType,

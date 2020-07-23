@@ -1,4 +1,4 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { OrderLineModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{ orderLines: OrderLineModel[]; }>;

@@ -1,8 +1,8 @@
-import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHistory/InvoiceHistoryState";
-import { Draft } from "immer";
-import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHistory/InvoiceHistoryState";
 import { UpdateSearchFieldsType } from "@insite/client-framework/Types/UpdateSearchFieldsType";
+import { Draft } from "immer";
 
 const initialState: InvoiceHistoryState = {
     getInvoicesParameter: {

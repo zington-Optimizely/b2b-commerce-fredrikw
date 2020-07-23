@@ -95,6 +95,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		currency: Insite.Websites.WebApi.V1.ApiModels.CurrencyModel;
 		deviceType: string;
 		persona: string;
+		personas: Insite.Account.WebApi.V1.ApiModels.PersonaModel[];
 		dashboardIsHomepage: boolean;
 		isSalesPerson: boolean;
 		customLandingPage: string;
@@ -109,6 +110,12 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		pickUpWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
 		fulfillmentMethod: string;
 		cartReminderUnsubscribeToken: string;
+	}
+	interface PersonaModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		description: string;
+		isDefault: boolean;
 	}
 	interface AccountShipToCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
@@ -360,6 +367,7 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
 		displayFacetsForStockedItems: boolean;
 		imageProvider: string;
+		catalogUrlPath: string;
 	}
 	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
 		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
@@ -421,8 +429,20 @@ declare module Insite.Customers.WebApi.V1.ApiModels {
 		isDefault: boolean;
 	}
 	interface CustomerSettingsModel extends Insite.Core.WebApi.BaseModel {
-		allowShipToAddressEdit: boolean;
 		allowBillToAddressEdit: boolean;
+		allowShipToAddressEdit: boolean;
+		allowCreateNewShipToAddress: boolean;
+		billToCompanyRequired: boolean;
+		billToFirstNameRequired: boolean;
+		billToLastNameRequired: boolean;
+		shipToCompanyRequired: boolean;
+		shipToFirstNameRequired: boolean;
+		shipToLastNameRequired: boolean;
+		budgetsFromOnlineOnly: boolean;
+		billToStateRequired: boolean;
+		shipToStateRequired: boolean;
+		displayAccountsReceivableBalances: boolean;
+		allowOneTimeAddresses: boolean;
 	}
 	interface BillToCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;
@@ -498,6 +518,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 		defaultPageSize: number;
 		enableCookiePrivacyPolicyPopup: boolean;
 		enableDynamicRecommendations: boolean;
+		googleMapsApiKey: string;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;
@@ -707,6 +728,7 @@ declare module Insite.Catalog.Services.Dtos {
 		canEnterQuantity: boolean;
 		canConfigure: boolean;
 		isStyleProductParent: boolean;
+		styleParentId: System.Guid;
 		requiresRealTimeInventory: boolean;
 		numberInCart: number;
 		qtyOrdered: number;
@@ -722,6 +744,7 @@ declare module Insite.Catalog.Services.Dtos {
 		productImages: Insite.Catalog.Services.Dtos.ProductImageDto[];
 		properties: {[key: string]:  string};
 		score: number;
+		scoreExplanation: Insite.Core.Plugins.Search.Dtos.ScoreExplanationDto;
 		searchBoost: number;
 		searchBoostDecimal: number;
 		salePriceLabel: string;
@@ -829,6 +852,7 @@ declare module Insite.Catalog.Services.Dtos {
 		label: string;
 		isFilter: boolean;
 		isComparable: boolean;
+		isSearchable: boolean;
 		includeOnProduct: boolean;
 		isActive: boolean;
 		sortOrder: number;
@@ -942,6 +966,72 @@ declare module Insite.Core.Plugins.Pricing {
 		breakPrice: number;
 		breakPriceDisplay: string;
 		savingsMessage: string;
+	}
+}
+declare module Insite.Core.Plugins.Search.Dtos {
+	interface ScoreExplanationDto {
+		totalBoost: number;
+		aggregateFieldScores: Insite.Core.Plugins.Search.Dtos.FieldScoreDto[];
+		detailedFieldScores: Insite.Core.Plugins.Search.Dtos.FieldScoreDetailedDto[];
+	}
+	interface FieldScoreDto {
+		name: string;
+		score: number;
+	}
+	interface FieldScoreDetailedDto {
+		name: string;
+		score: number;
+		boost: number;
+		matchText: string;
+		termFrequencyNormalized: number;
+		inverseDocumentFrequency: number;
+		scoreUsed: boolean;
+	}
+	interface CategoryFacetDto {
+		categoryId: System.Guid;
+		websiteId: System.Guid;
+		shortDescription: string;
+		count: number;
+		selected: boolean;
+		subCategoryDtos: Insite.Core.Plugins.Search.Dtos.CategoryFacetDto[];
+	}
+	interface AttributeTypeFacetDto {
+		attributeTypeId: System.Guid;
+		name: string;
+		nameDisplay: string;
+		sort: number;
+		attributeValueFacets: Insite.Core.Plugins.Search.Dtos.AttributeValueFacetDto[];
+	}
+	interface AttributeValueFacetDto {
+		attributeValueId: System.Guid;
+		value: string;
+		valueDisplay: string;
+		count: number;
+		sortOrder: number;
+		selected: boolean;
+	}
+	interface GenericFacetDto {
+		id: System.Guid;
+		name: string;
+		count: number;
+		selected: boolean;
+	}
+	interface SuggestionDto {
+		highlightedSuggestion: string;
+		score: number;
+		suggestion: string;
+	}
+	interface PriceRangeDto {
+		minimumPrice: number;
+		maximumPrice: number;
+		count: number;
+		priceFacets: Insite.Core.Plugins.Search.Dtos.PriceFacetDto[];
+	}
+	interface PriceFacetDto {
+		minimumPrice: number;
+		maximumPrice: number;
+		count: number;
+		selected: boolean;
 	}
 }
 declare module Insite.Budget.WebApi.V1.ApiModels {
@@ -1227,54 +1317,6 @@ declare module Insite.OrderApproval.WebApi.V1.ApiModels {
 	interface OrderApprovalCollectionModel extends Insite.Core.WebApi.BaseModel {
 		cartCollection: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
-	}
-}
-declare module Insite.Core.Plugins.Search.Dtos {
-	interface CategoryFacetDto {
-		categoryId: System.Guid;
-		websiteId: System.Guid;
-		shortDescription: string;
-		count: number;
-		selected: boolean;
-		subCategoryDtos: Insite.Core.Plugins.Search.Dtos.CategoryFacetDto[];
-	}
-	interface AttributeTypeFacetDto {
-		attributeTypeId: System.Guid;
-		name: string;
-		nameDisplay: string;
-		sort: number;
-		attributeValueFacets: Insite.Core.Plugins.Search.Dtos.AttributeValueFacetDto[];
-	}
-	interface AttributeValueFacetDto {
-		attributeValueId: System.Guid;
-		value: string;
-		valueDisplay: string;
-		count: number;
-		sortOrder: number;
-		selected: boolean;
-	}
-	interface GenericFacetDto {
-		id: System.Guid;
-		name: string;
-		count: number;
-		selected: boolean;
-	}
-	interface SuggestionDto {
-		highlightedSuggestion: string;
-		score: number;
-		suggestion: string;
-	}
-	interface PriceRangeDto {
-		minimumPrice: number;
-		maximumPrice: number;
-		count: number;
-		priceFacets: Insite.Core.Plugins.Search.Dtos.PriceFacetDto[];
-	}
-	interface PriceFacetDto {
-		minimumPrice: number;
-		maximumPrice: number;
-		count: number;
-		selected: boolean;
 	}
 }
 declare module Insite.Dashboard.WebApi.V1.ApiModels {

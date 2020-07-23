@@ -1,10 +1,10 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import { BudgetEnforcementLevel } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
 import translate from "@insite/client-framework/Translate";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
 import { css } from "styled-components";
-import { BudgetEnforcementLevel } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
 
 interface OwnProps {
     enforcementLevel: BudgetEnforcementLevel;

@@ -3,8 +3,11 @@
 # docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example -t spire
 # use this to run the built image, the site will run at http://localhost:3000, and your website domainNames needs to include host.docker.internal
 # docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire
-# docker ps to list running containers
-# docker stop [containerId] to stop a running container
+# stopping a running container
+# docker ps
+# docker stop {containerId}
+# troubleshooting - you can use the final image name, like spire from above, or any of the images creating during the build, they look like ---> XXXXXXXXXXXXX
+# docker run -it {imagename} /bin/sh
 
 # Command to build the base site with automatic Node/Linux image update:
 # docker build --pull .
@@ -13,18 +16,25 @@
 # "Current" versions should be periodically tested for early warning of compatibility problems.
 # The run-time version (near the end of this file) can be different but should generally be kept the same.
 
-# To build the build-base image used for customer sites (Linux container mode only because this uses buildkit)
-# BASH
-# DOCKER_BUILDKIT=1 && docker build --pull --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
-# Powershell
-# $env:DOCKER_BUILDKIT=1; docker build --pull --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
-ARG BUILD_BASE="build-base"
-
-# To build the runtime-base image used for customer sites (Linux container mode only because this uses buildkit)
+# To test/run the customer blueprint process
+# Ensure you are using Linux container mode
+# Build runtime-base image - do this once with a version number like 1.0.0.0
 # BASH
 # DOCKER_BUILDKIT=1 && docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
 # Powershell
 # $env:DOCKER_BUILDKIT=1; docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
+# To build the build-base image - do this each time you change base code, but you can use a version number like 1.0.0.0
+# BASH
+# DOCKER_BUILDKIT=1 && docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
+# Powershell
+# $env:DOCKER_BUILDKIT=1; docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
+# Run the actual blueprints docker file - this must execute from within the blueprints directory
+# cd modules\blueprints
+# docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example --build-arg COMMERCE_VERSION={version} -t spire-blueprint
+# docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire-blueprint
+ARG BUILD_BASE="build-base"
+
+
 ARG RUNTIME_BASE="runtime-base"
 
 ARG NODE_BASE_IMAGE="node:12-alpine"
@@ -64,16 +74,23 @@ RUN ["npm", "run", "stylelint"]
 
 # Copy this to get creators and other static files into the base build image.
 COPY ./wwwroot/ ./wwwroot/
+# We need these files available on build for the blueprints/Dockerfile
+COPY /startProduction.package.json /startProduction.js /start.js ./
 
 # This stage has to match the build stage in modules/blueprints/Dockerfile
 FROM $BUILD_BASE AS build
+
+##########################################################################################
+# Most things below this are currently copied (and changed slightly) into ./modules/blueprints/Dockerfile
+# you will probably need to make any changes there as well
+##########################################################################################
 
 WORKDIR /app
 COPY ./modules/blueprints ./modules/blueprints/
 
 # Create the JS bundles for the application.
 ARG BLUEPRINT=content-library
-RUN ["npm", "run", "build:docker"]
+RUN npm run build:docker || exit 1
 
 ARG BLUEPRINT_NAME=content-library
 RUN mkdir -p /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageCreators \
@@ -93,10 +110,17 @@ WORKDIR /app
 
 COPY --from=build /app/dist/. ./dist/
 COPY --from=build /app/wwwroot/. ./wwwroot/
+# ideally we wouldn't do this, but trying to get webpack to build startProduction.js wasn't working well because it requires dist/server
+# if we go down that path again don't forget target: "node" in the webpack config. Ideally it would treat dist/server as an external
+COPY /startProduction.package.json ./package.json
+COPY /startProduction.js /start.js ./
+RUN ["npm", "install", "--unsafe-perm"]
 
 ARG BUILD_INFO=None
 # Valid values for compression are `true` and `false, with `true` (the default) indicating to compress HTTP content.
-ARG ISC_ENABLE_COMPRESSION=true
+ENV ISC_ENABLE_COMPRESSION=true
+
+ENV ISC_ENABLE_CLUSTER=true
 
 USER node
-CMD ["node", "dist/server.js"]
+CMD ["node", "./startProduction.js"]

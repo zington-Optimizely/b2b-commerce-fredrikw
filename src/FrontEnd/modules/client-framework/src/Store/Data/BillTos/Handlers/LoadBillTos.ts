@@ -1,6 +1,6 @@
-import { GetBillTosApiParameter, getBillTos } from "@insite/client-framework/Services/CustomersService";
-import { BillToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandler, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getBillTos, GetBillTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { BillToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetBillTosApiParameter, BillToCollectionModel>;
 

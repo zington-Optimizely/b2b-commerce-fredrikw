@@ -1,26 +1,29 @@
-import React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import addLinesToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddLinesToCart";
 import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import deleteWishList from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishList";
 import deleteWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishListLines";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
+import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
 import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
 import translate from "@insite/client-framework/Translate";
-import { WishListLineModel, CartLineModel, CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { CartLineCollectionModel, CartLineModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import PrintAllPagesModal from "@insite/content-library/Components/PrintAllPagesModal";
-import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
+import ScheduleReminderModal, { ScheduleReminderModalStyles } from "@insite/content-library/Components/ScheduleReminderModal";
+import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyListsDetailsPage";
 import MyListsEditListForm from "@insite/content-library/Widgets/MyLists/MyListsEditListForm";
 import MyListsDetailsCopyListForm from "@insite/content-library/Widgets/MyListsDetails/MyListsDetailsCopyListForm";
@@ -31,18 +34,16 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import ScheduleReminderModal, { ScheduleReminderModalStyles } from "@insite/content-library/Components/ScheduleReminderModal";
-import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
-import { ShareOptions } from "@insite/client-framework/Services/WishListService";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface State {
     updateListModalIsOpen: boolean;
     deleteListModalIsOpen: boolean;
+    deleteListItemsModalIsOpen: boolean;
     copyListModalIsOpen: boolean;
     printAllModalIsOpen: boolean;
     scheduleReminderModalIsOpen: boolean;
@@ -55,6 +56,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     selectedWishListLineIds: state.pages.myListDetails.selectedWishListLineIds,
     myListsPageLink: getPageLinkByPageType(state, "MyListsPage"),
     allowEditingOfWishLists: getSettingsCollection(state).wishListSettings.allowEditingOfWishLists,
+    changedWishListLineQuantities: state.pages.myListDetails.changedWishListLineQuantities,
 });
 
 const mapDispatchToProps = {
@@ -67,6 +69,7 @@ const mapDispatchToProps = {
     updateLoadParameter,
     updateLoadWishListLinesParameter,
     setShareListModalIsOpen,
+    setAllWishListLinesIsSelected,
 };
 
 type Props = WidgetProps & HasHistory & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
@@ -87,6 +90,7 @@ export interface MyListsDetailsActionStyles {
     addListButton?: ButtonPresentationProps;
     editListModal?: ModalPresentationProps;
     deleteListModal?: TwoButtonModalStyles;
+    deleteListItemsModal?: TwoButtonModalStyles;
     printListModal?: TwoButtonModalStyles;
     copyListModal?: ModalPresentationProps;
     scheduleReminderModal?: ScheduleReminderModalStyles;
@@ -198,6 +202,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
             updateListModalIsOpen: false,
             printAllModalIsOpen: false,
             deleteListModalIsOpen: false,
+            deleteListItemsModalIsOpen: false,
             copyListModalIsOpen: false,
             scheduleReminderModalIsOpen: false,
         };
@@ -265,7 +270,10 @@ class MyListsDetailsActions extends React.Component<Props, State> {
             });
         } else {
             this.props.addWishListToCart({
-                apiParameter: { wishListId: this.props.wishList.id },
+                apiParameter: {
+                    wishListId: this.props.wishList.id,
+                    changedSharedListLinesQuantities: this.props.changedWishListLineQuantities,
+                },
                 onSuccess: this.onAddToCartSuccess,
             });
         }
@@ -275,25 +283,33 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         this.displayToast(this.linesSelected() ? translate("Added to Cart") : translate("List Added to Cart"));
     };
 
-    removeSelectedClickHandler = (e: any) => {
-        e.preventDefault();
+    removeSelectedClickHandler = () => {
+        this.setState({ deleteListItemsModalIsOpen: true });
+    };
+
+    removeSelectedCancelHandler = () => {
+        this.setState({ deleteListItemsModalIsOpen: false });
+    };
+
+    removeSelectedSubmitHandler = () => {
         if (!this.props.wishList || !this.props.wishListLinesDataView.value) {
             return;
         }
 
+        this.setState({ deleteListItemsModalIsOpen: false });
         const wishListLineIds = this.props.wishListLinesDataView.value
             .filter(o => this.props.selectedWishListLineIds.indexOf(o.id) > -1)
             .map(o => o.id);
         this.props.deleteWishListLines({
             wishListId: this.props.wishList.id,
             wishListLineIds,
-            reloadWishListLines: true,
             onSuccess: this.onRemoveSelectedSuccess,
         });
     };
 
     onRemoveSelectedSuccess = () => {
-        this.displayToast(translate("Items Deleted"));
+        this.displayToast(translate(`Item${this.props.selectedWishListLineIds.length > 1 ? "s" : ""} Deleted`));
+        this.props.setAllWishListLinesIsSelected({ isSelected: false });
     };
 
     deleteClickHandler = () => {
@@ -310,6 +326,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         }
 
         this.setState({ deleteListModalIsOpen: false });
+        this.props.myListsPageLink && this.props.history.push(this.props.myListsPageLink.url);
         this.props.deleteWishList({
             wishListId: this.props.wishList.id,
             onSuccess: this.onDeleteSuccess,
@@ -318,7 +335,6 @@ class MyListsDetailsActions extends React.Component<Props, State> {
 
     onDeleteSuccess = () => {
         this.displayToast(translate("List Deleted"));
-        this.props.myListsPageLink && this.props.history.push(this.props.myListsPageLink.url);
     };
 
     copyClickHandler = () => {
@@ -413,6 +429,18 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                     submitTestSelector="submitDeleteList"
                 >
                 </TwoButtonModal>
+                <TwoButtonModal
+                    headlineText={translate(`Delete Item${this.props.selectedWishListLineIds.length > 1 ? "s" : ""}`)}
+                    {...styles.deleteListItemsModal}
+                    modalIsOpen={this.state.deleteListItemsModalIsOpen}
+                    messageText={translate(`Are you sure you want to delete ${this.props.selectedWishListLineIds.length > 1 ? "these items" : "this item"}?`)}
+                    cancelButtonText={translate("Cancel")}
+                    submitButtonText={translate("Delete")}
+                    onCancel={this.removeSelectedCancelHandler}
+                    onSubmit={this.removeSelectedSubmitHandler}
+                    submitTestSelector="submitDeleteListItems"
+                >
+                </TwoButtonModal>
                 {wishListLinesDataView.value
                     && <PrintAllPagesModal
                         isOpen={this.state.printAllModalIsOpen}
@@ -453,7 +481,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Actions",
         allowedContexts: [MyListsDetailsPageContext],
-        isSystem: true,
     },
 };
 

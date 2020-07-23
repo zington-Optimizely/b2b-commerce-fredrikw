@@ -1,28 +1,28 @@
 import * as React from "react";
 import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
-import styled, { AnyStyledComponent, ThemeConsumer, css } from "styled-components";
+import styled, { AnyStyledComponent, css, ThemeConsumer } from "styled-components";
 import Button, { ButtonPresentationProps } from "../Button";
 import FormField, {
-    FormFieldIcon,
     FormFieldClickable,
+    FormFieldComponentProps,
+    FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-    FormFieldComponentProps,
 } from "../FormField";
+import { borderTypes, sizeVariantValues, VariantValues } from "../FormField/formStyles";
 import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
-import { sizeVariantValues, VariantValues, borderTypes } from "../FormField/formStyles";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import injectCss from "../utilities/injectCss";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import VisuallyHidden from "../VisuallyHidden";
 import get from "../utilities/get";
 import getProp from "../utilities/getProp";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import omitMultiple from "../utilities/omitMultiple";
+import uniqueId from "../utilities/uniqueId";
+import VisuallyHidden from "../VisuallyHidden";
 
 interface FileUploadCssOverrides extends Pick<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
     appearanceTransition?: StyledProp<any>;

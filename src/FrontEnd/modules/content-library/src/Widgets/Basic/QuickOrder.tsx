@@ -1,28 +1,30 @@
-import React, { FC } from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import { withToaster, HasToasterContext } from "@insite/mobius/Toast/ToasterContext";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { css } from "styled-components";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
+    const settingsCollection = getSettingsCollection(state);
     return {
-        showAddToCartConfirmationDialog: getSettingsCollection(state).productSettings.showAddToCartConfirmationDialog,
+        canOrderUpload: settingsCollection.orderSettings.canOrderUpload,
+        showAddToCartConfirmationDialog: settingsCollection.productSettings.showAddToCartConfirmationDialog,
         orderUploadPageNavLink: getPageLinkByPageType(state, "OrderUploadPage"),
         quickOrderPageNavLink: getPageLinkByPageType(state, "QuickOrderPage"),
     };
@@ -87,6 +89,7 @@ const styles: QuickOrderStyles = {
 export const quickOrderStyles = styles;
 
 const QuickOrder: FC<Props> = ({
+    canOrderUpload,
     showAddToCartConfirmationDialog,
     orderUploadPageNavLink,
     quickOrderPageNavLink,
@@ -116,9 +119,11 @@ const QuickOrder: FC<Props> = ({
                 <Typography {...styles.titleText}>{translate("Quick Order")}</Typography>
             </GridItem>
             <GridItem {...styles.linksGridItem}>
-                <Link {...styles.orderUploadLink} href={orderUploadPageNavLink ? orderUploadPageNavLink.url : undefined}>
-                    {translate("Upload an Order")}
-                </Link>
+                {canOrderUpload
+                    && <Link {...styles.orderUploadLink} href={orderUploadPageNavLink ? orderUploadPageNavLink.url : undefined}>
+                        {translate("Upload an Order")}
+                    </Link>
+                }
                 <Link {...styles.orderMultipleItemsLink} href={quickOrderPageNavLink ? quickOrderPageNavLink.url : undefined}>
                     {translate("Order Multiple Items")}
                 </Link>
@@ -139,7 +144,6 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(withToaster(QuickOrder)),
     definition: {
         group: "Basic",
-        isSystem: true,
     },
 };
 

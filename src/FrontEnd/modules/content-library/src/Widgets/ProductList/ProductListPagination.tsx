@@ -1,11 +1,11 @@
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -67,7 +67,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Pagination",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

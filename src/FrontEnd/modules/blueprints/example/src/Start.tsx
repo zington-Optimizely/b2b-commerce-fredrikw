@@ -1,7 +1,7 @@
 import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Configuration";
-import "./Store/Reducers"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
-import { setPreStyleGuideTheme, setPostStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import { setPostStyleGuideTheme, setPreStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
 import baseTheme from "@insite/mobius/globals/baseTheme";
+import "./Store/Reducers";
 
 // load all widgets. Without this they won't be included in the bundle
 const widgets = require.context("./Widgets", true, /\.tsx$/);

@@ -1,13 +1,13 @@
 import * as React from "react";
 import styled from "styled-components";
-import FormField, { FormFieldIcon, FormFieldPresentationProps, FormFieldComponentProps } from "../FormField";
+import FormField, { FormFieldComponentProps, FormFieldIcon, FormFieldPresentationProps } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
+import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import injectCss from "../utilities/injectCss";
-import uniqueId from "../utilities/uniqueId";
-import { IconPresentationProps } from "../Icon";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import uniqueId from "../utilities/uniqueId";
 
 export interface TokenExFramePresentationProps extends FormFieldPresentationProps<TokenExFrameComponentProps> {
     /** The props for icon displaying on the text input field.

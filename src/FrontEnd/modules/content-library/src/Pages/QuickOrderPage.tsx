@@ -1,12 +1,12 @@
-import React from "react";
-import Page from "@insite/mobius/Page";
 import Zone from "@insite/client-framework/Components/Zone";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import { connect } from "react-redux";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import ProductSelectorVariantModal from "@insite/content-library/Components/ProductSelectorVariantModal";
+import Page from "@insite/mobius/Page";
+import React from "react";
+import { connect } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     productsLength: state.pages.quickOrder.products.length,
@@ -26,7 +26,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

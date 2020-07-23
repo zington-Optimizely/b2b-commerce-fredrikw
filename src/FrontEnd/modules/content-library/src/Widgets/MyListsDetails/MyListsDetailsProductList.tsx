@@ -1,36 +1,45 @@
-import React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import deleteWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishListLine";
+import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
+import setQuantityAdjustmentModalIsOpen from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetQuantityAdjustmentModalIsOpen";
+import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
+import updateWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLine";
+import updateWishListLineQuantities from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineQuantities";
+import translate from "@insite/client-framework/Translate";
+import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import TwoButtonModal from "@insite/content-library/Components/TwoButtonModal";
 import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyListsDetailsPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
+import MyListsDetailsProductListLine from "@insite/content-library/Widgets/MyListsDetails/MyListsDetailsProductListLine";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
+import Move from "@insite/mobius/Icons/Move";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import TwoButtonModal from "@insite/content-library/Components/TwoButtonModal";
-import { WishListLineModel } from "@insite/client-framework/Types/ApiModels";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import MyListsDetailsProductListLine from "@insite/content-library/Widgets/MyListsDetails/MyListsDetailsProductListLine";
-import updateWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLine";
-import deleteWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishListLine";
-import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
-import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { SortableContainer, SortableElement, SortableHandle, SortEvent } from "react-sortable-hoc";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListDataView: getWishListState(state, state.pages.myListDetails.wishListId),
     wishListLinesDataView: getWishListLinesDataView(state, state.pages.myListDetails.loadWishListLinesParameter),
     loadWishListLinesParameter: state.pages.myListDetails.loadWishListLinesParameter,
+    editingSortOrder: state.pages.myListDetails.editingSortOrder,
+    quantityAdjustmentModalIsOpen: state.pages.myListDetails.quantityAdjustmentModalIsOpen,
 });
 
 const mapDispatchToProps = {
@@ -38,6 +47,8 @@ const mapDispatchToProps = {
     loadWishListLines,
     updateWishListLine,
     deleteWishListLine,
+    updateWishListLineQuantities,
+    setQuantityAdjustmentModalIsOpen,
 };
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -48,6 +59,10 @@ export interface MyListsDetailsProductListStyles {
     messageText?: TypographyPresentationProps;
     container?: GridContainerProps;
     lineGridItem?: GridItemProps;
+    sortOrderWrapper?: InjectableCss;
+    dragHandleIcon?: IconPresentationProps;
+    sortOrderTextField?: TextFieldProps;
+    paginationContainer?: GridContainerProps;
     paginationGridItem?: GridItemProps;
     pagination?: PaginationPresentationProps;
     editNotesModal?: ModalPresentationProps;
@@ -56,6 +71,8 @@ export interface MyListsDetailsProductListStyles {
     editNotesModalDeleteButton?: ButtonPresentationProps;
     editNotesModalCancelButton?: ButtonPresentationProps;
     editNotesModalSubmitButton?: ButtonPresentationProps;
+    quantityAdjustmentModal?: ModalPresentationProps;
+    quantityAdjustedText?: TypographyPresentationProps;
 }
 
 const styles: MyListsDetailsProductListStyles = {
@@ -92,11 +109,56 @@ const styles: MyListsDetailsProductListStyles = {
             padding: 20px 0;
         `,
     },
+    sortOrderWrapper: {
+        css: css`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60px;
+            margin-right: 12px;
+        `,
+    },
+    dragHandleIcon: {
+        src: Move,
+        size: 22,
+        css: css` cursor: move; `,
+    },
+    sortOrderTextField: {
+        labelPosition: "top",
+        labelProps: {
+            size: 9,
+            transform: "uppercase",
+            css: css`
+                min-height: auto;
+                text-align: center;
+            `,
+        },
+        cssOverrides: {
+            formInputWrapper: css`
+                input[type="number"]::-webkit-outer-spin-button,
+                input[type="number"]::-webkit-inner-spin-button {
+                    /* ISC-11023 deal with this. */
+                    /* stylelint-disable-next-line */
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+            `,
+            formField: css` margin-top: 10px; `,
+            inputSelect: css`
+                text-align: center;
+
+                /* ISC-11023 deal with this. */
+                /* stylelint-disable-next-line */
+                -moz-appearance: textfield;
+            `,
+        },
+    },
     paginationGridItem: {
         width: 12,
         css: css` justify-content: flex-end; `,
     },
     pagination: { cssOverrides: { pagination: css` @media print { display: none; } ` } },
+    editNotesModal: { sizeVariant: "small" },
     editNotesModalButtonsWrapper: {
         css: css`
             @media print { display: none; }
@@ -110,6 +172,7 @@ const styles: MyListsDetailsProductListStyles = {
         css: css` margin-left: 10px; `,
     },
     editNotesModalSubmitButton: { css: css` margin-left: 10px; ` },
+    quantityAdjustmentModal: { sizeVariant: "medium" },
 };
 
 export const productListStyles = styles;
@@ -118,10 +181,14 @@ const MyListsDetailsProductList: React.FC<Props> = ({
     wishListDataView,
     wishListLinesDataView,
     loadWishListLinesParameter,
+    editingSortOrder,
+    quantityAdjustmentModalIsOpen,
     updateLoadWishListLinesParameter,
     loadWishListLines,
     updateWishListLine,
     deleteWishListLine,
+    updateWishListLineQuantities,
+    setQuantityAdjustmentModalIsOpen,
 }) => {
     if (!wishListDataView.value || !wishListLinesDataView.value || wishListLinesDataView.isLoading || !wishListLinesDataView.pagination) {
         return <StyledWrapper {...styles.centeringWrapper}>
@@ -147,7 +214,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
         deleteWishListLine({
             wishListId: wishList.id,
             wishListLineId: wishListLineToAction.id,
-            reloadWishListLines: true,
             onSuccess: () => {
                 setDeleteLineModalIsOpen(false);
             },
@@ -186,9 +252,74 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             wishListId: wishList.id,
             wishListLineId: wishListLineToUpdate.id,
             wishListLine: wishListLineToUpdate,
-            reloadWishListLines: false,
             onSuccess: () => { setEditNotesModalIsOpen(false); },
         });
+    };
+
+    const updateSortOrder = (wishListLine: WishListLineModel, value: number | string) => {
+        const sortOrder = parseInt(value.toString() || "1", 10);
+        if (wishListLine.sortOrder === sortOrder) {
+            return;
+        }
+
+        const wishListLineToUpdate = { ...wishListLine, sortOrder };
+        updateWishListLine({
+            wishListId: wishList.id,
+            wishListLineId: wishListLineToUpdate.id,
+            wishListLine: wishListLineToUpdate,
+        });
+    };
+
+    const sortMove = (e: SortEvent) => {
+        e.preventDefault();
+
+        let clientY = 0;
+        if ((e as any).clientY !== undefined) {
+            clientY = (e as any).clientY;
+        } else if ((e as any).targetTouches !== undefined) {
+            clientY = (e as any).targetTouches[0].clientY;
+        } else {
+            return;
+        }
+
+        if (clientY < 50) {
+            scroll(-20);
+        } else if (clientY < 100) {
+            scroll(-10);
+        }
+
+        const bottom = window.innerHeight - clientY;
+        if (bottom < 50) {
+            scroll(20);
+        } else if (bottom < 100) {
+            scroll(10);
+        }
+    };
+
+    const scroll = (step: number) => {
+        window.scrollBy(0, step);
+    };
+
+    React.useEffect(
+        () => {
+            if (typeof Array.from !== "undefined") {
+                return;
+            }
+
+            // this is needed for IE
+            const script = document.createElement("script");
+            script.src = "https://polyfill.io/v3/polyfill.min.js?features=Array.from%2CSymbol";
+            script.async = true;
+
+            document.body.appendChild(script);
+        }, []);
+
+    const quantityAdjustmentModalCancelHandler = () => {
+        setQuantityAdjustmentModalIsOpen({ modalIsOpen: false });
+    };
+
+    const updateQuantityClickHandler = () => {
+        updateWishListLineQuantities();
     };
 
     if (!wishListLines || wishListLines.length === 0 || products.length === 0) {
@@ -200,21 +331,22 @@ const MyListsDetailsProductList: React.FC<Props> = ({
     }
 
     return <>
-        <GridContainer {...styles.container} data-test-selector="linesContainer">
-            {wishListLines.map((wishListLine, index) =>
-                <GridItem
-                    {...styles.lineGridItem}
-                    key={wishListLine.id}
-                    data-test-selector="lineContainer"
-                >
-                    <MyListsDetailsProductListLine
-                        wishList={wishList}
-                        wishListLine={wishListLine}
-                        product={products[index]}
-                        onDeleteClick={deleteClickHandler}
-                        onEditNotesClick={editNotesClickHandler} />
-                </GridItem>)
-            }
+        <LinesContainer
+            wishList={wishList}
+            wishListLines={wishListLines}
+            products={products}
+            editingSortOrder={editingSortOrder}
+            updateSortOrder={updateSortOrder}
+            onDeleteClick={deleteClickHandler}
+            onEditNotesClick={editNotesClickHandler}
+            onUpdateQuantityClick={updateQuantityClickHandler}
+            useDragHandle={true}
+            lockAxis="y"
+            onSortStart={(_, e) => e.preventDefault()}
+            onSortMove={sortMove}
+            onSortEnd={({ oldIndex, newIndex }) => updateSortOrder(wishListLines[oldIndex], newIndex + 1)}
+        />
+        <GridContainer {...styles.paginationContainer}>
             <GridItem {...styles.paginationGridItem} data-test-selector="pagination">
                 <Pagination
                     {...styles.pagination}
@@ -242,12 +374,118 @@ const MyListsDetailsProductList: React.FC<Props> = ({
                 headline={translate(`${wishListLineToAction.notes ? "Edit" : "Add"} Notes`)}
                 isOpen={editNotesModalIsOpen}
                 handleClose={editNotesModalCancelHandler}
-                sizeVariant="small">
+            >
                 <EditNotesForm wishListLine={wishListLineToAction} onCancel={editNotesModalCancelHandler} onSubmit={editNotesModalSubmitHandler} />
             </Modal>
         }
+        <Modal
+            {...styles.quantityAdjustmentModal}
+            headline={translate("Quantity Adjustment Has Been Made")}
+            isOpen={quantityAdjustmentModalIsOpen}
+            handleClose={quantityAdjustmentModalCancelHandler}
+        >
+            <Typography {...styles.quantityAdjustedText}>{siteMessage("Lists_QuantitiesAdjusted")}</Typography>
+        </Modal>
     </>;
 };
+
+const DragHandle = SortableHandle(() => <Icon {...styles.dragHandleIcon} />);
+
+interface LineItemProps {
+    wishList: WishListModel;
+    wishListLine: WishListLineModel;
+    product: ProductModelExtended;
+    editingSortOrder: boolean;
+    updateSortOrder: (wishListLine: WishListLineModel, value: number | string) => void;
+    onDeleteClick: (wishListLine: WishListLineModel) => void;
+    onEditNotesClick: (wishListLine: WishListLineModel) => void;
+    onUpdateQuantityClick: () => void;
+}
+
+const LineItem = SortableElement(({
+    wishList,
+    wishListLine,
+    product,
+    editingSortOrder,
+    updateSortOrder,
+    onDeleteClick,
+    onEditNotesClick,
+    onUpdateQuantityClick,
+}: LineItemProps) => {
+    const sortOrderBlurHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+        updateSortOrder(wishListLine, event.target.value);
+    };
+
+    const sortOrderKeyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.which === 13) {
+            (event.target as any).blur();
+        }
+    };
+
+    return <GridItem {...styles.lineGridItem} data-test-selector="lineContainer">
+        {editingSortOrder
+            && <StyledWrapper {...styles.sortOrderWrapper}>
+                <DragHandle />
+                <TextField
+                    {...styles.sortOrderTextField}
+                    label={translate("Sort Order")}
+                    type="number"
+                    min={1}
+                    defaultValue={wishListLine.sortOrder}
+                    onBlur={sortOrderBlurHandler}
+                    onKeyPress={sortOrderKeyPressHandler}
+                />
+            </StyledWrapper>
+        }
+        <MyListsDetailsProductListLine
+            wishList={wishList}
+            wishListLine={wishListLine}
+            product={product}
+            onDeleteClick={onDeleteClick}
+            onEditNotesClick={onEditNotesClick}
+            onUpdateQuantityClick={onUpdateQuantityClick}
+        />
+    </GridItem>;
+});
+
+interface LinesContainerProps {
+    wishList: WishListModel;
+    wishListLines: WishListLineModel[];
+    products: readonly ProductModelExtended[];
+    editingSortOrder: boolean;
+    updateSortOrder: (wishListLine: WishListLineModel, value: number | string) => void;
+    onDeleteClick: (wishListLine: WishListLineModel) => void;
+    onEditNotesClick: (wishListLine: WishListLineModel) => void;
+    onUpdateQuantityClick: () => void;
+}
+
+const LinesContainer = SortableContainer(({
+    wishList,
+    wishListLines,
+    products,
+    editingSortOrder,
+    updateSortOrder,
+    onDeleteClick,
+    onEditNotesClick,
+    onUpdateQuantityClick,
+}: LinesContainerProps) =>
+    <GridContainer {...styles.container} data-test-selector="linesContainer">
+        {wishListLines.map((wishListLine, index) => (
+            <LineItem
+                key={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}
+                index={index}
+                wishList={wishList}
+                wishListLine={wishListLine}
+                product={products[index]}
+                editingSortOrder={editingSortOrder}
+                updateSortOrder={updateSortOrder}
+                onDeleteClick={onDeleteClick}
+                onEditNotesClick={onEditNotesClick}
+                onUpdateQuantityClick={onUpdateQuantityClick}
+            />
+        ))}
+    </GridContainer>,
+);
 
 interface EditNotesFormProps {
     wishListLine: WishListLineModel;
@@ -290,7 +528,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Product List",
         allowedContexts: [MyListsDetailsPageContext],
-        isSystem: true,
     },
 };
 

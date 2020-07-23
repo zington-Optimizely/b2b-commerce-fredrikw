@@ -1,8 +1,8 @@
 import { css, Interpolation } from "styled-components";
-import getProp from "../utilities/getProp";
-import get from "../utilities/get";
-import { PaginationProps } from "./Pagination";
 import { ButtonVariants } from "../Button";
+import get from "../utilities/get";
+import getProp from "../utilities/getProp";
+import { PaginationProps } from "./Pagination";
 
 const buttonDisplayProps = (props: PaginationProps, {
     page, moreCss, cssOverrides, buttonProps, currentPageButtonVariant,

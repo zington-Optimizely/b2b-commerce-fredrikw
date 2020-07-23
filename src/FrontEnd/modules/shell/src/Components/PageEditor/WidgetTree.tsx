@@ -1,6 +1,6 @@
+import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
 import styled from "styled-components";
 
 interface OwnProps {

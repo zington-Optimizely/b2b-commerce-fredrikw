@@ -1,12 +1,12 @@
-import { Dictionary } from "@insite/client-framework/Common/Types";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
-import { PageModel } from "@insite/client-framework/Types/PageProps";
-import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { Dictionary } from "@insite/client-framework/Common/Types";
+import logger from "@insite/client-framework/Logger";
+import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
-import logger from "@insite/client-framework/Logger";
+import { PageModel } from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
 
 export function setupPageModel(pageModel: PageModel,
                                name: string,

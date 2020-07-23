@@ -1,24 +1,24 @@
+import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
+import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import React, { FC } from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
-import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import { connect } from "react-redux";
-import { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
-import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
-import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     cartState: getCartState(state, state.pages.orderConfirmation.cartId),
@@ -117,7 +117,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Header",
         allowedContexts: [OrderConfirmationPageContext],
         group: "Order Confirmation",
-        isSystem: true,
     },
 };
 

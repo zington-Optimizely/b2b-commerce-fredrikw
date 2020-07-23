@@ -1,15 +1,15 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import forgotPassword from "@insite/client-framework/Store/Context/Handlers/ForgotPassword";
 import translate from "@insite/client-framework/Translate";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import { ResolveThunks, connect } from "react-redux";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import forgotPassword from "@insite/client-framework/Store/Context/Handlers/ForgotPassword";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     onClose: () => void;

@@ -1,9 +1,9 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import React from "react";
 import translate from "@insite/client-framework/Translate";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React from "react";
 
 interface OwnProps {
     address: string;

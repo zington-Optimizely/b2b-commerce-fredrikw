@@ -1,13 +1,15 @@
-import { Draft } from "immer";
-import { PageTreeState, TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import {
-    PageReorderModel,
-    TreeFilterModel,
-    PageStateModel,
-} from "@insite/shell/Services/ContentAdminService";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import {
+    getPageState,
+    getPageStateFromDictionaries,
+    PageReorderModel,
+    PageStateModel,
+    TreeFilterModel,
+} from "@insite/shell/Services/ContentAdminService";
+import { PageTreeState, TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
+import { Draft } from "immer";
 
 const initialState: PageTreeState = {
     potentialTreeFilters: [],
@@ -49,6 +51,7 @@ const reducer = {
                     : "",
                 isMatchingPage: pageState.attributes.indexOf("NonMatching") < 0,
                 type: pageState.type,
+                futurePublishOn: pageState.futurePublishOn ? new Date(pageState.futurePublishOn) : undefined,
             };
 
             if (treeNode.displayName === "Header") {
@@ -76,6 +79,14 @@ const reducer = {
                 draft.expandedNodes[treeNode.pageId] = true;
             }
         }
+    },
+
+    "PageTree/UpdatePageState": (draft: Draft<PageTreeState>, action: { pageId: string; parentId: string; publishOn?: Date; }) => {
+        const pageState = action.parentId ? getPageState(action.pageId, draft.treeNodesByParentId[action.parentId], draft.headerTreeNodesByParentId[action.parentId], draft.footerTreeNodesByParentId[action.parentId])
+            : getPageStateFromDictionaries(action.pageId, draft.treeNodesByParentId, draft.headerTreeNodesByParentId, draft.footerTreeNodesByParentId);
+        if (!pageState) return;
+
+        pageState.futurePublishOn = action.publishOn;
     },
 
     "PageTree/SetExpandedNodes": (draft: Draft<PageTreeState>, action: { expandedNodes: Dictionary<boolean>; }) => {

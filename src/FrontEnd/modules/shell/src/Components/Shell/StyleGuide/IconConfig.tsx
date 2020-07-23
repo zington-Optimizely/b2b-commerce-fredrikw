@@ -1,13 +1,13 @@
-import * as React from "react";
 import TextField from "@insite/mobius/TextField";
+import get from "@insite/mobius/utilities/get";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
+import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
 import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
 import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
+import { configFormFieldStyles, createSetParentIfUndefined, undefinedIfFunction } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
 import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
-import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
-import { createSetParentIfUndefined, undefinedIfFunction, configFormFieldStyles } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
-import get from "@insite/mobius/utilities/get";
+import * as React from "react";
 
 const IconConfig: React.FunctionComponent<{
     idPrefix: string;

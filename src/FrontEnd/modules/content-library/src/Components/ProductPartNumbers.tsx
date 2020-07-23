@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
 import translate from "@insite/client-framework/Translate";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridWidths, GridItemProps } from "@insite/mobius/GridItem";
+import GridItem, { GridItemProps, GridWidths } from "@insite/mobius/GridItem";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
 
 interface OwnProps {
     productNumber: string;

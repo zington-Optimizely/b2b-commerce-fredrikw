@@ -1,15 +1,15 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { css } from "styled-components";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import { connect } from "react-redux";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     imageUrl = "imageUrl",
@@ -64,7 +64,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Image",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.imageUrl,

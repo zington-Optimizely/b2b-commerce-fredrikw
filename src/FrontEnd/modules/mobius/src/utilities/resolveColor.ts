@@ -1,5 +1,5 @@
-import get from "./get";
 import baseTheme, { BaseTheme } from "../globals/baseTheme";
+import get from "./get";
 
 /**
  * Used to translate theme colors into CSS color values.

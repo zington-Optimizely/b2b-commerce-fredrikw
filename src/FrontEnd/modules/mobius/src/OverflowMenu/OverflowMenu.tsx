@@ -9,10 +9,10 @@ import getColor from "../utilities/getColor";
 import getProp from "../utilities/getProp";
 import { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitSingle from "../utilities/omitSingle";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export interface OverflowMenuPresentationProps {
     /** An object containing props to be passed down to trigger button component.

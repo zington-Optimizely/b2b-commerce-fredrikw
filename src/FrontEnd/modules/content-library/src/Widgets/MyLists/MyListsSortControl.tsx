@@ -1,15 +1,15 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
+import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
 import Select, { SelectProps } from "@insite/mobius/Select";
-import translate from "@insite/client-framework/Translate";
-import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
-import updateLoadParameter from "@insite/client-framework/Store/Pages/MyLists/Handlers/UpdateLoadParameter";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends WidgetProps {
 }
@@ -60,7 +60,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Sort Control",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

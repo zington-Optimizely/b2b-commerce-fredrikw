@@ -1,5 +1,5 @@
-import { getSettings, GetSettingsApiParameter, SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getSettings, GetSettingsApiParameter, SettingsModel } from "@insite/client-framework/Services/SettingsService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetSettingsApiParameter, SettingsModel>;
 

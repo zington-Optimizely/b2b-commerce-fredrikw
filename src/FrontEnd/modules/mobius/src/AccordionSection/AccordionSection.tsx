@@ -1,14 +1,17 @@
 import * as React from "react";
-import { withTheme, ThemeProps } from "styled-components";
+import { Transition } from "react-transition-group";
+import { TransitionStatus } from "react-transition-group/Transition";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import AccordionContext from "../Accordion/AccordionContext";
-import AccordionSectionHeader, { AccordionSectionHeaderProps } from "./AccordionSectionHeader";
-import AccordionSectionPanel, { AccordionSectionPanelProps } from "./AccordionSectionPanel";
-import { IconMemo, IconPresentationProps } from "../Icon";
+import { BaseTheme } from "../globals/baseTheme";
+import { IconMemo, IconPresentationProps, IconProps, IconWrapperProps } from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import uniqueId from "../utilities/uniqueId";
 import { StyledProp } from "../utilities/InjectableCss";
-import { BaseTheme } from "../globals/baseTheme";
+import injectCss from "../utilities/injectCss";
+import uniqueId from "../utilities/uniqueId";
+import AccordionSectionHeader, { AccordionSectionHeaderProps } from "./AccordionSectionHeader";
+import AccordionSectionPanel, { AccordionSectionPanelProps } from "./AccordionSectionPanel";
 
 export interface AccordionSectionPresentationProps {
     /** CSS string or styled-components function to be injected into this component.
@@ -23,15 +26,34 @@ export interface AccordionSectionPresentationProps {
     /** Props that will be passed to the typography title component if the Title is a string.
      * @themable */
     titleTypographyProps?: TypographyPresentationProps;
-    /** Props that will be passed to the toggle icon.
+    /** Props that will be passed to the toggle icon. Used for icon size, and other props to be used for both icons.
+     * Source used if `collapseIconProps` or `expandIconProps` is not provided.
      * @themable */
     toggleIconProps?: IconPresentationProps;
+    /** Props that will be passed to the toggle icon when the accordion is open.
+     * @themable */
+    collapseIconProps?: IconPresentationProps;
+    /** Props that will be passed to the toggle icon when the accordion is closed.
+     * @themable */
+    expandIconProps?: IconPresentationProps;
+    /** Attributes of the toggle transition.
+     * @themable */
+    toggleTransition?: {
+        positionerCss?: StyledProp<IconWrapperProps>;
+        transitionCss?: StyledProp<{ transitionState: TransitionStatus }>;
+        timeout?: TimeoutProp;
+    };
+}
+
+interface TimeoutProp {
+    enter: number,
+    exit: number,
 }
 
 export interface AccordionSectionComponentProps {
     /** Props to be passed to the inner AccordionSectionHeader component. */
     headerProps?: AccordionSectionHeaderProps;
-    /** Sets the initial expanded state of the section. */
+    /** Controls expanded state of the section. */
     expanded?: boolean;
     /** Aria attributes used internally require an `id`. If not provided, a random id is generated. */
     uid?: string;
@@ -41,6 +63,16 @@ export interface AccordionSectionComponentProps {
     onTogglePanel?: (expanded: boolean) => void;
 }
 
+const IconPositioner = styled.span<IconWrapperProps>`
+    padding-left: 15px;
+    height: ${({ _height, _size }) => _height || _size}px;
+    width: ${({ _width, _size }) => _width || _size}px;
+    max-height: ${({ _height, _size }) => _height || _size}px;
+    max-width: ${({ _width, _size }) => _width || _size}px;
+    position: relative;
+    ${injectCss}
+`;
+
 export interface AccordionSectionProps extends AccordionSectionComponentProps,
     Omit<AccordionSectionPresentationProps, "headerProps"> { }
 
@@ -48,12 +80,12 @@ type State = Pick<AccordionSectionProps, "expanded" | "uid">;
 type Props = AccordionSectionProps & ThemeProps<BaseTheme>;
 
 class AccordionSection extends React.Component<Props, State> {
-    state: State = {}; // needs to be initialized as an empty object...
+    state: State = {};
 
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        let expanded = nextProps.expanded || false;
-        if (prevState && "expanded" in prevState) { // ...because of this check here.
-            expanded = !!prevState.expanded; // eslint-disable-line prefer-destructuring
+        let expanded: boolean | undefined = prevState.expanded || false;
+        if ("expanded" in nextProps && (prevState.expanded !== nextProps.expanded)) {
+            expanded = nextProps.expanded; // eslint-disable-line prefer-destructuring
         }
         return {
             expanded,
@@ -62,7 +94,9 @@ class AccordionSection extends React.Component<Props, State> {
     }
 
     togglePanel = () => {
-        this.setState(({ expanded }) => ({ expanded: !expanded }), () => {
+        this.setState(({ expanded }) => {
+            return { expanded: !expanded };
+        }, () => {
             if (this.props.onTogglePanel) {
                 this.props.onTogglePanel(this.state.expanded ?? false);
             }
@@ -72,6 +106,11 @@ class AccordionSection extends React.Component<Props, State> {
     render() {
         const { children, title } = this.props;
         const { spreadProps } = applyPropBuilder(this.props, { component: "accordion", propKey: "sectionDefaultProps" });
+        const toggleIconProps = spreadProps("toggleIconProps");
+        const collapseIconProps = spreadProps("collapseIconProps");
+        const expandIconProps = spreadProps("expandIconProps");
+        const toggleTransition = spreadProps("toggleTransition");
+        const usesSingleIcon = !collapseIconProps.src && !expandIconProps.src;
         const { expanded, uid } = this.state;
         const triggerId = `${uid}-trigger`;
         const panelId = `${uid}-panel`;
@@ -87,7 +126,7 @@ class AccordionSection extends React.Component<Props, State> {
 
         return (
             <AccordionContext.Consumer>
-                {({ headingLevel }) => (
+                {({ headingLevel = 0 }) => (
                     <>
                         <AccordionSectionHeader
                             headingLevel={headingLevel}
@@ -103,11 +142,38 @@ class AccordionSection extends React.Component<Props, State> {
                                 onClick={this.togglePanel}
                             >
                                 {titleElement}
-                                <IconMemo
-                                    role="presentation"
-                                    className="toggle"
-                                    {...spreadProps("toggleIconProps")}
-                                />
+                                {usesSingleIcon
+                                    ? <IconMemo
+                                        role="presentation"
+                                        className="toggle"
+                                        {...toggleIconProps}/>
+                                    : <IconPositioner
+                                        _size={toggleIconProps.size || 24}
+                                        _height={toggleIconProps.height}
+                                        _width={toggleIconProps.width}
+                                        css={toggleTransition.positionerCss}>
+                                        <TransitionIcon
+                                            isIn={!!expanded}
+                                            css={toggleTransition.transitionCss}
+                                            timeout={toggleTransition.timeout}
+                                            iconProps={{
+                                                role: "presentation",
+                                                ...toggleIconProps,
+                                                ...collapseIconProps,
+                                            }}
+                                        />
+                                        <TransitionIcon
+                                            isIn={!expanded}
+                                            css={toggleTransition.transitionCss}
+                                            timeout={toggleTransition.timeout}
+                                            iconProps={{
+                                                role: "presentation",
+                                                ...toggleIconProps,
+                                                ...expandIconProps,
+                                            }}
+                                        />
+                                    </IconPositioner>
+                                }
                             </button>
                         </AccordionSectionHeader>
                         <AccordionSectionPanel
@@ -125,6 +191,61 @@ class AccordionSection extends React.Component<Props, State> {
         );
     }
 }
+
+const TransitionManager = styled.span<{
+    transitionState: TransitionStatus,
+    css?: StyledProp<{ transitionState: TransitionStatus }>,
+}>`
+    position: absolute;
+    bottom: -3px;
+    right: 0;
+    transition: all ease-in-out 250ms;
+    ${({ transitionState }) => {
+        switch (transitionState) {
+        case "entering":
+            return "opacity: 0;";
+        case "entered":
+            return "opacity: 1;";
+        case "exiting":
+        case "exited":
+            return "opacity: 0;";
+        default:
+            return "";
+        }
+    }}
+    ${injectCss}
+`;
+
+const TransitionIcon = ({
+    isIn,
+    iconProps,
+    css,
+    timeout,
+}: {
+    isIn: boolean,
+    iconProps: IconProps,
+    timeout: TimeoutProp,
+    css: StyledProp<{ transitionState: TransitionStatus }>,
+}) => {
+    return (
+        <Transition
+            mountOnEnter
+            unmountOnExit
+            in={isIn}
+            timeout={timeout ?? {
+                enter: 75,
+                exit: 250,
+            }}
+        >
+            {state => (
+                <TransitionManager transitionState={state} css={css}>
+                    <IconMemo {...iconProps} />
+                </TransitionManager>
+            )}
+        </Transition>
+    );
+};
+
 
 /** @component */
 export default withTheme(AccordionSection as React.ComponentType<Props>); // withTheme is currently incompatible with getDerivedStateFromProps

@@ -1,7 +1,7 @@
-import styled, { StyledComponent } from "styled-components";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import styled, { StyledComponent } from "styled-components";
 
 // This should work but doesn't in TypeScript 3.7.1-rc
 // <T extends keyof JSX.IntrinsicElements>(element: T) => styled[element]<InjectableCss>` ${injectCss} `;

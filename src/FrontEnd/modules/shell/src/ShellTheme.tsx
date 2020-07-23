@@ -1,6 +1,6 @@
+import { ButtonPresentationProps } from "@insite/mobius/Button";
 import baseTheme, { ThemeColors } from "@insite/mobius/globals/baseTheme";
 import { css, FlattenSimpleInterpolation } from "styled-components";
-import { ButtonPresentationProps } from "@insite/mobius/Button";
 
 export interface ShellThemeProps {
     theme: ShellTheme;
@@ -16,6 +16,8 @@ export interface ShellColors extends ThemeColors {
         mainHeader: string;
         nonmatchingTreeLinks: string;
         accentSecondary: string;
+        futurePublish: string;
+        futurePublishActive: string;
     };
 }
 
@@ -24,6 +26,8 @@ const colors: ShellColors = {
         mainHeader: "#e5e5e5",
         nonmatchingTreeLinks: "#bbb",
         accentSecondary: "#cccccc",
+        futurePublish: "#0072bc",
+        futurePublishActive: "#c4e9fc",
     },
     primary: {
         main: "#78BC21",

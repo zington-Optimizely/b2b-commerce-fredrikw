@@ -1,28 +1,28 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
+import loadCurrentShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTos";
+import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import clearSearch from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/ClearSearch";
+import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
+import translate from "@insite/client-framework/Translate";
+import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
+import Button, { ButtonProps } from "@insite/mobius/Button";
+import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
+import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
-import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
 import Select, { SelectProps } from "@insite/mobius/Select";
-import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import translate from "@insite/client-framework/Translate";
-import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Button, { ButtonProps } from "@insite/mobius/Button";
 import Tag, { horizontalStyles, TagPresentationProps } from "@insite/mobius/Tag";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import TextField, { TextFieldProps } from "@insite/mobius/TextField";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
-import loadCurrentShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTos";
-import clearSearch from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/ClearSearch";
 
 interface State {
     invoiceNumber: string;
@@ -306,7 +306,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Search Results Filter",
         allowedContexts: [InvoiceHistoryPageContext],
-        isSystem: true,
     },
 };
 

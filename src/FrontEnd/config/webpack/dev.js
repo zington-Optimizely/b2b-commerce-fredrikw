@@ -8,10 +8,11 @@ const commonClientConfig = require("./client");
 const commonConfig = setupCommonConfig(true);
 
 const clientConfig = merge(commonConfig, commonClientConfig, {
+    name: "client",
     mode: "development",
     entry: {
-        shell: ["webpack-hot-middleware/client", "./modules/shell/Entry.ts"],
-        public: ["webpack-hot-middleware/client", "./modules/client-framework/Entry.ts"],
+        shell: ["webpack-hot-middleware/client?path=/__webpack_hmr", "./modules/shell/Entry.ts"],
+        public: ["webpack-hot-middleware/client?path=/__webpack_hmr", "./modules/client-framework/Entry.ts"],
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
@@ -24,8 +25,10 @@ const clientConfig = merge(commonConfig, commonClientConfig, {
 });
 
 const serverConfig = merge(commonConfig, commonServerConfig, {
+    name: "server",
     mode: "development",
     plugins: [
+        new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({
             IS_PRODUCTION: false,
             IS_SERVER_SIDE: true,

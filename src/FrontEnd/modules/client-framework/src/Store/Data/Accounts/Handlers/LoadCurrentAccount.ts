@@ -2,9 +2,9 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
 } from "@insite/client-framework/HandlerCreator";
+import { getAccount, GetAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { AccountModel } from "@insite/client-framework/Types/ApiModels";
-import { getAccount, GetAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetAccountApiParameter, AccountModel>;
 

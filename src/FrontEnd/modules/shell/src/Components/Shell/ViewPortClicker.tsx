@@ -1,11 +1,11 @@
-import ShellState from "@insite/shell/Store/ShellState";
-import { changeStageMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
-import { connect, ResolveThunks } from "react-redux";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import * as React from "react";
 import Icon from "@insite/mobius/Icon";
-import shellTheme from "@insite/shell/ShellTheme";
 import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
+import shellTheme from "@insite/shell/ShellTheme";
+import { changeStageMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ShellState, props: OwnProps) => ({
     targetMatchesCurrentStageMode: state.shellContext.stageMode === props.targetStageMode,

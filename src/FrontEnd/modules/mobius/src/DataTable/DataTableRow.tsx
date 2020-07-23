@@ -1,10 +1,10 @@
 import * as React from "react";
 import styled, { css } from "styled-components";
-import DataTableContext from "./DataTableContext";
 import getColor from "../utilities/getColor";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import DataTableContext from "./DataTableContext";
 
 export type DataTableRowProps = MobiusStyledComponentProps<"tr", {
     /** CSS string or styled-components function to be injected into this component. */

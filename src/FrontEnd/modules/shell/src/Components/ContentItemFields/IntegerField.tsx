@@ -1,8 +1,8 @@
-import * as React from "react";
 import { IntegerFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import TextField from "@insite/mobius/TextField";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === ".") {

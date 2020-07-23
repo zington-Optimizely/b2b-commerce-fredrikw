@@ -1,14 +1,14 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import * as React from "react";
 import { connect } from "react-redux";
-import translate from "@insite/client-framework/Translate";
 import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
@@ -64,7 +64,6 @@ const widgetModule: WidgetModule = {
         displayName: "Attributes",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

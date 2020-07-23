@@ -1,11 +1,11 @@
-import { Draft } from "immer";
+import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { WarehousesDataView, WarehousesState } from "@insite/client-framework/Store/Data/Warehouses/WarehousesState";
 import {
     WarehouseCollectionModel,
 } from "@insite/client-framework/Types/ApiModels";
-import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { WarehousesDataView, WarehousesState } from "@insite/client-framework/Store/Data/Warehouses/WarehousesState";
-import { GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
+import { Draft } from "immer";
 
 const initialState: WarehousesState = {
     isLoading: {},

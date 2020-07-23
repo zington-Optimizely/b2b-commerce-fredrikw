@@ -1,9 +1,9 @@
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import translate from "@insite/client-framework/Translate";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
 import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import * as React from "react";
 import { useContext } from "react";
 
 export interface OrderDetailsTitleStyles {
@@ -39,7 +39,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
     },
 };
 

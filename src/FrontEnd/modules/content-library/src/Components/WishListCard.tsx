@@ -1,27 +1,27 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { css } from "styled-components";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import { IconPresentationProps } from "@insite/mobius/Icon";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import React, { useContext } from "react";
-import WishListSharingStatus, { WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
-import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
-import { HandleThunkActionCreator, connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import { ShareOptions } from "@insite/client-framework/Services/WishListService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
+import translate from "@insite/client-framework/Translate";
+import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
+import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
+import WishListSharingStatus, { WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { useContext } from "react";
+import { connect, HandleThunkActionCreator } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     language: state.context.session.language,
@@ -197,7 +197,7 @@ const WishListCard: React.FunctionComponent<Props> = ({
                     <GridItem {...styles.extendedInfoGridItem}>
                         <GridContainer {...styles.extendedInfoGridContainer}>
                             <GridItem {...styles.productImagesGridItem}>
-                                {wishList.wishListLineCollection && wishList.wishListLineCollection.length > 0 && wishList.wishListLineCollection!.map((line: WishListLineModel) => (
+                                {wishList.wishListLineCollection && wishList.wishListLineCollection.length > 0 && wishList.wishListLineCollection.slice(0, 3).map(line => (
                                     <Link key={line.id.toString()} {...styles.productImageLink} href={line.productUri}>
                                         <LazyImage {...styles.productImage} src={line.smallImagePath} altText={line.altText} />
                                     </Link>

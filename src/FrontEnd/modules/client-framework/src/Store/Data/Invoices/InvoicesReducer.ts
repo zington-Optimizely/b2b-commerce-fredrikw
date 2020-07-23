@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { InvoiceCollectionModel, InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { InvoicesState } from "@insite/client-framework/Store/Data/Invoices/InvoicesState";
 import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { InvoicesState } from "@insite/client-framework/Store/Data/Invoices/InvoicesState";
+import { InvoiceCollectionModel, InvoiceModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: InvoicesState = {
     isLoading: {},

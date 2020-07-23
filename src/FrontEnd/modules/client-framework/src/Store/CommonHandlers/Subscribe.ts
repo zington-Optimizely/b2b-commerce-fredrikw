@@ -1,5 +1,5 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { SubscribeToListApiParameter, subscribeToList } from "@insite/client-framework/Services/EmailService";
+import { subscribeToList, SubscribeToListApiParameter } from "@insite/client-framework/Services/EmailService";
 
 export interface SubscribeParameter {
     email: string;

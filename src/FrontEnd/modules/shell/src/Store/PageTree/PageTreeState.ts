@@ -9,6 +9,7 @@ export interface TreeNodeModel {
     nodeId: string;
     isMatchingPage: boolean;
     type: string;
+    futurePublishOn?: Date;
 }
 
 export interface PageTreeState {

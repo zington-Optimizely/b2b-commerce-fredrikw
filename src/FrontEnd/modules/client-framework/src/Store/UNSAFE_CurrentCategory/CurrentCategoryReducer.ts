@@ -1,7 +1,7 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import CurrentCategoryState from "@insite/client-framework/Store/UNSAFE_CurrentCategory/CurrentCategoryState";
 import { CatalogPageModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: CurrentCategoryState = {
     catalogPageState: {

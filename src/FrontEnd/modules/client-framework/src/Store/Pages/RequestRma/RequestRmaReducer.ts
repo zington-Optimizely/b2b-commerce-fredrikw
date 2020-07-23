@@ -1,7 +1,7 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
-import { RmaModel, OrderLineModel } from "@insite/client-framework/Types/ApiModels";
+import { OrderLineModel, RmaModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: RequestRmaState = {
     orderLines: [],

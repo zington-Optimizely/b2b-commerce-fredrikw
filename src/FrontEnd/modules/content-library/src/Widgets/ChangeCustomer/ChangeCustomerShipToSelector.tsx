@@ -1,5 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
@@ -12,26 +13,24 @@ import { connect } from "react-redux";
 
 interface OwnProps {
     extendedStyles?: ChangeCustomerShipToSelectorStyles;
-
     setParameter: (parameter: GetShipTosApiParameter) => void;
     parameter: GetShipTosApiParameter;
     searchText: string;
     setSearchText: (searchText: string) => void;
     enableWarehousePickup: boolean;
     fulfillmentMethod: string;
-
     shipTo?: ShipToModel;
     billToId?: string;
     allowSelectBillTo?: boolean;
     onSelect: (shipTo: ShipToModel) => void;
     onCreateNewAddressClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    isLoading?: boolean;
 }
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState, props: OwnProps) => ({
     shipTosDataView: getShipTosDataView(state, props.parameter),
-    customerSettings: getSettingsCollection(state).customerSettings,
 });
 
 export interface ChangeCustomerShipToSelectorStyles {
@@ -53,6 +52,7 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
     setSearchText,
     enableWarehousePickup,
     fulfillmentMethod,
+    isLoading,
 }) => {
 
     const [styles] = useState(() => mergeToNew(changeCustomerShipToSelectorStyles, extendedStyles));
@@ -60,7 +60,7 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
     let dropdownLabel = translate("Select Ship To");
     let dropdownPlaceholder = translate("Search or Select Ship To");
 
-    if (enableWarehousePickup && fulfillmentMethod === "PickUp") {
+    if (enableWarehousePickup && fulfillmentMethod === FulfillmentMethod.PickUp) {
         dropdownLabel = translate("Recipient Address");
         dropdownPlaceholder = translate("Search or Select Recipient Address");
     }
@@ -106,7 +106,7 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
         const apiParameter: GetShipTosApiParameter = {
             ...parameter,
             billToId,
-            filter: searchText,
+            filter: searchText || undefined,
         };
         setParameter(apiParameter);
     };
@@ -119,6 +119,7 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
             onInputChange={searchTextChanged}
             selected={shipTo?.id}
             placeholder={dropdownPlaceholder}
+            isLoading={isLoading}
             options={options}
             data-test-selector="changeCustomerShipToSelector" />
     );

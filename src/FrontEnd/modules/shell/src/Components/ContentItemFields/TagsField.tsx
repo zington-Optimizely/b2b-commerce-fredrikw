@@ -1,11 +1,11 @@
-import * as React from "react";
 import { TextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
-import styled, { css } from "styled-components";
-import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import X from "@insite/shell/Components/Icons/X";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
+import X from "@insite/shell/Components/Icons/X";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import * as React from "react";
+import styled, { css } from "styled-components";
 
 interface State {
     value: string;

@@ -1,18 +1,18 @@
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setView from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetView";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import List from "@insite/mobius/Icons/List";
+import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import Grid from "@insite/mobius/Icons/Grid";
-import setView from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetView";
+import List from "@insite/mobius/Icons/List";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps extends WidgetProps {
 }
@@ -91,7 +91,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "View Select",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

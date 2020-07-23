@@ -1,10 +1,10 @@
-import React, { FC, useContext } from "react";
+import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import translate from "@insite/client-framework/Translate";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import React, { FC, useContext } from "react";
 
 export interface OrderHistoryResultCountStyles {
     orderCountText?: TypographyPresentationProps;
@@ -39,7 +39,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Result Count",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

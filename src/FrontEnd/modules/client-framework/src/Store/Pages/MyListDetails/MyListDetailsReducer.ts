@@ -1,12 +1,16 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
 import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import { SetAllWishListLinesIsSelectedParameter } from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
+import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
+import { Draft } from "immer";
 
 const initialState: MyListDetailsState = {
     loadWishListLinesParameter: { wishListId: "", page: 1, sort: "SortOrder" },
     selectedWishListLineIds: [],
+    editingSortOrder: false,
+    changedWishListLineQuantities: {},
+    wishListLinesWithUpdatedQuantity: {},
+    quantityAdjustmentModalIsOpen: false,
 };
 
 const reducer = {
@@ -41,6 +45,26 @@ const reducer = {
     },
     "Pages/MyListDetails/SetAllWishListLinesIsSelected": (draft: Draft<MyListDetailsState>, action: SetAllWishListLinesIsSelectedParameter) => {
         draft.selectedWishListLineIds = (action.isSelected && action.wishListLineIds) ? action.wishListLineIds : [];
+    },
+    "Pages/MyListDetails/SetEditingSortOrder": (draft: Draft<MyListDetailsState>, action: { editingSortOrder: boolean }) => {
+        draft.editingSortOrder = action.editingSortOrder;
+    },
+    "Pages/MyListDetails/SetWishListLineQuantity": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string; quantity?: number }) => {
+        draft.wishListLinesWithUpdatedQuantity = {};
+        if (action.quantity) {
+            draft.changedWishListLineQuantities[action.wishListLineId] = action.quantity;
+        } else {
+            delete draft.changedWishListLineQuantities[action.wishListLineId];
+        }
+    },
+    "Pages/MyListDetails/CompleteUpdateWishListLineQuantities": (draft: Draft<MyListDetailsState>, action: { isQuantityAdjusted: boolean }) => {
+        draft.wishListLinesWithUpdatedQuantity = {};
+        Object.keys(draft.changedWishListLineQuantities).forEach(o => { draft.wishListLinesWithUpdatedQuantity[o] = true; });
+        draft.changedWishListLineQuantities = {};
+        draft.quantityAdjustmentModalIsOpen = action.isQuantityAdjusted;
+    },
+    "Pages/MyListDetails/SetQuantityAdjustmentModalIsOpen": (draft: Draft<MyListDetailsState>, action: { modalIsOpen: boolean }) => {
+        draft.quantityAdjustmentModalIsOpen = action.modalIsOpen;
     },
 };
 

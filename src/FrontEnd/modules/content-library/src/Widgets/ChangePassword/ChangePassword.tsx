@@ -1,27 +1,27 @@
-import React, { FC } from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import TextField from "@insite/mobius/TextField";
-import { LinkPresentationProps } from "@insite/mobius/Link/Link";
-import translate from "@insite/client-framework/Translate";
-import ChangePasswordHeader from "@insite/content-library/Widgets/ChangePassword/ChangePasswordHeader";
-import { ChangePasswordPageContext } from "@insite/content-library/Pages/ChangePasswordPage";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner/LoadingSpinner";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import ChangePasswordActions from "@insite/content-library/Widgets/ChangePassword/ChangePasswordActions";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden/Hidden";
-import { css } from "styled-components";
-import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ChangePasswordPageContext } from "@insite/content-library/Pages/ChangePasswordPage";
+import ChangePasswordActions from "@insite/content-library/Widgets/ChangePassword/ChangePasswordActions";
+import ChangePasswordHeader from "@insite/content-library/Widgets/ChangePassword/ChangePasswordHeader";
+import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Hidden, { HiddenProps } from "@insite/mobius/Hidden/Hidden";
+import { LinkPresentationProps } from "@insite/mobius/Link/Link";
+import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner/LoadingSpinner";
+import TextField from "@insite/mobius/TextField";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps { }
 
@@ -211,7 +211,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [ChangePasswordPageContext],
         group: "Change Password",
-        isSystem: true,
     },
 };
 

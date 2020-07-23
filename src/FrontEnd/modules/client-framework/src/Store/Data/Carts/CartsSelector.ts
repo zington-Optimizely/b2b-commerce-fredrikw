@@ -1,8 +1,8 @@
-import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
-import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getById } from "@insite/client-framework/Store/Data/DataState";
+import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 
 export function getCurrentCartState(state: ApplicationState) {
     return getCartState(state, API_URL_CURRENT_FRAGMENT);

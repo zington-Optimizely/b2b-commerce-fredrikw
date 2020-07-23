@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ThemeConsumer } from "styled-components";
-import { ClickableProps, ClickablePresentationProps } from "../Clickable";
+import { ClickablePresentationProps, ClickableProps } from "../Clickable";
 import FormField, {
-    FormFieldIcon,
     FormFieldClickable,
     FormFieldComponentProps,
+    FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
 } from "../FormField";
@@ -13,10 +13,10 @@ import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
+import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden";
-import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 
 export interface TextFieldPresentationProps extends FormFieldPresentationProps<TextFieldComponentProps> {
     /** Props to be passed into the Clickable component that will optionally wrap the icon.

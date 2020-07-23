@@ -1,10 +1,10 @@
+import { newGuid, splitCamelCase } from "@insite/client-framework/Common/StringHelpers";
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { getThePageDefinitions, getTheWidgetDefinitions } from "@insite/client-framework/Components/ContentItemStore";
-import { newGuid, splitCamelCase } from "@insite/client-framework/Common/StringHelpers";
-import sortBy from "lodash/sortBy";
-import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
-import { ContentItemDefinition, PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import logger from "@insite/client-framework/Logger";
+import { ContentItemDefinition, PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import sortBy from "lodash/sortBy";
 
 export type LoadedWidgetDefinition = WidgetDefinition & HasType;
 export type LoadedPageDefinition = PageDefinition & HasType;

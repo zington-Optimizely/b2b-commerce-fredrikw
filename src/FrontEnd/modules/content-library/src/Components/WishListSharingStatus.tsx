@@ -1,19 +1,19 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { css } from "styled-components";
-import React, { FC } from "react";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setManageShareListModalIsOpen from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/SetManageShareListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import HelpCircle from "@insite/mobius/Icons/HelpCircle";
 import Users from "@insite/mobius/Icons/Users";
-import translate from "@insite/client-framework/Translate";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
 import Link from "@insite/mobius/Link";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
-import setManageShareListModalIsOpen from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/SetManageShareListModalIsOpen";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: WishListSharingStatusStyles;

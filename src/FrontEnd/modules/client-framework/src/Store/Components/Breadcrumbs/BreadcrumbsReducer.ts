@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { LinkProps } from "@insite/mobius/Link";
 import { Draft } from "immer";
 import BreadcrumbsState from "./BreadcrumbsState";
-import { LinkProps } from "@insite/mobius/Link";
 
 const initialState: BreadcrumbsState = {
 };

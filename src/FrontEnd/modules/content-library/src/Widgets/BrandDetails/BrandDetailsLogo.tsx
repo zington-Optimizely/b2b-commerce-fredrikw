@@ -1,4 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BrandDetailsPageContext } from "@insite/content-library/Pages/BrandDetailsPage";
@@ -7,7 +8,6 @@ import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
-import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 interface Props extends WidgetProps {
 }
@@ -70,7 +70,6 @@ const widgetModule: WidgetModule = {
         icon: "Logo",
         displayName: "Brand Logo",
         allowedContexts: [BrandDetailsPageContext],
-        isSystem: true,
     },
 };
 

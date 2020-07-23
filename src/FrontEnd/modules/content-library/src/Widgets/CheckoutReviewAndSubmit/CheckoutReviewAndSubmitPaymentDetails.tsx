@@ -1,14 +1,23 @@
+import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import validateCreditCard from "@insite/client-framework/Common/Utilities/validateCreditCard";
+import logger from "@insite/client-framework/Logger";
 import { TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadTokenExConfig from "@insite/client-framework/Store/Context/Handlers/LoadTokenExConfig";
-import placeOrder from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/PlaceOrder";
-import checkoutWithPayPal from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/CheckoutWithPayPal";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import checkoutWithPayPal from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/CheckoutWithPayPal";
+import placeOrder from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/PlaceOrder";
+import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/PreloadOrderConfirmationData";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import validateCreditCard from "@insite/client-framework/Common/Utilities/validateCreditCard";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 import CreditCardBillingAddressEntry, { CreditCardBillingAddressEntryStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardBillingAddressEntry";
 import CreditCardDetailsEntry, { CreditCardDetailsEntryStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardDetailsEntry";
@@ -22,22 +31,13 @@ import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import { generateTokenExFrameStyleConfig } from "@insite/mobius/TokenExFrame";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css, ThemeProps, withTheme } from "styled-components";
 import PayPalButton, { PayPalButtonStyles } from "./PayPalButton";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/PreloadOrderConfirmationData";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
-import logger from "@insite/client-framework/Logger";
-import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 const mapStateToProps = (state: ApplicationState) => {
     const currentCartState = getCurrentCartState(state);
@@ -968,7 +968,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         displayName: "Payment Details",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        isSystem: true,
     },
 };
 

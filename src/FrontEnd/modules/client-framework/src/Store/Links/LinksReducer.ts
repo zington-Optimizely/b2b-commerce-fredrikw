@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import LinksState from "@insite/client-framework/Store/Links/LinksState";
-import { Draft } from "immer";
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
+import LinksState from "@insite/client-framework/Store/Links/LinksState";
 import { CategoryCollectionModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: LinksState = {
     pageLinks: [],

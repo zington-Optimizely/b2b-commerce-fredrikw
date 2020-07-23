@@ -1,8 +1,7 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import Logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadCategories, { LoadCategoriesParameter } from "@insite/client-framework/Store/Links/Handlers/LoadCategories";
 import { getCategoryDepthLoaded, getCategoryLink, getPageLinkByNodeId, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -13,24 +12,25 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import MainNavigationItem from "@insite/content-library/Components/MainNavigationItem";
 import NavigationDrawer from "@insite/content-library/Components/NavigationDrawer";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import SearchInput, { SearchInputStyles } from "@insite/content-library/Widgets/Header/SearchInput";
 import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
 import { GridContainerProps } from "@insite/mobius/GridContainer";
 import { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden from "@insite/mobius/Hidden";
 import { IconProps } from "@insite/mobius/Icon";
 import Search from "@insite/mobius/Icons/Search";
+import X from "@insite/mobius/Icons/X";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import { MenuPresentationProps } from "@insite/mobius/Menu";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import { PopoverPresentationProps, PositionStyle } from "@insite/mobius/Popover";
 import { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import SearchInput, { SearchInputStyles } from "@insite/content-library/Widgets/Header/SearchInput";
-import X from "@insite/mobius/Icons/X";
-import Logger from "@insite/client-framework/Logger";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     links = "links",
@@ -512,7 +512,6 @@ const mainNavigation: WidgetModule = {
     definition: {
         group: "Header",
         allowedContexts: ["Header"],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.links,

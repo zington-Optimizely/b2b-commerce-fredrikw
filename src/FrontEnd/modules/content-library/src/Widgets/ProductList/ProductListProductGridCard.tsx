@@ -1,12 +1,12 @@
-import React, { FC } from "react";
-import ProductListProductImage from "@insite/content-library/Widgets/ProductList/ProductListProductImage";
-import ProductListProductInformation from "@insite/content-library/Widgets/ProductList/ProductListProductInformation";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductCardSelections } from "@insite/content-library/Widgets/ProductList/ProductCardSelections";
 import ProductListActions from "@insite/content-library/Widgets/ProductList/ProductListActions";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ProductListProductImage from "@insite/content-library/Widgets/ProductList/ProductListProductImage";
+import ProductListProductInformation from "@insite/content-library/Widgets/ProductList/ProductListProductInformation";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { css } from "styled-components";
 
 interface OwnProps extends ProductCardSelections, HasProductContext {
 }

@@ -1,38 +1,38 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import translate from "@insite/client-framework/Translate";
-import { ResetPasswordPageContext } from "@insite/content-library/Pages/ResetPasswordPage";
-import EyeOff from "@insite/mobius/Icons/EyeOff";
-import Eye from "@insite/mobius/Icons/Eye";
-import { IconPresentationProps } from "@insite/mobius/Icon";
-import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import resetPassword from "@insite/client-framework/Store/Context/Handlers/ResetPassword";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import validatePassword, {
-    numberPasswordLengthMessage,
     lowerCasePasswordLengthMessage,
-    upperCasePasswordLengthMessage,
+    numberPasswordLengthMessage,
     specialPasswordLengthMessage,
+    upperCasePasswordLengthMessage,
 } from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import resetPassword from "@insite/client-framework/Store/Context/Handlers/ResetPassword";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ResetPasswordPageContext } from "@insite/content-library/Pages/ResetPasswordPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import Eye from "@insite/mobius/Icons/Eye";
+import EyeOff from "@insite/mobius/Icons/EyeOff";
+import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapDispatchToProps = {
     resetPassword: makeHandlerChainAwaitable(resetPassword),
@@ -285,7 +285,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [ResetPasswordPageContext],
         group: "Reset Password",
-        isSystem: true,
     },
 };
 

@@ -1,8 +1,8 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 
-type HandlerType = Handler<{ wishListId?: string; modalIsOpen: boolean }>;
+type HandlerType = Handler<{ wishListId?: string; modalIsOpen: boolean; fromManage?: boolean; }>;
 
 export const LoadWishListIfNeeded: HandlerType = ({ parameter, getState, dispatch }) => {
     if (!parameter.modalIsOpen || !parameter.wishListId) {
@@ -26,6 +26,7 @@ export const DispatchCompleteSetIsOpen: HandlerType = props => {
         type: "Components/ShareListModal/CompleteSetIsOpen",
         isOpen: props.parameter.modalIsOpen,
         wishListId: props.parameter.wishListId,
+        fromManage: props.parameter.fromManage ?? false,
     });
 };
 

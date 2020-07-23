@@ -1,5 +1,5 @@
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import createTypedReducer from "@insite/client-framework/Common/CreateTypedReducer";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 
 export const enum LoadStatus {
     None,

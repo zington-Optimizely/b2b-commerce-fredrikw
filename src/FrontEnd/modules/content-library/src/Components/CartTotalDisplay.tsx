@@ -1,4 +1,5 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { Cart } from "@insite/client-framework/Services/CartService";
 import translate from "@insite/client-framework/Translate";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
@@ -9,7 +10,6 @@ import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import React, { FC, Fragment } from "react";
 import { css } from "styled-components";
-import { Cart } from "@insite/client-framework/Services/CartService";
 
 interface OwnProps {
     isLoading?: boolean;

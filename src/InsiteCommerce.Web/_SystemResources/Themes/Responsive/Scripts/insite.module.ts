@@ -20,7 +20,10 @@ module insite {
     }
 
     export class AppRunService implements IAppRunService {
-        static $inject = ["coreService", "$localStorage", "$window", "$rootScope", "$urlRouter", "spinnerService", "$location","$anchorScroll"];
+        filesExtensionForOpenInNewTab = ["jpg", "pdf", "gif", "jpeg", "xlsx", "xls", "txt"];
+        baseUrl: string;
+
+        static $inject = ["coreService", "$localStorage", "$window", "$rootScope", "$urlRouter", "spinnerService", "$location", "$anchorScroll"];
 
         constructor(
             protected coreService: core.ICoreService,
@@ -35,7 +38,7 @@ module insite {
 
         run(): void {
             (window as any).coreService = this.coreService;
-
+            this.baseUrl = this.$location.host();
             // If access_token is included in the query string, set it in local storage, this is used for authenticated swagger calls
             const hash: any = this.queryString(this.$window.location.pathname.split("&"));
             let accessToken = hash.access_token;
@@ -55,6 +58,7 @@ module insite {
             this.$rootScope.firstPage = true;
 
             this.$rootScope.$on("$locationChangeSuccess", (event, newUrl, oldUrl) => { this.onLocationChangeSuccess(newUrl, oldUrl); });
+            this.$rootScope.$on("$locationChangeStart", (event, newUrl, oldUrl) => { this.actualOnLocationChangeStart(event, newUrl, oldUrl); });
 
             this.$rootScope.$on("$stateChangeStart", () => { this.onLocationChangeStart(); });
 
@@ -81,6 +85,17 @@ module insite {
 
         protected onLocationChangeStart(): void {
             this.spinnerService.show("mainLayout");
+        }
+
+        protected actualOnLocationChangeStart(event, newUrl, oldUrl): void {
+            if (newUrl.toLowerCase() === oldUrl.toLowerCase()) {
+                return;
+            }
+
+            if (newUrl.indexOf(this.baseUrl) !== -1 && this.filesExtensionForOpenInNewTab.some(fileExt => newUrl.indexOf(`.${fileExt}`) !== -1)) {
+                event.preventDefault();
+                this.$window.open(newUrl, "_blank");
+            }
         }
 
         protected onStateChangeSuccess(): void {

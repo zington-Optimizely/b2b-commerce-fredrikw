@@ -1,17 +1,17 @@
 import Zone from "@insite/client-framework/Components/Zone";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
-import React, { Component, createContext } from "react";
-import { connect, ResolveThunks } from "react-redux";
-import updateCart from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateCart";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import setInitialValues from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetInitialValues";
+import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
+import updateCart from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateCart";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { Component, createContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapDispatchToProps = {
     preloadCheckoutShippingData,
@@ -123,7 +123,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

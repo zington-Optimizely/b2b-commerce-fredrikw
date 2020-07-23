@@ -1,7 +1,7 @@
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getById, getDataView } from "@insite/client-framework/Store/Data/DataState";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { GetBillTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getById, getDataView } from "@insite/client-framework/Store/Data/DataState";
 
 export function getBillTosDataView(state: ApplicationState, parameter: GetBillTosApiParameter) {
     return getDataView(state.data.billTos, parameter);

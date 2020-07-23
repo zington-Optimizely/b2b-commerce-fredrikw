@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import ManageShareListModalState from "@insite/client-framework/Store/Components/ManageShareListModal/ManageShareListModalState";
+import { Draft } from "immer";
 
 const initialState: ManageShareListModalState = {
     isOpen: false,

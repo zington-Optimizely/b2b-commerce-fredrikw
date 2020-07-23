@@ -1,9 +1,9 @@
-import { OrderModel } from "@insite/client-framework/Types/ApiModels";
-import { GetOrderApiParameter, getOrder } from "@insite/client-framework/Services/OrderService";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
+import { getOrder, GetOrderApiParameter } from "@insite/client-framework/Services/OrderService";
+import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ orderNumber: string }, GetOrderApiParameter, OrderModel>;
 

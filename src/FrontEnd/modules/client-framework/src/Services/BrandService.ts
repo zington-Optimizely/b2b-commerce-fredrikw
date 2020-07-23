@@ -1,4 +1,4 @@
-import { get, HasPagingParameters, ApiParameter } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get, HasPagingParameters } from "@insite/client-framework/Services/ApiService";
 import { BrandAlphabetModel, BrandCategoryCollectionModel, BrandCollectionModel, BrandModel, BrandProductLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetBrandByPathApiParameter extends ApiParameter {

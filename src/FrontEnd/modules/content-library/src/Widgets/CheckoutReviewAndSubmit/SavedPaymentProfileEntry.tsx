@@ -1,13 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { useState } from "react";
-import TokenExFrame, { TokenExFramePresentationProps } from "@insite/mobius/TokenExFrame";
 import translate from "@insite/client-framework/Translate";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import styled, { css } from "styled-components";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import TokenExFrame, { TokenExFramePresentationProps } from "@insite/mobius/TokenExFrame";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { useState } from "react";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
     useTokenExGateway?: boolean;

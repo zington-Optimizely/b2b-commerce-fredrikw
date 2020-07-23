@@ -1,15 +1,15 @@
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import { checkboxSizes } from "../Checkbox";
-import RadioGroupContext from "./RadioGroupContext";
 import Typography from "../Typography";
 import TypographyStyle from "../Typography/TypographyStyle";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { FieldSetGroupPresentationProps } from "../utilities/fieldSetProps";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
-import { FieldSetGroupPresentationProps } from "../utilities/fieldSetProps";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import RadioGroupContext from "./RadioGroupContext";
 
 export type RadioGroupComponentProps = MobiusStyledComponentProps<"fieldset", {
     /** Indicates an error by changing the color of the radiogroup label. */

@@ -1,5 +1,5 @@
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import getLocalizedCurrency from "@insite/client-framework/Common/Utilities/getLocalizedCurrency";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import React, { FC } from "react";
 import { connect } from "react-redux";
 

@@ -1,7 +1,7 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { GetBillTosApiParameter, GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
-import { Session } from "@insite/client-framework/Services/SessionService";
+import { FulfillmentMethod, Session } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import changeCustomerContext from "@insite/client-framework/Store/Context/Handlers/ChangeCustomerContext";
@@ -156,18 +156,9 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
             billToId: billTo.id,
             shipToId: shipTo.id,
             fulfillmentMethod,
-            pickUpWarehouse: fulfillmentMethod === "PickUp" ? pickUpWarehouse : null,
+            pickUpWarehouse: fulfillmentMethod === FulfillmentMethod.PickUp ? pickUpWarehouse : null,
+            returnUrl,
         });
-        const returnUrl = getCustomerContinueReturnUrl({
-            session,
-            dashboardUrl,
-            checkoutShippingUrl,
-            canCheckOut: cart.value.canCheckOut,
-            cartUrl,
-            canBypassCheckoutAddress: cart.value.canBypassCheckoutAddress,
-            checkoutReviewAndSubmitUrl,
-        });
-        history.push(returnUrl);
     };
 
     const handleCancelClicked = () => {

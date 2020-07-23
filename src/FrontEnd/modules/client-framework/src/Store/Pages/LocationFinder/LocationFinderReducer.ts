@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
-import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 import { GetDealersApiParameter } from "@insite/client-framework/Services/DealerService";
+import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
+import { Draft } from "immer";
 
 const initialState: LocationFinderState = {
 };

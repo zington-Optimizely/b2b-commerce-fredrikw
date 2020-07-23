@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React from "react";
-import { css } from "styled-components";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     modalIsOpen: boolean;

@@ -1,22 +1,22 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { hasChanges } from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsSelectors";
+import saveCurrentAccount from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SaveCurrentAccount";
+import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
+import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import GridContainer from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import saveCurrentAccount from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SaveCurrentAccount";
-import { hasChanges } from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsSelectors";
-import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -140,7 +140,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Account Settings",
         allowedContexts: [AccountSettingsPageContext],
-        isSystem: true,
     },
 };
 

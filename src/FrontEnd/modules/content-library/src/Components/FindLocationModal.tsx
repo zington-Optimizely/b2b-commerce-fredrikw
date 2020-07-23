@@ -1,6 +1,15 @@
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import useGoogleMaps from "@insite/client-framework/Common/Hooks/useGoogleMaps";
+import useWarehouseFilterSearch from "@insite/client-framework/Common/Hooks/useWarehouseFilterSearch";
+import useWarehouseGoogleMarkers from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import { getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import loadWarehouses from "@insite/client-framework/Store/Components/FindLocationModal/Handlers/LoadWarehouses";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getWarehousesDataView } from "@insite/client-framework/Store/Data/Warehouses/WarehousesSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PaginationModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
@@ -9,11 +18,6 @@ import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMa
 import WarehouseFindLocationPagination from "@insite/content-library/Components/WarehouseFindLocationPagination";
 import WarehouseGoogleMap, { WarehouseGoogleMapStyles } from "@insite/content-library/Components/WarehouseGoogleMap";
 import WarehouseHoursLink from "@insite/content-library/Components/WarehouseHoursLink";
-import useGoogleMaps from "@insite/client-framework/Common/Hooks/useGoogleMaps";
-import useWarehouseFilterSearch from "@insite/client-framework/Common/Hooks/useWarehouseFilterSearch";
-import useWarehouseGoogleMarkers from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
-import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import { getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -29,16 +33,12 @@ import Radio, { RadioComponentProps } from "@insite/mobius/Radio";
 import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import parse from "html-react-parser";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import loadWarehouses from "@insite/client-framework/Store/Components/FindLocationModal/Handlers/LoadWarehouses";
-import { getWarehousesDataView } from "@insite/client-framework/Store/Data/Warehouses/WarehousesSelectors";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import parse from "html-react-parser";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 
 interface OwnProps {
     modalIsOpen: boolean;
@@ -684,6 +684,7 @@ const SearchLocationsTextField: React.FC<SearchLocationsTextFieldProps> = ({
         value={searchLocationFilter}
         onChange={handleSearchLocationsChanged}
         placeholder={translate("Search by location name, city, state, or zip")}
+        data-test-selector="findLocationModal_locationSearch"
     />);
 };
 

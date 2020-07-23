@@ -1,12 +1,12 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import translate from "@insite/client-framework/Translate";
-import TextField, { TextFieldProps, TextFieldPresentationProps } from "@insite/mobius/TextField";
-import { css } from "styled-components";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import TextField, { TextFieldPresentationProps, TextFieldProps } from "@insite/mobius/TextField";
+import * as React from "react";
 import { connect } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends TextFieldProps {
     product: ProductModelExtended;
@@ -44,8 +44,9 @@ export const productQuantityOrderedStyles: TextFieldPresentationProps = {
     },
 };
 
-const ProductQuantityOrdered: React.FC<Props> = ({
+const ProductQuantityOrdered: React.FC<Props & { dispatch: any }> = ({
     productSettings,
+    dispatch, // This causes dom errors when passed to <input>
     product,
     quantity,
     configurationCompleted,

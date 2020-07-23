@@ -1,7 +1,7 @@
-import { CategoryCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
 import { getCategories, GetCategoriesApiParameter } from "@insite/client-framework/Services/CategoryService";
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { CategoryCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface LoadCategoriesParameter {
     maxDepth: number;

@@ -1,3 +1,4 @@
+import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -9,7 +10,6 @@ import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
-import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 interface Props extends WidgetProps {
 }
@@ -125,7 +125,6 @@ const widgetModule: WidgetModule = {
         icon: "Image",
         displayName: "Brand Image",
         allowedContexts: [BrandDetailsPageContext],
-        isSystem: true,
     },
 };
 

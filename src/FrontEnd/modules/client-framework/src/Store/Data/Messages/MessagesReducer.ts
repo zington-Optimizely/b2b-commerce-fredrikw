@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { MessageCollectionModel, MessageModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { MessagesState } from "@insite/client-framework/Store/Data/Messages/MessagesState";
 import { GetMessagesApiParameter } from "@insite/client-framework/Services/MessageService";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { MessagesState } from "@insite/client-framework/Store/Data/Messages/MessagesState";
+import { MessageCollectionModel, MessageModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: MessagesState = {
     isLoading: {},

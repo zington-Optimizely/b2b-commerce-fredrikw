@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalState";
+import { Draft } from "immer";
 
 const reducer = {
     "LogoutWarningModal/ShowModal": (

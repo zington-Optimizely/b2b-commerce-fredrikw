@@ -1,9 +1,9 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import GridItem from "@insite/mobius/GridItem";
 import GridContainer from "@insite/mobius/GridContainer";
+import GridItem from "@insite/mobius/GridItem";
+import * as React from "react";
 
 interface Props extends WidgetProps {
     fields: {
@@ -32,7 +32,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Row",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: "rowCount",

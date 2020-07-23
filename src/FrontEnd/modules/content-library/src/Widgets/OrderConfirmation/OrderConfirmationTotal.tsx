@@ -1,16 +1,16 @@
-import React, { FC } from "react";
-import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import {
     getDiscountTotal,
     getOrderPromotions, getPromotionsDataView,
     getShippingPromotions,
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-library/Components/CartTotalDisplay";
+import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
+import React, { FC } from "react";
+import { connect } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const promotionsDataView = getPromotionsDataView(state, state.pages.orderConfirmation.cartId);
@@ -64,7 +64,6 @@ const widgetModule: WidgetModule = {
         group: "Order Confirmation",
         allowedContexts: [OrderConfirmationPageContext],
         displayName: "Order Confirmation Total",
-        isSystem: true,
     },
 };
 

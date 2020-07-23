@@ -1,10 +1,10 @@
-import { Draft } from "immer";
-import { BillToModel, BillToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { BillTosState } from "@insite/client-framework/Store/Data/BillTos/BillTosState";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
-import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { GetBillTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { BillTosState } from "@insite/client-framework/Store/Data/BillTos/BillTosState";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { BillToCollectionModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: BillTosState = {
     isLoading: {},

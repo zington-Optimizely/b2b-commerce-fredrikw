@@ -1,9 +1,9 @@
 import * as React from "react";
-import FormField, { FormFieldPresentationProps, FormFieldComponentProps } from "../FormField";
+import FormField, { FormFieldComponentProps, FormFieldPresentationProps } from "../FormField";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type TextAreaComponentProps = MobiusStyledComponentProps<"textarea", {
     /** Error message to be displayed below the textarea. */
@@ -49,7 +49,7 @@ const TextArea: React.FC<TextAreaProps & HasDisablerContext> = (props) => {
                 aria-required={!disabled && required}
                 tabIndex={0}
                 {...{ disabled: isDisabled, placeholder, required }}
-                {...omitMultiple(otherProps, ["sizeVariant", "border", "label", "backgroundColor"])}
+                {...omitMultiple(otherProps, ["sizeVariant", "border", "label", "backgroundColor", "cssOverrides"])}
                 {...inputLabelObj}
             />
         </>

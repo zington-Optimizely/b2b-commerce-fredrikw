@@ -1,13 +1,14 @@
-import { Handler, createHandlerChainRunner, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
-import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
-import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
-import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
+import { createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
+import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
+import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
+import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{
     useBillingAddress: boolean;
@@ -19,7 +20,7 @@ type HandlerType = Handler<{
 
 export const ValidateContext: HandlerType = props => {
     const { context: { session } } = props.getState();
-    if (session.fulfillmentMethod === "PickUp") {
+    if (session.fulfillmentMethod === FulfillmentMethod.PickUp) {
         throw new Error("A shipping address does not apply to a pickup order.");
     }
 };

@@ -1,11 +1,11 @@
 import * as React from "react";
 import styled from "styled-components";
+import injectCss from "../utilities/injectCss";
 import * as ariaAppHider from "./helpers/ariaAppHider";
 import * as focusManager from "./helpers/focusManager";
 import scopeTab from "./helpers/scopeTab";
-import { OverlayOwnProps, OverlayComponentProps } from "./Overlay";
+import { OverlayComponentProps, OverlayOwnProps } from "./Overlay";
 import Scrim from "./Scrim";
-import injectCss from "../utilities/injectCss";
 
 const ContentContainer = styled.div` ${injectCss} `;
 

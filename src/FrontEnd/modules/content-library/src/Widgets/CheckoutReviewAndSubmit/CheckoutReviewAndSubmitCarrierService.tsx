@@ -1,5 +1,10 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import addDays from "@insite/client-framework/Common/Utilities/addDays";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import setRequestedDeliveryDate
     from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedDeliveryDate";
 import setRequestedPickUpDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedPickUpDate";
@@ -7,8 +12,7 @@ import setShippingMethod from "@insite/client-framework/Store/Pages/CheckoutRevi
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import addDays from "@insite/client-framework/Common/Utilities/addDays";
+import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -19,9 +23,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { ChangeEvent, FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 
 interface OwnProps extends WidgetProps {
 }
@@ -31,9 +32,9 @@ const mapStateToProps = (state: ApplicationState) => {
     const { session } = state.context;
     return {
         cart: getCurrentCartState(state).value,
-        showShippingMethod: session.fulfillmentMethod === "Ship",
+        showShippingMethod: session.fulfillmentMethod === FulfillmentMethod.Ship,
         showPickUpDate: settingsCollection.accountSettings.enableWarehousePickup && settingsCollection.cartSettings.enableRequestPickUpDate
-            && session.fulfillmentMethod === "PickUp",
+            && session.fulfillmentMethod === FulfillmentMethod.PickUp,
         session,
         accountSettings: settingsCollection.accountSettings,
         cartSettings: settingsCollection.cartSettings,
@@ -224,7 +225,6 @@ const widgetModule: WidgetModule = {
         displayName: "Carrier & Service",
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
-        isSystem: true,
     },
 };
 

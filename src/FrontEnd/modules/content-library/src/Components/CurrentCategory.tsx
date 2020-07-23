@@ -1,11 +1,11 @@
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { CategoryContext } from "@insite/client-framework/Components/CategoryContext";
-import loadCategory from "@insite/client-framework/Store/UNSAFE_CurrentCategory/Handlers/LoadCategory";
-import { connect, ResolveThunks } from "react-redux";
-import { getSelectedCategoryPath, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { getSelectedCategoryPath, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import loadCategory from "@insite/client-framework/Store/UNSAFE_CurrentCategory/Handlers/LoadCategory";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);

@@ -1,17 +1,17 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import ProductDetailState from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailState";
-import {
-    ImageModel,
-    TraitValueModel,
-    VariantTraitModel,
-    ProductInventoryDto, RealTimePricingModel, RealTimeInventoryModel,
-} from "@insite/client-framework/Types/ApiModels";
-import cloneDeep from "lodash/cloneDeep";
 import {
     ProductModelExtended,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import { LoadProductResult } from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/LoadProduct";
+import ProductDetailState from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailState";
+import {
+    ImageModel,
+    ProductInventoryDto,
+    RealTimeInventoryModel,
+    RealTimePricingModel, TraitValueModel, VariantTraitModel,
+} from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 
 const initialState: ProductDetailState = {
     variantSelection: [],

@@ -1,5 +1,5 @@
+import { DataView, DataViewState } from "@insite/client-framework/Store/Data/DataState";
 import { DealerModel } from "@insite/client-framework/Types/ApiModels";
-import { DataViewState, DataView } from "@insite/client-framework/Store/Data/DataState";
 
 export interface DealersDataView extends DataView {
     readonly defaultLatitude: number;

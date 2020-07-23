@@ -1,6 +1,6 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
-import { AddressFieldCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { getAddressFields, GetAddressFieldsApiParameter } from "@insite/client-framework/Services/WebsiteService";
+import { AddressFieldCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetAddressFieldsApiParameter, AddressFieldCollectionModel>;
 

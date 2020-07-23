@@ -1,14 +1,14 @@
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import React from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import ShippingAddressInfoDisplay, { ShippingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/ShippingAddressInfoDisplay";
-import BillingAddressInfoDisplay, { BillingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
-import { BillToModel, CarrierDto, ShipViaDto, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import translate from "@insite/client-framework/Translate";
-import { css } from "styled-components";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import { BillToModel, CarrierDto, ShipToModel, ShipViaDto } from "@insite/client-framework/Types/ApiModels";
 import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
+import BillingAddressInfoDisplay, { BillingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
+import ShippingAddressInfoDisplay, { ShippingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/ShippingAddressInfoDisplay";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     billTo: BillToModel;

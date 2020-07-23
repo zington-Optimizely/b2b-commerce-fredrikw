@@ -1,17 +1,17 @@
 import Color from "color";
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import Clickable, { ClickableComponentProps, ClickablePresentationProps } from "../Clickable";
+import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps }  from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getProp from "../utilities/getProp";
+import InjectableCss from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
-import { BaseTheme } from "../globals/baseTheme";
-import InjectableCss from "../utilities/InjectableCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type LinkPresentationProps = InjectableCss<ClickableComponentProps> & {
     /** Color of the link text and icon.

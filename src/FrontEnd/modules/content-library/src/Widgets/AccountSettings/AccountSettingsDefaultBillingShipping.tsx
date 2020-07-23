@@ -1,30 +1,31 @@
-import React, { FC, ChangeEvent } from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
-import translate from "@insite/client-framework/Translate";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
-import Radio, { RadioComponentProps, RadioProps } from "@insite/mobius/Radio";
-import DefaultBillingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultBillingAddress";
-import updateAccountSettings from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/UpdateAccountSettings";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import DefaultShippingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultShippingAddress";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import updateAccountSettings from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/UpdateAccountSettings";
+import translate from "@insite/client-framework/Translate";
+import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
+import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
+import DefaultBillingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultBillingAddress";
+import DefaultShippingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultShippingAddress";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Radio, { RadioComponentProps, RadioProps } from "@insite/mobius/Radio";
+import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { ChangeEvent, FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps { }
 
@@ -191,7 +192,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
 
     const pickUpWarehouse = account.defaultWarehouse || session.pickUpWarehouse;
 
-    if (account.defaultFulfillmentMethod === "PickUp") {
+    if (account.defaultFulfillmentMethod === FulfillmentMethod.PickUp) {
         if (pickUpWarehouse && enableWarehousePickup && isFirstRender) {
             useDefaultCustomer = true;
             setIsFirstRender(false);
@@ -228,12 +229,12 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                                 value={account.defaultFulfillmentMethod || session.fulfillmentMethod}
                                 onChangeHandler={(event) => { defaultFulfillmentChangeHandler(event, props); }}
                                 {...styles.defaultFulfillmentMethodRadioGroup}>
-                                <Radio value="Ship" {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
-                                <Radio value="PickUp" {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
+                                <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
+                                <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
                             </RadioGroup>
                         </GridItem>
                     }
-                    {account.defaultFulfillmentMethod === "PickUp" && pickUpWarehouse
+                    {account.defaultFulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse
                         && <GridItem {...warehouseAddressWrapperStyle}>
                             <PickUpLocation warehouse={pickUpWarehouse} />
                         </GridItem>
@@ -242,7 +243,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                         <DefaultShippingAddress
                             currentShipTo={shipTo}
                             currentBillTo={billTo}
-                            isPickUp={account.defaultFulfillmentMethod === "PickUp"}
+                            isPickUp={account.defaultFulfillmentMethod === FulfillmentMethod.PickUp}
                         />
                     </GridItem>
                 </GridContainer>
@@ -296,7 +297,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
-        isSystem: true,
     },
 };
 

@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { PaymentProfilesState } from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesState";
 import { GetPaymentProfilesApiParameter } from "@insite/client-framework/Services/AccountService";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { PaymentProfilesState } from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesState";
 import { AccountPaymentProfileCollectionModel, AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: PaymentProfilesState = {
     isLoading: {},

@@ -1,8 +1,8 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
-import { AccountSettingsModel } from "@insite/client-framework/Types/ApiModels";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import translate from "@insite/client-framework/Translate";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import { AccountSettingsModel } from "@insite/client-framework/Types/ApiModels";
 
 const digitRegExp = /[0-9]/;
 const lowerRegExp = /[a-z]/;

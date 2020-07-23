@@ -1,11 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import { UnitOfMeasureModel } from "@insite/client-framework/Types/ApiModels";
-import Select, { SelectProps, SelectPresentationProps } from "@insite/mobius/Select";
-import translate from "@insite/client-framework/Translate";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import { UnitOfMeasureModel } from "@insite/client-framework/Types/ApiModels";
+import Select, { SelectPresentationProps, SelectProps } from "@insite/mobius/Select";
+import * as React from "react";
+import { connect } from "react-redux";
 
 interface OwnProps extends SelectProps {
     productUnitOfMeasures: UnitOfMeasureModel[];

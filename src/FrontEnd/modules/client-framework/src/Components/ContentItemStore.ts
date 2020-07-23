@@ -1,12 +1,12 @@
-import * as React from "react";
-import logger from "@insite/client-framework/Logger";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import MissingComponent from "@insite/client-framework/Components/MissingComponent";
+import logger from "@insite/client-framework/Logger";
+import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import MissingComponent from "@insite/client-framework/Components/MissingComponent";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
-import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
+import * as React from "react";
 
 type RequireContext = __WebpackModuleApi.RequireContext;
 

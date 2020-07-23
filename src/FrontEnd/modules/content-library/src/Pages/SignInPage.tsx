@@ -1,11 +1,11 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = ({ pages: { signIn: { isSigningInAsGuest } } }: ApplicationState) => ({
@@ -31,7 +31,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

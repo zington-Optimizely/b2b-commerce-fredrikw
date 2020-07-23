@@ -1,21 +1,21 @@
-import React from "react";
-import { css } from "styled-components";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import { getWishListsDataView, getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
+import addWishListLines from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishListLines";
 import translate from "@insite/client-framework/Translate";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from "@insite/mobius/DynamicDropdown";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import addWishListLines from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishListLines";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
-import DynamicDropdown, { OptionObject, DynamicDropdownPresentationProps } from "@insite/mobius/DynamicDropdown";
-import { getWishListsDataView, getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     onCancel: () => void;
@@ -142,7 +142,6 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                         unitOfMeasure: line.unitOfMeasure,
                     })),
                 },
-                reloadWishLists: false,
                 onSuccess: this.onCopySuccess,
             });
         }

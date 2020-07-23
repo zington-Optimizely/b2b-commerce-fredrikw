@@ -1,24 +1,24 @@
-import parse from "html-react-parser";
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import Accordion, { AccordionProps } from "@insite/mobius/Accordion";
-import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import Accordion, { AccordionProps } from "@insite/mobius/Accordion";
+import { AccordionSectionPresentationProps, ManagedAccordionSection } from "@insite/mobius/AccordionSection";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import { IconMemo, IconProps } from "@insite/mobius/Icon";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { css } from "styled-components";
 import File from "@insite/mobius/Icons/File";
-import { connect } from "react-redux";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import parse from "html-react-parser";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     showDocuments = "showDocuments",
@@ -83,10 +83,10 @@ const ProductDetailsSpecifications: React.FC<OwnProps> = ({
 
     return <Accordion headingLevel={2} data-test-selector="productDetails_specifications" {...styles.specificationsAccordion}>
         {renderingDocuments
-            && <AccordionSection
+            && <ManagedAccordionSection
                 title={translate("Documents")}
                 data-test-selector="productDetails_specifications_documents"
-                expanded={true}
+                initialExpanded
                 {...styles.specificationsAccordionSection}
             >
                 <GridContainer {...styles.documentsContainer}>
@@ -99,12 +99,12 @@ const ProductDetailsSpecifications: React.FC<OwnProps> = ({
                         </GridItem>)
                     }
                 </GridContainer>
-            </AccordionSection>
+            </ManagedAccordionSection>
         }
         {renderingAttributes
-            && <AccordionSection
+            && <ManagedAccordionSection
                 title={translate("Attributes")}
-                expanded={!renderingDocuments}
+                initialExpanded={!renderingDocuments}
                 data-test-selector="productDetails_specifications_attributes"
                 {...styles.specificationsAccordionSection}
             >
@@ -122,18 +122,18 @@ const ProductDetailsSpecifications: React.FC<OwnProps> = ({
                         </Typography>
                     </StyledWrapper>)
                 }
-            </AccordionSection>
+            </ManagedAccordionSection>
         }
         {specifications && specifications.map((specification, index) =>
-            <AccordionSection
-                expanded={index === 0 && !renderingDocuments && !renderingAttributes}
+            <ManagedAccordionSection
+                initialExpanded={index === 0 && !renderingDocuments && !renderingAttributes}
                 key={specification.id.toString()}
                 title={specification.nameDisplay}
                 data-test-selector="productDetails_specifications_specification"
                 {...styles.specificationsAccordionSection}
             >
                 {parse(specification.htmlContent, parserOptions)}
-            </AccordionSection>)
+            </ManagedAccordionSection>)
         }
     </Accordion>;
 };
@@ -144,7 +144,6 @@ const widgetModule: WidgetModule = {
         displayName: "Specification",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showDocuments,

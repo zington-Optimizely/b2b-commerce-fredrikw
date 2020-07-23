@@ -1,20 +1,20 @@
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import * as React from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import loadQuotes from "@insite/client-framework/Store/Data/Quotes/Handlers/LoadQuotes";
+import { getQuotesDataView } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
 import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
 import CardListHeading from "@insite/content-library/Components/CardListHeading";
-import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
 import QuoteSummaryCard, { QuoteSummaryCardStyles } from "@insite/content-library/Components/QuoteSummaryCard";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getQuotesDataView } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
-import loadQuotes from "@insite/client-framework/Store/Data/Quotes/Handlers/LoadQuotes";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     settingsCollection: getSettingsCollection(state),
@@ -90,7 +90,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "List",
-        isSystem: true,
     },
 };
 

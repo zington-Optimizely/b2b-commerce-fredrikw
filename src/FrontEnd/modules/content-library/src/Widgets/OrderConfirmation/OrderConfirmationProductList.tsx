@@ -1,17 +1,17 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CartLinesList, { CartLinesListStyles } from "@insite/content-library/Components/CartLinesList";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useState } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
-import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     cartState: getCartState(state, state.pages.orderConfirmation.cartId),
@@ -76,7 +76,6 @@ const widgetModule: WidgetModule = {
         displayName: "Product List",
         allowedContexts: [OrderConfirmationPageContext],
         group: "Order Confirmation",
-        isSystem: true,
     },
 };
 

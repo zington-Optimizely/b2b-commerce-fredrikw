@@ -1,10 +1,10 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React from "react";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     heading: string;

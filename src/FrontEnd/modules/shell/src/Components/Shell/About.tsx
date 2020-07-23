@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Typography from "@insite/mobius/Typography";
-import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { rawRequest } from "@insite/client-framework/Services/ApiService";
+import Typography from "@insite/mobius/Typography";
 import { getDiagnostics } from "@insite/shell/Services/SpireService";
+import React, { useEffect, useState } from "react";
 
 const About: React.FC = () => {
     const [spireStuff, update] = useState<SafeDictionary<string> | undefined>();

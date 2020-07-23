@@ -1,10 +1,10 @@
-import { Draft } from "immer";
-import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { setDataViewLoaded, setDataViewLoading, getDataViewKey, assignById } from "@insite/client-framework/Store/Data/DataState";
-import { WishListLinesDataView, WishListLinesState } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesState";
-import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
+import { assignById, getDataViewKey, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { WishListLinesDataView, WishListLinesState } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesState";
+import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: WishListLinesState = {
     isLoading: {},

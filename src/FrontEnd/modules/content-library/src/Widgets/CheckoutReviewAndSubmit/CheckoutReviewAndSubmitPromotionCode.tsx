@@ -1,18 +1,18 @@
-import React, { FC, useState } from "react";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
-import translate from "@insite/client-framework/Translate";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { css } from "styled-components";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import { canApplyPromotionsToCart, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import applyPromotion from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/ApplyPromotion";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { getCurrentCartState, canApplyPromotionsToCart } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import React, { FC, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cartState = getCurrentCartState(state);
@@ -106,7 +106,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         displayName: "Promotion Code Form",
-        isSystem: true,
     },
 };
 

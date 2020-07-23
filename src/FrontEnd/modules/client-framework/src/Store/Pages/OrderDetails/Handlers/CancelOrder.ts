@@ -1,8 +1,8 @@
-import { UpdateOrderApiParameter, updateOrder } from "@insite/client-framework/Services/OrderService";
-import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
-import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { updateOrder, UpdateOrderApiParameter } from "@insite/client-framework/Services/OrderService";
 import loadOrderByOrderNumber from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrderByOrderNumber";
+import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, UpdateOrderApiParameter, OrderModel>;
 

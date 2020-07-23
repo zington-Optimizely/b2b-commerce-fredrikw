@@ -1,5 +1,5 @@
+import { DataView, DataViewState } from "@insite/client-framework/Store/Data/DataState";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import { DataViewState, DataView } from "@insite/client-framework/Store/Data/DataState";
 
 export interface WarehousesDataView extends DataView {
     readonly defaultLatitude: number;

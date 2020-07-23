@@ -1,11 +1,11 @@
-import React, { FC, useContext } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapDispatchToProps = {
     updateSearchFields,
@@ -64,7 +64,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Pagination",
         allowedContexts: [InvoiceHistoryPageContext],
-        isSystem: true,
     },
 };
 

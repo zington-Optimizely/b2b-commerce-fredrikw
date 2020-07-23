@@ -4,8 +4,8 @@ import {
 } from "@insite/client-framework/HandlerCreator";
 import { CartResult, updateCart, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import cloneDeep from "lodash/cloneDeep";
 import { Draft } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = Handler<{ redirectUri: string }, {
     apiParameter: UpdateCartApiParameter,

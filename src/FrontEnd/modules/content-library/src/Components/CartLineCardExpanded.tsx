@@ -1,7 +1,13 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
+import { Cart } from "@insite/client-framework/Services/CartService";
 import translate from "@insite/client-framework/Translate";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
+import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
 import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import CartLineNotes, { CartLineNotesStyles } from "@insite/content-library/Widgets/Cart/CartLineNotes";
 import CartLineQuantity, { CartLineQuantityStyles } from "@insite/content-library/Widgets/Cart/CartLineQuantity";
@@ -9,14 +15,8 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import React from "react";
 import { css } from "styled-components";
-import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import { withCartLine, HasCartLineContext } from "@insite/client-framework/Components/CartLineContext";
-import { Cart } from "@insite/client-framework/Services/CartService";
 
 interface OwnProps {
     cart: Cart;
@@ -150,7 +150,7 @@ const CartLineCardExpanded: React.FC<Props> = ({
     const [styles] = React.useState(() => mergeToNew(cartLineCardExpandedStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.container}>
+        <GridContainer {...styles.container} data-test-selector={`cartline_expanded_${cartLine.productId}_${cartLine.unitOfMeasure}`}>
             <GridItem {...styles.productImageGridItem}>
                 <ProductImage product={cartLine} extendedStyles={styles.productImage} />
             </GridItem>
@@ -196,10 +196,12 @@ const CartLineCardExpanded: React.FC<Props> = ({
                                 />
                             </GridItem>
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
-                                <SmallHeadingAndText
-                                    heading={translate("Subtotal")}
-                                    text={cartLine.pricing!.extendedUnitNetPriceDisplay}
-                                    extendedStyles={styles.extendedUnitNetPrice} />
+                                {cartLine.pricing
+                                    && <SmallHeadingAndText
+                                        heading={translate("Subtotal")}
+                                        text={cartLine.pricing.extendedUnitNetPriceDisplay}
+                                        extendedStyles={styles.extendedUnitNetPrice} />
+                                }
                             </GridItem>
                         </GridContainer>
                     </GridItem>

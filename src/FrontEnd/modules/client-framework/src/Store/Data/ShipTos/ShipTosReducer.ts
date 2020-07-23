@@ -1,10 +1,10 @@
-import { Draft } from "immer";
-import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { ShipToCollectionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { ShipTosState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosState";
-import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { ShipTosState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosState";
+import { ShipToCollectionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: ShipTosState = {
     isLoading: {},

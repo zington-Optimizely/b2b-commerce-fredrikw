@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductSelectorState from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorState";
 import { ProductAutocompleteItemModel, TraitValueModel, VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 const initialState: ProductSelectorState = {
     isSearching: false,

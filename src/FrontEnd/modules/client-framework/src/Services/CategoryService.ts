@@ -1,5 +1,5 @@
-import { get, ApiParameter } from "@insite/client-framework/Services/ApiService";
-import { CatalogPageModel, CategoryModel, CategoryCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
+import { CatalogPageModel, CategoryCollectionModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetCatalogPageByPathApiParameter extends ApiParameter {
     path: string;

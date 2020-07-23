@@ -1,11 +1,11 @@
-import { AddWishListLinesApiParameter, addWishListLines as addWishListLinesApi } from "@insite/client-framework/Services/WishListService";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { addWishListLines as addWishListLinesApi, AddWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<
     {
         apiParameter: AddWishListLinesApiParameter;
-        reloadWishLists: boolean;
+        reloadWishLists?: boolean;
         onSuccess?: () => void;
     },
     {
@@ -25,6 +25,15 @@ export const DispatchBeginAddWishListLines: HandlerType = props => {
 export const CallAddWishListLinesApi: HandlerType = async props => {
     await addWishListLinesApi(props.parameter.apiParameter);
     props.apiResult = { error: false };
+};
+
+export const ResetWishListData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishListLines/Reset",
+    });
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
@@ -48,6 +57,7 @@ export const DispatchLoadWishLists: HandlerType = props => {
 export const chain = [
     DispatchBeginAddWishListLines,
     CallAddWishListLinesApi,
+    ResetWishListData,
     ExecuteOnSuccessCallback,
     DispatchCompleteAddWishListLines,
     DispatchLoadWishLists,

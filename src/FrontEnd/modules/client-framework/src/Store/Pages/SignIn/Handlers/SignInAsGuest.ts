@@ -1,8 +1,8 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { AccountModel } from "@insite/client-framework/Types/ApiModels";
 import { addAccount } from "@insite/client-framework/Services/AccountService";
-import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
+import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
+import { AccountModel } from "@insite/client-framework/Types/ApiModels";
 
 type SignInAsGuestParameter = {
     returnUrl: string;

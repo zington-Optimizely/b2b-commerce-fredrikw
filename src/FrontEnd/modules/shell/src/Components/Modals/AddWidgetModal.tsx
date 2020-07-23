@@ -1,29 +1,29 @@
-import * as React from "react";
+import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { addWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import WidgetGroups, { WidgetGroup } from "@insite/client-framework/Types/WidgetGroups";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import Icon from "@insite/mobius/Icon";
+import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import TextField from "@insite/mobius/TextField";
+import Search from "@insite/shell/Components/Icons/Search";
+import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getWidgetDefinition, getWidgetDefinitions, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
-import { connect, ResolveThunks } from "react-redux";
-import sortBy from "lodash/sortBy";
-import ShellState from "@insite/shell/Store/ShellState";
-import styled, { css } from "styled-components";
+import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import {
-    savePage,
     editWidget,
     hideAddWidgetModal,
+    savePage,
 } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { addWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import WidgetGroups, { WidgetGroup } from "@insite/client-framework/Types/WidgetGroups";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import Search from "@insite/shell/Components/Icons/Search";
-import TextField from "@insite/mobius/TextField";
-import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
-import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
-import shellIconsObject from "../Icons/CompatibleIcons/shellIcons";
-import Icon from "@insite/mobius/Icon";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
+import sortBy from "lodash/sortBy";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
+import shellIconsObject from "../Icons/CompatibleIcons/shellIcons";
 
 const iconsObject = { ...shellIconsObject, ...mobiusIconsObject };
 

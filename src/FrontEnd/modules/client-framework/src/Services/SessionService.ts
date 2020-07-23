@@ -1,10 +1,20 @@
-import { get, patch, ApiParameter, del, ServiceResult } from "@insite/client-framework/Services/ApiService";
-import { BillToModel, SessionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import { fetch } from "@insite/client-framework/ServerSideRendering";
+import isApiError from "@insite/client-framework/Common/isApiError";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
+import { fetch } from "@insite/client-framework/ServerSideRendering";
+import { ApiParameter, del, get, patch, ServiceResult } from "@insite/client-framework/Services/ApiService";
+import { BillToModel, SessionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+
+export enum FulfillmentMethod {
+    PickUp = "PickUp",
+    Ship = "Ship",
+}
 
 export interface UpdateSessionApiParameter extends ApiParameter {
     session: Partial<Session>;
+}
+
+export interface UpdateSessionWithResultApiParameter extends ApiParameter {
+    session: Partial<SessionModel>;
 }
 
 export interface GetSessionApiParameter extends ApiParameter {
@@ -98,6 +108,25 @@ export async function updateSession(parameter: UpdateSessionApiParameter) {
     cleanSession(session);
     informShell(session);
     return session;
+}
+
+export async function updateSessionWithResult(parameter: UpdateSessionWithResultApiParameter): Promise<ServiceResult<SessionModel>> {
+    try {
+        const session = await patch<SessionModel>("/api/v1/sessions/current", parameter.session);
+        cleanSession(session);
+        return {
+            successful: true,
+            result: session,
+        };
+    } catch (error) {
+        if (isApiError(error)) {
+            return {
+                successful: false,
+                errorMessage: error.message,
+            };
+        }
+        throw error;
+    }
 }
 
 export async function forgotPassword(parameter: ForgotPasswordApiParameter): Promise<ServiceResult<Session>> {

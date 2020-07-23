@@ -1,9 +1,9 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
 
 const HomePage: React.FunctionComponent<PageProps> = ({
     id,
@@ -19,7 +19,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableTitle: true,
         hasEditableUrlSegment: false,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

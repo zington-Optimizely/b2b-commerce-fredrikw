@@ -1,9 +1,9 @@
+import { createPageElement } from "@insite/client-framework/Components/ContentItemStore";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getFooter } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { createPageElement } from "@insite/client-framework/Components/ContentItemStore";
-import { getFooter } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 
 const mapStateToProps = (state: ApplicationState) => ({
     footer: getFooter(state),

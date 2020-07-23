@@ -1,7 +1,7 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadPromotions";
+import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import loadCart from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/LoadCart";
 
 type HandlerType = Handler<{

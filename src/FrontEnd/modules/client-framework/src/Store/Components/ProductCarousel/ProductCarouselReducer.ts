@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductCarouselState from "@insite/client-framework/Store/Components/ProductCarousel/ProductCarouselState";
-import { RealTimePricingModel, RealTimeInventoryModel, ProductInventoryDto } from "@insite/client-framework/Types/ApiModels";
+import { ProductInventoryDto, RealTimeInventoryModel, RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: ProductCarouselState = {
     carouselProducts: {},

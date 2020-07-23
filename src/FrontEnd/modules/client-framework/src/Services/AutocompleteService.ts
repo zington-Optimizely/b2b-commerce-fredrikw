@@ -1,4 +1,4 @@
-import { get, ApiParameter } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
 import { AutocompleteModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface AutocompleteApiParameter extends ApiParameter {

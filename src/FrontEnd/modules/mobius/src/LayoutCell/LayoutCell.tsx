@@ -2,8 +2,8 @@ import * as React from "react";
 import styled from "styled-components";
 import LayoutGroupContext from "../LayoutGroup/LayoutGroupContext";
 import LayoutTableContext, { LayoutTableContextData } from "../LayoutTable/LayoutTableContext";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type LayoutCellProps = MobiusStyledComponentProps<"div", LayoutTableContextData & {

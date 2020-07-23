@@ -1,8 +1,8 @@
-import { CartLineCollectionModel, ProductDto, CartLineModel } from "@insite/client-framework/Types/ApiModels";
-import { addLineCollection, AddCartLinesApiParameter } from "@insite/client-framework/Services/CartService";
-import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { AddCartLinesApiParameter, addLineCollection } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import { CartLineCollectionModel, CartLineModel, ProductDto } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType =
     ApiHandlerDiscreteParameter<{

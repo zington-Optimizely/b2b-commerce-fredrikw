@@ -1,5 +1,5 @@
-import { GetCurrentWebsiteApiParameter, getCurrentWebsite, Website } from "@insite/client-framework/Services/WebsiteService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getCurrentWebsite, GetCurrentWebsiteApiParameter, Website } from "@insite/client-framework/Services/WebsiteService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetCurrentWebsiteApiParameter, Website>;
 

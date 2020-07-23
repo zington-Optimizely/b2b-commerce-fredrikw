@@ -1,6 +1,6 @@
-import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
+import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 export const canCancelOrder = (state: ApplicationState, order?: OrderModel) => {
     const orderStatusMappings = getOrderStatusMappingDataView(state).value;

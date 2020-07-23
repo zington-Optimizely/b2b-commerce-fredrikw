@@ -1,9 +1,9 @@
-import { WishListCollectionModel } from "@insite/client-framework/Types/ApiModels";
-import { GetWishListsApiParameter, getWishLists } from "@insite/client-framework/Services/WishListService";
 import {
     ApiHandler,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
+import { getWishLists, GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import { WishListCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetWishListsApiParameter, WishListCollectionModel>;
 

@@ -1,14 +1,14 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
-import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
-import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import { css } from "styled-components";
-import getColor from "@insite/mobius/utilities/getColor";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import translate from "@insite/client-framework/Translate";
+import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { css } from "styled-components";
 
 export interface CartLinesListHeaderStyles {
     wrapper?: InjectableCss;
@@ -35,13 +35,15 @@ export const cartLinesListHeaderStyles: CartLinesListHeaderStyles = {
 const CartLinesListHeader: FC<{
     productsCount: number;
     isCondensed: boolean;
-    onChangeIsCondensed: (event: React.SyntheticEvent, value: boolean) => void;
+    hideCondensedSelector?: boolean;
+    onChangeIsCondensed?: (event: React.SyntheticEvent, value: boolean) => void;
     extendedStyles?: CartLinesListHeaderStyles;
 }> = ({
     productsCount,
     onChangeIsCondensed,
     extendedStyles,
     isCondensed,
+    hideCondensedSelector,
 }) => {
     const [styles] = React.useState(() => mergeToNew(cartLinesListHeaderStyles, extendedStyles));
 
@@ -50,15 +52,17 @@ const CartLinesListHeader: FC<{
     return (
         <StyledWrapper {...styles.wrapper}>
             <Typography {...styles.productCountText}>{productsCount} {translate(productsLabel)}</Typography>
-            <CheckboxGroup {...styles.checkboxGroup}>
-                <Checkbox
-                    {...styles.condensedCheckbox}
-                    checked={isCondensed}
-                    onChange={onChangeIsCondensed}
-                >
-                    {translate("Condensed View")}
-                </Checkbox>
-            </CheckboxGroup>
+            {!hideCondensedSelector
+                && <CheckboxGroup {...styles.checkboxGroup}>
+                    <Checkbox
+                        {...styles.condensedCheckbox}
+                        checked={isCondensed}
+                        onChange={onChangeIsCondensed}
+                    >
+                        {translate("Condensed View")}
+                    </Checkbox>
+                </CheckboxGroup>
+            }
         </StyledWrapper>
     );
 };

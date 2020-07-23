@@ -1,6 +1,6 @@
 import * as React from "react";
-import LayoutGroupContext from "./LayoutGroupContext";
 import { StyledProp } from "../utilities/InjectableCss";
+import LayoutGroupContext from "./LayoutGroupContext";
 
 export interface LayoutGroupProps {
     /** Order of appearance of this LayoutGroup within its parent LayoutTable. */

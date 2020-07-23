@@ -1,5 +1,5 @@
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<GetShipTosApiParameter>;
 

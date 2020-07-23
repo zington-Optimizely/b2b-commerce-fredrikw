@@ -1,5 +1,5 @@
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ paymentProfile?: AccountPaymentProfileModel; modalIsOpen: boolean }>;
 

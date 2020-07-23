@@ -1,30 +1,30 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
+import reset from "@insite/client-framework/Store/Components/ProductSelector/Handlers/Reset";
+import searchProducts from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SearchProducts";
+import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
+import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import translate from "@insite/client-framework/Translate";
+import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from "@insite/mobius/DynamicDropdown";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import { SelectPresentationProps } from "@insite/mobius/Select";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import debounce from "lodash/debounce";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import translate from "@insite/client-framework/Translate";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import DynamicDropdown, { OptionObject, DynamicDropdownPresentationProps } from "@insite/mobius/DynamicDropdown";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { SelectPresentationProps } from "@insite/mobius/Select";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
-import searchProducts from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SearchProducts";
-import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
-import reset from "@insite/client-framework/Store/Components/ProductSelector/Handlers/Reset";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
-import debounce from "lodash/debounce";
-import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 interface OwnProps {
     onSelectProduct: (product: ProductModelExtended) => void;
@@ -78,16 +78,16 @@ const styles: ProductSelectorStyles = {
         gap: 10,
     },
     searchGridItem: {
-        width: [12, 12, 4, 4, 4],
+        width: [12, 12, 4, 5, 5],
     },
     qtyGridItem: {
         width: [3, 3, 2, 1, 1],
     },
     unitOfMeasureGridItem: {
-        width: [9, 9, 3, 2, 2],
+        width: [9, 9, 3, 3, 3],
     },
     buttonGridItem: {
-        width: [12, 12, 3, 5, 5],
+        width: [12, 12, 3, 3, 3],
     },
     optionWrapper: {
         css: css`

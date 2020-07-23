@@ -1,6 +1,6 @@
 import { css } from "styled-components";
-import getColor from "../utilities/getColor";
 import { ComponentThemeProps } from "../globals/baseTheme";
+import getColor from "../utilities/getColor";
 
 const DynamicDropdownPresentationPropsDefault: ComponentThemeProps["dynamicDropdown"]["defaultProps"] = {
     cssOverrides: {

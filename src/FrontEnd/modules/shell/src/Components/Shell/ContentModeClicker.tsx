@@ -1,11 +1,11 @@
-import ShellState from "@insite/shell/Store/ShellState";
-import { connect, ResolveThunks } from "react-redux";
-import * as React from "react";
-import Icon from "@insite/mobius/Icon";
-import shellTheme from "@insite/shell/ShellTheme";
-import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
 import ContentMode from "@insite/client-framework/Common/ContentMode";
+import Icon from "@insite/mobius/Icon";
+import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
+import shellTheme from "@insite/shell/ShellTheme";
 import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     targetMatchesCurrentContentMode: state.shellContext.contentMode === ownProps.targetContentMode,

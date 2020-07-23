@@ -1,26 +1,26 @@
-import * as React from "react";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { FC } from "react";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import Instagram from "@insite/mobius/Icons/Instagram";
-import Facebook from "@insite/mobius/Icons/Facebook";
-import Youtube from "@insite/mobius/Icons/Youtube";
-import Rss from "@insite/mobius/Icons/Rss";
-import User from "@insite/mobius/Icons/User";
-import Linkedin from "@insite/mobius/Icons/Linkedin";
-import Camera from "@insite/mobius/Icons/Camera";
-import Video from "@insite/mobius/Icons/Video";
-import FileText from "@insite/mobius/Icons/FileText";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import Camera from "@insite/mobius/Icons/Camera";
+import Facebook from "@insite/mobius/Icons/Facebook";
+import FileText from "@insite/mobius/Icons/FileText";
+import Instagram from "@insite/mobius/Icons/Instagram";
+import Linkedin from "@insite/mobius/Icons/Linkedin";
+import Rss from "@insite/mobius/Icons/Rss";
+import User from "@insite/mobius/Icons/User";
+import Video from "@insite/mobius/Icons/Video";
+import Youtube from "@insite/mobius/Icons/Youtube";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { FC } from "react";
 import { connect } from "react-redux";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { css } from "styled-components";
 
 const enum fields {
     direction = "direction",

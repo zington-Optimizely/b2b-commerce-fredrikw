@@ -1,7 +1,7 @@
 import { shippingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/ShippingAddress";
+import AtSign from "@insite/mobius/Icons/AtSign";
 import Mail from "@insite/mobius/Icons/Mail";
 import Smartphone from "@insite/mobius/Icons/Smartphone";
-import AtSign from "@insite/mobius/Icons/AtSign";
 
 shippingAddressStyles.createNewAddressModal = {
     addressForm: {

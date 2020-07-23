@@ -44,7 +44,7 @@ export interface PageEditorState {
     selectedCategoryPath?: string;
     selectedBrandPath?: string;
     /** When true, the page should be presented as the raw script for a page creator. */
-    showGeneratedPageCreator: boolean;
+    showGeneratedPageTemplate: boolean;
     addWidgetData?: AddWidgetData;
     savePageResponse?: SavePageResponseModel;
 }

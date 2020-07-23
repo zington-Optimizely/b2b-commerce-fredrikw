@@ -1,18 +1,18 @@
-import { FontWeightProperty, TextTransformProperty } from "csstype";
-import * as React from "react";
-import { css } from "styled-components";
 import Checkbox from "@insite/mobius/Checkbox";
 import CheckboxGroup from "@insite/mobius/CheckboxGroup";
-import get from "@insite/mobius/utilities/get";
 import Select from "@insite/mobius/Select";
 import TextField from "@insite/mobius/TextField";
 import { TypographyProps } from "@insite/mobius/Typography";
+import get from "@insite/mobius/utilities/get";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
-import { createSetParentIfUndefined, configFormFieldStyles, configCheckboxStyles } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
-import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
-import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
+import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
+import { configCheckboxStyles, configFormFieldStyles, createSetParentIfUndefined } from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
+import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
+import { FontWeightProperty, TextTransformProperty } from "csstype";
+import * as React from "react";
+import { css } from "styled-components";
 
 const TypographyConfig: React.FunctionComponent<{
     title: string;

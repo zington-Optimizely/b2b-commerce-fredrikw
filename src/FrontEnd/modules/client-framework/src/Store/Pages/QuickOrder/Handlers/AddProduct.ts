@@ -1,7 +1,7 @@
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended, getProductRealTimePrice, getProductRealTimeInventory } from "@insite/client-framework/Services/ProductServiceV2";
-import cloneDeep from "lodash/cloneDeep";
+import { getProductRealTimeInventory, getProductRealTimePrice, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import changeProductQty from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ChangeProductQty";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = HandlerWithResult<{ product: ProductModelExtended; }, { product: ProductModelExtended; }>;
 
@@ -53,6 +53,7 @@ export const GetInventory: HandlerType = async props => {
     if (realTimeInventory.realTimeInventoryResults) {
         realTimeInventory.realTimeInventoryResults.forEach((productInventory) => {
             if (product && product.id === productInventory.productId) {
+                product.qtyOnHand = productInventory.qtyOnHand;
                 product.availability = productInventory.inventoryAvailabilityDtos
                     ?.find(o => o.unitOfMeasure.toLowerCase() === product?.unitOfMeasure?.toLowerCase())?.availability || undefined;
                 product.inventoryAvailabilities = productInventory.inventoryAvailabilityDtos || undefined;

@@ -1,4 +1,4 @@
-import { HandlerWithResult, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { updateWishListLine as updateWishListLineApi } from "@insite/client-framework/Services/WishListService";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import { WishListLineModel } from "@insite/client-framework/Types/ApiModels";
@@ -18,6 +18,16 @@ type HandlerType = HandlerWithResult<
     UpdateWishListLineResult
 >;
 
+export const DispatchBeginLoadWishListLinesIfNeeded: HandlerType = props => {
+    if (props.parameter.reloadWishListLines) {
+        const dataViewParameter = props.getState().pages.myListDetails.loadWishListLinesParameter;
+        props.dispatch({
+            type: "Data/WishListLines/BeginLoadWishListLines",
+            parameter: dataViewParameter,
+        });
+    }
+};
+
 export const RequestUpdateWishListLine: HandlerType = async props => {
     const wishListLine = await updateWishListLineApi({
         wishListId: props.parameter.wishListId,
@@ -25,6 +35,15 @@ export const RequestUpdateWishListLine: HandlerType = async props => {
         wishListLine: props.parameter.wishListLine,
     });
     props.result = { wishListLine };
+};
+
+export const ResetWishListsData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishListLines/Reset",
+    });
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
 };
 
 export const DispatchUpdateWishListLine: HandlerType = props => {
@@ -47,7 +66,9 @@ export const DispatchLoadWishListLines: HandlerType = props => {
 };
 
 export const chain = [
+    DispatchBeginLoadWishListLinesIfNeeded,
     RequestUpdateWishListLine,
+    ResetWishListsData,
     DispatchUpdateWishListLine,
     ExecuteOnSuccessCallback,
     DispatchLoadWishListLines,

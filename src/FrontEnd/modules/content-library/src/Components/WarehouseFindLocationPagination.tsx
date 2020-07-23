@@ -1,6 +1,6 @@
+import { PaginationModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
 import * as React from "react";
-import { WarehouseModel, PaginationModel } from "@insite/client-framework/Types/ApiModels";
 
 type Props = PaginationPresentationProps & {
     warehouses: WarehouseModel[];

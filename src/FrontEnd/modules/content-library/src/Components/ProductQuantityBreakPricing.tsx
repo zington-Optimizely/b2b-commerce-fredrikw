@@ -1,17 +1,17 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import translate from "@insite/client-framework/Translate";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
-import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
-import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
-import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTableRow";
 import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
 import { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
+import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
+import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
+import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTableRow";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 interface OwnProps {
     product: ProductModelExtended;

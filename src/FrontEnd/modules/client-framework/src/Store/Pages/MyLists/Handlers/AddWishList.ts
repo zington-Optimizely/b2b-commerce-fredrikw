@@ -1,7 +1,8 @@
-import { AddWishListApiParameter, addWishList as addWishListApi } from "@insite/client-framework/Services/WishListService";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import isApiError from "@insite/client-framework/Common/isApiError";
+import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { addWishList as addWishListApi, AddWishListApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
-import { HandlerWithResult, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface AddWishListResult {
     wishListModel?: WishListModel;
@@ -19,6 +20,7 @@ type HandlerType = HandlerWithResult<
 >;
 
 export const DispatchBeginAddWishList: HandlerType = props => {
+    props.result = {};
     props.dispatch({
         type: "Pages/MyLists/BeginAddWishList",
     });
@@ -26,13 +28,20 @@ export const DispatchBeginAddWishList: HandlerType = props => {
 
 export const CallAddWishListApi: HandlerType = async props => {
     try {
-        const wishList = await addWishListApi(props.parameter.apiParameter);
-        props.result = { wishListModel: wishList };
+        props.result.wishListModel = await addWishListApi(props.parameter.apiParameter);
     } catch (error) {
-        props.result = {
-            errorMessage: JSON.parse(error.body || "{}").message || error.message,
-        };
+        if (isApiError(error) && error.status === 400) {
+            props.result.errorMessage = error.errorJson.message;
+            return;
+        }
+        throw error;
     }
+};
+
+export const ResetWishListsData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
@@ -63,6 +72,7 @@ export const DispatchLoadWishLists: HandlerType = props => {
 export const chain = [
     DispatchBeginAddWishList,
     CallAddWishListApi,
+    ResetWishListsData,
     ExecuteOnSuccessCallback,
     ExecuteOnErrorCallback,
     DispatchCompleteAddWishList,

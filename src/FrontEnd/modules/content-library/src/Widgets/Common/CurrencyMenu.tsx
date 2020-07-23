@@ -1,17 +1,17 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrencies } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import translate from "@insite/client-framework/Translate";
-import { getCurrencies } from "@insite/client-framework/Store/Context/ContextSelectors";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     showIcon = "showIcon",
@@ -96,7 +96,6 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Currency Menu",
         icon: "Menu",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showIcon,

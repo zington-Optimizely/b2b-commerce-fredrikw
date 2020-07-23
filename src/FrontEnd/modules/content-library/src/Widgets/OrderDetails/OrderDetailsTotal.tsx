@@ -1,13 +1,13 @@
-import React, { FC, useContext } from "react";
+import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
+import React, { FC, useContext } from "react";
 import { css } from "styled-components";
-import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 
 export interface OrderDetailsTotalStyles {
     container?: GridContainerProps;
@@ -170,7 +170,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
     },
 };
 

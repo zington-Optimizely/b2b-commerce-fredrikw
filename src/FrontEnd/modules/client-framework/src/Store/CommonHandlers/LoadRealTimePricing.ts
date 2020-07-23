@@ -3,13 +3,13 @@ import {
     createHandlerChainRunner,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
-import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
-import {
-    GetProductsRealTimePriceApiV2Parameter,
-    getProductCollectionRealTimePrices,
-} from "@insite/client-framework/Services/ProductServiceV2";
 import logger from "@insite/client-framework/Logger";
+import {
+    getProductCollectionRealTimePrices,
+    GetProductsRealTimePriceApiV2Parameter,
+} from "@insite/client-framework/Services/ProductServiceV2";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface LoadRealTimePricingParameter extends HasOnSuccess<RealTimePricingModel> {
     parameter: GetProductsRealTimePriceApiV2Parameter;

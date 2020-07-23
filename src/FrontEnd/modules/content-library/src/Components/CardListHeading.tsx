@@ -1,11 +1,11 @@
-import GridItem from "@insite/mobius/GridItem";
-import { css } from "styled-components";
-import * as React from "react";
-import GridContainer from "@insite/mobius/GridContainer";
-import Typography from "@insite/mobius/Typography";
-import Link from "@insite/mobius/Link";
-import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import translate from "@insite/client-framework/Translate";
+import GridContainer from "@insite/mobius/GridContainer";
+import GridItem from "@insite/mobius/GridItem";
+import ChevronRight from "@insite/mobius/Icons/ChevronRight";
+import Link from "@insite/mobius/Link";
+import Typography from "@insite/mobius/Typography";
+import * as React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     heading: string;

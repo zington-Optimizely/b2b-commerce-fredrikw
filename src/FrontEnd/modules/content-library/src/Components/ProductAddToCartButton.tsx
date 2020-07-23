@@ -1,15 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { HasProductContext } from "@insite/client-framework/Components/ProductContext";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
+import translate from "@insite/client-framework/Translate";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps extends HasProductContext {
     quantity: number;

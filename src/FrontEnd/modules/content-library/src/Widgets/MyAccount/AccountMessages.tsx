@@ -1,27 +1,27 @@
-import * as React from "react";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import Accordion from "@insite/mobius/Accordion";
-import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection";
-import { css } from "styled-components";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
-import Radio, { RadioComponentProps } from "@insite/mobius/Radio";
-import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
-import getColor from "@insite/mobius/utilities/getColor";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import { AccordionPresentationProps } from "@insite/mobius/Accordion/Accordion";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import LoadingSpinner from "@insite/mobius/LoadingSpinner";
-import { MessageModel } from "@insite/client-framework/Types/ApiModels";
-import { getMessagesDataView } from "@insite/client-framework/Store/Data/Messages/MessagesSelector";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadMessages from "@insite/client-framework/Store/Data/Messages/Handlers/LoadMessages";
 import updateMessageIsRead from "@insite/client-framework/Store/Data/Messages/Handlers/UpdateMessageIsRead";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import { getMessagesDataView } from "@insite/client-framework/Store/Data/Messages/MessagesSelector";
+import translate from "@insite/client-framework/Translate";
+import { MessageModel } from "@insite/client-framework/Types/ApiModels";
+import Accordion from "@insite/mobius/Accordion";
+import { AccordionPresentationProps } from "@insite/mobius/Accordion/Accordion";
+import { AccordionSectionPresentationProps, ManagedAccordionSection } from "@insite/mobius/AccordionSection";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import LoadingSpinner from "@insite/mobius/LoadingSpinner";
+import Radio, { RadioComponentProps } from "@insite/mobius/Radio";
+import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const messagesParameter = {};
 
@@ -184,11 +184,11 @@ class AccountMessages extends React.Component<Props, State> {
                     {...styles.messagesAccordion}
                     headingLevel={2}
                 >
-                    <AccordionSection
+                    <ManagedAccordionSection
                         title={title}
                         onTogglePanel={() => { this.setState({ isMessagesPreview: false }); }}
                         {...styles.messagesAccordionSection}
-                        expanded
+                        initialExpanded
                     >
                         <GridContainer {...styles.messagesGridContainer}>
                             <GridItem {...styles.messageFilterGridItem}>
@@ -213,7 +213,7 @@ class AccountMessages extends React.Component<Props, State> {
                             <LoadingSpinner />
                         </StyledWrapper>
                         }
-                    </AccordionSection>
+                    </ManagedAccordionSection>
                 </Accordion>
             </StyledSection>
         );

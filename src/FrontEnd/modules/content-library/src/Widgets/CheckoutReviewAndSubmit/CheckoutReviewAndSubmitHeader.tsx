@@ -1,27 +1,27 @@
-import React, { FC } from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { canPlaceOrder, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
+import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { connect, ResolveThunks } from "react-redux";
-import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
-import translate from "@insite/client-framework/Translate";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import getColor from "@insite/mobius/utilities/getColor";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { css } from "styled-components";
-import { getCurrentCartState, canPlaceOrder } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import get from "@insite/mobius/utilities/get";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import getColor from "@insite/mobius/utilities/getColor";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     isBackButtonDisabled: state.pages.checkoutReviewAndSubmit.isPlacingOrder,
@@ -142,7 +142,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         displayName: "Page Header",
-        isSystem: true,
     },
 };
 

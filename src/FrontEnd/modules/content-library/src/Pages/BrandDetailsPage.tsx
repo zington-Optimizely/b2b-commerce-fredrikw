@@ -1,25 +1,25 @@
+import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
 import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { getSelectedBrandPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import {
+    BrandCategoriesStateContext,
+    BrandProductLinesStateContext,
+    BrandStateContext,
+    getBrandCategoriesDataView,
+    getBrandProductLinesDataView,
+    getBrandStateByPath,
+} from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
+import loadBrandByPath from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandByPath";
+import loadBrandCategories from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandCategories";
+import loadBrandProductLines from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandProductLines";
+import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { ResolveThunks, connect } from "react-redux";
-import loadBrandByPath from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandByPath";
-import {
-    BrandStateContext,
-    getBrandCategoriesDataView,
-    BrandCategoriesStateContext,
-    BrandProductLinesStateContext,
-    getBrandProductLinesDataView,
-    getBrandStateByPath,
-} from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
-import loadBrandCategories from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandCategories";
-import loadBrandProductLines from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandProductLines";
-import { getSelectedBrandPath } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
-import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const { pathname } = getLocation(state);
@@ -136,7 +136,7 @@ const pageModule: PageModule = {
         hasEditableUrlSegment: false,
         hasEditableTitle: true,
         supportsBrandSelection: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

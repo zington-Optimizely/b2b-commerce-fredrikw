@@ -1,20 +1,20 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer from "@insite/mobius/GridContainer";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Link from "@insite/mobius/Link";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
-import TextField from "@insite/mobius/TextField";
-import { LinkPresentationProps } from "@insite/mobius/Link/Link";
-import translate from "@insite/client-framework/Translate";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import updateAccountSettings from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/UpdateAccountSettings";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
+import GridContainer from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Link from "@insite/mobius/Link";
+import { LinkPresentationProps } from "@insite/mobius/Link/Link";
+import TextField from "@insite/mobius/TextField";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps { }
 
@@ -102,7 +102,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
-        isSystem: true,
     },
 };
 

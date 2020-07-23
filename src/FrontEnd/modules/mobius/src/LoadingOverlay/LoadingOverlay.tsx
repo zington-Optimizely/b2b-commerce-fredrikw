@@ -1,14 +1,14 @@
 import * as React from "react";
-import styled, { withTheme, ThemeProps } from "styled-components";
-import LoadingSpinner, { LoadingSpinnerStyle } from "../LoadingSpinner";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import { BaseTheme } from "../globals/baseTheme";
-import VisuallyHidden from "../VisuallyHidden";
-import getProp from "../utilities/getProp";
-import injectCss from "../utilities/injectCss";
-import { StyledProp } from "../utilities/InjectableCss";
+import LoadingSpinner, { LoadingSpinnerStyle } from "../LoadingSpinner";
 import DisablerContext from "../utilities/DisablerContext";
-import safeColor from "../utilities/safeColor";
+import getProp from "../utilities/getProp";
+import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import safeColor from "../utilities/safeColor";
+import VisuallyHidden from "../VisuallyHidden";
 
 export type LoadingOverlayProps = MobiusStyledComponentProps<"div", {
     /** CSS string or styled-components function to be injected into this component. */

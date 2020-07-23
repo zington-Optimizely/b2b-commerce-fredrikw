@@ -1,12 +1,12 @@
-import * as React from "react";
-import { css } from "styled-components";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Zone from "@insite/client-framework/Components/Zone";
+import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import PageProps from "@insite/client-framework/Types/PageProps";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import * as React from "react";
+import { css } from "styled-components";
 
 export interface LogoLinksSearchStyles {
     container: InjectableCss;
@@ -81,7 +81,6 @@ const logoLinksSearch: WidgetModule = {
     definition: {
         group: "Common",
         icon: "Filter",
-        isSystem: true,
     },
 };
 

@@ -1,7 +1,7 @@
-import { GetBillToApiParameter, getBillTo } from "@insite/client-framework/Services/CustomersService";
-import { BillToModel } from "@insite/client-framework/Types/ApiModels";
-import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { getBillTo, GetBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { BillToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetBillToApiParameter, BillToModel>;
 

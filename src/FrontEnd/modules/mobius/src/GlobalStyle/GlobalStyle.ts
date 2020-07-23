@@ -1,8 +1,8 @@
 import styled, { createGlobalStyle, GlobalStyleComponent } from "styled-components";
-import getProp from "../utilities/getProp";
-import get from "../utilities/get";
-import { ExtendedTheme } from "../ThemeProvider";
 import { BaseTheme } from "../globals/baseTheme";
+import { ExtendedTheme } from "../ThemeProvider";
+import get from "../utilities/get";
+import getProp from "../utilities/getProp";
 
 export interface GlobalStyleProps {}
 

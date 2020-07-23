@@ -1,4 +1,4 @@
-import { get, HasPagingParameters, post, ApiParameter } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get, HasPagingParameters, post } from "@insite/client-framework/Services/ApiService";
 import {
     AvailabilityDto,
     CatalogPageModel,
@@ -47,6 +47,7 @@ export interface GetProductsApiV2Parameter extends GetProductApiV2ParameterBase,
 export interface GetProductByPathApiV2Parameter extends GetProductApiV2ParameterBase {
     path: string;
     styledOption?: string;
+    addToRecentlyViewed?: boolean;
 }
 
 export interface GetProductByIdApiV2Parameter extends GetProductApiV2ParameterBase {
@@ -214,6 +215,7 @@ export async function getProductByPath(parameter: GetProductByPathApiV2Parameter
         expand: parameter.expand,
         additionalExpands: parameter.additionalExpands,
         includeAttributes: parameter.includeAttributes,
+        addToRecentlyViewed: parameter.addToRecentlyViewed,
     } as ApiParameter);
 
     return convertProductModel(productModel);

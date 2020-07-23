@@ -1,8 +1,8 @@
-import * as React from "react";
-import { css } from "styled-components";
 import AccordionSection from "@insite/mobius/AccordionSection";
 import { AccordionSectionHeaderProps } from "@insite/mobius/AccordionSection/AccordionSectionHeader";
 import AccordionSectionPanel from "@insite/mobius/AccordionSection/AccordionSectionPanel";
+import * as React from "react";
+import { css } from "styled-components";
 
 const SideBarAccordionSection: React.FunctionComponent<{ title: string, inPopover?: boolean }> = ({ title, children, inPopover }) => {
     const paddingValue = inPopover ? 30 : 35;

@@ -1,11 +1,11 @@
-import * as React from "react";
-import { css } from "styled-components";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
+import * as React from "react";
+import { css } from "styled-components";
 
 export interface MyListsHeaderStyles {
     container?: GridContainerProps;
@@ -63,7 +63,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "Header",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

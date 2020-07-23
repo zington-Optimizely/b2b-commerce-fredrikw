@@ -1,18 +1,18 @@
 import * as React from "react";
-import styled, { css, withTheme, ThemeProps } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 import Button, { ButtonIcon, ButtonPresentationProps, ButtonVariants } from "../Button";
-import buttonDisplayProps from "./buttonDisplayProps";
+import { FormFieldPresentationProps } from "../FormField";
+import { BaseTheme } from "../globals/baseTheme";
 import Select, { SelectComponentProps } from "../Select";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
+import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitSingle from "../utilities/omitSingle";
 import VisuallyHidden from "../VisuallyHidden";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import { FormFieldPresentationProps } from "../FormField";
-import { BaseTheme } from "../globals/baseTheme";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import buttonDisplayProps from "./buttonDisplayProps";
 
 export interface PaginationPresentationProps {
     /** CSS string or styled-components function to be injected into this component

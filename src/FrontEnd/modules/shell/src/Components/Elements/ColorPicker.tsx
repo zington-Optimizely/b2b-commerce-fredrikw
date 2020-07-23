@@ -1,6 +1,3 @@
-import * as React from "react";
-import { ColorChangeHandler, SketchPicker } from "react-color";
-import styled, { css, ThemeProps } from "styled-components";
 import Button, { ButtonIcon } from "@insite/mobius/Button";
 import X from "@insite/mobius/Icons/X";
 import Popover, { PopoverPresentationProps } from "@insite/mobius/Popover";
@@ -8,6 +5,9 @@ import Typography from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
 import { ShellTheme } from "@insite/shell/ShellTheme";
+import * as React from "react";
+import { ColorChangeHandler, SketchPicker } from "react-color";
+import styled, { css, ThemeProps } from "styled-components";
 
 const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & {firstInput?: boolean, disabled?: boolean}>`
     height: 29px;

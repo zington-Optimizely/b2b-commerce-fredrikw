@@ -19,6 +19,5 @@ export interface PageDefinition<T = FieldDefinition> extends ContentItemDefiniti
     supportsProductSelection?: true;
     supportsCategorySelection?: true;
     supportsBrandSelection?: true;
-    isDeletable?: true;
-    isSystemPage?: true;
+    pageType: "System" | "Content";
 }

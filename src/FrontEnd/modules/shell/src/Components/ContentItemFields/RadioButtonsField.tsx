@@ -1,8 +1,8 @@
-import * as React from "react";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { RadioButtonOption, RadioButtonsDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import logger from "@insite/client-framework/Logger";
+import { RadioButtonOption, RadioButtonsDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
+import * as React from "react";
 
 export default class RadioButtonsField
     extends React.Component<ContentItemFieldProps<string | number, RadioButtonsDefinition<string> | RadioButtonsDefinition<number>>> {

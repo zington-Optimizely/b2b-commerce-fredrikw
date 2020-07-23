@@ -1,12 +1,12 @@
-import * as React from "react";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import * as React from "react";
 import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps, HasProductContext {
@@ -70,7 +70,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Title",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

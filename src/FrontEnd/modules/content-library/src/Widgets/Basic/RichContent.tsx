@@ -1,9 +1,9 @@
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import parse from "html-react-parser";
 import * as React from "react";
 import styled from "styled-components";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 
 const enum fields {
     content = "content",
@@ -27,7 +27,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Rtf",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.content,

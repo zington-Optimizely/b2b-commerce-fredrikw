@@ -1,13 +1,13 @@
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 
 interface OwnProps extends WidgetProps {
 }
@@ -73,7 +73,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Sort Select",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

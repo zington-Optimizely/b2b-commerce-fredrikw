@@ -1,5 +1,10 @@
+import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import { CartLineContext } from "@insite/client-framework/Components/CartLineContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import clearCurrentCart from "@insite/client-framework/Store/Pages/Cart/Handlers/ClearCurrentCart";
 import removeCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/RemoveCartLine";
 import updateCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/UpdateCartLine";
@@ -23,16 +28,11 @@ import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinn
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
-import getColor from "@insite/mobius/utilities/getColor";
-import { CartLineContext } from "@insite/client-framework/Components/CartLineContext";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 const enum fields {
     showLineNotes = "showLineNotes",
@@ -299,7 +299,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Cart",
         allowedContexts: [CartPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showLineNotes,

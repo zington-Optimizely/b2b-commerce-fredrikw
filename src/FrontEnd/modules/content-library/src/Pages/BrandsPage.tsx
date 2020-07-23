@@ -1,14 +1,14 @@
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getAllBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
+import loadAllBrands from "@insite/client-framework/Store/Pages/Brands/Handlers/LoadAllBrands";
 import loadBrandsAlphabet from "@insite/client-framework/Store/Pages/Brands/Handlers/LoadBrandsAlphabet";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import loadAllBrands from "@insite/client-framework/Store/Pages/Brands/Handlers/LoadAllBrands";
-import { getAllBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 const mapStateToProps = (state: ApplicationState) => ({
     shouldLoadBrandAlphabet: !state.pages.brands.brandAlphabetState.value,
@@ -48,7 +48,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

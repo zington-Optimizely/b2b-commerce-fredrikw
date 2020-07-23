@@ -4,11 +4,11 @@ import Button from "@insite/mobius/Button";
 import ListFieldRow from "@insite/shell/Components/ContentItemFields/ListFieldRow";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import * as React from "react";
 import cloneDeep from "lodash/cloneDeep";
+import * as React from "react";
+import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import styled from "styled-components";
-import { connect } from "react-redux";
 
 interface State {
     editingIndex: number;

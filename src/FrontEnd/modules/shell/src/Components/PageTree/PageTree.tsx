@@ -1,22 +1,22 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import PageTreePages from "@insite/shell/Components/PageTree/PageTreePages";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import Typography from "@insite/mobius/Typography";
 import ClickOutside from "@insite/shell/Components/ClickOutside";
+import Move from "@insite/shell/Components/Icons/Move";
+import SectionCollapse from "@insite/shell/Components/Icons/SectionCollapse";
+import PageTreeFlyOut from "@insite/shell/Components/PageTree/PageTreeFlyOut";
+import PageTreePages from "@insite/shell/Components/PageTree/PageTreePages";
 import {
     loadTreeNodes,
     openAddPage,
     openReorderPages,
     setExpandedNodes,
 } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
-import ShellState from "@insite/shell/Store/ShellState";
-import styled, { css } from "styled-components";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import Typography from "@insite/mobius/Typography";
-import PageTreeFlyOut from "@insite/shell/Components/PageTree/PageTreeFlyOut";
-import SectionCollapse from "@insite/shell/Components/Icons/SectionCollapse";
-import Move from "@insite/shell/Components/Icons/Move";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
 }

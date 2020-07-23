@@ -1,14 +1,17 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { CartPageContext } from "@insite/content-library/Pages/CartPage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Radio, { RadioComponentProps } from "@insite/mobius/Radio";
@@ -20,8 +23,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { ChangeEvent, FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps extends WidgetProps {
 }
@@ -116,16 +117,16 @@ const CartFulfillmentMethodSelector: FC<Props> = ({
                 {...styles.fulfillmentMethodradioGroup}
                 data-test-selector="cartFulfillmentMethod"
             >
-                <Radio value="Ship"
+                <Radio value={FulfillmentMethod.Ship}
                     {...styles.fulfillmentMethodRadio}
                     data-test-selector="fulfillmentMethod_ship"
                 >{translate("Ship")}</Radio>
-                <Radio value="PickUp"
+                <Radio value={FulfillmentMethod.PickUp}
                     {...styles.fulfillmentMethodRadio}
                     data-test-selector="fulfillmentMethod_pickUp"
                 >{translate("Pick Up")}</Radio>
             </RadioGroup>
-            {cart.fulfillmentMethod === "PickUp" && session.pickUpWarehouse
+            {cart.fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse
                 && <PickUpLocation warehouse={session.pickUpWarehouse}
                     onChange={handlePickUpAddressChange}
                 />
@@ -194,7 +195,6 @@ const widgetModule: WidgetModule = {
         group: "Cart",
         displayName: "Fulfillment Method Selector",
         allowedContexts: [CartPageContext],
-        isSystem: true,
     },
 };
 

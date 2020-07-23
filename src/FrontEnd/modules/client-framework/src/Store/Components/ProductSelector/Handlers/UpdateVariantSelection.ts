@@ -1,12 +1,12 @@
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { getProductCollectionRealTimePrices, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
 import {
-    TraitValueModel,
     ProductPriceDto,
+    TraitValueModel,
     VariantTraitModel,
 } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
-import { ProductModelExtended, getProductCollectionRealTimePrices } from "@insite/client-framework/Services/ProductServiceV2";
-import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
 
 type HandlerType = HandlerWithResult<
     {

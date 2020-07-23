@@ -1,30 +1,31 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import { ShareOptions } from "@insite/client-framework/Services/WishListService";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { css } from "styled-components";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setManageShareListModalIsOpen from "@insite/client-framework/Store/Components/ManageShareListModal/Handlers/SetManageShareListModalIsOpen";
+import sendWishListCopy from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SendWishListCopy";
 import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
 import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
-import sendWishListCopy from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SendWishListCopy";
-import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
-import Radio, { RadioProps, RadioStyle } from "@insite/mobius/Radio";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
-import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
-import GridContainer, { GridOffset, GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { ShareOptions } from "@insite/client-framework/Services/WishListService";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import translate from "@insite/client-framework/Translate";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps, GridOffset } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import Radio, { RadioProps, RadioStyle } from "@insite/mobius/Radio";
+import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
+import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: ShareListModalStyles;
@@ -36,10 +37,12 @@ const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
     modalIsOpen: state.components.shareListModal.isOpen,
     wishList: getWishListState(state, state.components.shareListModal.wishListId).value,
+    fromManage: state.components.shareListModal.fromManage,
 });
 
 const mapDispatchToProps = {
     setShareListModalIsOpen,
+    setManageShareListModalIsOpen,
     updateWishList: makeHandlerChainAwaitable(updateWishList),
     sendWishListCopy: makeHandlerChainAwaitable(sendWishListCopy),
 };
@@ -247,17 +250,19 @@ const ShareListModal: React.FC<Props> = ({
     session,
     modalIsOpen,
     wishList,
+    fromManage,
     extendedStyles,
     setShareListModalIsOpen,
+    setManageShareListModalIsOpen,
     updateWishList,
     sendWishListCopy,
 }) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(shareListModalStyles, extendedStyles));
 
-    const [shareListOption, setShareListOption] = React.useState("sendCopy");
+    const [shareListOption, setShareListOption] = React.useState(fromManage ? "shareList" : "sendCopy");
     const [shareByOption, setShareByOption] = React.useState("shareByEmail");
-    const [allowEditList, setAllowEditList] = React.useState(false);
+    const [allowEditList, setAllowEditList] = React.useState(wishList?.allowEdit || false);
     const [sendEmailNotification, setSendEmailNotification] = React.useState(false);
     const [yourName, setYourName] = React.useState(`${session.firstName} ${session.lastName}`);
     const [yourNameError, setYourNameError] = React.useState("");
@@ -269,6 +274,9 @@ const ShareListModal: React.FC<Props> = ({
 
     const modalCloseHandler = () => {
         setShareListModalIsOpen({ modalIsOpen: false });
+        if (fromManage) {
+            setManageShareListModalIsOpen({ modalIsOpen: true, wishListId: wishList?.id });
+        }
     };
 
     const shareListOptionChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -358,6 +366,9 @@ const ShareListModal: React.FC<Props> = ({
         }
 
         setShareListModalIsOpen({ modalIsOpen: false });
+        if (fromManage) {
+            setManageShareListModalIsOpen({ modalIsOpen: true, wishListId: wishList?.id });
+        }
 
         const message = shareListOption === "sendCopy"
             ? "A copy of your list has been sent."
@@ -370,9 +381,9 @@ const ShareListModal: React.FC<Props> = ({
     };
 
     const resetFields = () => {
-        setShareListOption("sendCopy");
+        setShareListOption(fromManage ? "shareList" : "sendCopy");
         setShareByOption("shareByEmail");
-        setAllowEditList(false);
+        setAllowEditList(wishList?.allowEdit || false);
         setSendEmailNotification(false);
         setYourName(`${session.firstName} ${session.lastName}`);
         setYourNameError("");
@@ -403,17 +414,19 @@ const ShareListModal: React.FC<Props> = ({
         onAfterClose={afterCloseHandler}
     >
         <GridContainer {...styles.container} data-test-selector="shareListForm">
-            <GridItem {...styles.shareListOptionGridItem}>
-                <Typography {...styles.shareListOptionText}>{siteMessage("Lists_Send_Copy_Or_Allow_Others_Access_List")}</Typography>
-                <RadioGroup {...styles.shareListOptionRadioGroup} value={shareListOption} onChangeHandler={shareListOptionChangeHandler} data-test-selector="shareListOption">
-                    <Radio {...styles.sendCopyRadio} value="sendCopy" data-test-selector="sendCopy">{translate("Send a copy")}</Radio>
-                    <Radio {...styles.shareListRadio} value="shareList" data-test-selector="shareList">
-                        {translate("Allow others to view or edit this list")}
-                        <Tooltip {...styles.shareListTooltip} text={siteMessage("Lists_Invite_Individuals_Or_Make_Available_To_All_Customer_Users_Tooltip") as string} />
-                    </Radio>
-                </RadioGroup>
-            </GridItem>
-            {shareListOption === "shareList"
+            {!fromManage
+                && <GridItem {...styles.shareListOptionGridItem}>
+                    <Typography {...styles.shareListOptionText}>{siteMessage("Lists_Send_Copy_Or_Allow_Others_Access_List")}</Typography>
+                    <RadioGroup {...styles.shareListOptionRadioGroup} value={shareListOption} onChangeHandler={shareListOptionChangeHandler} data-test-selector="shareListOption">
+                        <Radio {...styles.sendCopyRadio} value="sendCopy" data-test-selector="sendCopy">{translate("Send a copy")}</Radio>
+                        <Radio {...styles.shareListRadio} value="shareList" data-test-selector="shareList">
+                            {translate("Allow others to view or edit this list")}
+                            <Tooltip {...styles.shareListTooltip} text={siteMessage("Lists_Invite_Individuals_Or_Make_Available_To_All_Customer_Users_Tooltip") as string} />
+                        </Radio>
+                    </RadioGroup>
+                </GridItem>
+            }
+            {(!fromManage && shareListOption === "shareList")
                 && <>
                     <GridItem {...styles.shareByOptionGridItem}>
                         <Typography {...styles.shareByOptionText}>{translate("Assign users")}</Typography>
@@ -492,7 +505,7 @@ const ShareListModal: React.FC<Props> = ({
             }
             <GridItem {...styles.bottomRowGridItem}>
                 <GridContainer {...styles.buttonsContainer}>
-                    {shareListOption === "shareList"
+                    {(!fromManage && shareListOption === "shareList")
                         && <GridItem {...styles.allowEditingGridItem}>
                             <Checkbox {...styles.allowEditingCheckbox} checked={allowEditList} onChange={allowEditListChangeHandler} data-test-selector="allowEditList">
                                 {translate("Allow editing")}

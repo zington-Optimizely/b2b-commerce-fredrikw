@@ -1,15 +1,15 @@
-import * as React from "react";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import { connect, ResolveThunks } from "react-redux";
-import Page from "@insite/mobius/Page";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
-import displayInvoice from "@insite/client-framework/Store/Pages/InvoiceDetails/Handlers/DisplayInvoice";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getInvoiceState, InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import displayInvoice from "@insite/client-framework/Store/Pages/InvoiceDetails/Handlers/DisplayInvoice";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
@@ -54,7 +54,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

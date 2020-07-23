@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled, { keyframes } from "styled-components";
 import get from "../utilities/get";
-import resolveColor from "../utilities/resolveColor";
-import injectCss from "../utilities/injectCss";
 import { StyledProp } from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
+import resolveColor from "../utilities/resolveColor";
 
 export interface LoadingSpinnerProps extends React.SVGAttributes<SVGElement> {
     /** The stroke color of the circular segment.

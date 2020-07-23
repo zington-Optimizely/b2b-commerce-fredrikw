@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled, { css, ThemeProps } from "styled-components";
 import { BaseTheme } from "../globals/baseTheme";
-import { OverlayComponentProps, Transition } from "./Overlay";
-import injectCss from "../utilities/injectCss";
 import InjectableCss from "../utilities/InjectableCss";
+import injectCss from "../utilities/injectCss";
+import { OverlayComponentProps, Transition } from "./Overlay";
 
 export type ScrimProps = { isClosing?: boolean, transition?: Transition }
     & ThemeProps<BaseTheme>

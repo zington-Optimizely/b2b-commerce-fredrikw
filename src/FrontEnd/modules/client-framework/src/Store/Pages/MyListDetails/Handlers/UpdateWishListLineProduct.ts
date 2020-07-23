@@ -1,10 +1,10 @@
 import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { updateWishListLine as updateWishListLineApi } from "@insite/client-framework/Services/WishListService";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
+import { WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface UpdateWishListLineProductResult{
     wishListLine?: WishListLineModel;
@@ -57,6 +57,12 @@ export const RequestUpdateWishListLine: HandlerType = async props => {
     props.result = { wishListLine };
 };
 
+export const ResetWishListsData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
+};
+
 export const ReloadIfProductsHaveSameUnitOfMeasure: HandlerType = props => {
     const product = props.parameter.product;
     const state = props.getState();
@@ -99,6 +105,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 export const chain = [
     CopyFieldsFromProductToWishListLine,
     RequestUpdateWishListLine,
+    ResetWishListsData,
     ReloadIfProductsHaveSameUnitOfMeasure,
     DispatchUpdateWishListLine,
     UpdateProduct,

@@ -1,15 +1,15 @@
-import * as React from "react";
 import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import * as React from "react";
 import { css } from "styled-components";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 
 const enum fields {
     showImages = "showImages",
@@ -121,7 +121,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         icon: "LinkList",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImages,

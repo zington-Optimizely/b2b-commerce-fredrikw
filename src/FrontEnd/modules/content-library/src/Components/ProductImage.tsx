@@ -1,10 +1,10 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
+import React, { FC } from "react";
 import { css } from "styled-components";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 
 interface OwnProps {
     product: CartLineModel | ProductModelExtended;

@@ -1,17 +1,17 @@
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import React, { FC } from "react";
-import { css } from "styled-components";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import Zone from "@insite/client-framework/Components/Zone";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 export interface CheckoutReviewAndSubmitPageContainerStyles {
     loadingOverlay?: LoadingOverlayProps;
@@ -200,7 +200,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         displayName: "Page Container",
-        isSystem: true,
     },
 };
 

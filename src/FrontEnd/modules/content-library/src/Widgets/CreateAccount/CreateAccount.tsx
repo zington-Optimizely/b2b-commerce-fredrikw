@@ -1,32 +1,32 @@
-import React, { FC } from "react";
-import { css } from "styled-components";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import translate from "@insite/client-framework/Translate";
-import addAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/AddAccount";
-import { CreateAccountPageContext } from "@insite/content-library/Pages/CreateAccountPage";
-import EyeOff from "@insite/mobius/Icons/EyeOff";
-import Eye from "@insite/mobius/Icons/Eye";
-import { IconPresentationProps } from "@insite/mobius/Icon";
-import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import Checkbox from "@insite/mobius/Checkbox";
-import CheckboxGroup from "@insite/mobius/CheckboxGroup";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import validatePassword, { lowerCasePasswordLengthMessage, numberPasswordLengthMessage, specialPasswordLengthMessage, upperCasePasswordLengthMessage } from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
-import validatePassword, { numberPasswordLengthMessage, lowerCasePasswordLengthMessage, upperCasePasswordLengthMessage, specialPasswordLengthMessage } from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import addAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/AddAccount";
 import { getCreateAccountReturnUrl } from "@insite/client-framework/Store/Pages/CreateAccount/CreateAccountSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CreateAccountPageContext } from "@insite/content-library/Pages/CreateAccountPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Checkbox from "@insite/mobius/Checkbox";
+import CheckboxGroup from "@insite/mobius/CheckboxGroup";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import Eye from "@insite/mobius/Icons/Eye";
+import EyeOff from "@insite/mobius/Icons/EyeOff";
+import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -363,7 +363,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [CreateAccountPageContext],
         group: "Create Account",
-        isSystem: true,
     },
 };
 

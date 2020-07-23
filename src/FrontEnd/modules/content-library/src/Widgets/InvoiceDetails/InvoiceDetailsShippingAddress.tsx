@@ -1,12 +1,12 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import translate from "@insite/client-framework/Translate";
+import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { css } from "styled-components";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 
 interface OwnProps {
     invoice: InvoiceModel;

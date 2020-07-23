@@ -1,5 +1,5 @@
-import * as React from "react";
-import { withTheme, ThemeProps } from "styled-components";
+import { setMainNavigation } from "@insite/client-framework/Components/ShellHoleConnect";
+import { MainNavigationStyles, MappedLink } from "@insite/content-library/Widgets/Header/MainNavigation";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer from "@insite/mobius/GridContainer";
 import GridItem, { GridWidths } from "@insite/mobius/GridItem";
@@ -7,8 +7,8 @@ import ChevronDown from "@insite/mobius/Icons/ChevronDown";
 import Link, { StyledIcon } from "@insite/mobius/Link";
 import Menu from "@insite/mobius/Menu";
 import Popover from "@insite/mobius/Popover";
-import { MappedLink, MainNavigationStyles } from "@insite/content-library/Widgets/Header/MainNavigation";
-import { setMainNavigation } from "@insite/client-framework/Components/ShellHoleConnect";
+import * as React from "react";
+import { ThemeProps, withTheme } from "styled-components";
 
 interface MainNavigationItemProps {
     link: MappedLink;

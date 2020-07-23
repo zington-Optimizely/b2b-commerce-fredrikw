@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationState";
+import { Draft } from "immer";
 
 const initialState: OrderConfirmationState = {
     isPreloadingData: false,

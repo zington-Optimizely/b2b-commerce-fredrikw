@@ -1,7 +1,7 @@
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { addTask } from "@insite/client-framework/ServerSideRendering";
-import { AnyAction } from "@insite/client-framework/Store/Reducers";
 import logger from "@insite/client-framework/Logger";
+import { addTask } from "@insite/client-framework/ServerSideRendering";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { AnyAction } from "@insite/client-framework/Store/Reducers";
 
 /**
  * Redux's typings include a `Dispatch` helper type, but it doesn't alert if the dispatched action has extra properties.
@@ -172,6 +172,12 @@ export const createHandlerChainRunnerOptionalParameter = <Parameter, Props = {}>
 export type HasOnSuccess<Result = void> = {
     /** Called upon success of the handler chain. */
     onSuccess?: (result: Result) => void;
+};
+
+/** The standard pattern for parameters that report their failure. */
+export type HasOnError<Result = void> = {
+    /** Called upon failure of the handler chain. */
+    onError?: (result: Result) => void;
 };
 
 type Thunk<Result> =  (dispatch: StrictInputDispatch, getState: () => ApplicationState) => Result;

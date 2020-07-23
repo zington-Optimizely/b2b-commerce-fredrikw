@@ -1,29 +1,29 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { css, ThemeProps, withTheme } from "styled-components";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
-import ChevronRight from "@insite/mobius/Icons/ChevronRight";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import EmblaCarousel from "embla-carousel";
-import EmblaCarouselReact from "embla-carousel-react";
-import loadCarouselProducts from "@insite/client-framework/Store/Components/ProductCarousel/Handlers/LoadCarouselProducts";
-import ProductCarouselProduct, { ProductCarouselProductStyles } from "@insite/content-library/Components/ProductCarouselProduct";
-import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import { CategoryContext } from "@insite/client-framework/Components/CategoryContext";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import loadCarouselProducts from "@insite/client-framework/Store/Components/ProductCarousel/Handlers/LoadCarouselProducts";
+import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductCarouselProduct, { ProductCarouselProductStyles } from "@insite/content-library/Components/ProductCarouselProduct";
+import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
+import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
+import ChevronRight from "@insite/mobius/Icons/ChevronRight";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import EmblaCarousel from "embla-carousel";
+import EmblaCarouselReact from "embla-carousel-react";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css, ThemeProps, withTheme } from "styled-components";
 
 const enum fields {
     title = "title",
@@ -423,7 +423,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Common",
         icon: "Carousel",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

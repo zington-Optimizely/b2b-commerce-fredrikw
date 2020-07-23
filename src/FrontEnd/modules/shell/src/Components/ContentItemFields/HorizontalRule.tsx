@@ -1,6 +1,6 @@
-import * as React from "react";
 import { TextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import * as React from "react";
 import styled from "styled-components";
 
 const HorizontalRule: React.FC<ContentItemFieldProps<string, TextFieldDefinition>> = props => {

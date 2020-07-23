@@ -1,14 +1,14 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { LoadProductsResult } from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
+import {
+    UpdateProductParameter,
+} from "@insite/client-framework/Store/Pages/ProductList/Handlers/UpdateProduct";
 import ProductListState, {
     ProductFilters,
     ProductListViewType,
 } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
-import {
-    UpdateProductParameter,
-} from "@insite/client-framework/Store/Pages/ProductList/Handlers/UpdateProduct";
-import { LoadProductsResult } from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
 import { ProductInventoryDto, RealTimeInventoryModel, RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: ProductListState = {
     productsState: {

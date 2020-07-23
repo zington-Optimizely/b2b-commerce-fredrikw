@@ -1,14 +1,14 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Button from "@insite/mobius/Button";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
-import { css } from "styled-components";
 import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     variant = "variant",
@@ -61,7 +61,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Button",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.variant,

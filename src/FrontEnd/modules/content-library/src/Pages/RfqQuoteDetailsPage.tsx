@@ -1,16 +1,60 @@
-import * as  React from "react";
-import Page from "@insite/mobius/Page";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import loadQuoteIfNeeded from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/LoadQuoteIfNeeded";
+import setExpirationDate from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/SetExpirationDate";
 import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import * as  React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
-const RfqQuoteDetailsPage: React.FC = () => <Page></Page>;
+const mapStateToProps = (state: ApplicationState) => {
+    const { search } = getLocation(state);
+    const parsedQuery = parseQueryString<{ quoteId?: string }>(search);
+    const quoteId = parsedQuery.quoteId;
+    return {
+        quoteId,
+    };
+};
+
+const mapDispatchToProps = {
+    loadQuoteIfNeeded,
+    setExpirationDate,
+};
+
+type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+
+const RfqQuoteDetailsPage: React.FC<Props> = ({
+    id,
+    quoteId,
+    loadQuoteIfNeeded,
+    setExpirationDate,
+}) => {
+    React.useEffect(() => {
+        if (quoteId) {
+            loadQuoteIfNeeded({ quoteId });
+            setExpirationDate({ expirationDate: undefined });
+        }
+    }, []);
+
+    return (
+        <Page>
+            <Zone contentId={id} zoneName="Content" />
+        </Page>
+    );
+};
 
 const pageModule: PageModule = {
-    component: RfqQuoteDetailsPage,
+    component: connect(mapStateToProps, mapDispatchToProps)(RfqQuoteDetailsPage),
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 
 export default pageModule;
+
+export const RfqQuoteDetailsPageContext = "RfqQuoteDetailsPage";

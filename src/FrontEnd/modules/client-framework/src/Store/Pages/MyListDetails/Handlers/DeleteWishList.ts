@@ -1,10 +1,16 @@
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { deleteWishList as deleteWishListApi } from "@insite/client-framework/Services/WishListService";
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ wishListId: string; onSuccess?: () => void; }, {}>;
 
 export const RequestRemoveWishlist: HandlerType = async props => {
     await deleteWishListApi({ wishListId: props.parameter.wishListId });
+};
+
+export const ResetWishListsData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/WishLists/Reset",
+    });
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
@@ -13,6 +19,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 export const chain = [
     RequestRemoveWishlist,
+    ResetWishListsData,
     ExecuteOnSuccessCallback,
 ];
 

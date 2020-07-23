@@ -1,21 +1,21 @@
-import * as React from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import InvoiceDetailsShippingAddress from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsShippingAddress";
-import InvoiceDetailsBillingAddress from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsBillingAddress";
-import { InvoiceDetailsBillingAddressStyles } from "./InvoiceDetailsBillingAddress";
-import { InvoiceDetailsShippingAddressStyles } from "./InvoiceDetailsShippingAddress";
-import translate from "@insite/client-framework/Translate";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
-import { FC, useContext } from "react";
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
+import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
+import InvoiceDetailsBillingAddress from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsBillingAddress";
+import InvoiceDetailsShippingAddress from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsShippingAddress";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import * as React from "react";
+import { FC, useContext } from "react";
 import { connect } from "react-redux";
+import { css } from "styled-components";
+import { InvoiceDetailsBillingAddressStyles } from "./InvoiceDetailsBillingAddress";
+import { InvoiceDetailsShippingAddressStyles } from "./InvoiceDetailsShippingAddress";
 
 const mapStateToProps = (state: ApplicationState) => ({
     language: state.context.session.language,
@@ -155,7 +155,6 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Information",
         allowedContexts: [InvoiceDetailsPageContext],
-        isSystem: true,
     },
 };
 

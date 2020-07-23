@@ -1,17 +1,17 @@
-import * as React from "react";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import { connect, ResolveThunks } from "react-redux";
-import Page from "@insite/mobius/Page";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getOrderState, OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import loadOrderStatusMappings from "@insite/client-framework/Store/Data/OrderStatusMappings/Handlers/LoadOrderStatusMappings";
 import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
-import displayOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/DisplayOrder";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import displayOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/DisplayOrder";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
@@ -60,7 +60,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

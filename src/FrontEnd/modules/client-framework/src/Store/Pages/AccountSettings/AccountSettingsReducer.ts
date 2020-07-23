@@ -1,7 +1,8 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import AccountSettingsState from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsState";
 import { AccountModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: AccountSettingsState = {
     emailErrorMessage: "",
@@ -52,7 +53,7 @@ const reducer = {
         if (typeof action.useDefaultCustomer !== "undefined") {
             draft.useDefaultCustomer = action.useDefaultCustomer;
             if (!action.useDefaultCustomer) {
-                draft.editingAccount.defaultFulfillmentMethod = "Ship";
+                draft.editingAccount.defaultFulfillmentMethod = FulfillmentMethod.Ship;
                 draft.editingAccount.defaultWarehouse = null;
                 draft.editingAccount.defaultWarehouseId = null;
                 draft.editingAccount.defaultCustomerId = null;

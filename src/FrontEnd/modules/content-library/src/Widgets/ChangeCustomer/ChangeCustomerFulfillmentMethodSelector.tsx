@@ -1,4 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
@@ -124,18 +125,18 @@ const ChangeCustomerFulfillmentMethodSelector: FC<Props> = ({
                     {...styles.fulfillmentMethodRadioGroup}
                     data-test-selector="changeCustomerFulfillmentMethod"
                 >
-                    <Radio value="Ship"
+                    <Radio value={FulfillmentMethod.Ship}
                         {...styles.fulfillmentMethodRadio}
                         data-test-selector="fulfillmentMethod_ship"
                     >{translate("Ship")}</Radio>
-                    <Radio value="PickUp"
+                    <Radio value={FulfillmentMethod.PickUp}
                         {...styles.fulfillmentMethodRadio}
                         data-test-selector="fulfillmentMethod_pickUp"
                     >{translate("Pick Up")}</Radio>
                 </RadioGroup>
             </GridItem>
             <GridItem {...styles.pickupLocationGridItem}>
-                {session.fulfillmentMethod === "PickUp" && session.pickUpWarehouse
+                {session.fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse
                     && <PickUpLocation warehouse={session.pickUpWarehouse}
                         onChange={handlePickUpAddressChange}
                     />

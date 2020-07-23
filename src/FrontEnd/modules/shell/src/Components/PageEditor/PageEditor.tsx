@@ -1,21 +1,21 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import ItemEditor from "@insite/shell/Components/ItemEditor/ItemEditor";
-import { getPageDefinition } from "@insite/shell/DefinitionLoader";
-import Header from "@insite/shell/Components/PageEditor/Header";
-import ShellState from "@insite/shell/Store/ShellState";
 import MissingComponent from "@insite/client-framework/Components/MissingComponent";
-import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
-import PageCreatorModal from "@insite/shell/Components/Modals/PageCreatorModal";
-import styled from "styled-components";
-import SiteFrame from "@insite/shell/Components/Shell/SiteFrame";
-import Stage from "@insite/shell/Components/Shell/Stage";
-import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { Location } from "history";
+import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
+import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
+import ItemEditor from "@insite/shell/Components/ItemEditor/ItemEditor";
+import PageTemplateModal from "@insite/shell/Components/Modals/PageTemplateModal";
+import Header from "@insite/shell/Components/PageEditor/Header";
+import SiteFrame from "@insite/shell/Components/Shell/SiteFrame";
+import Stage from "@insite/shell/Components/Shell/Stage";
+import { getPageDefinition } from "@insite/shell/DefinitionLoader";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
+import { Location } from "history";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { RouteComponentProps } from "react-router";
+import styled from "styled-components";
 
 
 interface OwnProps extends RouteComponentProps<{
@@ -101,7 +101,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
         }
 
         return <>
-            <PageCreatorModal />
+            <PageTemplateModal />
             <PageEditorContainer>
                 <StyledStage>
                     <Header {...{ page, pageDefinition }} />

@@ -1,8 +1,8 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { BudgetCalendarsState } from "@insite/client-framework/Store/Data/BudgetCalendars/BudgetCalendarsState";
 import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { BudgetCalendarCollectionModel } from "@insite/client-framework/Types/ApiModels";
-import { BudgetCalendarsState } from "@insite/client-framework/Store/Data/BudgetCalendars/BudgetCalendarsState";
+import { Draft } from "immer";
 
 const initialState: BudgetCalendarsState = {
     dataViews: {},

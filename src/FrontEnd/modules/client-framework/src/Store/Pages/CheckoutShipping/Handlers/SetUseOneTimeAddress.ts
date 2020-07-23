@@ -1,16 +1,17 @@
-import { Handler, createHandlerChainRunner, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
-import cloneDeep from "lodash/cloneDeep";
-import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
+import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
+import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = Handler<{
     useOneTimeAddress: boolean;
@@ -24,7 +25,7 @@ export const ValidateContext: HandlerType = ({ getState }) => {
     const state = getState();
     const { context: { session } } = state;
     const { allowOneTimeAddresses } = getSettingsCollection(state).customerSettings;
-    if (session.fulfillmentMethod === "PickUp") {
+    if (session.fulfillmentMethod === FulfillmentMethod.PickUp) {
         throw new Error("A shipping address does not apply to a pickup order.");
     }
     if (!allowOneTimeAddresses) {

@@ -1,9 +1,8 @@
-import merge from "lodash/merge";
-import * as React from "react";
-import { connect } from "react-redux";
-import styled, { css } from "styled-components";
+import { theme as defaultTheme } from "@insite/client-framework/Theme";
+import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import translate from "@insite/client-framework/Translate";
 import Accordion from "@insite/mobius/Accordion";
-import AccordionSection from "@insite/mobius/AccordionSection";
+import AccordionSection, { ManagedAccordionSection } from "@insite/mobius/AccordionSection";
 import Breadcrumbs from "@insite/mobius/Breadcrumbs";
 import Button from "@insite/mobius/Button";
 import Checkbox from "@insite/mobius/Checkbox";
@@ -11,6 +10,8 @@ import CheckboxGroup from "@insite/mobius/CheckboxGroup";
 import Clickable from "@insite/mobius/Clickable";
 import DatePicker from "@insite/mobius/DatePicker";
 import FileUpload from "@insite/mobius/FileUpload";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
 import Link from "@insite/mobius/Link";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import OverflowMenu from "@insite/mobius/OverflowMenu";
@@ -18,23 +19,22 @@ import Pagination from "@insite/mobius/Pagination";
 import Radio from "@insite/mobius/Radio";
 import RadioGroup from "@insite/mobius/RadioGroup";
 import Select from "@insite/mobius/Select";
+import Tag from "@insite/mobius/Tag";
 import TextArea from "@insite/mobius/TextArea";
 import TextField from "@insite/mobius/TextField";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
-import Tag from "@insite/mobius/Tag";
 import ToolTip from "@insite/mobius/Tooltip";
 import Typography from "@insite/mobius/Typography";
+import get from "@insite/mobius/utilities/get";
 import Stage from "@insite/shell/Components/Shell/Stage";
 import StagePositioner from "@insite/shell/Components/Shell/StagePositioner";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import ShellState from "@insite/shell/Store/ShellState";
 import { LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
-import translate from "@insite/client-framework/Translate";
-import { preStyleGuideTheme, postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
-import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
-import get from "@insite/mobius/utilities/get";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import merge from "lodash/merge";
+import * as React from "react";
+import { connect } from "react-redux";
+import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const styleGuide = state.styleGuide;
@@ -72,6 +72,7 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
     // atop the Mobius theme when rendering in the preview. We may at some point want this to reference the code themes.
     const theme = merge({}, defaultTheme, preStyleGuideTheme, shallowClonedTheme, postStyleGuideTheme);
     const checkboxIconProps = generateIconSrc(theme, "checkbox.defaultProps.iconProps");
+    const checkboxIndeterminateIconProps = generateIconSrc(theme, "checkbox.defaultProps.indeterminateIconProps");
     const accordionToggleIconProps = generateIconSrc(theme, "accordion.sectionDefaultProps.toggleIconProps");
 
     return <StagePositioner><Stage>
@@ -173,9 +174,9 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
         <PreviewH3 id="accordion-preview">Accordion</PreviewH3>
         <PageStage>
             <Accordion headingLevel={2}>
-                <AccordionSection title="Initially Expanded Section" expanded toggleIconProps={accordionToggleIconProps}>
+                <ManagedAccordionSection title="Initially Expanded Section" initialExpanded toggleIconProps={accordionToggleIconProps}>
                     <Typography variant="p">Section text - {loremIpsum}</Typography>
-                </AccordionSection>
+                </ManagedAccordionSection>
                 <AccordionSection title="Initially Closed Section 1" toggleIconProps={accordionToggleIconProps}>
                     <Typography variant="p">Section text - {loremIpsum}</Typography>
                     </AccordionSection>
@@ -223,11 +224,13 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
                 <TextArea label="Text Area" /><Spacer/>
                 <CheckboxGroup label="Check Box Group">
                     <Checkbox checked iconProps={checkboxIconProps}>Item 1</Checkbox>
-                    <Checkbox iconProps={checkboxIconProps}>Item 2</Checkbox>
+                    <Checkbox checked="indeterminate" indeterminateIconProps={checkboxIndeterminateIconProps}>Item 2</Checkbox>
+                    <Checkbox iconProps={checkboxIconProps}>Item 3</Checkbox>
                 </CheckboxGroup><Spacer/>
                 <CheckboxGroup label="Check Box Disabled Group">
                     <Checkbox disabled checked iconProps={checkboxIconProps}>Item 1</Checkbox>
-                    <Checkbox disabled iconProps={checkboxIconProps}>Item 2</Checkbox>
+                    <Checkbox disabled checked="indeterminate" indeterminateIconProps={checkboxIndeterminateIconProps}>Item 2</Checkbox>
+                    <Checkbox disabled iconProps={checkboxIconProps}>Item 3</Checkbox>
                 </CheckboxGroup><Spacer/>
                 <DatePicker
                     clearIconProps={generateIconSrc(theme, "datePicker.defaultProps.clearIconProps")}

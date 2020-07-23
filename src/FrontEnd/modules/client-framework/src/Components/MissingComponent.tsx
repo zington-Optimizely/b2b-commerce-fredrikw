@@ -1,6 +1,6 @@
+import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import * as React from "react";
 import styled from "styled-components";
-import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 
 interface Props extends HasShellContext {
     type: string;

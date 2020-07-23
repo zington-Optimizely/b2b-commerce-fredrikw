@@ -1,6 +1,6 @@
-import { BrandModel, BrandCategoryCollectionModel, BrandProductLineCollectionModel, PaginationModel, BrandProductLineModel, BrandCategoryModel } from "@insite/client-framework/Types/ApiModels";
-import { DataViewState } from "@insite/client-framework/Store/Data/DataState";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { DataViewState } from "@insite/client-framework/Store/Data/DataState";
+import { BrandCategoryCollectionModel, BrandCategoryModel, BrandModel, BrandProductLineCollectionModel, BrandProductLineModel, PaginationModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface BrandsState extends DataViewState<BrandModel> {
     readonly idByPath: Dictionary<string>;

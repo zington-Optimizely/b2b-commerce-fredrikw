@@ -1,20 +1,20 @@
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import sendRmaRequest from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SendRmaRequest";
+import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetReturnNotes";
 import translate from "@insite/client-framework/Translate";
-import React, { FC, useContext } from "react";
-import { css } from "styled-components";
-import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
+import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { ResolveThunks, connect } from "react-redux";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import sendRmaRequest from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SendRmaRequest";
-import { withToaster, HasToasterContext } from "@insite/mobius/Toast/ToasterContext";
-import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetReturnNotes";
+import React, { FC, useContext } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: RequestRmaButtonsStyles;

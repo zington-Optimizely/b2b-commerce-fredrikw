@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
-import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
+import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 
 type HandlerType = Handler<{ wishListId?: string; modalIsOpen: boolean }>;
 

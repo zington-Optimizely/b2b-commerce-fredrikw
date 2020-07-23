@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { Draft } from "immer";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
+import { Draft } from "immer";
 
 const reducer = {
     "ErrorModal/ShowModal": (

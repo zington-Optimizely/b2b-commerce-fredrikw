@@ -1,16 +1,16 @@
-import * as React from "react";
-import { NavLink } from "react-router-dom";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import PageTreePages from "@insite/shell/Components/PageTree/PageTreePages";
-import styled, { css } from "styled-components";
-import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
-import TreeOverflow from "@insite/shell/Components/Icons/TreeOverflow";
-import Page from "@insite/shell/Components/Icons/Page";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import Icon from "@insite/mobius/Icon";
 import ChevronDown from "@insite/mobius/Icons/ChevronDown";
 import ChevronRight from "@insite/mobius/Icons/ChevronRight";
-import Icon from "@insite/mobius/Icon";
-import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import Page from "@insite/shell/Components/Icons/Page";
+import TreeOverflow from "@insite/shell/Components/Icons/TreeOverflow";
 import { pageTreeFlyOutMenuHasItems } from "@insite/shell/Components/PageTree/PageTreeFlyOut";
+import PageTreePages from "@insite/shell/Components/PageTree/PageTreePages";
+import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
+import * as React from "react";
+import { NavLink } from "react-router-dom";
+import styled, { css } from "styled-components";
 
 interface Props {
     isEditMode: boolean;
@@ -63,7 +63,7 @@ class PageTreeItem extends React.Component<Props> {
         const children = nodesByParentId[node.nodeId];
         return (
             <PageTreePage data-haschildren={!!children}>
-                <PageTreeTitle {...node} isActivePage={selectedPageId === node.pageId}>
+                <PageTreeTitle {...node} isActivePage={selectedPageId === node.pageId} isFuturePublish={!!node.futurePublishOn && node.futurePublishOn > new Date()}>
                     {children
                         && <ExpandStyle src={expandIcon} size={20} onClick={this.handleExpandClick} data-test-selector={`pageTreeFolder_${node.displayName}`} />
                     }
@@ -130,7 +130,7 @@ const PageTreeFlyOutActive = styled(PageTreeFlyout)`
     display: block;
 `;
 
-const PageTreeTitle = styled.h3<{ isMatchingPage: boolean, isActivePage: boolean }>`
+const PageTreeTitle = styled.h3<{ isMatchingPage: boolean, isActivePage: boolean, isFuturePublish: boolean }>`
     ${props => !props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : ""}
     ${props => props.isActivePage ? css`
         background-color: #777;
@@ -149,6 +149,9 @@ const PageTreeTitle = styled.h3<{ isMatchingPage: boolean, isActivePage: boolean
         ${ExpandStyle} {
             color: white;
         }
+    ` : ""}
+    ${props => props.isFuturePublish ? css`
+        color: ${props.isActivePage ? props.theme.colors.custom.futurePublishActive : props.theme.colors.custom.futurePublish};
     ` : ""}
     padding-left: 20px;
     position: relative;

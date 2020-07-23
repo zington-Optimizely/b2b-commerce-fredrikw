@@ -1,42 +1,42 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useContext } from "react";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Clickable from "@insite/mobius/Clickable";
-import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
-import translate from "@insite/client-framework/Translate";
+import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
+import { Cart } from "@insite/client-framework/Services/CartService";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import {
-    PromotionModel,
-    ProductSettingsModel,
-} from "@insite/client-framework/Types/ApiModels";
-import updateCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/UpdateCartLine";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import removeCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/RemoveCartLine";
+import updateCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/UpdateCartLine";
+import translate from "@insite/client-framework/Translate";
+import {
+    ProductSettingsModel,
+    PromotionModel,
+} from "@insite/client-framework/Types/ApiModels";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
+import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
 import CartLineNotes, { CartLineNotesStyles } from "@insite/content-library/Widgets/Cart/CartLineNotes";
 import CartLineQuantity, { CartLineQuantityStyles } from "@insite/content-library/Widgets/Cart/CartLineQuantity";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import XCircle from "@insite/mobius/Icons/XCircle";
-import { connect, ResolveThunks, HandleThunkActionCreator } from "react-redux";
-import { css } from "styled-components";
-import getColor from "@insite/mobius/utilities/getColor";
-import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
-import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
-import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { Cart } from "@insite/client-framework/Services/CartService";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Clickable from "@insite/mobius/Clickable";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import XCircle from "@insite/mobius/Icons/XCircle";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import getColor from "@insite/mobius/utilities/getColor";
+import React, { FC, useContext } from "react";
+import { connect, HandleThunkActionCreator, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     cart: Cart;
@@ -47,6 +47,7 @@ interface OwnProps {
     updateCartLine: HandleThunkActionCreator<typeof updateCartLine>;
     removeCartLine: HandleThunkActionCreator<typeof removeCartLine>;
     showRemoveAction?: boolean;
+    hideAddToList?: boolean;
     extendedStyles?: CartLineCardExpandedStyles;
 }
 
@@ -169,6 +170,7 @@ const CartLineCardExpanded: FC<Props> = ({
     wishListSettings,
     setAddToListModalIsOpen,
     addToWishList,
+    hideAddToList,
 }) => {
     const toasterContext = useContext(ToasterContext);
     const qtyOrderedChangeHandler = (qtyOrdered: number) => {
@@ -340,7 +342,9 @@ const CartLineCardExpanded: FC<Props> = ({
                                 trackInventory={cartLine.trackInventory}
                                 extendedStyles={styles.productAvailability} />
                         }
-                        <Link {...styles.addToListLink} onClick={addToListClickHandler}>{translate("Add to List")}</Link>
+                        {!hideAddToList
+                            && <Link {...styles.addToListLink} onClick={addToListClickHandler}>{translate("Add to List")}</Link>
+                        }
                     </GridItem>
                     {showLineNotes && cart.properties["isPunchout"] === undefined
                         && <GridItem {...styles.cartLineNotesGridItem}>

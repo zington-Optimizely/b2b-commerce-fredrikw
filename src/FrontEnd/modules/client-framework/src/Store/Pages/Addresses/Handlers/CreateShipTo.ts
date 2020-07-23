@@ -1,6 +1,6 @@
-import { CreateShipToApiParameter, createShipTo as createShipToApi } from "@insite/client-framework/Services/CustomersService";
-import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createShipTo as createShipToApi, CreateShipToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<CreateShipToApiParameter, ShipToCollectionModel>;
 

@@ -1,17 +1,17 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import Modal from "@insite/mobius/Modal";
-import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
-import { cancelReorderPages, saveReorderPages } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import Button from "@insite/mobius/Button";
-import styled, { css } from "styled-components";
-import { PageReorderModel } from "@insite/shell/Services/ContentAdminService";
-import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import LoadingSpinner from "@insite/mobius/LoadingSpinner";
-import Drag from "@insite/shell/Components/Icons/Drag";
 import Icon from "@insite/mobius/Icon";
 import AlertTriangle from "@insite/mobius/Icons/AlertTriangle";
+import LoadingSpinner from "@insite/mobius/LoadingSpinner";
+import Modal from "@insite/mobius/Modal";
+import Drag from "@insite/shell/Components/Icons/Drag";
+import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
+import { PageReorderModel } from "@insite/shell/Services/ContentAdminService";
+import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { cancelReorderPages, saveReorderPages } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
 }

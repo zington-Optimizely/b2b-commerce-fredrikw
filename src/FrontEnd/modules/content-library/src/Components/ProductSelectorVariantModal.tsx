@@ -1,20 +1,20 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import translate from "@insite/client-framework/Translate";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import closeVariantModal from "@insite/client-framework/Store/Components/ProductSelector/Handlers/CloseVariantModal";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import Select, { SelectProps } from "@insite/mobius/Select";
-import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
-import updateVariantSelection from "@insite/client-framework/Store/Components/ProductSelector/Handlers/UpdateVariantSelection";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import closeVariantModal from "@insite/client-framework/Store/Components/ProductSelector/Handlers/CloseVariantModal";
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
-import ProductPrice from "@insite/content-library/Components/ProductPrice";
+import updateVariantSelection from "@insite/client-framework/Store/Components/ProductSelector/Handlers/UpdateVariantSelection";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
+import translate from "@insite/client-framework/Translate";
+import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
+import ProductPrice from "@insite/content-library/Components/ProductPrice";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import Select, { SelectProps } from "@insite/mobius/Select";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: ProductSelectorVariantModalStyles;

@@ -1,22 +1,22 @@
-import * as React from "react";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
+import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CategoryListPageContext } from "@insite/content-library/Pages/CategoryListPage";
+import { HomePageContext } from "@insite/content-library/Pages/HomePage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import translate from "@insite/client-framework/Translate";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
-import { HomePageContext } from "@insite/content-library/Pages/HomePage";
-import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
 
 const enum fields {
     showImages = "showImages",
@@ -174,7 +174,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Categories",
         allowedContexts: [CategoryListPageContext, HomePageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImages,

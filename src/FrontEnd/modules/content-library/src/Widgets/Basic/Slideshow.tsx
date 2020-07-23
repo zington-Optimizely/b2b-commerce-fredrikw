@@ -1,26 +1,26 @@
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { useState, useEffect } from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
+import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { css } from "styled-components";
+import getColor from "@insite/mobius/utilities/getColor";
+import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import EmblaCarousel from "embla-carousel";
 import EmblaCarouselReact from "embla-carousel-react";
-import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
-import ChevronRight from "@insite/mobius/Icons/ChevronRight";
-import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
-import { IconPresentationProps } from "@insite/mobius/Icon";
 import parse from "html-react-parser";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
-import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import getColor from "@insite/mobius/utilities/getColor";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 interface SlideModel {
     fields: {

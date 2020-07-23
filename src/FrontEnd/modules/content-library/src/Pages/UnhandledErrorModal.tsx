@@ -1,10 +1,10 @@
-import * as React from "react";
-import Page from "@insite/mobius/Page";
-import Zone from "@insite/client-framework/Components/Zone";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import PageModule from "@insite/client-framework/Types/PageModule";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
+import Zone from "@insite/client-framework/Components/Zone";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
 import Typography from "@insite/mobius/Typography";
+import * as React from "react";
 
 const UnhandledErrorModal = ({ id, fields, shellContext: { isCurrentPage, isInShell } }: PageProps & HasShellContext) => <Page>
     {isCurrentPage && isInShell
@@ -19,6 +19,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableTitle: false,
         hasEditableUrlSegment: false,
+        pageType: "System",
         fieldDefinitions: [
             {
                 name: "modalTitle",

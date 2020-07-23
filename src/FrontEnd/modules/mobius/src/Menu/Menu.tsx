@@ -1,17 +1,17 @@
 import React from "react";
-import styled, { ThemeProps, ThemeConsumer, withTheme } from "styled-components";
-import Clickable, { ClickableProps, ClickablePresentationProps } from "../Clickable";
+import styled, { ThemeConsumer, ThemeProps, withTheme } from "styled-components";
+import Clickable, { ClickablePresentationProps, ClickableProps } from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import focusWithinImportInBrowser from "../utilities/focusWithin";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import focusWithinImportInBrowser from "../utilities/focusWithin";
 import getColor from "../utilities/getColor";
 import getProp from "../utilities/getProp";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
-import uniqueId from "../utilities/uniqueId";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import uniqueId from "../utilities/uniqueId";
 
 focusWithinImportInBrowser();
 

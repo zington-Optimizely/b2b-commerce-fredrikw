@@ -1,21 +1,21 @@
-import React, { FC } from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import translate from "@insite/client-framework/Translate";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { css } from "styled-components";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
 import { connect } from "react-redux";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCurrentCartState(state);
@@ -93,7 +93,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Header",
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],
-        isSystem: true,
     },
 };
 

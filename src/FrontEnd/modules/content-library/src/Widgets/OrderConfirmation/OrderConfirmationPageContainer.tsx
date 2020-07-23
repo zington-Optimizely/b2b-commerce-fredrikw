@@ -1,13 +1,13 @@
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import React from "react";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
-import { css } from "styled-components";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import React from "react";
+import { css } from "styled-components";
 
 export interface OrderConfirmationPageContainerStyles {
     container?: GridContainerProps;
@@ -85,7 +85,6 @@ const widgetModule: WidgetModule = {
         displayName: "Page Container",
         group: "Order Confirmation",
         allowedContexts: [OrderConfirmationPageContext],
-        isSystem: true,
     },
 };
 export default widgetModule;

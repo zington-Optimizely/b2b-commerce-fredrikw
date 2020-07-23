@@ -1,10 +1,10 @@
-import React from "react";
 import { ColorPickerFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
-import { ColorResult } from "react-color";
+import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
 import { colorResultToString } from "@insite/shell/Store/ShellSelectors";
+import React from "react";
+import { ColorResult } from "react-color";
 
 export default class ColorPickerField extends React.Component<ContentItemFieldProps<string, ColorPickerFieldDefinition>> {
 

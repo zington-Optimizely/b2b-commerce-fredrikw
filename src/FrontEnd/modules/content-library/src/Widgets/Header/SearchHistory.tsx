@@ -1,17 +1,17 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { clearSearchHistory, getSearchHistory } from "@insite/client-framework/Services/AutocompleteService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import Clock from "@insite/mobius/Icons/Clock";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React from "react";
 import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import translate from "@insite/client-framework/Translate";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { css } from "styled-components";
-import { getSearchHistory, clearSearchHistory } from "@insite/client-framework/Services/AutocompleteService";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import Clock from "@insite/mobius/Icons/Clock";
-import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps {
     focusedQuery?: string;

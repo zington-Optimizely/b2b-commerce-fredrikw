@@ -1,16 +1,16 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getPageLinkByNodeId, LinkModel, mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { LinkModel, mapLinks, getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { css } from "styled-components";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import getColor from "@insite/mobius/utilities/getColor";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields { links = "links" }
 
@@ -83,7 +83,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Header",
         icon: "LinkList",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.links,

@@ -1,8 +1,8 @@
-import { GetInvoiceApiParameter } from "@insite/client-framework/Services/InvoiceService";
-import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { getInvoiceState } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import { GetInvoiceApiParameter } from "@insite/client-framework/Services/InvoiceService";
 import loadInvoiceByInvoiceNumber from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoiceByInvoiceNumber";
+import { getInvoiceState } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ invoiceNumber: string; }, GetInvoiceApiParameter, InvoiceModel>;
 

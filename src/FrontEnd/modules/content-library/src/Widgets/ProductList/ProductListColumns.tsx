@@ -1,10 +1,10 @@
-import React, { FC } from "react";
+import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Zone from "@insite/client-framework/Components/Zone";
+import React, { FC } from "react";
 
 interface OwnProps extends WidgetProps {
 }
@@ -51,7 +51,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Columns",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
     },
 };
 

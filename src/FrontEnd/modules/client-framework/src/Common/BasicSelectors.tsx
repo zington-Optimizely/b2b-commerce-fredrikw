@@ -1,11 +1,11 @@
-import { HTMLReactParserOptions, domToReact } from "html-react-parser";
-import * as React from "react";
-import styled from "styled-components";
 import LazyImage from "@insite/mobius/LazyImage";
 import Link from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import injectCss from "@insite/mobius/utilities/injectCss";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import { domToReact, HTMLReactParserOptions } from "html-react-parser";
+import * as React from "react";
+import styled from "styled-components";
 
 const BulletList = styled.ul<InjectableCss>`
     list-style-type: disc;

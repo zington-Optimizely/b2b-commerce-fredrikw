@@ -1,19 +1,19 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useEffect, useState } from "react";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { BaseAddressModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
+import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
+import { getDefaultPageSize, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
+import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { BaseAddressModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import CustomerSelector, { CustomerSelectorStyles } from "@insite/content-library/Components/CustomerSelector";
 import CustomerSelectorToolbar, { CustomerSelectorToolbarStyles } from "@insite/content-library/Components/CustomerSelectorToolbar";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import CustomerSelector, { CustomerSelectorStyles } from "@insite/content-library/Components/CustomerSelector";
-import styled, { css } from "styled-components";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
-import { getSettingsCollection, getDefaultPageSize } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import React, { FC, useEffect, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
     currentShipTo?: ShipToModel;

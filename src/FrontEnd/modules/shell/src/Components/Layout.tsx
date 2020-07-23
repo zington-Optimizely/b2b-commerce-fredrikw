@@ -1,22 +1,22 @@
-import * as React from "react";
-import MainHeader from "@insite/shell/Components/Shell/MainHeader";
-import styled from "styled-components";
-import { Route, Switch, withRouter, RouteComponentProps } from "react-router-dom";
-import StyleGuideSideBar from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
-import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
-import PageEditor from "@insite/shell/Components/PageEditor/PageEditor";
-import StyleGuidePreview from "@insite/shell/Components/Shell/StyleGuide/StyleGuidePreview";
-import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
-import { connect } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import { useEffect } from "react";
+import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
 import LogoutWarningModal from "@insite/shell/Components/Modals/LogoutWarningModal";
+import PageEditor from "@insite/shell/Components/PageEditor/PageEditor";
+import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
 import About from "@insite/shell/Components/Shell/About";
+import MainHeader from "@insite/shell/Components/Shell/MainHeader";
+import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
+import StyleGuideSideBar from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
+import StyleGuidePreview from "@insite/shell/Components/Shell/StyleGuide/StyleGuidePreview";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { useEffect } from "react";
+import { connect } from "react-redux";
+import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
+import styled from "styled-components";
 
 const homePageLoader = (props: ReturnType<typeof mapStateToProps> & RouteComponentProps) => {
     useEffect(() => {

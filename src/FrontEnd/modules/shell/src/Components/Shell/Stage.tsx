@@ -1,10 +1,10 @@
+import getProp from "@insite/mobius/utilities/getProp";
+import DeviceMobile from "@insite/shell/Components/Icons/DeviceMobile";
+import DeviceTablet from "@insite/shell/Components/Icons/DeviceTablet";
+import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
 import styled, { css } from "styled-components";
-import ShellState from "@insite/shell/Store/ShellState";
-import DeviceMobile from "@insite/shell/Components/Icons/DeviceMobile";
-import DeviceTablet from "@insite/shell/Components/Icons/DeviceTablet";
-import getProp from "@insite/mobius/utilities/getProp";
 
 const StageFlexContainer = styled.div<StageProps>`
     ${({ stageMode }) => {

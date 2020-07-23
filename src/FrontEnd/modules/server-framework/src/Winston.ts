@@ -1,5 +1,5 @@
+import { LogFunction, LogReceiver, setLogger } from "@insite/client-framework/Logger";
 import winston, { createLogger } from "winston";
-import { setLogger, LogReceiver, LogFunction } from "@insite/client-framework/Logger";
 
 const options = {
     console: {

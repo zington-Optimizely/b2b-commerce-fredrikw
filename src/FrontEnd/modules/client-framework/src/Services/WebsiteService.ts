@@ -1,9 +1,10 @@
-import { get, ApiParameter } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
 import {
     AddressFieldCollectionModel,
     CountryCollectionModel,
-    WebsiteModel,
     SiteMessageCollectionModel,
+    TranslationDictionaryCollectionModel,
+    WebsiteModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetCurrentCountriesApiParameter extends ApiParameter {
@@ -42,3 +43,10 @@ export type GetSiteMessageParameter = ApiParameter & {
 };
 
 export const getSiteMessages = (parameter?: GetSiteMessageParameter) => get<SiteMessageCollectionModel>("/api/v1/websites/current/sitemessages", parameter);
+
+export type GetTranslationDictionariesParameter = ApiParameter & {
+    languageCode?: string;
+    pageSize: number;
+};
+
+export const getTranslationDictionaries = (parameter?: GetTranslationDictionariesParameter) => get<TranslationDictionaryCollectionModel>("/api/v1/translationdictionaries", parameter);

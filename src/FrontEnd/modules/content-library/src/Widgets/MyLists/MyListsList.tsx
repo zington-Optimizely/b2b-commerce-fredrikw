@@ -1,27 +1,27 @@
-import * as React from "react";
-import { css } from "styled-components";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
-import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
-import WishListCard from "@insite/content-library/Components/WishListCard";
-import TwoButtonModal from "@insite/content-library/Components/TwoButtonModal";
+import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
 import deleteWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/DeleteWishList";
 import deleteWishListShare from "@insite/client-framework/Store/Pages/MyLists/Handlers/DeleteWishListShare";
-import { ModalPresentationProps } from "@insite/mobius/Modal";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import translate from "@insite/client-framework/Translate";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
+import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
+import TwoButtonModal from "@insite/content-library/Components/TwoButtonModal";
+import WishListCard from "@insite/content-library/Components/WishListCard";
+import { MyListsPageContext } from "@insite/content-library/Pages/MyListsPage";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import { ModalPresentationProps } from "@insite/mobius/Modal";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
 }
@@ -107,7 +107,7 @@ class MyListsList extends React.Component<Props, State> {
     deleteSubmitHandler = () => {
         this.setState({ deleteListModalIsOpen: false });
         if (this.state.wishListToAction) {
-            this.props.deleteWishList({ wishListId: this.state.wishListToAction.id, onSuccess: this.onDeleteSuccess, reloadWishLists: true });
+            this.props.deleteWishList({ wishListId: this.state.wishListToAction.id, onSuccess: this.onDeleteSuccess });
         }
     };
 
@@ -198,7 +198,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists",
         displayName: "List",
         allowedContexts: [MyListsPageContext],
-        isSystem: true,
     },
 };
 

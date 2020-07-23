@@ -1,12 +1,12 @@
 import * as React from "react";
 import { TransitionGroup } from "react-transition-group";
-import styled, { withTheme, ThemeProps, css } from "styled-components";
-import Toast, { ToastProps } from "./Toast";
-import ToasterContext, { ToastContextData } from "./ToasterContext";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
+import { BaseTheme } from "../globals/baseTheme";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import { BaseTheme } from "../globals/baseTheme";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import Toast, { ToastProps } from "./Toast";
+import ToasterContext, { ToastContextData } from "./ToasterContext";
 
 export interface ToasterPresentationProps {
     /** The position for the toasts to display on medium, large, and extra large breakpoints.

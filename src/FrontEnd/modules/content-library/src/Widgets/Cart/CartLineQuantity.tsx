@@ -1,12 +1,12 @@
-import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import translate from "@insite/client-framework/Translate";
-import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import useAccessibleSubmit from "@insite/client-framework/Common/Hooks/useAccessibleSubmit";
-import { withCartLine, HasCartLineContext } from "@insite/client-framework/Components/CartLineContext";
-import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import translate from "@insite/client-framework/Translate";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
+import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import React, { FC } from "react";
 
 interface OwnProps {
     cart: Cart;

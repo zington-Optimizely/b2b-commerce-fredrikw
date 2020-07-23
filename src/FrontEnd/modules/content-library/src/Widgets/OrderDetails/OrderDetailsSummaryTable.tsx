@@ -1,33 +1,33 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import addToWishList, { AddToWishListParameter } from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import translate from "@insite/client-framework/Translate";
+import { OrderLineModel, OrderModel, WishListSettingsModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { OrderModel, OrderLineModel, WishListSettingsModel } from "@insite/client-framework/Types/ApiModels";
-import translate from "@insite/client-framework/Translate";
-import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
 import CardContainer from "@insite/content-library/Components/CardContainer";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
+import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
+import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import addToWishList, { AddToWishListParameter } from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import siteMessage from "@insite/client-framework/SiteMessage";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import { css } from "styled-components";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {}
 
@@ -365,12 +365,16 @@ const OrderLineCard = (props: {
             </GridItem>
             <GridItem {...styles.orderLineCardAddToListGridItem}>
                 <Hidden {...styles.orderLineCardActionsWide}>
-                    <OverflowMenu position="end" {...styles.overflowMenu}>
-                        <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>{translate("Add to List")}</Clickable>
-                    </OverflowMenu>
+                    {orderLine.canAddToWishlist
+                        && <OverflowMenu position="end" {...styles.overflowMenu}>
+                            <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>{translate("Add to List")}</Clickable>
+                        </OverflowMenu>
+                    }
                 </Hidden>
                 <Hidden {...styles.orderLineCardActionsNarrow}>
-                    <Button {...styles.orderLineCardAddToListButton} onClick={addToListClickHandler}>{translate("Add to List")}</Button>
+                    {orderLine.canAddToWishlist
+                        && <Button {...styles.orderLineCardAddToListButton} onClick={addToListClickHandler}>{translate("Add to List")}</Button>
+                    }
                 </Hidden>
             </GridItem>
         </GridContainer>
@@ -410,7 +414,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
     },
 };
 

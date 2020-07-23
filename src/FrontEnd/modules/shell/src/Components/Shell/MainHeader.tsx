@@ -1,8 +1,8 @@
+import HeaderBar from "@insite/shell/Components/Shell/HeaderBar";
+import { Switcher } from "@insite/shell/Components/Shell/Switcher";
 import * as React from "react";
 import { match } from "react-router-dom";
 import styled from "styled-components";
-import HeaderBar from "@insite/shell/Components/Shell/HeaderBar";
-import { Switcher } from "@insite/shell/Components/Shell/Switcher";
 
 const MainHeader: React.FunctionComponent<{ match?: match, disabled?: boolean }> = ({ disabled, match }) => {
     return (<>

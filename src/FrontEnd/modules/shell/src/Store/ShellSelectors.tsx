@@ -1,8 +1,8 @@
-import { ColorResult } from "react-color";
-import ShellState from "@insite/shell/Store/ShellState";
-import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
+import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { cleanPage, PageModel } from "@insite/client-framework/Types/PageProps";
+import ShellState from "@insite/shell/Store/ShellState";
+import { ColorResult } from "react-color";
 
 export const colorResultToString = (color: ColorResult): undefined | string => {
     let returnValue: undefined | string = color.hex.toUpperCase();

@@ -1,9 +1,10 @@
 import isNumeric from "@insite/client-framework/Common/isNumeric";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getAllBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import loadBrands from "@insite/client-framework/Store/Pages/Brands/Handlers/LoadAllBrands";
 import translate from "@insite/client-framework/Translate";
-import { BrandModel, BrandAlphabetLetterModel } from "@insite/client-framework/Types/ApiModels";
+import { BrandAlphabetLetterModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import VerticalColumnCell, { VerticalColumnCellProps } from "@insite/content-library/Components/VerticalColumnCell";
@@ -15,11 +16,11 @@ import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mob
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import { getAllBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 interface OwnProps extends WidgetProps {
 }
@@ -51,6 +52,7 @@ export interface BrandListStyles {
     brandLink?: LinkPresentationProps;
     actions?: InjectableCss;
     actionLinks?: LinkPresentationProps;
+    actionLinksDisabled?: TypographyPresentationProps;
     backToTopButton?: ButtonPresentationProps;
 }
 
@@ -95,9 +97,19 @@ const styles: BrandListStyles = {
     actionLinks: {
         css: css` margin: 5px; `,
     },
+    actionLinksDisabled: {
+        css: css` margin: 5px; `,
+        color: "text.disabled",
+    },
 };
 
 export const listStyles = styles;
+
+interface BrandListState {
+    expanded: boolean | "mixed";
+    brandLetterDetails: BrandAlphabetLetterModel[];
+    brandSections: BrandSection[]
+}
 
 /**
  * This will display all Brands grouped by the first character.
@@ -112,7 +124,7 @@ const BrandList: FC<Props> = (props: Props) => {
     const { letters, brandLettersMap } = buildLettersAndMap(brandList);
     const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, false);
 
-    const [state, setState] = React.useState<{ expanded: boolean; brandLetterDetails: BrandAlphabetLetterModel[]; brandSections: BrandSection[]}>({ expanded: false, brandLetterDetails, brandSections });
+    const [state, setState] = React.useState<BrandListState>({ expanded: false, brandLetterDetails, brandSections });
 
     React.useEffect(() => {
         setState({ ...state, brandLetterDetails, brandSections });
@@ -129,60 +141,88 @@ const BrandList: FC<Props> = (props: Props) => {
         return null;
     }
 
+    const onClickBrandSection = (section: BrandSection) => () => {
+        setState(({ brandSections, expanded, brandLetterDetails }: BrandListState) => {
+            const itemIndex = brandSections.findIndex(item => item.letter === section.letter);
+            const nextSectionExpanded = !section.expanded;
+            let nextExpanded = expanded;
+            if (expanded !== "mixed" && expanded !== nextSectionExpanded) {
+                nextExpanded = "mixed";
+            } else if (expanded === "mixed") {
+                const hasNonMatchingExpanded = brandSections.find(item => {
+                    return item.letter !== section.letter && item.expanded !== nextSectionExpanded;
+                });
+                if (!hasNonMatchingExpanded) {
+                    nextExpanded = nextSectionExpanded;
+                }
+            }
+            const newSectionState = { ...section, expanded: nextSectionExpanded };
+            const newBrandSections = [...brandSections];
+            newBrandSections.splice(itemIndex, 1, newSectionState);
+            return { brandSections: newBrandSections, expanded: nextExpanded, brandLetterDetails };
+        });
+    };
+
     const onCollapse = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (state.expanded) {
-            // TODO ISC-11114 - Needs a managed expanded way to collapse sections.
+        if (state.expanded === "mixed" || state.expanded) {
             const { letters, brandLettersMap } = buildLettersAndMap(brandList);
             const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, false);
             setState({ ...state, brandLetterDetails, brandSections, expanded: false });
         }
     };
+
     const onExpand = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (!state.expanded) {
-            // TODO ISC-11114 - Needs a managed expanded way to collapse sections.
+        if (state.expanded === "mixed" || !state.expanded) {
             const { letters, brandLettersMap } = buildLettersAndMap(brandList);
             const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, true);
             setState({ ...state, brandLetterDetails, brandSections, expanded: true });
         }
     };
-    const onAccordionClickResetExpandedState = () => {
-        const { letters, brandLettersMap } = buildLettersAndMap(brandList);
-        const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, false);
-        setState({ ...state, brandLetterDetails, brandSections, expanded: false });
-    };
+
     const handleBackToTop = () => {
         window.scrollTo(0, 0);
     };
+
     const handleBrandLetterClick = (letter: string) => {
-        // TODO ISC-11114 - Set brand details expanded or trigger expanded on AccordionSection.
+        const section = state.brandSections.find(item => item.letter === letter);
+        section && onClickBrandSection(section)();
     };
 
     return (
-        <StyledWrapper {...styles.container} onClick={onAccordionClickResetExpandedState} data-test-selector="brandList">
+        <StyledWrapper {...styles.container} data-test-selector="brandList">
             <BrandAlphabetNavigation
                 letterDetails={brandLetterDetails}
                 extendedStyles={styles.brandAlphabetNavigation}
                 onBrandLetterClick={handleBrandLetterClick}
             />
-            {/* TODO: ISC-11114 - Hidden till expanded on AccordionSection can be easily triggered
              <StyledWrapper {...styles.actions}>
-                <Link onClick={onCollapse} {...styles.actionLinks} data-test-selector="brandListCollapseAllLink">
-                    {translate("Collapse All")}
-                </Link>
-                <Link onClick={onExpand} {...styles.actionLinks} data-test-selector="brandListExpandAllLink">
-                    {translate("Expand All")}
-                </Link>
-            </StyledWrapper> */}
+                {state.expanded === false
+                    ? <Typography {...styles.actionLinksDisabled}>
+                        {translate("Collapse All")}
+                    </Typography>
+                    : <Link onClick={onCollapse} {...styles.actionLinks} data-test-selector="brandListCollapseAllLink">
+                        {translate("Collapse All")}
+                    </Link>
+                }
+                {state.expanded === true
+                    ? <Typography {...styles.actionLinksDisabled}>
+                        {translate("Expand All")}
+                    </Typography>
+                    : <Link onClick={onExpand} {...styles.actionLinks} data-test-selector="brandListExpandAllLink">
+                        {translate("Expand All")}
+                    </Link>
+}
+            </StyledWrapper>
             <Accordion headingLevel={2}>
                 {state.brandSections.map(brandDetails => (
-                    // TODO ISC-11114 - Manage expand from brandDetails, or ability to trigger expanded.
                     <AccordionSection
                         key={brandDetails.letter}
                         {...styles.brandAccordionSection}
                         title={brandDetails.letter}
                         expanded={brandDetails.expanded}
+                        onTogglePanel={onClickBrandSection(brandDetails)}
                     >
                         <VerticalColumnContainer
                             id={`letter-${brandDetails.letter}`}
@@ -220,7 +260,6 @@ const widgetModule: WidgetModule = {
         group: "Brands",
         icon: "List",
         allowedContexts: [BrandsPageContext],
-        isSystem: true,
     },
 };
 

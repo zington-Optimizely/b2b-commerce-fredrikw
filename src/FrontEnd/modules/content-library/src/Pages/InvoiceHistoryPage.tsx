@@ -1,20 +1,20 @@
-import * as React from "react";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import Zone from "@insite/client-framework/Components/Zone";
+import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
+import { getInvoicesDataView, InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import { connect, ResolveThunks } from "react-redux";
 import Page from "@insite/mobius/Page";
-import Zone from "@insite/client-framework/Components/Zone";
-import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
-import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getInvoicesDataView, InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { FC, useEffect } from "react";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import * as React from "react";
+import { FC, useEffect } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     settings: getSettingsCollection(state),
@@ -83,7 +83,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

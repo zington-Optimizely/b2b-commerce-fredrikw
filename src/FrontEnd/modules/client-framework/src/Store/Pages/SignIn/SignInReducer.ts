@@ -1,6 +1,6 @@
-import { Draft } from "immer";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
+import { Draft } from "immer";
 
 const initialState: SignInState = {
     isSigningInAsGuest: false,

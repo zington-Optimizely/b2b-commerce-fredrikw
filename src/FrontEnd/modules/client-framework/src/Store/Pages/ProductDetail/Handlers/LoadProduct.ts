@@ -1,25 +1,25 @@
-import {
-    getProductByPath,
-    ProductModelExtended,
-    GetProductByPathApiV2Parameter,
-    GetProductByIdApiV2Parameter,
-    getVariantChildren,
-} from "@insite/client-framework/Services/ProductServiceV2";
-import { createHandlerChainRunner, ApiHandlerDiscreteParameter } from "@insite/client-framework/HandlerCreator";
-import filterVariantTraits from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/FilterVariantTraits";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
-import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
 import sleep from "@insite/client-framework/Common/Sleep";
-import sortBy from "lodash/sortBy";
 import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    GetProductByIdApiV2Parameter,
+    getProductByPath,
+    GetProductByPathApiV2Parameter,
+    getVariantChildren,
+    ProductModelExtended,
+} from "@insite/client-framework/Services/ProductServiceV2";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import filterVariantTraits from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/FilterVariantTraits";
+import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
+import sortBy from "lodash/sortBy";
 
 export interface LoadProductResult {
     product: ProductModelExtended,
     variantChildren?: ProductModelExtended[] | null,
 }
 
-type LoadProductParameter = { path: string, styledOption?: string; };
+type LoadProductParameter = { path: string, styledOption?: string; addToRecentlyViewed?: boolean; };
 
 type HandlerType = ApiHandlerDiscreteParameter<LoadProductParameter, GetProductByPathApiV2Parameter | GetProductByIdApiV2Parameter, LoadProductResult, {
     pricingLoaded?: true,

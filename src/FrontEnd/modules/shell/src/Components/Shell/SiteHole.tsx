@@ -1,8 +1,8 @@
-import * as React from "react";
 import { FrameHole, setupSiteHole } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { Action, Dispatch, MiddlewareAPI } from "redux";
 import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { Action, Dispatch, MiddlewareAPI } from "redux";
 
 interface SiteHole {
     frameHole?: FrameHole;

@@ -1,14 +1,14 @@
-import React from "react";
-import { WarehouseModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import translate from "@insite/client-framework/Translate";
+import { BillToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
+import BillingAddressInfoDisplay, { BillingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
+import PickUpLocationAddressInfoDisplay from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PickUpLocationAddressInfoDisplay";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import PickUpLocationAddressInfoDisplay from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PickUpLocationAddressInfoDisplay";
-import { css } from "styled-components";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import BillingAddressInfoDisplay, { BillingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
-import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
+import React from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     pickUpDate: Date | null;

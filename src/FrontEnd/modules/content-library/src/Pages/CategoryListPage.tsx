@@ -1,12 +1,12 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
 import Zone from "@insite/client-framework/Components/Zone";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import Page from "@insite/mobius/Page";
-import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
+import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     shouldLoadCategories: !getCategoriesDataView(state).value,
@@ -38,7 +38,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

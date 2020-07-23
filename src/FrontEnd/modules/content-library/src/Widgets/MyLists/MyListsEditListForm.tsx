@@ -1,16 +1,16 @@
-import React from "react";
-import { css } from "styled-components";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
+import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
 import translate from "@insite/client-framework/Translate";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
-import updateWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/UpdateWishList";
-import { ResolveThunks, connect } from "react-redux";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import siteMessage from "@insite/client-framework/SiteMessage";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import React from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps {
     wishList?: WishListModel;
@@ -97,7 +97,6 @@ class MyListsEditListForm extends React.Component<Props, State> {
                 apiParameter: { name: this.state.name, description: this.state.description },
                 onSuccess: this.onSubmitSuccess,
                 onError: this.onSubmitError,
-                reloadWishLists: true,
             });
         }
     };

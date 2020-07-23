@@ -1,14 +1,14 @@
-import React, { FC } from "react";
-import translate from "@insite/client-framework/Translate";
-import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
+import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
+import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 interface OwnProps extends HasProductContext {
     showImage: boolean;

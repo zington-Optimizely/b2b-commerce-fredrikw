@@ -1,7 +1,7 @@
+import { loadProducts, selectProduct } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { selectProduct, loadProducts } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import styled from "styled-components";
 
 interface OwnProps {

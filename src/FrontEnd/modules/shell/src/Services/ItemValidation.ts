@@ -1,6 +1,6 @@
-import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
+import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 
 export function validateField(fieldDefinition: ChildFieldDefinition, item: HasFields) {
     if (fieldDefinition.isVisible && !fieldDefinition.isVisible(item)) {

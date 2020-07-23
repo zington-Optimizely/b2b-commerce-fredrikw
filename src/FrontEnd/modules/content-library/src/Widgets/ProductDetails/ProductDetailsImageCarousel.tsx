@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { withProduct, HasProductContext } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import EmblaCarousel from "embla-carousel";
-import EmblaCarouselReact from "embla-carousel-react";
-import { connect, ResolveThunks } from "react-redux";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setSelectedImage from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/SetSelectedImage";
+import { ImageModel } from "@insite/client-framework/Types/ApiModels";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import Button, { ButtonIcon, ButtonProps } from "@insite/mobius/Button";
-import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
-import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import { css } from "styled-components";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
+import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import { ImageModel } from "@insite/client-framework/Types/ApiModels";
 import getColor from "@insite/mobius/utilities/getColor";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import EmblaCarousel from "embla-carousel";
+import EmblaCarouselReact from "embla-carousel-react";
+import React, { useEffect, useState } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     productSettings: getSettingsCollection(state).productSettings,
@@ -213,7 +213,6 @@ const widgetModule: WidgetModule = {
         displayName: "Image Carousel",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

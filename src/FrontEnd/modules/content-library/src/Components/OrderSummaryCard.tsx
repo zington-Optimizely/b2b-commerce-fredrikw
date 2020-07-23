@@ -1,13 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import translate from "@insite/client-framework/Translate";
 import { OrderModel, OrderSettingsModel } from "@insite/client-framework/Types/ApiModels";
+import OrderDetailPageTypeLink from "@insite/content-library/Components/OrderDetailPageTypeLink";
+import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
-import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import OrderDetailPageTypeLink from "@insite/content-library/Components/OrderDetailPageTypeLink";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { connect } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({

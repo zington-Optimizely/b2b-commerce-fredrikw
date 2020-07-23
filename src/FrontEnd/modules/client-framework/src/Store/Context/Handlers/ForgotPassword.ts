@@ -1,9 +1,9 @@
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import {
     forgotPassword as forgotPasswordApi,
     ForgotPasswordApiParameter, Session,
 } from "@insite/client-framework/Services/SessionService";
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 
 type ResetPasswordParameter = {
     userName: string;

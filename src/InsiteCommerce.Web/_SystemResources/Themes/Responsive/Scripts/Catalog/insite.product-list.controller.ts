@@ -62,6 +62,8 @@ module insite.catalog {
         getPageDataCalled: boolean;
         defaultIncludeSuggestions: string = "true";
         stockedItemsOnly: boolean;
+        showSearchData: boolean = false;
+        showExpandedSearchData: boolean = false;
 
         static $inject = [
             "$scope",
@@ -155,6 +157,10 @@ module insite.catalog {
                 
                 this.onSessionUpdated(session);
             });
+
+
+            const inShell = window.parent != null && window.parent.location.toString().toLowerCase().indexOf("/contentadmin") !== -1;
+            this.showSearchData = inShell && this.$localStorage.get("searchData", "") === "enabled";
         }
 
         protected getFacets(categoryId: string): void {
@@ -402,6 +408,9 @@ module insite.catalog {
             }
 
             expand = expand ? expand : ["pricing", "attributes", "facets", "brand"];
+            if (this.showSearchData){
+                expand.push("scoreexplanation");
+            }
 
             this.productService.getProducts(params, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection, params, expand); },
@@ -896,6 +905,17 @@ module insite.catalog {
                     this.visibleColumnNames.push(facet.name);
                     (<any>facet).checked = true;
                 });
+        }
+
+        matchingFields(product: ProductDto): string {
+            if (product.scoreExplanation) {
+                return product.scoreExplanation.aggregateFieldScores.map(x => x.name).join(', ');
+            }
+            return "";
+        }
+
+        toggleExpandedSearchData(): void {
+            this.showExpandedSearchData = !this.showExpandedSearchData;
         }
     }
 

@@ -86,3 +86,13 @@ If you would like to add a new folder you have to first create a folder in **./g
 
 ### Adding data sources 
 Adding more data sources is similarly very easy. Go under **./grafana/provisioning/datasources** and open *datasource.yml* file. There you can add a new data source. The file is documented well and adding a new source should be easy if you just follow the instructions. For more help please see the official [documentation](https://grafana.com/docs/administration/provisioning/)
+
+
+## Troubleshooting
+
+### Time drift of Hyper-v 
+When your computer goes to sleep, the time in your VM and the time in your computer will go out of synch. To fix that issue please run the following commands in Powershell as Administrator:
+
+`Get-VMIntegrationService -VMName DockerDesktopVM -Name "Time Synchronization" | Disable-VMIntegrationService`
+
+`Get-VMIntegrationService -VMName DockerDesktopVM -Name "Time Synchronization" | Enable-VMIntegrationService`

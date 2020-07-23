@@ -1,8 +1,8 @@
-import * as React from "react";
 import { ColumnAlignment, ColumnAlignmentDefinition } from "@insite/client-framework/Types/FieldDefinition";
+import Select from "@insite/mobius/Select";
 import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import StandardControl from "@insite/shell/Components/ItemEditor/StandardControl";
-import Select from "@insite/mobius/Select";
+import * as React from "react";
 import styled from "styled-components";
 
 type Props = ContentItemFieldProps<ColumnAlignment[], ColumnAlignmentDefinition>;

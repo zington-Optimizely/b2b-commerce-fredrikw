@@ -1,7 +1,7 @@
-import React, { FC } from "react";
-import { connect } from "react-redux";
-import { css } from "styled-components";
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import { getWishListState, getWishListTotal } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -14,9 +14,9 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import { getWishListState, getWishListTotal } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const wishListLinesDataView = getWishListLinesDataView(state, state.pages.myListDetails.loadWishListLinesParameter);
@@ -122,7 +122,6 @@ const widgetModule: WidgetModule = {
         group: "My Lists Details",
         displayName: "Header",
         allowedContexts: [MyListsDetailsPageContext],
-        isSystem: true,
     },
 };
 

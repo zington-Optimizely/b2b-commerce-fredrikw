@@ -1,14 +1,15 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC, useState } from "react";
+import { Cart } from "@insite/client-framework/Services/CartService";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import translate from "@insite/client-framework/Translate";
+import { ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
+import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
-import translate from "@insite/client-framework/Translate";
-import { ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
+import React, { FC, useState } from "react";
 import { css } from "styled-components";
-import { Cart } from "@insite/client-framework/Services/CartService";
-import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
 
 interface OwnProps {
     cart: Cart;
@@ -141,7 +142,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
             <GridItem {...styles.shippingInformationTitleGridItem}>
                 <Typography {...styles.shippingInformationTitle}>{translate("Shipping Information")}</Typography>
             </GridItem>
-            {cart.fulfillmentMethod === "Ship"
+            {cart.fulfillmentMethod === FulfillmentMethod.Ship
                 && <GridItem {...styles.shippingInformationAddressGridItem}>
                     <Typography {...styles.shippingAddressTitle}>{translate("Shipping Address")}</Typography>
                     <AddressInfoDisplay
@@ -157,7 +158,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
                     />
                 </GridItem>
             }
-            {cart.fulfillmentMethod === "PickUp" && pickUpWarehouse
+            {cart.fulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse
                 && <GridItem {...styles.shippingInformationAddressGridItem}>
                     <Typography {...styles.shippingAddressTitle}>{translate("Pick Up Location")}</Typography>
                     <AddressInfoDisplay
@@ -169,7 +170,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
             }
             <GridItem {...styles.shippingOtherInformationGridItem}>
                 <GridContainer {...styles.shippingOtherInformationGridContainer}>
-                    {cart.fulfillmentMethod === "Ship"
+                    {cart.fulfillmentMethod === FulfillmentMethod.Ship
                         && <GridItem {...styles.shippingInformationCarrierGridItem}>
                             <Typography {...styles.shippingCarrierTitle}>{translate("Carrier")}</Typography>
                             <Typography {...styles.shippingCarrierDescription}>{cart.carrier!.description}</Typography>
@@ -182,7 +183,7 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
                                 <LocalizedDateTime dateTime={cart.requestedDeliveryDateDisplay || cart.requestedPickupDateDisplay} />
                             </Typography>
                         </GridItem>}
-                    {cart.fulfillmentMethod === "Ship"
+                    {cart.fulfillmentMethod === FulfillmentMethod.Ship
                         && <GridItem {...styles.shippingInformationServiceGridItem}>
                             <Typography {...styles.shippingServiceTitle}>{translate("Service")}</Typography>
                             <Typography {...styles.shippingServiceDescription}>{cart.shipVia?.description}</Typography>

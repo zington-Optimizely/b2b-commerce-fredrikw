@@ -1,21 +1,21 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { BrandProductLinesStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BrandDetailsPageContext } from "@insite/content-library/Pages/BrandDetailsPage";
 import Button, { ButtonProps } from "@insite/mobius/Button";
+import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkProps } from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC, useEffect, useContext } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import { BrandProductLinesStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 
 const enum fields {
     title = "title",
@@ -215,7 +215,6 @@ const widgetModule: WidgetModule = {
         group: "Brand Details",
         displayName: "Brand Product Lines",
         allowedContexts: [BrandDetailsPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.title,

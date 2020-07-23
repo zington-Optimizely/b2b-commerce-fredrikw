@@ -1,19 +1,19 @@
 import * as React from "react";
 import { ThemeConsumer } from "styled-components";
 import FormField, {
+    FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-    FormFieldComponentProps,
 } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export interface SelectPresentationProps extends FormFieldPresentationProps<SelectComponentProps> {
     /** The props for icon displaying on the select.

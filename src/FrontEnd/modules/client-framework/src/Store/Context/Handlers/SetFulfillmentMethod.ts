@@ -1,6 +1,6 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { UpdateSessionApiParameter, updateSession, Session } from "@insite/client-framework/Services/SessionService";
 import { updateContext } from "@insite/client-framework/Context";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 
 type HandlerType = ApiHandlerDiscreteParameter<{

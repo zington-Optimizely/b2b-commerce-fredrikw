@@ -12,8 +12,10 @@ const Typography = require('../Typography').default;
         <Typography variant="h4">Default</Typography>
         <CheckboxGroup label="Checkbox Group Label">
             <Checkbox checked>Checked</Checkbox>
+            <Checkbox checked="indeterminate">Indeterminate</Checkbox>
             <Checkbox>Unchecked</Checkbox>
             <Checkbox checked disabled>Disabled Checked</Checkbox>
+            <Checkbox checked="indeterminate" disabled>Disabled Indeterminate</Checkbox>
             <Checkbox disabled>Disabled</Checkbox>
         </CheckboxGroup>
     </GridItem>
@@ -51,8 +53,10 @@ const Typography = require('../Typography').default;
         <Typography variant="h4">Default</Typography>
         <CheckboxGroup sizeVariant="small" label="Checkbox Group Label">
             <Checkbox checked>Checked</Checkbox>
+            <Checkbox checked="indeterminate">Indeterminate</Checkbox>
             <Checkbox>Unchecked</Checkbox>
             <Checkbox checked disabled>Disabled Checked</Checkbox>
+            <Checkbox checked="indeterminate" disabled>Disabled Indeterminate</Checkbox>
             <Checkbox disabled>Disabled</Checkbox>
         </CheckboxGroup>
     </GridItem>
@@ -84,7 +88,6 @@ const CheckboxGroup = require('../CheckboxGroup').default;
 const globalTheme = require('../globals/baseTheme').default;
 const GridContainer = require('../GridContainer').default;
 const GridItem = require('../GridItem').default;
-const xIcon = require('../Icons/X').default;
 const ThemeProvider = require('../ThemeProvider').default;
 
 const theme={
@@ -96,9 +99,12 @@ const theme={
         }
     },
     checkbox: {
+        ...globalTheme.checkbox,
         defaultProps: {
-            iconProps: {src: xIcon},
-            typographyProps: {weight: 300}
+            ...globalTheme.checkbox.defaultProps,
+            iconProps: {src: "X"},
+            typographyProps: {weight: 300},
+            indeterminateIconProps: {src: "MoreHorizontal"},
         }
     }
 };
@@ -116,6 +122,8 @@ const theme={
             <Checkbox css={({ theme }) => `margin-left: -5px; border: 1px solid ${theme.colors.primary.main}; padding: 5px`}>
                 Instance custom CSS (using styled-components function)
             </Checkbox>
+            <Checkbox checked="indeterminate">Indeterminate override in theme</Checkbox>
+            <Checkbox checked="indeterminate" indeterminateColor="secondary">Instance indeterminate override</Checkbox>
         </CheckboxGroup>
     </div>
 </ThemeProvider>
@@ -132,10 +140,17 @@ const Spacer = () => <div style={{ width: 50 }} />;
 class Example extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { checked: false };
+        this.state = { checked: false};
         this.toggle = () => {
             this.setState(({checked}) => {
                 return { checked: checked ? false : true };
+            });
+        };
+        this.toggleIndeterminate = () => {
+            this.setState(({checked}) => {
+                return {
+                    checked: checked === "indeterminate" ? false : "indeterminate",
+                };
             });
         };
         this.handleChange = (e, currentValue) => {
@@ -144,15 +159,22 @@ class Example extends React.Component {
     }
 
     render() {
+        let renderValue = this.state.checked ? "checked" : "unchecked";
+        if (this.state.checked === "indeterminate") renderValue = "mixed";
         return (
             <div style={{ display: 'flex' }}>
-                <Checkbox onChange={this.handleChange} checked={this.state.checked}>
+                <Checkbox
+                    onChange={this.handleChange}
+                    checked={this.state.checked}
+                >
                     Controlled Checkbox
                 </Checkbox>
                 <Spacer/>
-                <Typography style={{ whiteSpace: 'nowrap', width: '180px' }}>Value: {this.state.checked ? 'checked' : 'unchecked'}</Typography>
+                <Button onClick={this.toggle} icon={{src: "Check", position: "left"}} sizeVariant="small" variant="secondary">Toggle Checked</Button>
                 <Spacer/>
-                <Button onClick={this.toggle}>Toggle</Button>
+                <Button onClick={this.toggleIndeterminate} icon={{src: "Minus", position: "left"}} sizeVariant="small" variant="secondary">Toggle Indeterminate</Button>
+                <Spacer/>
+                <Typography style={{ whiteSpace: 'nowrap', width: '180px' }}>Value: {renderValue}</Typography>
             </div>
         );
     }

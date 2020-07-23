@@ -1,12 +1,12 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import clearSearch from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/ClearSearch";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
 import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import translate from "@insite/client-framework/Translate";
-import clearSearch from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/ClearSearch";
-import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {
@@ -55,7 +55,6 @@ const widgetModule: WidgetModule = {
         group: "Order History",
         displayName: "Clear Filters Button",
         allowedContexts: [OrderHistoryPageContext],
-        isSystem: true,
     },
 };
 

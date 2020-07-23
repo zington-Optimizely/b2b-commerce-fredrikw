@@ -1,7 +1,7 @@
-import * as React from "react";
 import FieldDefinition, { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import styled from "styled-components";
 import Tooltip from "@insite/shell/Components/Icons/Tooltip";
+import * as React from "react";
+import styled from "styled-components";
 
 interface Props {
     fieldDefinition: FieldDefinition | (ChildFieldDefinition & { fieldType?: undefined });

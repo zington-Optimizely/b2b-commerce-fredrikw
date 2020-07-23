@@ -1,7 +1,7 @@
-import { createHandlerChainRunner, ApiHandlerDiscreteParameter } from "@insite/client-framework/HandlerCreator";
-import { UpdateMessageApiParameter, updateMessage } from "@insite/client-framework/Services/MessageService";
-import { MessageModel } from "@insite/client-framework/Types/ApiModels";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { updateMessage, UpdateMessageApiParameter } from "@insite/client-framework/Services/MessageService";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
+import { MessageModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ message: MessageModel; isRead: boolean; }, UpdateMessageApiParameter, MessageModel>;
 

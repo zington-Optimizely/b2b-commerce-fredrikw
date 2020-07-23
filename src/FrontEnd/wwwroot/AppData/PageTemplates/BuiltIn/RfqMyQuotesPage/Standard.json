@@ -1,22 +1,43 @@
 {
-  "id": "fb1591b7-1c65-41c0-935a-38e59727fc31",
-  "parentId": "f9c98cf8-c69d-400b-9a6f-8367be20698e",
-  "nodeId": "9b466087-9d2e-41ef-8341-c9c75d3e5b85",
-  "sortOrder": 0,
-  "fields": {
-    "url": "RfqMyQuotesPage"
-  },
-  "translatableFields": {},
+  "nodeId": "556e2423-f2a5-4f82-915a-f244d443bff2",
+  "name": "My Quotes",
   "type": "RfqMyQuotesPage",
+  "parentId": "a46310a5-374a-4d1e-a4f2-b3614b727065",
+  "sortOrder": 0,
+  "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+  "id": "16fa52df-e745-4dc3-a416-86a6ca717f3c",
+  "generalFields": {
+    "horizontalRule": "",
+    "tags": [],
+    "hideBreadcrumbs": false
+  },
+  "translatableFields": {
+    "title": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "My Quotes"
+    },
+    "urlSegment": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "MyQuotes"
+    }
+  },
+  "contextualFields": {},
   "widgets": [
     {
-      "id": "f3414a2e-9fa5-4a0f-8655-720d4632e5c6",
-      "parentId": "fb1591b7-1c65-41c0-935a-38e59727fc31",
+      "parentId": "16fa52df-e745-4dc3-a416-86a6ca717f3c",
       "type": "Basic/PageTitle",
       "zone": "Content",
-      "fields": {},
-      "translatableFields": {}
+      "id": "55e6fbdb-5a61-47a8-88ae-28e232217464",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
+      "parentId": "16fa52df-e745-4dc3-a416-86a6ca717f3c",
+      "zone": "Content",
+      "type": "RfqMyQuotes/RfqMyQuotesTypeSelector",
+      "id": "e76b14c4-a2b1-41d9-8eeb-a7d4d1b46b8d",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
     }
-  ],
-  "websiteId": "5c028c3a-c7f1-41fe-a4c0-1414b4c7acdb"
+  ]
 }

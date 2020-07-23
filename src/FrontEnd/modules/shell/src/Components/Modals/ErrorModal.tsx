@@ -1,9 +1,9 @@
-import * as React from "react";
-import styled from "styled-components";
 import Modal from "@insite/mobius/Modal";
-import { connect, DispatchProp } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, DispatchProp } from "react-redux";
+import styled from "styled-components";
 
 const mapStateToProps = ({ errorModal: { isOpen, message, error, onCloseAction } }: ShellState) => ({
     isOpen,

@@ -1,13 +1,13 @@
-import * as React from "react";
-import styled, { css } from "styled-components";
-import { FormFieldProps } from "@insite/mobius/FormField";
-import { CheckboxProps, CheckboxPresentationProps } from "@insite/mobius/Checkbox";
+import { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
 import Clickable from "@insite/mobius/Clickable";
-import Typography from "@insite/mobius/Typography";
+import { FormFieldProps } from "@insite/mobius/FormField";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Popover from "@insite/mobius/Popover";
+import Typography from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import * as React from "react";
+import styled, { css } from "styled-components";
 
 type Props = {
     title: string;

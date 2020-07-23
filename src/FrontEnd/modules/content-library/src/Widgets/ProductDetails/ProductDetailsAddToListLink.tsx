@@ -1,13 +1,13 @@
-import * as React from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
 import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
@@ -55,7 +55,6 @@ const widgetModule: WidgetModule = {
         displayName: "Add to List Link",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

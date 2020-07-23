@@ -1,9 +1,9 @@
-import { Draft } from "immer";
-import { AddressFieldCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { AddressFieldsState } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsState";
 import { GetAddressFieldsApiParameter } from "@insite/client-framework/Services/WebsiteService";
+import { AddressFieldsState } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsState";
 import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
+import { AddressFieldCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { Draft } from "immer";
 
 const initialState: AddressFieldsState = {
     dataViews: {},

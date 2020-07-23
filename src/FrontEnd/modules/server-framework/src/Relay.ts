@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
+import { Request, Response } from "express";
 
 interface ApiMethod {
     (request: Request, response: Response): Promise<void>;
@@ -88,8 +88,8 @@ function createRelay(prefix: string) {
 // This code is always the first to access process.env.ISC_API_URL so it has to make sure it's right.
 let ISC_API_URL = process.env.ISC_API_URL;
 if (!ISC_API_URL) {
-    logger.warn("ISC_API_URL environment variable not found, defaulting to https://commerce.local.com/.");
-    ISC_API_URL = process.env.ISC_API_URL = "https://commerce.local.com/";
+    logger.warn("ISC_API_URL environment variable not found, defaulting to http://commerce.local.com/.");
+    ISC_API_URL = process.env.ISC_API_URL = "http://commerce.local.com/";
 } else if (!ISC_API_URL.startsWith("http")) {
     logger.warn("ISC_API_URL doesn't start with `http`, prefixing with `https://`.");
     ISC_API_URL = process.env.ISC_API_URL = `https://${process.env.ISC_API_URL}`;
@@ -113,6 +113,7 @@ const relay: Relay = {
     email: relayMethod,
     excel: relayMethod,
     sitemap: relayMethod,
+    afterimpersonate: relayMethod,
 };
 
 export default relay;

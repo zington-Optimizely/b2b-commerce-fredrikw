@@ -1,22 +1,23 @@
+import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
+import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
-import Accordion, { AccordionPresentationProps } from "@insite/mobius/Accordion";
-import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection";
-import React, { FC, useEffect } from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
-import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import BillingAndShippingInfo from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAndShippingInfo";
 import PickUpLocation from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PickUpLocation";
-import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
+import Accordion, { AccordionPresentationProps } from "@insite/mobius/Accordion";
+import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { FC, useEffect } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cartState = getCurrentCartState(state);
@@ -104,13 +105,21 @@ const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
 
     const goBackToShipping = () => shippingPageNavLink && history.push(shippingPageNavLink.url);
 
-    const sectionTitle = fulfillmentMethod === "Ship" ? "Billing & Shipping Information" : "Pick Up Location";
+    const sectionTitle = fulfillmentMethod === FulfillmentMethod.Ship ? "Billing & Shipping Information" : "Pick Up Location";
     const { carrier, shipVia, requestedDeliveryDateDisplay, requestedPickupDateDisplay } = cart;
 
     return (
-        <Accordion {...styles.accordion} headingLevel={2}>
-            <AccordionSection title={translate(sectionTitle)} {...styles.shippingInfoAccordionSection}>
-                {fulfillmentMethod === "Ship"
+        <Accordion
+            {...styles.accordion}
+            headingLevel={2}
+            data-test-selector="checkoutReviewAndSubmitShippingInfo"
+        >
+            <AccordionSection
+                title={translate(sectionTitle)}
+                {...styles.shippingInfoAccordionSection}
+                data-test-selector="checkoutReviewAndSubmitShippingInfo_accordionSection"
+            >
+                {fulfillmentMethod === FulfillmentMethod.Ship
                 && <BillingAndShippingInfo
                     billTo={billToState.value}
                     shipTo={shipToState.value}
@@ -121,7 +130,7 @@ const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
                     onEditShipTo={goBackToShipping}
                 />
                 }
-                {fulfillmentMethod === "PickUp"
+                {fulfillmentMethod === FulfillmentMethod.PickUp
                 && <PickUpLocation
                     location={pickUpWarehouse!}
                     billTo={billToState.value}
@@ -141,7 +150,6 @@ const widgetModule: WidgetModule = {
         group: "Checkout - Review & Submit",
         allowedContexts: [CheckoutReviewAndSubmitPageContext],
         displayName: "Shipping Info",
-        isSystem: true,
     },
 };
 

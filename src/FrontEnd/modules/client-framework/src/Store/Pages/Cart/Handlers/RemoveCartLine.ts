@@ -1,10 +1,10 @@
-import { RemoveCartLineApiParameter, removeCartLine as removeCartLineApi } from "@insite/client-framework/Services/CartService";
-import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { removeCartLine as removeCartLineApi, RemoveCartLineApiParameter } from "@insite/client-framework/Services/CartService";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 
 type HandlerType = ApiHandlerDiscreteParameter<{

@@ -1,10 +1,10 @@
-import { CountryCollectionModel } from "@insite/client-framework/Types/ApiModels";
-import { GetCurrentCountriesApiParameter, getCurrentCountries } from "@insite/client-framework/Services/WebsiteService";
 import {
     ApiHandler,
     ApiHandlerDiscreteParameter, createHandlerChainRunner,
     createHandlerChainRunnerOptionalParameter,
 } from "@insite/client-framework/HandlerCreator";
+import { getCurrentCountries, GetCurrentCountriesApiParameter } from "@insite/client-framework/Services/WebsiteService";
+import { CountryCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetCurrentCountriesApiParameter, CountryCollectionModel>;
 

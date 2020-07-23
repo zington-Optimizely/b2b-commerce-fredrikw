@@ -1,38 +1,38 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import getRealTimeWarehouseInventory from "@insite/client-framework/Store/Data/RealTimeInventory/Handlers/GetRealTimeWarehouseInventory";
+import translate from "@insite/client-framework/Translate";
 import {
     AvailabilityDto,
     AvailabilityMessageType,
     ProductSettingsModel, WarehouseDto,
 } from "@insite/client-framework/Types/ApiModels";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import translate from "@insite/client-framework/Translate";
-import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect, ResolveThunks } from "react-redux";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
+import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
+import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
+import { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
 import DataTableHead, { DataTableHeadProps } from "@insite/mobius/DataTable/DataTableHead";
 import DataTableHeader, { DataTableHeaderProps } from "@insite/mobius/DataTable/DataTableHeader";
-import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
 import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTableRow";
-import { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
-import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import styled, { css } from "styled-components";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
-import AlertTriangle from "@insite/mobius/Icons/AlertTriangle";
-import X from "@insite/mobius/Icons/X";
-import Check from "@insite/mobius/Icons/Check";
 import Icon, { IconWrapper } from "@insite/mobius/Icon";
-import safeColor from "@insite/mobius/utilities/safeColor";
+import AlertTriangle from "@insite/mobius/Icons/AlertTriangle";
+import Check from "@insite/mobius/Icons/Check";
+import X from "@insite/mobius/Icons/X";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import getRealTimeWarehouseInventory from "@insite/client-framework/Store/Data/RealTimeInventory/Handlers/GetRealTimeWarehouseInventory";
+import safeColor from "@insite/mobius/utilities/safeColor";
+import React, { FC } from "react";
+import { connect, ResolveThunks } from "react-redux";
+import styled, { css } from "styled-components";
 
 interface OwnProps {
     productId: string;

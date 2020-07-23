@@ -1,7 +1,8 @@
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
-import { HandlerWithResult, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { addWishList, addWishListLine, addWishListLines } from "@insite/client-framework/Services/WishListService";
+import isApiError from "@insite/client-framework/Common/isApiError";
+import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { addWishList, addWishListLine, addWishListLines } from "@insite/client-framework/Services/WishListService";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface AddToWishListParameter {
     products: ProductModelExtended[];
@@ -18,7 +19,11 @@ export const AddWishList: HandlerType = async props => {
     try {
         props.result.wishList = props.parameter.selectedWishList ?? await addWishList({ name: props.parameter.newListName });
     } catch (error) {
-        props.result.errorMessage = JSON.parse(error.body || "{}").message || error.message;
+        if (isApiError(error) && error.status === 400) {
+            props.result.errorMessage = error.errorJson.message;
+            return;
+        }
+        throw error;
     }
 };
 
@@ -45,7 +50,11 @@ export const AddLineToWishList: HandlerType = async props => {
             await addWishListLines({ wishList: props.result.wishList, lines });
         }
     } catch (error) {
-        props.result.errorMessage = JSON.parse(error.body || "{}").message || error.message;
+        if (isApiError(error) && error.status === 400) {
+            props.result.errorMessage = error.errorJson.message;
+            return;
+        }
+        throw error;
     }
 };
 

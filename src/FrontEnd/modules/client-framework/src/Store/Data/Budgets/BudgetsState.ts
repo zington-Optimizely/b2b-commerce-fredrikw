@@ -1,5 +1,5 @@
-import { BudgetModel } from "@insite/client-framework/Types/ApiModels";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { BudgetModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface BudgetsState {
     readonly dataViews: Dictionary<DataView>;

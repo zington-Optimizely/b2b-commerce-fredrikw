@@ -1,4 +1,4 @@
-import { ShipToModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
+import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type OneTimeAddressState = {
     address: ShipToModel;

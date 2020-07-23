@@ -1,9 +1,9 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import React, { FC } from "react";
-import CustomerCard, { CustomerCardStyles } from "@insite/content-library/Components/CustomerCard";
 import { BaseAddressModel, PaginationModel } from "@insite/client-framework/Types/ApiModels";
+import CustomerCard, { CustomerCardStyles } from "@insite/content-library/Components/CustomerCard";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
 import { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React, { FC } from "react";
 
 interface OwnProps {
     customers: BaseAddressModel[];

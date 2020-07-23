@@ -1,13 +1,13 @@
-import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { getPageDefinitions, LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
-import ShellState from "@insite/shell/Store/ShellState";
-import { addPage, cancelAddPage } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import Scrim from "@insite/mobius/Overlay/Scrim";
-import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
-import TextField from "@insite/mobius/TextField";
 import Select from "@insite/mobius/Select";
+import TextField from "@insite/mobius/TextField";
+import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
+import { getPageDefinitions, LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
+import { addPage, cancelAddPage } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps {
     addingPageUnderId: string;
@@ -121,7 +121,7 @@ class AddPage extends React.Component<Props, State> {
                 <TextField label="Display Name" name="DisplayName" value={this.state.pageName} onChange={this.onNameChange} error={this.state.pageNameError} />
                 <Select disabled={!!this.props.copyPageId} label="Page Type" name="PageType" value={this.state.selectedPageType} onChange={this.onPageTypeChange} error={this.state.pageTypeError}>
                     <option value="">Select Type</option>
-                    {pageDefinitionsWithType.filter(o => o.isDeletable).map((pageDefinition: LoadedPageDefinition) =>
+                    {pageDefinitionsWithType.filter(o => o.pageType === "Content").map((pageDefinition: LoadedPageDefinition) =>
                         <option key={pageDefinition.type} value={pageDefinition.type}>
                             {pageDefinition.type}
                         </option>,

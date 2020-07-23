@@ -1,10 +1,10 @@
-import { PublishablePageInfoModel } from "@insite/shell/Services/ContentAdminService";
-import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import { Dictionary } from "@insite/client-framework/Common/Types";
 import ContentMode from "@insite/client-framework/Common/ContentMode";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import LoadedState from "@insite/client-framework/Types/LoadedState";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { PublishablePageInfoModel } from "@insite/shell/Services/ContentAdminService";
 
 export interface LanguageModel extends BasicLanguageModel {
     description: string;
@@ -37,4 +37,8 @@ export interface ShellContextState {
     showModal?: "Publish" | "Bulk Publish";
     publishInTheFuture?: true;
     pagePublishInfo: LoadedState<PublishablePageInfoModel[]>;
+    publishOn?: Date;
+    rollbackOn?: Date;
+    isPublishEdit?: boolean;
+    failedToPublishPageIds?: Dictionary<boolean>;
 }

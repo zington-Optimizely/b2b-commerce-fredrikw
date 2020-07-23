@@ -1,5 +1,5 @@
-import { createHandlerChainRunnerOptionalParameter, ApiHandlerDiscreteParameter } from "@insite/client-framework/HandlerCreator";
-import { TokenExConfig, getTokenExConfig, GetTokenExConfigApiParameter } from "@insite/client-framework/Services/SettingsService";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { getTokenExConfig, GetTokenExConfigApiParameter, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ token?: string; }, GetTokenExConfigApiParameter, TokenExConfig>;
 

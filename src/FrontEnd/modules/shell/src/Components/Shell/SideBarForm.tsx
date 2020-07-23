@@ -1,8 +1,8 @@
+import Button from "@insite/mobius/Button";
+import Typography from "@insite/mobius/Typography";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import * as React from "react";
 import styled from "styled-components";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import Typography from "@insite/mobius/Typography";
-import Button from "@insite/mobius/Button";
 
 interface Props {
     title: string;

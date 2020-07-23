@@ -1,13 +1,14 @@
-import * as React from "react";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
+import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { css } from "styled-components";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import * as React from "react";
 import { useContext } from "react";
-import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { css } from "styled-components";
 
 export interface OrderDetailsShippingMethodStyles {
     titleText?: TypographyProps;
@@ -34,7 +35,7 @@ const OrderDetailsShippingMethod: React.FunctionComponent = () => {
         return null;
     }
 
-    const hasShippingMethod = (order.fulfillmentMethod === "Ship" || !order.fulfillmentMethod) && order.shipCode;
+    const hasShippingMethod = (order.fulfillmentMethod === FulfillmentMethod.Ship || !order.fulfillmentMethod) && order.shipCode;
 
     if (!hasShippingMethod) {
         return null;
@@ -53,7 +54,6 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",
-        isSystem: true,
     },
 };
 

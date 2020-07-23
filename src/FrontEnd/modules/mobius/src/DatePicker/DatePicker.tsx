@@ -1,9 +1,9 @@
 import * as React from "react";
 import DateTimePicker, { DateTimePickerProps } from "react-datetime-picker/dist/entry.nostyle";
-import styled, { withTheme, ThemeProps } from "styled-components";
+import styled, { ThemeProps, withTheme } from "styled-components";
 import FormField, {
-    FormFieldPresentationProps,
     FormFieldComponentProps,
+    FormFieldPresentationProps,
     FormFieldSizeVariant,
 } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
@@ -12,14 +12,14 @@ import Icon, { IconPresentationProps } from "../Icon";
 import { chevronLeftString } from "../Icons/ChevronLeft";
 import { chevronRightString } from "../Icons/ChevronRight";
 import applyPropBuilder from "../utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import getColor from "../utilities/getColor";
 import getContrastColor from "../utilities/getContrastColor";
 import getProp from "../utilities/getProp";
+import { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import safeColor from "../utilities/safeColor";
-import { StyledProp } from "../utilities/InjectableCss";
 import uniqueId from "../utilities/uniqueId";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
 import VisuallyHidden from "../VisuallyHidden";
 
 export interface DatePickerPresentationProps extends
@@ -376,7 +376,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
         const pickerInput = (
             <DateTimePickerStyle
                 _sizeVariant={sizeVariant}
-                css={_cssOverrides.datePicker}
+                css={datePickerCss}
                 disabled={!!isDisabled}
                 role="group"
                 aria-invalid={selectedDayDisabled || (required && isEmpty) || false}

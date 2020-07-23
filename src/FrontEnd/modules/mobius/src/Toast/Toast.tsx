@@ -1,11 +1,10 @@
 import * as React from "react";
 import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
-import styled, { withTheme, css } from "styled-components";
+import styled, { css, withTheme } from "styled-components";
 import Button, { ButtonPresentationProps } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import ToasterContext from "./ToasterContext";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
@@ -14,9 +13,10 @@ import getColor from "../utilities/getColor";
 import getProp from "../utilities/getProp";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import resolveColor from "../utilities/resolveColor";
 import VisuallyHidden from "../VisuallyHidden";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import ToasterContext from "./ToasterContext";
 
 export interface ToastPresentationProps {
     /** Props that will be passed to the typography body component if the `body` is a string.

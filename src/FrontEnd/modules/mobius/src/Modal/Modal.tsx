@@ -1,18 +1,18 @@
+import { IconPresentationProps } from "@insite/mobius/Icon";
 import * as React from "react";
-import styled, { withTheme, ThemeProps, css } from "styled-components";
-import Button, { ButtonPresentationProps, ButtonIcon } from "../Button";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
+import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
 import { BaseTheme } from "../globals/baseTheme";
 import Overlay, { OverlayComponentProps, Transition } from "../Overlay";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
 import getColor from "../utilities/getColor";
-import injectCss from "../utilities/injectCss";
-import omitMultiple from "../utilities/omitMultiple";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
+import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import { IconPresentationProps } from "@insite/mobius/Icon";
+import omitMultiple from "../utilities/omitMultiple";
+import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 
 export type SizeVariant = "small" | "medium" |  "large";
 

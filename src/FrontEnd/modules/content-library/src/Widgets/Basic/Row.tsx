@@ -1,10 +1,10 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
+import { ColumnAlignment } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import GridItem, { GridWidths } from "@insite/mobius/GridItem";
 import GridContainer from "@insite/mobius/GridContainer";
-import { ColumnAlignment } from "@insite/client-framework/Types/FieldDefinition";
+import GridItem, { GridWidths } from "@insite/mobius/GridItem";
+import * as React from "react";
 
 const enum fields {
     columns = "columns",
@@ -67,7 +67,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Basic",
         icon: "Row",
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.columns,

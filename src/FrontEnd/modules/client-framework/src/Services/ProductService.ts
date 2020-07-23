@@ -11,6 +11,6 @@ export interface BatchGetProductsApiParameter extends ApiParameter {
 const productsUrl = "/api/v1/products";
 
 export function batchGetProducts(parameter: BatchGetProductsApiParameter) {
-    return request<ProductDto[]>(`${productsUrl}/batchget`, "POST", { "Content-Type": "application/json" },
+    return request<(ProductDto | null)[]>(`${productsUrl}/batchget`, "POST", { "Content-Type": "application/json" },
         JSON.stringify({ extendedNames: parameter.extendedNames }));
 }

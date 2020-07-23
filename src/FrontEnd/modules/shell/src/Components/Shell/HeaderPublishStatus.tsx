@@ -1,9 +1,10 @@
+import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
 import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import styled from "styled-components";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 
 const mapStateToProps = (state: ShellState) => {
     const {
@@ -17,12 +18,20 @@ const mapStateToProps = (state: ShellState) => {
         pageEditor: {
             isEditingNewPage,
         },
+        pageTree: {
+            treeNodesByParentId,
+            headerTreeNodesByParentId,
+            footerTreeNodesByParentId,
+        },
     } = state;
 
-    const pageId = getCurrentPageForShell(state).id;
+    const page = getCurrentPageForShell(state);
+    const pageId = page.id;
 
     return ({
         pageId,
+        futurePublishOn: getPageState(pageId, treeNodesByParentId[page.parentId], headerTreeNodesByParentId[page.parentId],
+            footerTreeNodesByParentId[page.parentId])?.futurePublishOn,
         contentMode,
         loaded: pagePublishInfo.value,
         hasDraft: isEditingNewPage || (pagePublishInfo.value && !!pagePublishInfo.value
@@ -44,17 +53,17 @@ const HeaderPublishStatus: FC<Props> = ({
                                             loaded,
                                             hasDraft,
                                             loadPublishInfo,
+                                            futurePublishOn,
                                         }) => {
     useEffect(() => loadPublishInfo(pageId), [pageId]);
 
     let value: "Published" | "Draft" | "Scheduled" | undefined;
 
-    // TODO ISC-11129: Implement the "scheduled" option.
     if (loaded) {
         switch (contentMode) {
         case "Previewing":
         case "Editing":
-            value = hasDraft ? "Draft" : "Published";
+            value = (futurePublishOn && futurePublishOn > new Date()) ? "Scheduled" : (hasDraft ? "Draft" : "Published");
             break;
         default:
             value = "Published";
@@ -63,7 +72,6 @@ const HeaderPublishStatus: FC<Props> = ({
     }
 
     return <StyledSpan data-test-selector="publishStatus">{value || "..."}</StyledSpan>;
-    41;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderPublishStatus);

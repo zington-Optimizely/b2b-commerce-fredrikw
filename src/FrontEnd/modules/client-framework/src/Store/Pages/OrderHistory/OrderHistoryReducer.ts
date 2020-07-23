@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
-import { Draft } from "immer";
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
+import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
 import { UpdateSearchFieldsType } from "@insite/client-framework/Types/UpdateSearchFieldsType";
+import { Draft } from "immer";
 
 const initialState: OrderHistoryState = {
     isReordering: {},

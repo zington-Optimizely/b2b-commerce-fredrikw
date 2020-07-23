@@ -1,10 +1,10 @@
-import { connect, ResolveThunks } from "react-redux";
-import * as React from "react";
 import Icon from "@insite/mobius/Icon";
-import shellTheme from "@insite/shell/ShellTheme";
-import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
 import LogOut from "@insite/mobius/Icons/LogOut";
+import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
+import shellTheme from "@insite/shell/ShellTheme";
 import { logOut } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = () => ({
 });

@@ -1,4 +1,4 @@
-import { Handler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { BudgetWidgetNames } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
 
 type HandlerType = Handler<{ value: BudgetWidgetNames; }>;

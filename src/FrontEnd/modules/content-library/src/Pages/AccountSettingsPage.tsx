@@ -1,13 +1,13 @@
-import * as React from "react";
 import Zone from "@insite/client-framework/Components/Zone";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
-import { connect, ResolveThunks } from "react-redux";
-import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentAccountState } from "@insite/client-framework/Store/Data/Accounts/AccountsSelector";
 import loadCurrentAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/LoadCurrentAccount";
+import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     shouldLoadAccount: !getCurrentAccountState(state).value,
@@ -47,7 +47,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

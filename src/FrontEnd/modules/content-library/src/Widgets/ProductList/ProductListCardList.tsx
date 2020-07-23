@@ -1,25 +1,25 @@
-import React, { FC } from "react";
-import { connect } from "react-redux";
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { ProductContext } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
 import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
-import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
-import { ProductContext } from "@insite/client-framework/Components/ProductContext";
-import ProductListProductCard from "@insite/content-library/Widgets/ProductList/ProductListProductCard";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
-import { css } from "styled-components";
-import ProductListProductGridCard from "@insite/content-library/Widgets/ProductList/ProductListProductGridCard";
 import CardContainerMultiColumn, { CardContainerMultiColumnStyles } from "@insite/content-library/Components/CardContainerMultiColumn";
+import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
+import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
+import ProductListProductCard from "@insite/content-library/Widgets/ProductList/ProductListProductCard";
+import ProductListProductGridCard from "@insite/content-library/Widgets/ProductList/ProductListProductGridCard";
 import Hidden from "@insite/mobius/Hidden";
-import getColor from "@insite/mobius/utilities/getColor";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { FC } from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     showImage = "showImage",
@@ -179,7 +179,6 @@ const widgetModule: WidgetModule = {
         group: "Product List",
         displayName: "Card List",
         allowedContexts: [ProductListPageContext],
-        isSystem: true,
         fieldDefinitions: [
             {
                 name: fields.showImage,

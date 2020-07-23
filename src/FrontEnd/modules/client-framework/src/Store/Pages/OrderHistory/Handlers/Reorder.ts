@@ -1,12 +1,12 @@
 import {
-    createHandlerChainRunner,
     ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
-import { CartLineCollectionModel, CartLineModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
-import { addLineCollection } from "@insite/client-framework/Services/CartService";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { addLineCollection } from "@insite/client-framework/Services/CartService";
 import { getOrder } from "@insite/client-framework/Services/OrderService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import { CartLineCollectionModel, CartLineModel, OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 interface ReorderParameter {
     orderNumber: string;

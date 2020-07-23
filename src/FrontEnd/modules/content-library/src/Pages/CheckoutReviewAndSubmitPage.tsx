@@ -1,17 +1,17 @@
-import Page from "@insite/mobius/Page";
 import Zone from "@insite/client-framework/Components/Zone";
-import React, { Component } from "react";
-import PageProps from "@insite/client-framework/Types/PageProps";
-import PageModule from "@insite/client-framework/Types/PageModule";
-import { ResolveThunks, connect } from "react-redux";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
-import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
+import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
+import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
+import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import setPlaceOrderErrorMessage from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetPlaceOrderErrorMessage";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import Page from "@insite/mobius/Page";
+import React, { Component } from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 const mapDispatchToProps = {
     loadCurrentCart,
@@ -59,7 +59,7 @@ const pageModule: PageModule = {
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
 

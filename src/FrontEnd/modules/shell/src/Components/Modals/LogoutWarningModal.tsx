@@ -1,11 +1,11 @@
-import * as React from "react";
-import Modal from "@insite/mobius/Modal";
-import { connect, DispatchProp } from "react-redux";
-import ShellState from "@insite/shell/Store/ShellState";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
 import Button from "@insite/mobius/Button";
+import Modal from "@insite/mobius/Modal";
+import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
 import { refreshAccessToken } from "@insite/shell/Services/AccessTokenService";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import ShellState from "@insite/shell/Store/ShellState";
+import * as React from "react";
+import { connect, DispatchProp } from "react-redux";
 
 const mapStateToProps = ({ logoutWarningModal: { isOpen } }: ShellState) => ({
     isOpen,

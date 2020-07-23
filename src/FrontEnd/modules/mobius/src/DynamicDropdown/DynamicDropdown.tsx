@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import * as React from "react";
-import styled, { withTheme, css, ThemeProps } from "styled-components";
-import filter from "./filter";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 import FormField, {
+    FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-    FormFieldComponentProps,
 } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
@@ -20,10 +19,11 @@ import get from "../utilities/get";
 import getColor from "../utilities/getColor";
 import { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
+import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
 import safeColor from "../utilities/safeColor";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
-import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
+import filter from "./filter";
 
 export interface DynamicDropdownPresentationProps extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.

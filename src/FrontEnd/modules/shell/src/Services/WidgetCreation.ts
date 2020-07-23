@@ -1,13 +1,13 @@
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
-import { LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
 import {
     createContextualIds,
     getContextualId,
     prepareFields,
 } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
-import { setDefaultFieldValues } from "@insite/shell/Services/PageCreation";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { setDefaultFieldValues } from "@insite/shell/Services/PageCreation";
 import { LanguageModel } from "@insite/shell/Store/ShellContext/ShellContextState";
 
 export function setupWidgetModel(widgetDefinition: LoadedWidgetDefinition,

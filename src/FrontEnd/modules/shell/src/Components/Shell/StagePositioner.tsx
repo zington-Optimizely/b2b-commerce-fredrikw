@@ -1,6 +1,6 @@
+import ShellState from "@insite/shell/Store/ShellState";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import ShellState from "@insite/shell/Store/ShellState";
 
 const mapStageModeToProps = (state: ShellState) => ({
     overflowAuto: state.shellContext.stageMode !== "Desktop",

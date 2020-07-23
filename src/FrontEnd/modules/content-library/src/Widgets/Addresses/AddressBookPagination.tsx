@@ -1,10 +1,10 @@
-import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
-import updateSearchFields from "@insite/client-framework/Store/Pages/Addresses/Handlers/UpdateSearchFields";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import * as React from "react";
-import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { connect, ResolveThunks } from "react-redux";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import updateSearchFields from "@insite/client-framework/Store/Pages/Addresses/Handlers/UpdateSearchFields";
+import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
+import * as React from "react";
+import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps {
 }
@@ -71,7 +71,6 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Addresses",
         icon: "LinkList",
-        isSystem: true,
     },
 };
 

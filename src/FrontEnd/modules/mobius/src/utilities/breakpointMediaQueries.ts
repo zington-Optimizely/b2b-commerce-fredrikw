@@ -1,6 +1,6 @@
+import { css } from "styled-components";
 import baseTheme from "../globals/baseTheme";
 import { StyledProp } from "./InjectableCss";
-import { css } from "styled-components";
 
 export type BreakpointKey = "xs" | "sm" | "md" | "lg" | "xl";
 

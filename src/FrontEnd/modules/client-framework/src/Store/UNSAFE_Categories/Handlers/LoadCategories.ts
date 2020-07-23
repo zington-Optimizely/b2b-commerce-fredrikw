@@ -1,6 +1,6 @@
-import { CategoryCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { createHandlerChainRunnerOptionalParameter, ErrorHandler, Handler } from "@insite/client-framework/HandlerCreator";
 import { getCategories } from "@insite/client-framework/Services/CategoryService";
-import { Handler, createHandlerChainRunnerOptionalParameter, ErrorHandler } from "@insite/client-framework/HandlerCreator";
+import { CategoryCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{}, { categoryCollection?: CategoryCollectionModel }>;
 

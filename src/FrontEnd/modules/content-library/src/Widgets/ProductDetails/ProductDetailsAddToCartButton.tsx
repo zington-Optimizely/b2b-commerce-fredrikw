@@ -1,12 +1,12 @@
-import * as React from "react";
+import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { connect } from "react-redux";
-import { ButtonPresentationProps } from "@insite/mobius/Button";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
+import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ButtonPresentationProps } from "@insite/mobius/Button";
+import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
@@ -53,7 +53,6 @@ const widgetModule: WidgetModule = {
         displayName: "Add to Cart Button",
         group: "Product Details",
         allowedContexts: [ProductDetailPageContext],
-        isSystem: true,
     },
 };
 

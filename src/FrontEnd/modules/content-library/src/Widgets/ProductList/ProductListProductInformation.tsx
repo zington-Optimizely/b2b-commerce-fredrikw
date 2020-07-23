@@ -1,16 +1,16 @@
-import React, { FC } from "react";
-import { connect } from "react-redux";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import ProductAttributes, { ProductAttributesStyles } from "@insite/content-library/Components/ProductAttributes";
+import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
-import ProductAttributes, { ProductAttributesStyles } from "@insite/content-library/Components/ProductAttributes";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
+import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
+import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import React, { FC } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 
 interface OwnProps extends HasProductContext {
     showBrand: boolean;

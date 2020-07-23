@@ -1,19 +1,19 @@
-import * as React from "react";
-import { css } from "styled-components";
-import { connect } from "react-redux";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import translate from "@insite/client-framework/Translate";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Page from "@insite/mobius/Page";
+import Typography from "@insite/mobius/Typography";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
-import Typography from "@insite/mobius/Typography";
-import translate from "@insite/client-framework/Translate";
+import * as React from "react";
+import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     siteName: state.context.website.name,
@@ -81,8 +81,10 @@ const pageModule: PageModule = {
     definition: {
         hasEditableTitle: false,
         hasEditableUrlSegment: false,
-        isSystemPage: true,
+        pageType: "System",
     },
 };
+
+export const HeaderContext = "HeaderContext";
 
 export default pageModule;

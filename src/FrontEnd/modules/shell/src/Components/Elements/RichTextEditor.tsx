@@ -3,16 +3,18 @@
 ///<reference path= "../../../node_modules/react-froala-wysiwyg/lib/index.d.ts" />
 // eslint-disable-next-line spaced-comment
 ///<reference path= "../../Froalaeditor.d.ts" />
+import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import { getTheme } from "@insite/client-framework/Services/ContentService";
 import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import Modal from "@insite/mobius/Modal";
-import { themeTypographyStyleString } from "@insite/mobius/Typography/TypographyStyle";
 import Scrim from "@insite/mobius/Overlay/Scrim";
+import { themeTypographyStyleString } from "@insite/mobius/Typography/TypographyStyle";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import get from "@insite/mobius/utilities/get";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
+import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import ShellState from "@insite/shell/Store/ShellState";
 import { LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 import CodeMirror from "codemirror";
@@ -36,6 +38,7 @@ import "froala-editor/js/plugins/font_size.min.js";
 import "froala-editor/js/plugins/help.min.js";
 import "froala-editor/js/plugins/image.min.js";
 import "froala-editor/js/plugins/line_breaker.min.js";
+import "froala-editor/js/plugins/line_height.min.js";
 import "froala-editor/js/plugins/link.min.js";
 import "froala-editor/js/plugins/lists.min.js";
 import "froala-editor/js/plugins/paragraph_format.min.js";
@@ -43,7 +46,6 @@ import "froala-editor/js/plugins/quote.min.js";
 import "froala-editor/js/plugins/special_characters.min.js";
 import "froala-editor/js/plugins/video.min.js";
 import "froala-editor/js/plugins/word_paste.min.js";
-import "froala-editor/js/plugins/line_height.min.js";
 import cloneDeep from "lodash/cloneDeep";
 import extend from "lodash/extend";
 import flatten from "lodash/flatten";
@@ -52,8 +54,6 @@ import * as React from "react";
 import FroalaEditor from "react-froala-wysiwyg";
 import { connect, DispatchProp } from "react-redux";
 import styled, { css, ThemeProps } from "styled-components";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { rawRequest } from "@insite/client-framework/Services/ApiService";
 
 const expandArrows = `M15 4.2C14.6 4.2 14.3 4.5 14.3 5s0.3 0.8 0.8 0.8h2.2L12.8 10.1c-0.3 0.3-0.3 0.8 0 1.1 0.1 0.1 0.3
  0.2 0.5 0.2s0.4-0.1 0.5-0.2L18.3 6.8v2.2c0 0.4 0.3 0.8 0.8 0.8s0.8-0.3 0.8-0.8V4.2H15zM11.2 12.8c-0.3-0.3-0.8-0.3-1.1

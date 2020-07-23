@@ -1,8 +1,8 @@
-import { SiteMessageModel } from "@insite/client-framework/Types/ApiModels";
+import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { throwIfClientSide } from "@insite/client-framework/ServerSideRendering";
+import { SiteMessageModel } from "@insite/client-framework/Types/ApiModels";
 import parse, { HTMLReactParserOptions } from "html-react-parser";
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 
 /** Produces a site message dictionary from a site message list. */
 export const processSiteMessages = (messages: SiteMessageModel[] | null, languageCode: string | undefined) => {

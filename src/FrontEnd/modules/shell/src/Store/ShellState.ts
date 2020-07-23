@@ -1,11 +1,11 @@
-import { PageTreeState } from "@insite/shell/Store/PageTree/PageTreeState";
+import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import LinksState from "@insite/client-framework/Store/Links/LinksState";
-import { PageEditorState } from "@insite/shell/Store/PageEditor/PageEditorState";
-import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
-import styleGuideReducer from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
 import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalState";
-import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
+import { PageEditorState } from "@insite/shell/Store/PageEditor/PageEditorState";
+import { PageTreeState } from "@insite/shell/Store/PageTree/PageTreeState";
+import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
+import styleGuideReducer from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
 
 export default interface ShellState {
     readonly data: {

@@ -1,39 +1,52 @@
 # Changelog
 
-DynamicDropdown:
-- added white-space: nowrap for selected text
-- added cursor: pointer for the options default mouse cursor
-- added autocomplete="no" to disable browser's AutoFill feature
+## Next
 
-AccordionSection: added onTogglePanel event.
+**Breaking Changes**
+- `AccordionSection`: is now either fully controlled or fully uncontrolled. 
 
-- Accessibility improvements: 
-    - `RadioGroup` and `CheckboxGroup` will not render fieldsets with only one radio or checkbox
-    - `Tooltip` accepts a prop named `triggerAltText` and includes it as alt text for the trigger icon if not provided. 
-    - `DatePicker` buttons provide alt text
-    - `FileUpload` is more keyboard friendly and only provides one label. 
-    - Modify base theme for higher contrast.
-    - `TextField` accepts a `clickableText` prop that renders a visually hidden text to describe the clickable. 
-    
-`Link` - iconProps was moved to icon property of Link.
-`Toast` - body parameter type was changed to 'React.ReactNode' to have ability to pass siteMessage (which return 'React.ReactNode' type).
-`Menu` - focuses on adjacent element when item in menu is clicked, to close menu while still using CSS-based appearance.
-`LazyImage` - added onLoad and onError callback functions to LazyImageProps.
-`CheckBoxGroup` - modified `onChange` type into to `onChangeHandler`
-`Icon` prop `src` will interpret a string matching the filename in `Icons/*.tsx` and render the corresponding icon. This is especially useful for theme and style extensions.
-`PanelMenu` - menu items are filtered by `excludeFromNavigation` property, only not excluded should be rendered.
-`PanelMenu` - `dataTestSelector` prop removed in lieu of using `data-test-selector` HTML attribute internally.
-`FileUpload` now has a "clear" button and provides a visual transition for file name appearance and clear button appearance. Both are style extensible.
-`Tag` - now respects iconProp color when set.
-`Tooltip` - semantic improvements to the tooltip elements to allow for correct styling. 
+**Improvements**
+- `AccordionSection`: new props `expandIconProps`, `collapseIconProps`, and `toggleTransition` to provide more granular control over iconography. 
+- `DataTable`: Added sortable features to `DataTableHeader`. Style extensibility is through DataTable in theme, and can also be applied to components individually.
 
-Added theme and prop extension points for: 
-- `PanelRow` within `PanelMenu`.
-- `Toast` close button icon and icon source per toast type.
-- `Pagination` accepts a prop to change the navigation button icons.
-- `Modal` close button icon icon.
-- `LazyImage` is now themable.  
-- `Drawer` close button icon is now themable.  
+## Insite Commerce 5.0.2 cut 6/18 docs release
+
+**Breaking changes**
+- `CheckboxGroup`: renamed `onChange` prop into to `onChangeHandler` to avoid HTML attribute collisions.
+- `Link`: removed `iconProps`. Use `icon.iconProps` instead.
+- `PanelMenu`: removed the `dataTestSelector` prop in lieu of using `data-test-selector` HTML attribute.
+
+**Improvements**
+- Accessibility improvements:
+    - Modify base theme for appropriate contrast ratios.
+    - `RadioGroup` and `CheckboxGroup` will render a div rather than a fieldset when it contains only one radio or checkbox.
+    - `Tooltip` added a prop named `triggerAltText` and includes it as alt text for the trigger icon.
+    - `DatePicker` buttons provide alt text.
+    - `FileUpload` is more keyboard friendly and only provides one label.
+    - `TextField` added a `clickableText` prop that renders a visually hidden text to describe the clickable.
+- Added styling extension points to allow for theme and prop styling on:
+    - `PanelRow` within `PanelMenu`.
+    - `Toast` close button icon and icon source per toast type.
+    - `Pagination` navigation button icons.
+    - `Modal` close button icon.
+    - `LazyImage` component as a whole.
+    - `Drawer` close button icon. 
+- `AccordionSection`: added `onTogglePanel` event.
+- `Checkbox`: added an `indeterminate` checked type.
+- `DynamicDropdown`: 
+    - Text displaying selected option is now fully contained to the visual form field. 
+    - Options receive a pointer cursor
+    - Prevents browser autocomplete.
+- `FileUpload`: added a "clear" button. Added a visual transition for file name appearance and clear button appearance. Both are style extensible.
+- `Icon`: 
+    - Added named export `IconMemo`. Use when the same icon is used multiple times within a page, or a set of pages that can be reasonably expected to be rendered in the same session.
+    - Prop `src` will interpret a string matching the filename in `Icons/*.tsx` and render the corresponding icon. Icons whose source is provided this way are dynamically loaded in a second module. The initial site render speed is increased. Also useful for theme and style extensions.
+- `LazyImage`: added `onLoad` and `onError` props. Both are callback functions.
+- `Menu`: improvements to behavior closing menu when menu item is clicked.
+- `PanelMenu`: If a menu item has `excludeFromNavigation` set to true, it will no longer be rendered. 
+- `Tag`: now respects `iconProp` color when set.
+- `Toast`: `body` prop now accepts `ReactNode` instead of `string`. This affects the `addToast` function when using `ToasterContext`.
+- `Tooltip`: semantic improvements to the tooltip elements to allow for correct styling. 
 
 ## 1.0.0-beta.3
 

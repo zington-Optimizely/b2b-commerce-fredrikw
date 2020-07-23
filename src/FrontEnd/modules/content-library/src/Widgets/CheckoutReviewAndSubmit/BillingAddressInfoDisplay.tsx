@@ -1,12 +1,12 @@
-import React from "react";
-import { BillToModel } from "@insite/client-framework/Types/ApiModels";
-import translate from "@insite/client-framework/Translate";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import translate from "@insite/client-framework/Translate";
+import { BillToModel } from "@insite/client-framework/Types/ApiModels";
+import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
+import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import React from "react";
 import { css } from "styled-components";
 
 interface OwnProps {

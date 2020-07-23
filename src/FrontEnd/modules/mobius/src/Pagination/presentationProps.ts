@@ -1,7 +1,7 @@
 import { css } from "styled-components";
-import resolveColor from "../utilities/resolveColor";
-import { ComponentThemeProps } from "../globals/baseTheme";
 import { ButtonProps } from "../Button";
+import { ComponentThemeProps } from "../globals/baseTheme";
+import resolveColor from "../utilities/resolveColor";
 
 const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["defaultProps"] = {
     buttonProps: {

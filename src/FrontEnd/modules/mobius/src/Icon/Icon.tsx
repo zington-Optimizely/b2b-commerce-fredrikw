@@ -1,14 +1,14 @@
 import * as React from "react";
 import SVG from "react-inlinesvg";
 import styled, { ThemeConsumer } from "styled-components";
+import { BaseTheme } from "../globals/baseTheme";
 import applyPropBuilder from "../utilities/applyPropBuilder";
-import injectCss from "../utilities/injectCss";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import omitMultiple from "../utilities/omitMultiple";
-import resolveColor from "../utilities/resolveColor";
+import injectCss from "../utilities/injectCss";
 import isUrl from "../utilities/isUrl";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import { BaseTheme } from "../globals/baseTheme";
+import omitMultiple from "../utilities/omitMultiple";
+import resolveColor from "../utilities/resolveColor";
 
 export interface IconThemableProps {
     /** The color of the icon.
@@ -22,7 +22,9 @@ export interface IconThemableProps {
 export interface IconPresentationProps extends IconThemableProps {
     /** CSS string or styled-components function to be injected into this component. */
     css?: StyledProp<IconProps>;
-    /** A React component or a URL. */
+    /** A string describing the path to the Mobius Icon, React component or a URL.
+     * PLEASE NOTE: Using a string matching the filename in `Icons/*.tsx` will allow the icon source
+     * to be loaded as a second module and will save on initial site load. */
     src?: React.ComponentType | string;
 }
 

@@ -25,7 +25,8 @@ export const SetNeedFullCart: HandlerType = props => {
     props.needFullCart = props.parameter.shouldLoadFullCart
         || pageType === "CheckoutShippingPage"
         || pageType === "CheckoutReviewAndSubmitPage"
-        || pageType === "CartPage";
+        || pageType === "CartPage"
+        || pageType === "RfqRequestQuotePage";
 };
 
 export const PopulateApiParameter: HandlerType = props => {

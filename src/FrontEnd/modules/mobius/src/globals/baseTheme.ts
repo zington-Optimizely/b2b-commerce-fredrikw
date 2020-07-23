@@ -40,7 +40,7 @@ import { PanelMenuPresentationProps } from "../PanelMenu";
 import PanelMenuDefaultProps from "../PanelMenu/presentationProps";
 import { RadioProps } from "../Radio";
 import { RadioGroupProps } from "../RadioGroup";
-import { SelectProps, SelectPresentationProps } from "../Select";
+import { SelectPresentationProps, SelectProps } from "../Select";
 import SelectPresentationPropsDefault from "../Select/presentationProps";
 import { TabPresentationProps } from "../Tab";
 import { TabGroupPresentationProps } from "../TabGroup";
@@ -56,8 +56,8 @@ import { TooltipPresentationProps } from "../Tooltip";
 import TooltipPropsDefault from "../Tooltip/presentationProps";
 import { TypographyPresentationProps } from "../Typography";
 import FieldSetPresentationProps, {
-    FieldSetPropsMock,
     FieldSetGroupPresentationProps,
+    FieldSetPropsMock,
 } from "../utilities/fieldSetProps";
 import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
 

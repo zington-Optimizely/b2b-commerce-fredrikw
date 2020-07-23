@@ -1,40 +1,53 @@
-import { AccountCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { getAccounts, GetAccountsApiParameter } from "@insite/client-framework/Services/AccountService";
-import { ApiHandler, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { AccountCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandler<GetAccountsApiParameter, AccountCollectionModel, {
-    dataViewParameter: GetAccountsApiParameter,
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<GetAccountsApiParameter & HasOnSuccess, GetAccountsApiParameter, AccountCollectionModel>;
 
 export const DispatchBeginLoadAccounts: HandlerType = props => {
-    props.dispatch({
+    const { dispatch, parameter } = props;
+    dispatch({
         type: "Data/Accounts/BeginLoadAccounts",
-        parameter: props.dataViewParameter,
+        parameter,
     });
 };
 
 export const PopulateApiParameter: HandlerType = props => {
-    props.apiParameter = { ...props.dataViewParameter };
+    const newParameter = {
+        ...props.parameter,
+    };
+    delete newParameter.onSuccess;
+    props.apiParameter = newParameter;
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
     props.apiResult = await getAccounts(props.apiParameter);
 };
 
-export const DispatchCompleteLoadAccounts: HandlerType = props => {
-    props.dispatch({
+export const DispatchCompleteAccounts: HandlerType = props => {
+    const { dispatch, parameter, apiResult } = props;
+    dispatch({
         type: "Data/Accounts/CompleteLoadAccounts",
-        collection: props.apiResult,
-        parameter: props.dataViewParameter,
+        parameter,
+        collection: apiResult,
     });
+};
+
+export const ExecuteOnSuccessCallback: HandlerType = props => {
+    props.parameter.onSuccess?.();
 };
 
 export const chain = [
     DispatchBeginLoadAccounts,
     PopulateApiParameter,
     RequestDataFromApi,
-    DispatchCompleteLoadAccounts,
+    DispatchCompleteAccounts,
+    ExecuteOnSuccessCallback,
 ];
 
-const loadAccounts = createHandlerChainRunnerOptionalParameter(chain, {}, "loadAccounts");
+const loadAccounts = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadAccounts");
 export default loadAccounts;

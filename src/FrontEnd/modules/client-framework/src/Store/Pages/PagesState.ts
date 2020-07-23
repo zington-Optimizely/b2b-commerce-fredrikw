@@ -1,25 +1,29 @@
-import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
-import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
-import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
 import AccountSettingsState from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsState";
 import AddressesState from "@insite/client-framework/Store/Pages/Addresses/AddressesState";
 import BrandsState from "@insite/client-framework/Store/Pages/Brands/BrandsState";
+import BudgetManagementState from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
 import CartState from "@insite/client-framework/Store/Pages/Cart/CartState";
 import CheckoutReviewAndSubmitState from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitState";
 import CheckoutShippingState from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingState";
 import InvoiceDetailsState from "@insite/client-framework/Store/Pages/InvoiceDetails/InvoiceDetailsState";
 import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHistory/InvoiceHistoryState";
-import MyListsState from "@insite/client-framework/Store/Pages/MyLists/MyListsState";
+import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
+import MyListsState from "@insite/client-framework/Store/Pages/MyLists/MyListsState";
 import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationState";
+import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
+import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
 import OrderUploadState from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadState";
 import ProductDetailState from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailState";
 import ProductListState from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
-import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
+import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
+import RfqConfirmationState from "@insite/client-framework/Store/Pages/RfqConfirmation/RfqConfirmationState";
+import RfqMyQuotesState from "@insite/client-framework/Store/Pages/RfqMyQuotes/RfqMyQuotesState";
+import RfqQuoteDetailsState from "@insite/client-framework/Store/Pages/RfqQuoteDetails/RfqQuoteDetailsState";
+import RfqRequestQuoteState from "@insite/client-framework/Store/Pages/RfqRequestQuote/RfqRequestQuoteState";
+import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
-import BudgetManagementState from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
-import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 
 export default interface PagesState {
     readonly accountSettings: AccountSettingsState;
@@ -42,6 +46,10 @@ export default interface PagesState {
     readonly productList: ProductListState;
     readonly requestRma: RequestRmaState;
     readonly quickOrder: QuickOrderState;
+    readonly rfqConfirmation: RfqConfirmationState;
+    readonly rfqMyQuotes: RfqMyQuotesState;
+    readonly rfqQuoteDetails: RfqQuoteDetailsState;
+    readonly rfqRequestQuote: RfqRequestQuoteState;
     readonly savedPayments: SavedPaymentsState;
     readonly signIn: SignInState;
 }

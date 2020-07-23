@@ -1,8 +1,8 @@
-import { GetMessagesApiParameter, getMessages } from "@insite/client-framework/Services/MessageService";
 import {
     ApiHandler,
     createHandlerChainRunner,
 } from "@insite/client-framework/HandlerCreator";
+import { getMessages, GetMessagesApiParameter } from "@insite/client-framework/Services/MessageService";
 import { MessageCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetMessagesApiParameter, MessageCollectionModel>;

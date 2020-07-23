@@ -1,7 +1,7 @@
-import * as React from "react";
 import { ThemeTypography } from "@insite/mobius/globals/baseTheme";
 import { PresetHelpers } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
+import * as React from "react";
 
 const ElementTypographyConfig: React.FunctionComponent<{
     element: keyof ThemeTypography;
