@@ -1,11 +1,13 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
+import translate from "@insite/client-framework/Translate";
 import {
     LinkFieldDefinition,
     LinkFieldValue,
 } from "@insite/client-framework/Types/FieldDefinition";
 import Button from "@insite/mobius/Button";
+import Icon from "@insite/mobius/Icon";
 import Tab, { TabProps } from "@insite/mobius/Tab";
 import TabGroup from "@insite/mobius/TabGroup";
 import TextField from "@insite/mobius/TextField";
@@ -78,6 +80,7 @@ const mapDispatchToProps = {
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const StandardIconPropsSource: React.FC = () => <Link color1={shellTheme.colors.text.main}/>;
+const ClearIconPropsSource: React.FC = () => <Icon src="X" />;
 
 class LinkField extends ClickOutside<Props, State> {
     constructor(props: Props) {
@@ -247,11 +250,18 @@ class LinkField extends ClickOutside<Props, State> {
         element.style.top = `${rect.top + rect.height}px`;
     };
 
+    clearFieldValue = () => {
+        this.props.updateField(this.props.fieldDefinition.name, {
+            ...this.props.fieldValue,
+            value: "",
+        });
+    };
+
     render() {
         setTimeout(() => {
             this.positionLinkSelector();
         });
-        const { fieldValue: { type }, fieldDefinition } = this.props;
+        const { fieldValue: { type, value }, fieldDefinition } = this.props;
         const allowUrls = !fieldDefinition.allowUrls || fieldDefinition.allowUrls(this.props.item);
         const allowCategories = !fieldDefinition.allowCategories || fieldDefinition.allowCategories(this.props.item);
         const currentTab = (type === "Url" && !allowUrls) || (type === "Category" && !allowCategories) ? "Page" : type;
@@ -296,7 +306,9 @@ class LinkField extends ClickOutside<Props, State> {
                 id={fieldDefinition.name}
                 type="text"
                 value={this.props.displayValue}
-                iconProps={{ src: StandardIconPropsSource }}/>
+                iconProps={{ src: value ? ClearIconPropsSource : StandardIconPropsSource }}
+                iconClickableProps={value ? { onClick: this.clearFieldValue } : undefined}
+                clickableText={value ? translate("clear link field") : undefined} />
             {this.state.linkSelectorIsOpen
             && <LinkSelectorStyle ref={this.setWrapperRef}>
                 <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }} current={currentTab}>

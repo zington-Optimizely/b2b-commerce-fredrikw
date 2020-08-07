@@ -174,6 +174,12 @@ export interface ComponentThemeProps {
     fileUpload: { defaultProps?: FileUploadPresentationProps; };
     icon: { defaultProps?: IconThemableProps; };
     link: { defaultProps?: LinkPresentationProps };
+    lists: {
+        defaultProps?: InjectableCss;
+        orderedListProps?: InjectableCss;
+        unorderedListProps?: InjectableCss;
+        listItemProps?: InjectableCss;
+    };
     lazyImage: { defaultProps?: LazyImagePresentationProps };
     loadingSpinner: { defaultProps?: LoadingSpinnerProps };
     menu: { defaultProps?: MenuPresentationProps };
@@ -448,6 +454,7 @@ const baseTheme: BaseTheme = {
     },
     icon: { defaultProps: IconPresentationPropsDefault },
     link: { defaultProps: LinkPresentationPropsDefault },
+    lists: { defaultProps: {} },
     lazyImage: { defaultProps: LazyImagePresentationPropsDefault },
     loadingSpinner: { defaultProps: {} },
     menu: { defaultProps: MenuDefaultProps },

@@ -32,6 +32,11 @@ const alignments = {
 const gridItemWidthStyle = (x: GridWidths) => {
     if (x === 0) return css` display: none; `;
     return css`
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
         flex-basis: ${gridWidth(x)};
         max-width: ${gridWidth(x)};
     `;

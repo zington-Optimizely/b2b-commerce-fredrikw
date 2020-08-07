@@ -324,7 +324,7 @@ class RichTextEditor extends React.Component<Props, State> {
                 height: 400,
                 colorsStep: 5,
                 videoInsertButtons: ["videoBack", "|", "videoByURL", "videoEmbed"],
-                htmlAllowedStyleProps: ["font-family", "font-size", "background", "color", "width", "text-align", "vertical-align", "background-color"],
+                htmlAllowedStyleProps: ["font-family", "font-size", "background", "color", "width", "text-align", "vertical-align", "background-color", "list-style-type"],
             };
             const config = this.props.extendedConfig ? this.extendConfig(baseConfig, this.props.extendedConfig) : baseConfig;
 
@@ -383,6 +383,23 @@ class RichTextEditor extends React.Component<Props, State> {
 const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme: BaseTheme }>`
     ${({ sidebar }) => sidebar ? "margin-top: 10px;" : ""}
     ${({ siteTheme }) => siteTheme && themeTypographyStyleString({ theme: siteTheme })}
+    ul, ol {
+        padding: 0 0 0 40px;
+        margin: 1rem 0;
+    }
+    ul {
+        list-style: disc;
+        ${({ siteTheme }) => siteTheme?.lists?.defaultProps?.css}
+        ${({ siteTheme }) => siteTheme?.lists?.unorderedListProps?.css}
+    }
+    ol {
+        ${({ siteTheme }) => siteTheme?.lists?.defaultProps?.css}
+        ${({ siteTheme }) => siteTheme?.lists?.orderedListProps?.css}
+    }
+    li {
+        ${({ siteTheme }) => siteTheme?.lists?.defaultProps?.css}
+        ${({ siteTheme }) => siteTheme?.lists?.listItemProps?.css}
+    }
     a {
         color:
             ${({ siteTheme }) => {

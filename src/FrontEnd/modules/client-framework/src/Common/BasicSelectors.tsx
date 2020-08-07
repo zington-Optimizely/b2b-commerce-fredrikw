@@ -1,18 +1,9 @@
 import LazyImage from "@insite/mobius/LazyImage";
 import Link from "@insite/mobius/Link";
+import ListItem, { OrderedList, UnorderedList } from "@insite/mobius/Lists";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import injectCss from "@insite/mobius/utilities/injectCss";
 import { domToReact, HTMLReactParserOptions } from "html-react-parser";
 import * as React from "react";
-import styled from "styled-components";
-
-const BulletList = styled.ul<InjectableCss>`
-    list-style-type: disc;
-    padding: 0 0 0 40px;
-    margin: 1rem 0;
-    ${injectCss}
-`;
 
 export const parserOptions: HTMLReactParserOptions = {
     replace: (node) => {
@@ -27,9 +18,19 @@ export const parserOptions: HTMLReactParserOptions = {
             </Typography>;
         }
         if (name === "ul") {
-            return <BulletList css={style as any} {...otherAttribs}>
+            return <UnorderedList css={style as any} {...otherAttribs}>
                 {children && domToReact(children, parserOptions)}
-            </BulletList>;
+            </UnorderedList>;
+        }
+        if (name === "ol") {
+            return <OrderedList css={style as any} {...otherAttribs}>
+                {children && domToReact(children, parserOptions)}
+            </OrderedList>;
+        }
+        if (name === "li") {
+            return <ListItem css={style as any} {...otherAttribs}>
+                {children && domToReact(children, parserOptions)}
+            </ListItem>;
         }
         if (name === "img") {
             return <LazyImage as="span" css={style as any} {...otherAttribs} />;

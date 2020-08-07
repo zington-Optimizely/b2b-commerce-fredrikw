@@ -12,6 +12,7 @@ import FileText from "@insite/mobius/Icons/FileText";
 import Instagram from "@insite/mobius/Icons/Instagram";
 import Linkedin from "@insite/mobius/Icons/Linkedin";
 import Rss from "@insite/mobius/Icons/Rss";
+import Twitter from "@insite/mobius/Icons/Twitter";
 import User from "@insite/mobius/Icons/User";
 import Video from "@insite/mobius/Icons/Video";
 import Youtube from "@insite/mobius/Icons/Youtube";
@@ -39,6 +40,7 @@ const enum icons {
     instagram = "Instagram",
     facebook = "Facebook",
     youtube = "Youtube",
+    twitter = "Twitter",
     rss = "Rss",
     user = "User",
     linkedin = "Linkedin",
@@ -74,6 +76,7 @@ interface LinkModel {
         icon: string,
         openInNewWindow: boolean,
         destination: LinkFieldValue,
+        overriddenTitle: string,
     };
 }
 
@@ -111,6 +114,8 @@ const GetIcon = (icon: string) => {
     switch (icon) {
         case icons.youtube:
             return Youtube;
+        case icons.twitter:
+            return Twitter;
         case icons.facebook:
             return Facebook;
         case icons.instagram:
@@ -232,6 +237,7 @@ const definition: WidgetDefinition = {
                         { displayName: "Instagram", value: icons.instagram },
                         { displayName: "Youtube", value: icons.youtube },
                         { displayName: "Facebook", value: icons.facebook },
+                        { displayName: "Twitter", value: icons.twitter },
                         { displayName: "Rss", value: icons.rss },
                         { displayName: "User", value: icons.user },
                         { displayName: "Linkedin", value: icons.linkedin },

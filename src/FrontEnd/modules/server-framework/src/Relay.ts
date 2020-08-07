@@ -114,6 +114,7 @@ const relay: Relay = {
     excel: relayMethod,
     sitemap: relayMethod,
     afterimpersonate: relayMethod,
+    importexport: relayMethod,
 };
 
 export default relay;

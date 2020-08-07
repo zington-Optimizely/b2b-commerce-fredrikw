@@ -48,6 +48,7 @@ export const getLink = (state: ApplicationState, { type, value }: LinkFieldValue
 export interface LinkModel {
     fields: {
         openInNewWindow: boolean;
+        overriddenTitle: string;
         destination: LinkFieldValue;
     }
 }

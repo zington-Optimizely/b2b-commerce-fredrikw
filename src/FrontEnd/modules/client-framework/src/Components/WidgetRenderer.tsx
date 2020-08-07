@@ -110,6 +110,9 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
         this.widgetHover.current!.setAttribute("draggable", "true");
     };
 
+    scrollIfNeededId: number | undefined;
+    scrollStep: number | undefined;
+
     dragStart = () => {
         this.props.beginDraggingWidget(this.props.widget!.id);
         setTimeout(() => {
@@ -117,6 +120,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
             current!.style.display = "none";
             current!.parentElement!.parentElement!.setAttribute("data-dragging", "");
         });
+        this.scrollIfNeededId = setInterval(this.scrollIfNeeded, 20);
     };
 
     dragEnd = () => {
@@ -125,6 +129,35 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
         current!.parentElement!.parentElement!.removeAttribute("data-dragging");
         current!.style.display = "";
         this.props.endDraggingWidget();
+        clearInterval(this.scrollIfNeededId);
+    };
+
+    drag = (event: React.DragEvent<HTMLElement>) => {
+        const top = event.clientY;
+        const bottom = document.documentElement.clientHeight - event.clientY;
+        const fastStep = 30;
+        const fastZone = 40;
+        const slowStep = 20;
+        const slowZone = 80;
+
+        if (top < fastZone) {
+            this.scrollStep = -fastStep;
+        } else if (top < slowZone) {
+            this.scrollStep = -slowStep;
+        } else if (bottom < fastZone) {
+            this.scrollStep = fastStep;
+        } else if (bottom < slowZone) {
+            this.scrollStep = slowStep;
+        } else {
+            this.scrollStep = undefined;
+        }
+    };
+
+    scrollIfNeeded = () => {
+        if (!this.scrollStep) {
+            return;
+        }
+        window.scrollTo({ top: window.pageYOffset + this.scrollStep });
     };
 
     private canEditWidget = () => {
@@ -165,7 +198,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
             return <div data-widget={type}>
                 <WidgetStyle>
                     {(!draggingWidgetId || draggingWidgetId === widget.id)
-                        && <HoverStyle ref={this.widgetHover} onDragStart={this.dragStart} onDragEnd={this.dragEnd} data-test-selector={`widgetHover_${type}`}>
+                        && <HoverStyle ref={this.widgetHover} onDragStart={this.dragStart} onDrag={this.drag} onDragEnd={this.dragEnd} data-test-selector={`widgetHover_${type}`}>
                             <WidgetHoverNameStyle fixed={fixed || !this.canMoveWidget()} onMouseDown={this.dragHandleMouseDown} data-test-selector="widgetHover_title">{widget.type}</WidgetHoverNameStyle>
                             {this.canEditWidget()
                             && <IconLink onClick={this.editWidget} data-test-selector="widgetHover_edit" title="Edit">

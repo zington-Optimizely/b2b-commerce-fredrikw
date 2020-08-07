@@ -26,6 +26,7 @@ const systemUris: SafeDictionary<true> = {
     userfiles: true,
     dist: true,
     creators: true,
+    importexport: true,
     ".spire": true,
 };
 

@@ -34,8 +34,9 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
     const titleLink = getLink(state, ownProps.fields.titleLink);
-    const links = mapLinks<LinkModel, { openInNewWindow: boolean }>(state, ownProps.fields.links, (widgetLink) => ({
+    const links = mapLinks<LinkModel, { openInNewWindow: boolean, overriddenTitle: string }>(state, ownProps.fields.links, (widgetLink) => ({
         openInNewWindow: widgetLink.fields.openInNewWindow,
+        overriddenTitle: widgetLink.fields.overriddenTitle,
     }));
     return {
         titleLink,
@@ -95,7 +96,7 @@ const LinkList: React.FC<Props> = ({
         {links.map((link, index) =>
             // eslint-disable-next-line react/no-array-index-key
             <StyledWrapper key={index} css={directionStyles}>
-                {link?.url && <Link href={link.url} target={link.openInNewWindow ? "_blank" : ""}>{link.title}</Link>}
+                {link?.url && <Link href={link.url} target={link.openInNewWindow ? "_blank" : ""}>{link.overriddenTitle || link.title}</Link>}
             </StyledWrapper>,
         )}
     </StyledWrapper>;
@@ -186,6 +187,12 @@ const widgetModule: WidgetModule = {
                             type: "Page",
                         },
                         isRequired: true,
+                    },
+                    {
+                        name: "overriddenTitle",
+                        displayName: "Title",
+                        editorTemplate: "TextField",
+                        defaultValue: "",
                     },
                     {
                         name: "openInNewWindow",

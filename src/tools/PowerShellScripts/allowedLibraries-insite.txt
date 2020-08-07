@@ -22,6 +22,7 @@ Insite.Integration.Connector.Acumatica
 Insite.Integration.Connector.APlus
 Insite.Integration.Connector.Facts
 Insite.Integration.Connector.Ifs
+Insite.Integration.Connector.IfsAurena
 Insite.Integration.Connector.Prophet21
 Insite.Integration.Connector.SXe
 Insite.Invoice

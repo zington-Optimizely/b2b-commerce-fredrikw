@@ -111,6 +111,7 @@
                                         "Insite.Integration.Connector.APlus":  null,
                                         "Insite.Integration.Connector.Facts":  null,
                                         "Insite.Integration.Connector.Ifs":  null,
+                                        "Insite.Integration.Connector.IfsAurena":  null,
                                         "Insite.Integration.Connector.Prophet21":  null,
                                         "Insite.Integration.Connector.SXe":  null,
                                         "Insite.Invoice":  null,
