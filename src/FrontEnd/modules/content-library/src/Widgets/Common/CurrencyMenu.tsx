@@ -33,7 +33,7 @@ export interface CurrencyMenuStyles {
     currencySymbol?: TypographyPresentationProps;
 }
 
-const styles: CurrencyMenuStyles = {
+export const currencyMenuStyles: CurrencyMenuStyles = {
     currencyWrapper: {
         css: css` display: flex; `,
     },
@@ -61,7 +61,7 @@ interface OwnProps extends WidgetProps {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-export const currencyMenuStyles = styles;
+const styles = currencyMenuStyles;
 const CurrencyMenu: FC<Props> = ({ currencies, currentCurrencyId, currentCurrencySymbol, fields, setCurrency }) => {
     if (!currencies || currencies.length <= 1) {
         return null;

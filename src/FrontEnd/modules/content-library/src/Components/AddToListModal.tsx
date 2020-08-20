@@ -28,7 +28,7 @@ type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeo
 const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
     modalIsOpen: state.components.addToListModal.isOpen,
-    products: state.components.addToListModal.products,
+    productInfos: state.components.addToListModal.productInfos,
     wishLists: getWishListsDataView(state, wishListsParameter).value,
 });
 
@@ -86,7 +86,7 @@ export const addToListModalStyles: AddToListModalStyles = {
 const LastUpdatedListIdCookieName = "LastUpdatedListId";
 
 const AddToListModal: React.FC<Props> = ({
-    products,
+    productInfos,
     session,
     modalIsOpen,
     wishLists,
@@ -113,7 +113,7 @@ const AddToListModal: React.FC<Props> = ({
         setSelectedWishList(lastUpdatedList);
     }, [modalIsOpen]);
 
-    if (!products) {
+    if (!productInfos) {
         return null;
     }
 
@@ -145,7 +145,7 @@ const AddToListModal: React.FC<Props> = ({
         }
 
         addToWishList({
-            products,
+            productInfos,
             selectedWishList,
             newListName,
             onSuccess: (wishList: WishListModel) => {

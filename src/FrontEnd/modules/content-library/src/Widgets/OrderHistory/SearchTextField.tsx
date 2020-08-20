@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";

@@ -3,7 +3,7 @@ import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
 import CheckboxGroupContext, { CheckboxGroupContextData } from "../CheckboxGroup/CheckboxGroupContext";
 import { BaseTheme } from "../globals/baseTheme";
-import Icon, { IconMemo, IconPresentationProps, IconProps } from "../Icon";
+import { IconMemo, IconPresentationProps, IconProps } from "../Icon";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import combineTypographyProps from "../utilities/combineTypographyProps";

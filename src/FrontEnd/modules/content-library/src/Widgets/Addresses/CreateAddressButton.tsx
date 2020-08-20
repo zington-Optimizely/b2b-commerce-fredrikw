@@ -46,7 +46,7 @@ export interface CreateAddressButtonStyles {
     addressFormModal?: ModalPresentationProps;
 }
 
-const styles: CreateAddressButtonStyles = {
+export const createAddressButtonStyles: CreateAddressButtonStyles = {
     createNewAddressButtonGridItem: {
         width: 12,
         css: css` justify-content: flex-end; `,
@@ -54,7 +54,7 @@ const styles: CreateAddressButtonStyles = {
     addressFormModal: { sizeVariant: "medium" },
 };
 
-export const createAddressButtonStyles = styles;
+const styles = createAddressButtonStyles;
 
 const CreateAddressButton: React.FunctionComponent<Props> = (props: Props) => {
     const [modalIsOpen, setModalIsOpen] = React.useState(false);

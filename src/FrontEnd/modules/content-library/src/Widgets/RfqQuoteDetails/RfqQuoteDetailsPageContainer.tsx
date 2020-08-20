@@ -9,7 +9,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -30,7 +30,7 @@ export interface RfqQuoteDetailsPageContainerStyles {
     rigthColumnGridItem?: GridItemProps;
 }
 
-const styles: RfqQuoteDetailsPageContainerStyles = {
+export const rfqQuoteDetailsPageContainerStyles: RfqQuoteDetailsPageContainerStyles = {
     spinnerWrapper: {
         css: css`
             display: flex;
@@ -48,7 +48,7 @@ const styles: RfqQuoteDetailsPageContainerStyles = {
     rigthColumnGridItem: { width: [0, 0, 6, 5, 4] },
 };
 
-export const rfqQuoteDetailsPageContainerStyles = styles;
+const styles = rfqQuoteDetailsPageContainerStyles;
 
 const RfqQuoteDetailsPageContainer = ({
     id,

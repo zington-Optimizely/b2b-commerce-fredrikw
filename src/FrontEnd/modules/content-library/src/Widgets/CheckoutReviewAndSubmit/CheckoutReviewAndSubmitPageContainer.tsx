@@ -37,7 +37,7 @@ export interface CheckoutReviewAndSubmitPageContainerStyles {
     actionButtonsBottomGridItem?: GridItemProps;
 }
 
-const styles: CheckoutReviewAndSubmitPageContainerStyles = {
+export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
     loadingOverlay: { css: css` width: 100%; ` },
     headerGridItem: { width: 12 },
     promoCodeAndCartTotalGridItem: {
@@ -126,7 +126,7 @@ const styles: CheckoutReviewAndSubmitPageContainerStyles = {
     },
 };
 
-export const pageContainerStyles = styles;
+const styles = pageContainerStyles;
 const mapStateToProps = (state: ApplicationState) => ({
     isPreloadingData: state.pages.orderConfirmation.isPreloadingData || state.pages.checkoutShipping.isPreloadingData,
     isPlacingOrder: state.pages.checkoutReviewAndSubmit.isPlacingOrder,

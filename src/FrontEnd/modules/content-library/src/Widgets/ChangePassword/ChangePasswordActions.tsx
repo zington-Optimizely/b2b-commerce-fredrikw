@@ -41,7 +41,7 @@ export interface ChangePasswordActionsStyles {
     buttonGridItem?: GridItemProps;
 }
 
-const styles: ChangePasswordActionsStyles = {
+export const changePasswordActionsStyles: ChangePasswordActionsStyles = {
     saveButton: {
         css: css` width: 100%; `,
     },
@@ -56,7 +56,7 @@ const styles: ChangePasswordActionsStyles = {
     },
 };
 
-export const changePasswordActionsStyles = styles;
+const styles = changePasswordActionsStyles;
 
 const numberPasswordLengthMessage = translate("Password must include at least one number");
 const lowerCasePasswordLengthMessage = translate("Password must include at least one lowercase character");

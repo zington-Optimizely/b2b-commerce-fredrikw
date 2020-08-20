@@ -10,7 +10,7 @@ import { RfqConfirmationPageContext } from "@insite/content-library/Pages/RfqCon
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -28,7 +28,7 @@ export interface RfqConfirmationProductListStyles {
     backToTopButton?: ButtonPresentationProps;
 }
 
-const styles: RfqConfirmationProductListStyles = {
+export const rfqConfirmationProductListStyles: RfqConfirmationProductListStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -58,7 +58,7 @@ const styles: RfqConfirmationProductListStyles = {
     },
 };
 
-export const productListStyles = styles;
+const styles = rfqConfirmationProductListStyles;
 
 const RfqConfirmationProductList: FC<Props> = ({
     quoteState,

@@ -3,7 +3,7 @@ import { addTask } from "@insite/client-framework/ServerSideRendering";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { getPagePublishInfo, getShellContext, switchContentMode } from "@insite/shell/Services/ContentAdminService";
+import { getShellContext, switchContentMode } from "@insite/shell/Services/ContentAdminService";
 import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
@@ -61,23 +61,4 @@ export const setContentMode = (contentMode: ContentMode): ShellThunkAction => (d
         });
         dispatch(loadTreeNodes());
     }());
-};
-
-export const loadPublishInfo = (pageId: string): ShellThunkAction => (dispatch, getState) => {
-    if (getState().shellContext.pagePublishInfo.isLoading) {
-        return;
-    }
-
-    dispatch({
-        type: "ShellContext/BeginLoadingPublishInfo",
-    });
-
-    (async () => {
-        const page = await getPagePublishInfo(pageId);
-
-        dispatch({
-            type: "ShellContext/CompleteLoadingPublishInfo",
-            pages: page ? [page] : [],
-        });
-    })();
 };

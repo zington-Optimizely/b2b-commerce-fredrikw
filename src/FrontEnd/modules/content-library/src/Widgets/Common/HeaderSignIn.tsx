@@ -44,7 +44,7 @@ export interface HeaderSignInStyles {
     signOutClickable?: ClickablePresentationProps;
 }
 
-const styles: HeaderSignInStyles = {
+export const headerSignInStyles: HeaderSignInStyles = {
     signOutWrapper: {
         css: css` display: inline-flex; `,
     },
@@ -80,7 +80,7 @@ interface OwnProps extends WidgetProps {
 }
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
-export const headerSignInStyles = styles;
+const styles = headerSignInStyles;
 let icon: React.ComponentType;
 const HeaderSignIn: FC<Props> = ({
     userName,

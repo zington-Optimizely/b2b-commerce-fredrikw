@@ -183,15 +183,22 @@ export type HasOnError<Result = void> = {
 type Thunk<Result> =  (dispatch: StrictInputDispatch, getState: () => ApplicationState) => Result;
 
 /**  Converts a handler chain that has an `onSuccess` method to return a `Promise` that can be used in conjunction with `await`. */
-export const makeHandlerChainAwaitable = <Parameter extends HasOnSuccess<Result>, Result>
-    (handlerChain: (parameter: Parameter) => Thunk<void>) =>
+export const makeHandlerChainAwaitable = <Parameter extends HasOnSuccess<Result>, Result>(handlerChain: (parameter: Parameter) => Thunk<void>) =>
     (parameter: Omit<Parameter, "onSuccess">): Thunk<Promise<Result>> =>
-    (dispatch, getState) => new Promise(resolve => {
-    handlerChain({
+    (dispatch) => new Promise<Result>(resolve => {
+    dispatch(handlerChain({
         ...parameter as Parameter,
         onSuccess: resolve,
-    })(dispatch, getState);
+    }));
 });
+
+export const executeAwaitableHandlerChain = <Parameter extends HasOnSuccess<Result>, Result>(handlerChain: (parameter: Parameter) => Thunk<void>, parameter: Parameter, props: {
+    dispatch: StrictInputDispatch;
+    getState: () => ApplicationState;
+}): Promise<Result> => {
+    const awaitable = makeHandlerChainAwaitable<Parameter, Result>(handlerChain);
+    return awaitable(parameter)(props.dispatch, props.getState);
+};
 
 export function addToStartOfChain<Parameter, Props>(chain: Handler<Parameter, Props>[], handler: Handler<Parameter, Props>) {
     chain.unshift(handler);

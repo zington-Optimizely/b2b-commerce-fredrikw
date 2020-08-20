@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { GetWishListLinesApiParameter, GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
-import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { WishListsState } from "@insite/client-framework/Store/Data/WishLists/WishListsState";
 import { WishListCollectionModel, WishListLineCollectionModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";

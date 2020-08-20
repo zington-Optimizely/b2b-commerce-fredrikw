@@ -31,7 +31,7 @@ export interface RfqRequestQuotePageContainerStyles {
     emptyQuoteText?: TypographyPresentationProps;
 }
 
-const styles: RfqRequestQuotePageContainerStyles = {
+export const rfqRequestQuotePageContainerStyles: RfqRequestQuotePageContainerStyles = {
     spinnerWrapper: {
         css: css`
             display: flex;
@@ -120,7 +120,7 @@ const styles: RfqRequestQuotePageContainerStyles = {
     },
 };
 
-export const rfqRequestQuotePageContainerStyles = styles;
+const styles = rfqRequestQuotePageContainerStyles;
 
 const RfqRequestQuotePageContainer: FC<Props> = ({ cartState, accounts, id }) => {
     if (!cartState.value || !accounts) {

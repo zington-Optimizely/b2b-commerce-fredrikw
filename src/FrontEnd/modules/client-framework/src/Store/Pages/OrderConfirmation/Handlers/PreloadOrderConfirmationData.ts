@@ -1,8 +1,9 @@
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadPromotions";
 import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import loadCart from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/LoadCart";
 
 type HandlerType = Handler<{
     cartId: string,
@@ -10,6 +11,10 @@ type HandlerType = Handler<{
 }>;
 
 export const DispatchBeginPreloadingData: HandlerType = props => {
+    props.dispatch({
+        type: "Pages/OrderConfirmation/BeginLoadCart",
+        cartId: props.parameter.cartId,
+    });
     props.dispatch({
         type: "Pages/OrderConfirmation/SetIsPreloadingData",
         isPreloadingData: true,
@@ -27,8 +32,6 @@ export const PreloadData: HandlerType = props => {
     }
 };
 
-const wait = (milliseconds: number) => new Promise(result => setTimeout(result, milliseconds));
-
 export const WaitForData: HandlerType = async props => {
     const checkData = () => {
         const state = props.getState();
@@ -43,14 +46,7 @@ export const WaitForData: HandlerType = async props => {
         return true;
     };
 
-    let x = 0;
-    while(x < 600) { // wait 30 seconds max
-        if (checkData()) {
-            break;
-        }
-        await wait(50);
-        x += 1;
-    }
+    await waitFor(checkData);
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {

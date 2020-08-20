@@ -14,14 +14,14 @@ export interface WarehouseAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const baseStyles: WarehouseAddressInfoDisplayStyles = {
+export const warehouseAddressInfoDisplayStyles: WarehouseAddressInfoDisplayStyles = {
 };
 
 const WarehouseAddressInfoDisplay = ({
     warehouse,
     extendedStyles,
 }: OwnProps) => {
-    const [styles] = React.useState(() => mergeToNew(baseStyles, extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(warehouseAddressInfoDisplayStyles, extendedStyles));
     return (
         <>
             <Typography as="p" {...styles.warehouseNameText}>{warehouse.description || warehouse.name}</Typography>

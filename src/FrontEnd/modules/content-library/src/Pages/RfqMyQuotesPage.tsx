@@ -1,7 +1,7 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
-import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
+import { GetQuotesApiParameter } from "@insite/client-framework/Services/QuoteService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -12,11 +12,11 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import { useEffect } from "react";
-import * as React from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
+    session: state.context.session,
     quotesDataView: getQuotesDataView(state, state.pages.rfqMyQuotes.getQuotesParameter),
     getQuotesParameter: state.pages.rfqMyQuotes.getQuotesParameter,
     location: getLocation(state),
@@ -31,6 +31,7 @@ type Props = HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typ
 
 const RfqMyQuotesPage = ({
     id,
+    session,
     quotesDataView,
     getQuotesParameter,
     loadQuotes,
@@ -43,10 +44,20 @@ const RfqMyQuotesPage = ({
     useEffect(
         () => {
             firstLoad = true;
+            let parsedGetQuotesParameter: GetQuotesApiParameter = {};
             if (location.search) {
-                const getInvoicesApiParameter = parseQueryString<GetInvoicesApiParameter>(location.search);
-                updateSearchFields({ ...getInvoicesApiParameter, type: "Replace" });
+                parsedGetQuotesParameter = parseQueryString<GetQuotesApiParameter>(location.search);
+                if (typeof parsedGetQuotesParameter.statuses === "string") {
+                    parsedGetQuotesParameter.statuses = [parsedGetQuotesParameter.statuses];
+                }
             }
+
+            updateSearchFields({
+                ...getQuotesParameter,
+                ...parsedGetQuotesParameter,
+                expand: session.isSalesPerson ? ["salesList"] : undefined,
+                type: "Replace",
+            });
         },
         [],
     );
@@ -57,15 +68,15 @@ const RfqMyQuotesPage = ({
         }
     }, [getQuotesParameter]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         // if this is undefined it means someone changed the filters and we haven't loaded the new collection yet
-        if (!quotesDataView.value && !quotesDataView.isLoading) {
+        if (!firstLoad && !quotesDataView.value && !quotesDataView.isLoading) {
             loadQuotes(getQuotesParameter);
         }
     });
 
     return <Page>
-        <Zone contentId={id} zoneName="Content"/>
+        <Zone contentId={id} zoneName="Content" />
     </Page>;
 };
 

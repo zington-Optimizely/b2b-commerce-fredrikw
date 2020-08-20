@@ -32,7 +32,7 @@ export interface SignInResetPasswordFormStyles {
     sendButton?: ButtonPresentationProps;
 }
 
-const styles: SignInResetPasswordFormStyles = {
+export const signInResetPasswordFormStyles: SignInResetPasswordFormStyles = {
     userNameGridItem: {
         width: 12,
     },
@@ -49,7 +49,11 @@ const styles: SignInResetPasswordFormStyles = {
     },
 };
 
-export const createListFormStyles = styles;
+/**
+ * @deprecated Use signInResetPasswordFormStyles instead.
+ */
+export const createListFormStyles = signInResetPasswordFormStyles;
+const styles = signInResetPasswordFormStyles;
 
 const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
     const [userName, setUserName] = React.useState("");

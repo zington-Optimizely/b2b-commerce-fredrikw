@@ -36,7 +36,7 @@ export interface CheckoutShippingPageContainerStyles {
     cartTotalGridItemWide?: GridItemProps;
 }
 
-const styles: CheckoutShippingPageContainerStyles = {
+export const containerStyles: CheckoutShippingPageContainerStyles = {
     loadingOverlay: {
         css: css`
             width: 100%;
@@ -54,7 +54,7 @@ const styles: CheckoutShippingPageContainerStyles = {
     cartTotalGridItemWide: { width: [0, 0, 12, 12, 12] },
 };
 
-export const containerStyles = styles;
+const styles = containerStyles;
 
 const CheckoutShippingPageContainer = ({
     id,

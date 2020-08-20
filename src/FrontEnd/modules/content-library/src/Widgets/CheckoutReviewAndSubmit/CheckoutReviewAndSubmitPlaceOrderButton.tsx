@@ -1,5 +1,6 @@
+/* eslint-disable spire/export-styles */
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import translate from "@insite/client-framework/Translate";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import React, { FC } from "react";
@@ -10,8 +11,8 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cartState = getCurrentCartState(state);
-    const { isPlacingOrder, isCheckingOutWithPayPay } = state.pages.checkoutReviewAndSubmit;
+    const { cartId, isPlacingOrder, isCheckingOutWithPayPay } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     return {
         isDisabled: cartState.isLoading || isPlacingOrder || isCheckingOutWithPayPay || cartState.value?.hasInsufficientInventory === true,
     };

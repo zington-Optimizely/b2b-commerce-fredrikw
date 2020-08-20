@@ -15,11 +15,11 @@ export interface ProductListFiltersAccordionStyles {
     accordion?: AccordionPresentationProps;
 }
 
-const styles: ProductListFiltersAccordionStyles = {
+export const filtersAccordionStyles: ProductListFiltersAccordionStyles = {
     accordion: { css: css` padding-top: 20px; ` },
 };
 
-export const filtersAccordionStyles = styles;
+const styles = filtersAccordionStyles;
 
 const ProductListFiltersAccordion: FC<Props> = ({ id }) => {
     return (

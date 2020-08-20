@@ -1,17 +1,18 @@
 import AppThunkAction from "@insite/client-framework/Common/AppThunkAction";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
+import { trackPageChange } from "@insite/client-framework/Common/Utilities/tracking";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
 import { addTask, clearInitialPage, getInitialPage, redirectTo, setStatusCode } from "@insite/client-framework/ServerSideRendering";
-import { getPageByType, getPageByUrl } from "@insite/client-framework/Services/ContentService";
+import { BasicLanguageModel as ActualBasicLanguageModel, getPageByType, getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getPageStateByPath, getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { FieldType } from "@insite/client-framework/Types/FieldDefinition";
 import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
@@ -94,7 +95,6 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
         const url = location.pathname + location.search;
 
         const finished = (page: PageProps) => {
-            // TODO ISC-11900 setTitle(result.fields.title || 'Page Title Not Set');
             sendToShell({
                 type: "LoadPageComplete",
                 pageId: page.id,
@@ -108,7 +108,10 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
 
             const state = getState();
             if (state.pages && state.context) {
-                setOpenGraphInfo(state.pages, page.type, page.fields, state.context.website.name, url);
+                // product list and product details call trackPageChange when they get data
+                if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
+                    trackPageChange();
+                }
             }
         };
 
@@ -146,7 +149,6 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             return;
         }
 
-        const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
 
         setStatusCode(result.statusCode);
         if (result.redirectTo) {
@@ -158,24 +160,27 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 history.push(result.redirectTo);
                 onSuccess?.();
             }
-        } else if (hasPageByType) {
-            dispatch({
-                type: "Data/Pages/SetPageIsLoaded",
-                pageType: result.page.type,
-                page: result.page,
-                path: location.pathname,
-            });
+        } else if (result.page) {
+            const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
+            if (hasPageByType) {
+                dispatch({
+                    type: "Data/Pages/SetPageIsLoaded",
+                    pageType: result.page.type,
+                    page: result.page,
+                    path: location.pathname,
+                });
 
-            finished(result.page);
-        } else {
-            dispatch({
-                type: "Data/Pages/CompleteLoadPage",
-                page: result.page,
-                path: location.pathname,
-                ...getContextData(getState()),
-            });
+                finished(result.page);
+            } else {
+                dispatch({
+                    type: "Data/Pages/CompleteLoadPage",
+                    page: result.page,
+                    path: location.pathname,
+                    ...getContextData(getState()),
+                });
 
-            finished(result.page);
+                finished(result.page);
+            }
         }
     }());
 };
@@ -220,11 +225,8 @@ interface ShellContext {
     currentDeviceType: DeviceType;
 }
 
-export interface BasicLanguageModel {
-    id: string,
-    hasPersonaSpecificContent: boolean,
-    hasDeviceSpecificContent: boolean
-}
+// this had to move to ContentService to avoid a circular dependency.
+export interface BasicLanguageModel extends ActualBasicLanguageModel { }
 
 export interface UpdateFieldParameter {
     id: string;

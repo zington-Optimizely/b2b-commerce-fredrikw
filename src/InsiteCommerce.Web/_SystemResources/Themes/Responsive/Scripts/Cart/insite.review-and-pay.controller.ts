@@ -473,7 +473,7 @@ module insite.cart {
         protected tokenizeCardInfoIfNeeded(submitSuccessUri: string) {
             this.submitSuccessUri = submitSuccessUri;
 
-            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal) {
+            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && !this.cart.requiresApproval) {
                 if (this.cart.paymentMethod.isCreditCard) {
                     if (typeof this.isInvalidCardNumber !== 'undefined') {
                         this.tokenExIframe.tokenize();
@@ -491,7 +491,7 @@ module insite.cart {
                     return;
                 }
             }
-            if (this.usePaymetricGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal) {
+            if (this.usePaymetricGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && !this.cart.requiresApproval) {
                 if (this.cart.paymentMethod.isCreditCard) {
                     this.submitPaymetric();
                     return;

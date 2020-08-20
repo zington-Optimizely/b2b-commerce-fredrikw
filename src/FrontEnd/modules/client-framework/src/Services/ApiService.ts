@@ -81,10 +81,18 @@ export class ApiError extends Error {
     errorJson: any;
 
     constructor(url: string, response: Response, errorMessage: string, errorJson: any) {
+        /** Node adds additional data to the `Response` type from `fetch`. */
+        type PossibleNodeResponse = Response & {
+            _raw?: unknown,
+        };
+
+        const { body, _raw, ...responseToLog } = response as PossibleNodeResponse;
+
+        const t = "";
         super(`Request to ${url} resulted in a error status ${response.status}. \n`
             + `${errorMessage !== "" ? `errorMessage: ${errorMessage} \n` : ""}`
             + `${errorJson ? `errorJson: ${JSON.stringify(errorJson, null, 1)} \n` : ""}`
-            + `response: ${JSON.stringify(response, null, 1)}`);
+            + `response: ${JSON.stringify(responseToLog, null, 1)}`);
 
         this.url = url;
         this.errorMessage = errorMessage;

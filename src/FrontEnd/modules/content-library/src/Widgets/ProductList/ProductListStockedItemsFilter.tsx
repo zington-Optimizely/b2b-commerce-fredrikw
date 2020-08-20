@@ -1,6 +1,7 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -16,7 +17,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    loaded: !!state.pages.productList.productsState.value,
+    loaded: !!getProductListDataView(state).value,
     stockedItemsOnly: state.pages.productList.productFilters.stockedItemsOnly,
 });
 
@@ -30,12 +31,11 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 export interface ProductListStockedItemsFilterStyles {
 }
 
-const styles: ProductListStockedItemsFilterStyles = {};
+export const productListStockedItemsFilterStyles: ProductListStockedItemsFilterStyles = {};
 
-export const productListStockedItemsFilterStyles = styles;
+const styles = productListStockedItemsFilterStyles;
 
 const ProductListStockedItemsFilter: FC<Props> = ({ stockedItemsOnly, loaded, addProductFilters, removeProductFilters }) => {
-
     if (!loaded) {
         return null;
     }

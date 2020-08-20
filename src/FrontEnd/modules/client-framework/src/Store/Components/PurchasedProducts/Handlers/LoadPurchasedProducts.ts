@@ -1,114 +1,54 @@
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { getProductCollectionV2, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
+import loadProductInfoList from "@insite/client-framework/Store/Components/ProductInfoList/Handlers/LoadProductInfoList";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface LoadPurchasedProductsParameter {
+interface Parameter {
     widgetId: string;
     purchaseType: string;
 }
 
-export interface LoadPurchasedProductsResult {
-    products: ProductModelExtended[];
+interface Props {
+    getProductCollectionParameter?: GetProductCollectionApiV2Parameter,
+    products?: ProductModel[];
+    productInfos?: ProductInfo[];
 }
 
-type HandlerType = HandlerWithResult<LoadPurchasedProductsParameter, LoadPurchasedProductsResult>;
+type HandlerType = Handler<Parameter, Props>;
 
-export const DispatchBeginLoadPurchasedProducts: HandlerType = props => {
-    props.dispatch({
-        type: "Components/PurchasedProducts/BeginLoadPurchasedProducts",
-        widgetId: props.parameter.widgetId,
-    });
-};
-
-export const InitializeResult: HandlerType = props => {
-    props.result = { products: [] };
-};
-
-export const LoadRecentlyPurchased: HandlerType = async ({
-    parameter: { purchaseType },
-    result,
-}) => {
-    if (purchaseType !== "recently") {
+export const LoadRecentlyPurchased: HandlerType = props => {
+    if (props.parameter.purchaseType !== "recently") {
         return;
     }
 
-    const productCollection = await getProductCollectionV2({ filter: "recentlyPurchased" });
-    result.products = productCollection.products || [];
-    result.products.forEach(product => {
-        const selectedUoM = product.unitOfMeasures?.find(uom => uom.id === emptyGuid);
-        product.unitOfMeasure = selectedUoM?.unitOfMeasure || "";
-        product.selectedUnitOfMeasure = selectedUoM?.unitOfMeasure || "";
-        product.unitOfMeasureDisplay = selectedUoM?.unitOfMeasureDisplay || "";
-        product.unitOfMeasureDescription = selectedUoM?.description || "";
-    });
+    props.getProductCollectionParameter = { filter: "recentlyPurchased" };
 };
 
-export const LoadFrequentlyPurchased: HandlerType = async ({
-    parameter: { purchaseType },
-    result,
-}) => {
-    if (purchaseType !== "frequently") {
+export const LoadFrequentlyPurchased: HandlerType = props => {
+    if (props.parameter.purchaseType !== "frequently") {
         return;
     }
 
-    const productCollection = await getProductCollectionV2({ filter: "frequentlyPurchased" });
-    result.products = productCollection.products || [];
+    props.getProductCollectionParameter = { filter: "frequentlyPurchased" };
 };
 
-export const DispatchCompleteLoadPurchasedProducts: HandlerType = props => {
-    props.dispatch({
-        type: "Components/PurchasedProducts/CompleteLoadPurchasedProducts",
-        widgetId: props.parameter.widgetId,
-        products: props.result.products,
-    });
-};
-
-export const LoadRealTimePrices: HandlerType = props => {
-    if (props.result.products?.length) {
-        props.dispatch(loadRealTimePricing({
-            parameter: { products: props.result.products },
-            onSuccess: (realTimePricing) => {
-                props.dispatch({
-                    type: "Components/PurchasedProducts/CompleteLoadRealTimePricing",
-                    widgetId: props.parameter.widgetId,
-                    realTimePricing,
-                });
-            },
-            onError: () => {
-                props.dispatch({
-                    type: "Components/PurchasedProducts/FailedLoadRealTimePricing",
-                    widgetId: props.parameter.widgetId,
-                });
-            },
-        }));
+export const LoadProducts: HandlerType = props => {
+    const { getProductCollectionParameter, dispatch, parameter: { widgetId: id } } = props;
+    if (!getProductCollectionParameter) {
+        return false;
     }
-};
 
-export const LoadRealTimeInventory: HandlerType = props => {
-    if (props.result.products?.length) {
-        props.dispatch(loadRealTimeInventory({
-            parameter: { products: props.result.products },
-            onSuccess: realTimeInventory => {
-                props.dispatch({
-                    type: "Components/PurchasedProducts/CompleteLoadRealTimeInventory",
-                    widgetId: props.parameter.widgetId,
-                    realTimeInventory,
-                });
-            },
-        }));
-    }
+    dispatch(loadProductInfoList({
+        getProductCollectionParameter,
+        id,
+    }));
 };
 
 export const chain = [
-    DispatchBeginLoadPurchasedProducts,
-    InitializeResult,
     LoadRecentlyPurchased,
     LoadFrequentlyPurchased,
-    DispatchCompleteLoadPurchasedProducts,
-    LoadRealTimePrices,
-    LoadRealTimeInventory,
+    LoadProducts,
 ];
 
 const loadPurchasedProducts = createHandlerChainRunner(chain, "LoadPurchasedProducts");

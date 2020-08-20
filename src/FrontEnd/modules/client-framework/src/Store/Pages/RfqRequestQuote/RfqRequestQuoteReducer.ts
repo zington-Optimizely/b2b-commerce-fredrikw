@@ -7,7 +7,7 @@ const initialState: RfqRequestQuoteState = {
     accounts: [],
     quoteParameter: {
         quoteId: "",
-        quoteType: "sales",
+        quoteType: "quote",
         accountId: undefined,
         jobName: "",
         note: "",

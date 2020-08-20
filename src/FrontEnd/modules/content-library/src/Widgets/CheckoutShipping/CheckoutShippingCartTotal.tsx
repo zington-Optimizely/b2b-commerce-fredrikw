@@ -1,9 +1,10 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import {
     getCurrentPromotionsDataView,
     getDiscountTotal,
     getOrderPromotions,
+    getPromotionsDataView,
     getShippingPromotions,
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -21,15 +22,16 @@ import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cart = getCurrentCartState(state);
-    const promotions = getCurrentPromotionsDataView(state).value;
+    const { cartId } = state.pages.checkoutShipping;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+    const promotions = cartId ? getPromotionsDataView(state, cartId).value : getCurrentPromotionsDataView(state).value;
     const { isUpdatingCart } = state.pages.checkoutShipping;
     return {
-        cart: cart.value,
+        cart: cartState.value,
         orderPromotions: promotions ? getOrderPromotions(promotions) : undefined,
         shippingPromotions: promotions ? getShippingPromotions(promotions) : undefined,
         discountTotal: promotions ? getDiscountTotal(promotions) : undefined,
-        isLoading: !cart.value || cart.isLoading || isUpdatingCart,
+        isLoading: !cartState.value || cartState.isLoading || isUpdatingCart,
     };
 };
 
@@ -43,7 +45,7 @@ export interface CheckoutShippingCartTotalStyles {
     continueButton?: ButtonPresentationProps;
 }
 
-const styles: CheckoutShippingCartTotalStyles = {
+export const cartTotalStyles: CheckoutShippingCartTotalStyles = {
     container: { gap: 10 },
     cartTotalGridItem: { width: 12 },
     buttonsGridItem: {
@@ -68,7 +70,7 @@ const styles: CheckoutShippingCartTotalStyles = {
     },
 };
 
-export const cartTotalStyles = styles;
+const styles = cartTotalStyles;
 
 const CheckoutShippingCartTotal: FC<Props> = ({
     cart,

@@ -1,35 +1,26 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import changeProductQtyOrdered, { ChangeProductQtyOrderedParameter } from "@insite/client-framework/Store/CommonHandlers/ChangeProductQtyOrdered";
-import updateProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateProduct";
+import { canAddToCart } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
-const mapStateToProps = (state: ApplicationState) => ({
-    configurationCompleted: state.pages.productDetail.configurationCompleted,
-    variantSelectionCompleted: state.pages.productDetail.variantSelectionCompleted,
+const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
+    canAddToCart: canAddToCart(state, ownProps.product),
 });
-
-const mapDispatchToProps = {
-    changeProductQtyOrdered: makeHandlerChainAwaitable<ChangeProductQtyOrderedParameter, ProductModelExtended>(changeProductQtyOrdered),
-    updateProduct,
-};
 
 export interface ProductDetailsQuantityOrderedStyles {
     quantityOrdered?: TextFieldProps;
 }
 
-const styles: ProductDetailsQuantityOrderedStyles = {
+export const quantityOrderedStyles: ProductDetailsQuantityOrderedStyles = {
     quantityOrdered: {
         cssOverrides: {
             formField: css` margin-top: 10px; `,
@@ -37,39 +28,25 @@ const styles: ProductDetailsQuantityOrderedStyles = {
     },
 };
 
-export const quantityOrderedStyles = styles;
+const styles = quantityOrderedStyles;
 
-const ProductDetailsQuantityOrdered: React.FC<OwnProps> = ({
-    product,
-    configurationCompleted,
-    variantSelectionCompleted,
-    changeProductQtyOrdered,
-    updateProduct,
-}) => {
-    if (!product) {
+const ProductDetailsQuantityOrdered: React.FC<Props> = ({
+                                                            canAddToCart,
+                                                        }) => {
+    if (!canAddToCart) {
         return null;
     }
 
-    const quantityOrderedChangeHandler = async (value: string) => {
-        const productToUpdate = await changeProductQtyOrdered({ product, qtyOrdered: parseFloat(value) });
-        updateProduct({ product: productToUpdate });
-    };
-
     return <ProductQuantityOrdered
-        product={product}
-        quantity={product.qtyOrdered}
-        configurationCompleted={configurationCompleted}
-        variantSelectionCompleted={variantSelectionCompleted}
-        onChangeHandler={quantityOrderedChangeHandler}
-        extendedStyles={styles.quantityOrdered} />;
+        extendedStyles={styles.quantityOrdered}/>;
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(withProduct(ProductDetailsQuantityOrdered)),
+    component: withProduct(connect(mapStateToProps)(ProductDetailsQuantityOrdered)),
     definition: {
         displayName: "Quantity Ordered",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

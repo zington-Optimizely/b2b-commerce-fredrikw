@@ -783,21 +783,25 @@ module insite.catalog {
                 let priceHeight = -1;
                 let thumbHeight = -1;
                 let productInfoHeight = -1;
+                let actionsBlockHeight = -1;
 
                 $itemBlocks.each((i, elem) => {
                     const $elem = $(elem);
-                    maxHeight = maxHeight > $elem.find(".item-inf-wrapper").height() ? maxHeight : $elem.find(".item-inf-wrapper").height();
-                    priceHeight = priceHeight > $elem.find(".item-price").height() ? priceHeight : $elem.find(".item-price").height();
-                    thumbHeight = thumbHeight > $elem.find(".item-thumb").height() ? thumbHeight : $elem.find(".item-thumb").height();
-                    productInfoHeight = productInfoHeight > $elem.find(".product-info").height() ? productInfoHeight : $elem.find(".product-info").height();
+                    maxHeight = Math.max(maxHeight, $elem.find(".item-inf-wrapper").height());
+                    priceHeight = Math.max(priceHeight,$elem.find(".item-price").height());
+                    thumbHeight = Math.max(thumbHeight, $elem.find(".item-thumb").height());
+                    productInfoHeight = Math.max(productInfoHeight, $elem.find(".product-info").height());
+                    actionsBlockHeight = Math.max(actionsBlockHeight, $elem.find(".actions-block").height());
                 });
                 if (maxHeight > 0) {
+                    priceHeight = Math.max(priceHeight, productInfoHeight + actionsBlockHeight);
                     $itemBlocks.each((i, elem) => {
                         const $elem = $(elem);
                         $elem.find(".item-inf-wrapper").height(maxHeight);
                         $elem.find(".item-price").height(priceHeight);
                         $elem.find(".item-thumb").height(thumbHeight);
                         $elem.find(".product-info").height(productInfoHeight);
+                        $elem.find(".actions-block").height(actionsBlockHeight);
                         $elem.addClass("eq");
                     });
                 }

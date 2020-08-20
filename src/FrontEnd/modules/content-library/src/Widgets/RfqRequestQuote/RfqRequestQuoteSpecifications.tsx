@@ -17,12 +17,9 @@ import TextArea, { TextAreaProps } from "@insite/mobius/TextArea/TextArea";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import FieldSetPresentationProps from "@insite/mobius/utilities/fieldSetProps";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import React, { ChangeEvent, FC, useEffect } from "react";
+import React, { ChangeEvent, FC, ReactNode, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {
-}
 
 const mapStateToProps = (state: ApplicationState) => ({
     cart: getCurrentCartState(state).value,
@@ -36,7 +33,7 @@ const mapDispatchToProps = {
     createOrRequestQuote,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & HasHistory & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & HasHistory & ResolveThunks<typeof mapDispatchToProps> & WidgetProps;
 
 export interface RfqRequestQuoteSpecificationsStyles {
     quoteTypeRadioGroup?: RadioGroupProps;
@@ -47,7 +44,7 @@ export interface RfqRequestQuoteSpecificationsStyles {
     submitButton?: ButtonPresentationProps;
 }
 
-const styles: RfqRequestQuoteSpecificationsStyles = {
+export const rfqRequestQuoteSpecificationsStyles: RfqRequestQuoteSpecificationsStyles = {
     quoteTypeRadioGroup: {
         // TODO ISC-12425 set these radio buttons to horizontal and remove the  "& > div" selector
         css: css`
@@ -78,7 +75,7 @@ const styles: RfqRequestQuoteSpecificationsStyles = {
     },
 };
 
-export const rfqRequestQuoteSpecificationsStyles = styles;
+const styles = rfqRequestQuoteSpecificationsStyles;
 
 const RfqRequestQuoteSpecifications: FC<Props> = ({
     cart,
@@ -90,12 +87,12 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
     rfqQuoteConfirmationPageUrl,
 }) => {
 
-    const [notes, setNotes] = React.useState(cart?.notes);
-    const [jobName, setJobName] = React.useState("");
-    const [jobNameError, setJobNameError] = React.useState<React.ReactNode>("");
-    const [quoteType, setQuoteType] = React.useState<QuoteType>("sales");
-    const [accountId, setAccountId] = React.useState<string|undefined>(undefined);
-    const [accountIdError, setAccountIdError] = React.useState<React.ReactNode>("");
+    const [notes, setNotes] = useState(cart?.notes);
+    const [jobName, setJobName] = useState("");
+    const [jobNameError, setJobNameError] = useState<ReactNode>("");
+    const [quoteType, setQuoteType] = useState<QuoteType>("quote");
+    const [accountId, setAccountId] = useState<string | undefined>(undefined);
+    const [accountIdError, setAccountIdError] = useState<ReactNode>("");
 
     const saveParameter = () => {
         updateQuoteParameter({
@@ -153,17 +150,19 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
             return;
         }
 
-        createOrRequestQuote({ onSuccess: (result) => {
-            if (isCreatingQuote && rfqQuoteDetailsPageUrl) {
-                history.push(`${rfqQuoteDetailsPageUrl}?quoteId=${result.id}`);
-            } else if (!isCreatingQuote && rfqQuoteConfirmationPageUrl) {
-                history.push(`${rfqQuoteConfirmationPageUrl}?quoteId=${result.id}`);
-            }
-        } });
+        createOrRequestQuote({
+            onSuccess: (result) => {
+                if (isCreatingQuote && rfqQuoteDetailsPageUrl) {
+                    history.push(`${rfqQuoteDetailsPageUrl}?quoteId=${result.id}`);
+                } else if (!isCreatingQuote && rfqQuoteConfirmationPageUrl) {
+                    history.push(`${rfqQuoteConfirmationPageUrl}?quoteId=${result.id}`);
+                }
+            },
+        });
     };
 
-    const submitButtonClickHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        e.preventDefault();
+    const submitButtonClickHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        event.preventDefault();
         submitHandler();
     };
 
@@ -176,7 +175,7 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="requestQuoteTypeRadio"
             >
-                <Radio {...styles.quoteTypeRadioButton} value="sales">{translate("Sales Quote")}</Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="quote">{translate("Sales Quote")}</Radio>
                 <Radio {...styles.quoteTypeRadioButton} value="job">{translate("Job Quote")}</Radio>
             </RadioGroup>
             {quoteType === "job" && <TextField
@@ -211,12 +210,12 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
                 value={notes}
                 onChange={notesChangeHandler} />
             {canSubmit && <Button
-                    {...styles.submitButton}
-                    onClick={submitButtonClickHandler}
-                    data-test-selector="requestQuoteSubmitButton"
-                >
-                    {translate(isCreatingQuote ? "Create Quote" : "Submit Quote")}
-                </Button>
+                {...styles.submitButton}
+                onClick={submitButtonClickHandler}
+                data-test-selector="requestQuoteSubmitButton"
+            >
+                {translate(isCreatingQuote ? "Create Quote" : "Submit Quote")}
+            </Button>
             }
         </form>
     );

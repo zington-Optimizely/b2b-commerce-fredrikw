@@ -1,6 +1,7 @@
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getQuoteState } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import acceptJobQuote from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/AcceptJobQuote";
@@ -21,7 +22,7 @@ import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/Ove
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import React from "react";
+import React, { FC, useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -29,6 +30,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     quoteState: getQuoteState(state, state.pages.rfqQuoteDetails.quoteId),
     rfqMyQuotesPageUrl: getPageLinkByPageType(state, "RfqMyQuotesPage")?.url,
     checkoutShippingPageUrl: getPageLinkByPageType(state, "CheckoutShippingPage")?.url,
+    cartState: getCurrentCartState(state),
 });
 
 const mapDispatchToProps = {
@@ -51,7 +53,6 @@ export interface RfqQuoteDetailsHeaderStyles {
     submitQuoteButton?: ButtonPresentationProps;
     declineQuoteButton?: ButtonPresentationProps;
     acceptQuoteButton?: ButtonPresentationProps;
-    generateOrderButton?: ButtonPresentationProps;
     printButton?: ButtonPresentationProps;
     buttonGridItem?: GridItemProps;
     printClickable?: ClickableProps;
@@ -59,11 +60,11 @@ export interface RfqQuoteDetailsHeaderStyles {
     submitQuoteClickable?: ClickableProps;
     declineQuoteClickable?: ClickableProps;
     acceptQuoteClickable?: ClickableProps;
-    generateOrderClickable?: ClickableProps;
     deleteQuoteModal?: TwoButtonModalStyles;
+    cartNotificationModal?: TwoButtonModalStyles;
 }
 
-const styles: RfqQuoteDetailsHeaderStyles = {
+export const rfqQuoteDetailsHeaderStyles: RfqQuoteDetailsHeaderStyles = {
     headerGridContainer: {
         gap: 10,
     },
@@ -77,9 +78,6 @@ const styles: RfqQuoteDetailsHeaderStyles = {
         css: css` margin-left: 10px; `,
     },
     acceptQuoteButton: {
-        css: css` margin-left: 10px; `,
-    },
-    generateOrderButton: {
         css: css` margin-left: 10px; `,
     },
     printButton: {
@@ -106,20 +104,22 @@ const styles: RfqQuoteDetailsHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = rfqQuoteDetailsHeaderStyles;
 
-const RfqQuoteDetailsHeader: React.FC<Props> = ({
+const RfqQuoteDetailsHeader: FC<Props> = ({
     quoteState,
     history,
     rfqMyQuotesPageUrl,
     checkoutShippingPageUrl,
+    cartState,
     deleteQuote,
     submitQuote,
     declineQuote,
     acceptJobQuote,
 }) => {
-    const toasterContext = React.useContext(ToasterContext);
-    const [deleteQuoteModalIsOpen, setDeleteQuoteModalIsOpen] = React.useState(false);
+    const toasterContext = useContext(ToasterContext);
+    const [deleteQuoteModalIsOpen, setDeleteQuoteModalIsOpen] = useState(false);
+    const [cartNotificationModalIsOpen, setCartNotificationModalIsOpen] = useState(false);
 
     if (!quoteState.value) {
         return null;
@@ -143,6 +143,14 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
 
     const cancelDeleteQuoteHandler = () => {
         setDeleteQuoteModalIsOpen(false);
+    };
+
+    const submitCartNotificationHandler = () => {
+        redirectToCheckout();
+    };
+
+    const cancelCartNotificationHandler = () => {
+        setCartNotificationModalIsOpen(false);
     };
 
     const submitQuoteClickHandler = () => {
@@ -173,14 +181,11 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
                     toasterContext.addToast({ body: "Quote accepted", messageType: "success" });
                 },
             });
-        } else {
+        } else if (cartState.value?.lineCount === 0) {
             redirectToCheckout();
+        } else {
+            setCartNotificationModalIsOpen(true);
         }
-    };
-
-    const generateOrderClickHandler = () => {
-        // TODO ISC-11796 Update quantities before redirect to checkout
-        redirectToCheckout();
     };
 
     const redirectToMyQuotes = () => {
@@ -215,12 +220,10 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
     const submitQuoteLabel = translate(`Submit ${quoteType}`);
     const declineQuoteLabel = translate(`Decline ${quoteType}`);
     const acceptQuoteLabel = translate(`Accept ${quoteType}`);
-    const generateOrderLabel = translate("Generate Order");
     const canBeSubmittedOrDeleted = quote.isSalesperson && quote.isEditable;
     const expirationDateIsValid = expirationDateIsGreaterThanCurrentDate();
     const canBeDeclined = !quote.isSalesperson && quote.status === "QuoteProposed" && expirationDateIsValid;
     const canBeAccepted = !quote.isSalesperson && (quote.status === "QuoteProposed" || quote.status === "AwaitingApproval") && expirationDateIsValid;
-    const canGenerateOrder = !quote.isSalesperson && quote.isJobQuote && quote.status === "JobAccepted";
 
     return (<>
         <GridContainer {...styles.headerGridContainer}>
@@ -245,9 +248,6 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
                         {canBeAccepted
                             && <Clickable {...styles.acceptQuoteClickable} onClick={acceptQuoteClickHandler}>{acceptQuoteLabel}</Clickable>
                         }
-                        {canGenerateOrder
-                            && <Clickable {...styles.generateOrderClickable} onClick={generateOrderClickHandler}>{generateOrderLabel}</Clickable>
-                        }
                     </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.buttonsHiddenContainer}>
@@ -255,17 +255,32 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
                     {canBeSubmittedOrDeleted
                         && <>
                             <Button {...styles.deleteQuoteButton} onClick={deleteQuoteClickHandler}>{deleteQuoteLabel}</Button>
-                            <Button {...styles.submitQuoteButton} onClick={submitQuoteClickHandler}>{submitQuoteLabel}</Button>
+                            <Button
+                                {...styles.submitQuoteButton}
+                                onClick={submitQuoteClickHandler}
+                                data-test-selector="rfqQuoteDetails_submitQuote"
+                            >
+                                {submitQuoteLabel}
+                            </Button>
                         </>
                     }
                     {canBeDeclined
-                        && <Button {...styles.declineQuoteButton} onClick={declineQuoteClickHandler}>{declineQuoteLabel}</Button>
+                        && <Button
+                            {...styles.declineQuoteButton}
+                            onClick={declineQuoteClickHandler}
+                            data-test-selector="rfqQuoteDetails_declineQuote"
+                        >
+                            {declineQuoteLabel}
+                        </Button>
                     }
                     {canBeAccepted
-                        && <Button {...styles.acceptQuoteButton} onClick={acceptQuoteClickHandler}>{acceptQuoteLabel}</Button>
-                    }
-                    {canGenerateOrder
-                        && <Button {...styles.generateOrderButton} onClick={generateOrderClickHandler}>{generateOrderLabel}</Button>
+                        && <Button
+                            {...styles.acceptQuoteButton}
+                            onClick={acceptQuoteClickHandler}
+                            data-test-selector="rfqQuoteDetails_acceptQuote"
+                        >
+                            {acceptQuoteLabel}
+                        </Button>
                     }
                 </Hidden>
             </GridItem>
@@ -280,6 +295,17 @@ const RfqQuoteDetailsHeader: React.FC<Props> = ({
             onCancel={cancelDeleteQuoteHandler}
             onSubmit={submitDeleteQuoteHandler}
             submitTestSelector="submitDeleteQuote"
+        />
+        <TwoButtonModal
+            {...styles.cartNotificationModal}
+            modalIsOpen={cartNotificationModalIsOpen}
+            headlineText={translate("Cart Notification")}
+            messageText={siteMessage("Rfq_CartNotificationMessage")}
+            cancelButtonText={translate("Cancel")}
+            submitButtonText={translate("Continue")}
+            onCancel={cancelCartNotificationHandler}
+            onSubmit={submitCartNotificationHandler}
+            submitTestSelector="submitCartNotification"
         />
     </>);
 };

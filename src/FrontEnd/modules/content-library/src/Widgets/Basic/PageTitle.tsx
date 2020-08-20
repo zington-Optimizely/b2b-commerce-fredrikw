@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";

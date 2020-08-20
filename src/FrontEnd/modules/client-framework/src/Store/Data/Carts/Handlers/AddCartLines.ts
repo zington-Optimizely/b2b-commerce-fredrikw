@@ -1,22 +1,27 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { AddCartLinesApiParameter, addLineCollection } from "@insite/client-framework/Services/CartService";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { CartLineCollectionModel, CartLineModel } from "@insite/client-framework/Types/ApiModels";
 
-type AddCartLinesParameter = {
-    products: ProductModelExtended[];
+type Parameter = {
+    productInfos: ProductInfo[];
 } & HasOnSuccess;
 
-type HandlerType = ApiHandlerDiscreteParameter<AddCartLinesParameter, AddCartLinesApiParameter, CartLineCollectionModel>;
+type Props = {
+    apiParameter: AddCartLinesApiParameter,
+    apiResult: CartLineCollectionModel,
+};
+
+type HandlerType = Handler<Parameter, Props>;
 
 export const PopulateApiParameter: HandlerType = props => {
     const cartLineCollection: CartLineModel[] = [];
-    props.parameter.products.forEach(product => {
+    props.parameter.productInfos.forEach(o => {
         cartLineCollection.push({
-            productId: product.id,
-            qtyOrdered: product.qtyOrdered,
-            unitOfMeasure: product.selectedUnitOfMeasure,
+            productId: o.productId,
+            qtyOrdered: o.qtyOrdered,
+            unitOfMeasure: o.unitOfMeasure,
         } as CartLineModel);
     });
 

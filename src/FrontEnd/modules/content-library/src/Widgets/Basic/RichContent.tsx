@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";

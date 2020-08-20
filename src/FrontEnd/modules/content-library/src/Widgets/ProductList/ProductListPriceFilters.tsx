@@ -1,8 +1,8 @@
-import { Session } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
-import { FacetModel, PriceFacetModel } from "@insite/client-framework/Types/ApiModels";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
+import { CurrencyModel, FacetModel, PriceFacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
@@ -21,22 +21,19 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-export const formatPriceRangeFacet = (facet?: PriceFacetModel, session?: Session) => {
+export const formatPriceRangeFacet = (facet: PriceFacetModel | undefined, currency: CurrencyModel | null | undefined) => {
     if (!facet) {
         return "";
     }
 
-    const lowPrice = `${session?.currency?.currencySymbol}${facet.minimumPrice}`;
-    const highPrice = `${session?.currency?.currencySymbol}${facet.maximumPrice > 10 ? facet.maximumPrice - 1 : facet.maximumPrice - 0.01}`;
+    const lowPrice = `${currency?.currencySymbol}${facet.minimumPrice}`;
+    const highPrice = `${currency?.currencySymbol}${facet.maximumPrice > 10 ? facet.maximumPrice - 1 : facet.maximumPrice - 0.01}`;
     return `${lowPrice} - ${highPrice}`;
 };
 
-const mapStateToProps = ({ pages: { productList: { productsState } }, context: { session } }: ApplicationState) => ({
-    priceFacets: productsState.value?.priceRange?.priceFacets?.map<FacetModel>((f: PriceFacetModel) => ({
-            ...f,
-            id: f.minimumPrice.toString(),
-            name: formatPriceRangeFacet(f, session),
-        })),
+const mapStateToProps = (state: ApplicationState) => ({
+    currency: state.context.session.currency,
+    priceFacets: getProductListDataViewProperty(state, "priceRange")?.priceFacets,
 });
 
 const mapDispatchToProps = {
@@ -51,13 +48,19 @@ export interface ProductListPriceFiltersStyles {
 
 export const productListPriceFiltersStyles: ProductListPriceFiltersStyles = {};
 
-const ProductListPriceFilters: FC<Props> = ({ priceFacets, addProductFilters, removeProductFilters, fields }) => {
+const ProductListPriceFilters: FC<Props> = ({ priceFacets, currency, addProductFilters, removeProductFilters, fields }) => {
     // TODO ISC-11787 - make showMoreLimit configurable
     const showMoreLimit = 10;
 
     if (!priceFacets?.length) {
         return null;
     }
+
+    const facets = priceFacets.map(o => ({
+        ...o,
+        id: o.minimumPrice.toString(),
+        name: formatPriceRangeFacet(o, currency),
+    }));
 
     const onChangeFacet = (facet: FacetModel) => {
         if (facet.selected) {
@@ -70,7 +73,7 @@ const ProductListPriceFilters: FC<Props> = ({ priceFacets, addProductFilters, re
     return (
         <ProductListFiltersAccordionSection
             title="Price"
-            facets={priceFacets}
+            facets={facets}
             onChangeFacet={onChangeFacet}
             showMoreLimit={showMoreLimit}
             expandByDefault={fields.expandByDefault}

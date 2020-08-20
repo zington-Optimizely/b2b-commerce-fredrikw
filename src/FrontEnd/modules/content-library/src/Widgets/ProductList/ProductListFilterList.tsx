@@ -1,7 +1,10 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import { ProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsState";
 import clearAllProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearAllProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -19,8 +22,11 @@ import { css } from "styled-components";
 interface OwnProps extends WidgetProps {
 }
 
-const mapStateToProps = ({ pages: { productList: { productsState, productFilters, unfilteredProductCollection } }, context }: ApplicationState) => {
-    if (productsState.value) {
+const mapStateToProps = (state: ApplicationState) => {
+    const { pages: { productList: { productFilters, unfilteredApiParameter } }, context: { session: { currency } } } = state;
+    if (getProductListDataView(state).value) {
+        const unfilteredDataView = getProductsDataView(state, unfilteredApiParameter);
+        const unfilteredProductCollection = unfilteredDataView.value ? unfilteredDataView : undefined;
         return {
             loaded: true,
             stockedItemsOnly: productFilters.stockedItemsOnly,
@@ -35,10 +41,10 @@ const mapStateToProps = ({ pages: { productList: { productsState, productFilters
             selectedPriceFilters: productFilters.priceFilters,
             selectedAttributeValuesIds: productFilters.attributeValueIds,
             selectedCategoryId: productFilters.categoryId,
-            session: context.session,
+            currency,
         };
     }
-    return { };
+    return {};
 };
 
 const mapDispatchToProps = {
@@ -57,7 +63,7 @@ export interface ProductListFilterListStyles {
     clearAllLink?: LinkPresentationProps;
 }
 
-const styles: ProductListFilterListStyles = {
+export const filterListStyles: ProductListFilterListStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -80,7 +86,7 @@ const styles: ProductListFilterListStyles = {
     },
 };
 
-export const filterListStyles = styles;
+const styles = filterListStyles;
 
 const ProductListFilterList: FC<Props> = (
     {
@@ -99,7 +105,7 @@ const ProductListFilterList: FC<Props> = (
         selectedCategoryId,
         removeProductFilters,
         clearAllProductFilters,
-        session,
+        currency,
     }) => {
 
     if (!loaded) {
@@ -154,13 +160,13 @@ const ProductListFilterList: FC<Props> = (
                 </ProductListPageDataContext.Consumer>
             </StyledWrapper>
             {stockedItemsOnly
-                && <Tag
-                    {...styles.filterTag}
-                    onDelete={clickRemoveStockedItemsOnly}
-                    data-test-select="stockedItemsOnlyFilter"
-                >
-                    {translate("Stocked Items Only")}
-                </Tag>
+            && <Tag
+                {...styles.filterTag}
+                onDelete={clickRemoveStockedItemsOnly}
+                data-test-select="stockedItemsOnlyFilter"
+            >
+                {translate("Stocked Items Only")}
+            </Tag>
             }
             {searchWithinQueries?.map(s =>
                 <Tag
@@ -177,7 +183,7 @@ const ProductListFilterList: FC<Props> = (
                     onDelete={() => clickRemoveBrandHandler(id)}
                     data-test-selector={`brandFilter${id}`}
                 >
-                    {translate("Brand")}: {brandFacets?.find(b => b.id === id)?.name}
+                    {translate("Brand")}: {brandFacets?.find(o => o.id === id)?.name}
                 </Tag>,
             )}
             {selectedProductLineIds?.map(id =>
@@ -186,17 +192,17 @@ const ProductListFilterList: FC<Props> = (
                     onDelete={() => clickRemoveProductLineHandler(id)}
                     data-test-selector={`productLineFilter${id}`}
                 >
-                    {translate("Product Line")}: {productLineFacets?.find(x => x.id === id)?.name}
+                    {translate("Product Line")}: {productLineFacets?.find(o => o.id === id)?.name}
                 </Tag>,
             )}
             {selectedCategoryId
-                && <Tag
-                    {...styles.filterTag}
-                    onDelete={() => clickRemoveCategoryHandler()}
-                    data-test-selector={`categoryFilter${selectedCategoryId}`}
-                >
-                    {translate("Category")}: {categoryFacets?.find(c => c.categoryId === selectedCategoryId)?.shortDescription}
-                </Tag>
+            && <Tag
+                {...styles.filterTag}
+                onDelete={() => clickRemoveCategoryHandler()}
+                data-test-selector={`categoryFilter${selectedCategoryId}`}
+            >
+                {translate("Category")}: {categoryFacets?.find(o => o.categoryId === selectedCategoryId)?.shortDescription}
+            </Tag>
             }
             {selectedPriceFilters?.map(id =>
                 <Tag
@@ -204,7 +210,7 @@ const ProductListFilterList: FC<Props> = (
                     onDelete={() => clickRemovePriceHandler(id)}
                     data-test-selector={`priceFilter${id}`}
                 >
-                    {translate("Price")}: {formatPriceRangeFacet(priceFacets?.find(x => x.minimumPrice.toString() === id), session)}
+                    {translate("Price")}: {formatPriceRangeFacet(priceFacets?.find(o => o.minimumPrice.toString() === id), currency)}
                 </Tag>,
             )}
             {selectedAttributeValuesIds?.map(id => {
@@ -221,7 +227,7 @@ const ProductListFilterList: FC<Props> = (
                 }
             )}
             {anyActiveFilters
-                && <Link {...styles.clearAllLink} onClick={() => clearAllProductFilters()} data-test-selector="productListClearAll">{translate("Clear All")}</Link>
+            && <Link {...styles.clearAllLink} onClick={() => clearAllProductFilters()} data-test-selector="productListClearAll">{translate("Clear All")}</Link>
             }
         </StyledWrapper>
     );

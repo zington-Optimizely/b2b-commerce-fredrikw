@@ -4,7 +4,6 @@
     "nodeId": "bdf41e9a-7983-4439-a865-b2ce3694e72f",
     "sortOrder": 1,
     "fields": {
-        "url": "Invoices"
     },
     "translatableFields": {},
     "type": "InvoiceHistoryPage",

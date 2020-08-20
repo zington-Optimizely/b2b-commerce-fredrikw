@@ -40,7 +40,7 @@ export interface OrderConfirmationHeaderStyles {
     printListModal?: TwoButtonModalStyles;
 }
 
-const styles: OrderConfirmationHeaderStyles = {
+export const headerStyles: OrderConfirmationHeaderStyles = {
     continueButton: {
         css: css` margin-left: 10px; `,
     },
@@ -70,7 +70,7 @@ const styles: OrderConfirmationHeaderStyles = {
 
 type Props = HasHistory & WidgetProps & ReturnType<typeof mapStateToProps>;
 
-export const headerStyles = styles;
+const styles = headerStyles;
 const OrderConfirmationHeader: FC<Props> = props => {
     const { cartState } = props;
     const { history } = props;

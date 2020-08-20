@@ -1,7 +1,6 @@
 import { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
 import Clickable from "@insite/mobius/Clickable";
 import { FormFieldProps } from "@insite/mobius/FormField";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Popover from "@insite/mobius/Popover";
 import Typography from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";

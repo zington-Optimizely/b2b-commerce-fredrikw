@@ -97,7 +97,7 @@ export interface SavedPaymentsEditCardModalStyles {
     saveButton?: ButtonPresentationProps;
 }
 
-const styles: SavedPaymentsEditCardModalStyles = {
+export const editCardModalStyles: SavedPaymentsEditCardModalStyles = {
     leftColumn: {
         width: [12, 6, 6, 6, 6],
         css: css` flex-direction: column; `,
@@ -164,7 +164,7 @@ const styles: SavedPaymentsEditCardModalStyles = {
     },
 };
 
-export const editCardModalStyles = styles;
+const styles = editCardModalStyles;
 const StyledForm = getStyledWrapper("form");
 
 declare const TokenEx: any;

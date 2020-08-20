@@ -1,14 +1,20 @@
-import { createHandlerChainRunnerOptionalParameter, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { updateWishListLines as updateWishListLinesApi } from "@insite/client-framework/Services/WishListService";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { createHandlerChainRunnerOptionalParameter, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { updateWishListLines as updateWishListLinesApi, UpdateWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
+import { WishListLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
-interface UpdateWishListLineQuantitiesResult {
-    isQuantityAdjusted?: boolean;
+interface Props {
+    apiParameter: UpdateWishListLinesApiParameter;
+    apiResult: WishListLineCollectionModel;
+    result: {
+        isQuantityAdjusted?: boolean;
+    };
 }
 
-type UpdateWishListLineQuantitiesParameter = { reloadWishListLines?: boolean; } & HasOnSuccess<UpdateWishListLineQuantitiesResult>;
+type Parameter = { reloadWishListLines?: boolean; } & HasOnSuccess<Props["result"]>;
 
-type HandlerType = HandlerWithResult<UpdateWishListLineQuantitiesParameter, UpdateWishListLineQuantitiesResult>;
+type HandlerType = Handler<Parameter, Props>;
 
 export const DispatchBeginLoadWishListLinesIfNeeded: HandlerType = props => {
     if (props.parameter.reloadWishListLines) {
@@ -20,14 +26,35 @@ export const DispatchBeginLoadWishListLinesIfNeeded: HandlerType = props => {
     }
 };
 
-export const RequestUpdateWishListLineQuantities: HandlerType = async props => {
-    const wishListLineCollection = await updateWishListLinesApi({
-        wishListId: props.getState().pages.myListDetails.wishListId!,
-        changedSharedListLinesQuantities: props.getState().pages.myListDetails.changedWishListLineQuantities,
+export const PopulateApiParameter: HandlerType = props => {
+    const state = props.getState();
+    const { wishListId, productInfosByWishListLineId } = state.pages.myListDetails;
+    if (!wishListId) {
+        throw new Error("There was no wishListId defined on the pages.myListDetails state");
+    }
+
+    const changedSharedListLinesQuantities: SafeDictionary<number> = {};
+    for (const wishListLineId in productInfosByWishListLineId) {
+        const wishListLine = state.data.wishListLines.byId[wishListLineId];
+        const qtyOrdered = productInfosByWishListLineId[wishListLineId]!.qtyOrdered;
+        if (!wishListLine || wishListLine.qtyOrdered === qtyOrdered) {
+            continue;
+        }
+
+        changedSharedListLinesQuantities[wishListLineId] = qtyOrdered;
+    }
+
+    props.apiParameter = {
+        wishListId,
+        changedSharedListLinesQuantities,
         includeListLines: true,
-    });
+    };
+};
+
+export const RequestUpdateWishListLineQuantities: HandlerType = async props => {
+    props.apiResult = await updateWishListLinesApi(props.apiParameter);
     props.result = {
-        isQuantityAdjusted: wishListLineCollection.wishListLines?.some(o => o.isQtyAdjusted),
+        isQuantityAdjusted: props.apiResult.wishListLines?.some(o => o.isQtyAdjusted),
     };
 };
 
@@ -44,6 +71,7 @@ export const DispatchCompleteUpdateWishListLineQuantities: HandlerType = props =
     props.dispatch({
         type: "Pages/MyListDetails/CompleteUpdateWishListLineQuantities",
         isQuantityAdjusted: props.result.isQuantityAdjusted || false,
+        wishListLinesWithUpdatedQuantity: props.apiParameter.changedSharedListLinesQuantities ?? {},
     });
 };
 
@@ -59,6 +87,7 @@ export const DispatchLoadWishListLines: HandlerType = props => {
 
 export const chain = [
     DispatchBeginLoadWishListLinesIfNeeded,
+    PopulateApiParameter,
     RequestUpdateWishListLineQuantities,
     ResetWishListData,
     DispatchCompleteUpdateWishListLineQuantities,

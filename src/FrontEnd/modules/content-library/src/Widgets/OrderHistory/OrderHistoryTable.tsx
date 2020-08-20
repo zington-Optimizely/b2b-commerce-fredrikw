@@ -81,7 +81,7 @@ export interface OrderHistoryTableStyles {
     dataTable?: DataTableProps;
 }
 
-const styles: OrderHistoryTableStyles = {
+export const orderHistoryTableStyles: OrderHistoryTableStyles = {
     container: {
         css: css` overflow: auto; `,
     },
@@ -146,7 +146,7 @@ const styles: OrderHistoryTableStyles = {
     },
 };
 
-export const orderHistoryTableStyles = styles;
+const styles = orderHistoryTableStyles;
 
 class OrderHistoryTable extends React.Component<Props> {
 

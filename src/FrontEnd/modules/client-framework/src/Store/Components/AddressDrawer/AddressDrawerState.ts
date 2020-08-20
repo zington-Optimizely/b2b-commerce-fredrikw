@@ -2,6 +2,7 @@ import { BillToModel, ShipToModel, WarehouseModel } from "@insite/client-framewo
 
 export default interface AddressDrawerState {
     isOpen: boolean;
+    navDrawerIsOpen?: boolean;
     fulfillmentMethod: string;
     selectedBillTo: BillToModel | undefined;
     selectedShipTo: ShipToModel | undefined;

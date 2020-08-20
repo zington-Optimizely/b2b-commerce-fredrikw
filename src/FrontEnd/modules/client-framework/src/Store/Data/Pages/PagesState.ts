@@ -1,6 +1,6 @@
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
-import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 

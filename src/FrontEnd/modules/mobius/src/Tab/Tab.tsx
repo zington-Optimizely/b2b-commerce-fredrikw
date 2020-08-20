@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled, { ThemeProps, withTheme } from "styled-components";
+import styled, { withTheme } from "styled-components";
 import Button, { ButtonProps } from "../Button";
 import Typography from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";

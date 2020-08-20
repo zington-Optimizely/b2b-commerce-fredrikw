@@ -7,6 +7,8 @@ import { BrandsState } from "@insite/client-framework/Store/Data/Brands/BrandsSt
 import { BudgetCalendarsState } from "@insite/client-framework/Store/Data/BudgetCalendars/BudgetCalendarsState";
 import { BudgetsState } from "@insite/client-framework/Store/Data/Budgets/BudgetsState";
 import { CartsState } from "@insite/client-framework/Store/Data/Carts/CartsState";
+import { CatalogPagesState } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesState";
+import { CategoriesState } from "@insite/client-framework/Store/Data/Categories/CategoriesState";
 import { CountriesState } from "@insite/client-framework/Store/Data/Countries/CountriesState";
 import { DealersState } from "@insite/client-framework/Store/Data/Dealers/DealersState";
 import { InvoicesState } from "@insite/client-framework/Store/Data/Invoices/InvoicesState";
@@ -15,6 +17,7 @@ import { OrdersState } from "@insite/client-framework/Store/Data/Orders/OrdersSt
 import { OrderStatusMappingsState } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsState";
 import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { PaymentProfilesState } from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesState";
+import { ProductsState } from "@insite/client-framework/Store/Data/Products/ProductsState";
 import { PromotionsState } from "@insite/client-framework/Store/Data/Promotions/PromotionsState";
 import { QuotesState } from "@insite/client-framework/Store/Data/Quotes/QuotesState";
 import { ShipTosState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosState";
@@ -51,6 +54,8 @@ export default interface DataState {
     readonly budgets: BudgetsState;
     readonly budgetCalendars: BudgetCalendarsState;
     readonly carts: CartsState;
+    readonly catalogPages: CatalogPagesState;
+    readonly categories: CategoriesState;
     readonly countries: CountriesState;
     readonly dealers: DealersState;
     readonly invoices: InvoicesState;
@@ -59,6 +64,7 @@ export default interface DataState {
     readonly orderStatusMappings: OrderStatusMappingsState;
     readonly pages: PagesState;
     readonly paymentProfiles: PaymentProfilesState;
+    readonly products: ProductsState;
     readonly promotions: PromotionsState;
     readonly quotes: QuotesState;
     readonly shipTos: ShipTosState;

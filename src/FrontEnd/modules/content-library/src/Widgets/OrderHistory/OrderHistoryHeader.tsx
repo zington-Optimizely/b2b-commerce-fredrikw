@@ -30,7 +30,7 @@ export interface OrderHistoryHeaderStyles {
     toggleFilterClickable?: ClickablePresentationProps;
 }
 
-const styles: OrderHistoryHeaderStyles = {
+export const headerStyles: OrderHistoryHeaderStyles = {
     container: { gap: 8, css: css` padding-bottom: 20px; ` },
     invoiceCountGridItem: {
         width: 11,
@@ -45,7 +45,7 @@ const styles: OrderHistoryHeaderStyles = {
         size: 24,
     },
 };
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const OrderHistoryHeader: FC<Props> = ({ toggleFiltersOpen, id }) => {
     return (

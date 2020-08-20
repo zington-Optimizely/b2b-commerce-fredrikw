@@ -1,4 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
@@ -56,7 +57,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     selectedWishListLineIds: state.pages.myListDetails.selectedWishListLineIds,
     myListsPageLink: getPageLinkByPageType(state, "MyListsPage"),
     allowEditingOfWishLists: getSettingsCollection(state).wishListSettings.allowEditingOfWishLists,
-    changedWishListLineQuantities: state.pages.myListDetails.changedWishListLineQuantities,
+    productInfosByWishListLineId: state.pages.myListDetails.productInfosByWishListLineId,
 });
 
 const mapDispatchToProps = {
@@ -96,7 +97,7 @@ export interface MyListsDetailsActionStyles {
     scheduleReminderModal?: ScheduleReminderModalStyles;
 }
 
-const styles: MyListsDetailsActionStyles = {
+export const actionStyles: MyListsDetailsActionStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -189,7 +190,7 @@ const styles: MyListsDetailsActionStyles = {
     },
 };
 
-export const actionStyles = styles;
+const styles = actionStyles;
 
 class MyListsDetailsActions extends React.Component<Props, State> {
 
@@ -269,10 +270,15 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                 onSuccess: this.onAddToCartSuccess,
             });
         } else {
+            const changedSharedListLinesQuantities: Dictionary<number> = {};
+            for (const wishListLineId in this.props.productInfosByWishListLineId) {
+                changedSharedListLinesQuantities[wishListLineId] = this.props.productInfosByWishListLineId[wishListLineId]!.qtyOrdered;
+            }
+
             this.props.addWishListToCart({
                 apiParameter: {
                     wishListId: this.props.wishList.id,
-                    changedSharedListLinesQuantities: this.props.changedWishListLineQuantities,
+                    changedSharedListLinesQuantities,
                 },
                 onSuccess: this.onAddToCartSuccess,
             });

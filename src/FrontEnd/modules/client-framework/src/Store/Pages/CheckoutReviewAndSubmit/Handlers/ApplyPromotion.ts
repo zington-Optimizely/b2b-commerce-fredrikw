@@ -1,6 +1,7 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { addCartPromotion, AddCartPromotionApiParameter } from "@insite/client-framework/Services/CartService";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
@@ -19,7 +20,9 @@ export const DispatchBeginApplyPromotion: HandlerType = props => {
 };
 
 export const PopulateApiParameter: HandlerType = props => {
-    const cart = getCurrentCartState(props.getState()).value;
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cart) {
         throw new Error("There was no current cart when we were trying to apply a promotion to it.");
     }
@@ -49,7 +52,13 @@ export const DispatchCompleteApplyPromotion: HandlerType = props => {
 };
 
 export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const LoadPromotions: HandlerType = props => {

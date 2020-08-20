@@ -35,7 +35,7 @@ export interface SearchHistoryStyles {
     clearLink?: LinkPresentationProps;
 }
 
-const baseStyles: SearchHistoryStyles = {
+export const searchHistoryStyles: SearchHistoryStyles = {
     headerText: {
         weight: "bold",
         css: css`
@@ -101,13 +101,15 @@ const baseStyles: SearchHistoryStyles = {
     },
 };
 
+const styles = searchHistoryStyles;
+
 class SearchHistory extends React.Component<Props> {
     private readonly styles: SearchHistoryStyles;
 
     constructor(props: Props) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
     }
 
     clearLinkClickHandler = () => {

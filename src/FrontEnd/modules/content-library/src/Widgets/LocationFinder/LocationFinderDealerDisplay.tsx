@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";

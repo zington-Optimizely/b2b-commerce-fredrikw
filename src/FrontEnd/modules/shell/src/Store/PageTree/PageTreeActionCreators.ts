@@ -1,7 +1,7 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import {
     addTask,
-    fetch,
+
 } from "@insite/client-framework/ServerSideRendering";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
@@ -117,8 +117,12 @@ export const addPage = (pageType: string, pageName: string, parentId: string, co
         let pageModel: PageModel;
 
         if (copyPageId) {
-            const result = await getPageByUrl(`/Content/Page/${copyPageId}`, true);
-            pageModel = result.page;
+            const url = `/Content/Page/${copyPageId}`;
+            const { page } = await getPageByUrl(url, true);
+            if (!page) {
+                throw new Error(`Getting the page by the URL '${url}' unexpectedly did not return a page.`);
+            }
+            pageModel = page;
         } else {
             pageModel = await getTemplate(pageType);
         }

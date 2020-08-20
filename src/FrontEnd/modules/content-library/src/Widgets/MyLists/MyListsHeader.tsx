@@ -15,7 +15,7 @@ export interface MyListsHeaderStyles {
     rightBottomGridItem?: GridItemProps;
 }
 
-const styles: MyListsHeaderStyles = {
+export const headerStyles: MyListsHeaderStyles = {
     container: {
         gap: 10,
         css: css` padding-bottom: 20px; `,
@@ -34,7 +34,7 @@ const styles: MyListsHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const MyListsHeader: React.FC<WidgetProps> = props => {
     return (

@@ -1,14 +1,14 @@
 import { updateContext } from "@insite/client-framework/Context";
-import { ApiHandlerNoApiParameter, createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { createShipTo, GetShipTosApiParameter, UpdateBillToApiParameter, updateShipTo as updateShipToApi } from "@insite/client-framework/Services/CustomersService";
+import { createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
 import updateBillToChain from "@insite/client-framework/Store/Data/BillTos/Handlers/UpdateBillTo";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
-import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<{
@@ -87,7 +87,13 @@ export const UpdateSession: HandlerType = async props => {
 };
 
 export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const DispatchCompleteUpdateBillTo: HandlerType = props => {

@@ -39,6 +39,8 @@ export interface RfqQuoteDetailsInformationStyles {
     jobNameHeadingAndText?: SmallHeadingAndTextStyles;
     salesRepGridItem?: GridItemProps;
     salesRepHeadingAndText?: SmallHeadingAndTextStyles;
+    userGridItem?: GridItemProps;
+    userHeadingAndText?: SmallHeadingAndTextStyles;
     statusGridItem?: GridItemProps;
     statusHeadingAndText?: SmallHeadingAndTextStyles;
     dateGridItem?: GridItemProps;
@@ -51,7 +53,7 @@ export interface RfqQuoteDetailsInformationStyles {
     notesHeadingAndText?: SmallHeadingAndTextStyles;
 }
 
-const styles: RfqQuoteDetailsInformationStyles = {
+export const rfqQuoteDetailsInformationStyles: RfqQuoteDetailsInformationStyles = {
     detailsGridContainer: { gap: 20, css: css` margin-bottom: 20px; ` },
     expirationDateGridItem: {
         width: 12,
@@ -67,6 +69,10 @@ const styles: RfqQuoteDetailsInformationStyles = {
     },
     salesRepGridItem: { width: [6, 6, 4, 4, 4] },
     salesRepHeadingAndText: {
+        heading: { transform: "initial", weight: "bold", size: 14 },
+    },
+    userGridItem: { width: [6, 6, 4, 4, 4] },
+    userHeadingAndText: {
         heading: { transform: "initial", weight: "bold", size: 14 },
     },
     statusGridItem: { width: [6, 6, 4, 4, 4] },
@@ -92,7 +98,7 @@ const styles: RfqQuoteDetailsInformationStyles = {
     },
 };
 
-export const informationStyles = styles;
+const styles = rfqQuoteDetailsInformationStyles;
 
 const RfqQuoteDetailsInformation = ({
     quoteState,
@@ -114,9 +120,9 @@ const RfqQuoteDetailsInformation = ({
     const expirationDateLabel = translate(`${quote.isJobQuote ? "Job" : "Quote"} Expiration Date`);
 
     return (
-        <GridContainer {...styles.detailsGridContainer}>
+        <GridContainer {...styles.detailsGridContainer} data-test-selector="rfqQuoteDetails_info">
             {quote.isEditable
-                && <GridItem {...styles.expirationDateGridItem}>
+                && <GridItem {...styles.expirationDateGridItem} data-test-selector="rfqQuoteDetails_expirationDate">
                     <DatePicker
                         {...styles.expirationDateDatePicker}
                         label={expirationDateLabel}
@@ -144,6 +150,9 @@ const RfqQuoteDetailsInformation = ({
             }
             <GridItem {...styles.salesRepGridItem}>
                 <SmallHeadingAndText heading={translate("Sales Rep")} text={quote.salespersonName} extendedStyles={styles.salesRepHeadingAndText} />
+            </GridItem>
+            <GridItem {...styles.userGridItem}>
+                <SmallHeadingAndText heading={translate("User")} text={quote.userName} extendedStyles={styles.userHeadingAndText} data-test-selector="user"/>
             </GridItem>
             <GridItem {...styles.statusGridItem}>
                 <SmallHeadingAndText heading={translate("Status")} text={quote.statusDisplay} extendedStyles={styles.statusHeadingAndText} />

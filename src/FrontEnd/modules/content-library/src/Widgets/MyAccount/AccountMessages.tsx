@@ -70,7 +70,7 @@ interface MessageCardStyles {
     bottomBorder?: InjectableCss;
 }
 
-const styles: AccountMessagesStyles = {
+export const accountMessagesStyles: AccountMessagesStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -136,7 +136,7 @@ function filterMessagesBasedOnFilterType(messages: MessageModel[], messagesFilte
     });
 }
 
-export const accountMessagesStyles = styles;
+const styles = accountMessagesStyles;
 const StyledSection = getStyledWrapper("section");
 const StyledArticle = getStyledWrapper("article");
 

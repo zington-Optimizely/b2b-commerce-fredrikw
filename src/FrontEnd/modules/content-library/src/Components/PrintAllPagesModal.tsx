@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import { HasPagingParameters } from "@insite/client-framework/Services/ApiService";

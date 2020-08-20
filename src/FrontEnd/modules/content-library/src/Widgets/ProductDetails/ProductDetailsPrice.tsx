@@ -1,10 +1,10 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import * as React from "react";
 import { connect } from "react-redux";
 
@@ -18,7 +18,7 @@ export interface ProductDetailsPriceStyles {
     productPrice?: ProductPriceStyles;
 }
 
-const styles: ProductDetailsPriceStyles = {
+export const priceStyles: ProductDetailsPriceStyles = {
     productPrice: {
         price: {
             priceText: { size: 26 },
@@ -27,11 +27,11 @@ const styles: ProductDetailsPriceStyles = {
     },
 };
 
-export const priceStyles = styles;
+const styles = priceStyles;
 
-const ProductDetailsPrice: React.FC<OwnProps> = ({ product, productSettings }) => {
+const ProductDetailsPrice: React.FC<OwnProps> = ({ productContext, productSettings }) => {
     return <ProductPrice
-        product={product}
+        product={productContext}
         showLabel={false}
         showSavings={true}
         showSavingsAmount={productSettings.showSavingsAmount}
@@ -40,11 +40,11 @@ const ProductDetailsPrice: React.FC<OwnProps> = ({ product, productSettings }) =
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withProduct(ProductDetailsPrice)),
+    component: connect(mapStateToProps)(withProductContext(ProductDetailsPrice)),
     definition: {
         displayName: "Price",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

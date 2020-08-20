@@ -70,7 +70,7 @@ export interface Props {
     facets: FacetModel[];
     onChangeFacet: (facet: FacetModel) => void;
     showMoreLimit: number;
-    extendedStyles: ProductListFilterAccordionSectionStyles;
+    extendedStyles?: ProductListFilterAccordionSectionStyles;
     expandByDefault: boolean;
 }
 

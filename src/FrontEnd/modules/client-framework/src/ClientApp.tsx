@@ -22,11 +22,12 @@ import "./polyfills";
  * client-framework and frontend. Then attach why-did-you-render to your component as follows:
  *    * class component, inside the component add `static whyDidYouRender = true;`
  *    * functional component, after the component add `ComponentName.whyDidYouRender = true;`
- * if (process.env.NODE_ENV !== "production") {
- *     const whyDidYouRender = require("@welldone-software/why-did-you-render");
- *     whyDidYouRender(React, { exclude: [/^ConnectFunction/], trackHooks: true });
- * }
  */
+ // if (process.env.NODE_ENV !== "production") {
+ //     // eslint-disable-next-line @typescript-eslint/no-var-requires
+ //     const whyDidYouRender = require("@welldone-software/why-did-you-render");
+ //     whyDidYouRender(React, { exclude: [/^ConnectFunction/], trackHooks: true });
+ // }
 
 type customWindow = {
     siteMessages: SafeDictionary<string>;

@@ -1,7 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
@@ -218,14 +217,14 @@ const CartLineCardExpanded: FC<Props> = ({
             return;
         }
 
-        const product = {
-            id: cartLine.productId,
-            qtyOrdered: cartLine.qtyOrdered,
-            selectedUnitOfMeasure: cartLine.unitOfMeasure,
-        } as ProductModelExtended;
+        const productInfo = {
+            productId: cartLine.productId!,
+            qtyOrdered: cartLine.qtyOrdered!,
+            unitOfMeasure: cartLine.unitOfMeasure,
+        };
         if (!wishListSettings.allowMultipleWishLists) {
             addToWishList({
-                products: [product],
+                productInfos: [productInfo],
                 onSuccess: () => {
                     toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
                 },
@@ -233,7 +232,7 @@ const CartLineCardExpanded: FC<Props> = ({
             return;
         }
 
-        setAddToListModalIsOpen({ modalIsOpen: true, products: [product] });
+        setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
     };
 
     const sumQtyPerUom = cart.cartLines!.reduce(

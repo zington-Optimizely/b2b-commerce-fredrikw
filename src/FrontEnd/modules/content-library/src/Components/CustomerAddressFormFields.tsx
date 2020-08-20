@@ -102,7 +102,7 @@ export interface CustomerAddressFormFieldStyles {
     submitButton?: ButtonPresentationProps;
 }
 
-const styles: CustomerAddressFormFieldStyles = {
+export const customerAddressFormFieldStyles: CustomerAddressFormFieldStyles = {
     firstNameGridItem: { width: 6 },
     lastNameGridItem: { width: 6 },
     companyNameGridItem: { width: 6 },
@@ -131,7 +131,7 @@ const styles: CustomerAddressFormFieldStyles = {
     },
 };
 
-export const customerAddressFormFieldStyles = styles;
+const styles = customerAddressFormFieldStyles;
 
 const CustomerAddressFormFields = ({
     firstName,

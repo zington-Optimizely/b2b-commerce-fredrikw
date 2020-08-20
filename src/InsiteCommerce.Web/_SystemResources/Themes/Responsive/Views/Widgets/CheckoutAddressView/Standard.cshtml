@@ -38,7 +38,11 @@
                 <div ng-if="vm.editMode">
                     <div class="shipping-info">
                         <div class="ship-select">
-                            <select id="shipTo" name="shipTo" ng-model="vm.selectedShipTo" ng-options="shipTo.label for shipTo in vm.shipTos" ng-change="vm.checkSelectedShipTo()"></select>
+                            <input type="text" class="shipto-selector tst_shipto_selector" id="shipTo" name="shipTo"
+                                   ng-init="vm.shipToOptionsPlaceholder = '[% translate 'Search or Select Ship To' EscapeSingleQuotes %]'; vm.recipientAddressOptionsPlaceholder = '[% translate 'Search or Select Recipient Address' EscapeSingleQuotes %]'"
+                                   ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#shipTo')"
+                                   ng-model="vm.shipToSearch" kendo-auto-complete k-options="vm.shipToOptions" />
+                            <span class="icon-arw-down-5" ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#shipTo')"></span>
                         </div>
                         <isc-address-edit prefix="st" show-email="false" address="vm.selectedShipTo" countries="vm.countries" address-fields="vm.addressFields.shipToAddressFields"
                                           is-read-only="vm.isReadOnly" set-state-required-rule="vm.setStateRequiredRule('st', vm.selectedShipTo)"></isc-address-edit>
@@ -77,4 +81,9 @@
 </script>
 <script type="text/ng-template" id="/PartialViews/Account-FullAddressDisplay">
     [% partialView 'Account-FullAddressDisplay' %]
+</script>
+<script id="totalShipToCountTemplate" type="text/template">
+    <div class="k-header" ng-show="vm.totalShipTosCount > vm.defaultPageSize">
+        [% translate 'Showing 1-{0} of {1}' %]
+    </div>
 </script>

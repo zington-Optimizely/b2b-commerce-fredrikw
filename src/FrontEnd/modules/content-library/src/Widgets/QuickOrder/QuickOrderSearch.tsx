@@ -1,7 +1,8 @@
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import addProduct from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/AddProduct";
 import translate from "@insite/client-framework/Translate";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
@@ -20,18 +21,18 @@ export interface QuickOrderSearchStyles {
     productSelector?: ProductSelectorStyles;
 }
 
-const styles: QuickOrderSearchStyles = {
+export const quickOrderSearchStyles: QuickOrderSearchStyles = {
 };
 
-export const quickOrderSearchStyles = styles;
+const styles = quickOrderSearchStyles;
 
 const QuickOrderSearch: FC<Props> = ({
     addProduct,
 }) => {
     const toasterContext = React.useContext(ToasterContext);
 
-    const addProductToOrder = (product: ProductModelExtended) => {
-        addProduct({ product });
+    const addProductToOrder = (productInfo: ProductInfo, product: ProductModel) => {
+        addProduct({ productInfo, product });
         toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
     };
 

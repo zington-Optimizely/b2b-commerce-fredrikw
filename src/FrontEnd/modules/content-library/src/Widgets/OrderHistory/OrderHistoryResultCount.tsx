@@ -10,9 +10,9 @@ export interface OrderHistoryResultCountStyles {
     orderCountText?: TypographyPresentationProps;
 }
 
-const styles: OrderHistoryResultCountStyles = {};
+export const resultCountStyles: OrderHistoryResultCountStyles = {};
 
-export const resultCountStyles = styles;
+const styles = resultCountStyles;
 
 const OrderHistoryResultCount: FC<WidgetProps> = () => {
     const ordersDataView = useContext(OrdersDataViewContext);

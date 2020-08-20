@@ -1,27 +1,32 @@
 import {
-    ApiHandler,
-    createHandlerChainRunner,
+    createHandlerChainRunner, Handler,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
 import {
+    GetProductCollectionRealTimePriceApiV2Parameter,
     getProductCollectionRealTimePrices,
-    GetProductsRealTimePriceApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface LoadRealTimePricingParameter extends HasOnSuccess<RealTimePricingModel> {
-    parameter: GetProductsRealTimePriceApiV2Parameter;
+
+type Parameter = GetProductCollectionRealTimePriceApiV2Parameter & HasOnSuccess<RealTimePricingModel> &{
     onError?: (error: unknown) => void;
+};
+
+interface Props {
+    apiResult: RealTimePricingModel,
+    apiParameter: GetProductCollectionRealTimePriceApiV2Parameter,
+    error?: unknown,
 }
 
-type HandlerType = ApiHandler<LoadRealTimePricingParameter, RealTimePricingModel, {
-    error?: unknown,
-}>;
+type HandlerType = Handler<Parameter, Props>;
+
 
 export const PopulateApiParameter: HandlerType = props => {
-    props.apiParameter = props.parameter;
+    const { onSuccess, onError, ...apiParameter } = props.parameter;
+    props.apiParameter = apiParameter;
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
@@ -31,7 +36,7 @@ export const RequestDataFromApi: HandlerType = async props => {
     }
 
     try {
-        props.apiResult = await getProductCollectionRealTimePrices(props.apiParameter.parameter);
+        props.apiResult = await getProductCollectionRealTimePrices(props.apiParameter);
     } catch (error) {
         logger.warn(`Failed to load pricing data: ${error}`);
         props.error = error;

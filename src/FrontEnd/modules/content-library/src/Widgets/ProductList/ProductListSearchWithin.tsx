@@ -1,6 +1,7 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -17,7 +18,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    loaded: !!state.pages.productList.productsState.value,
+    loaded: !!getProductListDataView(state).value,
     productFilters: state.pages.productList.productFilters,
 });
 
@@ -33,7 +34,7 @@ export interface ProductListSearchWithinStyles {
     searchTextField?: TextFieldPresentationProps;
 }
 
-const styles: ProductListSearchWithinStyles = {
+export const searchWithinStyles: ProductListSearchWithinStyles = {
     titleText: {
         variant: "h6",
     },
@@ -45,10 +46,9 @@ const styles: ProductListSearchWithinStyles = {
     },
 };
 
-export const searchWithinStyles = styles;
+const styles = searchWithinStyles;
 
 const ProductListSearchWithin: FC<Props> = ({ loaded, addProductFilters, productFilters }) => {
-
     if (!loaded) {
         return null;
     }

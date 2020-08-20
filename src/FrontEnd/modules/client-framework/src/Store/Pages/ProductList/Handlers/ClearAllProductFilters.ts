@@ -24,9 +24,9 @@ export const RemoveAllFilters: HandlerType = props => {
     props.result.page = undefined;
 };
 
-export const DispatchRemoveProductFilters: HandlerType = props => {
+export const DispatchSetProductFilters: HandlerType = props => {
     props.dispatch({
-        type: "Pages/ProductList/ClearAllProductFilters",
+        type: "Pages/ProductList/SetProductFilters",
         result: props.result,
     });
 };
@@ -38,7 +38,7 @@ export const DispatchSetFilterQuery: HandlerType = props => {
 export const chain = [
     GetCurrentFilters,
     RemoveAllFilters,
-    DispatchRemoveProductFilters,
+    DispatchSetProductFilters,
     DispatchSetFilterQuery,
 ];
 

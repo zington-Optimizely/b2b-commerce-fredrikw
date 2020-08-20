@@ -16,7 +16,7 @@ import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaP
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Link from "@insite/mobius/Link";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import React, { FC, useContext } from "react";
@@ -62,7 +62,7 @@ export interface RequestRmaProductListStyles {
     productInfoSubtotalGridItem?: GridItemProps;
 }
 
-const styles: RequestRmaProductListStyles = {
+export const requestRmaProductListStyles: RequestRmaProductListStyles = {
     gridContainer: {
         css: css`
             margin-top: 35px;
@@ -201,7 +201,7 @@ const OrderLineCard = (props: {
                     {...styles.qtyToReturnTextField}
                     label={translate("QTY to Return")}
                     type="number"
-                    value={orderLine.rmaQtyRequested}
+                    value={orderLine.rmaQtyRequested.toString()}
                     min={minQtyToReturn}
                     max={orderLine.qtyOrdered}
                     error={qtyToReturnError}
@@ -217,7 +217,7 @@ const OrderLineCard = (props: {
                     onChange={(event: React.ChangeEvent<HTMLSelectElement>) => returnReasonChangeHandler(event, orderLine.lineNumber)}>
                     <option value="">{translate("Select a Reason Code")}</option>
                     {order.returnReasons?.map(returnReason =>
-                        <option key={returnReason} value={returnReason}>{translate(returnReason)}</option>,
+                        <option key={returnReason} value={returnReason}>{returnReason}</option>,
                     )}
                 </Select>
             </GridItem>
@@ -225,7 +225,7 @@ const OrderLineCard = (props: {
     );
 };
 
-export const requestRmaProductListStyles = styles;
+const styles = requestRmaProductListStyles;
 
 const RequestRmaProductList: FC<Props> = ({
     orderLines,
@@ -255,11 +255,7 @@ const RequestRmaProductList: FC<Props> = ({
     }
 
     const qtyChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, lineNumber: number) => {
-        const qty = Number.parseInt(event.target.value, 10);
-        if (Number.isNaN(qty)) {
-            return;
-        }
-
+        const qty = parseInt(event.target.value, 10);
         const updatedOrderLines = orderLines.map(line => line.lineNumber === lineNumber ? { ...line, rmaQtyRequested: qty } : line);
         setOrderLines({ orderLines: updatedOrderLines });
 

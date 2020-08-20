@@ -1,5 +1,5 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import AddToListModalState from "@insite/client-framework/Store/Components/AddToListModal/AddToListModalState";
 import { Draft } from "immer";
 
@@ -10,10 +10,10 @@ const initialState: AddToListModalState = {
 const reducer = {
     "Components/AddToListModal/CompleteSetIsOpen": (draft: Draft<AddToListModalState>, action: {
         isOpen: boolean;
-        products?: ProductModelExtended[],
+        productInfos?: Omit<ProductInfo, "productDetailPath">[],
     }) => {
         draft.isOpen = action.isOpen;
-        draft.products = action.products;
+        draft.productInfos = action.productInfos;
     },
     "CurrentPage/LoadPageComplete": (draft: Draft<AddToListModalState>, action: { }) => {
         draft.isOpen = false;

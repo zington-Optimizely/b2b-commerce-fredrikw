@@ -3,7 +3,7 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
-import { AddressFieldDisplayCollectionModel, BaseAddressModel, BillToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
+import { AddressFieldDisplayCollectionModel, BillToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import BillToSelector, { BillToSelectorStyles } from "@insite/content-library/Components/BillToSelector";
 import CustomerAddressForm, { CustomerAddressFormStyles } from "@insite/content-library/Components/CustomerAddressForm";
@@ -52,7 +52,7 @@ export interface BillingAddressStyles {
     editAddressForm?: CustomerAddressFormStyles;
 }
 
-const baseStyles: BillingAddressStyles = {
+export const billingAddressStyles: BillingAddressStyles = {
     container: { gap: 20 },
     headingGridItem: {
         width: 12,
@@ -88,8 +88,6 @@ const baseStyles: BillingAddressStyles = {
     },
 };
 
-export const billingAddressStyles = baseStyles;
-
 const BillingAddress = ({
     address,
     onChange,
@@ -110,7 +108,7 @@ const BillingAddress = ({
         }
     }, [addressBeingEdited]);
 
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(billingAddressStyles, extendedStyles);
 
     const selectAddressClickHandler = () => setIsCustomerSelectorModalOpen(true);
 

@@ -31,7 +31,7 @@ export interface AccountSettingsManageSubscriptionsStyles {
     manageSubscriptionsTitle: TypographyProps;
 }
 
-const styles: AccountSettingsManageSubscriptionsStyles = {
+export const manageSubscriptionsStyles: AccountSettingsManageSubscriptionsStyles = {
     manageSubscriptionsTitle: {
         variant: "h4",
         as: "h2",
@@ -44,7 +44,7 @@ const styles: AccountSettingsManageSubscriptionsStyles = {
     manageSubscriptionsCheckboxGroup: {},
 };
 
-export const manageSubscriptionsStyles = styles;
+const styles = manageSubscriptionsStyles;
 
 const AccountSettingsManageSubscriptions: FC<Props> = props => {
     const { allowSubscribeToNewsLetter, account } = props;

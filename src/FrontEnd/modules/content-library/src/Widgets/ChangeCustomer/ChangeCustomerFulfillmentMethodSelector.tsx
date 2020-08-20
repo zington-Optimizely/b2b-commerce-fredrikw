@@ -60,7 +60,7 @@ interface WarehouseAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const styles: ChangeCustomerFulfillmentMethodSelectorStyles = {
+export const changeCustomerFulfillmentMethodStyles: ChangeCustomerFulfillmentMethodSelectorStyles = {
     radioGroupGridItem: {
         width: 12,
     },
@@ -88,7 +88,7 @@ const styles: ChangeCustomerFulfillmentMethodSelectorStyles = {
     },
 };
 
-export const changeCustomerFulfillmentMethodStyles = styles;
+const styles = changeCustomerFulfillmentMethodStyles;
 
 const ChangeCustomerFulfillmentMethodSelector: FC<Props> = ({
     session,

@@ -39,4 +39,4 @@ export const hasRestrictedCartLines = (cart: Cart | undefined) => cart && !!cart
 export const canPlaceOrder = (cart: Cart | undefined) => cart && !cart.requiresApproval
     && (!cart.paymentMethod || (cart.paymentMethod && !cart.paymentMethod.isPaymentProfileExpired));
 
-export const canApplyPromotionsToCart = (cart: Cart | undefined) => cart && !cart.paymentOptions!.isPayPal && cart.type !== "Quote" && cart.type !== "Job";
+export const canApplyPromotionsToCart = (cart: Cart | undefined) => cart && !cart.paymentOptions?.isPayPal && cart.type !== "Quote" && cart.type !== "Job";

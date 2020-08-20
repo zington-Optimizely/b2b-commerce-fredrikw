@@ -26,7 +26,7 @@ export interface MyListsCreateListButtonStyles {
     createListModal?: ModalPresentationProps;
 }
 
-const styles: MyListsCreateListButtonStyles = {
+export const createListButtonStyles: MyListsCreateListButtonStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -41,7 +41,7 @@ const styles: MyListsCreateListButtonStyles = {
     },
 };
 
-export const createListButtonStyles = styles;
+const styles = createListButtonStyles;
 
 class MyListsCreateListButton extends React.Component<Props, State> {
     constructor(props: Props) {

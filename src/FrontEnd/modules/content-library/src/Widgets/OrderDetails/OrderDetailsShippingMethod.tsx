@@ -16,7 +16,7 @@ export interface OrderDetailsShippingMethodStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: OrderDetailsShippingMethodStyles = {
+export const shippingMethodStyles: OrderDetailsShippingMethodStyles = {
     titleText: {
         variant: "h6",
         as: "h2",
@@ -27,7 +27,7 @@ const styles: OrderDetailsShippingMethodStyles = {
     },
 };
 
-export const shippingMethodStyles = styles;
+const styles = shippingMethodStyles;
 
 const OrderDetailsShippingMethod: React.FunctionComponent = () => {
     const { value: order } = useContext(OrderStateContext);

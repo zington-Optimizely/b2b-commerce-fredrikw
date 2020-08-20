@@ -1,4 +1,6 @@
 import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
@@ -9,6 +11,8 @@ import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import * as React from "react";
+import { useContext } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
@@ -29,7 +33,7 @@ export interface CategoryDetailSubCategoriesStyles {
     subCategoryNameLink?: LinkPresentationProps;
 }
 
-const styles: CategoryDetailSubCategoriesStyles = {
+export const categoryDetailSubCategoriesStyles: CategoryDetailSubCategoriesStyles = {
     container: {
         gap: 0,
     },
@@ -80,41 +84,55 @@ const styles: CategoryDetailSubCategoriesStyles = {
     },
 };
 
-export const detailSubCategoriesStyles = styles;
+const styles = categoryDetailSubCategoriesStyles;
 
 const CategoryDetailSubCategories: React.FC<Props> = props => {
-    if (!props.category || !props.category.subCategories) {
+    if (!props.category || !props.category.subCategoryIds || props.category.subCategoryIds.length === 0) {
         return null;
     }
 
     const { fields: { showImages } } = props;
 
     return <GridContainer {...styles.container}>
-        {props.category.subCategories.map((subCategory) => (
-            <GridItem key={subCategory.id} {...styles.subCategoryItem}>
-                <GridContainer {...styles.innerContainer}>
-                    {showImages
-                        && <GridItem {...styles.subCategoryImageItem}>
-                            {subCategory.smallImagePath
-                                && <Clickable href={subCategory.path} {...styles.subCategoryImageClickable}>
-                                    <LazyImage src={subCategory.smallImagePath} {...styles.subCategoryImage}/>
-                                </Clickable>
-                            }
-                        </GridItem>
-                    }
-                    <GridItem {...styles.subCategoryNameLinkItem}>
-                        <Link
-                            href={subCategory.path}
-                            {...styles.subCategoryNameLink}
-                            data-test-selector={`categoryDetailSubCategoriesLink${subCategory.id}`}>
-                            {subCategory.shortDescription}
-                        </Link>
-                    </GridItem>
-                </GridContainer>
+        {props.category.subCategoryIds.map((subCategoryId) => (
+            <GridItem key={subCategoryId} {...styles.subCategoryItem}>
+                <SubCategoryLink categoryId={subCategoryId} showImages={showImages} />
             </GridItem>
         ))}
     </GridContainer>;
 };
+
+const SubCategoryLinkView = ({ category, showImages }: ReturnType<typeof mapStateToProps> & { showImages: boolean }) => {
+    if (!category) {
+        return null;
+    }
+
+    return <GridContainer {...styles.innerContainer}>
+        {showImages
+        && <GridItem {...styles.subCategoryImageItem}>
+            {category.smallImagePath
+            && <Clickable href={category.path} {...styles.subCategoryImageClickable}>
+                <LazyImage src={category.smallImagePath} {...styles.subCategoryImage}/>
+            </Clickable>
+            }
+        </GridItem>
+        }
+        <GridItem {...styles.subCategoryNameLinkItem}>
+            <Link
+                href={category.path}
+                {...styles.subCategoryNameLink}
+                data-test-selector={`categoryDetailsSubCategoriesLink_${category.id}`}>
+                {category.shortDescription}
+            </Link>
+        </GridItem>
+    </GridContainer>;
+};
+
+const mapStateToProps = (state: ApplicationState, ownProps: { categoryId: string }) => ({
+    category: getCategoryState(state, ownProps.categoryId).value,
+});
+
+const SubCategoryLink = connect(mapStateToProps)(SubCategoryLinkView);
 
 const widgetModule: WidgetModule = {
     component: withCategory(CategoryDetailSubCategories),

@@ -1,9 +1,21 @@
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { getProductRealTimeInventory, getProductRealTimePrice, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import changeProductQty from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ChangeProductQty";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
 
-type HandlerType = HandlerWithResult<{ product: ProductModelExtended; }, { product: ProductModelExtended; }>;
+type Parameter = {
+    productInfo: ProductInfo;
+    product: ProductModel;
+};
+
+type Props = {
+    productInfo: ProductInfo;
+};
+
+type HandlerType = Handler<Parameter, Props>;
 
 export const DispatchBeginAddProduct: HandlerType = props => {
     props.dispatch({
@@ -12,60 +24,64 @@ export const DispatchBeginAddProduct: HandlerType = props => {
 };
 
 export const CopyCurrentValues: HandlerType = props => {
-    props.result = {
-        product: cloneDeep(props.parameter.product),
-    };
+    props.productInfo = cloneDeep(props.parameter.productInfo);
 };
 
 export const ChangeProductQtyForExistingProduct: HandlerType = props => {
-    const quickProductList = props.getState().pages.quickOrder.products;
-    const product = props.parameter.product;
-    const existedProduct = quickProductList.filter(prod => prod.id === product.id && prod.selectedUnitOfMeasure === product.selectedUnitOfMeasure)[0];
-    if (existedProduct) {
-        changeProductQty({ product: existedProduct, qtyOrdered: props.parameter.product.qtyOrdered + existedProduct.qtyOrdered })(props.dispatch, props.getState);
-        return false;
+    const quickOrderProductInfos = props.getState().pages.quickOrder.productInfos;
+    const { productId, qtyOrdered, unitOfMeasure } = props.productInfo;
+    const existingProductInfo = quickOrderProductInfos.find(o => o.productId === productId && o.unitOfMeasure === unitOfMeasure);
+    if (!existingProductInfo) {
+        return;
     }
+
+    props.productInfo.qtyOrdered = existingProductInfo.qtyOrdered + qtyOrdered;
 };
 
 export const GetPrice: HandlerType = async props => {
-    const product = props.parameter.product;
-    if (!product || product.quoteRequired || !product.canShowPrice) {
+    const { productId, unitOfMeasure, qtyOrdered } = props.productInfo;
+
+    if (props.parameter.product.quoteRequired) {
         return;
     }
 
-    const realTimePricing = await getProductRealTimePrice({ product });
-    if (realTimePricing.realTimePricingResults) {
-        realTimePricing.realTimePricingResults.forEach((productPrice) => {
-            if (product && product.id === productPrice.productId) {
-                product.pricing = productPrice;
-            }
-        });
-    }
+    let loadedPricing = false;
+
+    props.dispatch(loadRealTimePricing({
+        productPriceParameters: [{ productId, unitOfMeasure, qtyOrdered }],
+        onSuccess: realTimePricingModel => {
+            props.productInfo.pricing = realTimePricingModel.realTimePricingResults?.find(o => o.productId === productId);
+            loadedPricing = true;
+        },
+        onError: () => {
+            loadedPricing = true;
+            props.productInfo.failedToLoadPricing = true;
+        },
+    }));
+
+    await waitFor(() => loadedPricing);
 };
 
 export const GetInventory: HandlerType = async props => {
-    const product = props.parameter.product;
-    if (!product) {
-        return;
-    }
+    const { productId } = props.productInfo;
 
-    const realTimeInventory = await getProductRealTimeInventory({ productId: product.id, unitOfMeasure: product.unitOfMeasure });
-    if (realTimeInventory.realTimeInventoryResults) {
-        realTimeInventory.realTimeInventoryResults.forEach((productInventory) => {
-            if (product && product.id === productInventory.productId) {
-                product.qtyOnHand = productInventory.qtyOnHand;
-                product.availability = productInventory.inventoryAvailabilityDtos
-                    ?.find(o => o.unitOfMeasure.toLowerCase() === product?.unitOfMeasure?.toLowerCase())?.availability || undefined;
-                product.inventoryAvailabilities = productInventory.inventoryAvailabilityDtos || undefined;
-            }
-        });
-    }
+    let loadedInventory = false;
+
+    props.dispatch(loadRealTimeInventory({
+        productIds: [productId],
+        onSuccess: realTimeInventoryResult => {
+            loadedInventory = true;
+            props.productInfo.inventory = realTimeInventoryResult.realTimeInventoryResults?.find(o => o.productId === productId);
+        },
+    }));
+
+    await waitFor(() => loadedInventory);
 };
 
 export const DispatchCompleteAddProduct: HandlerType = props => {
     props.dispatch({
         type: "Pages/QuickOrder/CompleteAddProduct",
-        product: props.parameter.product,
+        productInfo: props.productInfo,
     });
 };
 

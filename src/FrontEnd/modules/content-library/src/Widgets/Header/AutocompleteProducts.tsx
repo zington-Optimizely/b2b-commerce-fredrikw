@@ -27,7 +27,7 @@ export interface AutocompleteProductsStyles {
     erpNumberText?: TypographyPresentationProps;
 }
 
-const baseStyles: AutocompleteProductsStyles = {
+export const autocompleteProductsStyles: AutocompleteProductsStyles = {
     headerText: {
         weight: "bold",
         css: css`
@@ -97,13 +97,15 @@ const baseStyles: AutocompleteProductsStyles = {
     },
 };
 
+const styles = autocompleteProductsStyles;
+
 class AutocompleteProducts extends React.Component<Props> {
     private readonly styles: AutocompleteProductsStyles;
 
     constructor(props: Props) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
     }
 
     render() {

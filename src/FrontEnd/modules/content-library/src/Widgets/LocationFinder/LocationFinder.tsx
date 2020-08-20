@@ -69,7 +69,7 @@ export interface LocationFinderStyles {
     locationGoogleMap?: LocationGoogleMapStyles
 }
 
-const styles: LocationFinderStyles = {
+export const locationFinderStyles: LocationFinderStyles = {
     container: {
         gap: 30,
     },
@@ -124,6 +124,8 @@ const styles: LocationFinderStyles = {
         css: css` white-space: pre-wrap; `,
     },
 };
+
+const styles = locationFinderStyles;
 
 const LocationFinder: FC<Props> = ({
     settings,

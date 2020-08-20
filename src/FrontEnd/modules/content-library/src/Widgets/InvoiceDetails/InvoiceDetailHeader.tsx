@@ -28,7 +28,7 @@ export interface InvoiceDetailHeaderStyles {
     emailClickable?: ClickableProps;
 }
 
-const styles: InvoiceDetailHeaderStyles = {
+export const headerStyles: InvoiceDetailHeaderStyles = {
     shareEntityButtonStyles: {
         button: {
             css: css` margin-left: 10px; `,
@@ -59,7 +59,7 @@ const styles: InvoiceDetailHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 const InvoiceDetailHeader: FC = () => {
     const { value: invoice } = useContext(InvoiceStateContext);
     if (!invoice) {

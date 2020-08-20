@@ -5,6 +5,8 @@ import BrandsReducer from "@insite/client-framework/Store/Data/Brands/BrandsRedu
 import BudgetCalendarsReducer from "@insite/client-framework/Store/Data/BudgetCalendars/BudgetCalendarsReducer";
 import BudgetsReducer from "@insite/client-framework/Store/Data/Budgets/BudgetsReducer";
 import CartsReducer from "@insite/client-framework/Store/Data/Carts/CartsReducer";
+import CatalogPagesReducer from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesReducer";
+import CategoriesReducer from "@insite/client-framework/Store/Data/Categories/CategoriesReducer";
 import CountriesReducer from "@insite/client-framework/Store/Data/Countries/CountriesReducer";
 import DealersReducer from "@insite/client-framework/Store/Data/Dealers/DealersReducer";
 import InvoicesReducer from "@insite/client-framework/Store/Data/Invoices/InvoicesReducer";
@@ -13,6 +15,7 @@ import OrdersReducer from "@insite/client-framework/Store/Data/Orders/OrdersRedu
 import OrderStatusMappingReducer from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsReducer";
 import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 import PaymentProfilesReducer from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesReducer";
+import ProductsReducer from "@insite/client-framework/Store/Data/Products/ProductsReducer";
 import PromotionsReducer from "@insite/client-framework/Store/Data/Promotions/PromotionsReducer";
 import QuotesReducer from "@insite/client-framework/Store/Data/Quotes/QuotesReducer";
 import ShipTosReducer from "@insite/client-framework/Store/Data/ShipTos/ShipTosReducer";
@@ -29,6 +32,8 @@ const dataReducers = {
     budgets: BudgetsReducer,
     budgetCalendars: BudgetCalendarsReducer,
     carts: CartsReducer,
+    catalogPages: CatalogPagesReducer,
+    categories: CategoriesReducer,
     countries: CountriesReducer,
     dealers: DealersReducer,
     invoices: InvoicesReducer,
@@ -37,6 +42,7 @@ const dataReducers = {
     orderStatusMappings: OrderStatusMappingReducer,
     pages: PagesReducer,
     paymentProfiles: PaymentProfilesReducer,
+    products: ProductsReducer,
     promotions: PromotionsReducer,
     quotes: QuotesReducer,
     shipTos: ShipTosReducer,

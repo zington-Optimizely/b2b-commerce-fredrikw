@@ -13,9 +13,9 @@ export interface ChangeCustomerSelectCustomerStyles {
     container?: ChangeCustomerSelectCustomerContainerStyles;
 }
 
-const styles: ChangeCustomerSelectCustomerStyles = {};
+export const changeCustomerSelectCustomerStyles: ChangeCustomerSelectCustomerStyles = {};
 
-export const changeCustomerSelectCustomerStyles = styles;
+const styles = changeCustomerSelectCustomerStyles;
 
 const ChangeCustomerSelectCustomer: FC<Props> = (_) => {
     const [billTosParameter, setBillTosParameter] = useState<GetBillTosApiParameter>({

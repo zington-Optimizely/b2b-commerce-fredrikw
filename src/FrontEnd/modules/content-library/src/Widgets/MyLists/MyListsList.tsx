@@ -55,7 +55,7 @@ export interface MyListsListStyles {
     messageText?: TypographyProps;
 }
 
-const styles: MyListsListStyles = {
+export const listStyles: MyListsListStyles = {
     deleteListModal: {
         sizeVariant: "small",
     },
@@ -78,7 +78,7 @@ const styles: MyListsListStyles = {
     },
 };
 
-export const listStyles = styles;
+const styles = listStyles;
 
 class MyListsList extends React.Component<Props, State> {
 

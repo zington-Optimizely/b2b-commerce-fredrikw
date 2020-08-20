@@ -1,4 +1,4 @@
-import { ApiHandlerNoApiParameter, createHandlerChainRunner, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerNoApiParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { getBrandById } from "@insite/client-framework/Services/BrandService";
 import { BrandModel } from "@insite/client-framework/Types/ApiModels";
 

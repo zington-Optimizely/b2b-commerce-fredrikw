@@ -1,12 +1,12 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import setSelectedImage from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/SetSelectedImage";
+import setSelectedImageIndex from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/SetSelectedImageIndex";
 import { ImageModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import Button, { ButtonIcon, ButtonProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -23,14 +23,14 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     productSettings: getSettingsCollection(state).productSettings,
-    selectedImage: state.pages.productDetail.selectedImage,
+    selectedImageIndex: state.pages.productDetails.selectedImageIndex,
 });
 
 const mapDispatchToProps = {
-    setSelectedImage,
+    setSelectedImageIndex,
 };
 
-type Props = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface ProductDetailsImageCarouselStyles {
     mainContainer?: GridContainerProps;
@@ -62,7 +62,7 @@ const getImageCss = (borderColor: string) => css`
     }
 `;
 
-const styles: ProductDetailsImageCarouselStyles = {
+export const productDetailsImageCarouselStyles: ProductDetailsImageCarouselStyles = {
     mainContainer: { gap: 0 },
     prevArrowGridItem: {
         width: 1,
@@ -122,18 +122,14 @@ const styles: ProductDetailsImageCarouselStyles = {
     },
 };
 
-export const productDetailsImageCarouselStyles = styles;
+const styles = productDetailsImageCarouselStyles;
 
 const ProductDetailsImageCarousel: React.FC<Props> = ({
-    productSettings,
-    product,
-    selectedImage,
-    setSelectedImage,
-}) => {
-    if (!product || !product.images) {
-        return null;
-    }
-
+                                                          productSettings,
+                                                          product,
+                                                          selectedImageIndex,
+                                                          setSelectedImageIndex,
+                                                      }) => {
     const [embla, setEmbla] = useState<EmblaCarousel | null>(null);
     const [canScrollPrev, setCanScrollPrev] = useState(false);
     const [canScrollNext, setCanScrollNext] = useState(false);
@@ -150,8 +146,6 @@ const ProductDetailsImageCarousel: React.FC<Props> = ({
 
             embla.on("init", setCanScroll);
             embla.on("select", setCanScroll);
-
-            return () => { embla && embla.destroy(); };
         },
         [embla],
     );
@@ -166,30 +160,30 @@ const ProductDetailsImageCarousel: React.FC<Props> = ({
         return "";
     };
 
-    if (product.images?.length === 0) {
+    if (!product || !product.images || product.images?.length === 0) {
         return null;
     }
 
     return (<GridContainer {...styles.mainContainer} key={product.id}>
         <GridItem {...styles.prevArrowGridItem}>
             {product.images.length > 6
-                && <Button {...styles.prevArrowButton} onClick={() => embla && embla.scrollPrev()} disabled={!canScrollPrev}>
-                    <ButtonIcon src={ChevronLeft} />
-                </Button>
+            && <Button {...styles.prevArrowButton} onClick={() => embla && embla.scrollPrev()} disabled={!canScrollPrev}>
+                <ButtonIcon src={ChevronLeft}/>
+            </Button>
             }
         </GridItem>
         <GridItem {...styles.carouselGridItem}>
             <StyledWrapper {...styles.carouselWrapper}>
                 <EmblaCarouselReact emblaRef={setEmbla} options={{ align: product.images.length > 6 ? "start" : "center", slidesToScroll: 6 }}>
                     <StyledWrapper {...styles.carouselSlidesContainer}>
-                        {product.images.map(productImage =>
+                        {product.images.map((productImage, index) =>
                             <StyledWrapper {...styles.carouselSlide} key={productImage.id}>
                                 <StyledWrapper {...styles.carouselSlideInner}>
                                     <LazyImage
-                                        {...(productImage.mediumImagePath === selectedImage?.mediumImagePath ? styles.selectedImage : styles.image)}
+                                        {...(index === selectedImageIndex ? styles.selectedImage : styles.image)}
                                         src={getProductImageThumbPath(productImage)}
                                         altText={productImage.imageAltText}
-                                        onClick={() => setSelectedImage({ productImage })} />
+                                        onClick={() => setSelectedImageIndex({ index })}/>
                                 </StyledWrapper>
                             </StyledWrapper>)
                         }
@@ -199,9 +193,9 @@ const ProductDetailsImageCarousel: React.FC<Props> = ({
         </GridItem>
         <GridItem {...styles.nextArrowGridItem}>
             {product.images.length > 6
-                && <Button {...styles.nextArrowButton} onClick={() => embla && embla.scrollNext()} disabled={!canScrollNext}>
-                    <ButtonIcon src={ChevronRight} />
-                </Button>
+            && <Button {...styles.nextArrowButton} onClick={() => embla && embla.scrollNext()} disabled={!canScrollNext}>
+                <ButtonIcon src={ChevronRight}/>
+            </Button>
             }
         </GridItem>
     </GridContainer>);
@@ -212,7 +206,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Image Carousel",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

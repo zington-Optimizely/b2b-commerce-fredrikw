@@ -4,7 +4,6 @@
     "nodeId": "432948ea-a967-4ed2-8a6d-6a1bdaf77b54",
     "sortOrder": 2,
     "fields": {
-        "url": "/Budget",
         "title": "Budget Management",
         "name": "Budget Management",
         "urlSegment": "Budget"

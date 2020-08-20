@@ -16,13 +16,13 @@ export interface BrandDetailsContentStyles {
     container?: InjectableCss;
 }
 
-const styles: BrandDetailsContentStyles = {
+export const contentStyles: BrandDetailsContentStyles = {
     container: {
         css: css` margin: 30px 15px; `,
     },
 };
 
-export const contentStyles = styles;
+const styles = contentStyles;
 
 const BrandDetailsContent: FC<Props> = () => {
     const { value: brand } = useContext(BrandStateContext);

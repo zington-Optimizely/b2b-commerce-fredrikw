@@ -29,10 +29,10 @@ export interface OrderDetailsShipmentPackagesStyles {
     trackingNumberCell?: DataTableCellProps;
 }
 
-const styles: OrderDetailsShipmentPackagesStyles = {
+export const shipmentPackagesStyles: OrderDetailsShipmentPackagesStyles = {
 };
 
-export const shipmentPackagesStyles = styles;
+const styles = shipmentPackagesStyles;
 
 const OrderDetailsShipmentPackages: React.FC = () => {
     const { value: order } = useContext(OrderStateContext);

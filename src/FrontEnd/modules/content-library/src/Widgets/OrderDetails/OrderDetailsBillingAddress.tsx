@@ -16,7 +16,7 @@ export interface OrderDetailsBillingAddressStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: OrderDetailsBillingAddressStyles = {
+export const billingAddressStyles: OrderDetailsBillingAddressStyles = {
     wrapper: {
         css: css` padding-bottom: 10px; `,
     },
@@ -30,7 +30,7 @@ const styles: OrderDetailsBillingAddressStyles = {
     },
 };
 
-export const billingAddressStyles = styles;
+const styles = billingAddressStyles;
 
 const OrderDetailsBillingAddress: React.FunctionComponent = () => {
     const { value: order } = useContext(OrderStateContext);

@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { LocationModel } from "@insite/client-framework/Common/Hooks/useLocationFilterSearch";
 import { PaginationModel } from "@insite/client-framework/Types/ApiModels";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";

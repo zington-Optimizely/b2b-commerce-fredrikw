@@ -1,6 +1,7 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { Cart, updateCart, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { CarrierDto, ShipViaDto } from "@insite/client-framework/Types/ApiModels";
@@ -15,7 +16,8 @@ type HandlerType = ApiHandlerDiscreteParameter<
 
 export const PopulateApiParameter: HandlerType = props => {
     const state = props.getState();
-    const cart = getCurrentCartState(state).value;
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cart) {
         throw new Error("There was no current cart and we are trying to set a shipping method on it.");
     }
@@ -32,7 +34,13 @@ export const UpdateCart: HandlerType = async props => {
 };
 
 export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const LoadPromotions: HandlerType = props => {

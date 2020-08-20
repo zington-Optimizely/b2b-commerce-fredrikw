@@ -68,7 +68,7 @@ const baseDrawerStyles: DrawerPresentationProps = {
     },
 };
 
-const styles: HeaderShipToAddressStyles = {
+export const headerShipToAddressStyles: HeaderShipToAddressStyles = {
     shipToAddressWrapper: {
         css: css`
             display: inline-flex;
@@ -108,7 +108,7 @@ interface OwnProps extends WidgetProps {
     fields: {};
 }
 
-export const headerShipToAddressStyles = styles;
+const styles = headerShipToAddressStyles;
 
 const HeaderShipToAddress: FC<Props> = ({
     id,

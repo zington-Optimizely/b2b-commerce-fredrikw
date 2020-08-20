@@ -2,6 +2,7 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setView from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetView";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
@@ -18,7 +19,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    productsState: state.pages.productList.productsState,
+    loaded: !!getProductListDataView(state).value,
     view: state.pages.productList.view || getSettingsCollection(state).productSettings.defaultViewType,
 });
 
@@ -36,7 +37,7 @@ export interface ProductListViewSelectStyles {
     gridViewIcon?: IconPresentationProps;
 }
 
-const styles: ProductListViewSelectStyles = {
+export const viewSelectStyles: ProductListViewSelectStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -57,10 +58,10 @@ const styles: ProductListViewSelectStyles = {
     },
 };
 
-export const viewSelectStyles = styles;
+const styles = viewSelectStyles;
 
-const ProductListViewSelect: FC<Props> = ({ view, setView, productsState }) => {
-    if (!productsState.value) {
+const ProductListViewSelect: FC<Props> = ({ view, setView, loaded }) => {
+    if (!loaded) {
         return null;
     }
 

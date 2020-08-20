@@ -1,6 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { canPlaceOrder, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { canPlaceOrder, getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
@@ -23,13 +23,18 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    isBackButtonDisabled: state.pages.checkoutReviewAndSubmit.isPlacingOrder,
-    checkoutShippingPageLink: getPageLinkByPageType(state, "CheckoutShippingPage"),
-    cart: getCurrentCartState(state).value,
-    showPlaceOrderButton: canPlaceOrder(getCurrentCartState(state).value),
-    pageTitle: getCurrentPage(state).fields.title,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+    return {
+        cartId,
+        isBackButtonDisabled: state.pages.checkoutReviewAndSubmit.isPlacingOrder,
+        checkoutShippingPageLink: getPageLinkByPageType(state, "CheckoutShippingPage"),
+        cart: cartState.value,
+        showPlaceOrderButton: canPlaceOrder(cartState.value),
+        pageTitle: getCurrentPage(state).fields.title,
+    };
+};
 
 const mapDispatchToProps = {
     preloadCheckoutShippingData,
@@ -46,7 +51,7 @@ export interface CheckoutReviewAndSubmitHeaderStyles {
     placeOrderButton?: ButtonPresentationProps;
 }
 
-const styles: CheckoutReviewAndSubmitHeaderStyles = {
+export const checkoutReviewAndSubmitHeaderStyles: CheckoutReviewAndSubmitHeaderStyles = {
     gridItem: { width: 12 },
     headingText: { variant: "h2", css: css` margin-bottom: 0; ` },
     buttonsWrapper: {
@@ -95,7 +100,11 @@ const styles: CheckoutReviewAndSubmitHeaderStyles = {
     },
 };
 
-export const header = styles;
+/**
+ * @deprecated Use checkoutReviewAndSubmitHeaderStyles instead.
+ */
+export const header = checkoutReviewAndSubmitHeaderStyles;
+const styles = checkoutReviewAndSubmitHeaderStyles;
 
 const CheckoutReviewAndSubmitHeader: FC<Props> = ({
     checkoutShippingPageLink,
@@ -105,11 +114,16 @@ const CheckoutReviewAndSubmitHeader: FC<Props> = ({
     history,
     preloadCheckoutShippingData,
     cart,
+    cartId,
 }) => {
     const backClickHandler = () => {
         preloadCheckoutShippingData({
+            cartId,
             onSuccess: () => {
-                history.push(checkoutShippingPageLink!.url);
+                const backUrl = cartId
+                    ? `${checkoutShippingPageLink!.url}?cartId=${cartId}`
+                    : checkoutShippingPageLink!.url;
+                history.push(backUrl);
             },
         });
     };
@@ -128,7 +142,7 @@ const CheckoutReviewAndSubmitHeader: FC<Props> = ({
                         >
                             {translate("Back")}
                         </Button>
-                        {showPlaceOrderButton && <PlaceOrderButton styles={styles.placeOrderButton}/>}
+                        {showPlaceOrderButton && <PlaceOrderButton styles={styles.placeOrderButton} />}
                     </StyledWrapper>
                 }
             </GridItem>

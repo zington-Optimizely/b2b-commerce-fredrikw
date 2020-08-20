@@ -50,7 +50,11 @@ class PageEditor extends React.Component<Props, PageEditorState> {
         const id = props.match.params.id;
         if (!id) {
             getPageByUrl("/").then(result => {
-                props.history.push(`/ContentAdmin/Page/${result.page.id}`);
+                const { page } = result;
+                if (!page) {
+                    throw new Error("Getting the home page by URL unexpectedly did not return a page.");
+                }
+                props.history.push(`/ContentAdmin/Page/${page.id}`);
             });
         } else if (this.props.page.id !== id && !id.startsWith("SwitchTo")) {
             PageEditor.loadPage(id, props);

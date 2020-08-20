@@ -1,6 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import shareProduct from "@insite/client-framework/Store/CommonHandlers/ShareProduct";
@@ -18,12 +18,12 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends HasProductContext {
+interface OwnProps {
     text?: string;
     extendedStyles?: ProductShareLinkStyles;
 }
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasProduct;
 
 const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
@@ -100,12 +100,13 @@ export const productShareLinkStyles: ProductShareLinkStyles = {
 };
 
 const ProductShareLink: React.FC<Props> = ({
-    product,
-    text,
-    session,
-    shareProduct,
-    extendedStyles,
-}) => {
+                                               product,
+                                               productInfo,
+                                               text,
+                                               session,
+                                               shareProduct,
+                                               extendedStyles,
+                                           }) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productShareLinkStyles, extendedStyles));
     const isAuthenticated = (session.isAuthenticated || session.rememberMe) && !session.isGuest;
@@ -192,6 +193,7 @@ const ProductShareLink: React.FC<Props> = ({
 
         shareProduct({
             product,
+            productDetailPath: productInfo.productDetailPath,
             friendsName: recipientName,
             friendsEmailAddress: recipientEmail,
             yourName,

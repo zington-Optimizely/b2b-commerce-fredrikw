@@ -75,7 +75,7 @@ export interface CreateAccountStyles {
     passwordGridContainer?: GridContainerProps;
 }
 
-const styles: CreateAccountStyles = {
+export const createAccountStyles: CreateAccountStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -136,7 +136,7 @@ const styles: CreateAccountStyles = {
     },
 };
 
-export const createAccountStyles = styles;
+const styles = createAccountStyles;
 const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_Required");
 const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
 const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");

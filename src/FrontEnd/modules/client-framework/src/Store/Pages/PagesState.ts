@@ -14,7 +14,7 @@ import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderCo
 import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
 import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
 import OrderUploadState from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadState";
-import ProductDetailState from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailState";
+import ProductDetailsState from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsState";
 import ProductListState from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
 import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
@@ -42,7 +42,7 @@ export default interface PagesState {
     readonly orderConfirmation: OrderConfirmationState;
     readonly orderHistory: OrderHistoryState;
     readonly orderUpload: OrderUploadState;
-    readonly productDetail: ProductDetailState;
+    readonly productDetails: ProductDetailsState;
     readonly productList: ProductListState;
     readonly requestRma: RequestRmaState;
     readonly quickOrder: QuickOrderState;

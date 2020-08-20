@@ -3,8 +3,8 @@ import { siteMessageWithCustomParserOptions } from "@insite/client-framework/Sit
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
-import { canPlaceOrder, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView, getDiscountTotal, getOrderPromotions, getShippingPromotions } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import { canPlaceOrder, getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPromotionsDataView, getDiscountTotal, getOrderPromotions, getPromotionsDataView, getShippingPromotions } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -36,7 +36,10 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: ApplicationState) => {
-    const promotionsDataView = getCurrentPromotionsDataView(state);
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+    const promotionsDataView = cartId ? getPromotionsDataView(state, cartId) : getCurrentPromotionsDataView(state);
+
     let orderPromotions;
     let shippingPromotions;
     let discountTotal;
@@ -46,15 +49,13 @@ const mapStateToProps = (state: ApplicationState) => {
         discountTotal = getDiscountTotal(promotionsDataView.value);
     }
 
-    const cart = getCurrentCartState(state);
-
     return {
-        isLoading: cart.isLoading,
-        cart: cart.value,
+        isLoading: cartState.isLoading,
+        cart: cartState.value,
         orderPromotions,
         shippingPromotions,
         discountTotal,
-        showPlaceOrderButton: canPlaceOrder(cart.value),
+        showPlaceOrderButton: canPlaceOrder(cartState.value),
         placeOrderErrorMessage: state.pages.checkoutReviewAndSubmit.placeOrderErrorMessage,
     };
 };
@@ -76,7 +77,7 @@ export interface CheckoutReviewAndSubmitCartTotalStyles {
     defaultFulfillmentMethodRadio?: FieldSetPresentationProps<RadioComponentProps>;
 }
 
-const styles: CheckoutReviewAndSubmitCartTotalStyles = {
+export const cartTotalStyles: CheckoutReviewAndSubmitCartTotalStyles = {
     container: { gap: 10 },
     cartTotalGridItem: { width: 12 },
     buttonsGridItem: {
@@ -123,7 +124,7 @@ const styles: CheckoutReviewAndSubmitCartTotalStyles = {
     },
 };
 
-export const cartTotalStyles = styles;
+const styles = cartTotalStyles;
 
 const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
     showPlaceOrderButton,

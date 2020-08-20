@@ -1,7 +1,7 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import Zone from "@insite/client-framework/Components/Zone";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { UploadError } from "@insite/client-framework/Store/Components/OrderUpload/Handlers/BatchLoadProducts";
@@ -92,7 +92,7 @@ export interface MyListsDetailsOptionsStyles {
     closeAddItemsToList?: IconProps;
 }
 
-const styles: MyListsDetailsOptionsStyles = {
+export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     wrapper: {
         css: css`
             @media print { display: none; }
@@ -186,7 +186,7 @@ const styles: MyListsDetailsOptionsStyles = {
     },
 };
 
-export const myListsDetailsOptionsStyles = styles;
+const styles = myListsDetailsOptionsStyles;
 
 const MyListsDetailsOptions: React.FC<Props> = ({
     id,
@@ -250,8 +250,8 @@ const MyListsDetailsOptions: React.FC<Props> = ({
         setAddItemsToListIsOpen(true);
     };
 
-    const selectProductHandler = async (product: ProductModelExtended) => {
-        await addToWishList({ products: [product], selectedWishList: wishList });
+    const selectProductHandler = async (productInfo: ProductInfo) => {
+        await addToWishList({ productInfos: [productInfo], selectedWishList: wishList });
         toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
     };
 
@@ -264,7 +264,8 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     };
 
     const uploadProductsHandler = async (products: ProductDto[]) => {
-        await addToWishList({ products: products as unknown as ProductModelExtended[], selectedWishList: wishList });
+        const productInfos = products.map(o => ({ productId: o.id, qtyOrdered: o.qtyOrdered, unitOfMeasure: o.selectedUnitOfMeasure ?? "" }));
+        await addToWishList({ productInfos, selectedWishList: wishList });
         setUploadItemsModalIsOpen(false);
         loadWishListIfNeeded({ wishListId: wishList.id });
     };
@@ -361,7 +362,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
             <StyledWrapper {...styles.rightColumnWrapper}>
                 {!addItemsToListIsOpen
                     && <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
-                        {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions.map(sortOption =>
+                        {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions?.map(sortOption =>
                             <Clickable
                                 {...(sortOption.sortType === loadWishListLinesParameter.sort ? styles.selectedSortByClickable : styles.sortByClickable)}
                                 key={sortOption.sortType}

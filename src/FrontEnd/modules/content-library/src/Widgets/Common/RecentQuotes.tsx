@@ -37,7 +37,7 @@ export interface RecentQuotesStyles {
     quoteSummaryCard?: QuoteSummaryCardStyles;
 }
 
-const styles: RecentQuotesStyles = {
+export const recentQuotesStyles: RecentQuotesStyles = {
     noQuotesGridItem: { width: 12 },
 };
 
@@ -46,7 +46,7 @@ const recentQuotesParameter = {
     pageSize: 5,
 };
 
-export const recentQuotesStyles = styles;
+const styles = recentQuotesStyles;
 
 class RecentQuotes extends React.Component<Props> {
     componentDidMount() {

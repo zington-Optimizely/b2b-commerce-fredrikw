@@ -21,7 +21,7 @@ export interface AutocompleteBrandsStyles {
     focusedLink?: LinkPresentationProps;
 }
 
-const baseStyles: AutocompleteBrandsStyles = {
+export const autocompleteBrandsStyles: AutocompleteBrandsStyles = {
     headerText: {
         weight: "bold",
         css: css`
@@ -77,13 +77,15 @@ const baseStyles: AutocompleteBrandsStyles = {
     },
 };
 
+const styles = autocompleteBrandsStyles;
+
 class AutocompleteBrands extends React.Component<Props> {
     private readonly styles: AutocompleteBrandsStyles;
 
     constructor(props: Props) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
     }
 
     render() {

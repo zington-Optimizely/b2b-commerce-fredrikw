@@ -42,7 +42,7 @@ export interface RequestRmaButtonsStyles {
     sendReturnRequestModal?: TwoButtonModalStyles;
 }
 
-const styles: RequestRmaButtonsStyles = {
+export const requestRmaButtonsStyles: RequestRmaButtonsStyles = {
     sendButton: {
         variant: "primary",
         css: css` margin-left: 10px; `,
@@ -59,7 +59,7 @@ const styles: RequestRmaButtonsStyles = {
     },
 };
 
-export const requestRmaButtonsStyles = styles;
+const styles = requestRmaButtonsStyles;
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory & HasToasterContext;
 

@@ -1,51 +1,58 @@
-import sleep from "@insite/client-framework/Common/Sleep";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
 import {
-    ApiHandlerDiscreteParameter,
-    createHandlerChainRunnerOptionalParameter,
+    createHandlerChainRunnerOptionalParameter, Handler,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import { getWishListLines, GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
 import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
-import cloneDeep from "lodash/cloneDeep";
 
-type GetWishListLinesParameter = HasOnSuccess;
+type Parameter = HasOnSuccess;
 
-type GetWishListLinesProps = {
+type Props = {
     pricingLoaded?: true;
     inventoryLoaded?: true;
-    products: ProductModelExtended[];
+    productInfosByWishListLineId: SafeDictionary<ProductInfo>;
     dataViewParameter: GetWishListLinesApiParameter,
+    wishListLines?: WishListLineModel[];
+    apiResult?: WishListLineCollectionModel,
+    apiParameter: GetWishListLinesApiParameter,
 };
 
-type HandlerType = ApiHandlerDiscreteParameter<
-    GetWishListLinesParameter,
-    GetWishListLinesApiParameter,
-    WishListLineCollectionModel,
-    GetWishListLinesProps>;
+type HandlerType = Handler<Parameter, Props>;
 
 export const DispatchBeginLoadWishListLines: HandlerType = props => {
     props.dataViewParameter = props.getState().pages.myListDetails.loadWishListLinesParameter;
-    props.dispatch({
-        type: "Data/WishListLines/BeginLoadWishListLines",
-        parameter: props.dataViewParameter,
-    });
+    props.wishListLines = getWishListLinesDataView(props.getState(), props.dataViewParameter).value;
+    if (!props.wishListLines) {
+        props.dispatch({
+            type: "Data/WishListLines/BeginLoadWishListLines",
+            parameter: props.dataViewParameter,
+        });
+    }
 };
 
 export const PopulateApiParameter: HandlerType = props => {
-    props.apiParameter = { ...props.dataViewParameter };
+    if (!props.wishListLines) {
+        props.apiParameter = { ...props.dataViewParameter };
+    }
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getWishListLines(props.apiParameter);
+    if (!props.wishListLines) {
+        props.apiResult = await getWishListLines(props.apiParameter);
+        props.wishListLines = props.apiResult.wishListLines!;
+    }
 };
 
-export const CheckForEmptyPage: HandlerType = ({ apiResult, getState, dispatch }) => {
+export const CheckForEmptyPage: HandlerType = ({ wishListLines, getState, dispatch }) => {
     const loadWishListLinesParameter = getState().pages.myListDetails.loadWishListLinesParameter;
-    if (apiResult.wishListLines?.length === 0 && loadWishListLinesParameter.page && loadWishListLinesParameter.page > 1) {
+    if (wishListLines?.length === 0 && loadWishListLinesParameter.page && loadWishListLinesParameter.page > 1) {
         dispatch(updateLoadWishListLinesParameter({ page: loadWishListLinesParameter.page - 1 }));
         dispatch(loadWishListLines());
         return false;
@@ -53,94 +60,101 @@ export const CheckForEmptyPage: HandlerType = ({ apiResult, getState, dispatch }
 };
 
 export const MapProducts: HandlerType = props => {
-    props.products = props.apiResult.wishListLines!.map(mapWishListLineToProduct);
+    props.productInfosByWishListLineId = {};
+    props.wishListLines?.forEach(o => {
+        props.productInfosByWishListLineId[o.id] = {
+            productId: o.productId,
+            qtyOrdered: o.qtyOrdered,
+            unitOfMeasure: o.unitOfMeasure,
+            productDetailPath: o.productUri,
+        };
+    });
 };
 
 export const LoadRealTimePrices: HandlerType = props => {
-    const { apiResult: { wishListLines }, products } = props;
-    if (wishListLines?.length) {
-        props.dispatch(loadRealTimePricing({
-            parameter: { products: props.products },
-            onSuccess: realTimePricing => {
-                realTimePricing.realTimePricingResults?.forEach(pricing => {
-                    const index = products.findIndex(p => p.id === pricing.productId && p.unitOfMeasure === pricing.unitOfMeasure);
-                    if (index > -1) {
-                        products[index].pricing = pricing;
-                    }
-                });
-
-                props.pricingLoaded = true;
-            },
-            onError: () => {
-                products.forEach(o => { o.failedToLoadPricing = true; });
-                props.pricingLoaded = true;
-            },
-        }));
-    } else {
+    const { wishListLines, productInfosByWishListLineId } = props;
+    if (!wishListLines?.length) {
         props.pricingLoaded = true;
+        return;
     }
+
+    props.dispatch(loadRealTimePricing({
+        productPriceParameters: wishListLines!.map(o => ({ productId: o.productId, unitOfMeasure: o.unitOfMeasure, qtyOrdered: o.qtyOrdered })),
+        onSuccess: realTimePricing => {
+            realTimePricing.realTimePricingResults?.forEach(pricing => {
+                for (const wishListLineId in productInfosByWishListLineId) {
+                    const productInfo = productInfosByWishListLineId[wishListLineId]!;
+                    if (productInfo.productId === pricing.productId && productInfo.unitOfMeasure === pricing.unitOfMeasure) {
+                        productInfo.pricing = pricing;
+                    }
+                }
+            });
+
+            props.pricingLoaded = true;
+        },
+        onError: () => {
+            for (const wishListLineId in productInfosByWishListLineId) {
+                productInfosByWishListLineId[wishListLineId]!.failedToLoadPricing = true;
+            }
+            props.pricingLoaded = true;
+        },
+    }));
 };
 
 export const LoadRealTimeInventory: HandlerType = props => {
-    const { apiResult: { wishListLines }, products } = props;
-    if (wishListLines?.length) {
-        props.dispatch(loadRealTimeInventory({
-            parameter: { products },
-            onSuccess: realTimeInventory => {
-                realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
-                    products.filter(p => p.id === inventory.productId).forEach(product => {
-                        product.qtyOnHand = inventory.qtyOnHand;
-                        product.availability = inventory.inventoryAvailabilityDtos
-                            ?.find(o => o.unitOfMeasure.toLowerCase() === product.unitOfMeasure.toLowerCase())?.availability || undefined;
-                        product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;
-                    });
-                });
-
-                props.inventoryLoaded = true;
-            },
-        }));
-    } else {
+    const { wishListLines, productInfosByWishListLineId } = props;
+    if (!wishListLines?.length) {
         props.inventoryLoaded = true;
+        return;
     }
+
+    const wishListLineIds = Object.keys(productInfosByWishListLineId);
+    props.dispatch(loadRealTimeInventory({
+        productIds: wishListLineIds.map(o => productInfosByWishListLineId[o]!.productId),
+        onSuccess: realTimeInventory => {
+            realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
+                wishListLineIds.forEach(o => {
+                    const productInfo = productInfosByWishListLineId[o]!;
+                    if (productInfo.productId === inventory.productId) {
+                        productInfo.inventory = inventory;
+                    }
+                });
+            });
+
+            props.inventoryLoaded = true;
+        },
+    }));
 };
 
 export const WaitForData: HandlerType = async props => {
-    let attempts = 0;
-    while ((!props.pricingLoaded || !props.inventoryLoaded) && attempts < 500) {
-        await sleep(10);
-        attempts += 1;
-    }
+    const checkData = () => {
+        return !!props.pricingLoaded && !!props.inventoryLoaded;
+    };
+
+    await waitFor(checkData);
 };
 
-export const DispatchCompleteLoadWishListLines: HandlerType = ({ dispatch, apiParameter, apiResult, products, dataViewParameter, getState }) => {
+export const DispatchCompleteLoadWishListLines: HandlerType = ({ dispatch, apiParameter, apiResult, productInfosByWishListLineId, dataViewParameter, getState }) => {
     dispatch({
-        type: "Data/WishListLines/CompleteLoadWishListLines",
-        parameter: dataViewParameter,
-        result: apiResult,
-        products,
+        type: "Pages/MyListDetails/CompleteLoadProductInfos",
+        productInfosByWishListLineId,
     });
-    dispatch({
-        type: "Data/WishLists/CompleteLoadWishListLines",
-        parameter: apiParameter,
-        result: apiResult,
-    });
+    if (apiResult) {
+        dispatch({
+            type: "Data/WishListLines/CompleteLoadWishListLines",
+            parameter: dataViewParameter,
+            result: apiResult,
+        });
+        dispatch({
+            type: "Data/WishLists/CompleteLoadWishListLines",
+            parameter: apiParameter,
+            result: apiResult,
+        });
+    }
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
-};
-
-export const mapWishListLineToProduct = (wishListLine: WishListLineModel) => {
-    const product = cloneDeep(wishListLine) as any as ProductModelExtended;
-    product.id = wishListLine.productId;
-    product.productNumber = wishListLine.erpNumber;
-    product.productTitle = wishListLine.shortDescription;
-    product.productDetailPath = wishListLine.productUri;
-    product.unitOfMeasures = wishListLine?.productUnitOfMeasures?.map(u => ({
-        id: u.productUnitOfMeasureId,
-        ...u,
-    })) || null;
-    return product;
 };
 
 export const chain = [

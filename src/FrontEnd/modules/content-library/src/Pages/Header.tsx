@@ -29,7 +29,7 @@ export interface HeaderStyles {
     websiteName?: InjectableCss;
 }
 
-const styles: HeaderStyles = {
+export const headerStyles: HeaderStyles = {
     container: {
         css: css`
             background-color: ${getColor("secondary.main")};
@@ -57,7 +57,7 @@ const styles: HeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const Header: React.FC<Props> = ({ id, siteName }) => {
     const afterHeader = React.createRef<HTMLSpanElement>();

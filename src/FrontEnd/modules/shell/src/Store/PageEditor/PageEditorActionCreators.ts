@@ -11,8 +11,8 @@ import {
     SavePageResponseModel,
 } from "@insite/shell/Services/ContentAdminService";
 import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import { loadPublishInfo } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import { getCurrentPageForShell, getStorablePage } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import { push } from "connected-react-router";

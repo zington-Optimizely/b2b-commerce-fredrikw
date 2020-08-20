@@ -13,7 +13,7 @@ import {
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
-import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { ItemProps } from "@insite/client-framework/Types/PageProps";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";

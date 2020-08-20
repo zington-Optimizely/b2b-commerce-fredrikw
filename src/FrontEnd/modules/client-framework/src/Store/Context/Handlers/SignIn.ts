@@ -1,7 +1,6 @@
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { createSession, Session } from "@insite/client-framework/Services/SessionService";
-import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
 type HandlerType = ApiHandler<SignInParameter, SignInResult, {

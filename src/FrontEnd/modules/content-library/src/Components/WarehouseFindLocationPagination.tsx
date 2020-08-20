@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { PaginationModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
 import * as React from "react";

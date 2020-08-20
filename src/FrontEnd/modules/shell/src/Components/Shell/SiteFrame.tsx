@@ -7,7 +7,7 @@ import {
     removeWidget,
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
-import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import AddWidgetModal from "@insite/shell/Components/Modals/AddWidgetModal";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";

@@ -1,30 +1,26 @@
+import useFilteredVariantTraits from "@insite/client-framework/Common/Hooks/useFilteredVariantTraits";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasParentProductId, withParentProductId } from "@insite/client-framework/Components/ParentProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateVariantSelection";
+import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/UpdateVariantSelection";
 import translate from "@insite/client-framework/Translate";
-import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import Select, { SelectProps } from "@insite/mobius/Select";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasParentProductId;
 
-const mapStateToProps = (state: ApplicationState) => {
-    return {
-        parentProduct: state.pages.productDetail.parentProduct,
-        initialVariantTraits: state.pages.productDetail.initialVariantTraits,
-        initialVariantProducts: state.pages.productDetail.initialVariantProducts,
-        variantSelection: state.pages.productDetail.variantSelection,
-        variantSelectionCompleted: state.pages.productDetail.variantSelectionCompleted,
-        filteredVariantTraits: state.pages.productDetail.filteredVariantTraits,
-    };
-};
+const mapStateToProps = (state: ApplicationState, ownProps: HasParentProductId) => ({
+    variantTraits: getProductState(state, ownProps.parentProductId).value?.variantTraits,
+    variantChildren: getVariantChildrenDataView(state, ownProps.parentProductId).value,
+    variantSelection: state.pages.productDetails.variantSelection,
+});
 
 const mapDispatchToProps = {
     updateVariantSelection,
@@ -35,7 +31,7 @@ export interface ProductDetailsVariantOptionsStyles {
     select?: SelectProps;
 }
 
-const styles: ProductDetailsVariantOptionsStyles = {
+export const variantOptionsStyles: ProductDetailsVariantOptionsStyles = {
     wrapper: {
         css: css` width: 100%; `,
     },
@@ -44,34 +40,37 @@ const styles: ProductDetailsVariantOptionsStyles = {
     },
 };
 
-export const variantOptionsStyles = styles;
+const styles = variantOptionsStyles;
 
-const ProductDetailsVariantOptions: React.FC<OwnProps> = ({
-    filteredVariantTraits,
+const ProductDetailsVariantOptions: React.FC<Props> = ({
+    variantChildren,
     variantSelection,
     updateVariantSelection,
+    variantTraits,
+    parentProductId,
 }) => {
-    const variantChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>, index: number, variantTrait: VariantTraitModel) => {
-        const traitValue = variantTrait.traitValues!.find(item => `${item.id}` === event.currentTarget.value);
-        updateVariantSelection({ index, traitValue });
+    const variantChangeHandler = (traitValueId: string, variantTraitId: string) => {
+        updateVariantSelection({ traitValueId, variantTraitId, productId: parentProductId });
     };
 
-    if (!filteredVariantTraits || filteredVariantTraits.length === 0) {
+    if (!variantTraits || variantTraits.length === 0 || !variantChildren) {
         return null;
     }
 
+    const filteredVariantTraits = useFilteredVariantTraits(variantTraits, variantChildren, variantSelection);
+
     return <StyledWrapper {...styles.wrapper}>
-        {filteredVariantTraits.slice().sort((a, b) => a.sortOrder - b.sortOrder).map((variantTrait, index) =>
+        {filteredVariantTraits.map(variantTrait =>
             <Select
                 {...styles.select}
-                key={variantTrait.id.toString()}
+                key={variantTrait.id}
                 label={variantTrait.nameDisplay}
-                value={variantSelection[index] ? `${variantSelection[index]!.id}` : ""}
-                onChange={(event) => { variantChangeHandler(event, index, variantTrait); }}
+                value={variantSelection[variantTrait.id]}
+                onChange={(event) => { variantChangeHandler(event.currentTarget.value, variantTrait.id); }}
                 data-test-selector={`styleSelect_${variantTrait.name}`}
             >
                 <option value="">{variantTrait.unselectedValue ? variantTrait.unselectedValue : `${translate("Select")} ${variantTrait.nameDisplay}`}</option>
-                {variantTrait.traitValues?.slice().sort((a, b) => a.sortOrder - b.sortOrder).map(traitValue =>
+                {variantTrait.traitValues?.map(traitValue =>
                     <option value={`${traitValue.id}`} key={`${traitValue.id}`}>{traitValue.valueDisplay}</option>)
                 }
             </Select>)
@@ -80,10 +79,10 @@ const ProductDetailsVariantOptions: React.FC<OwnProps> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(withProduct(ProductDetailsVariantOptions)),
+    component: withParentProductId(connect(mapStateToProps, mapDispatchToProps)(ProductDetailsVariantOptions)),
     definition: {
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

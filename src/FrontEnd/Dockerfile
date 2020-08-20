@@ -52,6 +52,10 @@ COPY ./modules/shell/package.json ./modules/shell/package-lock.json ./modules/sh
 
 RUN ["npm", "install", "--unsafe-perm"]
 
+# spire-linter should change less often than Mobius
+COPY ./modules/spire-linter ./modules/spire-linter
+RUN ["npm", "run", "test:spire-linter"]
+
 # Most branches will not change Mobius, so do the minimum required work to run its tests so the layer can be cached.
 COPY ./babel.config.js ./constants.d.ts ./tsconfig.base.json ./
 COPY ./modules/client-framework/src/Logger.ts ./modules/client-framework/src/

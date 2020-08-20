@@ -61,7 +61,7 @@ export interface CustomerAddressFormStyles {
     submitButton?: ButtonPresentationProps;
 }
 
-const baseStyles: CustomerAddressFormStyles = {
+export const customerAddressFormStyles: CustomerAddressFormStyles = {
     formButtonsWrapper: {
         css: css`
             display: flex;
@@ -75,7 +75,7 @@ const baseStyles: CustomerAddressFormStyles = {
     },
 };
 
-export const customerAddressFormStyles = baseStyles;
+const styles = customerAddressFormStyles;
 const StyledForm = getStyledWrapper("form");
 
 const getRequiredErrorMessage = (fieldDisplay: AddressFieldDisplayModel) =>
@@ -87,7 +87,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
     constructor(props: OwnProps<Address>) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
 
         const { address } = this.props;
         const countryLookup = this.props.countries.find(c => c.id === address.country?.id);
@@ -294,7 +294,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
             && validation.email!.isDisabled) || this.state.isSubmitting;
 
         return (
-            <StyledForm {...baseStyles.form} onSubmit={this.submitHandler} noValidate>
+            <StyledForm {...styles.form} onSubmit={this.submitHandler} noValidate>
                 <CustomerAddressFormFields
                     firstName={firstName}
                     lastName={lastName}
@@ -346,7 +346,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
                     fieldDisplay={fieldDisplay}
                     extendedStyles={extendedStyles?.formFields}
                 />
-                <StyledWrapper {...baseStyles.formButtonsWrapper}>
+                <StyledWrapper {...styles.formButtonsWrapper}>
                     {this.props.onCancel
                         && <Button
                             {...this.styles.cancelButton}

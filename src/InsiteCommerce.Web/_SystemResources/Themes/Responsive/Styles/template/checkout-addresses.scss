@@ -41,6 +41,42 @@
         list-style: none;
         margin: 0;
     }
+
+    .ship-select {
+        min-height: 110px;
+        position: relative;
+
+        .btns {
+            margin-top: .25em;
+
+            a.btn {
+                margin-bottom: 1em;
+            }
+        }
+
+        .si-step-2 {
+            margin-bottom: 1.5em;
+
+            .select-step {
+                margin-bottom: 1em;
+                position: relative;
+            }
+        }
+
+        .shipto-selector {
+            .k-input {
+                padding-right: 2em;
+            }
+
+            + .icon-arw-down-5 {
+                position: absolute;
+                top: .30em;
+                right: .25em;
+                font-size: 22px;
+                cursor: pointer;
+            }
+        }
+    }
 }
 
 @media all and (max-width: 767px) {
@@ -59,11 +95,6 @@
     .checkout-addresses {
         h3 {
             margin-top: 0;
-        }
-
-        .ship-select {
-            min-height: 110px;
-            display: inline-block;
         }
 
         .bill-to, .ship-to, .pick-up-location {

@@ -220,22 +220,22 @@ export const shareListModalStyles: ShareListModalStyles = {
         gap: 20,
         css: css` & ${GridOffset} { justify-content: flex-end; } `,
     },
-    allowEditingGridItem: { width: [12, 6, 8, 8, 8] },
+    allowEditingGridItem: { width: [12, 6, 8, 6, 6] },
     cancelButtonGridItem: {
-        width: [12, 3, 2, 2, 2],
+        width: [12, 3, 2, 3, 3],
         css: css` justify-content: flex-end; `,
     },
     cancelButton: {
         variant: "secondary",
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` width: 100%; `], "max")} `,
+        css: css` width: 100%; `,
     },
     sendButtonGridItem: {
-        width: [12, 3, 2, 2, 2],
+        width: [12, 3, 2, 3, 3],
         css: css` justify-content: flex-end; `,
     },
     sendButton: {
         variant: "primary",
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` width: 100%; `], "max")} `,
+        css: css` width: 100%; `,
     },
 };
 

@@ -1,16 +1,19 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
-import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
+import { getCategoriesDataView } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    shouldLoadCategories: !getCategoriesDataView(state).value,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const categoriesDataView = getCategoriesDataView(state);
+    return ({
+        shouldLoadCategories: !categoriesDataView.value && !categoriesDataView.isLoading,
+    });
+};
 
 const mapDispatchToProps = {
     loadCategories,

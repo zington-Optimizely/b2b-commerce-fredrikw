@@ -35,7 +35,7 @@ export interface CartLinkStyles {
     routerLink?: LinkPresentationProps;
 }
 
-const styles: CartLinkStyles = {
+export const cartLinkStyles: CartLinkStyles = {
     routerLink: {
         typographyProps: {
             variant: "headerSecondary",
@@ -72,7 +72,7 @@ type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeo
 /** Reloading the cart makes `totalCountDisplay` temporarily unavailable, so retain the previous value for better UX. */
 let retainedTotalCountToDisplay: number | undefined;
 
-export const cartLinkStyles = styles;
+const styles = cartLinkStyles;
 const CartLink: FC<Props> = ({
                                  shouldLoadCart,
                                  cartUrl,

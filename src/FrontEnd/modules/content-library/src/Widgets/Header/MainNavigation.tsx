@@ -2,9 +2,12 @@ import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import Logger from "@insite/client-framework/Logger";
+import { Category } from "@insite/client-framework/Services/CategoryService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import loadCategories, { LoadCategoriesParameter } from "@insite/client-framework/Store/Links/Handlers/LoadCategories";
-import { getCategoryDepthLoaded, getCategoryLink, getPageLinkByNodeId, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getCategoriesDataView, getCategoryDepthLoaded, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
+import loadCategory from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategory";
+import { getPageLinkByNodeId, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
@@ -23,6 +26,7 @@ import X from "@insite/mobius/Icons/X";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import { MenuPresentationProps } from "@insite/mobius/Menu";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import { returnFocus } from "@insite/mobius/Overlay/helpers/focusManager";
 import { PopoverPresentationProps, PositionStyle } from "@insite/mobius/Popover";
 import { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -86,42 +90,15 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
                 title,
             };
         } else if (type === "Page") {
-            const mappedLinkFromCache = getPageLinkByNodeId(state, value);
-            if (mappedLinkFromCache) {
+            const readonlyPageLink = getPageLinkByNodeId(state, value);
+            if (readonlyPageLink) {
+                mappedLink = { ...readonlyPageLink };
                 if (overrideTitle) {
-                    mappedLink = {
-                        ...mappedLinkFromCache,
-                        title: overrideTitle,
-                    };
-                } else {
-                    // mappedLinkFromCache is frozen so we need to clone so it can be updated further down.
-                    mappedLink = { ...mappedLinkFromCache };
+                    mappedLink.title = overrideTitle;
                 }
             }
         } else if (type === "Category") {
-            const depthLoaded = getCategoryDepthLoaded(state, value);
-            if (!state.links.parentCategoryIdToChildrenIds[value] || depthLoaded < depthToLoad) {
-                categoryIdsToLoad[value] = depthToLoad;
-            } else {
-                if (value === emptyGuid) {
-                    mappedLink = {
-                        url: "",
-                        title: overrideTitle || translate("Products"),
-                    };
-                } else {
-                    const categoryLinkModel = getCategoryLink(state, value);
-                    if (!categoryLinkModel) {
-                        Logger.error(`Category ${value} missing link model, excluding from navigation.`);
-                        continue;
-                    }
-                    mappedLink = {
-                        url: categoryLinkModel.path,
-                        title: overrideTitle || categoryLinkModel.shortDescription,
-                    };
-                }
-
-                loadChildren(mappedLink, value, 1, maxDepth, state);
-            }
+            mappedLink = setupCategoryLink(state, value, categoryIdsToLoad, depthToLoad, overrideTitle);
         }
 
         if (!mappedLink) {
@@ -146,29 +123,67 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
     };
 };
 
-const loadChildren = (mappedLink: MappedLink, categoryId: string, currentDepth: number, maxDepth: number, state: ApplicationState) => {
+const getParameter = (categoryId: string, maxDepth: number) => ({
+    maxDepth,
+    startCategoryId: categoryId === emptyGuid ? undefined : categoryId,
+    includeStartCategory: true,
+});
+
+const setupCategoryLink = (state: ApplicationState, value: string, categoryIdsToLoad: Dictionary<number>, maxDepth: number, overrideTitle: string) => {
+    let mappedLink: MappedLink | undefined;
+
+    const depthLoaded = getCategoryDepthLoaded(state, value);
+    const subCategoryIds = state.data.categories.parentCategoryIdToChildrenIds[value];
+    if ((depthLoaded < maxDepth || !subCategoryIds) && !getCategoriesDataView(state, getParameter(value, maxDepth)).isLoading) {
+        categoryIdsToLoad[value] = maxDepth;
+    } else {
+        if (value === emptyGuid) {
+            mappedLink = {
+                url: "",
+                title: overrideTitle || translate("Products"),
+            };
+        } else {
+            const categoryState = getCategoryState(state, value);
+            if (!categoryState.value) {
+                if (!categoryState.isLoading) {
+                    categoryIdsToLoad[value] = maxDepth;
+                }
+                return;
+            }
+            mappedLink = {
+                url: categoryState.value.path,
+                title: overrideTitle || categoryState.value.shortDescription,
+            };
+        }
+
+        loadSubCategories(mappedLink, subCategoryIds, 1, maxDepth, state);
+    }
+
+    return mappedLink;
+};
+
+const loadSubCategories = (mappedLink: MappedLink, subCategoryIds: readonly string[] | undefined, currentDepth: number, maxDepth: number, state: ApplicationState) => {
     if (currentDepth > maxDepth) {
         return;
     }
     mappedLink.children = [];
-    const childIdentifiers = state.links.parentCategoryIdToChildrenIds[categoryId];
-    if (!childIdentifiers) {
+    if (!subCategoryIds) {
         return;
     }
-    for (const childId of childIdentifiers) {
-        const categoryLinkModel = getCategoryLink(state, childId);
-        if (!categoryLinkModel) {
-            Logger.error(`Category ${childId} missing link model, excluding from navigation.`);
+    for (const subCategoryId of subCategoryIds) {
+        const subCategory = getCategoryState(state, subCategoryId).value;
+        if (!subCategory) {
+            Logger.error(`Category ${subCategoryId} was not found in data state, excluding from navigation.`);
             continue;
         }
         const childLink: MappedLink = {
-            url: categoryLinkModel.path,
-            title: categoryLinkModel.shortDescription,
+            url: subCategory.path,
+            title: subCategory.shortDescription,
             children: [],
         };
         mappedLink.children.push(childLink);
 
-        loadChildren(childLink, childId, currentDepth + 1, maxDepth, state);
+        loadSubCategories(childLink, subCategory.subCategoryIds, currentDepth + 1, maxDepth, state);
     }
 };
 
@@ -210,7 +225,7 @@ export interface MainNavigationStyles {
     mobileSearchModalCloseIcon?: IconProps;
 }
 
-const styles: MainNavigationStyles = {
+export const mainNavigationStyles: MainNavigationStyles = {
     menuHeight: 50,
     container: {
         css: css`
@@ -358,7 +373,7 @@ const styles: MainNavigationStyles = {
     },
 };
 
-export const mainNavigationStyles = styles;
+const styles = mainNavigationStyles;
 
 class MainNavigation extends React.Component<Props, State> {
     container = React.createRef<HTMLDivElement>();
@@ -380,29 +395,12 @@ class MainNavigation extends React.Component<Props, State> {
         this.loadCategoriesIfNeeded();
     }
 
-    categoriesLoading: Dictionary<true> = {};
-
     loadCategoriesIfNeeded() {
         const { categoryIdsToLoad } = this.props;
         if (categoryIdsToLoad.length !== 0) {
             for (const categoryId of Object.keys(categoryIdsToLoad)) {
                 const maxDepth = categoryIdsToLoad[categoryId];
-                const key = categoryId + maxDepth;
-                if (typeof this.categoriesLoading[key] !== "undefined") {
-                    return;
-                }
-
-                this.categoriesLoading[key] = true;
-
-                const parameter: LoadCategoriesParameter = {
-                    maxDepth,
-                };
-
-                if (categoryId !== emptyGuid) {
-                    parameter.startCategoryId = categoryId;
-                }
-
-                this.props.loadCategories(parameter);
+                this.props.loadCategories(getParameter(categoryId, maxDepth));
             }
         }
     }
@@ -546,16 +544,18 @@ const mainNavigation: WidgetModule = {
                         if (value === emptyGuid) {
                             return "Products";
                         }
-                        const link = getCategoryLink(state, value);
-                        if (!link) {
-                            return dispatch => {
-                                dispatch(loadCategories({
-                                    startCategoryId: value,
-                                    maxDepth: 0,
-                                }));
-                            };
+                        const categoryState = getCategoryState(state, value);
+                        if (!categoryState.value) {
+                            if (!categoryState.isLoading) {
+                                return dispatch => {
+                                    dispatch(loadCategory({
+                                        id: value,
+                                    }));
+                                };
+                            }
+                            return "";
                         }
-                        return link.shortDescription;
+                        return categoryState.value.shortDescription;
                     }
                     if (type === "Url") {
                         return title ?? value;

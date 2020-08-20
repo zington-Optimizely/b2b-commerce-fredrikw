@@ -69,7 +69,7 @@ export interface BrandListStyles {
     image?: LazyImageProps;
 }
 
-const styles: BrandListStyles = {
+export const listStyles: BrandListStyles = {
     titleText: {
         variant: "h3",
         transform: "inherit",
@@ -86,7 +86,7 @@ const styles: BrandListStyles = {
     },
 };
 
-export const listStyles = styles;
+const styles = listStyles;
 
 class BrandGallery extends React.Component<Props> {
     UNSAFE_componentWillMount() {

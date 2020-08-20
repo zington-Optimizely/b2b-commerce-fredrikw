@@ -4,7 +4,7 @@ import { FulfillmentMethod } from "@insite/client-framework/Services/SessionServ
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import setRequestedDeliveryDate
     from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedDeliveryDate";
 import setRequestedPickUpDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedPickUpDate";
@@ -30,8 +30,10 @@ interface OwnProps extends WidgetProps {
 const mapStateToProps = (state: ApplicationState) => {
     const settingsCollection = getSettingsCollection(state);
     const { session } = state.context;
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     return {
-        cart: getCurrentCartState(state).value,
+        cart: cartState.value,
         showShippingMethod: session.fulfillmentMethod === FulfillmentMethod.Ship,
         showPickUpDate: settingsCollection.accountSettings.enableWarehousePickup && settingsCollection.cartSettings.enableRequestPickUpDate
             && session.fulfillmentMethod === FulfillmentMethod.PickUp,
@@ -64,7 +66,7 @@ export interface CheckoutShippingCarrierServiceStyles {
     pickUpDatePicker?: DatePickerPresentationProps;
 }
 
-const styles: CheckoutShippingCarrierServiceStyles = {
+export const checkoutShippingCarrierServiceStyles: CheckoutShippingCarrierServiceStyles = {
     container: { gap: 20 },
     centeringWrapper: {
         css: css`
@@ -81,7 +83,11 @@ const styles: CheckoutShippingCarrierServiceStyles = {
     pickUpDateGridItem: { width: [12, 12, 12, 6, 6] },
 };
 
-export const checkoutShippingCarrierService = styles;
+/**
+ * @deprecated Use checkoutShippingCarrierServiceStyles instead.
+ */
+export const checkoutShippingCarrierService = checkoutShippingCarrierServiceStyles;
+const styles = checkoutShippingCarrierServiceStyles;
 
 const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                                        cart,

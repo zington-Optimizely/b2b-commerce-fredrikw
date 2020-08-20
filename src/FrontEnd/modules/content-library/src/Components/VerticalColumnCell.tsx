@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";

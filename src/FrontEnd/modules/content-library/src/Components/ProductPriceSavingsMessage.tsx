@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import getLocalizedCurrency from "@insite/client-framework/Common/Utilities/getLocalizedCurrency";
 import { getUnitListPrice, getUnitNetPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";

@@ -60,6 +60,7 @@ type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeo
 
 export interface OrderUploadStyles {
     mainWrapper?: InjectableCss;
+    orderCancellationSuccessfulText?: TypographyPresentationProps;
     uploadLinkTooltipText?: TypographyPresentationProps;
     downloadTemplateButton?: ButtonPresentationProps;
     fileUploader?: FileUploadPresentationProps;
@@ -71,9 +72,13 @@ export interface OrderUploadStyles {
     uploadFileButtonLabel?: TypographyPresentationProps;
 }
 
-const styles: OrderUploadStyles = {
+export const orderUploadStyles: OrderUploadStyles = {
     mainWrapper: {
         css: css` width: 100%; `,
+    },
+    orderCancellationSuccessfulText: {
+        color: "warning",
+        css: css` line-height: 25px; `,
     },
     uploadLinkTooltipText: {
         css: css` margin-bottom: 15px; `,
@@ -122,7 +127,7 @@ const styles: OrderUploadStyles = {
     },
 };
 
-export const orderUploadStyles = styles;
+const styles = orderUploadStyles;
 
 const OrderUpload: FC<Props> = ({
     descriptionText,
@@ -281,6 +286,9 @@ const OrderUpload: FC<Props> = ({
 
     return (
         <StyledWrapper {...styles.mainWrapper}>
+            {uploadCancelled
+                && <Typography as="p" {...styles.orderCancellationSuccessfulText}>{siteMessage("OrderUpload_CancellationSuccessful")}</Typography>
+            }
             <Typography as="p" {...styles.uploadLinkTooltipText}>{descriptionText}</Typography>
             <Button {...styles.downloadTemplateButton} onClick={downloadTemplateHandler}>{translate("Download Template")}</Button>
             <FileUpload

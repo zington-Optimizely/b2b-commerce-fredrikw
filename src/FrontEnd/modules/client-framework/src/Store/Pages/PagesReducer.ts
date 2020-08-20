@@ -14,7 +14,7 @@ import OrderConfirmationReducer from "@insite/client-framework/Store/Pages/Order
 import OrderDetailsReducer from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsReducer";
 import OrderHistoryReducer from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryReducer";
 import OrderUploadReducer from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadReducer";
-import ProductDetailReducer from "@insite/client-framework/Store/Pages/ProductDetail/ProductDetailReducer";
+import ProductDetailsReducer from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsReducer";
 import ProductListReducer from "@insite/client-framework/Store/Pages/ProductList/ProductListReducer";
 import QuickOrderReducer from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderReducer";
 import RequestRmaReducer from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaReducer";
@@ -44,7 +44,7 @@ const reducers = {
     orderConfirmation: OrderConfirmationReducer,
     orderUpload: OrderUploadReducer,
     productList: ProductListReducer,
-    productDetail: ProductDetailReducer,
+    productDetails: ProductDetailsReducer,
     quickOrder: QuickOrderReducer,
     requestRma: RequestRmaReducer,
     rfqConfirmation: RfqConfirmationReducer,

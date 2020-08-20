@@ -60,7 +60,7 @@ interface WarehouseAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const styles: CartFulfillmentMethodSelectorStyles = {
+export const cartFulfillmentMethodStyles: CartFulfillmentMethodSelectorStyles = {
     pickUpLocation: {
         wrapper: {
             css: css` margin-top: 20px; `,
@@ -82,7 +82,7 @@ const styles: CartFulfillmentMethodSelectorStyles = {
     },
 };
 
-export const cartFulfillmentMethodStyles = styles;
+const styles = cartFulfillmentMethodStyles;
 
 const CartFulfillmentMethodSelector: FC<Props> = ({
     cart,

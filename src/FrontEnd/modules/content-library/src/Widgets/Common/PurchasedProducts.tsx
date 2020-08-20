@@ -1,4 +1,5 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getProductsForProductInfoList } from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListSelectors";
 import loadPurchasedProducts from "@insite/client-framework/Store/Components/PurchasedProducts/Handlers/LoadPurchasedProducts";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -42,7 +43,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
-    products: state.components.purchasedProducts.products[ownProps.id]?.value,
+    products: getProductsForProductInfoList(state, ownProps.id),
 });
 
 const mapDispatchToProps = {
@@ -63,7 +64,7 @@ export interface PurchasedProductsStyles {
     addToCartHeaderText?: TypographyPresentationProps;
 }
 
-const styles: PurchasedProductsStyles = {
+export const purchasedProductsStyles: PurchasedProductsStyles = {
     titleText: {
         variant: "h2",
         css: css`
@@ -77,7 +78,7 @@ const styles: PurchasedProductsStyles = {
             padding: 10px;
             background-color: ${getColor("common.accent")};
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, css` display: none; `], "max")}
+            breakpointMediaQueries(theme, [null, css` display: none; `], "max")}
         `,
     },
     itemHeaderGridItem: { width: [0, 0, 6, 6, 6] },
@@ -87,7 +88,7 @@ const styles: PurchasedProductsStyles = {
         css: css`
             justify-content: flex-end;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, css` padding-right: 35px; `, null, null])}
+            breakpointMediaQueries(theme, [null, null, css` padding-right: 35px; `, null, null])}
         `,
     },
     priceHeaderText: { weight: "bold" },
@@ -98,7 +99,7 @@ const styles: PurchasedProductsStyles = {
     addToCartHeaderText: { weight: "bold" },
 };
 
-export const purchasedProductsStyles = styles;
+const styles = purchasedProductsStyles;
 
 const getJustifyContent = (position: string) => {
     if (position === "left") {
@@ -116,11 +117,11 @@ const TitleWrapper = styled.div<{ position: string }>`
 `;
 
 const PurchasedProducts: React.FC<Props> = ({
-    id,
-    fields,
-    products,
-    loadPurchasedProducts,
-}) => {
+                                                id,
+                                                fields,
+                                                products,
+                                                loadPurchasedProducts,
+                                            }) => {
     React.useEffect(
         () => {
             loadPurchasedProducts({ widgetId: id, purchaseType: fields.purchaseType });
@@ -134,7 +135,7 @@ const PurchasedProducts: React.FC<Props> = ({
 
     return <>
         <TitleWrapper {...styles.titleWrapper} position={fields.titlePosition}>
-            <Typography {...styles.titleText}>{translate(fields.title)}</Typography>
+            <Typography {...styles.titleText}>{fields.title}</Typography>
         </TitleWrapper>
         <GridContainer {...styles.headerContainer}>
             <GridItem {...styles.itemHeaderGridItem}>
@@ -149,8 +150,9 @@ const PurchasedProducts: React.FC<Props> = ({
         </GridContainer>
         {products.map(product => (
             <PurchasedProductCard
-                key={`${product.id}_${product.selectedUnitOfMeasure}`}
+                key={product.id}
                 product={product}
+                widgetId={id}
                 showBrand={fields.showBrand}
                 showPartNumbers={fields.showPartNumbers}
                 showPrice={fields.showPrice}
@@ -174,7 +176,7 @@ const widgetModule: WidgetModule = {
                 displayName: "Title",
                 editorTemplate: "TextField",
                 defaultValue: "",
-                fieldType: "General",
+                fieldType: "Translatable",
                 sortOrder: 0,
             },
             {

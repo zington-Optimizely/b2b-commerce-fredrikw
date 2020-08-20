@@ -81,7 +81,7 @@ const reducer = {
         }
     },
 
-    "PageTree/UpdatePageState": (draft: Draft<PageTreeState>, action: { pageId: string; parentId: string; publishOn?: Date; }) => {
+    "PageTree/UpdatePageState": (draft: Draft<PageTreeState>, action: { pageId: string; parentId: string | null; publishOn?: Date; }) => {
         const pageState = action.parentId ? getPageState(action.pageId, draft.treeNodesByParentId[action.parentId], draft.headerTreeNodesByParentId[action.parentId], draft.footerTreeNodesByParentId[action.parentId])
             : getPageStateFromDictionaries(action.pageId, draft.treeNodesByParentId, draft.headerTreeNodesByParentId, draft.footerTreeNodesByParentId);
         if (!pageState) return;

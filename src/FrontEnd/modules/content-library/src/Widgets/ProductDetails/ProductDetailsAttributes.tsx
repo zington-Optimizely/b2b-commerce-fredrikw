@@ -1,21 +1,15 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
-
-const mapStateToProps = (state: ApplicationState) => ({
-    attributeTypes: state.pages.productDetail.product?.attributeTypes,
-});
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsAttributesStyles {
     wrapper?: InjectableCss;
@@ -23,7 +17,7 @@ export interface ProductDetailsAttributesStyles {
     attributeTypeValuesText?: TypographyPresentationProps;
 }
 
-const styles: ProductDetailsAttributesStyles = {
+export const attributesStyles: ProductDetailsAttributesStyles = {
     wrapper: {
         css: css` padding-bottom: 15px; `,
     },
@@ -35,35 +29,37 @@ const styles: ProductDetailsAttributesStyles = {
     },
 };
 
-export const attributesStyles = styles;
+const styles = attributesStyles;
 
-const ProductDetailsAttributes: React.FC<OwnProps> = ({ product, attributeTypes }) => {
-    if (!product.brand && (!attributeTypes || attributeTypes.length === 0)) {
+const ProductDetailsAttributes: React.FC<Props> = ({ product: { brand, attributeTypes } }) => {
+    if (!brand && (!attributeTypes || attributeTypes.length === 0)) {
         return null;
     }
 
+    const limitedAttributeTypes = (attributeTypes ?? []).slice(0, 5);
+
     return <StyledWrapper {...styles.wrapper} data-test-selector="productDetails_attributes">
-        {product.brand
+        {brand
             && <Typography data-test-selector="brand_item" as="p" {...styles.attributeTypeValuesText}>
                 <Typography data-test-selector="brand_item_label" {...styles.attributeTypeLabelText}>{translate("Brand")}&nbsp;:&nbsp;</Typography>
-                <span data-test-selector="brand_item_value" >{product.brand.name}</span>
+                <span data-test-selector="brand_item_value" >{brand.name}</span>
             </Typography>
         }
-        {attributeTypes && attributeTypes.slice(0, 5).map(attributeType =>
+        {limitedAttributeTypes.map(attributeType =>
             <Typography key={attributeType.id.toString()} data-test-selector="attributes_item" data-attributetypeid={attributeType.id} {...styles.attributeTypeValuesText} as="p">
                 <Typography data-test-selector="attributes_item_label" {...styles.attributeTypeLabelText}>{attributeType.label}&nbsp;:&nbsp;</Typography>
-                <span data-test-selector="attributes_item_value">{attributeType.attributeValues!.map(attributeValue => attributeValue.valueDisplay).join(", ")}</span>
+                <span data-test-selector="attributes_item_value">{(attributeType.attributeValues ?? []).map(attributeValue => attributeValue.valueDisplay).join(", ")}</span>
             </Typography>)
         }
     </StyledWrapper>;
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withProduct(ProductDetailsAttributes)),
+    component: withProduct(ProductDetailsAttributes),
     definition: {
         displayName: "Attributes",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

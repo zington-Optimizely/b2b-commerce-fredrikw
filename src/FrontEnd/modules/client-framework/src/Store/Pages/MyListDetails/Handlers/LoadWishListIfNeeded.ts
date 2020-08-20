@@ -36,11 +36,8 @@ export const DispatchLoadWishListLinesIfNeeded: HandlerType = props => {
         defaultPageSize: props.getState().context.settings.settingsCollection.wishListSettings.productsPerPage,
         query: "",
     }));
-    const loadWishListLinesParameters = props.getState().pages.myListDetails.loadWishListLinesParameter;
-    const wishListLinesDataView = getWishListLinesDataView(props.getState(), loadWishListLinesParameters);
-    if (!wishListLinesDataView.value) {
-        props.dispatch(loadWishListLines());
-    }
+
+    props.dispatch(loadWishListLines());
 };
 
 export const chain = [

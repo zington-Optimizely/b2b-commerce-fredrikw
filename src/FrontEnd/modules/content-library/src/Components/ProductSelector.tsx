@@ -1,14 +1,18 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
+import clearProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/ClearProduct";
 import reset from "@insite/client-framework/Store/Components/ProductSelector/Handlers/Reset";
 import searchProducts from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SearchProducts";
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
+import setUnitOfMeasure from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetUnitOfMeasure";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getProductState } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import translate from "@insite/client-framework/Translate";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from "@insite/mobius/DynamicDropdown";
@@ -27,7 +31,7 @@ import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
-    onSelectProduct: (product: ProductModelExtended) => void;
+    onSelectProduct: (productInfo: ProductInfo, product: ProductModel) => void;
     selectButtonTitle?: string;
     productIsConfigurableMessage?: React.ReactNode;
     productIsUnavailableMessage?: React.ReactNode;
@@ -36,11 +40,13 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const { isSearching, searchResults, selectedProduct, errorType } = getProductSelector(state);
+    const { isSearching, searchResults, selectedProductInfo, errorType } = getProductSelector(state);
+    const product = getProductState(state, selectedProductInfo?.productId).value;
     return ({
         isSearching,
         searchResults,
-        selectedProduct,
+        selectedProductInfo,
+        product,
         errorType,
         location: getLocation(state),
     });
@@ -49,7 +55,8 @@ const mapStateToProps = (state: ApplicationState) => {
 const mapDispatchToProps = {
     searchProducts,
     setProduct,
-    changeProductUnitOfMeasure,
+    clearProduct,
+    setUnitOfMeasure,
     reset,
 };
 
@@ -73,7 +80,7 @@ export interface ProductSelectorStyles {
     searchDynamicDropdown?: DynamicDropdownPresentationProps;
 }
 
-const styles: ProductSelectorStyles = {
+export const productSelectorStyles: ProductSelectorStyles = {
     container: {
         gap: 10,
     },
@@ -129,7 +136,7 @@ const styles: ProductSelectorStyles = {
         css: css`
             margin-top: 30px;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, css` width: 100%; `], "max")}
+            breakpointMediaQueries(theme, [null, css` width: 100%; `], "max")}
         `,
     },
 };
@@ -137,28 +144,30 @@ const styles: ProductSelectorStyles = {
 const ENTER_KEY = 13;
 
 const ProductSelector: React.FC<Props> = ({
-    onSelectProduct,
-    selectButtonTitle,
-    searchProducts,
-    isSearching,
-    searchResults,
-    setProduct,
-    selectedProduct,
-    errorType,
-    changeProductUnitOfMeasure,
-    extendedStyles,
-    customErrorMessage,
-    productIsConfigurableMessage,
-    productIsUnavailableMessage,
-    location,
-    reset,
-}) => {
+                                              onSelectProduct,
+                                              selectButtonTitle,
+                                              searchProducts,
+                                              isSearching,
+                                              searchResults,
+                                              setProduct,
+                                              clearProduct,
+                                              setUnitOfMeasure,
+                                              selectedProductInfo,
+                                              product,
+                                              errorType,
+                                              extendedStyles,
+                                              customErrorMessage,
+                                              productIsConfigurableMessage,
+                                              productIsUnavailableMessage,
+                                              location,
+                                              reset,
+                                          }) => {
     const [qty, setQty] = React.useState("1");
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
     const [selectedProductId, setSelectedProductId] = React.useState("");
     const [options, setOptions] = React.useState<OptionObject[]>([]);
     const [searchTerm, setSearchTerm] = React.useState("");
-    const [mergedStyles] = React.useState(() => mergeToNew(styles, extendedStyles));
+    const [styles] = React.useState(() => mergeToNew(productSelectorStyles, extendedStyles));
 
     React.useEffect(() => {
         reset();
@@ -172,13 +181,13 @@ const ProductSelector: React.FC<Props> = ({
         const newOptions = searchResults.map(product => ({
             optionText: product.title,
             optionValue: product.id || undefined,
-            rowChildren: <StyledWrapper {...mergedStyles.optionWrapper}>
-                <StyledWrapper {...mergedStyles.imageWrapper}>
-                    <LazyImage {...mergedStyles.productImage} src={product.image} />
+            rowChildren: <StyledWrapper {...styles.optionWrapper}>
+                <StyledWrapper {...styles.imageWrapper}>
+                    <LazyImage {...styles.productImage} src={product.image} />
                 </StyledWrapper>
-                <StyledWrapper {...mergedStyles.infoWrapper}>
-                    <Typography {...mergedStyles.autocompleteTitleText}>{product.title}</Typography>
-                    <Typography {...mergedStyles.autocompleteErpText}>{product.erpNumber}</Typography>
+                <StyledWrapper {...styles.infoWrapper}>
+                    <Typography {...styles.autocompleteTitleText}>{product.title}</Typography>
+                    <Typography {...styles.autocompleteErpText}>{product.erpNumber}</Typography>
                 </StyledWrapper>
             </StyledWrapper>,
         }));
@@ -190,26 +199,31 @@ const ProductSelector: React.FC<Props> = ({
     }, [customErrorMessage]);
 
     React.useEffect(() => {
-        setSelectedProductId(selectedProduct ? selectedProduct.id : "");
-    }, [selectedProduct]);
+        setSelectedProductId(selectedProductInfo ? selectedProductInfo.productId : "");
+    }, [selectedProductInfo]);
 
     React.useEffect(() => {
         switch (errorType) {
-            case "productIsConfigurable":
-                setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
-                break;
-            case "productIsUnavailable":
-                setErrorMessage(productIsUnavailableMessage || translate("Product is unavailable"));
-                break;
-            default:
-                setErrorMessage("");
-                break;
+        case "productIsConfigurable":
+            setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
+            break;
+        case "productIsUnavailable":
+            setErrorMessage(productIsUnavailableMessage || translate("Product is unavailable"));
+            break;
+        default:
+            setErrorMessage("");
+            break;
         }
     }, [errorType]);
 
     const onSelectionChangeHandler = (value?: string) => {
         if (searchResults && searchResults.length > 0) {
-            setProduct({ productId: value, validateProduct: true });
+            const variantParentId = searchResults.find(o => o.id === value)?.styleParentId;
+            if (variantParentId) {
+                setProduct({ productId: variantParentId, variantId: value, validateProduct: true });
+            } else {
+                setProduct({ productId: value, validateProduct: true });
+            }
         }
     };
 
@@ -221,54 +235,50 @@ const ProductSelector: React.FC<Props> = ({
         setErrorMessage("");
         setSearchTerm(event.target.value);
 
-        if (selectedProduct) {
-            setProduct({});
+        if (selectedProductInfo) {
+            clearProduct();
         }
 
         debouncedSearchProducts(event.target.value);
     };
 
     const selectProduct = () => {
-        if (!selectedProduct || errorMessage) {
+        if (!selectedProductInfo || errorMessage || !product) {
             return;
         }
 
-        const newProduct = { ...selectedProduct };
-        newProduct.qtyOrdered = Math.max(Number(qty) || 1, selectedProduct.minimumOrderQty || 1);
-        onSelectProduct(newProduct);
+        const newProductInfo = { ...selectedProductInfo };
+        newProductInfo.qtyOrdered = Math.max(Number(qty) || 1, product.minimumOrderQty || 1);
+        onSelectProduct(newProductInfo, product);
 
-        setProduct({});
+        clearProduct();
         setQty("1");
         searchProducts({ query: "" });
     };
 
-    const onSuccessUomChanged = (product: ProductModelExtended) => {
-        setProduct({ product });
-    };
-
-    const uomChangeHandler = (value: string) => {
-        if (!selectedProduct) {
+    const uomChangeHandler = (unitOfMeasure: string) => {
+        if (!selectedProductInfo) {
             return;
         }
 
-        changeProductUnitOfMeasure({ product: selectedProduct, selectedUnitOfMeasure: value, onSuccess: onSuccessUomChanged });
+        setUnitOfMeasure({ unitOfMeasure });
     };
 
     const onKeyPress = (event: React.KeyboardEvent) => {
         if (event.charCode === ENTER_KEY) {
-            if (selectedProduct) {
+            if (selectedProductInfo) {
                 selectProduct();
-            }  else if (searchTerm && (!searchResults || searchResults.length === 0)) {
+            } else if (searchTerm && (!searchResults || searchResults.length === 0)) {
                 setProduct({ searchTerm });
             }
         }
     };
 
     return (
-        <GridContainer {...mergedStyles.container} data-test-selector="productSelector">
-            <GridItem {...mergedStyles.searchGridItem}>
+        <GridContainer {...styles.container} data-test-selector="productSelector">
+            <GridItem {...styles.searchGridItem}>
                 <DynamicDropdown
-                    {...mergedStyles.searchDynamicDropdown}
+                    {...styles.searchDynamicDropdown}
                     label={translate("Search")}
                     onSelectionChange={onSelectionChangeHandler}
                     onInputChange={onInputChanged}
@@ -281,32 +291,33 @@ const ProductSelector: React.FC<Props> = ({
                     data-test-selector="productSelector_search"
                 />
             </GridItem>
-            <GridItem {...mergedStyles.qtyGridItem}>
+            <GridItem {...styles.qtyGridItem}>
                 <TextField
                     type="number"
                     min={1}
                     label={translate("QTY")}
                     value={qty}
-                    onChange={(e) => { setQty(e.currentTarget.value); }}
+                    onChange={(e) => {
+                        setQty(e.currentTarget.value);
+                    }}
                     data-test-selector="productSelector_qty"
                 />
             </GridItem>
-            <GridItem {...mergedStyles.unitOfMeasureGridItem}>
-                {selectedProduct && selectedProduct.unitOfMeasures && selectedProduct.unitOfMeasures.length > 0
-                    && <ProductUnitOfMeasureSelect
-                        productUnitOfMeasures={selectedProduct.unitOfMeasures}
-                        selectedUnitOfMeasure={selectedProduct.selectedUnitOfMeasure}
-                        onChangeHandler={uomChangeHandler}
+            <GridItem {...styles.unitOfMeasureGridItem}>
+                {product && selectedProductInfo
+                && <ProductContext.Provider value={{ product, productInfo: selectedProductInfo, onUnitOfMeasureChanged: uomChangeHandler }}>
+                    <ProductUnitOfMeasureSelect
                         extendedStyles={styles.unitOfMeasureSelect}
                         data-test-selector="productSelector_uom"
                     />
+                </ProductContext.Provider>
                 }
             </GridItem>
-            <GridItem {...mergedStyles.buttonGridItem}>
+            <GridItem {...styles.buttonGridItem}>
                 <Button
-                    {...mergedStyles.selectButton}
+                    {...styles.selectButton}
                     onClick={() => selectProduct()}
-                    disabled={!selectedProduct || !!errorMessage || Number(qty) < 1}
+                    disabled={!selectedProductInfo || !!errorMessage || Number(qty) < 1}
                     data-test-selector="productSelector_selectProduct"
                 >
                     {selectButtonTitle || translate("Select Product")}

@@ -20,9 +20,9 @@ export interface OrderHistoryPaginationStyles {
     pagination?: PaginationPresentationProps;
 }
 
-const styles: OrderHistoryPaginationStyles = {};
+export const orderHistoryPaginationStyles: OrderHistoryPaginationStyles = {};
 
-export const orderHistoryPaginationStyles = styles;
+const styles = orderHistoryPaginationStyles;
 
 const OrderHistoryPagination: FC<Props> = ({
                                                updateSearchFields,

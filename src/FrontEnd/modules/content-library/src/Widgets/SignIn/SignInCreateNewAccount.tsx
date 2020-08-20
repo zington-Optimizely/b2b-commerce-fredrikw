@@ -1,4 +1,3 @@
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getLocation, getReturnUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -41,13 +40,13 @@ const mapDispatchToProps = {
     signInAsGuest,
 };
 
-interface OwnProps extends WidgetProps, HasHistory {
+interface OwnProps extends WidgetProps {
     fields: {
         [fields.text]: string;
     };
 }
 
-type Props = ReturnType<typeof mapStateToProps> & OwnProps & ResolveThunks<typeof mapDispatchToProps>;
+type Props = ReturnType<typeof mapStateToProps> & OwnProps & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 export interface SignInCreateNewAccountStyles {
     signInCreateNewAccountGridContainer?: GridContainerProps;
@@ -60,7 +59,7 @@ export interface SignInCreateNewAccountStyles {
     createNewAccountButton?: ButtonPresentationProps;
 }
 
-const styles: SignInCreateNewAccountStyles = {
+export const signInCreateNewAccountStyles: SignInCreateNewAccountStyles = {
     signInCreateNewAccountTitle: {
         variant: "h4",
     },
@@ -115,7 +114,11 @@ const styles: SignInCreateNewAccountStyles = {
     createNewAccountButton: { variant: "secondary" },
 };
 
-export const signInCreateNewAccount = styles;
+/**
+ * @deprecated Use signInCreateNewAccountStyles instead.
+ */
+export const signInCreateNewAccount = signInCreateNewAccountStyles;
+const styles = signInCreateNewAccountStyles;
 
 const SignInCreateNewAccount: FC<Props> = ({
     history,

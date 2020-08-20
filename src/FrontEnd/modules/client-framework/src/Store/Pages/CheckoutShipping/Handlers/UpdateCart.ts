@@ -4,7 +4,8 @@ import { createShipTo, updateBillTo, updateShipTo } from "@insite/client-framewo
 import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
@@ -43,7 +44,8 @@ export const DispatchBeginUpdateCart: HandlerType = props => {
 
 export const PopulateCart: HandlerType = props => {
     const state = props.getState();
-    const cart = getCurrentCartState(state).value;
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cart) {
         throw new Error("There was no current cart available while trying to update the current cart.");
     }
@@ -117,9 +119,10 @@ export const UpdateBillTo: HandlerType = async props => {
 };
 
 export const UpdateSession: HandlerType = async props => {
-    const { updatedShipTo, cart } = props;
+    const { updatedShipTo, cart, getState } = props;
+    const { cartId } = getState().pages.checkoutShipping;
 
-    if (updatedShipTo) {
+    if (!cartId && updatedShipTo) {
         await updateSession({
             session: {
                 billToId: cart.billToId,
@@ -135,7 +138,13 @@ export const UpdateCart: HandlerType = async props => {
 };
 
 export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {

@@ -36,9 +36,9 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 export interface {{pascalCase pageName}}{{pascalCase name}}Styles {
 }
 
-const styles: {{pascalCase pageName}}{{pascalCase name}}Styles = {};
+export const {{camelCase pageName}}{{pascalCase name}}Styles: {{pascalCase pageName}}{{pascalCase name}}Styles = {};
 
-export const {{camelCase pageName}}{{pascalCase name}}Styles = styles;
+const styles = {{camelCase pageName}}{{pascalCase name}}Styles;
 
 {{#if functionComponent}}
 const {{pascalCase pageName}}{{pascalCase name}}: FC<Props> = ({ }) => {

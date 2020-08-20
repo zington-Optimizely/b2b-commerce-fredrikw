@@ -1,10 +1,10 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { tellAFriend, TellAFriendApiParameter } from "@insite/client-framework/Services/EmailService";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
+import { ProductModel, TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface ShareProductParameter {
-    product: ProductModelExtended;
+    product: ProductModel;
+    productDetailPath: string;
     friendsName: string;
     friendsEmailAddress: string;
     yourName: string;
@@ -26,7 +26,7 @@ export const PopulateApiParameter: HandlerType = props => {
         productImage: props.parameter.product.mediumImagePath,
         productShortDescription: props.parameter.product.productTitle,
         altText: props.parameter.product.imageAltText,
-        productUrl: props.parameter.product.productDetailPath || props.parameter.product.canonicalUrl,
+        productUrl: props.parameter.productDetailPath,
     } as TellAFriendModel;
     props.apiParameter = { tellAFriendModel };
 };

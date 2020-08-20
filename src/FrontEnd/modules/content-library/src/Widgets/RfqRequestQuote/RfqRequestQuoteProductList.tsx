@@ -35,7 +35,7 @@ export interface RfqRequestQuoteProductListStyles {
     cartLineStyles?: CartLineCardExpandedStyles;
 }
 
-const styles: RfqRequestQuoteProductListStyles = {
+export const rfqRequestQuoteProductListStyles: RfqRequestQuoteProductListStyles = {
     lineCountWrapper: {
         css: css`
             border-bottom: 1px solid ${getColor("common.border")};
@@ -45,7 +45,7 @@ const styles: RfqRequestQuoteProductListStyles = {
     lineCountStyles: { weight: 600 },
 };
 
-export const rfqRequestQuoteProductListStyles = styles;
+const styles = rfqRequestQuoteProductListStyles;
 
 const RfqRequestQuoteProductList: FC<Props> = ({
    cart,

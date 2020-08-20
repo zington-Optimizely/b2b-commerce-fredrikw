@@ -1,5 +1,5 @@
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
-import { loadPublishInfo } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import { loadPublishInfo } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import React, { FC, useEffect } from "react";
@@ -8,11 +8,13 @@ import styled from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
+        publishModal: {
+            pagePublishInfosState,
+        },
         shellContext: {
             currentLanguageId,
             currentPersonaId,
             currentDeviceType,
-            pagePublishInfo,
             contentMode,
         },
         pageEditor: {
@@ -33,11 +35,13 @@ const mapStateToProps = (state: ShellState) => {
         futurePublishOn: getPageState(pageId, treeNodesByParentId[page.parentId], headerTreeNodesByParentId[page.parentId],
             footerTreeNodesByParentId[page.parentId])?.futurePublishOn,
         contentMode,
-        loaded: pagePublishInfo.value,
-        hasDraft: isEditingNewPage || (pagePublishInfo.value && !!pagePublishInfo.value
-            .find(page => page.pageId === pageId && page.unpublishedContexts
-                .find(({ languageId, personaId, deviceType }) => (!languageId || languageId === currentLanguageId) && (!personaId || personaId === currentPersonaId) && (!deviceType || deviceType === currentDeviceType)),
-            )),
+        loaded: pagePublishInfosState.value,
+        hasDraft: isEditingNewPage
+            || (pagePublishInfosState.value
+                && !!pagePublishInfosState.value.find(({ pageId: publishPageId, languageId, personaId, deviceType }) => publishPageId === pageId
+                                                            && (!languageId || languageId === currentLanguageId)
+                                                            && (!personaId || personaId === currentPersonaId)
+                                                            && (!deviceType || deviceType === currentDeviceType))),
     });
 };
 
@@ -55,7 +59,9 @@ const HeaderPublishStatus: FC<Props> = ({
                                             loadPublishInfo,
                                             futurePublishOn,
                                         }) => {
-    useEffect(() => loadPublishInfo(pageId), [pageId]);
+    useEffect(() => {
+        loadPublishInfo(pageId);
+    }, [pageId]);
 
     let value: "Published" | "Draft" | "Scheduled" | undefined;
 
@@ -77,6 +83,7 @@ const HeaderPublishStatus: FC<Props> = ({
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderPublishStatus);
 
 const StyledSpan = styled.span`
+    width: 72px;
     background: ${({ theme }) => theme.colors.common.backgroundContrast};
     color: ${({ theme }) => theme.colors.common.accent};
     font-family: ${({ theme }) => theme.typography.body.fontFamily};

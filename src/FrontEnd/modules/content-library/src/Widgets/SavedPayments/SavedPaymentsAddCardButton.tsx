@@ -25,7 +25,7 @@ export interface SavedPaymentsAddCardButtonStyles {
     addCardButton?: ButtonPresentationProps;
 }
 
-const styles: SavedPaymentsAddCardButtonStyles = {
+export const addCardButtonStyles: SavedPaymentsAddCardButtonStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -35,7 +35,7 @@ const styles: SavedPaymentsAddCardButtonStyles = {
     addCardButton: { variant: "tertiary" },
 };
 
-export const addCardButtonStyles = styles;
+const styles = addCardButtonStyles;
 
 const SavedPaymentsAddCardButton: React.FC<Props> = ({
                                                          updateEditModal,

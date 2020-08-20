@@ -216,7 +216,7 @@ Implementation of [lodash's get method](https://lodash.com/docs/4.17.11#get).
 > **@param** *{\*}* `defaultValue` The value returned for `undefined` resolved values.  
 
 ```js static
-import get from '../../mobius/src/utilities/get';
+
 ```
 
 *******

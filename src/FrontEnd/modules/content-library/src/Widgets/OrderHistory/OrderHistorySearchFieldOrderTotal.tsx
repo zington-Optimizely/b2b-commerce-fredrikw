@@ -4,8 +4,8 @@ import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHist
 import SearchTextField, { SearchTextFieldStyles } from "@insite/content-library/Widgets/OrderHistory/SearchTextField";
 import * as React from "react";
 
-const styles: SearchTextFieldStyles = {};
-export const orderTotalStyles = styles;
+export const orderTotalStyles: SearchTextFieldStyles = {};
+const styles = orderTotalStyles;
 
 const OrderHistorySearchFieldOrderTotal: React.FunctionComponent<WidgetProps> = () => {
     return(

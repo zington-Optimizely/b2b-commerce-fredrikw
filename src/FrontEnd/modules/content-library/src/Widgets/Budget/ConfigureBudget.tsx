@@ -103,7 +103,7 @@ export interface ConfigureBudgetStyles {
     twoButtonModalStyles?: TwoButtonModalStyles;
 }
 
-const styles: ConfigureBudgetStyles = {
+export const configureBudgetStyles: ConfigureBudgetStyles = {
     titleText: {
         variant: "h4",
         css: css` margin: 0; `,
@@ -256,7 +256,7 @@ const styles: ConfigureBudgetStyles = {
     },
 };
 
-export const configureBudgetStyles = styles;
+const styles = configureBudgetStyles;
 const tzOffset = (new Date()).getTimezoneOffset() * 60000;
 const ConfigureBudget: React.FC<Props> = ({
     billToState,
@@ -487,15 +487,21 @@ const ConfigureBudget: React.FC<Props> = ({
                         data-test-selector="budgetPeriodTypeRadio"
                         {...styles.budgetPeriodTypeRadioGroup}>
                         <Radio value={BudgetPeriodType.Monthly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                            {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Monthly)}
                         </Radio>
                         <Radio value={BudgetPeriodType.Quarterly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                            {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Quarterly)}
                         </Radio>
                         <Radio value={BudgetPeriodType.Yearly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                            {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Yearly)}
                         </Radio>
-                        <Radio value={BudgetPeriodType.Custom} {...styles.customBudgetPeriodTypeRadio}>{translate(BudgetPeriodType.Custom)}</Radio>
+                        <Radio value={BudgetPeriodType.Custom} {...styles.customBudgetPeriodTypeRadio}>
+                            {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
+                            {translate(BudgetPeriodType.Custom)}
+                        </Radio>
                         {budgetPeriodType === BudgetPeriodType.Custom
                             && <TextField
                                 value={customBudgetPeriodNumber || ""}

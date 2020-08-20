@@ -31,8 +31,8 @@ export interface OrderHistorySearchFieldStatusStyles {
     wrapper?: SearchFieldWrapperStyles;
 }
 
-const styles: OrderHistorySearchFieldStatusStyles = {};
-export const statusStyles = styles;
+export const statusStyles: OrderHistorySearchFieldStatusStyles = {};
+const styles = statusStyles;
 
 class OrderHistorySearchFieldStatus extends React.Component<Props> {
     handleChange = (event: React.FormEvent<HTMLSelectElement>) => {

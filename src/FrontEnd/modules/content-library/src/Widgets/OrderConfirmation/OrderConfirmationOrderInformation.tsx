@@ -48,7 +48,7 @@ export interface OrderConfirmationOrderInformationStyles {
     notesDescription?: TypographyPresentationProps;
 }
 
-const styles: OrderConfirmationOrderInformationStyles = {
+export const orderInformationStyles: OrderConfirmationOrderInformationStyles = {
     OrderInformationGridContainer: {
         gap: 10,
     },
@@ -79,7 +79,7 @@ const styles: OrderConfirmationOrderInformationStyles = {
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-export const orderInformationStyles = styles;
+const styles = orderInformationStyles;
 
 const OrderConfirmationOrderInformation: FC<Props> = props => {
     if (!props.cart) {

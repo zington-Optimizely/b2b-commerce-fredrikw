@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import translate from "@insite/client-framework/Translate";
 import GridContainer from "@insite/mobius/GridContainer";
 import GridItem from "@insite/mobius/GridItem";

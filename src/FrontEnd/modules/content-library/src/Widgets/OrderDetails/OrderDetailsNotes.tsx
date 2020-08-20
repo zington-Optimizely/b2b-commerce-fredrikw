@@ -15,7 +15,7 @@ export interface OrderDetailsNotesStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: OrderDetailsNotesStyles = {
+export const notesStyles: OrderDetailsNotesStyles = {
     titleText: {
         variant: "h6",
         as: "h2",
@@ -26,7 +26,7 @@ const styles: OrderDetailsNotesStyles = {
     },
 };
 
-export const notesStyles = styles;
+const styles = notesStyles;
 
 const OrderDetailsNotes: React.FunctionComponent = () => {
     const { value: order } = useContext(OrderStateContext);

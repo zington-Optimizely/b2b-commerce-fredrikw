@@ -86,7 +86,7 @@ export interface LinkListStyles {
     link?: LinkPresentationProps;
 }
 
-export const styles: LinkListStyles = {
+export const linkListStyles: LinkListStyles = {
     socialLinkListWrapper: {
         css: css`
             width: 100%;
@@ -109,6 +109,8 @@ export const styles: LinkListStyles = {
         },
     },
 };
+
+const styles = linkListStyles;
 
 const GetIcon = (icon: string) => {
     switch (icon) {

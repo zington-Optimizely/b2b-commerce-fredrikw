@@ -6,7 +6,7 @@ const path = require("path");
 const setupEntryFiles = require("./setupEntryFiles");
 const webpack = require("webpack");
 
-exports.setupCommonConfig = (isDevBuild, env) => {
+exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
     let blueprint = env && env.BLUEPRINT && `blueprints/${env.BLUEPRINT}`;
     if (!blueprint) {
         if (isDevBuild) {
@@ -26,14 +26,6 @@ exports.setupCommonConfig = (isDevBuild, env) => {
     console.log(`Blueprint is ${blueprint}.`);
 
     setupEntryFiles(isDevBuild, blueprint);
-
-    const tsLoader = {
-        loader: "ts-loader",
-        options: {
-            happyPackMode: true,
-            getCustomTransformers: path.resolve(__dirname, "./transformers.js"),
-        },
-    };
 
     const commonConfig = {
         resolve: {
@@ -66,14 +58,20 @@ exports.setupCommonConfig = (isDevBuild, env) => {
         module: {
             rules: [
                 {
-                    test: /\.tsx$/,
+                    test: /\.tsx?$/,
                     exclude: /node_modules/,
-                    use: [tsLoader],
-                },
-                {
-                    test: /\.ts$/,
-                    exclude: /node_modules/,
-                    use: [tsLoader],
+                    use: [
+                        {
+                            loader: "ts-loader",
+                            options: {
+                                happyPackMode: true,
+                                getCustomTransformers: path.resolve(__dirname, "./transformers.js"),
+                                compilerOptions: {
+                                    target,
+                                },
+                            },
+                        },
+                    ],
                 }, {
                     test: /\.css$/,
                     use: [

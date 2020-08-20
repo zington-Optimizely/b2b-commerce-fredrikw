@@ -26,7 +26,7 @@ export interface InvoiceDetailsSummaryTableStyles {
     lineStyles?: InvoiceDetailsLineCardStyles;
 }
 
-const styles: InvoiceDetailsSummaryTableStyles = {
+export const summaryTableStyles: InvoiceDetailsSummaryTableStyles = {
     centeringWrapper: {
         css: css`
             height: 300px;
@@ -67,7 +67,7 @@ const styles: InvoiceDetailsSummaryTableStyles = {
     },
 };
 
-export const summaryTableStyles = styles;
+const styles = summaryTableStyles;
 
 const InvoiceDetailsSummaryTable = () => {
     const invoiceState = useContext(InvoiceStateContext);

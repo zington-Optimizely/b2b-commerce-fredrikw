@@ -50,7 +50,7 @@ export interface AccountSettingsHeaderStyles {
     buttonSet?: GridItemProps;
 }
 
-const styles: AccountSettingsHeaderStyles = {
+export const headerStyles: AccountSettingsHeaderStyles = {
     saveButton: {
         css: css` margin-left: 10px; `,
     },
@@ -77,7 +77,7 @@ const updateSettingsHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>,
     props.saveCurrentAccount();
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 const AccountSettingsHeader: FC<Props> = props => {
     const { account, isEmailValid, hasChanges, pageTitle, useDefaultCustomer } = props;
 

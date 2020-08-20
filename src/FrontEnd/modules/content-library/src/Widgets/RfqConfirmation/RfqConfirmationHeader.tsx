@@ -5,7 +5,6 @@ import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/Link
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import { RfqConfirmationPageContext } from "@insite/content-library/Pages/RfqConfirmationPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
@@ -15,7 +14,7 @@ import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/OverflowMenu";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import React from "react";
+import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -42,7 +41,7 @@ export interface RfqConfirmationHeaderStyles {
     continueClickable?: ClickableProps;
 }
 
-const styles: RfqConfirmationHeaderStyles = {
+export const rfqConfirmationHeaderStyles: RfqConfirmationHeaderStyles = {
     headerGridContainer: {
         gap: 10,
     },
@@ -76,9 +75,9 @@ const styles: RfqConfirmationHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = rfqConfirmationHeaderStyles;
 
-const RfqConfirmationHeader: React.FC<Props> = ({
+const RfqConfirmationHeader: FC<Props> = ({
     quoteState,
     history,
     rfqMyQuotesPageUrl,

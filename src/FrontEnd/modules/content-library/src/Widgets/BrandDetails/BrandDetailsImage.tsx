@@ -27,7 +27,7 @@ export interface BrandDetailsImageStyles {
     externalLink?: LinkPresentationProps;
 }
 
-const styles: BrandDetailsImageStyles = {
+export const imageStyles: BrandDetailsImageStyles = {
     container: {
         gap: 5,
         css: css` margin: 15px; `,
@@ -73,7 +73,7 @@ const styles: BrandDetailsImageStyles = {
     },
 };
 
-export const imageStyles = styles;
+const styles = imageStyles;
 
 const BrandDetailsImage: FC<Props> = () => {
     const { value: brand } = useContext(BrandStateContext);

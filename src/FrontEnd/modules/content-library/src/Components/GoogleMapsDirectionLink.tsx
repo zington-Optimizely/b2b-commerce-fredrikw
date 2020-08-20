@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import translate from "@insite/client-framework/Translate";
 import Link, { LinkProps } from "@insite/mobius/Link";
 import * as React from "react";

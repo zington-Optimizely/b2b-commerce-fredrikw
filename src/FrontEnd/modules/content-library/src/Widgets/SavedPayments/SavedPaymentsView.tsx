@@ -33,7 +33,7 @@ export interface SavedPaymentsViewStyles {
     mainRightColumnGridItem?: GridItemProps;
 }
 
-const styles: SavedPaymentsViewStyles = {
+export const viewStyles: SavedPaymentsViewStyles = {
     centeringWrapper: {
         css: css`
             height: 300px;
@@ -92,7 +92,7 @@ const styles: SavedPaymentsViewStyles = {
     },
 };
 
-export const viewStyles = styles;
+const styles = viewStyles;
 
 const SavedPaymentsView: React.FC<Props> = ({
                                                 id,

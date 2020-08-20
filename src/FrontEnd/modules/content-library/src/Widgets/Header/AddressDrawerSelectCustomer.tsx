@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { GetBillTosApiParameter, GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -15,14 +16,6 @@ const mapStateToProps = (state: ApplicationState) => {
 };
 
 type Props = ReturnType<typeof mapStateToProps>;
-
-export interface AddressDrawerSelectCustomerStyles {
-}
-
-export const addressDrawerSelectCustomerStyles = {
-};
-
-const styles = addressDrawerSelectCustomerStyles;
 
 const AddressDrawerSelectCustomer = ({
     showAddressesSelector,

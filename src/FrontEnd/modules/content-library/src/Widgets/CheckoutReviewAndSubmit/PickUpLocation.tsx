@@ -29,7 +29,7 @@ export interface PickUpLocationInfoDisplayStyles {
     billingAddress?: BillingAddressInfoDisplayStyles;
 }
 
-const baseStyles: PickUpLocationInfoDisplayStyles = {
+export const pickUpLocationInfoDisplayStyles: PickUpLocationInfoDisplayStyles = {
     container: { gap: 20 },
     pickUpDateGridItem: {
         width: 12,
@@ -44,8 +44,6 @@ const baseStyles: PickUpLocationInfoDisplayStyles = {
     },
 };
 
-export const pickUpLocationInfoDisplayStyles = baseStyles;
-
 const PickUpLocation = ({
     pickUpDate,
     billTo,
@@ -54,7 +52,7 @@ const PickUpLocation = ({
     extendedStyles,
     ...otherProps
 }: OwnProps) => {
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(pickUpLocationInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container}>
             {pickUpDate

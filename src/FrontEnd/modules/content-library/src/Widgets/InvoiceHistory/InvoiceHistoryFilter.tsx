@@ -6,7 +6,6 @@ import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/S
 import clearSearch from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/ClearSearch";
 import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import translate from "@insite/client-framework/Translate";
-import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { InvoiceHistoryPageContext } from "@insite/content-library/Pages/InvoiceHistoryPage";
@@ -66,7 +65,7 @@ export interface InvoiceHistoryFilterStyles {
     clearFiltersButton?: ButtonProps;
 }
 
-const styles: InvoiceHistoryFilterStyles = {
+export const filterStyles: InvoiceHistoryFilterStyles = {
     container: { css: css` padding-bottom: 15px; ` },
     headingItem: { width: 12, css: css` padding-bottom: 0; ` },
     heading: { variant: "h5", as: "h2", css: css` margin: 0; ` },
@@ -87,7 +86,7 @@ const styles: InvoiceHistoryFilterStyles = {
     fromDate: { cssOverrides: { formField: css` width: 100%; ` } },
 };
 
-export const filterStyles = styles;
+const styles = filterStyles;
 const tzOffset = (new Date()).getTimezoneOffset() * 60000;
 class InvoiceHistoryFilter extends React.Component<Props, State> {
     constructor(props: Props) {

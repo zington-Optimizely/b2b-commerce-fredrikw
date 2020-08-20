@@ -1,9 +1,10 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import ProductAttributes, { ProductAttributesStyles } from "@insite/content-library/Components/ProductAttributes";
-import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductContextAvailability from "@insite/content-library/Components/ProductContextAvailability";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -12,7 +13,7 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends HasProductContext {
+interface OwnProps {
     showBrand: boolean;
     showTitle: boolean;
     showPartNumbers: boolean;
@@ -24,7 +25,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     settingsCollection: getSettingsCollection(state),
 });
 
-type Props = ReturnType<typeof mapStateToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & OwnProps & HasProductContext;
 
 export interface ProductListProductInformationStyles {
     container?: GridContainerProps;
@@ -40,7 +41,7 @@ export interface ProductListProductInformationStyles {
     attributes?: ProductAttributesStyles;
 }
 
-const styles: ProductListProductInformationStyles = {
+export const productInformationStyles: ProductListProductInformationStyles = {
     container: {
         gap: 10,
         css: css` width: 100%; `,
@@ -70,16 +71,18 @@ const styles: ProductListProductInformationStyles = {
     },
 };
 
-export const productInformationStyles = styles;
+const styles = productInformationStyles;
 
 const ProductListProductInformation: FC<Props> = ({
-    product,
+    productContext,
     settingsCollection,
     showBrand,
     showTitle,
     showPartNumbers,
     showAvailability,
     showAttributes }) => {
+
+    const { product } = productContext;
 
     if (!product) {
         return null;
@@ -94,7 +97,7 @@ const ProductListProductInformation: FC<Props> = ({
             }
             {showTitle
                 && <GridItem {...styles.descriptionGridItem}>
-                    <ProductDescription product={product} extendedStyles={styles.descriptionStyles}/>
+                    <ProductDescription product={productContext} extendedStyles={styles.descriptionStyles}/>
                 </GridItem>
             }
             {showPartNumbers
@@ -109,23 +112,16 @@ const ProductListProductInformation: FC<Props> = ({
             }
             {settingsCollection.productSettings.showInventoryAvailability && showAvailability
                 && <GridItem {...styles.availabilityGridItem}>
-                    <ProductAvailability
-                        productId={product.id}
-                        availability={product.availability!}
-                        unitOfMeasure={product.unitOfMeasure}
-                        trackInventory={product.trackInventory}
-                        extendedStyles={styles.availabilityStyles}
-                    />
+                    <ProductContextAvailability extendedStyles={styles.availabilityStyles} />
                 </GridItem>
             }
             {showAttributes
                 && <GridItem {...styles.attributesGridItem}>
-                    <ProductAttributes product={product} maximumNumberAttributeTypes={3}
-                                       extendedStyles={styles.attributes}/>
+                    <ProductAttributes maximumNumberAttributeTypes={3} extendedStyles={styles.attributes} />
                 </GridItem>
             }
         </GridContainer>
     );
 };
 
-export default connect(mapStateToProps)(withProduct(ProductListProductInformation));
+export default connect(mapStateToProps)(withProductContext(ProductListProductInformation));

@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import translate from "@insite/client-framework/Translate";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import * as React from "react";

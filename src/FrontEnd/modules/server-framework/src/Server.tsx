@@ -1,11 +1,13 @@
 import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { encodeCookie } from "@insite/client-framework/Common/Cookies";
-import getPageMetadataProperties from "@insite/client-framework/Common/Utilities/getPageMetadataProperties";
+import { Dictionary } from "@insite/client-framework/Common/Types";
+import { getHeadTrackingScript, getNoscriptTrackingScript } from "@insite/client-framework/Common/Utilities/tracking";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
 import {
+    getPageMetadata,
     getRedirectTo,
     getStatusCode,
     getTrackedPromises,
@@ -23,6 +25,7 @@ import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import { getPageUrlByType, getTheme, RetrievePageResult } from "@insite/client-framework/Services/ContentService";
 import { getSiteMessages, getTranslationDictionaries } from "@insite/client-framework/Services/WebsiteService";
 import { processSiteMessages, setResolver } from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { configureStore as publicConfigureStore } from "@insite/client-framework/Store/ConfigureStore";
 import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
@@ -49,8 +52,16 @@ setTranslationResolver(serverTranslationResolver);
 
 let checkedForSiteGeneration = false;
 
+const classicToSpirePageMapping: Dictionary<string> = {
+    MyListDetailPage: "MyListsDetailsPage",
+};
+
 const redirectTo = async ({ originalUrl, path }: Request, response: Response) => {
-    const destination = await getPageUrlByType(path.substr("/RedirectTo/".length)) || "/";
+    let pageType = path.substr("/RedirectTo/".length);
+    if (classicToSpirePageMapping[pageType]) {
+        pageType = classicToSpirePageMapping[pageType];
+    }
+    const destination = await getPageUrlByType(pageType) || "/";
     response.redirect(destination + originalUrl.substring(path.length));
 };
 
@@ -168,7 +179,7 @@ async function pageRenderer(request: Request, response: Response) {
     }
 
     // in the case of a first page load with no request cookies, we get the default language code from the first response
-    const responseLanguageCode =  responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value;
+    const responseLanguageCode = responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value;
     const siteMessages = getSiteMessagesPromise && processSiteMessages((await getSiteMessagesPromise).siteMessages, languageCode ?? responseLanguageCode);
 
     if (siteMessages) {
@@ -196,7 +207,7 @@ async function pageRenderer(request: Request, response: Response) {
                     <ShellContext.Provider value={value}>
                         <ThemeProvider theme={theme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
                             <SessionLoader location={convertToLocation(request.url)}>
-                                <SpireRouter />
+                                <SpireRouter/>
                             </SessionLoader>
                         </ThemeProvider>
                     </ShellContext.Provider>
@@ -257,82 +268,55 @@ async function pageRenderer(request: Request, response: Response) {
     if (isShellRequest) {
         // Roboto Condensed is used by the CMS
         // Open Sans is used by the default Mobius theme and may be seen in the Style Guide.
-        shellFont = <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet" />;
+        shellFont = <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet"/>;
     }
 
-    const storefrontFont = <link href={theme.typography.fontFamilyImportUrl} rel="stylesheet" />;
+    const storefrontFont = <link href={theme.typography.fontFamilyImportUrl} rel="stylesheet"/>;
 
-    const state = store.getState();
-    const websiteName = isShellRequest ? "" : (state as any).context.website.name;
-
-    let metaDescription: string;
-    let metaKeywords: string;
-    let openGraphImage = "";
-    let openGraphTitle: string;
-    let openGraphUrl = "";
-    let canonicalPath: string | undefined;
-    let title = websiteName;
-
-    if (!isShellRequest && pageByUrlResult?.page) {
-        const { page: { fields, type } } = pageByUrlResult;
-        const pages = (state as any).pages;
-        ({
-            metaDescription,
-            metaKeywords,
-            openGraphImage,
-            openGraphTitle,
-            openGraphUrl,
-            canonicalPath,
-            title,
-        } = getPageMetadataProperties(
-            type,
-            pages,
-            websiteName,
-            fields,
-        ));
-    }
-
-    const currentUrl = `https://${request.headers.host}${canonicalPath || request.path}`;
-    const domainUri = `https://${request.headers.host}`;
-    openGraphImage = !openGraphImage ? "" : (openGraphImage.toLowerCase().startsWith("http") ? openGraphImage
-        : `${domainUri}${openGraphImage.startsWith("/") ? openGraphImage : `/${openGraphImage}`}`);
-    openGraphUrl = !openGraphUrl ? currentUrl : (openGraphUrl.toLowerCase().startsWith("http") ? openGraphUrl
-        : `${domainUri}${openGraphUrl.startsWith("/") ? openGraphUrl : `/${openGraphUrl}`}`);
+    const metadata = getPageMetadata();
+    const state = store.getState() as ApplicationState;
+    const noscriptTrackingScript = getNoscriptTrackingScript(state.context?.settings);
+    const headTrackingScript = getHeadTrackingScript(state.context?.settings, state.context?.session);
 
     const app = (rawHtml: string) => (
         <html lang={languageCode}>
-            <head>
-                <meta charSet="utf-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
-                <title>{isShellRequest ? "Content Administration" : title}</title>
-                <meta id="ogTitle" property="og:title" content={openGraphTitle || title} />
-                <meta id="ogImage" property="og:image" content={openGraphImage} />
-                <meta id="ogUrl" property="og:url" content={openGraphUrl} />
-                <meta name="keywords" content={metaKeywords} />
-                <meta name="description" content={metaDescription} />
-                <base href="/" />
-                {shellFont}
-                {storefrontFont}
-                {sheet?.getStyleElement()}
-                <script>{`if (window.parent !== window) {
+        <head>
+            {/* eslint-disable react/no-danger */}
+            {headTrackingScript && <script dangerouslySetInnerHTML={{ __html: headTrackingScript }}></script>}
+            <meta charSet="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+            <title>{isShellRequest ? "Content Administration" : metadata?.title}</title>
+            <meta id="ogTitle" property="og:title" content={metadata?.openGraphTitle}/>
+            <meta id="ogImage" property="og:image" content={metadata?.openGraphImage}/>
+            <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl}/>
+            <meta name="keywords" content={metadata?.metaKeywords}/>
+            <meta name="description" content={metadata?.metaDescription}/>
+            <base href="/"/>
+            {shellFont}
+            {storefrontFont}
+            {sheet?.getStyleElement()}
+            <script>{`if (window.parent !== window) {
     window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = window.parent.__REACT_DEVTOOLS_GLOBAL_HOOK__;
 }`}</script>
-            </head>
-            <body>
-                {/* eslint-disable react/no-danger */}
-                <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
-                {(!isShellRequest && <script dangerouslySetInnerHTML={{ __html: `
+        </head>
+        <body>
+        {noscriptTrackingScript && <noscript dangerouslySetInnerHTML={{ __html: noscriptTrackingScript }}></noscript>}
+        {/* eslint-disable react/no-danger */}
+        <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
+        {(!isShellRequest && <script dangerouslySetInnerHTML={{
+            __html: `
                 var siteMessages = ${JSON.stringify(siteMessages)};
-                var translationDictionaries = ${JSON.stringify(translationDictionaries)};` }}></script>)}
-                {(renderStorefrontServerSide
-                    && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(state).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
-                )}
-                <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
-                {/* eslint-enable react/no-danger */}
-                <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js?v=${BUILD_DATE}`} />
-                <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
-                {isShellRequest  && <script src="/SystemResources/Scripts/Libraries/ckfinder/3.4.1/ckfinder.js"></script>}
-            </body>
+                var translationDictionaries = ${JSON.stringify(translationDictionaries)};`,
+        }}></script>)}
+        {(renderStorefrontServerSide
+            && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(state).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
+        )}
+        <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
+        {/* eslint-enable react/no-danger */}
+        <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js?v=${BUILD_DATE}`}/>
+        <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
+        {isShellRequest && <script src="/SystemResources/Scripts/Libraries/ckfinder/3.4.1/ckfinder.js"></script>}
+        </body>
         </html>
     );
 

@@ -1,5 +1,5 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import setNotes from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetNotes";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -12,9 +12,13 @@ import { connect, ResolveThunks } from "react-redux";
 interface OwnProps extends WidgetProps {
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    notes: getCurrentCartState(state).value?.notes,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
+    return {
+        notes: cart?.notes,
+    };
+};
 
 const mapDispatchToProps = {
     setNotes,
@@ -26,9 +30,9 @@ export interface CheckoutShippingOrderNotesEntryStyles {
     textArea?: TextAreaProps;
 }
 
-const styles: CheckoutShippingOrderNotesEntryStyles = {};
+export const checkoutShippingOrderNotesEntryStyles: CheckoutShippingOrderNotesEntryStyles = {};
 
-export const checkoutShippingOrderNotesEntryStyles = styles;
+const styles = checkoutShippingOrderNotesEntryStyles;
 
 interface State {
     notes?: string;

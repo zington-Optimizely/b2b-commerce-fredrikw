@@ -1,11 +1,10 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { updateQuote as updateQuoteApi, UpdateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{
     quote: QuoteModel,
-    onError?: (error: string) => void,
-} & HasOnSuccess, UpdateQuoteApiParameter, QuoteModel>;
+} & HasOnSuccess & HasOnError<string>, UpdateQuoteApiParameter, QuoteModel>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {

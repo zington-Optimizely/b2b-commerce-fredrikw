@@ -24,7 +24,7 @@ export interface ShippingAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const baseStyles: ShippingAddressInfoDisplayStyles = {
+export const shippingAddressInfoDisplayStyles: ShippingAddressInfoDisplayStyles = {
     container: { gap: 0 },
     headingGridItem: { width: 12 },
     heading: {
@@ -34,14 +34,12 @@ const baseStyles: ShippingAddressInfoDisplayStyles = {
     addressGridItem: { width: 12 },
 };
 
-export const shippingAddressInfoDisplayStyles = baseStyles;
-
 const ShippingAddressInfoDisplay = ({
     shipTo,
     onEdit,
     extendedStyles,
 }: OwnProps) => {
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(shippingAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container} data-test-selector="shippingAddressInfoDisplay_container">
             <GridItem {...styles.headingGridItem}>

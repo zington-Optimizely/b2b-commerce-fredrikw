@@ -31,7 +31,7 @@ export interface InvoiceHistoryHeaderStyles {
     toggleFilterIcon?: IconProps;
 }
 
-const styles: InvoiceHistoryHeaderStyles = {
+export const headerStyles: InvoiceHistoryHeaderStyles = {
     container: { gap: 8, css: css` padding-bottom: 10px; ` },
     heading: { variant: "h2", as: "h1" },
     invoiceCountGridItem: {
@@ -45,7 +45,7 @@ const styles: InvoiceHistoryHeaderStyles = {
     toggleFilterIcon: { size: 24 },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const InvoiceHistoryHeader = (props: Props) => {
     const invoicesDataView = useContext(InvoicesDataViewContext);

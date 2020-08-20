@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";

@@ -21,7 +21,7 @@ export interface AutocompleteCategoriesStyles {
     focusedLink?: LinkPresentationProps;
 }
 
-const baseStyles: AutocompleteCategoriesStyles = {
+export const autocompleteCategoriesStyles: AutocompleteCategoriesStyles = {
     headerText: {
         weight: "bold",
         css: css`
@@ -77,13 +77,15 @@ const baseStyles: AutocompleteCategoriesStyles = {
     },
 };
 
+const styles = autocompleteCategoriesStyles;
+
 class AutocompleteCategories extends React.Component<Props> {
     private readonly styles: AutocompleteCategoriesStyles;
 
     constructor(props: Props) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
     }
 
     render() {

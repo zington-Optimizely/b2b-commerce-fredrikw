@@ -83,7 +83,7 @@ interface CartLinesHeaderStyles {
     removeAllLink?: LinkPresentationProps;
 }
 
-const styles: CartLinesStyles = {
+export const cartLinesStyles: CartLinesStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -142,7 +142,7 @@ const styles: CartLinesStyles = {
 
 const StyledSection = getStyledWrapper("section");
 
-export const cartLinesStyles = styles;
+const styles = cartLinesStyles;
 
 const CartLines: FC<Props> = ({
                                   cart,

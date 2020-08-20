@@ -1,7 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
 import { InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import translate from "@insite/client-framework/Translate";
@@ -68,7 +67,7 @@ export interface InvoiceHistoryTableStyles {
     currentBalanceCell?: DataTableCellBaseProps;
 }
 
-const styles: InvoiceHistoryTableStyles = {
+export const tableStyles: InvoiceHistoryTableStyles = {
     container: {
         css: css` overflow: auto; `,
     },
@@ -116,7 +115,7 @@ const styles: InvoiceHistoryTableStyles = {
     },
 };
 
-export const tableStyles = styles;
+const styles = tableStyles;
 
 const InvoiceHistoryTable = (props: Props) => {
     const headerClick = (sortField: string) => {

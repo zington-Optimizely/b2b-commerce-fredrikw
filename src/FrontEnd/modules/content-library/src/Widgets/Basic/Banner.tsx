@@ -14,7 +14,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import React from "react";
 import { connect } from "react-redux";
-import styled, { css } from "styled-components";
+import { css } from "styled-components";
 
 const enum fields {
     background = "background",

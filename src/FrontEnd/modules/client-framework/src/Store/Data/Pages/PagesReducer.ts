@@ -12,7 +12,7 @@ import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 
 const initialState: PagesState = {
@@ -237,6 +237,9 @@ const reducer = {
             if (contextualFields[action.fieldName]) {
                 delete contextualFields[action.fieldName];
             }
+            if (generalFields[action.fieldName]) {
+                delete generalFields[action.fieldName];
+            }
         } else if (fieldType === "Contextual") {
             let contextualField = contextualFields[fieldName];
             if (!contextualField) {
@@ -254,6 +257,9 @@ const reducer = {
 
             if (translatableFields[action.fieldName]) {
                 delete translatableFields[action.fieldName];
+            }
+            if (generalFields[action.fieldName]) {
+                delete generalFields[action.fieldName];
             }
         } else {
             generalFields[action.fieldName] = action.value;

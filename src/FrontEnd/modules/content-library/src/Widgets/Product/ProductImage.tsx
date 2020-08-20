@@ -1,9 +1,10 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+/* eslint-disable spire/export-styles */
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import * as React from "react";
 
-const ProductImage: React.FC<HasProductContext> = ({ product }) => {
+const ProductImage: React.FC<HasProduct> = ({ product }) => {
     if (!product) {
         return null;
     }
@@ -15,7 +16,7 @@ const widgetModule: WidgetModule = {
     component: withProduct(ProductImage),
     definition: {
         group: "Products",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

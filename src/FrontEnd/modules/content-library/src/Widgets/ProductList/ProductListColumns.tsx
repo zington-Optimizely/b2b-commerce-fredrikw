@@ -17,7 +17,7 @@ export interface ProductListColumnsStyles {
     rightColumnGridItem?: GridItemProps;
 }
 
-const styles: ProductListColumnsStyles = {
+export const columnsStyles: ProductListColumnsStyles = {
     container: {
         gap: 20,
     },
@@ -29,7 +29,7 @@ const styles: ProductListColumnsStyles = {
     },
 };
 
-export const columnsStyles = styles;
+const styles = columnsStyles;
 
 const ProductListColumns: FC<Props> = ({ id }) => {
     return (

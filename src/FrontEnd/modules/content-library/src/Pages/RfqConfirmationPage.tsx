@@ -6,7 +6,7 @@ import loadQuoteIfNeeded from "@insite/client-framework/Store/Pages/RfqConfirmat
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
-import * as  React from "react";
+import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -24,12 +24,12 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RfqConfirmationPage: React.FC<Props> = ({
+const RfqConfirmationPage: FC<Props> = ({
     id,
     quoteId,
     loadQuoteIfNeeded,
 }) => {
-    React.useEffect(() => {
+    useEffect(() => {
         if (quoteId) {
             loadQuoteIfNeeded({ quoteId });
         }

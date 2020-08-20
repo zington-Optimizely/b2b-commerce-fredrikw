@@ -32,9 +32,9 @@ export interface MyListsSortControlStyles {
     select?: SelectProps;
 }
 
-const styles: MyListsSortControlStyles = {};
+export const sortControlStyles: MyListsSortControlStyles = {};
 
-export const sortControlStyles = styles;
+const styles = sortControlStyles;
 
 const sortChangeHandler = (event: React.FormEvent<HTMLSelectElement>, props: Props) => {
     props.updateLoadParameter({ sort: event.currentTarget.value });

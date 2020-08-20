@@ -1,26 +1,29 @@
 import {
-    ApiHandler,
-    createHandlerChainRunner,
+    createHandlerChainRunner, Handler,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import {
     getProductCollectionRealTimeInventory,
-    GetProductsRealTimeInventoryApiV2Parameter,
+    GetProductCollectionRealTimeInventoryApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import { RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface LoadRealTimeInventoryParameter extends HasOnSuccess<RealTimeInventoryModel> {
-    parameter: GetProductsRealTimeInventoryApiV2Parameter;
-}
+type Parameter = GetProductCollectionRealTimeInventoryApiV2Parameter & HasOnSuccess<RealTimeInventoryModel>;
 
-type HandlerType = ApiHandler<LoadRealTimeInventoryParameter, RealTimeInventoryModel>;
+type Props = {
+    apiParameter: GetProductCollectionRealTimeInventoryApiV2Parameter;
+    apiResult: RealTimeInventoryModel;
+};
+
+type HandlerType = Handler<Parameter, Props>;
 
 export const PopulateApiParameter: HandlerType = props => {
-    props.apiParameter = props.parameter;
+    const { onSuccess, ...apiParameter } = props.parameter;
+    props.apiParameter = apiParameter;
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getProductCollectionRealTimeInventory(props.apiParameter.parameter);
+    props.apiResult = await getProductCollectionRealTimeInventory(props.apiParameter);
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {

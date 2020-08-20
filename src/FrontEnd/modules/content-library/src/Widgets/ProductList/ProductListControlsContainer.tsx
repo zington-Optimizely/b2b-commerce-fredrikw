@@ -21,7 +21,7 @@ export interface ProductListControlsContainerStyles {
     viewSelectGridItem?: GridItemProps;
 }
 
-const styles: ProductListControlsContainerStyles = {
+export const controlsContainerStyles: ProductListControlsContainerStyles = {
     container: {
         gap: 0,
     },
@@ -46,7 +46,7 @@ const styles: ProductListControlsContainerStyles = {
     },
 };
 
-export const controlsContainerStyles = styles;
+const styles = controlsContainerStyles;
 
 const ProductListControlsContainer: FC<Props> = ({ id }) => {
     return (

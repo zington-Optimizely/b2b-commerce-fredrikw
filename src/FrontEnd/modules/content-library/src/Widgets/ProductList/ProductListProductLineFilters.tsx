@@ -1,6 +1,8 @@
+import caseInsensitiveSort from "@insite/client-framework/Common/Utilities/caseInsensitiveSort";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -21,10 +23,13 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = ({ pages: { productList: { productsState, productFilters } } }: ApplicationState) => ({
-    productLineFacets: productsState.value?.productLineFacets,
-    pageProductLineId: productFilters.pageProductLineId,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const { pages: { productList: { productFilters } } } = state;
+    return ({
+        productLineFacets: getProductListDataViewProperty(state, "productLineFacets"),
+        pageProductLineId: productFilters.pageProductLineId,
+    });
+};
 
 const mapDispatchToProps = {
     addProductFilters,

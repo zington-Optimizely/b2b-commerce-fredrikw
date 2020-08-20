@@ -19,12 +19,14 @@ export interface MyAccountViewStyles {
     dashboardWidgetsGridItem?: GridItemProps;
 }
 
-const styles: MyAccountViewStyles = {
+export const myAccountViewStyles: MyAccountViewStyles = {
     quickLinksGridItem: { width: [12, 12, 12, 2, 2] },
     mainSectionGridItem: { width: [12, 12, 12, 10, 10] },
     accountMessagesGridItem: { width: 12 },
     dashboardWidgetsGridItem: { width: 12 },
 };
+
+const styles = myAccountViewStyles;
 
 class MyAccountView extends React.PureComponent<Props> {
     render() {

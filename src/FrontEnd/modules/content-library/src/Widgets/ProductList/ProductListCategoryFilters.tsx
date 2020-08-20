@@ -1,7 +1,9 @@
+import caseInsensitiveSort from "@insite/client-framework/Common/Utilities/caseInsensitiveSort";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
-import { CategoryFacetModel, FacetModel } from "@insite/client-framework/Types/ApiModels";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
+import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
@@ -21,15 +23,10 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = ({ pages: { productList: { productsState, productFilters } } }: ApplicationState) => {
-    return { categoryFacets: productsState.value?.categoryFacets?.map<FacetModel>((f: CategoryFacetModel) => ({
-                ...f,
-                id: f.categoryId,
-                name: f.shortDescription,
-            })),
-        isCategoryPage: productFilters.pageCategoryId !== undefined,
-    };
-};
+const mapStateToProps = (state: ApplicationState) => ({
+    categoryFacets: getProductListDataViewProperty(state, "categoryFacets"),
+    isCategoryPage: state.pages.productList.productFilters.pageCategoryId !== undefined,
+});
 
 const mapDispatchToProps = {
     addProductFilters,
@@ -49,6 +46,12 @@ const ProductListCategoryFilters: FC<Props> = ({ categoryFacets, isCategoryPage,
         return null;
     }
 
+    const facets = categoryFacets?.map(o => ({
+        ...o,
+        id: o.categoryId,
+        name: o.shortDescription,
+    }));
+
     const onChangeFacet = (facet: FacetModel) => {
         if (facet.selected) {
             removeProductFilters({ categoryId: facet.id });
@@ -60,7 +63,7 @@ const ProductListCategoryFilters: FC<Props> = ({ categoryFacets, isCategoryPage,
     return (
         <ProductListFiltersAccordionSection
             title="Categories"
-            facets={categoryFacets}
+            facets={facets}
             onChangeFacet={onChangeFacet}
             showMoreLimit={showMoreLimit}
             expandByDefault={fields.expandByDefault}

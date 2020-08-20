@@ -6,7 +6,6 @@
   "sortOrder": -1,
   "websiteId": "5c028c3a-c7f1-41fe-a4c0-1414b4c7acdb",
   "fields": {
-    "url": "Categories",
     "title": "Shop Categories",
     "name": "Category List",
     "urlSegment": "Categories"

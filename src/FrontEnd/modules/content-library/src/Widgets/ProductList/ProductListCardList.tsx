@@ -1,7 +1,7 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { ProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -10,6 +10,7 @@ import CardContainerMultiColumn, { CardContainerMultiColumnStyles } from "@insit
 import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
 import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
 import ProductListProductCard from "@insite/content-library/Widgets/ProductList/ProductListProductCard";
+import ProductListProductContext from "@insite/content-library/Widgets/ProductList/ProductListProductContext";
 import ProductListProductGridCard from "@insite/content-library/Widgets/ProductList/ProductListProductGridCard";
 import Hidden from "@insite/mobius/Hidden";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
@@ -17,7 +18,7 @@ import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinn
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -51,11 +52,12 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    productsState: state.pages.productList.productsState,
+    isLoading: state.pages.productList.isLoading,
+    productsDataView: getProductListDataView(state),
     view: state.pages.productList.view || getSettingsCollection(state).productSettings.defaultViewType,
 });
 
-type Props =  ReturnType<typeof mapStateToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
 export interface ProductListCardListStyles {
     wrapper?: InjectableCss;
@@ -67,7 +69,7 @@ export interface ProductListCardListStyles {
     cardContainerMultiColumnStyles?: CardContainerMultiColumnStyles;
 }
 
-const styles: ProductListCardListStyles = {
+export const listStyles: ProductListCardListStyles = {
     wrapper: {
         css: css`
             margin-top: 20px;
@@ -107,22 +109,22 @@ const styles: ProductListCardListStyles = {
     },
 };
 
-export const listStyles = styles;
+const styles = listStyles;
 
-const ProductListCardList: FC<Props> = ({ productsState, view, fields }) => {
-    if (productsState.isLoading && !productsState.value) {
+const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fields }) => {
+    if (isLoading && !productsDataView.value) {
         return <StyledWrapper {...styles.centeringWrapper}>
             <LoadingSpinner {...styles.spinner} data-test-selector="productListCardListSpinner"/>
         </StyledWrapper>;
     }
 
-    if (!productsState.value) {
+    if (!productsDataView.value) {
         return null;
     }
 
-    const productCollection = productsState.value;
+    const products = productsDataView.value;
 
-    if (productCollection.products!.length === 0) {
+    if (products.length === 0) {
         return <StyledWrapper {...styles.wrapper}>
             <StyledWrapper {...styles.centeringWrapper} data-test-selector="productListNoneFound">
                 <Typography {...styles.noProductsText}>{translate("No products found")}</Typography>
@@ -130,6 +132,12 @@ const ProductListCardList: FC<Props> = ({ productsState, view, fields }) => {
         </StyledWrapper>;
     }
 
+    const renderProducts = (children: ReactNode) => {
+        return products.map(product =>
+            <ProductListProductContext product={product} key={product.id}>
+                {children}
+            </ProductListProductContext>);
+    };
     return (
         <StyledWrapper {...styles.wrapper}>
             <ProductListPageDataContext.Consumer>
@@ -137,34 +145,23 @@ const ProductListCardList: FC<Props> = ({ productsState, view, fields }) => {
                     return (ref ? <span ref={ref} tabIndex={-1}/> : undefined);
                 }}
             </ProductListPageDataContext.Consumer>
-            <LoadingOverlay loading={productsState.isLoading}>
+            <LoadingOverlay loading={isLoading}>
                 <Hidden below="md">
                     <CardList extendedStyles={styles.cardList} data-test-selector={`productListCardContainer${view}`}>
-                        {productCollection.products!.map(product =>
-                            <ProductContext.Provider value={product} key={product.id.toString()}>
-                                    {view === "List"
-                                        ? <CardContainer extendedStyles={styles.cardContainerStyles}>
-                                            <ProductListProductCard {...fields} />
-                                        </CardContainer>
-                                    : <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
-                                            <ProductListProductGridCard {...fields} />
-                                        </CardContainerMultiColumn>
-                                    }
-                            </ProductContext.Provider>,
-                            )
-                        }
+                        {renderProducts(view === "List"
+                            ? <CardContainer extendedStyles={styles.cardContainerStyles}>
+                                <ProductListProductCard {...fields} />
+                            </CardContainer>
+                            : <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
+                                <ProductListProductGridCard {...fields} />
+                            </CardContainerMultiColumn>)}
                     </CardList>
                 </Hidden>
                 <Hidden above="sm">
                     <CardList extendedStyles={styles.cardList} data-test-selector="cardListProductsNarrow">
-                        {productCollection.products!.map(product =>
-                            <ProductContext.Provider value={product} key={product.id.toString()}>
-                                <CardContainer extendedStyles={styles.cardContainerStyles}>
-                                    <ProductListProductCard {...fields} />
-                                </CardContainer>
-                            </ProductContext.Provider>,
-                            )
-                        }
+                        {renderProducts(<CardContainer extendedStyles={styles.cardContainerStyles}>
+                                <ProductListProductCard {...fields} />
+                            </CardContainer>)}
                     </CardList>
                 </Hidden>
             </LoadingOverlay>

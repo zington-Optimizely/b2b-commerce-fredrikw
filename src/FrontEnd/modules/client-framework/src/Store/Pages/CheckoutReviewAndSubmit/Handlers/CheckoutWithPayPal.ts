@@ -3,7 +3,7 @@ import {
     Handler,
 } from "@insite/client-framework/HandlerCreator";
 import { CartResult, updateCart, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { Draft } from "immer";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -19,7 +19,9 @@ export const DispatchBeginSubmitOfPayPalCheckout: HandlerType = props => {
 };
 
 export const PopulateApiParameter: HandlerType = props => {
-    const cartFromState = getCurrentCartState(props.getState()).value;
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartFromState = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cartFromState?.paymentOptions) {
         throw new Error("There was no current cart and we are trying to submit PayPal for it.");
     }

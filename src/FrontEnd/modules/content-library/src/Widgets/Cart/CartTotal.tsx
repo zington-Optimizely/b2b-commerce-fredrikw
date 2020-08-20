@@ -1,11 +1,18 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import {
     canCheckoutWithCart,
     getCurrentCartState,
     isCartCheckoutDisabled,
     isCartEmpty,
 } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import {
+    getCurrentPromotionsDataView, getDiscountTotal,
+    getOrderPromotions, getShippingPromotions,
+} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import preloadCheckoutShippingData
+    from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -14,19 +21,11 @@ import { CartPageContext } from "@insite/content-library/Pages/CartPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import get from "@insite/mobius/utilities/get";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import {
-    getCurrentPromotionsDataView, getDiscountTotal,
-    getOrderPromotions, getShippingPromotions,
-} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
-import preloadCheckoutShippingData
-    from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
-import get from "@insite/mobius/utilities/get";
-import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 
 const mapStateToProps = (state: ApplicationState) => {
     const promotionsDataView = getCurrentPromotionsDataView(state);
@@ -72,7 +71,7 @@ export interface CartTotalStyles {
     checkoutButton?: ButtonPresentationProps;
 }
 
-const styles: CartTotalStyles = {
+export const cartTotalStyles: CartTotalStyles = {
     checkoutButton: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
@@ -107,7 +106,7 @@ const styles: CartTotalStyles = {
     },
 };
 
-export const cartTotalStyles = styles;
+const styles = cartTotalStyles;
 
 const CartTotal: FC<Props> = ({
                                   cartSettings,

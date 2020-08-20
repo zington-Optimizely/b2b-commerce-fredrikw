@@ -46,7 +46,7 @@ export interface ChangePasswordStyles {
     centeringWrapper?: InjectableCss;
 }
 
-const styles: ChangePasswordStyles = {
+export const changePasswordStyles: ChangePasswordStyles = {
     actions: {
         css: css` width: 100%; `,
     },
@@ -89,7 +89,7 @@ const styles: ChangePasswordStyles = {
     },
 };
 
-export const changePasswordStyles = styles;
+const styles = changePasswordStyles;
 
 const numberPasswordLengthMessage = translate("Password must include at least one number");
 const lowerCasePasswordLengthMessage = translate("Password must include at least one lowercase character");

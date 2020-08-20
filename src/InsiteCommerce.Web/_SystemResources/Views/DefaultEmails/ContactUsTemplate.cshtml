@@ -40,6 +40,12 @@
                     <td class="last-name-label"><h4>Last Name</h4></td>
                     <td class="last-name">[[Model.LastName]]</td>
                 </tr>
+                [% if Model.PhoneNumber %]
+                <tr>
+                    <td class="phone-number-label"><h4>Phone Number</h4></td>
+                    <td class="phone-number">[[Model.PhoneNumber]]</td>
+                </tr>
+                [% endif %]
                 <tr>
                     <td class="email-label"><h4>Email</h4></td>
                     <td class="email-name">[[Model.Email]]</td>

@@ -23,9 +23,9 @@ export interface AddressBookPaginationStyles {
     pagination?: PaginationPresentationProps;
 }
 
-const styles: AddressBookPaginationStyles = {};
+export const addressBookPaginationStyles: AddressBookPaginationStyles = {};
 
-export const addressBookPaginationStyles = styles;
+const styles = addressBookPaginationStyles;
 
 const AddressBookPagination: React.FunctionComponent<Props> = ({
                                                                    shipTosDataView,

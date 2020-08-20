@@ -14,14 +14,14 @@ export interface CategoryDetailBannerStyles {
     container?: InjectableCss;
 }
 
-const styles: CategoryDetailBannerStyles = {};
+export const bannerStyles: CategoryDetailBannerStyles = {};
 
-export const bannerStyles = styles;
+const styles = bannerStyles;
 
 const CategoryDetailBanner: React.FC<Props> = ({
     category,
 }: Props) => {
-    if (!category) {
+    if (!category || !category.htmlContent) {
         return null;
     }
 

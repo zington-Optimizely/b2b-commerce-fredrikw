@@ -1,6 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import { CartLineModel, OrderLineModel } from "@insite/client-framework/Types/ApiModels";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
@@ -8,7 +8,7 @@ import React, { FC } from "react";
 import { css } from "styled-components";
 
 interface OwnProps {
-    product: CartLineModel | ProductModelExtended | OrderLineModel;
+    product: CartLineModel | ProductContextModel | OrderLineModel;
     extendedStyles?: ProductDescriptionStyles;
 }
 
@@ -37,11 +37,11 @@ const ProductDescription: FC<Props> = ({
 }) => {
     const [styles] = React.useState(() => mergeToNew(productDescriptionStyles, extendedStyles));
 
-    const description = ("productTitle" in product)
-        ? product.productTitle
+    const description = ("product" in product)
+        ? product.product.productTitle
         : product.shortDescription || ("description" in product ? product.description : "");
-    const productDetailPath = ("productDetailPath" in product || "canonicalUrl" in product)
-        ? product.productDetailPath || product.canonicalUrl
+    const productDetailPath = ("product" in product)
+        ? product.productInfo.productDetailPath
         : product.productUri;
 
     return productDetailPath && (!("isActiveProduct" in product) || product.isActiveProduct)

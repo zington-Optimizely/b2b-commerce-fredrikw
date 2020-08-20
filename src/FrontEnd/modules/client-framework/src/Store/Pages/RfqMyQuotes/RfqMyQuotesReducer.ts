@@ -6,7 +6,7 @@ import { Draft } from "immer";
 
 const initialState: RfqMyQuotesState = {
     getQuotesParameter: {
-        types: "sales",
+        types: "quote",
     },
     filtersOpen: false,
 };

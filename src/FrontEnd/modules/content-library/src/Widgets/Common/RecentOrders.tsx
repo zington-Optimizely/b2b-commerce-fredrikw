@@ -48,7 +48,7 @@ export interface RecentOrdersStyles {
     orderSummaryCard?: OrderSummaryCardStyles;
 }
 
-const styles: RecentOrdersStyles = {
+export const recentOrdersStyles: RecentOrdersStyles = {
     errorGridItem: { width: 12 },
     noOrdersFoundGridItem: { width: 12 },
 };
@@ -58,7 +58,7 @@ let recentOrdersParameter: GetOrdersApiParameter = {
     sort: "OrderDate DESC",
 };
 
-export const recentOrdersStyles = styles;
+const styles = recentOrdersStyles;
 
 class RecentOrders extends React.Component<Props> {
     componentDidMount() {

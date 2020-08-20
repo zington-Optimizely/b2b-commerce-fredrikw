@@ -1,14 +1,14 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import ProductSelectorState from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorState";
-import { ProductAutocompleteItemModel, TraitValueModel, VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
+import { ProductAutocompleteItemModel, ProductModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: ProductSelectorState = {
     isSearching: false,
-    errorType: "",
     variantModalIsOpen: false,
-    variantSelection: [],
+    variantSelection: {},
     variantSelectionCompleted: false,
 };
 
@@ -21,7 +21,7 @@ const reducer = {
         draft.isSearching = false;
         draft.searchResults = action.result ?? [];
     },
-    "Components/ProductSelector/UpdateOptions": (draft: Draft<ProductSelectorState>, action: { result: ProductModelExtended }) => {
+    "Components/ProductSelector/UpdateOptions": (draft: Draft<ProductSelectorState>, action: { result: ProductModel }) => {
         draft.searchResults = [{
             id: action.result.id,
             image: action.result.mediumImagePath,
@@ -36,11 +36,18 @@ const reducer = {
         } as ProductAutocompleteItemModel];
     },
     "Components/ProductSelector/BeginSetProduct": (draft: Draft<ProductSelectorState>) => {
-        draft.selectedProduct = undefined;
-        draft.errorType = "";
+        delete draft.selectedProductInfo;
+        delete draft.errorType;
     },
-    "Components/ProductSelector/CompleteSetProduct": (draft: Draft<ProductSelectorState>, action: { product?: ProductModelExtended }) => {
-        draft.selectedProduct = action.product;
+    "Components/ProductSelector/CompleteSetProduct": (draft: Draft<ProductSelectorState>, action: { productInfo?: ProductInfo }) => {
+        draft.selectedProductInfo = action.productInfo;
+    },
+    "Components/ProductSelector/SetUnitOfMeasure": (draft: Draft<ProductSelectorState>, action: { unitOfMeasure: string }) => {
+        if (!draft.selectedProductInfo) {
+            return;
+        }
+
+        draft.selectedProductInfo.unitOfMeasure = action.unitOfMeasure;
     },
     "Components/ProductSelector/SetErrorType": (draft: Draft<ProductSelectorState>, action: { errorType: string }) => {
         draft.errorType = action.errorType;
@@ -48,33 +55,25 @@ const reducer = {
     "Components/ProductSelector/CloseVariantModal": (draft: Draft<ProductSelectorState>) => {
         draft.variantModalIsOpen = false;
         draft.variantSelectionCompleted = false;
-        draft.variantParentProduct = undefined;
-        draft.selectedVariant = undefined;
-        draft.variantSelection = [];
-        draft.initialVariantTraits = [];
-        draft.filteredVariantTraits = [];
+        draft.variantModalProductId = undefined;
+        draft.selectedVariantProductInfo = undefined;
+        draft.variantSelection = {};
     },
     "Components/ProductSelector/OpenVariantModal": (draft: Draft<ProductSelectorState>, action: {
-        variantParentProduct: ProductModelExtended,
-        variantChildren?: ProductModelExtended[] | null,
+        productId: string
     }) => {
         draft.variantModalIsOpen = true;
-        draft.variantParentProduct = action.variantParentProduct;
-        draft.initialVariantProducts = action.variantChildren || [];
-        draft.initialVariantTraits = action.variantParentProduct.variantTraits || [];
-        draft.filteredVariantTraits = action.variantParentProduct.variantTraits || [];
-        draft.variantSelection = action.variantParentProduct.variantTraits?.map(p => undefined) || [];
+        draft.variantModalProductId = action.productId;
+        draft.variantSelection = { };
     },
     "Components/ProductSelector/UpdateVariantSelection": (draft: Draft<ProductSelectorState>, action: {
-        selectedVariant: ProductModelExtended,
-        variantSelection: (TraitValueModel | undefined)[];
+        variantSelection: SafeDictionary<string>;
         variantSelectionCompleted: boolean;
-        filteredVariantTraits?: VariantTraitModel[]
+        productInfo?: ProductInfo;
     }) => {
-        draft.selectedVariant = action.selectedVariant;
+        draft.selectedVariantProductInfo = action.productInfo;
         draft.variantSelection = action.variantSelection;
         draft.variantSelectionCompleted = action.variantSelectionCompleted;
-        draft.filteredVariantTraits = action.filteredVariantTraits;
     },
     "Components/ProductSelector/Reset": (draft: Draft<ProductSelectorState>) => {
         return { ...initialState };

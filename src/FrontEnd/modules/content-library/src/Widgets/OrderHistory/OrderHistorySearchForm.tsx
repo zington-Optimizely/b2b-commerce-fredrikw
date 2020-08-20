@@ -23,12 +23,12 @@ export interface OrderHistorySearchFormStyles {
     headingText?: TypographyPresentationProps;
 }
 
-const styles: OrderHistorySearchFormStyles = {
+export const searchFormStyles: OrderHistorySearchFormStyles = {
     wrapper: { css: css` margin-bottom: 10px; ` },
     headingText: { variant: "h5" },
 };
 
-export const searchFormStyles = styles;
+const styles = searchFormStyles;
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 

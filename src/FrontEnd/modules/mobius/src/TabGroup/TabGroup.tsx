@@ -1,6 +1,6 @@
 import { ButtonProps } from "mobius/src/Button";
 import * as React from "react";
-import styled, { ThemeProps, withTheme } from "styled-components";
+import styled, { withTheme } from "styled-components";
 import Tab, { TabProps } from "../Tab";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import get from "../utilities/get";

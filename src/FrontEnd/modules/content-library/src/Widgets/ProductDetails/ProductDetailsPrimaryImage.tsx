@@ -1,10 +1,11 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSelectedImage } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import LazyImage from "@insite/mobius/LazyImage";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -12,11 +13,11 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type Props = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
-const mapStateToProps = (state: ApplicationState) => ({
+const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
     productSettings: getSettingsCollection(state).productSettings,
-    selectedImage: state.pages.productDetail.selectedImage,
+    selectedImage: getSelectedImage(state, ownProps.product),
 });
 
 export interface ProductDetailsPrimaryImageStyles {
@@ -25,7 +26,7 @@ export interface ProductDetailsPrimaryImageStyles {
     spinner?: LoadingSpinnerProps;
 }
 
-const styles: ProductDetailsPrimaryImageStyles = {
+export const primaryImageStyles: ProductDetailsPrimaryImageStyles = {
     centeringWrapper: {
         css: css`
             min-height: 300px;
@@ -47,17 +48,13 @@ const styles: ProductDetailsPrimaryImageStyles = {
     },
 };
 
-export const primaryImageStyles = styles;
+const styles = primaryImageStyles;
 
 const ProductDetailsPrimaryImage: React.FC<Props> = ({
     productSettings,
     product,
     selectedImage,
 }) => {
-    if (!product || !selectedImage) {
-        return null;
-    }
-
     const [lastHeight, setLastHeight] = React.useState(300);
     const [lastInstance, setLastInstance] = React.useState<HTMLElement | null>(null);
     const setRefHandler = (instance: HTMLElement | null) => {
@@ -84,12 +81,27 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
 
     React.useEffect(
         () => {
-            if (selectedImage.imageType === "Static") {
+            if (selectedImage?.imageType === "Static") {
                 setIsLoading(true);
             }
         },
-        [selectedImage.id],
+        [selectedImage?.id],
     );
+
+    if (!product) {
+        return null;
+    }
+
+    const image = selectedImage ?? {
+        id: product.id,
+        imageAltText: product.imageAltText,
+        imageType: "Static",
+        largeImagePath: product.largeImagePath,
+        mediumImagePath: product.mediumImagePath,
+        name: "",
+        smallImagePath: product.smallImagePath,
+        sortOrder: 0,
+    };
 
     React.useEffect(
         () => {
@@ -111,7 +123,7 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
         [productSettings.imageProvider, product],
     );
 
-    const path = selectedImage.mediumImagePath || selectedImage.largeImagePath;
+    const path = image.mediumImagePath || image.largeImagePath;
     if (!path) {
         return null;
     }
@@ -122,12 +134,12 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
                 <LoadingSpinner {...styles.spinner} />
             </StyledWrapper>
         }
-        {selectedImage.imageType === "Static"
+        {image.imageType === "Static"
             && <StyledWrapper {...(isLoading ? styles.hiddenWrapper : styles.centeringWrapper)}>
                 <LazyImage
-                    key={selectedImage.id}
+                    key={image.id}
                     src={path}
-                    altText={selectedImage.imageAltText}
+                    altText={image.imageAltText}
                     imgProps={{ ref: setRefHandler }}
                     onLoad={onLoadHandler}
                     onError={onLoadHandler}
@@ -135,20 +147,20 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
                 />
             </StyledWrapper>
         }
-        {selectedImage.imageType === "360" && productSettings.imageProvider === "SIRV"
+        {image.imageType === "360" && productSettings.imageProvider === "SIRV"
             && <div style={{ minHeight: lastHeight }}>
-                <div className="Sirv" key={selectedImage.id} data-src={selectedImage.mediumImagePath} />
+                <div className="Sirv" key={image.id} data-src={image.mediumImagePath} />
             </div>
         }
     </>;
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withProduct(ProductDetailsPrimaryImage)),
+    component: withProduct(connect(mapStateToProps)(ProductDetailsPrimaryImage)),
     definition: {
         displayName: "Primary Image",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

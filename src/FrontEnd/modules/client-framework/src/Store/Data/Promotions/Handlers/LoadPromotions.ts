@@ -1,9 +1,8 @@
 import {
     ApiHandler,
-    ApiHandlerDiscreteParameter, createHandlerChainRunner,
-    createHandlerChainRunnerOptionalParameter,
+    createHandlerChainRunner,
+
 } from "@insite/client-framework/HandlerCreator";
-import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import {
     getCartPromotions,
     GetCartPromotionsApiParameter,

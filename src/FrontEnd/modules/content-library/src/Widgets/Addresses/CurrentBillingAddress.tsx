@@ -42,7 +42,7 @@ export interface CurrentBillingAddressStyles {
     addressInfoDisplayGridItem?: GridItemProps;
 }
 
-const styles: CurrentBillingAddressStyles = {
+export const currentBillingAddressStyles: CurrentBillingAddressStyles = {
     gridContainer: { gap: 5 },
     headingGridItem: { width: 10 },
     headingText: { variant: "h5" },
@@ -51,7 +51,7 @@ const styles: CurrentBillingAddressStyles = {
     addressInfoDisplayGridItem: { width: 12 },
 };
 
-export const currentBillingAddressStyles = styles;
+const styles = currentBillingAddressStyles;
 
 const CurrentBillingAddress: React.FunctionComponent<Props> = (props: Props) => {
     const { currentBillTo } = props;

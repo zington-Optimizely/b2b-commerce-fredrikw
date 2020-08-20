@@ -57,7 +57,7 @@ export interface BrandDetailsProductLinesStyles {
     viewAllButton?: ButtonProps;
 }
 
-const styles: BrandDetailsProductLinesStyles = {
+export const productLinesStyles: BrandDetailsProductLinesStyles = {
     titleItem: {
         width: 12,
         css: css`
@@ -136,7 +136,7 @@ const styles: BrandDetailsProductLinesStyles = {
     },
 };
 
-export const productLinesStyles = styles;
+const styles = productLinesStyles;
 
 const BrandDetailsProductLines: FC<Props> = ({ fields }) => {
     const { isLoading, value: brandProductLines } = useContext(BrandProductLinesStateContext);

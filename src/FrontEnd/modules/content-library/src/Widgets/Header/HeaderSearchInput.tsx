@@ -7,10 +7,10 @@ export interface HeaderSearchInputStyles {
     searchInputStyles?: SearchInputStyles;
 }
 
-const styles: HeaderSearchInputStyles = {
+export const searchInputStyles: HeaderSearchInputStyles = {
 };
 
-export const searchInputStyles = styles;
+const styles = searchInputStyles;
 
 const HeaderSearchInput: React.FC<WidgetProps> = ({ id }) => <SearchInput id={id} extendedStyles={styles.searchInputStyles} />;
 

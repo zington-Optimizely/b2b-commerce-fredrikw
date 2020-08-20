@@ -18,7 +18,7 @@ export interface BrandDetailsLogoStyles {
     heading?: TypographyProps;
 }
 
-const styles: BrandDetailsLogoStyles = {
+export const logoStyles: BrandDetailsLogoStyles = {
     heading: {
         variant: "h1",
         css: css`
@@ -42,7 +42,7 @@ const styles: BrandDetailsLogoStyles = {
     },
 };
 
-export const logoStyles = styles;
+const styles = logoStyles;
 
 const BrandDetailsLogo: FC<Props> = () => {
     const { value: brand } = useContext(BrandStateContext);

@@ -15,7 +15,7 @@ export interface OrderDateStyles {
     orderDate?: TypographyProps;
 }
 
-const styles: OrderDateStyles = {
+export const orderDateStyles: OrderDateStyles = {
     wrapper: {
         css: css` padding-bottom: 10px; `,
     },
@@ -29,7 +29,7 @@ const styles: OrderDateStyles = {
     },
 };
 
-export const orderDateStyles = styles;
+const styles = orderDateStyles;
 
 const OrderDate: FC = () => {
     const { value: order } = useContext(OrderStateContext);

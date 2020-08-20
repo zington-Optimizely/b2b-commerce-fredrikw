@@ -21,7 +21,7 @@ export interface PayPalButtonStyles {
     errorText?: TypographyPresentationProps;
 }
 
-const payPalButtonStyles: PayPalButtonStyles = {
+export const payPalButtonStyles: PayPalButtonStyles = {
     container: {
         css: css`
             padding-top: 1em;

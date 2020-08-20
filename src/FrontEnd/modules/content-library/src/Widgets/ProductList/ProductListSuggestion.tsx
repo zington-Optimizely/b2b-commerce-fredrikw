@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -14,12 +15,12 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const productCollection = state.pages.productList.productsState.value;
-    if (productCollection) {
+    const productsDataView = getProductListDataView(state);
+    if (productsDataView.value) {
         return {
-            didYouMeanSuggestions: productCollection.didYouMeanSuggestions,
-            correctedQuery: productCollection.correctedQuery,
-            originalQuery: productCollection.originalQuery,
+            didYouMeanSuggestions: productsDataView.didYouMeanSuggestions,
+            correctedQuery: productsDataView.correctedQuery,
+            originalQuery: productsDataView.originalQuery,
         };
     }
     return {};
@@ -34,9 +35,9 @@ export interface ProductListSuggestionStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: ProductListSuggestionStyles = {};
+export const suggestionStyles: ProductListSuggestionStyles = {};
 
-export const suggestionStyles = styles;
+const styles = suggestionStyles;
 
 const ProductListSuggestion: FC<Props> = ({ didYouMeanSuggestions, originalQuery, correctedQuery }) => {
     return (

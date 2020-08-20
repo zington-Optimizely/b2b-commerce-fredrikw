@@ -1,5 +1,4 @@
-import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
-import { rawRequest } from "@insite/client-framework/Services/ApiService";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import Typography from "@insite/mobius/Typography";
 import { getDiagnostics } from "@insite/shell/Services/SpireService";
 import React, { useEffect, useState } from "react";

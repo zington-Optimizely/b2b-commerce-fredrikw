@@ -57,7 +57,7 @@ export interface BrandDetailsCategoriesStyles {
     viewMoreLink?: LinkProps;
 }
 
-const styles: BrandDetailsCategoriesStyles = {
+export const categoriesStyles: BrandDetailsCategoriesStyles = {
     title: {
         as: "h4",
         variant: "headerSecondary",
@@ -135,7 +135,7 @@ const styles: BrandDetailsCategoriesStyles = {
     },
 };
 
-export const categoriesStyles = styles;
+const styles = categoriesStyles;
 
 const BrandDetailsCategories: FC<Props> = ({ fields }) => {
     const { isLoading, value: brandCategories } = useContext(BrandCategoriesStateContext);

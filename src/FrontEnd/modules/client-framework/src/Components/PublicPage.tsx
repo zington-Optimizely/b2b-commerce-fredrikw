@@ -1,3 +1,4 @@
+import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import {
     createPageElement,
     registerPageUpdate,
@@ -19,7 +20,9 @@ import { HasShellContext, ShellContext, withIsInShell } from "./IsInShell";
 
 const mapStateToProps = (state: ApplicationState) => ({
     page: getCurrentPage(state),
+    websiteName: state.context.website.name,
     errorPageLink: getPageLinkByPageType(state, "UnhandledErrorPage"),
+    pathname: state.data.pages.location.pathname,
 });
 
 type Props = ReturnType<typeof mapStateToProps> & HasShellContext;
@@ -38,10 +41,38 @@ class PublicPage extends React.Component<Props> {
         });
     }
 
+    UNSAFE_componentWillMount() {
+        this.setMetadata();
+    }
+
     componentWillUnmount() {
         if (module.hot) {
             unregisterPageUpdate(this.forceUpdate);
         }
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        const { page } = this.props;
+        if (page.id !== prevProps.page?.id) {
+            this.setMetadata();
+        }
+    }
+
+    setMetadata() {
+        const { page, websiteName, pathname } = this.props;
+        if (!page) {
+            return;
+        }
+        setPageMetadata({
+            metaKeywords: page.fields["metaKeywords"],
+            metaDescription: page.fields["metaDescription"],
+            openGraphUrl: page.fields["openGraphUrl"],
+            openGraphTitle: page.fields["openGraphTitle"],
+            openGraphImage: page.fields["openGraphImage"],
+            title: page.fields["title"],
+            canonicalPath: pathname,
+            websiteName,
+        });
     }
 
     wrapContent(content: ReturnType<typeof createPageElement>) {
@@ -54,7 +85,7 @@ class PublicPage extends React.Component<Props> {
 
         const { isInShell } = shellContext;
 
-        return <>
+        return <div data-test-selector={`page_${this.props.page?.type}`}>
                 {!page.fields.hideHeader
                     && <ShellContext.Provider value={{ isInShell }}>
                         <Header />
@@ -72,7 +103,7 @@ class PublicPage extends React.Component<Props> {
                         <Footer />
                     </ShellContext.Provider>
                 }
-        </>;
+        </div>;
     }
 
     render() {

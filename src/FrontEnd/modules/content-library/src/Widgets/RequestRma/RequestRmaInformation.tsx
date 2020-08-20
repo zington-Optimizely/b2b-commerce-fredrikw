@@ -22,7 +22,7 @@ export interface RequestRmaInformationStyles {
     addressDisplay?: AddressInfoDisplayStyles;
 }
 
-const styles: RequestRmaInformationStyles = {
+export const requestRmaInformationStyles: RequestRmaInformationStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -44,7 +44,11 @@ const styles: RequestRmaInformationStyles = {
     },
 };
 
-export const statusStyles = styles;
+/**
+ * @deprecated Use requestRmaInformationStyles instead.
+ */
+export const statusStyles = requestRmaInformationStyles;
+const styles = requestRmaInformationStyles;
 
 const RequestRmaInformation: FC = () => {
     const { value: order } = useContext(OrderStateContext);

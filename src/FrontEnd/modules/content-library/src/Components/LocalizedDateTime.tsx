@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import React, { FC } from "react";

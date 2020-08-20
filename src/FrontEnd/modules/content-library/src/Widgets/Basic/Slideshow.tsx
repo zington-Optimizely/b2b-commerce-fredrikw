@@ -209,8 +209,6 @@ const Slideshow: React.FC<Props> = ({
                 setSelectedIndex(embla.selectedScrollSnap());
                 setCanScroll();
             });
-
-            return () => { embla && embla.destroy(); };
         },
         [embla],
     );

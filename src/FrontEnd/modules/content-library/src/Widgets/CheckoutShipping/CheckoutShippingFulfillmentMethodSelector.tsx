@@ -39,7 +39,7 @@ export interface CheckoutShippingFulfillmentMethodSelectorStyles {
     pickUpRadio?: FieldSetPresentationProps<RadioComponentProps>;
 }
 
-const styles: CheckoutShippingFulfillmentMethodSelectorStyles = {
+export const checkoutShippingFulfillmentMethodStyles: CheckoutShippingFulfillmentMethodSelectorStyles = {
     gridItem: {
         width: 12,
         css: css`
@@ -61,7 +61,7 @@ const styles: CheckoutShippingFulfillmentMethodSelectorStyles = {
     },
 };
 
-export const checkoutShippingFulfillmentMethodStyles = styles;
+const styles = checkoutShippingFulfillmentMethodStyles;
 
 const CheckoutShippingFulfillmentMethodSelector = ({
     fulfillmentMethod,

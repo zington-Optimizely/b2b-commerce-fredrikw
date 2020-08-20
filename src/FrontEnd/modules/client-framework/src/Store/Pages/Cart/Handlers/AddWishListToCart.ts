@@ -1,13 +1,18 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { addWishListToCart as addWishListToCartApi, AddWishListToCartApiParameter } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType =
-    ApiHandlerDiscreteParameter<{
-        apiParameter: AddWishListToCartApiParameter;
-        onSuccess?: () => void;
-    }, AddWishListToCartApiParameter, CartLineCollectionModel>;
+type Parameter = {
+    apiParameter: AddWishListToCartApiParameter;
+} & HasOnSuccess;
+
+type Props = {
+    apiParameter: AddWishListToCartApiParameter,
+    apiResult: CartLineCollectionModel,
+};
+
+type HandlerType = Handler<Parameter, Props>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = props.parameter.apiParameter;

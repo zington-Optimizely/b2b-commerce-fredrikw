@@ -24,7 +24,7 @@ export interface BillingAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const baseStyles: BillingAddressInfoDisplayStyles = {
+export const billingAddressInfoDisplayStyles: BillingAddressInfoDisplayStyles = {
     container: { gap: 0 },
     headingGridItem: { width: 12 },
     heading: {
@@ -34,14 +34,12 @@ const baseStyles: BillingAddressInfoDisplayStyles = {
     addressGridItem: { width: 12 },
 };
 
-export const billingAddressInfoDisplayStyles = baseStyles;
-
 const BillingAddressInfoDisplay = ({
     billTo,
     onEdit,
     extendedStyles,
 }: OwnProps) => {
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(billingAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.headingGridItem}>

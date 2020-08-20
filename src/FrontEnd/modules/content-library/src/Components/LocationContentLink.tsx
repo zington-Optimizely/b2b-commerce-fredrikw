@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { LocationModel } from "@insite/client-framework/Common/Hooks/useLocationFilterSearch";
 import translate from "@insite/client-framework/Translate";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";

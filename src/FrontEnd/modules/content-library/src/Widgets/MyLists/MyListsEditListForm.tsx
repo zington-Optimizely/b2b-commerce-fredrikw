@@ -43,7 +43,7 @@ export interface MyListsEditListFormStyles {
     createButton?: ButtonPresentationProps;
 }
 
-const styles: MyListsEditListFormStyles = {
+export const myListsEditListFormStyles: MyListsEditListFormStyles = {
     nameGridItem: {
         width: 12,
     },
@@ -60,7 +60,11 @@ const styles: MyListsEditListFormStyles = {
     },
 };
 
-export const createListFormStyles = styles;
+/**
+ * @deprecated Use myListsEditListFormStyles instead.
+ */
+export const createListFormStyles = myListsEditListFormStyles;
+const styles = myListsEditListFormStyles;
 
 class MyListsEditListForm extends React.Component<Props, State> {
     static contextType = ToasterContext;

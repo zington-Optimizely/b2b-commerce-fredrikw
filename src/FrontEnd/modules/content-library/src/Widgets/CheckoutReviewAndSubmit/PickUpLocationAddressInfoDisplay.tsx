@@ -25,7 +25,7 @@ export interface PickUpLocationAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const baseStyles: PickUpLocationAddressInfoDisplayStyles = {
+export const pickUpLocationAddressInfoDisplayStyles: PickUpLocationAddressInfoDisplayStyles = {
     container: { gap: 0 },
     headingGridItem: { width: 12 },
     headingText: {
@@ -38,14 +38,12 @@ const baseStyles: PickUpLocationAddressInfoDisplayStyles = {
     },
 };
 
-export const pickUpLocationAddressInfoDisplayStyles = baseStyles;
-
 const PickUpLocationAddressInfoDisplay = ({
     location,
     onEdit,
     extendedStyles,
 }: OwnProps) => {
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(pickUpLocationAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container} data-test-selector="pickUpLocationAddressInfoDisplay_container">
             <GridItem {...styles.headingGridItem}>

@@ -12,14 +12,14 @@ export interface RequestRmaProductListButtonsStyles {
     requestRmaButtons?: RequestRmaButtonsStyles;
 }
 
-const styles: RequestRmaProductListButtonsStyles = {
+export const productListButtonsStyles: RequestRmaProductListButtonsStyles = {
     buttonsGridItem: {
         css: css` justify-content: flex-end; `,
         width: [0, 0, 0, 12, 12],
     },
 };
 
-export const productListButtonsStyles = styles;
+const styles = productListButtonsStyles;
 
 const RequestRmaProductListButtons: FC = () => {
     return (

@@ -2,31 +2,31 @@ import Button, { ButtonIcon } from "@insite/mobius/Button";
 import ChevronDown from "@insite/mobius/Icons/ChevronDown";
 import ChevronUp from "@insite/mobius/Icons/ChevronUp";
 import PublishModal from "@insite/shell/Components/Shell/PublishModal";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import { setPublishButtonExpanded, showPublishModal } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import React from "react";
-import { connect, DispatchProp } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import styled from "styled-components";
 
-const mapStateToProps = ({ shellContext }: ShellState) => ({
-    visible: shellContext.publishExpanded,
+const mapStateToProps = ({ publishModal }: ShellState) => ({
+    visible: publishModal.publishButtonExpanded,
 });
+
+const mapDispatchToProps = {
+    setPublishButtonExpanded,
+    showPublishModal,
+};
 
 interface OwnProps {}
 
-type PublishDropDownProps = ReturnType<typeof mapStateToProps> & DispatchProp<AnyShellAction> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-class PublishDropDown extends React.Component<PublishDropDownProps> {
+class PublishDropDown extends React.Component<Props> {
     element = React.createRef<HTMLDivElement>();
 
-    hide = () => this.props.dispatch({
-        type: "ShellContext/SetPublishExpanded",
-    });
-
-    toggle = () => this.props.dispatch({
-        type: "ShellContext/SetPublishExpanded",
-        publishExpanded: this.props.visible ? undefined : true,
-    });
+    toggle = () => {
+        this.props.setPublishButtonExpanded(!this.props.visible);
+    };
 
     mouseDown = (event: MouseEvent) => {
         const { current } = this.element;
@@ -35,7 +35,7 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
         }
 
         if (this.props.visible && !current.contains(event.target as Node)) {
-            this.hide();
+            this.props.setPublishButtonExpanded(false);
         }
     };
 
@@ -48,38 +48,26 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
     }
 
     onPublish = () => {
-        this.props.dispatch({
-            type: "ShellContext/SetShowModal",
-            showModal: "Publish",
-        });
+        this.props.showPublishModal();
     };
 
     onBulkPublish = () => {
-        this.props.dispatch({
-            type: "ShellContext/SetShowModal",
-            showModal: "Bulk Publish",
-        });
+        this.props.showPublishModal(true);
     };
 
     render() {
         const { visible } = this.props;
         return <>
-            <PublishButton
-                data-test-selector="headerBar_publish"
-                onClick={this.onPublish}
-                expanded={visible}
-                variant="primary"
-            >
-                Publish
-            </PublishButton>
+            <PublishButton data-test-selector="headerBar_publish"
+                           onClick={this.onPublish}
+                           expanded={visible}
+                           variant="primary">Publish</PublishButton>
             <PublishModal />
             <div ref={this.element}>
-                <PublishDropDownButton
-                    data-test-selector="headerBar_expandPublishOptions"
-                    expanded={visible}
-                    style={{ width: "100%" }}
-                    onClick={this.toggle}
-                >
+                <PublishDropDownButton data-test-selector="headerBar_expandPublishOptions"
+                                       expanded={visible}
+                                       style={{ width: "100%" }}
+                                       onClick={this.toggle}>
                     <ButtonIcon
                         src={visible ? ChevronUp : ChevronDown}
                         size={14}
@@ -97,7 +85,7 @@ class PublishDropDown extends React.Component<PublishDropDownProps> {
     }
 }
 
-export default connect(mapStateToProps)(PublishDropDown);
+export default connect(mapStateToProps, mapDispatchToProps)(PublishDropDown);
 
 const InlinePopUpOuterWrapper = styled.div`
     z-index: ${props => props.theme.zIndex.dynamicDropdown};

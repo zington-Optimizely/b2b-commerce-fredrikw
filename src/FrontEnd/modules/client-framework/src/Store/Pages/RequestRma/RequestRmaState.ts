@@ -1,4 +1,4 @@
-import { OrderLineModel, RmaLineDto } from "@insite/client-framework/Types/ApiModels";
+import { OrderLineModel } from "@insite/client-framework/Types/ApiModels";
 
 export default interface RequestRmaState {
     orderLines: OrderLineModel[];

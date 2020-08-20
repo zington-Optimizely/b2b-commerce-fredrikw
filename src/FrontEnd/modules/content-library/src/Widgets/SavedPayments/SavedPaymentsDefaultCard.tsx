@@ -50,7 +50,7 @@ export interface SavedPaymentsDefaultCardStyles {
     deleteCardModal?: TwoButtonModalStyles;
 }
 
-const styles: SavedPaymentsDefaultCardStyles = {
+export const defaultCardStyles: SavedPaymentsDefaultCardStyles = {
     titleText: {
         variant: "h3",
         as: "h2",
@@ -145,7 +145,7 @@ const styles: SavedPaymentsDefaultCardStyles = {
     },
 };
 
-export const defaultCardStyles = styles;
+const styles = defaultCardStyles;
 
 const getImageName = (cardType: string) => {
     if (cardType.toLowerCase() === "american express") {

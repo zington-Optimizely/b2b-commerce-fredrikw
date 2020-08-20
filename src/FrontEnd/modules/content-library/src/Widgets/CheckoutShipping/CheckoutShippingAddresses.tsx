@@ -7,7 +7,7 @@ import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/Se
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
@@ -31,8 +31,8 @@ import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cartState = getCurrentCartState(state);
-    const cart = cartState.value;
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     const shipTosDataView = cart ? getShipTosDataView(state, { billToId: cart.billToId, expand: ["validation"], exclude: ["showAll"] }) : undefined;
     let newAddress;
     let oneTimeAddress;
@@ -49,7 +49,7 @@ const mapStateToProps = (state: ApplicationState) => {
         cart,
         newAddress,
         oneTimeAddress,
-        shipToState: getShipToState(state, cartState.value ? cartState.value.shipToId : undefined),
+        shipToState: getShipToState(state, cart ? cart.shipToId : undefined),
         shipTosDataView,
         isShipToSameAsBillTo,
         session: state.context.session,
@@ -60,7 +60,7 @@ const mapStateToProps = (state: ApplicationState) => {
         canUseBillToAsShipTo,
         currentUserIsGuest: getCurrentUserIsGuest(state),
         useBillingAddress: state.pages.checkoutShipping.useBillingAddress,
-        billToState: getBillToState(state, cartState.value?.billToId),
+        billToState: getBillToState(state, cart?.billToId),
     };
 };
 
@@ -87,7 +87,7 @@ export interface CheckoutShippingAddressesStyles {
     pickUpAddress?: PickUpAddressStyles;
 }
 
-const styles: CheckoutShippingAddressesStyles = {
+export const checkoutShippingAddressesStyles: CheckoutShippingAddressesStyles = {
     loadingWrapper: {
         css: css`
             display: flex;
@@ -101,7 +101,11 @@ const styles: CheckoutShippingAddressesStyles = {
     billingAddressGridItem: { width: [12, 12, 12, 6, 6] },
 };
 
-export const fulfillmentMethodAndAddressStyles = styles;
+/**
+ * @deprecated Use checkoutShippingAddressesStyles instead.
+ */
+export const fulfillmentMethodAndAddressStyles = checkoutShippingAddressesStyles;
+const styles = checkoutShippingAddressesStyles;
 
 const CheckoutShippingAddresses: FC<Props> = ({
                                                   cart,

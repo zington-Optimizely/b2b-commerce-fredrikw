@@ -18,7 +18,7 @@ export interface CartPageContainerStyles {
     productCarouselContainer?: InjectableCss;
 }
 
-const styles: CartPageContainerStyles = {
+export const cartPageContainerStyles: CartPageContainerStyles = {
     container: {
         css: css`
             /* stylelint-disable value-no-vendor-prefix */
@@ -161,7 +161,7 @@ const styles: CartPageContainerStyles = {
     },
 };
 
-export const cartPageContainerStyles = styles;
+const styles = cartPageContainerStyles;
 
 const CartPageContainer = ({
     id,

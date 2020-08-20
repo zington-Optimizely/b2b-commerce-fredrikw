@@ -1,4 +1,5 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Metadata, PreparedMetadata } from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import logger from "@insite/client-framework/Logger";
 import { RetrievePageResult } from "@insite/client-framework/Services/ContentService";
 import "isomorphic-fetch";
@@ -40,6 +41,7 @@ interface InsiteSession {
     messagesByName: SafeDictionary<string>;
     translationsByKeyword: SafeDictionary<string>;
     displayErrorPage?: true | undefined;
+    pageMetadata?: PreparedMetadata;
     initialPage?: {
         result: RetrievePageResult,
         url: string,
@@ -195,6 +197,14 @@ export function setPromiseAddedCallback(promiseAddedCallback: (stack: string) =>
 
 export function setHeaders(headers: SafeDictionary<string | string[]>) {
     setSessionValue("headers", headers);
+}
+
+export function setServerPageMetadata(metadata: PreparedMetadata) {
+    setSessionValue("pageMetadata", metadata);
+}
+
+export function getPageMetadata() {
+    return getSessionValue("pageMetadata");
 }
 
 /**

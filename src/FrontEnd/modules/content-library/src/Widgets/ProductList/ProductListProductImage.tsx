@@ -1,5 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -10,7 +10,7 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends HasProductContext {
+interface OwnProps {
     showImage: boolean;
     showCompare: boolean;
 }
@@ -19,7 +19,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     settingsCollection: getSettingsCollection(state),
 });
 
-type Props = ReturnType<typeof mapStateToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & OwnProps & HasProductContext;
 
 export interface ProductListProductImageStyles {
     wrapper?: InjectableCss;
@@ -27,7 +27,7 @@ export interface ProductListProductImageStyles {
     compareCheckbox?: CheckboxPresentationProps;
 }
 
-const styles: ProductListProductImageStyles = {
+export const productImageStyles: ProductListProductImageStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -50,12 +50,12 @@ const styles: ProductListProductImageStyles = {
     },
 };
 
-export const productImageStyles = styles;
+const styles = productImageStyles;
 
-const ProductListProductImage: FC<Props> = ({ product, showImage, showCompare, settingsCollection }) => {
+const ProductListProductImage: FC<Props> = ({ productContext, showImage, showCompare, settingsCollection }) => {
     return <StyledWrapper {...styles.wrapper}>
         {showImage
-            && <ProductImage extendedStyles={styles.productImage} product={product}/>
+            && <ProductImage extendedStyles={styles.productImage} product={productContext}/>
         }
         {showCompare && settingsCollection.productSettings.enableProductComparisons
             && <Checkbox {...styles.compareCheckbox}>{translate("Compare")}</Checkbox>
@@ -63,4 +63,4 @@ const ProductListProductImage: FC<Props> = ({ product, showImage, showCompare, s
     </StyledWrapper>;
 };
 
-export default connect(mapStateToProps)(withProduct(ProductListProductImage));
+export default connect(mapStateToProps)(withProductContext(ProductListProductImage));

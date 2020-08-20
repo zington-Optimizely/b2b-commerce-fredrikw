@@ -1,7 +1,6 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { addRma as addRmaApi, AddRmaApiParameter } from "@insite/client-framework/Services/OrderService";
-import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import { RmaLineDto, RmaModel } from "@insite/client-framework/Types/ApiModels";
 
 type SendRmaRequestParameter = {

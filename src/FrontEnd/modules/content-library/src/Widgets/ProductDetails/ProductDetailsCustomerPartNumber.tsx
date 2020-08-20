@@ -1,21 +1,20 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import * as React from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps, HasProductContext {
-}
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsCustomerPartNumberStyles {
     labelText?: TypographyProps;
     valueText?: TypographyProps;
 }
 
-const styles: ProductDetailsCustomerPartNumberStyles = {
+export const customerPartNumberStyles: ProductDetailsCustomerPartNumberStyles = {
     labelText: {
         size: 16,
         weight: "bold",
@@ -27,9 +26,9 @@ const styles: ProductDetailsCustomerPartNumberStyles = {
     },
 };
 
-export const customerPartNumberStyles = styles;
+const styles = customerPartNumberStyles;
 
-const ProductDetailsCustomerPartNumber: React.FC<OwnProps> = ({ product }) => {
+const ProductDetailsCustomerPartNumber: React.FC<Props> = ({ product }) => {
     if (!product.customerProductNumber) {
         return null;
     }
@@ -42,7 +41,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Customer Part Number",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

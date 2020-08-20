@@ -16,7 +16,7 @@ export interface OrderDetailsRequestedDateStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: OrderDetailsRequestedDateStyles = {
+export const requestedDateStyles: OrderDetailsRequestedDateStyles = {
     titleText: {
         variant: "h6",
         as: "h2",
@@ -27,7 +27,7 @@ const styles: OrderDetailsRequestedDateStyles = {
     },
 };
 
-export const requestedDateStyles = styles;
+const styles = requestedDateStyles;
 
 const OrderDetailsRequestedDate: React.FunctionComponent = () => {
     const { value: order } = useContext(OrderStateContext);

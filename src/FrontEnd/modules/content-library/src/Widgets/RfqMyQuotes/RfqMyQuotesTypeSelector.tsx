@@ -30,7 +30,7 @@ export interface RfqMyQuotesTypeSelectorStyles {
     quoteTypeRadioButton?: FieldSetPresentationProps<RadioComponentProps>;
 }
 
-const styles: RfqMyQuotesTypeSelectorStyles = {
+export const rfqMyQuotesTypeSelectorStyles: RfqMyQuotesTypeSelectorStyles = {
     quoteTypeRadioGroup: {
         // TODO ISC-12425 set these radio buttons to horizontal and remove the  "& > div" selector
         css: css`
@@ -46,7 +46,7 @@ const styles: RfqMyQuotesTypeSelectorStyles = {
     },
 };
 
-export const rfqMyQuotesTypeSelectorStyles = styles;
+const styles = rfqMyQuotesTypeSelectorStyles;
 
 const RfqMyQuotesTypeSelector: FC<Props> = ({ parameter, updateSearchFields }) => {
 
@@ -62,8 +62,8 @@ const RfqMyQuotesTypeSelector: FC<Props> = ({ parameter, updateSearchFields }) =
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="requestQuoteTypeRadio"
             >
-                <Radio {...styles.quoteTypeRadioButton} value="sales">{translate("Sales Quote")}</Radio>
-                <Radio {...styles.quoteTypeRadioButton} value="job">{translate("Job Quote")}</Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="quote">{translate("Sales Quotes")}</Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="job">{translate("Job Quotes")}</Radio>
             </RadioGroup>
         </StyledWrapper>
     );

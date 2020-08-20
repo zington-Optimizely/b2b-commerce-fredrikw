@@ -38,9 +38,9 @@ export interface OrderConfirmationTotalStyles {
     cartTotal?: CartTotalDisplayStyles;
 }
 
-const styles: OrderConfirmationTotalStyles = {};
+export const orderConfirmationTotalStyles: OrderConfirmationTotalStyles = {};
 
-export const orderConfirmationTotalStyles = styles;
+const styles = orderConfirmationTotalStyles;
 
 const OrderConfirmationTotal: FC<Props> = (props) => {
     if (!props.cartState.value || !props.promotionsDataView.value) {

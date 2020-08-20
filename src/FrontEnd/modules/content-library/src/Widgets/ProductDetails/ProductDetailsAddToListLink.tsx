@@ -1,19 +1,19 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
+type OwnProps = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState) => ({
-    variantSelectionCompleted: state.pages.productDetail.variantSelectionCompleted,
+    variantSelectionCompleted: state.pages.productDetails.variantSelectionCompleted,
 });
 
 export interface ProductDetailsAddToListLinkStyles {
@@ -21,7 +21,7 @@ export interface ProductDetailsAddToListLinkStyles {
     link?: ProductAddToListLinkStyles;
 }
 
-const styles: ProductDetailsAddToListLinkStyles = {
+export const addToListLinkStyles: ProductDetailsAddToListLinkStyles = {
     wrapper: {
         css: css`
             margin-top: 30px;
@@ -30,20 +30,18 @@ const styles: ProductDetailsAddToListLinkStyles = {
     },
 };
 
-export const addToListLinkStyles = styles;
+const styles = addToListLinkStyles;
 
 const ProductDetailsAddToListLink: React.FC<OwnProps> = ({
     product,
     variantSelectionCompleted,
 }) => {
-    if (!product) {
+    if (!product.canAddToWishlist && !variantSelectionCompleted) {
         return null;
     }
 
     return <StyledWrapper {...styles.wrapper}>
         <ProductAddToListLink
-            product={product}
-            variantSelectionCompleted={variantSelectionCompleted}
             data-test-selector="productDetails_addToList"
             extendedStyles={styles.link} />
     </StyledWrapper>;
@@ -54,7 +52,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Add to List Link",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

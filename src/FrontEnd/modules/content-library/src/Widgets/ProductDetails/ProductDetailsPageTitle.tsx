@@ -1,16 +1,15 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import * as React from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps, HasProductContext {
-}
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsPageTitleStyles {
     container?: GridContainerProps;
@@ -20,7 +19,7 @@ export interface ProductDetailsPageTitleStyles {
     titleText?: TypographyProps;
 }
 
-const styles: ProductDetailsPageTitleStyles = {
+export const pageTitleStyles: ProductDetailsPageTitleStyles = {
     container: {
         gap: 0,
     },
@@ -49,9 +48,9 @@ const styles: ProductDetailsPageTitleStyles = {
     },
 };
 
-export const pageTitleStyles = styles;
+const styles = pageTitleStyles;
 
-const ProductDetailsPageTitle: React.FC<OwnProps> = ({ product }) => {
+const ProductDetailsPageTitle: React.FC<Props> = ({ product }) => {
     return <GridContainer {...styles.container}>
         {product.brand
             && <GridItem {...styles.brandGridItem}>
@@ -69,7 +68,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Page Title",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

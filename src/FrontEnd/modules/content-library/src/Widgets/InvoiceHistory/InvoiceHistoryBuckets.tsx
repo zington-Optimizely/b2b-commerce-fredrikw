@@ -30,7 +30,7 @@ export interface InvoiceHistoryBucketsStyles {
     item?: GridItemProps;
 }
 
-const styles: InvoiceHistoryBucketsStyles = {
+export const bucketsStyles: InvoiceHistoryBucketsStyles = {
     container: {
         gap: 0,
         css: css`
@@ -53,7 +53,7 @@ const styles: InvoiceHistoryBucketsStyles = {
     },
 };
 
-export const bucketsStyles = styles;
+const styles = bucketsStyles;
 
 class InvoiceHistoryBuckets extends React.Component<Props> {
     componentDidMount() {

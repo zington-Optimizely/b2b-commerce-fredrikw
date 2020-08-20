@@ -26,13 +26,13 @@ export interface MyListsPaginationStyles {
     pagination?: PaginationPresentationProps;
 }
 
-const styles: MyListsPaginationStyles = {
+export const paginationStyles: MyListsPaginationStyles = {
     wrapper: {
         css: css` padding: 20px 0; `,
     },
 };
 
-export const paginationStyles = styles;
+const styles = paginationStyles;
 
 const MyListsPagination: React.FC<Props> = ({
     wishListsDataView,

@@ -80,7 +80,6 @@ export const AddAttributeValueFilters: HandlerType = props => {
     }
 };
 
-
 export const AddFilterCategory: HandlerType = props => {
     if (props.parameter.categoryId) {
         props.result.categoryId = props.parameter.categoryId;
@@ -93,10 +92,9 @@ export const AddStockedItemsFilter: HandlerType = props => {
     }
 };
 
-export const DispatchAddProductFilters: HandlerType = props => {
-
+export const DispatchSetProductFilters: HandlerType = props => {
     props.dispatch({
-        type: "Pages/ProductList/AddProductFilters",
+        type: "Pages/ProductList/SetProductFilters",
         result: props.result,
     });
 };
@@ -116,7 +114,7 @@ export const chain = [
     AddAttributeValueFilters,
     AddFilterCategory,
     AddStockedItemsFilter,
-    DispatchAddProductFilters,
+    DispatchSetProductFilters,
     DispatchSetFilterQuery,
 ];
 

@@ -1,17 +1,15 @@
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { ProductAutocompleteItemModel, TraitValueModel, VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
 
 export default interface ProductSelectorState {
+    selectedProductInfo?: ProductInfo;
     isSearching: boolean;
     searchResults?: ProductAutocompleteItemModel[],
-    selectedProduct?: ProductModelExtended;
-    errorType: string;
+    errorType?: string;
     variantModalIsOpen: boolean;
-    variantParentProduct?: ProductModelExtended;
-    selectedVariant?: ProductModelExtended;
-    initialVariantTraits?: VariantTraitModel[];
-    initialVariantProducts?: ProductModelExtended[];
-    variantSelection: (TraitValueModel | undefined)[];
+    variantModalProductId?: string;
+    variantSelection: SafeDictionary<string>
     variantSelectionCompleted: boolean;
-    filteredVariantTraits?: VariantTraitModel[];
+    selectedVariantProductInfo?: ProductInfo;
 }

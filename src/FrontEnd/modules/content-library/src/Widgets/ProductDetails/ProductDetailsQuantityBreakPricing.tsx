@@ -1,18 +1,18 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import * as React from "react";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext;
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsQuantityBreakPricingStyles {
     quantityBreakPricing?: ProductQuantityBreakPricingStyles;
 }
 
-const styles: ProductDetailsQuantityBreakPricingStyles = {
+export const quantityBreakPricingStyles: ProductDetailsQuantityBreakPricingStyles = {
     quantityBreakPricing: {
         viewLink: {
             css: css` margin: 8px 0; `,
@@ -20,16 +20,14 @@ const styles: ProductDetailsQuantityBreakPricingStyles = {
     },
 };
 
-export const quantityBreakPricingStyles = styles;
+const styles = quantityBreakPricingStyles;
 
-const ProductDetailsQuantityBreakPricing: React.FC<OwnProps> = ({ product }) => {
+const ProductDetailsQuantityBreakPricing: React.FC<Props> = ({ product }) => {
     if (!product) {
         return null;
     }
 
-    return <ProductQuantityBreakPricing
-        product={product}
-        extendedStyles={styles.quantityBreakPricing}/>;
+    return <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing}/>;
 };
 
 const widgetModule: WidgetModule = {
@@ -37,7 +35,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Quantity Break Pricing",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

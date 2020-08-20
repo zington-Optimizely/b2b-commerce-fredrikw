@@ -114,7 +114,7 @@
         }
 
         protected updateHistory(): void {
-            this.coreService.pushState({ filter: this.searchFilter, pagination: this.pagination });
+            this.coreService.replaceState({ filter: this.searchFilter, pagination: this.pagination });
         }
 
         protected setInitialFromDate(lookBackDays: number): void {

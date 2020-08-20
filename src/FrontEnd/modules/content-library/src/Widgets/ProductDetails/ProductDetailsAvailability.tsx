@@ -1,26 +1,27 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ConfigurationType } from "@insite/client-framework/Services/ProductServiceV2";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import ProductContextAvailability from "@insite/content-library/Components/ProductContextAvailability";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import * as React from "react";
 import { connect } from "react-redux";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
+type OwnProps = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState) => ({
-    configurationCompleted: state.pages.productDetail.configurationCompleted,
+    configurationCompleted: state.pages.productDetails.configurationCompleted,
 });
 
 export interface ProductDetailsAvailabilityStyles {
     availability?: ProductAvailabilityStyles;
 }
 
-const styles: ProductDetailsAvailabilityStyles = {};
+export const availabilityStyles: ProductDetailsAvailabilityStyles = {};
 
-export const availabilityStyles = styles;
+const styles = availabilityStyles;
 
 const ProductDetailsAvailability: React.FC<OwnProps> = ({ product, configurationCompleted }) => {
     if (!product || product.isVariantParent
@@ -28,11 +29,7 @@ const ProductDetailsAvailability: React.FC<OwnProps> = ({ product, configuration
         return null;
     }
 
-    return <ProductAvailability
-        productId={product.id}
-        availability={product.availability!}
-        unitOfMeasure={product.unitOfMeasure}
-        trackInventory={product.trackInventory}
+    return <ProductContextAvailability
         isProductDetailsPage={true}
         extendedStyles={styles.availability} />;
 };
@@ -42,7 +39,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Availability",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

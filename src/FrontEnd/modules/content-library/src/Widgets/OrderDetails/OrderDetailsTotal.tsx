@@ -37,7 +37,7 @@ export interface OrderDetailsTotalStyles {
     totalValue?: TypographyProps;
 }
 
-const styles: OrderDetailsTotalStyles = {
+export const totalStyles: OrderDetailsTotalStyles = {
     container: {
         gap: 10,
         css: css`
@@ -79,7 +79,7 @@ const styles: OrderDetailsTotalStyles = {
     },
 };
 
-export const totalStyles = styles;
+const styles = totalStyles;
 
 const OrderDetailsTotal: FC = () => {
     const { value: order } = useContext(OrderStateContext);

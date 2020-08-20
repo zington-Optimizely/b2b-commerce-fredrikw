@@ -4,7 +4,7 @@ import { GetShipTosApiParameter } from "@insite/client-framework/Services/Custom
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
@@ -26,9 +26,9 @@ export const ValidateContext: HandlerType = props => {
 };
 
 export const PopulateCart: HandlerType = props => {
-    const { getState } = props;
-    const state = getState();
-    const cart = getCurrentCartState(state).value;
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cart) {
         throw new Error("The cart is not loaded. It must be loaded before the addresses associated with it can be edited.");
     }

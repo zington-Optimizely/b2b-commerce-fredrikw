@@ -23,14 +23,14 @@ export interface OrderHistorySearchClearButtonStyles {
     wrapper?: SearchFieldWrapperStyles;
 }
 
-const styles: OrderHistorySearchClearButtonStyles = {
+export const clearButtonStyles: OrderHistorySearchClearButtonStyles = {
     clearButton: {
         variant: "secondary",
         css: css` float: right; `,
     },
 };
 
-export const clearButtonStyles = styles;
+const styles = clearButtonStyles;
 
 class OrderHistorySearchClearButton extends React.Component<Props> {
     clearSearch = () => {

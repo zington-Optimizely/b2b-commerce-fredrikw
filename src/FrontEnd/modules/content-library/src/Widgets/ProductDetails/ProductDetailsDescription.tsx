@@ -1,30 +1,29 @@
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import * as React from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps, HasProductContext {
-}
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsDescriptionStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: ProductDetailsDescriptionStyles = {
+export const descriptionStyles: ProductDetailsDescriptionStyles = {
     wrapper: {
         css: css` margin-bottom: 15px; `,
     },
 };
 
-export const descriptionStyles = styles;
+const styles = descriptionStyles;
 
-const ProductDetailsDescription: React.FC<OwnProps> = ({ product }) => {
+const ProductDetailsDescription: React.FC<Props> = ({ product }) => {
     if (!product.content) {
         return null;
     }
@@ -41,7 +40,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Description",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

@@ -1,10 +1,9 @@
-import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { deleteQuote as deleteQuoteApi } from "@insite/client-framework/Services/QuoteService";
 
 type HandlerType = Handler<{
     quoteId: string,
-    onError?: (error: string) => void,
-} & HasOnSuccess>;
+} & HasOnSuccess & HasOnError<string>>;
 
 export const SendDataToApi: HandlerType = async props => {
     const result = await deleteQuoteApi({ quoteId: props.parameter.quoteId });

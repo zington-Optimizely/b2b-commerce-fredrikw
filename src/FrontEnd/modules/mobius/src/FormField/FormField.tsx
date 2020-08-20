@@ -50,6 +50,8 @@ export interface FormFieldComponentProps {
     labelId?: number | string;
     /** Adds an asterisk to the input's label (if provided). */
     required?: boolean;
+    /** Is sometimes passed via a object spread */
+    dispatch?: unknown;
 }
 
 export interface FormFieldPresentationPropsCommon {
@@ -289,7 +291,7 @@ const FormField: React.ComponentType<FormFieldProps> = ({
     }
 
     let renderError;
-    if (!disabled && (error === 0 || error)) {
+    if (!disabled && error !== true && (error === 0 || error)) {
         renderError = (
             <Typography
                 {...combineTypographyProps({

@@ -30,7 +30,7 @@ export interface MyListsSearchBoxStyles {
     search?: TextFieldProps;
 }
 
-const styles: MyListsSearchBoxStyles = {
+export const searchBoxStyles: MyListsSearchBoxStyles = {
     search: {
         iconProps: { src: Search },
     },
@@ -40,7 +40,7 @@ interface MyListsSearchBoxState {
     query?: string;
 }
 
-export const searchBoxStyles = styles;
+const styles = searchBoxStyles;
 
 class MyListsSearchBox extends React.Component<Props, MyListsSearchBoxState> {
     searchTimeoutId: number | undefined;

@@ -56,7 +56,7 @@ export interface BrandListStyles {
     backToTopButton?: ButtonPresentationProps;
 }
 
-const styles: BrandListStyles = {
+export const listStyles: BrandListStyles = {
     centeringWrapper: {
         css: css`
             height: 300px;
@@ -103,7 +103,7 @@ const styles: BrandListStyles = {
     },
 };
 
-export const listStyles = styles;
+const styles = listStyles;
 
 interface BrandListState {
     expanded: boolean | "mixed";

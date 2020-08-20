@@ -1,7 +1,8 @@
 import { updateContext } from "@insite/client-framework/Context";
 import { ApiHandlerNoApiParameter, createHandlerChainRunner, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { createShipTo, updateShipTo as updateShipToApi } from "@insite/client-framework/Services/CustomersService";
-import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
+import { updateSession } from "@insite/client-framework/Services/SessionService";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
@@ -53,7 +54,13 @@ export const UpdateSession: HandlerType = async props => {
 };
 
 export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const DispatchCompleteUpdateShipTo: HandlerType = props => {

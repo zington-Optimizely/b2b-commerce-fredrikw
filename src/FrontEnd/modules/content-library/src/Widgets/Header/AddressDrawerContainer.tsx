@@ -32,7 +32,7 @@ interface AddressDrawerContainerStyles {
     applyButtonGridItem?: GridItemProps;
 }
 
-const styles: AddressDrawerContainerStyles = {
+export const addressDrawerContainerStyles: AddressDrawerContainerStyles = {
     drawerContainer: {
         css: [({ gap, theme }) => css`
             margin-left: ${gap !== undefined && gap > 0 ? `${gap / 2}px` : "0"};
@@ -66,7 +66,7 @@ const styles: AddressDrawerContainerStyles = {
     },
 };
 
-export const addressDrawerContainerStyles = styles;
+const styles = addressDrawerContainerStyles;
 
 const AddressDrawerContainer = ({
     id,

@@ -1,8 +1,8 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import { getUnitNetPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -17,7 +17,7 @@ import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
-    product: ProductModelExtended | CartLineModel;
+    product: ProductContextModel | CartLineModel;
     currencySymbol?: string;
     showLabel?: boolean;
     showSavings?: boolean;
@@ -124,7 +124,7 @@ export const productPriceStyles: ProductPriceStyles = {
 const SectionWrapper = getStyledWrapper("section");
 
 const ProductPrice: FC<Props> = ({
-                                     product,
+                                     product: pricingData,
                                      currencySymbol,
                                      canSeePrices,
                                      showLabel = true,
@@ -135,10 +135,25 @@ const ProductPrice: FC<Props> = ({
                                  }) => {
     const [styles] = React.useState(() => mergeToNew(productPriceStyles, extendedStyles));
 
-    const { pricing, quoteRequired, qtyOrdered } = product;
-    const unitOfMeasure = product.unitOfMeasureDescription || product.unitOfMeasureDisplay;
-    const showQtyPerBaseUnitOfMeasure = "baseUnitOfMeasure" in product
-        && product.unitOfMeasure !== product.baseUnitOfMeasure && product.qtyPerBaseUnitOfMeasure > 0;
+    const productContextModel = pricingData as ProductContextModel;
+    const cartLineModel = pricingData as CartLineModel;
+
+    const unitOfMeasureDescription = "product" in pricingData ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)?.description : pricingData.unitOfMeasureDescription;
+    const unitOfMeasureDisplay = "product" in pricingData ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)?.unitOfMeasureDisplay : pricingData.unitOfMeasureDisplay;
+    const quoteRequired = productContextModel.product ? productContextModel.product.quoteRequired : cartLineModel.quoteRequired;
+    const qtyOrdered = productContextModel.product ? productContextModel.productInfo.qtyOrdered : cartLineModel.qtyOrdered;
+
+    let pricing;
+    if ("product" in pricingData) {
+        pricing = pricingData.productInfo.pricing;
+    } else {
+        pricing = pricingData.pricing;
+    }
+
+    const unitOfMeasure = unitOfMeasureDescription || unitOfMeasureDisplay;
+    const showQtyPerBaseUnitOfMeasure = "baseUnitOfMeasure" in pricingData
+        && pricingData.unitOfMeasure !== pricingData.baseUnitOfMeasure && pricingData.qtyPerBaseUnitOfMeasure > 0;
+    const packDescription = "product" in pricingData ? pricingData.product.packDescription : undefined;
 
     const quoteStyles = styles.quoteMessage || {};
     const priceStyles = styles.price || {};
@@ -151,7 +166,7 @@ const ProductPrice: FC<Props> = ({
         );
     }
 
-    if ((product as ProductModelExtended).failedToLoadPricing) {
+    if (("product" in pricingData) && pricingData.productInfo.failedToLoadPricing) {
         return (
             <SectionWrapper {...styles.wrapper}>
                 <Typography {...priceStyles.errorText}>{siteMessage("RealTimePricing_PriceLoadFailed")}</Typography>
@@ -195,15 +210,15 @@ const ProductPrice: FC<Props> = ({
                     </Typography>
                     }
                 </StyledWrapper>
-                {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in product
+                {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in pricingData
                 && <Typography {...priceStyles.qtyPerBaseUnitOfMeasureText}>
-                    {`${product.qtyPerBaseUnitOfMeasure} ${product.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
+                    {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
                 </Typography>
                 }
-                {"packDescription" in product && product.packDescription
+                {packDescription
                 && <StyledWrapper {...styles.packWrapper}>
                     <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
-                    <Typography {...styles.packDescriptionText}>{product.packDescription}</Typography>
+                    <Typography {...styles.packDescriptionText}>{packDescription}</Typography>
                 </StyledWrapper>
                 }
                 {pricing && showSavings

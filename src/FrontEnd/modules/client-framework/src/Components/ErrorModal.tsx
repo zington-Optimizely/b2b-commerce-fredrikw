@@ -5,7 +5,7 @@ import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesA
 import { getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Modal from "@insite/mobius/Modal";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({

@@ -17,7 +17,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { sortBy } from "lodash";
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -43,7 +43,7 @@ export interface RfqQuoteDetailsMessagesStyles {
     messageBodyText?: TypographyPresentationProps;
 }
 
-const styles: RfqQuoteDetailsMessagesStyles = {
+export const rfqQuoteDetailsMessagesStyles: RfqQuoteDetailsMessagesStyles = {
     mainWrapper: {
         css: css`
             display: flex;
@@ -58,7 +58,6 @@ const styles: RfqQuoteDetailsMessagesStyles = {
     messageTextArea: {
         cssOverrides: {
             formField: css` margin-bottom: 20px; `,
-            inputSelect: css` resize: none; `,
         },
     },
     messagesContainer: {
@@ -88,20 +87,20 @@ const styles: RfqQuoteDetailsMessagesStyles = {
     },
 };
 
-export const messagesStyles = styles;
+const styles = rfqQuoteDetailsMessagesStyles;
 
 const RfqQuoteDetailsMessages = ({
     quoteState,
     sendMessage,
 }: Props) => {
     const quote = quoteState.value;
-    const [message, setMessage] = React.useState("");
-    const messageChangeHandler = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const [message, setMessage] = useState("");
+    const messageChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setMessage(event.currentTarget.value);
     };
 
-    const [sortedMessages, setSortedMessages] = React.useState<MessageModel[]>([]);
-    React.useEffect(() => {
+    const [sortedMessages, setSortedMessages] = useState<MessageModel[]>([]);
+    useEffect(() => {
         if (!quote) {
             return;
         }

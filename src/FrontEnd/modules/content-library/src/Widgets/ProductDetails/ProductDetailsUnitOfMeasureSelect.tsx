@@ -1,28 +1,19 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
-import updateProduct from "@insite/client-framework/Store/Pages/ProductDetail/Handlers/UpdateProduct";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import { SelectPresentationProps } from "@insite/mobius/Select";
 import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ResolveThunks<typeof mapDispatchToProps>;
-
-const mapDispatchToProps = {
-    changeProductUnitOfMeasure,
-    updateProduct,
-};
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsUnitOfMeasureSelectStyles {
     unitOfMeasureSelect?: SelectPresentationProps;
 }
 
-const styles: ProductDetailsUnitOfMeasureSelectStyles = {
+export const unitOfMeasureSelectStyles: ProductDetailsUnitOfMeasureSelectStyles = {
     unitOfMeasureSelect: {
         cssOverrides: {
             formField: css` margin-top: 10px; `,
@@ -30,43 +21,24 @@ const styles: ProductDetailsUnitOfMeasureSelectStyles = {
     },
 };
 
-export const unitOfMeasureSelectStyles = styles;
+const styles = unitOfMeasureSelectStyles;
 
-const ProductDetailsUnitOfMeasureSelect: React.FC<OwnProps> = ({
+const ProductDetailsUnitOfMeasureSelect: React.FC<Props> = ({
     product,
-    changeProductUnitOfMeasure,
-    updateProduct,
 }) => {
-    if (!product) {
+    if (!product || !product.unitOfMeasures) {
         return null;
     }
 
-    const onSuccessUomChanged = (product: ProductModelExtended) => {
-        updateProduct({ product });
-    };
-
-    const uomChangeHandler = (value: string) => {
-        changeProductUnitOfMeasure({ product, selectedUnitOfMeasure: value, onSuccess: onSuccessUomChanged });
-    };
-
-    if (!product.unitOfMeasures) {
-        return null;
-    }
-
-    return <ProductUnitOfMeasureSelect
-        productUnitOfMeasures={product.unitOfMeasures}
-        selectedUnitOfMeasure={product.selectedUnitOfMeasure}
-        onChangeHandler={uomChangeHandler}
-        extendedStyles={styles.unitOfMeasureSelect}
-    />;
+    return <ProductUnitOfMeasureSelect extendedStyles={styles.unitOfMeasureSelect} />;
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(null, mapDispatchToProps)(withProduct(ProductDetailsUnitOfMeasureSelect)),
+    component: withProduct(ProductDetailsUnitOfMeasureSelect),
     definition: {
         displayName: "Unit of Measure Select",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

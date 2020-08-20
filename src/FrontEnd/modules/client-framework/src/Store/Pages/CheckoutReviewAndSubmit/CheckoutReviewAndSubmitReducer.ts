@@ -9,6 +9,9 @@ const initialState: CheckoutReviewAndSubmitState = {
 };
 
 const reducer = {
+    "Pages/CheckoutReviewAndSubmit/SetCartId": (draft: Draft<CheckoutReviewAndSubmitState>, action: { cartId?: string }) => {
+        draft.cartId = action.cartId;
+    },
     "Pages/CheckoutReviewAndSubmit/BeginApplyPromotion": (draft: Draft<CheckoutReviewAndSubmitState>) => {
         draft.isApplyingPromotion = true;
     },

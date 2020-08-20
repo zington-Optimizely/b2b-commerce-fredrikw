@@ -1,52 +1,44 @@
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { getProductRealTimePrice, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import cloneDeep from "lodash/cloneDeep";
+import { createHandlerChainRunner, executeAwaitableHandlerChain, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { ProductModel, ProductPriceDto, RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
 
-interface ChangeProductQtyParameter {
-    product: ProductModelExtended;
+interface Parameter {
+    productId: string;
+    unitOfMeasure: string;
     qtyOrdered: number;
+    product: ProductModel;
 }
 
-type HandlerType = HandlerWithResult<ChangeProductQtyParameter, { product: ProductModelExtended; }>;
+interface Props {
+    pricing?: ProductPriceDto
+}
 
-export const DispatchBeginChangeQty: HandlerType = ({ dispatch }) => {
-    dispatch({
-        type: "Pages/QuickOrder/BeginChangeProductQty",
-    });
-};
+type HandlerType = Handler<Parameter, Props>;
 
-export const CopyCurrentValues: HandlerType = props => {
-    props.result = {
-        product: cloneDeep(props.parameter.product),
-    };
-};
-
-export const SetQtyOrdered: HandlerType = ({ parameter, result: { product } }) => {
-    product.qtyOrdered = parameter.qtyOrdered;
-};
-
-export const UpdatePrice: HandlerType = async ({ result: { product }, getState }) => {
+export const UpdatePrice: HandlerType = async props => {
+    const { parameter: { productId, unitOfMeasure, qtyOrdered, product } } = props;
     if (product.quoteRequired) {
-        return;
+         return;
     }
 
-    const realTimePricing = await getProductRealTimePrice({ product });
-    const realTimePricingResult = realTimePricing.realTimePricingResults?.find(o => o.productId === product.id);
-    product.pricing = realTimePricingResult || product.pricing;
+    const realTimePricingModel = await executeAwaitableHandlerChain<Parameters<typeof loadRealTimePricing>[0], RealTimePricingModel>(
+        loadRealTimePricing,
+        { productPriceParameters: [{ productId, unitOfMeasure, qtyOrdered }] },
+        props);
+    props.pricing = realTimePricingModel.realTimePricingResults?.find(o => o.productId === productId);
 };
 
-export const DispatchCompleteChangeQty: HandlerType = ({ result: { product }, dispatch }) => {
+export const DispatchCompleteChangeQty: HandlerType = ({ parameter: { productId, qtyOrdered, unitOfMeasure }, dispatch, pricing }) => {
     dispatch({
-        type: "Pages/QuickOrder/CompleteChangeProductQty",
-        product,
+        type: "Pages/QuickOrder/ChangeProductQtyOrdered",
+        productId,
+        qtyOrdered,
+        unitOfMeasure,
+        pricing,
     });
 };
 
 export const chain = [
-    DispatchBeginChangeQty,
-    CopyCurrentValues,
-    SetQtyOrdered,
     UpdatePrice,
     DispatchCompleteChangeQty,
 ];

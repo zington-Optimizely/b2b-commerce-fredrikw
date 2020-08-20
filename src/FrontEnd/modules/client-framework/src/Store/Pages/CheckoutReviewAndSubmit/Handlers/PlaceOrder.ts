@@ -1,7 +1,9 @@
 import formatDateWithTimezone from "@insite/client-framework/Common/Utilities/formatDateWithTimezone";
+import { trackCompletedOrder } from "@insite/client-framework/Common/Utilities/tracking";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { Cart, CartResult, UpdateCartApiParameter, updateCartWithResult } from "@insite/client-framework/Services/CartService";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import cloneDeep from "lodash/cloneDeep";
@@ -40,15 +42,17 @@ export const DispatchBeginPlaceOrder: HandlerType = props => {
 };
 
 export const SetCartStatus: HandlerType = props => {
-    const cartState = getCurrentCartState(props.getState());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
 
-    if (!cartState.value) {
+    if (!cart) {
         throw new Error("There was no current cart and we are trying to place the current cart as an order.");
     }
 
     props.cartToUpdate = {
-        ...cloneDeep(cartState.value),
-        status: cartState.value.requiresApproval ? "AwaitingApproval" : "Submitted",
+        ...cloneDeep(cart),
+        status: cart.requiresApproval ? "AwaitingApproval" : "Submitted",
         poNumber: props.parameter.poNumber,
     };
 };
@@ -97,13 +101,11 @@ export const SetCreditCard: HandlerType = props => {
             const countries = getCurrentCountries(props.getState());
             if (!countries) {
                 throw new Error("The active countries for the current website are not available.");
-                return;
             }
 
             const selectedCountry = countries.find(country => country.id === props.parameter.countryId);
             if (!selectedCountry) {
                 throw new Error("The selected country for the card billing address is not valid.");
-                return;
             }
 
             updatedCreditCard.address1 = props.parameter.address1;
@@ -113,7 +115,6 @@ export const SetCreditCard: HandlerType = props => {
             const selectedState = selectedCountry.states?.find(state => state.id === props.parameter.stateId);
             if (!selectedState) {
                 throw new Error("The selected state for the card billing address is not valid.");
-                return;
             }
 
             updatedCreditCard.state = selectedState.name;
@@ -161,11 +162,21 @@ export const UpdateCart: HandlerType = async props => {
 };
 
 export const ReloadCurrentCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
+    } else {
+        props.dispatch(loadCurrentCart());
+    }
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess && props.parameter.onSuccess(props.apiResult.cart.id);
+};
+
+export const SendTracking: HandlerType = props => {
+    trackCompletedOrder(props.cartToUpdate, props.apiResult.billTo);
 };
 
 export const DispatchCompletePlaceOrder: HandlerType = props => {
@@ -180,6 +191,14 @@ export const DispatchResetOrders: HandlerType = props => {
     });
 };
 
+export const DispatchResetPaymentProfiles: HandlerType = props => {
+    if (props.parameter.saveCard) {
+        props.dispatch({
+            type: "Data/PaymentProfiles/Reset",
+        });
+    }
+};
+
 export const chain = [
     DispatchBeginPlaceOrder,
     SetCartStatus,
@@ -189,8 +208,10 @@ export const chain = [
     UpdateCart,
     ReloadCurrentCart,
     ExecuteOnSuccessCallback,
+    SendTracking,
     DispatchCompletePlaceOrder,
     DispatchResetOrders,
+    DispatchResetPaymentProfiles,
 ];
 
 const placeOrder = createHandlerChainRunner(chain, "PlaceOrder");

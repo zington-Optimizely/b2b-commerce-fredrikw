@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import BrandsState from "@insite/client-framework/Store/Pages/Brands/BrandsState";
-import { BrandAlphabetLetterModel, BrandCollectionModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
+import { BrandAlphabetLetterModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: BrandsState = {

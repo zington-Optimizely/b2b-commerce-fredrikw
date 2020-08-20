@@ -1,19 +1,19 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductShareLink, { ProductShareLinkStyles } from "@insite/content-library/Components/ProductShareLink";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState) => ({
-    variantSelectionCompleted: state.pages.productDetail.variantSelectionCompleted,
+    variantSelectionCompleted: state.pages.productDetails.variantSelectionCompleted,
 });
 
 export interface ProductDetailsShareLinkStyles {
@@ -21,7 +21,7 @@ export interface ProductDetailsShareLinkStyles {
     link?: ProductShareLinkStyles;
 }
 
-const styles: ProductDetailsShareLinkStyles = {
+export const shareLinkStyles: ProductDetailsShareLinkStyles = {
     wrapper: {
         css: css`
             margin-top: 30px;
@@ -30,9 +30,9 @@ const styles: ProductDetailsShareLinkStyles = {
     },
 };
 
-export const shareLinkStyles = styles;
+const styles = shareLinkStyles;
 
-const ProductDetailsShareLink: React.FC<OwnProps> = ({
+const ProductDetailsShareLink: React.FC<Props> = ({
     product,
 }) => {
     if (!product) {
@@ -40,8 +40,7 @@ const ProductDetailsShareLink: React.FC<OwnProps> = ({
     }
 
     return <StyledWrapper {...styles.wrapper}>
-        <ProductShareLink
-            extendedStyles={styles.link} />
+        <ProductShareLink extendedStyles={styles.link} />
     </StyledWrapper>;
 };
 
@@ -50,7 +49,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "Share Link",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

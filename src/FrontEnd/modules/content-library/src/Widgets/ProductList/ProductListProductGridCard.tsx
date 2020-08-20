@@ -1,5 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductCardSelections } from "@insite/content-library/Widgets/ProductList/ProductCardSelections";
 import ProductListActions from "@insite/content-library/Widgets/ProductList/ProductListActions";
 import ProductListProductImage from "@insite/content-library/Widgets/ProductList/ProductListProductImage";
@@ -8,17 +8,14 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends ProductCardSelections, HasProductContext {
-}
-
-type Props = OwnProps;
+type Props = ProductCardSelections & HasProduct;
 
 export interface ProductListProductGridCardStyles {
     wrapper?: InjectableCss;
     imageWrapper?: InjectableCss;
 }
 
-const styles: ProductListProductGridCardStyles = {
+export const productGridCardStyles: ProductListProductGridCardStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -37,16 +34,28 @@ const styles: ProductListProductGridCardStyles = {
     },
 };
 
-export const productGridCardStyles = styles;
+const styles = productGridCardStyles;
 
-const ProductListProductGridCard: FC<Props> = ({ product, ...otherProps }) => {
+const ProductListProductGridCard: FC<Props> = ({
+                                                   product,
+                                                   showImage,
+                                                   showCompare,
+                                                   showAttributes,
+                                                   showAvailability,
+                                                   showBrand,
+                                                   showPartNumbers,
+                                                   showTitle,
+                                                   showAddToList,
+                                                   showPrice,
+                                               }) => {
     return (
         <StyledWrapper {...styles.wrapper} data-test-selector={`productListProductCard${product.id}`}>
             <StyledWrapper {...styles.imageWrapper}>
-                <ProductListProductImage {...otherProps}/>
+                <ProductListProductImage showImage={showImage} showCompare={showCompare}/>
             </StyledWrapper>
-            <ProductListProductInformation {...otherProps}/>
-            <ProductListActions {...otherProps}/>
+            <ProductListProductInformation showAttributes={showAttributes} showAvailability={showAvailability} showBrand={showBrand}
+                                           showPartNumbers={showPartNumbers} showTitle={showTitle}/>
+            <ProductListActions showAddToList={showAddToList} showPrice={showPrice}/>
         </StyledWrapper>
     );
 };

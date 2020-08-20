@@ -81,7 +81,7 @@ export interface ScheduleReminderModalStyles {
     scheduleButton?: ButtonPresentationProps;
 }
 
-const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
+export const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
     modal: {
         cssOverrides: {
             modalTitle: css`
@@ -202,6 +202,8 @@ const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
         css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 100%; `], "max")} `,
     },
 };
+
+const styles = scheduleReminderModalStyles;
 
 const ScheduleReminderModal: React.FC<Props> = ({
     wishList,

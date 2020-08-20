@@ -1,12 +1,13 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCategoriesDataView } from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesSelector";
-import loadCategories from "@insite/client-framework/Store/UNSAFE_Categories/Handlers/LoadCategories";
+import { getCategoriesDataView, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CategoryListPageContext } from "@insite/content-library/Pages/CategoryListPage";
 import { HomePageContext } from "@insite/content-library/Pages/HomePage";
+import Clickable from "@insite/mobius/Clickable/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
@@ -56,7 +57,7 @@ export interface CategoryListStyles {
     viewMoreLink?: LinkPresentationProps;
 }
 
-const styles: CategoryListStyles = {
+export const categoryListStyles: CategoryListStyles = {
     centeringWrapper: {
         css: css`
             height: 300px;
@@ -106,7 +107,7 @@ const styles: CategoryListStyles = {
     },
 };
 
-export const listStyles = styles;
+const styles = categoryListStyles;
 
 class CategoryList extends React.Component<Props> {
     UNSAFE_componentWillMount(): void {
@@ -149,14 +150,12 @@ class CategoryList extends React.Component<Props> {
                                     <Typography {...styles.categoryName}>{category.shortDescription}</Typography>
                                 </Link>
                             </GridItem>
-                            {category.subCategories && category.subCategories.slice(0, 4).map((subCategory) => (
-                                <GridItem key={subCategory.id.toString()} {...styles.subCategoryNameLinkItem}>
-                                    <Link href={subCategory.path} {...styles.subCategoryNameLink}>
-                                        {subCategory.shortDescription}
-                                    </Link>
+                            {category.subCategoryIds && category.subCategoryIds.slice(0, 4).map(subCategoryId => (
+                                <GridItem key={subCategoryId} {...styles.subCategoryNameLinkItem}>
+                                    <SubCategoryLink categoryId={subCategoryId} />
                                 </GridItem>
                             ))}
-                            {category.subCategories && category.subCategories.length > 4
+                            {category.subCategoryIds && category.subCategoryIds.length > 4
                                 && <GridItem {...styles.viewMoreLinkItem}>
                                     <Link href={category.path} {...styles.viewMoreLink}>{translate("View More")}</Link>
                                 </GridItem>
@@ -168,6 +167,22 @@ class CategoryList extends React.Component<Props> {
         );
     }
 }
+
+const SubCategoryLinkView = ({ category }: ReturnType<typeof linkMapStateToProps>) => {
+    if (!category) {
+        return null;
+    }
+
+    return <Link href={category.path} {...styles.subCategoryNameLink}>
+        {category.shortDescription}
+    </Link>;
+};
+
+const linkMapStateToProps = (state: ApplicationState, ownProps: { categoryId: string }) => ({
+    category: getCategoryState(state, ownProps.categoryId).value,
+});
+
+const SubCategoryLink = connect(linkMapStateToProps)(SubCategoryLinkView);
 
 const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(CategoryList),

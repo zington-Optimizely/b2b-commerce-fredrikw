@@ -1,7 +1,11 @@
+/* eslint-disable spire/export-styles */
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
+import logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { hasEnoughInventory } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import { canAddToCart } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import translate from "@insite/client-framework/Translate";
 import TextField, { TextFieldPresentationProps, TextFieldProps } from "@insite/mobius/TextField";
 import * as React from "react";
@@ -9,21 +13,19 @@ import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps extends TextFieldProps {
-    product: ProductModelExtended;
-    quantity: number;
-    configurationCompleted?: boolean;
-    variantSelectionCompleted?: boolean;
-    onChangeHandler?: (value: string) => void;
-    onBlurHandler?: (value: string) => void;
     labelOverride?: React.ReactNode;
     extendedStyles?: TextFieldPresentationProps;
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    productSettings: getSettingsCollection(state).productSettings,
-});
+const mapStateToProps = (state: ApplicationState, props: HasProductContext) => {
+    return ({
+        productSettings: getSettingsCollection(state).productSettings,
+        canAddToCart: canAddToCart(state, props.productContext.product),
+        hasEnoughInventory: hasEnoughInventory(state, props.productContext),
+    });
+};
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasProductContext;
 
 export const productQuantityOrderedStyles: TextFieldPresentationProps = {
     cssOverrides: {
@@ -46,41 +48,24 @@ export const productQuantityOrderedStyles: TextFieldPresentationProps = {
 
 const ProductQuantityOrdered: React.FC<Props & { dispatch: any }> = ({
     productSettings,
-    dispatch, // This causes dom errors when passed to <input>
-    product,
-    quantity,
-    configurationCompleted,
-    variantSelectionCompleted,
-    onChangeHandler,
-    onBlurHandler,
+    hasEnoughInventory,
+    productContext: { product, onQtyOrderedChanged, productInfo },
     labelOverride,
     extendedStyles,
+    canAddToCart,
     ...otherProps
 }) => {
     const [styles] = React.useState(() => mergeToNew(productQuantityOrderedStyles, extendedStyles));
-    const [productQty, setProductQty] = React.useState(quantity.toString());
+    const [productQty, setProductQty] = React.useState(productInfo.qtyOrdered.toString());
 
     React.useEffect(() => {
-        if (quantity === Number(productQty)) {
+        if (productInfo.qtyOrdered === Number(productQty)) {
             return;
         }
-        setProductQty(`${quantity || ""}`);
-    }, [quantity]);
+        setProductQty(`${productInfo.qtyOrdered || ""}`);
+    }, [productInfo.qtyOrdered]);
 
-    if (!productSettings || !productSettings.canAddToCart) {
-        return null;
-    }
-
-    const isEnoughInventory = productSettings.allowBackOrder || !product.trackInventory || (product.qtyOnHand && product.qtyOnHand > 0);
-    if (!isEnoughInventory) {
-        return null;
-    }
-
-    const showQtyInput = product.canAddToCart
-        || (product.canConfigure && configurationCompleted)
-        || (!product.canConfigure && variantSelectionCompleted);
-
-    if (!showQtyInput) {
+    if (!productSettings.canAddToCart || !product || !productInfo || !hasEnoughInventory || !canAddToCart) {
         return null;
     }
 
@@ -93,14 +78,15 @@ const ProductQuantityOrdered: React.FC<Props & { dispatch: any }> = ({
     const qtyChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setProductQty(value);
-        if (onChangeHandler) {
-            onChangeHandler(value);
-        }
-    };
 
-    const qtyBlurHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (onBlurHandler) {
-            onBlurHandler(event.target.value);
+        if (!onQtyOrderedChanged) {
+            logger.warn(`There was no onQtyOrderedChanged passed to the ProductContext for ${product.id}`);
+            return;
+        }
+
+        const possibleNumber = Number(value);
+        if (!Number.isNaN(possibleNumber)) {
+            onQtyOrderedChanged(possibleNumber);
         }
     };
 
@@ -112,9 +98,8 @@ const ProductQuantityOrdered: React.FC<Props & { dispatch: any }> = ({
         data-test-selector="product_qtyOrdered"
         {...otherProps}
         onKeyPress={keyPressHandler}
-        onBlur={qtyBlurHandler}
         onChange={qtyChangeHandler}
         {...styles} />;
 };
 
-export default connect(mapStateToProps)(ProductQuantityOrdered);
+export default withProductContext(connect(mapStateToProps)(ProductQuantityOrdered));

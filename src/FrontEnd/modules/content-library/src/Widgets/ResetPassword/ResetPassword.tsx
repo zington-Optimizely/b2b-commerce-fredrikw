@@ -68,7 +68,7 @@ export interface ResetPasswordStyles {
     passwordRequirementsGridContainer?: GridContainerProps;
 }
 
-const styles: ResetPasswordStyles = {
+export const resetPasswordStyles: ResetPasswordStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -124,7 +124,7 @@ const styles: ResetPasswordStyles = {
     },
 };
 
-export const resetPasswordStyles = styles;
+const styles = resetPasswordStyles;
 
 const ResetPassword: FC<Props> = ({
                                       accountSettings,

@@ -1,5 +1,5 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
@@ -7,7 +7,7 @@ import React, { FC } from "react";
 import { css } from "styled-components";
 
 interface OwnProps {
-    product: CartLineModel | ProductModelExtended;
+    product: CartLineModel | ProductContextModel;
     extendedStyles?: ProductImageStyles;
 }
 
@@ -37,18 +37,22 @@ const ProductImage: FC<Props> = ({
 }) => {
     const [styles] = React.useState(() => mergeToNew(productImageStyles, extendedStyles));
 
-    const altText = "imageAltText" in product ? product.imageAltText : product.altText;
+    let altText = "product" in product ? product.product.imageAltText : product.altText;
+    if (!altText || altText === "") {
+        altText = ("product" in product ? product.product.productTitle : product.productName);
+    }
+    const smallImagePath = "product" in product ? product.product.smallImagePath : product.smallImagePath;
 
-    const productDetailPath = ("productDetailPath" in product || "canonicalUrl" in product)
-        ? product.productDetailPath || product.canonicalUrl
+    const productDetailPath = "product" in product
+        ? product.productInfo.productDetailPath
         : product.productUri;
 
     return (
         <Clickable {...styles.linkWrappingImage} href={productDetailPath} data-test-selector="productImage">
             <LazyImage
                 {...styles.image}
-                src={product.smallImagePath}
-                altText={(altText && (altText !== "")) ? altText : ("productTitle" in product ? product.productTitle : product.productName)}
+                src={smallImagePath}
+                altText={altText}
             />
         </Clickable>
     );

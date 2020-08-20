@@ -1,4 +1,5 @@
 export default interface CheckoutReviewAndSubmitState {
+    cartId?: string;
     isPlacingOrder: boolean;
     isApplyingPromotion: boolean;
     promotionSuccessMessage?: string;

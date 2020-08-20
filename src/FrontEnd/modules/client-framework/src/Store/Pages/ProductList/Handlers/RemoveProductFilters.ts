@@ -71,9 +71,9 @@ export const RemoveStockedItemsFilter: HandlerType = ({ result, parameter: { sto
     }
 };
 
-export const DispatchRemoveProductFilters: HandlerType = props => {
+export const DispatchSetProductFilters: HandlerType = props => {
     props.dispatch({
-        type: "Pages/ProductList/RemoveProductFilters",
+        type: "Pages/ProductList/SetProductFilters",
         result: props.result,
     });
 };
@@ -92,7 +92,7 @@ export const chain = [
     RemoveFilterCategory,
     RemoveAttributeValueFilters,
     RemoveStockedItemsFilter,
-    DispatchRemoveProductFilters,
+    DispatchSetProductFilters,
     DispatchSetFilterQuery,
 ];
 

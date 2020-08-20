@@ -1,3 +1,4 @@
+import { HasCategoriesState } from "@insite/client-framework/Store/Data/Categories/CategoriesState";
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { TabDefinition } from "@insite/client-framework/Types/TabDefinition";
@@ -46,7 +47,7 @@ export interface ListFieldDefinition extends BaseFieldDefinition<"ListField", Ha
     /**
      * Determines what value will be displayed in a given row. This uses ShellState as it runs in the shell, not the storefront.
      */
-    getDisplay: (item: HasFields, state: HasLinksState) => string | ((dispatch: ThunkDispatch<HasLinksState, void, any>) => void);
+    getDisplay: (item: HasFields, state: HasLinksState & HasCategoriesState) => string | ((dispatch: ThunkDispatch<HasLinksState, void, any>) => void);
     /**
      * The fields that exist on each item in the list. Note that the fieldType is not supported at this level.
      */

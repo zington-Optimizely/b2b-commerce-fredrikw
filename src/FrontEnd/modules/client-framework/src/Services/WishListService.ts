@@ -1,3 +1,4 @@
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import {
     ApiParameter,
     del,
@@ -93,7 +94,7 @@ export interface UpdateWishListLineApiParameter extends ApiParameter {
 
 export interface UpdateWishListLinesApiParameter extends ApiParameter {
     wishListId: string;
-    changedSharedListLinesQuantities?: { [key: string]: number };
+    changedSharedListLinesQuantities?: SafeDictionary<number>;
     includeListLines: boolean;
 }
 
@@ -114,6 +115,10 @@ export interface UpdateWishListScheduleApiParameter extends ApiParameter {
 export interface DeleteWishListShareApiParameter extends ApiParameter {
     wishListId: string;
     wishListShareId?: string;
+}
+
+export interface ActivateInviteApiParameter extends ApiParameter {
+    invite: string;
 }
 
 const wishListUrl = "/api/v1/wishlists";
@@ -197,6 +202,10 @@ export function updateWishListSchedule(parameter: UpdateWishListScheduleApiParam
 
 export function deleteWishListShare(parameter: DeleteWishListShareApiParameter) {
     return del(`${wishListUrl}/${parameter.wishListId}/share/${parameter.wishListShareId || "current"}`);
+}
+
+export function activateInvite(parameter: ActivateInviteApiParameter) {
+    return patch<WishListModel>(`${wishListUrl}/activateinvite`, parameter as unknown as WishListModel);
 }
 
 function cleanWishList(wishList: WishListModel, parameter?: { expand?: string[] }) {

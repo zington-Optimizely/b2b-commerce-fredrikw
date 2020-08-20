@@ -1,21 +1,23 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductContext, ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import changeProductUnitOfMeasure from "@insite/client-framework/Store/CommonHandlers/ChangeProductUnitOfMeasure";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setWishListLineIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineIsSelected";
-import setWishListLineQuantity from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetWishListLineQuantity";
-import updateWishListLineProduct from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineProduct";
+import updateQuantity from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateQuantity";
+import updateUnitOfMeasure from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateUnitOfMeasure";
+import updateWishListLineQuantities from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineQuantities";
 import translate from "@insite/client-framework/Translate";
 import {
-    AvailabilityMessageType,
+    AvailabilityMessageType, ProductModel,
     WishListLineModel,
     WishListModel,
 } from "@insite/client-framework/Types/ApiModels";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
-import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
+import { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import ProductContextAvailability from "@insite/content-library/Components/ProductContextAvailability";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
@@ -39,6 +41,7 @@ import { SelectPresentationProps } from "@insite/mobius/Select";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import { cloneDeep } from "lodash";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -46,24 +49,22 @@ import { css } from "styled-components";
 interface OwnProps {
     wishList: WishListModel;
     wishListLine: WishListLineModel;
-    product: ProductModelExtended;
+    productInfo: ProductInfo;
     onDeleteClick: (wishListLine: WishListLineModel) => void;
     onEditNotesClick: (wishListLine: WishListLineModel) => void;
-    onUpdateQuantityClick: () => void;
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     isSelected: !!state.pages.myListDetails.selectedWishListLineIds.find(o => o === ownProps.wishListLine.id),
     settingsCollection: getSettingsCollection(state),
-    changedQuantity: state.pages.myListDetails.changedWishListLineQuantities[ownProps.wishListLine.id],
     isQuantityUpdated: state.pages.myListDetails.wishListLinesWithUpdatedQuantity[ownProps.wishListLine.id],
 });
 
 const mapDispatchToProps = {
-    changeProductUnitOfMeasure,
     setWishListLineIsSelected,
-    updateWishListLineProduct,
-    setWishListLineQuantity,
+    updateUnitOfMeasure,
+    updateQuantity,
+    updateWishListLineQuantities,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -114,7 +115,7 @@ export interface MyListsDetailsProductListLineStyles {
     restrictedRemoveItemLink?: LinkPresentationProps;
 }
 
-const styles: MyListsDetailsProductListLineStyles = {
+export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     editNotesLink: {
         typographyProps: { size: 12 },
         css: css` margin-top: 5px; `,
@@ -293,54 +294,36 @@ const styles: MyListsDetailsProductListLineStyles = {
     restrictedMessageText: { color: "warning" },
 };
 
-export const productListLineStyles = styles;
+const styles = productListLineStyles;
 
 const MyListsDetailsProductListLine: React.FC<Props> = ({
-    wishList,
-    wishListLine,
-    product,
-    isSelected,
-    settingsCollection,
-    changedQuantity,
-    isQuantityUpdated,
-    onDeleteClick,
-    onEditNotesClick,
-    onUpdateQuantityClick,
-    changeProductUnitOfMeasure,
-    setWishListLineIsSelected,
-    setWishListLineQuantity,
-    updateWishListLineProduct,
-}) => {
-    const [quantity, setQuantity] = React.useState(changedQuantity || product.qtyOrdered);
-    const quantityChangeHandler = (value: string) => {
-        const newQuantity = parseFloat(value);
-        setQuantity(newQuantity);
-        setWishListLineQuantity({
-            wishListLineId: wishListLine.id,
-            quantity: newQuantity === product.qtyOrdered || !newQuantity ? undefined : newQuantity,
-        });
-    };
-
-    const uomChangeHandler = (value: string) => {
-        changeProductUnitOfMeasure({
-            product,
-            selectedUnitOfMeasure: value,
-            onSuccess: (updatedProduct) => {
-                updateWishListLineProduct({
-                    wishListId: wishList.id,
-                    wishListLineId: wishListLine.id,
-                    originalProduct: product,
-                    product: updatedProduct });
-            },
-        });
-    };
+                                                            wishList,
+                                                            wishListLine,
+                                                            productInfo,
+                                                            isSelected,
+                                                            settingsCollection,
+                                                            isQuantityUpdated,
+                                                            onDeleteClick,
+                                                            onEditNotesClick,
+                                                            updateWishListLineQuantities,
+                                                            setWishListLineIsSelected,
+                                                            updateUnitOfMeasure,
+                                                            updateQuantity,
+                                                        }) => {
+    const product = mapWishListLineToProduct(wishListLine);
 
     const selectChangeHandler: CheckboxProps["onChange"] = (_, value) => {
         setWishListLineIsSelected({ wishListLineId: wishListLine.id, isSelected: value });
     };
 
+    const onUpdateQuantityClick = () => {
+        updateWishListLineQuantities({ reloadWishListLines: true });
+    };
+
     const isDiscontinued = () => {
-        return !wishListLine.isActive || (product.isDiscontinued && product.availability?.messageType === AvailabilityMessageType.OutOfStock);
+        const availability = productInfo.inventory?.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure.toLowerCase() === productInfo.unitOfMeasure.toLowerCase())?.availability;
+
+        return !wishListLine.isActive || (wishListLine.isDiscontinued && availability?.messageType === AvailabilityMessageType.OutOfStock);
     };
 
     const isRestricted = () => {
@@ -378,22 +361,22 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 <GridItem {...styles.priceAndAvailabilityGridItem}>
                     <Typography {...styles.restrictedMessageText} data-test-selector="restrictedMessage">
                         {isRestricted()
-                            && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Restrictions")}</>
+                        && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Restrictions")}</>
                         }
                         {isDiscontinued()
-                            && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Discontinued")}</>
+                        && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Discontinued")}</>
                         }
                     </Typography>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     {canEditWishList
-                        && <Link
-                            {...styles.restrictedRemoveItemLink}
-                            onClick={() => onDeleteClick(wishListLine)}
-                            data-test-selector="removeRestricted"
-                        >
-                            {translate("Remove item")}
-                        </Link>
+                    && <Link
+                        {...styles.restrictedRemoveItemLink}
+                        onClick={() => onDeleteClick(wishListLine)}
+                        data-test-selector="removeRestricted"
+                    >
+                        {translate("Remove item")}
+                    </Link>
                     }
                 </GridItem>
             </GridContainer>
@@ -401,29 +384,39 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     }
 
     const { productSettings } = settingsCollection;
+    const productContext: ProductContextModel = {
+        product,
+        productInfo,
+        onQtyOrderedChanged: qtyOrdered => {
+            updateQuantity({ wishListLineId: wishListLine.id, qtyOrdered });
+        },
+        onUnitOfMeasureChanged: unitOfMeasure => {
+            updateUnitOfMeasure({ wishListLineId: wishListLine.id, unitOfMeasure });
+        },
+    };
 
-    return (
+    return <ProductContext.Provider value={productContext}>
         <GridContainer {...styles.lineInnerContainer} data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
             <GridItem {...styles.imageGridItem}>
                 <Hidden {...styles.selectedCheckboxHidden}>
-                    <Checkbox {...styles.selectedCheckbox} checked={isSelected} onChange={selectChangeHandler} data-test-selector="selectItem" />
+                    <Checkbox {...styles.selectedCheckbox} checked={isSelected} onChange={selectChangeHandler} data-test-selector="selectItem"/>
                 </Hidden>
                 <StyledWrapper {...styles.imageWrapper}>
-                    <ProductImage product={product} extendedStyles={styles.productImageStyles} />
+                    <ProductImage product={productContext} extendedStyles={styles.productImageStyles}/>
                     {canEditWishList
-                        && <Hidden {...styles.editNotesHidden}>
-                            <Link {...styles.editNotesLink} onClick={() => onEditNotesClick(wishListLine)}>
-                                {translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}
-                            </Link>
-                        </Hidden>
+                    && <Hidden {...styles.editNotesHidden}>
+                        <Link {...styles.editNotesLink} onClick={() => onEditNotesClick(wishListLine)}>
+                            {translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}
+                        </Link>
+                    </Hidden>
                     }
                 </StyledWrapper>
             </GridItem>
             <GridItem {...styles.descriptionGridItem}>
                 {product.brand
-                    && <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles} />
+                && <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles}/>
                 }
-                <ProductDescription product={product} extendedStyles={styles.productDescriptionStyles} />
+                <ProductDescription product={productContext} extendedStyles={styles.productDescriptionStyles}/>
                 <Hidden {...styles.partNumbersHidden}>
                     <GridItem {...styles.partNumbersGridItem}>
                         <ProductPartNumbers
@@ -434,19 +427,19 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                         />
                     </GridItem>
                     {wishListLine.notes
-                        && <GridItem {...styles.notesGridItem}>
-                            <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles} />
-                        </GridItem>
+                    && <GridItem {...styles.notesGridItem}>
+                        <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles}/>
+                    </GridItem>
                     }
                 </Hidden>
             </GridItem>
             {canEditWishList
-                && <GridItem {...styles.overflowMenuGridItem}>
-                    <OverflowMenu position="end">
-                        <Clickable onClick={() => onEditNotesClick(wishListLine)}>{translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}</Clickable>
-                        <Clickable onClick={() => onDeleteClick(wishListLine)}>{translate("Delete")}</Clickable>
-                    </OverflowMenu>
-                </GridItem>
+            && <GridItem {...styles.overflowMenuGridItem}>
+                <OverflowMenu position="end">
+                    <Clickable onClick={() => onEditNotesClick(wishListLine)}>{translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}</Clickable>
+                    <Clickable onClick={() => onDeleteClick(wishListLine)}>{translate("Delete")}</Clickable>
+                </OverflowMenu>
+            </GridItem>
             }
             <Hidden {...styles.notesHidden}>
                 <GridItem {...styles.partNumbersGridItem}>
@@ -462,90 +455,87 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 <GridContainer {...styles.priceAndAvailabilityInnerContainer}>
                     <GridItem {...styles.priceGridItem}>
                         <ProductPrice
-                            product={product}
+                            product={productContext}
                             showSavings={true}
                             showSavingsAmount={productSettings.showSavingsAmount}
                             showSavingsPercent={productSettings.showSavingsPercent}
-                            extendedStyles={styles.productPriceStyles} />
-                        <ProductQuantityBreakPricing product={product} extendedStyles={styles.quantityBreakPricing} />
+                            extendedStyles={styles.productPriceStyles}/>
+                        <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing}/>
                     </GridItem>
                     <GridItem {...styles.uomAndQuantityGridItem}>
                         <GridContainer {...styles.uomAndQuantityInnerContainer}>
                             {product.unitOfMeasures && product.unitOfMeasures.length > 1
-                                && <GridItem {...styles.uomGridItem}>
-                                    <ProductUnitOfMeasureSelect
-                                        productUnitOfMeasures={product.unitOfMeasures}
-                                        selectedUnitOfMeasure={product.selectedUnitOfMeasure}
-                                        onChangeHandler={uomChangeHandler}
-                                        disabled={!canEditWishList}
-                                        extendedStyles={styles.productUnitOfMeasureSelectStyles} />
-                                </GridItem>
+                            && <GridItem {...styles.uomGridItem}>
+                                <ProductUnitOfMeasureSelect
+                                    disabled={!canEditWishList}
+                                    extendedStyles={styles.productUnitOfMeasureSelectStyles}/>
+                            </GridItem>
                             }
                             <GridItem {...styles.quantityGridItem}>
-                                <ProductQuantityOrdered
-                                    product={product}
-                                    quantity={quantity}
-                                    onChangeHandler={quantityChangeHandler}
-                                    extendedStyles={styles.productQuantityOrderedStyles} />
+                                <ProductQuantityOrdered extendedStyles={styles.productQuantityOrderedStyles}/>
                             </GridItem>
                         </GridContainer>
                     </GridItem>
                     <GridItem {...styles.availabilityGridItem}>
-                        {product.availability
-                            && <ProductAvailability
-                                productId={product.id}
-                                availability={product.availability}
-                                unitOfMeasure={product.selectedUnitOfMeasure}
-                                trackInventory={product.trackInventory}
-                                extendedStyles={styles.productAvailabilityStyles} />
+                        {productInfo.inventory
+                        && <ProductContextAvailability extendedStyles={styles.productAvailabilityStyles}/>
                         }
                     </GridItem>
                 </GridContainer>
             </GridItem>
             {wishListLine.notes
-                && <Hidden {...styles.notesHidden}>
-                    <GridItem {...styles.notesGridItem}>
-                        <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles} />
-                    </GridItem>
-                </Hidden>
+            && <Hidden {...styles.notesHidden}>
+                <GridItem {...styles.notesGridItem}>
+                    <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles}/>
+                </GridItem>
+            </Hidden>
             }
             <GridItem {...styles.buttonsGridItem}>
                 <ProductAddToCartButton
-                    product={product}
-                    quantity={quantity}
-                    unitOfMeasure={product.selectedUnitOfMeasure}
                     extendedStyles={styles.addToCartButton}
                     data-test-selector="addToCart"
                 />
                 {canEditWishList
-                    && <>
-                        <Hidden {...styles.deleteLinkHidden}>
-                            <Link
-                                {...styles.deleteLink}
-                                onClick={() => onDeleteClick(wishListLine)}
-                                data-test-selector="deleteListItem"
-                            >
-                                {translate("Delete")}
-                            </Link>
-                        </Hidden>
-                        <StyledWrapper {...styles.updateQuantityWrapper}>
-                            {changedQuantity
-                                && <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
-                                    {translate("Update QTY")}
-                                </Link>
-                            }
-                            {isQuantityUpdated && !changedQuantity
-                                && <>
-                                    <Icon {...styles.quantityUpdatedIcon} />
-                                    <Typography {...styles.quantityUpdatedText}>{translate("QTY updated")}</Typography>
-                                </>
-                            }
-                        </StyledWrapper>
-                    </>
+                && <>
+                    <Hidden {...styles.deleteLinkHidden}>
+                        <Link
+                            {...styles.deleteLink}
+                            onClick={() => onDeleteClick(wishListLine)}
+                            data-test-selector="deleteListItem"
+                        >
+                            {translate("Delete")}
+                        </Link>
+                    </Hidden>
+                    <StyledWrapper {...styles.updateQuantityWrapper}>
+                        {wishListLine.qtyOrdered !== productInfo.qtyOrdered
+                        && <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
+                            {translate("Update QTY")}
+                        </Link>
+                        }
+                        {isQuantityUpdated && wishListLine.qtyOrdered === productInfo.qtyOrdered
+                        && <>
+                            <Icon {...styles.quantityUpdatedIcon} />
+                            <Typography {...styles.quantityUpdatedText}>{translate("QTY updated")}</Typography>
+                        </>
+                        }
+                    </StyledWrapper>
+                </>
                 }
             </GridItem>
         </GridContainer>
-    );
+    </ProductContext.Provider>;
+};
+
+const mapWishListLineToProduct = (wishListLine: WishListLineModel) => {
+    const product = cloneDeep(wishListLine) as any as ProductModel;
+    product.id = wishListLine.productId;
+    product.productNumber = wishListLine.erpNumber;
+    product.productTitle = wishListLine.shortDescription;
+    product.unitOfMeasures = wishListLine?.productUnitOfMeasures?.map(u => ({
+        id: u.productUnitOfMeasureId,
+        ...u,
+    })) || null;
+    return product;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyListsDetailsProductListLine);

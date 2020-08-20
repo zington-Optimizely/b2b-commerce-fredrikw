@@ -1,6 +1,6 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { canApplyPromotionsToCart, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { canApplyPromotionsToCart, getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import applyPromotion from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/ApplyPromotion";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -15,7 +15,8 @@ import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cartState = getCurrentCartState(state);
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     const { isApplyingPromotion, promotionErrorMessage, promotionSuccessMessage, isCheckingOutWithPayPay } = state.pages.checkoutReviewAndSubmit;
     return {
         isApplyButtonDisabled: cartState.isLoading || isApplyingPromotion,
@@ -38,7 +39,7 @@ export interface CheckoutReviewAndSubmitPromotionCodeStyles {
     applySuccessText?: TypographyPresentationProps;
 }
 
-const styles: CheckoutReviewAndSubmitPromotionCodeStyles = {
+export const promotionCodeFormStyles: CheckoutReviewAndSubmitPromotionCodeStyles = {
     applyButton: {
         variant: "tertiary",
         css: css` margin-top: 10px; `,
@@ -50,7 +51,7 @@ const styles: CheckoutReviewAndSubmitPromotionCodeStyles = {
     },
 };
 
-export const promotionCodeFormStyles = styles;
+const styles = promotionCodeFormStyles;
 const StyledForm = getStyledWrapper("form");
 
 const CheckoutReviewAndSubmitPromotionCode: FC<Props> = ({

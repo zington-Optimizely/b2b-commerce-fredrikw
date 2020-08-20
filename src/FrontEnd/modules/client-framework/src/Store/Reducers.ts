@@ -3,8 +3,6 @@ import ContextReducer from "@insite/client-framework/Store/Context/ContextReduce
 import dataReducer, { DataReducers } from "@insite/client-framework/Store/Data/DataReducer";
 import linksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 import pagesReducer, { PagesReducers } from "@insite/client-framework/Store/Pages/PagesReducer";
-import categoriesReducer from "@insite/client-framework/Store/UNSAFE_Categories/CategoriesReducer";
-import currentCategoryReducer from "@insite/client-framework/Store/UNSAFE_CurrentCategory/CurrentCategoryReducer";
 
 export const reducers = {
     components: componentsReducer,
@@ -12,9 +10,6 @@ export const reducers = {
     data: dataReducer,
     links: linksReducer,
     pages: pagesReducer,
-
-    UNSAFE_categories: categoriesReducer,
-    UNSAFE_currentCategory: currentCategoryReducer,
 };
 
 type Reducers = Omit<typeof reducers, "components" | "pages" | "data">;

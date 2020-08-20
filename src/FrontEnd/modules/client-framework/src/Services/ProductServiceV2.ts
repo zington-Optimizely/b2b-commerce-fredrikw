@@ -1,11 +1,8 @@
 import { ApiParameter, get, HasPagingParameters, post } from "@insite/client-framework/Services/ApiService";
 import {
-    AvailabilityDto,
     CatalogPageModel,
-    InventoryAvailabilityDto,
     ProductCollectionModel,
     ProductModel,
-    ProductPriceDto,
     RealTimeInventoryModel,
     RealTimePricingModel,
 } from "@insite/client-framework/Types/ApiModels";
@@ -23,7 +20,7 @@ export interface GetProductApiV2ParameterBase extends ApiParameter {
 
 type ProductFilterTokens = "frequentlyPurchased" | "recentlyPurchased" | "alsoPurchased" | "recentlyViewed" | "topSellers" | "siteCrosssells";
 
-export interface GetProductsApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
+export interface GetProductCollectionApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
     search?: string;
     categoryId?: string;
     productIds?: string[],
@@ -56,40 +53,29 @@ export interface GetProductByIdApiV2Parameter extends GetProductApiV2ParameterBa
     alsoPurchasedMaxResults?: number;
 }
 
-export interface GetProductRealTimePriceApiV2Parameter extends ApiParameter {
-    product: ProductModelExtended;
-    configuration?: string[];
-}
-
-export interface GetProductsRealTimePriceApiV2Parameter extends ApiParameter {
-    products: ProductModelExtended[];
-}
-
-export interface GetProductRealTimeInventoryApiV2Parameter extends  ApiParameter {
+interface ProductPriceParameter {
     productId: string;
     unitOfMeasure: string;
+    qtyOrdered: number;
+    configuration?: string[],
+}
+
+export interface GetProductRealTimePriceApiV2Parameter extends ApiParameter, ProductPriceParameter {
+}
+
+export interface GetProductCollectionRealTimePriceApiV2Parameter extends ApiParameter {
+    productPriceParameters: ProductPriceParameter[];
+}
+
+export interface GetProductRealTimeInventoryApiV2Parameter extends ApiParameter {
+    productId: string;
     configuration?: string[];
     expand?: ("warehouses")[];
 }
 
-export interface GetProductsRealTimeInventoryApiV2Parameter extends ApiParameter {
-    products: ProductModelExtended[];
-    configurations?: { [productId: string]: string[] };
-    expand?: string[];
-}
-
-export interface RealTimePricingParameter {
-    productPriceParameters: {
-        productId: string;
-        unitOfMeasure: string;
-        qtyOrdered: number;
-        configuration?: string[],
-    }[],
-}
-
-export interface RealTimeInventoryParameter {
+export interface GetProductCollectionRealTimeInventoryApiV2Parameter extends ApiParameter {
     productIds: string[];
-    configuration?: { [productId: string]: string[] },
+    configuration?: { [productId: string]: string[] };
     expand?: string[];
 }
 
@@ -99,25 +85,7 @@ export interface GetProductVariantChildrenApiV2Parameter extends GetProductApiV2
 
 export interface GetProductVariantChildApiV2Parameter extends GetProductApiV2ParameterBase {
     variantParentId: string;
-    variantId: string;
-}
-
-export interface ProductModelExtended extends ProductModel {
-    pricing?: ProductPriceDto;
-    failedToLoadPricing?: true;
-    availability?: AvailabilityDto;
-    inventoryAvailabilities?: InventoryAvailabilityDto[];
-    selectedUnitOfMeasure: string;
-    unitOfMeasure: string;
-    unitOfMeasureDescription: string;
-    unitOfMeasureDisplay: string;
-    qtyOrdered: number;
-    qtyOnHand?: number;
-    productDetailPath: string;
-}
-
-export interface ProductCollectionModelExtended extends ProductCollectionModel {
-    products: ProductModelExtended[] | null;
+    id: string;
 }
 
 export enum ConfigurationType {
@@ -127,119 +95,102 @@ export enum ConfigurationType {
     Advanced = "Advanced",
 }
 
-const convertProductModel = (productModel: ProductModel) => {
-    const defaultUnitOfMeasure = productModel.unitOfMeasures?.find(o => o.isDefault);
-    return {
-        ...productModel,
-        unitOfMeasure: defaultUnitOfMeasure?.unitOfMeasure,
-        selectedUnitOfMeasure: defaultUnitOfMeasure?.unitOfMeasure,
-        unitOfMeasureDescription: defaultUnitOfMeasure?.description,
-        unitOfMeasureDisplay: defaultUnitOfMeasure?.unitOfMeasureDisplay,
-    } as ProductModelExtended;
-};
-
-export async function getProductCollectionV2(parameter: GetProductsApiV2Parameter) {
-    const productModelCollection = await get<ProductCollectionModelExtended>(productsUrl, parameter);
-    productModelCollection.products = productModelCollection.products?.map(p => convertProductModel(p)) || null;
-    return productModelCollection;
+export function getProductCollectionV2(parameter: GetProductCollectionApiV2Parameter) {
+    return get<ProductCollectionModel>(productsUrl, parameter);
 }
 
-interface GetRelatedProductCollectionApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
+export interface GetRelatedProductCollectionApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
     productId: string;
     relationship: string;
 }
 
-export async function getRelatedProductsCollectionV2(parameter: GetRelatedProductCollectionApiV2Parameter) {
+export function getRelatedProductsCollectionV2(parameter: GetRelatedProductCollectionApiV2Parameter) {
     const productId = parameter.productId;
     delete parameter.productId;
-    const productModelCollection =  await get<ProductCollectionModelExtended>(
+    return get<ProductCollectionModel>(
         `${productsUrl}/${productId}/relatedproducts`,
         parameter,
     );
-    productModelCollection.products = productModelCollection.products?.map(p => convertProductModel(p)) || null;
-    return productModelCollection;
 }
 
-export function getProductRealTimePrice(parameter: GetProductRealTimePriceApiV2Parameter) {
-    return post<RealTimePricingParameter, RealTimePricingModel>(`${realTimePricingUrl}`, {
+export async function getProductRealTimePrice(parameter: GetProductRealTimePriceApiV2Parameter) {
+    const pricing = await getProductCollectionRealTimePrices({
+        additionalQueryStringParameters: parameter.additionalQueryStringParameters,
         productPriceParameters: [
             {
-                productId: parameter.product.id,
-                unitOfMeasure: parameter.product.selectedUnitOfMeasure,
-                qtyOrdered: parameter.product.qtyOrdered,
+                productId: parameter.productId,
+                unitOfMeasure: parameter.unitOfMeasure,
+                qtyOrdered: parameter.qtyOrdered,
                 configuration: parameter.configuration,
             },
         ],
     });
+
+    return pricing.realTimePricingResults?.find(o => o.productId === parameter.productId);
 }
 
-export function getProductCollectionRealTimePrices(parameter: GetProductsRealTimePriceApiV2Parameter) {
-    return post<RealTimePricingParameter, RealTimePricingModel>(`${realTimePricingUrl}`, {
-        productPriceParameters: parameter.products.map(p => ({
-                productId: p.id,
-                unitOfMeasure: p.selectedUnitOfMeasure,
-                qtyOrdered: p.qtyOrdered,
-                configuration: [],
-            }),
-        ),
+export function getProductCollectionRealTimePrices(parameter: GetProductCollectionRealTimePriceApiV2Parameter) {
+    return post<GetProductCollectionRealTimePriceApiV2Parameter, RealTimePricingModel>(`${realTimePricingUrl}`, {
+        productPriceParameters: parameter.productPriceParameters,
     });
 }
 
-export function getProductRealTimeInventory(parameter: GetProductRealTimeInventoryApiV2Parameter) {
-    let url = realTimeInventoryUrl;
-    if (parameter.expand) {
-        url += (`?expand=${parameter.expand.join(",")}`);
-    }
-
-    return post<RealTimeInventoryParameter, RealTimeInventoryModel>(`${url}`, {
+export async function getProductRealTimeInventory(parameter: GetProductRealTimeInventoryApiV2Parameter) {
+    const realTimeInventoryModel = await getProductCollectionRealTimeInventory({
+        expand: parameter.expand,
         productIds: [parameter.productId],
+        additionalQueryStringParameters: parameter.additionalQueryStringParameters,
         configuration: parameter.configuration ? { [parameter.productId]: parameter.configuration } : undefined,
     });
+
+    return realTimeInventoryModel.realTimeInventoryResults?.find(o => o.productId === parameter.productId);
 }
 
-export function getProductCollectionRealTimeInventory(parameter: GetProductsRealTimeInventoryApiV2Parameter) {
+export function getProductCollectionRealTimeInventory(parameter: GetProductCollectionRealTimeInventoryApiV2Parameter) {
     let url = realTimeInventoryUrl;
     if (parameter.expand) {
         url += (`?expand=${parameter.expand.join(",")}`);
     }
 
-    return post<RealTimeInventoryParameter, RealTimeInventoryModel>(`${url}`, {
-        productIds: parameter.products.map(p => p.id),
-        configuration: parameter.configurations,
+    return post<GetProductCollectionRealTimeInventoryApiV2Parameter, RealTimeInventoryModel>(`${url}`, {
+        productIds: parameter.productIds,
+        configuration: parameter.configuration,
     });
 }
 
 export async function getProductByPath(parameter: GetProductByPathApiV2Parameter) {
     const result = await get<CatalogPageModel>(`${catalogPagesUrl}`, { path: parameter.path } as ApiParameter);
-    const productModel = await get<ProductModelExtended>(`${productsUrl}/${result.productId}`, {
+    const productModel = await get<ProductModel>(`${productsUrl}/${result.productId}`, {
         expand: parameter.expand,
         additionalExpands: parameter.additionalExpands,
         includeAttributes: parameter.includeAttributes,
         addToRecentlyViewed: parameter.addToRecentlyViewed,
     } as ApiParameter);
 
-    return convertProductModel(productModel);
+    return productModel;
 }
 
-export async function getProductById(parameter: GetProductByIdApiV2Parameter) {
-    const productModel = await get<ProductModel>(`${productsUrl}/${parameter.id}`, {
+export function getProductById(parameter: GetProductByIdApiV2Parameter) {
+    return get<ProductModel>(`${productsUrl}/${parameter.id}`, {
         expand: parameter.expand,
         additionalExpands: parameter.additionalExpands,
         unitOfMeasure: parameter.unitOfMeasure,
         includeAttributes: parameter.includeAttributes,
         alsoPurchasedMaxResults: parameter.alsoPurchasedMaxResults,
     } as ApiParameter);
-
-    return convertProductModel(productModel);
 }
 
-export async function getVariantChildren(parameter: GetProductVariantChildrenApiV2Parameter) {
-    const variantchildren = await get<ProductCollectionModelExtended>(`${productsUrl}/${parameter.productId}/variantchildren`, {});
-    variantchildren.products = variantchildren.products?.map(p => convertProductModel(p)) || null;
-    return variantchildren;
+export function getVariantChildren(parameter: GetProductVariantChildrenApiV2Parameter) {
+    const newParameter = { ...parameter };
+    delete newParameter.productId;
+
+    return get<ProductCollectionModel>(`${productsUrl}/${parameter.productId}/variantchildren`, newParameter);
 }
 
-export async function getVariantChild(parameter: GetProductVariantChildApiV2Parameter) {
-    const variantChild = await get<ProductModelExtended>(`${productsUrl}/${parameter.variantParentId}/variantchildren/${parameter.variantId}`, {});
-    return convertProductModel(variantChild);
+export function getVariantChild(parameter: GetProductVariantChildApiV2Parameter) {
+    const newParameter = { ...parameter };
+    delete newParameter.variantParentId;
+    delete newParameter.id;
+
+    return get<ProductModel>(`${productsUrl}/${parameter.variantParentId}/variantchildren/${parameter.id}`, newParameter);
 }

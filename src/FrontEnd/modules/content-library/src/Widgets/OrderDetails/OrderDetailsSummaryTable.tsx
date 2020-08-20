@@ -1,4 +1,4 @@
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
@@ -93,7 +93,7 @@ export interface OrderDetailSummaryTableStyles {
     productInfoTotalsGridItem?: GridItemProps;
 }
 
-const styles: OrderDetailSummaryTableStyles = {
+export const summaryTableStyles: OrderDetailSummaryTableStyles = {
     titleText: {
         variant: "h5",
         as: "h2",
@@ -208,7 +208,7 @@ const styles: OrderDetailSummaryTableStyles = {
     },
 };
 
-const ProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
+const OrderLineProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
 
     let sectionOptions: JSX.Element[] = [];
     if (orderLine.sectionOptions && orderLine.sectionOptions) {
@@ -319,7 +319,7 @@ const OrderLineCard = (props: {
     orderLine: OrderLineModel,
     order: OrderModel,
     wishListSettings?: WishListSettingsModel,
-    setAddToListModalIsOpen: (parameter: { products?: ProductModelExtended[] | undefined; modalIsOpen: boolean; }) => void,
+    setAddToListModalIsOpen: (parameter: { productInfos?: Omit<ProductInfo, "productDetailPath">[]; modalIsOpen: boolean; }) => void,
     addToWishList: (parameter: AddToWishListParameter) => void,
 }) => {
     const { orderLine, order, wishListSettings, setAddToListModalIsOpen, addToWishList } = props;
@@ -329,14 +329,14 @@ const OrderLineCard = (props: {
             return;
         }
 
-        const product = {
-            id: orderLine.productId,
+        const productInfo = {
+            productId: orderLine.productId,
             qtyOrdered: orderLine.qtyOrdered,
-            selectedUnitOfMeasure: orderLine.unitOfMeasure,
-        } as ProductModelExtended;
+            unitOfMeasure: orderLine.unitOfMeasure,
+        };
         if (!wishListSettings.allowMultipleWishLists) {
             addToWishList({
-                products: [product],
+                productInfos: [productInfo],
                 onSuccess: () => {
                     toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
                 },
@@ -344,7 +344,7 @@ const OrderLineCard = (props: {
             return;
         }
 
-        setAddToListModalIsOpen({ modalIsOpen: true, products: [product] });
+        setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
     };
 
     return (
@@ -358,7 +358,7 @@ const OrderLineCard = (props: {
             </GridItem>
             <GridItem {...styles.orderLineCardInfoGridItem}>
                 <GridContainer {...styles.orderLineCardInfoGridContainer}>
-                    <ProductInfo orderLine={orderLine} />
+                    <OrderLineProductInfo orderLine={orderLine} />
                     <OrderLineInfo orderLine={orderLine} order={order} />
                     <OrderLineNotes extendedStyles={styles.orderLineNotes} orderLine={orderLine} />
                 </GridContainer>
@@ -381,7 +381,7 @@ const OrderLineCard = (props: {
     );
 };
 
-export const summaryTableStyles = styles;
+const styles = summaryTableStyles;
 
 const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({ order, wishListSettings, setAddToListModalIsOpen, addToWishList }) => {
     if (!order.value || !order.value.orderLines) {

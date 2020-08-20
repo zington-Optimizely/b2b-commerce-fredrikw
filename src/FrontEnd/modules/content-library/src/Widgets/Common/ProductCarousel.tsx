@@ -1,8 +1,10 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { CategoryContext } from "@insite/client-framework/Components/CategoryContext";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
+import { ProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadCarouselProducts from "@insite/client-framework/Store/Components/ProductCarousel/Handlers/LoadCarouselProducts";
+import { getProductsForProductInfoList } from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListSelectors";
 import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -64,8 +66,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
-    products: state.components.productCarousel.carouselProducts[ownProps.id]?.value,
-    parentProduct: state.pages.productDetail.product,
+    products: getProductsForProductInfoList(state, ownProps.id),
     pageType: getCurrentPage(state).type,
 });
 
@@ -91,7 +92,7 @@ export interface ProductCarouselStyles {
     carouselProductStyles?: ProductCarouselProductStyles;
 }
 
-const styles: ProductCarouselStyles = {
+export const productCarouselStyles: ProductCarouselStyles = {
     titleText: {
         variant: "h2",
         css: css`
@@ -106,13 +107,13 @@ const styles: ProductCarouselStyles = {
         css: css`
             justify-content: flex-start;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                ])}
+            breakpointMediaQueries(theme, [
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+            ])}
         `,
     },
     prevArrowButton: {
@@ -129,13 +130,13 @@ const styles: ProductCarouselStyles = {
         css: css`
             justify-content: flex-end;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                    css` flex-basis: 5%; max-width: 5%; `,
-                ])}
+            breakpointMediaQueries(theme, [
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+                css` flex-basis: 5%; max-width: 5%; `,
+            ])}
         `,
     },
     nextArrowButton: {
@@ -150,13 +151,13 @@ const styles: ProductCarouselStyles = {
         width: 10,
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [
-                    css` flex-basis: 90%; max-width: 90%; `,
-                    css` flex-basis: 90%; max-width: 90%; `,
-                    css` flex-basis: 90%; max-width: 90%; `,
-                    css` flex-basis: 90%; max-width: 90%; `,
-                    css` flex-basis: 90%; max-width: 90%; `,
-                ])}
+            breakpointMediaQueries(theme, [
+                css` flex-basis: 90%; max-width: 90%; `,
+                css` flex-basis: 90%; max-width: 90%; `,
+                css` flex-basis: 90%; max-width: 90%; `,
+                css` flex-basis: 90%; max-width: 90%; `,
+                css` flex-basis: 90%; max-width: 90%; `,
+            ])}
         `,
     },
     carouselWrapper: {
@@ -187,26 +188,26 @@ const styles: ProductCarouselStyles = {
     },
 };
 
-export const productCarouselStyles = styles;
+const styles = productCarouselStyles;
 
 const ProductCarousel: React.FC<Props> = ({
-    id,
-    theme,
-    fields,
-    products,
-    parentProduct,
-    loadCarouselProducts,
-    pageType,
-    shellContext,
-}) => {
+                                              id,
+                                              theme,
+                                              fields,
+                                              products,
+                                              loadCarouselProducts,
+                                              pageType,
+                                              shellContext,
+                                          }) => {
     const afterCarousel = React.createRef<HTMLSpanElement>();
-    const isProductDetailsPage = pageType === "ProductDetailPage";
+    const isProductDetailsPage = pageType === "ProductDetailsPage";
     const isProductListPage = pageType === "ProductListPage";
     const isBrandDetailsPage = pageType === "BrandDetailsPage";
     const brand = React.useContext(BrandStateContext).value;
     const category = React.useContext(CategoryContext);
+    const productContext = React.useContext(ProductContext);
 
-    const loadProducts = React.useCallback(
+    React.useEffect(
         () => {
             loadCarouselProducts({
                 carouselId: id,
@@ -217,7 +218,7 @@ const ProductCarousel: React.FC<Props> = ({
                 selectedCategoryIds: fields.selectedCategoryIds,
                 numberOfProductsToDisplay: fields.numberOfProductsToDisplay,
                 isProductDetailsPage,
-                parentProduct,
+                productId: productContext?.product?.id,
                 isProductListPage,
                 category,
                 isBrandDetailsPage,
@@ -231,26 +232,9 @@ const ProductCarousel: React.FC<Props> = ({
             fields.displayProductsFrom,
             fields.selectedCategoryIds,
             fields.numberOfProductsToDisplay,
-            parentProduct?.id,
-            category,
-            brand,
-        ],
-    );
-
-    React.useEffect(
-        () => {
-            loadProducts();
-        },
-        [
-            fields.carouselType,
-            fields.relatedProductType,
-            fields.seedWithManuallyAssigned,
-            fields.displayProductsFrom,
-            fields.selectedCategoryIds,
-            fields.numberOfProductsToDisplay,
-            parentProduct?.id,
-            category,
-            brand,
+            productContext?.product?.id,
+            category?.id,
+            brand?.id,
         ],
     );
 
@@ -259,7 +243,9 @@ const ProductCarousel: React.FC<Props> = ({
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
     const setCanScroll = () => {
-        if (shellContext.isInShell) return;
+        if (shellContext.isInShell) {
+            return;
+        }
         setCanScrollPrev(!!embla && embla.canScrollPrev());
         setCanScrollNext(!!embla && embla.canScrollNext());
     };
@@ -327,7 +313,6 @@ const ProductCarousel: React.FC<Props> = ({
 
             return () => {
                 window.removeEventListener("resize", onWindowResize);
-                if (!shellContext.isInShell) embla.destroy();
             };
         },
         [embla],
@@ -349,23 +334,23 @@ const ProductCarousel: React.FC<Props> = ({
         return null;
     }
 
-    const title = fields.title || carouselTypeOptions.find(o => o.value === fields.carouselType)?.displayName || "Product Carousel";
+    const title = fields.title || translate(carouselTypeOptions.find(o => o.value === fields.carouselType)?.displayName || "Product Carousel");
     const showBrandBlocks = fields.showBrandName && products.some(o => !!o.brand);
 
     return <>
         <SkipNav text={translate("Skip Carousel")} extendedStyles={styles.skipCarouselButton} destination={afterCarousel} />
-        <Typography {...styles.titleText}>{translate(title)}</Typography>
+        <Typography {...styles.titleText}>{title}</Typography>
         <GridContainer {...styles.mainContainer} data-test-selector={`productCarousel_${fields.carouselType}${fields.relatedProductType}`}>
             <GridItem {...styles.prevArrowGridItem}>
                 {products.length > slidesToScroll
-                    && <Button
-                        {...styles.prevArrowButton}
-                        onClick={() => embla && embla.scrollPrev()}
-                        disabled={!canScrollPrev}
-                        data-test-selector="prevBtn"
-                    >
-                        <ButtonIcon src={ChevronLeft} />
-                    </Button>
+                && <Button
+                    {...styles.prevArrowButton}
+                    onClick={() => embla && embla.scrollPrev()}
+                    disabled={!canScrollPrev}
+                    data-test-selector="prevBtn"
+                >
+                    <ButtonIcon src={ChevronLeft}/>
+                </Button>
                 }
             </GridItem>
             <GridItem {...styles.carouselGridItem}>
@@ -385,7 +370,7 @@ const ProductCarousel: React.FC<Props> = ({
                                             showPrice={fields.showPrice}
                                             showAddToCart={fields.showAddToCart}
                                             showAddToList={fields.showAddToList}
-                                            extendedStyles={styles.carouselProductStyles} />
+                                            extendedStyles={styles.carouselProductStyles}/>
                                     </StyledWrapper>
                                 </StyledWrapper>)
                             }
@@ -395,14 +380,14 @@ const ProductCarousel: React.FC<Props> = ({
             </GridItem>
             <GridItem {...styles.nextArrowGridItem}>
                 {products.length > slidesToScroll
-                    && <Button
-                        {...styles.nextArrowButton}
-                        onClick={() => embla && embla.scrollNext()}
-                        disabled={!canScrollNext}
-                        data-test-selector="nextBtn"
-                    >
-                        <ButtonIcon src={ChevronRight} />
-                    </Button>
+                && <Button
+                    {...styles.nextArrowButton}
+                    onClick={() => embla && embla.scrollNext()}
+                    disabled={!canScrollNext}
+                    data-test-selector="nextBtn"
+                >
+                    <ButtonIcon src={ChevronRight}/>
+                </Button>
                 }
             </GridItem>
         </GridContainer>
@@ -429,7 +414,7 @@ const widgetModule: WidgetModule = {
                 displayName: "Title",
                 editorTemplate: "TextField",
                 defaultValue: "",
-                fieldType: "General",
+                fieldType: "Translatable",
                 sortOrder: 0,
             },
             {

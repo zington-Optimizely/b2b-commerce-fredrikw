@@ -1,8 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { LoadProductsResult } from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
-import {
-    UpdateProductParameter,
-} from "@insite/client-framework/Store/Pages/ProductList/Handlers/UpdateProduct";
+import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
+import { DisplayProductsResult } from "@insite/client-framework/Store/Pages/ProductList/Handlers/DisplayProducts";
 import ProductListState, {
     ProductFilters,
     ProductListViewType,
@@ -11,101 +9,87 @@ import { ProductInventoryDto, RealTimeInventoryModel, RealTimePricingModel } fro
 import { Draft } from "immer";
 
 const initialState: ProductListState = {
-    productsState: {
-        isLoading: false,
-    },
+    isLoading: false,
     productFilters: {},
-    filterQuery: undefined,
+    productInfosByProductId: {},
 };
 
 const reducer = {
     "Pages/ProductList/BeginLoadProducts": (draft: Draft<ProductListState>) => {
-        draft.productsState.isLoading = true;
+        draft.isLoading = true;
     },
-    "Pages/ProductList/CompleteLoadProducts": (draft: Draft<ProductListState>, action: { result: LoadProductsResult }) => {
-        if (action.result.productCollection) {
-            draft.productsState = {
-                value: action.result.productCollection,
-                isLoading: false,
-            };
+    "Pages/ProductList/SetParameter": (draft: Draft<ProductListState>, action: { parameter: GetProductCollectionApiV2Parameter }) => {
+        draft.lastParameter = draft.parameter;
+        draft.parameter = action.parameter;
+    },
+    "Pages/ProductList/CompleteLoadProducts": (draft: Draft<ProductListState>, action: { result: DisplayProductsResult }) => {
+        draft.isLoading = false;
 
-            if (action.result.unfilteredProductCollection) {
-                draft.unfilteredProductCollection = action.result.unfilteredProductCollection;
-            }
-        }
-
-        draft.catalogPage = action.result.catalogPage;
+        draft.unfilteredApiParameter = action.result.unfilteredApiParameter;
 
         if (action.result.productFilters) {
             draft.productFilters = action.result.productFilters;
             draft.isSearchPage = !!action.result.productFilters.query;
         }
-    },
-    "Pages/ProductList/ClearProducts": (draft: Draft<ProductListState>) => {
-        draft.productsState = {
-            isLoading: false,
-        };
+
+        draft.productInfosByProductId = action.result.productInfosByProductId;
     },
     "Pages/ProductList/SetView": (draft: Draft<ProductListState>, action: { parameter: { view: ProductListViewType}}) => {
         draft.view = action.parameter.view;
     },
-    "Pages/ProductList/UpdateProduct": (draft: Draft<ProductListState>, action: { parameter: UpdateProductParameter }) => {
-        if (draft.productsState.value) {
-            const index = draft.productsState.value.products!
-                .findIndex(p => p.id === action.parameter.product.id);
-            if (index > -1) {
-                draft.productsState.value.products![index] = action.parameter.product;
-            }
-        }
-    },
-    "Pages/ProductList/AddProductFilters": (draft: Draft<ProductListState>, action: { result: ProductFilters }) => {
-        draft.productFilters = action.result;
-    },
-    "Pages/ProductList/RemoveProductFilters": (draft: Draft<ProductListState>, action: { result: ProductFilters }) => {
-        draft.productFilters = action.result;
-    },
-    "Pages/ProductList/ClearAllProductFilters": (draft: Draft<ProductListState>, action: { result: ProductFilters }) => {
+    "Pages/ProductList/SetProductFilters": (draft: Draft<ProductListState>, action: { result: ProductFilters }) => {
         draft.productFilters = action.result;
     },
     "Pages/ProductList/SetFilterQuery": (draft: Draft<ProductListState>, action: { result: string }) => {
         draft.filterQuery = action.result;
     },
-    "Pages/ProductList/CompleteLoadRealTimePricing": (draft: Draft<ProductListState>, action: { realTimePricing: RealTimePricingModel }) => {
-        if (!draft.productsState.value || !draft.productsState.value.products) {
-            return;
+    "Pages/ProductList/ChangeUnitOfMeasure": (draft: Draft<ProductListState>, action: { unitOfMeasure: string, productId: string }) => {
+        const productInfo = draft.productInfosByProductId[action.productId];
+        if (productInfo) {
+            productInfo.unitOfMeasure = action.unitOfMeasure;
         }
-        const draftProducts = draft.productsState.value.products;
+    },
+    "Pages/ProductList/ChangeQtyOrdered": (draft: Draft<ProductListState>, action: { qtyOrdered: number, productId: string }) => {
+        const productInfo = draft.productInfosByProductId[action.productId];
+        if (productInfo) {
+            productInfo.qtyOrdered = action.qtyOrdered;
+        }
+    },
+    "Pages/ProductList/CompleteLoadRealTimePricing": (draft: Draft<ProductListState>, action: { realTimePricing: RealTimePricingModel }) => {
         action.realTimePricing.realTimePricingResults?.forEach(pricing => {
-            const index = draftProducts.findIndex(p => p.id === pricing.productId);
-            if (index > -1) {
-                draftProducts[index].pricing = pricing;
-                delete draftProducts[index].failedToLoadPricing;
+            const productInfo = draft.productInfosByProductId[pricing.productId];
+            if (productInfo) {
+                productInfo.pricing = pricing;
+                delete productInfo.failedToLoadPricing;
             }
         });
     },
-    "Pages/ProductList/FailedLoadRealTimePricing": (draft: Draft<ProductListState>) => {
-        if (!draft.productsState.value || !draft.productsState.value.products) {
+    "Pages/ProductList/FailedLoadRealTimePricing": (draft: Draft<ProductListState>, action: { productId?: string }) => {
+        if (action.productId) {
+            const productInfo = draft.productInfosByProductId[action.productId];
+            if (productInfo) {
+                productInfo.failedToLoadPricing = true;
+            }
             return;
         }
-        draft.productsState.value.products.forEach(o => { o.failedToLoadPricing = true; });
+
+        for (const productId in draft.productInfosByProductId) {
+            draft.productInfosByProductId[productId]!.failedToLoadPricing = true;
+        }
     },
 
     "Pages/ProductList/CompleteLoadRealTimeInventory": (draft: Draft<ProductListState>, action: { realTimeInventory: RealTimeInventoryModel }) => {
-        if (!draft.productsState.value || !draft.productsState.value.products) {
-            return;
-        }
-        const draftProducts = draft.productsState.value.products;
-
         action.realTimeInventory.realTimeInventoryResults?.forEach((inventory: ProductInventoryDto) => {
-            const index = draftProducts.findIndex(p => p.id === inventory.productId);
-            if (index > -1) {
-                const product = draftProducts[index];
-                product.qtyOnHand = inventory.qtyOnHand;
-                product.availability = inventory.inventoryAvailabilityDtos
-                    ?.find(o => o.unitOfMeasure.toLowerCase() === product.unitOfMeasure.toLowerCase())?.availability || undefined;
-                product.inventoryAvailabilities = inventory.inventoryAvailabilityDtos || undefined;
+            const productInfo = draft.productInfosByProductId[inventory.productId];
+            if (productInfo) {
+                productInfo.inventory = inventory;
             }
         });
+    },
+    "Pages/ProductList/ClearProducts": (draft: Draft<ProductListState>) => {
+        draft.lastParameter = undefined;
+        draft.parameter = undefined;
+        draft.productInfosByProductId = { };
     },
 };
 

@@ -3,7 +3,7 @@ import { FulfillmentMethod } from "@insite/client-framework/Services/SessionServ
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -20,13 +20,12 @@ import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cartState = getCurrentCartState(state);
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     const { fulfillmentMethod, pickUpWarehouse, language } = state.context.session;
-    let cart;
     let deliveryDateDisplay;
     let pickUpDateDisplay;
-    if (cartState.value) {
-        cart = cartState.value;
+    if (cart) {
         if (cart.requestedDeliveryDate) {
             deliveryDateDisplay = getLocalizedDateTime({
                 dateTime: new Date(cart.requestedDeliveryDateDisplay!),
@@ -41,9 +40,10 @@ const mapStateToProps = (state: ApplicationState) => {
         }
     }
     return {
+        cartId,
         cart,
-        shipToState: getShipToState(state, cartState.value ? cartState.value.shipToId : undefined),
-        billToState: getBillToState(state, cartState.value ? cartState.value.billToId : undefined),
+        shipToState: getShipToState(state, cart?.shipToId),
+        billToState: getBillToState(state, cart?.billToId),
         deliveryDateDisplay,
         pickUpDateDisplay,
         fulfillmentMethod,
@@ -64,13 +64,13 @@ export interface CheckoutReviewAndSubmitShippingInfoStyles {
     shippingInfoAccordionSection?: AccordionSectionPresentationProps;
 }
 
-const styles: CheckoutReviewAndSubmitShippingInfoStyles = {
+export const shippingInfoStyles: CheckoutReviewAndSubmitShippingInfoStyles = {
     shippingInfoAccordionSection: {
         titleTypographyProps: { weight: 600 },
     },
 };
 
-export const shippingInfoStyles = styles;
+const styles = shippingInfoStyles;
 
 const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
                                                             shippingPageNavLink,
@@ -82,28 +82,34 @@ const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
                                                             pickUpWarehouse,
                                                             history,
                                                             loadBillTo,
+                                                            cartId,
                                                         }) => {
-    if (!cart) {
-        return null;
-    }
-
     useEffect(() => {
-        if (!shipToState.value && cart && cart.billToId && cart.shipToId) {
+        if (!shipToState.value && !shipToState.isLoading && cart && cart.billToId && cart.shipToId) {
             loadShipTo({ billToId: cart.billToId, shipToId: cart.shipToId });
         }
-    });
+    }, [shipToState]);
 
     useEffect(() => {
-        if (!billToState.value && cart && cart.billToId) {
+        if (!billToState.value && !billToState.isLoading && cart && cart.billToId) {
             loadBillTo({ billToId: cart.billToId });
         }
-    });
+    }, [billToState]);
 
-    if (!shipToState.value || !billToState.value) {
+    if (!cart || !shipToState.value || !billToState.value) {
         return null;
     }
 
-    const goBackToShipping = () => shippingPageNavLink && history.push(shippingPageNavLink.url);
+    const goBackToShipping = () => {
+        if (!shippingPageNavLink) {
+            return;
+        }
+
+        const backUrl = cartId
+            ? `${shippingPageNavLink.url}?cartId=${cartId}`
+            : shippingPageNavLink.url;
+        return history.push(backUrl);
+    };
 
     const sectionTitle = fulfillmentMethod === FulfillmentMethod.Ship ? "Billing & Shipping Information" : "Pick Up Location";
     const { carrier, shipVia, requestedDeliveryDateDisplay, requestedPickupDateDisplay } = cart;

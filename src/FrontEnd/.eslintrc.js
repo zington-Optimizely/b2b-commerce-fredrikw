@@ -7,6 +7,7 @@ module.exports = {
         "@typescript-eslint",
         "react-hooks",
         "ordered-imports",
+        "spire",
     ],
     extends: [
         "airbnb",
@@ -140,5 +141,7 @@ module.exports = {
         "require-atomic-updates": "off", // Ideally would be "error", but would get triggered frequently by our front-end handler chain design.
         "require-await": "error", // This isn't enabled by any rule sets so we force it on here to reduce waste in the JS bundle.
         "semi": "off", // Should be "off"; conflicts with @typescript-eslint/semi.
+        "spire/avoid-dynamic-translate": "error",
+        "spire/export-styles": "error",
     }
 };

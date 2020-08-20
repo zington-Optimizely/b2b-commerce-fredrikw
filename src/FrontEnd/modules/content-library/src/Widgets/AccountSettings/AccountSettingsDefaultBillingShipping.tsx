@@ -80,7 +80,7 @@ interface WarehouseAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-const styles: AccountSettingsDefaultBillingShippingStyles = {
+export const accountSettingsDefaultBillingShippingStyles: AccountSettingsDefaultBillingShippingStyles = {
     customerSelectorGridContainer: {
         css: css`
             margin-left: 15px;
@@ -158,7 +158,7 @@ const styles: AccountSettingsDefaultBillingShippingStyles = {
     },
 };
 
-export const accountSettingsDefaultBillingShippingStyles = styles;
+const styles = accountSettingsDefaultBillingShippingStyles;
 let warehouseAddressWrapperStyle: GridItemProps | undefined;
 let shipToTitle: string;
 

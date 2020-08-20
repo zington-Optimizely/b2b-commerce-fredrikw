@@ -1,7 +1,7 @@
 import { ApiParameter, doesNotHaveExpand, get, HasPagingParameters, patch } from "@insite/client-framework/Services/ApiService";
 import {
     InvoiceCollectionModel,
-    InvoiceModel, OrderModel,
+    InvoiceModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetInvoicesApiParameter extends ApiParameter, HasPagingParameters {

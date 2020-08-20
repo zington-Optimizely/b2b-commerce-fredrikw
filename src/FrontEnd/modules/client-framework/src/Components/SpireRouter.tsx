@@ -9,7 +9,7 @@ import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
 import Toaster from "@insite/mobius/Toast/Toaster";
-import HistoryContext, { History } from "@insite/mobius/utilities/HistoryContext";
+import HistoryContext from "@insite/mobius/utilities/HistoryContext";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 

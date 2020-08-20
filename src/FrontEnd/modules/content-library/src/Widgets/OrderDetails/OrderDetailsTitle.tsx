@@ -10,14 +10,14 @@ export interface OrderDetailsTitleStyles {
     titleText: TypographyProps;
 }
 
-const styles: OrderDetailsTitleStyles = {
+export const titleStyles: OrderDetailsTitleStyles = {
     titleText: {
         variant: "h2",
         as: "h1",
     },
 };
 
-export const titleStyles = styles;
+const styles = titleStyles;
 
 const OrderDetailsTitle: React.FC = () => {
     const { value: order } = useContext(OrderStateContext);

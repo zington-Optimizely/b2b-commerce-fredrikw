@@ -1,11 +1,11 @@
-import { CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import { Category } from "@insite/client-framework/Services/CategoryService";
 import * as React from "react";
 
 export interface HasCategoryContext {
-    category?: CategoryModel;
+    category?: Category;
 }
 
-export const CategoryContext = React.createContext<CategoryModel | undefined>(undefined);
+export const CategoryContext = React.createContext<Category | undefined>(undefined);
 
 export function withCategory<P extends HasCategoryContext>(Component: React.ComponentType<P>) {
     return function CategoryComponent(props: Omit<P, keyof HasCategoryContext>) {

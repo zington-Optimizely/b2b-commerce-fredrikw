@@ -43,9 +43,9 @@ export interface ShippingAddressFormStyles {
     formFields?: CustomerAddressFormFieldStyles;
 }
 
-const baseStyles: ShippingAddressFormStyles = {};
+export const oneTimeAddressFormStyles: ShippingAddressFormStyles = {};
 
-export const oneTimeAddressFormStyles = baseStyles;
+const styles = oneTimeAddressFormStyles;
 
 class ShippingAddressForm extends React.Component<Props, State> {
     static contextType = CheckoutShippingFormContext;
@@ -55,7 +55,7 @@ class ShippingAddressForm extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            styles: mergeToNew(baseStyles, this.props.extendedStyles),
+            styles: mergeToNew(styles, this.props.extendedStyles),
         };
     }
 

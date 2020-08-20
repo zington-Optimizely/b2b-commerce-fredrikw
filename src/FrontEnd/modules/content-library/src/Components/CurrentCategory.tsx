@@ -1,19 +1,23 @@
+/* eslint-disable spire/export-styles */
 import { CategoryContext } from "@insite/client-framework/Components/CategoryContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
-import { getSelectedCategoryPath, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesSelectors";
+import loadCatalogPageByPath from "@insite/client-framework/Store/Data/CatalogPages/Handlers/LoadCatalogPageByPath";
+import { getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import loadCategory from "@insite/client-framework/Store/UNSAFE_CurrentCategory/Handlers/LoadCategory";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     const categoryPath = getSelectedCategoryPath(state) || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
+    const catalogPage = getCatalogPageStateByPath(state, categoryPath).value;
 
     return ({
-        lastCategoryPath: state.UNSAFE_currentCategory.lastCategoryPath,
-        catalogPage: state.UNSAFE_currentCategory.catalogPageState.value,
+        catalogPage,
+        category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
         categoryPath,
         breadcrumbLinks: state.components.breadcrumbs.links,
         location: getLocation(state),
@@ -21,7 +25,7 @@ const mapStateToProps = (state: ApplicationState) => {
 };
 
 const mapDispatchToProps = {
-    loadCategory,
+    loadCatalogPageByPath,
     setBreadcrumbs,
 };
 
@@ -29,23 +33,24 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 class CurrentCategory extends React.Component<Props> {
     UNSAFE_componentWillMount() {
-        const { categoryPath, lastCategoryPath } = this.props;
-        if (lastCategoryPath !== categoryPath) {
-            this.props.loadCategory({ path: categoryPath });
-            return;
-        }
-        if (this.props.catalogPage && this.props.catalogPage.breadCrumbs && !this.props.breadcrumbLinks) {
+        const { categoryPath, catalogPage } = this.props;
+        if (!catalogPage) {
+            if (categoryPath) {
+                this.props.loadCatalogPageByPath({ path: categoryPath });
+            }
+        } else if (catalogPage.breadCrumbs && !this.props.breadcrumbLinks) {
             this.setBreadcrumbs();
         }
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (this.props.categoryPath !== prevProps.categoryPath) {
-            this.props.loadCategory({ path: this.props.categoryPath });
-            return;
-        }
-        if (this.props.catalogPage && this.props.catalogPage.breadCrumbs
-            && (prevProps.catalogPage !== this.props.catalogPage || !this.props.breadcrumbLinks)) {
+        const { categoryPath, catalogPage } = this.props;
+        if (!catalogPage) {
+            if (categoryPath) {
+                this.props.loadCatalogPageByPath({ path: categoryPath });
+            }
+        } else if (catalogPage.breadCrumbs
+            && (prevProps.catalogPage !== catalogPage || !this.props.breadcrumbLinks)) {
             this.setBreadcrumbs();
         }
     }
@@ -59,7 +64,7 @@ class CurrentCategory extends React.Component<Props> {
             return this.props.children;
         }
 
-        return <CategoryContext.Provider value={this.props.catalogPage.category || undefined}>
+        return <CategoryContext.Provider value={this.props.category}>
                 {this.props.children}
             </CategoryContext.Provider>;
     }

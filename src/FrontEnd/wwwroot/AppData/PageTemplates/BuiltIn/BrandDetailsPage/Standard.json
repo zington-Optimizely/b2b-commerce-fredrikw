@@ -4,7 +4,6 @@
     "type": "BrandDetailsPage",
     "sortOrder": 0,
     "fields": {
-        "url": "BrandDetails",
         "title": "Brand Details",
         "name": "Brand Details",
         "urlSegment": "BrandDetails"

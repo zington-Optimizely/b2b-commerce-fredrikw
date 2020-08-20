@@ -1,11 +1,11 @@
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import loadDataIfNeeded from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/LoadDataIfNeeded";
 import setPlaceOrderErrorMessage from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetPlaceOrderErrorMessage";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
@@ -18,14 +18,14 @@ const mapDispatchToProps = {
     loadCurrentPromotions,
     loadCurrentCountries,
     setPlaceOrderErrorMessage,
+    loadDataIfNeeded,
 };
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cartState = getCurrentCartState(state);
+    const parsedQuery = parseQueryString<{ cartId?: string }>(getLocation(state).search);
+    const cartId = parsedQuery.cartId;
     return ({
-        shouldLoadCart: !cartState.value || !cartState.value.cartLines,
-        shouldLoadPromotions: !getCurrentPromotionsDataView(state).value,
-        shouldLoadCountries: !getCurrentCountries(state),
+        cartId,
     });
 };
 
@@ -34,15 +34,7 @@ type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<t
 class CheckoutReviewAndSubmitPage extends Component<Props> {
     componentDidMount() {
         this.props.setPlaceOrderErrorMessage({});
-        if (this.props.shouldLoadCart) {
-            this.props.loadCurrentCart();
-        }
-        if (this.props.shouldLoadPromotions) {
-            this.props.loadCurrentPromotions();
-        }
-        if (this.props.shouldLoadCountries) {
-            this.props.loadCurrentCountries();
-        }
+        this.props.loadDataIfNeeded({ cartId: this.props.cartId });
     }
 
     render() {

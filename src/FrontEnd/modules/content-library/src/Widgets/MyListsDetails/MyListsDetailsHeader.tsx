@@ -23,7 +23,7 @@ const mapStateToProps = (state: ApplicationState) => {
 
     return ({
         wishList: getWishListState(state, state.pages.myListDetails.wishListId).value,
-        wishListTotal: getWishListTotal(wishListLinesDataView),
+        wishListTotal: getWishListTotal(wishListLinesDataView, state.pages.myListDetails.productInfosByWishListLineId),
         language: state.context.session.language,
     });
 };
@@ -42,7 +42,7 @@ export interface MyListsDetailsHeaderStyles {
     descriptionStyles?: SmallHeadingAndTextStyles;
 }
 
-const styles: MyListsDetailsHeaderStyles = {
+export const headerStyles: MyListsDetailsHeaderStyles = {
     container: { gap: 15 },
     infoGridItem: {
         width: 12,
@@ -69,7 +69,7 @@ const styles: MyListsDetailsHeaderStyles = {
     descriptionGridItem: { width: 6 },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const MyListsDetailsHeader: FC<Props> = ({
                                              wishList,

@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import Zone from "@insite/client-framework/Components/Zone";
 import { ColumnAlignment } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";

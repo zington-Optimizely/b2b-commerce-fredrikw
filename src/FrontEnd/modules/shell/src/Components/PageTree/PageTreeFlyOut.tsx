@@ -1,5 +1,4 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import Edit from "@insite/shell/Components/Icons/Edit";
 import OverflowAddPage from "@insite/shell/Components/Icons/OverflowAddPage";

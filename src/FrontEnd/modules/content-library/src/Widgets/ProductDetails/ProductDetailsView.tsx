@@ -1,7 +1,7 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
@@ -21,7 +21,7 @@ export interface ProductDetailsViewStyles {
     rightColumnGridItemHidden?: HiddenProps;
 }
 
-const styles: ProductDetailsViewStyles = {
+export const viewStyles: ProductDetailsViewStyles = {
     leftColumnGridItem: { width: [12, 12, 8, 8, 8], css: css` overflow: hidden; ` },
     topGridItem: { width: 12 },
     middleGridItem: { width: [12, 12, 0, 0, 0] },
@@ -31,7 +31,7 @@ const styles: ProductDetailsViewStyles = {
     rightColumnGridItemHidden: { below: "md", css: css` width: 100%; ` },
 };
 
-export const viewStyles = styles;
+const styles = viewStyles;
 
 const ProductDetailsView: React.FC<WidgetProps> = props => {
     return <GridContainer {...styles.container}>
@@ -63,7 +63,7 @@ const widgetModule: WidgetModule = {
     definition: {
         displayName: "View",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

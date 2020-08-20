@@ -34,8 +34,13 @@ const mapDispatchToProps = {
     updateSearchFields,
 };
 
-const styles: SearchTextFieldStyles = {};
-export const orderNumberStyles = styles;
+export const searchTextFieldStyles: SearchTextFieldStyles = {};
+
+/**
+ * @deprecated Use searchTextFieldStyles instead.
+ */
+export const orderNumberStyles = searchTextFieldStyles;
+const styles = searchTextFieldStyles;
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 

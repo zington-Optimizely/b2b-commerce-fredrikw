@@ -33,14 +33,16 @@ interface OverlayManagerState {
 export default class OverlayManager extends React.Component<OverlayManagerProps, OverlayManagerState> {
     private shouldClose?: boolean;
     private closeTimer?: number;
-    private scrim?: HTMLDivElement;
-    private content?: HTMLDivElement;
     private node?: HTMLDivElement;
+
+    private contentRef = React.createRef<HTMLDivElement>();
+    private scrimRef = React.createRef<HTMLDivElement>();
 
     constructor(props: OverlayManagerProps) {
         super(props);
 
         this.state = {
+            isOpen: props.isOpen,
             afterOpen: false,
             beforeClose: false,
             closesAt: 0,
@@ -71,17 +73,9 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         clearTimeout(this.closeTimer);
     }
 
-    setScrimRef = (scrim: HTMLDivElement) => {
-        this.scrim = scrim;
-        // eslint-disable-next-line no-unused-expressions
-        this.props.scrimRef && this.props.scrimRef(scrim);
-    };
+    setScrimRef = () => this.props.setScrimRef && this.props.setScrimRef(this.scrimRef);
 
-    setContentRef = (content: HTMLDivElement) => {
-        this.content = content;
-        // eslint-disable-next-line no-unused-expressions
-        this.props.contentRef && this.props.contentRef(content);
-    };
+    setContentRef = () => this.props.setContentRef && this.props.setContentRef(this.contentRef);
 
     beforeOpen() {
         const { appElement } = this.props;
@@ -111,6 +105,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
 
     open = (event: React.SyntheticEvent | null) => {
         this.beforeOpen();
+        event && this.props.handleOpen?.(event);
         if (this.state.afterOpen && this.state.beforeClose) {
             clearTimeout(this.closeTimer);
             this.setState({ beforeClose: false });
@@ -139,7 +134,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     // Don't steal focus from inner elements
     focusContent = () => {
     // eslint-disable-next-line no-unused-expressions
-        this.content && !this.contentHasFocus() && this.content.focus();
+        this.contentRef && !this.contentHasFocus() && this.contentRef.current?.focus();
     };
 
     closeWithTimeout = (event: React.SyntheticEvent | null) => {
@@ -164,9 +159,22 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         );
     };
 
+    isPersistentAndVisible = () =>  this.props.persisted && this.contentRef.current?.style.transform !== "";
+
     handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (this.isPersistentAndVisible()) {
+            if (event.keyCode === TAB_KEY) {
+                scopeTab(this.contentRef.current as HTMLElement, event);
+            }
+
+            if (this.props.closeOnEsc && event.keyCode === ESC_KEY) {
+                event.stopPropagation();
+                this.props.handleClose?.(event);
+            }
+        }
+
         if (event.keyCode === TAB_KEY) {
-            scopeTab(this.content as HTMLElement, event);
+            scopeTab(this.contentRef.current as HTMLElement, event);
         }
 
         if (this.props.closeOnEsc && event.keyCode === ESC_KEY) {
@@ -176,6 +184,10 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     };
 
     handleScrimOnClick = (event: React.SyntheticEvent) => {
+        if (event.target as any === this.scrimRef && this.isPersistentAndVisible()) {
+            this.props.handleClose?.(event);
+            return;
+        }
         if (this.shouldClose === undefined) {
             this.shouldClose = true;
         }
@@ -194,7 +206,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     };
 
     handleScrimOnMouseDown = (event: React.SyntheticEvent) => {
-        if (!this.props.closeOnScrimClick && event.target === this.scrim) {
+        if (!this.props.closeOnScrimClick && event.target === this.scrimRef.current) {
             event.preventDefault();
         }
     };
@@ -208,28 +220,36 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     };
 
     requestClose = (event: React.SyntheticEvent) => {
-        this.props.handleClose && this.props.handleClose(event);
+        this.props.handleClose?.(event);
     };
 
     shouldBeClosed = () => !this.state.isOpen && !this.state.beforeClose;
 
-    contentHasFocus = () => document.activeElement === this.content
-    || this.content?.contains(document.activeElement);
+    contentHasFocus = () => document.activeElement === this.contentRef.current
+    || this.contentRef.current?.contains(document.activeElement);
 
     render() {
         const {
-            transition,
-            zIndexLevel,
+            children,
+            contentLabel,
             cssOverrides,
             role,
-            contentLabel,
+            setScrimRef,
+            setContentRef,
             titleId,
-            children,
+            transition,
+            zIndexLevel,
             ...otherProps
         } = this.props;
-        return this.shouldBeClosed() ? null : (
-            <Scrim
-                ref={this.setScrimRef}
+
+        setScrimRef && setScrimRef(this.scrimRef);
+        setContentRef && setContentRef(this.contentRef);
+
+        const renderComponent = (
+           <Scrim
+                persisted={this.props.persisted}
+                persistentClosed={!this.state.isOpen || !this.isPersistentAndVisible()}
+                ref={this.scrimRef}
                 onClick={this.handleScrimOnClick}
                 onMouseDown={this.handleScrimOnMouseDown}
                 onKeyDown={this.handleKeyDown}
@@ -247,7 +267,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
                 >
                     <ContentBody
                         css={cssOverrides?.contentBody}
-                        ref={this.setContentRef}
+                        ref={this.contentRef}
                         tabIndex={-1}
                         onKeyDown={this.handleKeyDown}
                         onMouseDown={this.handleContentOnMouseDown}
@@ -262,5 +282,9 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
                 </ContentContainer>
             </Scrim>
         );
+        if (!this.props.persisted) {
+            return this.shouldBeClosed() ? null : renderComponent;
+        }
+        return renderComponent;
     }
 }

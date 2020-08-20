@@ -21,7 +21,7 @@ export interface QuickOrderPageContainerStyles {
     bottomGridItem?: GridItemProps;
 }
 
-const styles: QuickOrderPageContainerStyles = {
+export const quickOrderPageContainerStyles: QuickOrderPageContainerStyles = {
     firstGridItem: { width: 12 },
     leftColumnGridItem: { width: [12, 12, 6, 4, 4] },
     rightColumnGridItem: { width: [0, 0, 6, 8, 8] },
@@ -32,7 +32,11 @@ const styles: QuickOrderPageContainerStyles = {
     bottomGridItem: { width: 12 },
 };
 
-export const viewStyles = styles;
+/**
+ * @deprecated Use quickOrderPageContainerStyles instead.
+ */
+export const viewStyles = quickOrderPageContainerStyles;
+const styles = quickOrderPageContainerStyles;
 
 const QuickOrderPageContainer: React.FC<WidgetProps> = props => {
     return <GridContainer {...styles.container}>

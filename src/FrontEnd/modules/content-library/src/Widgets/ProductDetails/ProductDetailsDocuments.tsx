@@ -1,9 +1,8 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { IconMemo, IconProps } from "@insite/mobius/Icon";
@@ -12,14 +11,9 @@ import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
-
-const mapStateToProps = (state: ApplicationState) => ({
-    documents: state.pages.productDetail.product?.documents,
-});
+type OwnProps = WidgetProps & HasProduct;
 
 export interface ProductDetailsDocumentsStyles {
     wrapper?: InjectableCss;
@@ -30,7 +24,7 @@ export interface ProductDetailsDocumentsStyles {
     documentNameText?: TypographyPresentationProps;
 }
 
-const styles: ProductDetailsDocumentsStyles = {
+export const documentsStyles: ProductDetailsDocumentsStyles = {
     wrapper: {
         css: css` padding: 10px 15px 30px; `,
     },
@@ -47,9 +41,9 @@ const styles: ProductDetailsDocumentsStyles = {
     },
 };
 
-export const documentsStyles = styles;
+const styles = documentsStyles;
 
-const ProductDetailsDocuments: React.FC<OwnProps> = ({ documents }) => {
+const ProductDetailsDocuments: React.FC<OwnProps> = ({ product: { documents } }) => {
     if (!documents || documents.length === 0) {
         return null;
     }
@@ -69,11 +63,11 @@ const ProductDetailsDocuments: React.FC<OwnProps> = ({ documents }) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withProduct(ProductDetailsDocuments)),
+    component: withProduct(ProductDetailsDocuments),
     definition: {
         displayName: "Documents",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
     },
 };
 

@@ -24,7 +24,7 @@ export interface RequestRmaHeaderStyles {
     requestRmaButtons?: RequestRmaButtonsStyles;
 }
 
-const styles: RequestRmaHeaderStyles = {
+export const headerStyles: RequestRmaHeaderStyles = {
     buttonsGridItem: {
         css: css` justify-content: flex-end; `,
         width: [1, 1, 1, 6, 6],
@@ -38,7 +38,7 @@ const styles: RequestRmaHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 

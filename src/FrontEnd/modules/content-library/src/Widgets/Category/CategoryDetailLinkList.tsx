@@ -1,14 +1,17 @@
 import { HasCategoryContext, withCategory } from "@insite/client-framework/Components/CategoryContext";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import * as React from "react";
+import { useContext } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface Props extends WidgetProps, HasCategoryContext {
-}
+type OwnProps = WidgetProps & HasCategoryContext;
 
 export interface CategoryDetailLinkListStyles {
     container?: GridContainerProps;
@@ -16,7 +19,7 @@ export interface CategoryDetailLinkListStyles {
     subCategoryNameLink?: LinkPresentationProps;
 }
 
-const styles: CategoryDetailLinkListStyles = {
+export const categoryDetailLinkListStyles: CategoryDetailLinkListStyles = {
     container: {
         gap: 0,
     },
@@ -26,28 +29,42 @@ const styles: CategoryDetailLinkListStyles = {
     },
 };
 
-export const detailLinkListStyles = styles;
+const styles = categoryDetailLinkListStyles;
 
-const CategoryDetailLinkList: React.FunctionComponent<Props> = ({
-    category,
-}: Props) => {
-    if (!category || !category.subCategories) {
+const CategoryDetailLinkList: React.FunctionComponent<OwnProps> = ({ category }: OwnProps) => {
+    if (!category || !category.subCategoryIds || category.subCategoryIds.length === 0) {
         return null;
     }
 
     return <GridContainer {...styles.container}>
-        {category.subCategories.map((subCategory) => (
-            <GridItem key={subCategory.id.toString()} {...styles.subCategoryNameLinkItem}>
-                <Link
-                    href={subCategory.path}
-                    {...styles.subCategoryNameLink}
-                    data-test-selector={`categoryDetailLinkListLink${subCategory.id}`}>
-                    {subCategory.shortDescription}
-                </Link>
+        {category.subCategoryIds.map((subCategoryId) => (
+            <GridItem key={subCategoryId.toString()} {...styles.subCategoryNameLinkItem}>
+                <SubCategoryLink subCategoryId={subCategoryId} />
             </GridItem>
         ))}
     </GridContainer>;
 };
+
+const mapStateToProps = (state: ApplicationState, ownProps: { subCategoryId: string }) => {
+    return {
+        category: getCategoryState(state, ownProps.subCategoryId).value,
+    };
+};
+
+const SubCategoryLinkView = ({ category }: ReturnType<typeof mapStateToProps>) => {
+    if (!category) {
+        return null;
+    }
+
+    return <Link
+        href={category.path}
+        {...styles.subCategoryNameLink}
+        data-test-selector={`categoryDetailsLinkListLink_${category.id}`}>
+        {category.shortDescription}
+    </Link>;
+};
+
+const SubCategoryLink = connect(mapStateToProps)(SubCategoryLinkView);
 
 const widgetModule: WidgetModule = {
     component: withCategory(CategoryDetailLinkList),

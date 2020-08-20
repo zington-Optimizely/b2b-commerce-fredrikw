@@ -17,7 +17,7 @@ export interface CartHeaderStyles {
     gridItem2?: GridItemProps;
 }
 
-const styles: CartHeaderStyles = {
+export const cartHeaderStyles: CartHeaderStyles = {
     gridItem1: {
         width: [10, 10, 8, 9, 9],
     },
@@ -26,7 +26,7 @@ const styles: CartHeaderStyles = {
     },
 };
 
-export const cartHeaderStyles = styles;
+const styles = cartHeaderStyles;
 
 const CartHeader: FC<Props> = ({ id }) => {
     return (

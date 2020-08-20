@@ -5,9 +5,7 @@ const { setupCommonConfig } = require("./common");
 const commonServerConfig = require("./server");
 const commonClientConfig = require("./client");
 
-const commonConfig = setupCommonConfig(true);
-
-const clientConfig = merge(commonConfig, commonClientConfig, {
+const clientConfig = merge(setupCommonConfig(true), commonClientConfig, {
     name: "client",
     mode: "development",
     entry: {
@@ -24,7 +22,8 @@ const clientConfig = merge(commonConfig, commonClientConfig, {
     devtool: "inline-source-map", // slowest build/slowest rebuild but shows proper source, eval-cheap-source-map is only like 2 seconds faster and gives us transpiled code
 });
 
-const serverConfig = merge(commonConfig, commonServerConfig, {
+// TODO ISC-13725 - Node 14 supports ES2020 syntax, such as `?.` and `??`; using it will reduce the amount of compiler-generated code in the JS bundle.
+const serverConfig = merge(setupCommonConfig(true, undefined, "ES2019"), commonServerConfig, {
     name: "server",
     mode: "development",
     plugins: [

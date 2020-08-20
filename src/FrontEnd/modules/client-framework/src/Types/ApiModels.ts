@@ -143,6 +143,7 @@ export interface SessionModel extends BaseModel {
     shipTo: ShipToModel | null;
     userLabel: string;
     userName: string;
+    userProfileId: string | null;
     userRoles: string;
 }
 
@@ -459,6 +460,7 @@ export interface ProductDto {
     roundingRule: string;
     salePriceLabel: string;
     score: number;
+    scoreExplanation: ScoreExplanationDto | null;
     searchBoost: number;
     searchBoostDecimal: number;
     selectedUnitOfMeasure: string;
@@ -563,6 +565,27 @@ export interface SpecificationDto {
     specificationId: string;
     specifications: SpecificationDto[] | null;
     value: string;
+}
+
+export interface ScoreExplanationDto {
+    aggregateFieldScores: FieldScoreDto[] | null;
+    detailedFieldScores: FieldScoreDetailedDto[] | null;
+    totalBoost: any;
+}
+
+export interface FieldScoreDetailedDto {
+    boost: any;
+    inverseDocumentFrequency: any;
+    matchText: string;
+    name: string;
+    score: any;
+    scoreUsed: boolean;
+    termFrequencyNormalized: any;
+}
+
+export interface FieldScoreDto {
+    name: string;
+    score: any;
 }
 
 export interface RelatedProductDto {
@@ -1067,7 +1090,7 @@ export interface ProductLineModel extends BaseModel {
 }
 
 export interface ProductModel extends BaseModel {
-    attributeTypes: AttributeTypeModel[] | null;
+    attributeTypes?: AttributeTypeModel[];
     brand: BrandModel | null;
     canAddToCart: boolean;
     canAddToWishlist: boolean;
@@ -1075,15 +1098,15 @@ export interface ProductModel extends BaseModel {
     canonicalUrl: string;
     canShowPrice: boolean;
     canShowUnitOfMeasure: boolean;
-    childTraitValues: ChildTraitValueModel[] | null;
+    childTraitValues?: ChildTraitValueModel[];
     configurationType: string;
-    content: ContentModel | null;
+    content?: ContentModel;
     customerProductNumber: string;
-    detail: DetailModel | null;
-    documents: DocumentModel[] | null;
+    detail?: DetailModel;
+    documents?: DocumentModel[];
     id: string;
     imageAltText: string;
-    images: ImageModel[] | null;
+    images?: ImageModel[];
     isDiscontinued: boolean;
     isSponsored: boolean;
     isVariantParent: boolean;
@@ -1098,15 +1121,15 @@ export interface ProductModel extends BaseModel {
     productTitle: string;
     quoteRequired: boolean;
     smallImagePath: string;
-    specifications: SpecificationModel[] | null;
+    specifications?: SpecificationModel[];
     trackInventory: boolean;
     unitListPrice: number;
     unitListPriceDisplay: string;
     unitOfMeasures: UnitOfMeasureModel[] | null;
     urlSegment: string;
-    variantTraits: VariantTraitModel[] | null;
+    variantTraits?: VariantTraitModel[];
     variantTypeId: string | null;
-    warehouses: WarehouseModel[] | null;
+    warehouses?: WarehouseModel[];
 }
 
 export interface AutocompleteItemModel extends BaseModel {
@@ -1168,6 +1191,7 @@ export interface ProductAutocompleteItemModel extends BaseModel {
     isNameCustomerOverride: boolean;
     manufacturerItemNumber: string;
     name: string;
+    styleParentId: string | null;
     subtitle: string;
     title: string;
     url: string;
@@ -2588,7 +2612,10 @@ export interface WebsiteSettingsModel extends BaseModel {
     enableCookiePrivacyPolicyPopup: boolean;
     enableDynamicRecommendations: boolean;
     googleMapsApiKey: string;
+    googleTrackingAccountId: string;
+    googleTrackingTypeComputed: string;
     mobileAppEnabled: boolean;
+    usePaymetricGateway: boolean;
     useTokenExGateway: boolean;
 }
 

@@ -3,7 +3,6 @@ import 'jest-styled-components';
 import React from 'react';
 import Button from '../Button';
 import Icon from '../Icon';
-import ChevronRight from '../Icons/ChevronRight';
 import Menu, { MenuItemText } from './Menu';
 import menuItems, { conciseNames, conciseMenuItems } from './menuData';
 import ThemeProvider from '../ThemeProvider';

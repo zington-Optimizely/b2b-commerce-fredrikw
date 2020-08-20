@@ -102,7 +102,7 @@ export interface OrderDetailsButtonSetStyles {
     buttonWrapper?: InjectableCss;
 }
 
-const styles: OrderDetailsButtonSetStyles = {
+export const orderDetailsButtonSetStyles: OrderDetailsButtonSetStyles = {
     buttonsWrapper: {
         css: css`
             display: flex;
@@ -167,7 +167,11 @@ const styles: OrderDetailsButtonSetStyles = {
     },
 };
 
-export const emailButtonStyles = styles;
+/**
+ * @deprecated Use orderDetailsButtonSetStyles instead.
+ */
+export const emailButtonStyles = orderDetailsButtonSetStyles;
+const styles = orderDetailsButtonSetStyles;
 
 const OrderDetailsButtonSet: React.FC<Props> = ({
     order,

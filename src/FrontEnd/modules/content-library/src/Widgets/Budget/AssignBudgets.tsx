@@ -103,7 +103,7 @@ export interface AssignBudgetsStyles {
     buttonsHidden?: HiddenProps;
 }
 
-const styles: AssignBudgetsStyles = {
+export const assignBudgetsStyles: AssignBudgetsStyles = {
     gridContainer: {
         gap: 0,
     },
@@ -209,7 +209,7 @@ const styles: AssignBudgetsStyles = {
     },
 };
 
-export const assignBudgetsStyles = styles;
+const styles = assignBudgetsStyles;
 
 function getEndDate(index: number, maintenanceInfo: BudgetModel) {
     const review = maintenanceInfo.budgetLineCollection![index + 1];

@@ -1,145 +1,118 @@
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { getProductCollectionRealTimePrices, ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
-import {
-    ProductPriceDto,
-    TraitValueModel,
-    VariantTraitModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import cloneDeep from "lodash/cloneDeep";
 
-type HandlerType = HandlerWithResult<
-    {
-        index?: number;
-        traitValue?: TraitValueModel;
-    },
-    {
-        selectedVariant: ProductModelExtended,
-        variantSelection: (TraitValueModel | undefined)[];
-        variantSelectionCompleted: boolean;
-        filteredVariantTraits?: VariantTraitModel[]
-    }
->;
+interface Parameter {
+    variantTraitId?: string;
+    traitValueId?: string;
+}
+
+interface Props {
+    variantSelection: SafeDictionary<string>;
+    variantSelectionCompleted: boolean;
+    selectedProductId?: string;
+    productInfo?: ProductInfo;
+}
+
+type HandlerType = Handler<Parameter, Props>;
 
 export const CopyCurrentValues: HandlerType = props => {
-    const { variantSelection, variantSelectionCompleted, initialVariantTraits } = getProductSelector(props.getState());
-    props.result = {
-        selectedVariant: {} as ProductModelExtended,
-        variantSelection: cloneDeep(variantSelection),
-        variantSelectionCompleted,
-        filteredVariantTraits: cloneDeep(initialVariantTraits),
-    };
+    const { variantSelection } = getProductSelector(props.getState());
+    props.variantSelection = cloneDeep(variantSelection);
 };
 
-export const SetVariantSelection: HandlerType = ({ parameter: { index, traitValue }, result }) => {
-    if (index === undefined) {
+export const SetVariantSelection: HandlerType = props => {
+    if (!props.parameter.variantTraitId) {
         return;
     }
 
-    result.variantSelection[index] = traitValue;
+    props.variantSelection[props.parameter.variantTraitId] = props.parameter.traitValueId;
 };
 
-export const FilterVariantTraits: HandlerType = ({ result, getState }) => {
-    // loop trough every trait and compose values
-    result.filteredVariantTraits?.forEach((variantTrait) => {
-        if (!variantTrait) {
-            return;
+export const SetVariantSelectionCompleted: HandlerType = props => {
+    const selectedVariantTraitIds = Object.keys(props.variantSelection);
+    props.variantSelectionCompleted = selectedVariantTraitIds.length > 0 && selectedVariantTraitIds.every(traitValueId => props.variantSelection[traitValueId]);
+};
+
+export const SelectVariantProduct: HandlerType = props => {
+    const state = props.getState();
+    const productState = getProductState(state, getProductSelector(state).variantModalProductId);
+
+    if (!props.variantSelectionCompleted) {
+        return;
+    }
+
+    const variantChildren = getVariantChildrenDataView(state, productState.value!.id).value!;
+
+    for (const variantChild of variantChildren) {
+        let matches = true;
+        if (!variantChild.childTraitValues) {
+            break;
+        }
+        for (const childTraitValue of variantChild.childTraitValues) {
+            if (props.variantSelection[childTraitValue.styleTraitId] !== childTraitValue.id) {
+                matches = false;
+                break;
+            }
         }
 
-        let variantdProductsFiltered = getProductSelector(getState()).initialVariantProducts!.slice();
-
-        // iteratively filter products for selected traits (except current)
-        result.variantSelection.forEach((traitValue) => {
-            if (traitValue && variantTrait.traitValues!.every(o => o.id !== traitValue.id)) {
-                variantdProductsFiltered = getProductsByVariantTraitValueId(variantdProductsFiltered, traitValue.id);
-            }
-        });
-
-        // for current trait get all distinct values in filtered products
-        const filteredValuesIds: string[] = [];
-        variantdProductsFiltered.forEach((product) => {
-            // get values for current product
-            const currentValue = product.childTraitValues!.find(traitValue => traitValue.styleTraitId === variantTrait.id);
-            // check if value already selected
-            const isCurrentValueInFilteredList = currentValue && filteredValuesIds.some(filteredValueId => filteredValueId === currentValue.id);
-            if (currentValue && !isCurrentValueInFilteredList) {
-                filteredValuesIds.push(currentValue.id);
-            }
-        });
-        variantTrait.traitValues = variantTrait.traitValues!.filter(traitValue => filteredValuesIds.indexOf(traitValue.id) > -1);
-    });
+        if (matches) {
+            props.selectedProductId = variantChild.id;
+            return;
+        }
+    }
 };
 
-export const SetVariantSelectionCompleted: HandlerType = ({ result }) => {
-    result.variantSelectionCompleted = result.variantSelection.every(item => item !== undefined && item !== null);
-};
-
-export const SelectVariantProduct: HandlerType = async ({ result, getState }) => {
-    if (!result.variantSelectionCompleted) {
-        result.selectedVariant = result.selectedVariant.id ? {} as ProductModelExtended : result.selectedVariant;
+export const SetProductInfo: HandlerType = async props => {
+    if (!props.selectedProductId) {
         return;
     }
 
-    const initialVariantProducts = getProductSelector(getState()).initialVariantProducts!;
-    const selectedVariantProduct = getSelectedVariantProduct(result.variantSelection, initialVariantProducts);
-    if (!selectedVariantProduct) {
-        return;
-    }
+    props.productInfo = createFromProduct(getProductState(props.getState(), props.selectedProductId).value!);
 
-    const product = result.selectedVariant;
-    product.id = selectedVariantProduct.id;
-    product.productNumber = selectedVariantProduct.productNumber;
-    product.pricing = selectedVariantProduct.pricing;
-    product.productTitle = selectedVariantProduct.productTitle;
-
-    const products = initialVariantProducts.map((product) => {
-        return {
-            id: product.id,
-            selectedUnitOfMeasure: product?.selectedUnitOfMeasure || "",
-            qtyOrdered: product?.qtyOrdered || 1,
-        } as ProductModelExtended;
+    const promise = new Promise(resolve => {
+        const { productInfo } = props;
+        props.dispatch(loadRealTimePricing({
+            productPriceParameters: [productInfo!],
+            onSuccess: realTimePricing => {
+                const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productInfo!.productId);
+                if (pricing) {
+                    productInfo!.pricing = pricing;
+                } else {
+                    productInfo!.failedToLoadPricing = true;
+                }
+                resolve();
+            },
+            onError: () => {
+                productInfo!.failedToLoadPricing = true;
+                resolve();
+            },
+        }));
     });
 
-    const realTimePricing = await getProductCollectionRealTimePrices({ products });
-    if (realTimePricing.realTimePricingResults) {
-        realTimePricing.realTimePricingResults.forEach((productPrice: ProductPriceDto) => {
-            const variant = initialVariantProducts.find((p: ProductModelExtended) => p.id === productPrice.productId);
-            if (variant && variant.id === product.id) {
-                product.pricing = productPrice;
-            }
-        });
-    }
+    await promise;
 };
 
-export const DispatchUpdateVariantSelection: HandlerType = ({ result, dispatch }) => {
-    dispatch({
+export const DispatchUpdateVariantSelection: HandlerType = props => {
+    props.dispatch({
         type: "Components/ProductSelector/UpdateVariantSelection",
-        selectedVariant: result.selectedVariant,
-        variantSelection: result.variantSelection,
-        variantSelectionCompleted: result.variantSelectionCompleted,
-        filteredVariantTraits: result.filteredVariantTraits,
+        variantSelection: props.variantSelection,
+        variantSelectionCompleted: props.variantSelectionCompleted,
+        productInfo: props.productInfo,
     });
 };
 
-function getSelectedVariantProduct(variantSelection: (TraitValueModel | undefined)[], variantdProducts: ProductModelExtended[]) {
-    let filteredVariantdProducts = variantdProducts.slice();
-    variantSelection.forEach((traitValue) => {
-        filteredVariantdProducts = getProductsByVariantTraitValueId(filteredVariantdProducts, traitValue!.id);
-    });
-
-    return (filteredVariantdProducts && filteredVariantdProducts.length > 0) ? filteredVariantdProducts[0] : null;
-}
-
-function getProductsByVariantTraitValueId(variantdProducts: ProductModelExtended[], variantTraitValueId: string) {
-    return variantdProducts.filter(product => product.childTraitValues!.some(value => value.id === variantTraitValueId));
-}
 
 export const chain = [
     CopyCurrentValues,
     SetVariantSelection,
-    FilterVariantTraits,
     SetVariantSelectionCompleted,
     SelectVariantProduct,
+    SetProductInfo,
     DispatchUpdateVariantSelection,
 ];
 

@@ -33,8 +33,8 @@ export interface OrderHistorySearchFieldShipToStyles {
     wrapper?: SearchFieldWrapperStyles;
 }
 
-const styles: OrderHistorySearchFieldShipToStyles = {};
-export const shipToStyles = styles;
+export const shipToStyles: OrderHistorySearchFieldShipToStyles = {};
+const styles = shipToStyles;
 
 class OrderHistorySearchFieldShipTos extends React.Component<Props> {
     componentDidMount() {

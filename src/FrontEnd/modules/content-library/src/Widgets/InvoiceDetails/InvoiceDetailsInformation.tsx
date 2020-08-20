@@ -42,7 +42,7 @@ export interface InvoiceDetailsInformationStyles {
     shippingAddressStyle?: InvoiceDetailsShippingAddressStyles;
 }
 
-const styles: InvoiceDetailsInformationStyles = {
+export const informationStyles: InvoiceDetailsInformationStyles = {
     invoiceInformationGridContainer: {
         css: css` padding: 5px; `,
     },
@@ -91,7 +91,7 @@ const styles: InvoiceDetailsInformationStyles = {
     },
 };
 
-export const informationStyles = styles;
+const styles = informationStyles;
 const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
     const { value: invoice } = useContext(InvoiceStateContext);
     if (!invoice) {

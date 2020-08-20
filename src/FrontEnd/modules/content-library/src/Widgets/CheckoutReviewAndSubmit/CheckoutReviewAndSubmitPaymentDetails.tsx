@@ -9,7 +9,7 @@ import { getSettingsCollection } from "@insite/client-framework/Store/Context/Co
 import loadTokenExConfig from "@insite/client-framework/Store/Context/Handlers/LoadTokenExConfig";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -40,10 +40,11 @@ import { css, ThemeProps, withTheme } from "styled-components";
 import PayPalButton, { PayPalButtonStyles } from "./PayPalButton";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const currentCartState = getCurrentCartState(state);
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     return ({
-        cartState: currentCartState,
-        billToState: getBillToState(state, currentCartState.value ? currentCartState.value.billToId : undefined),
+        cartState,
+        billToState: getBillToState(state, cartState.value ? cartState.value.billToId : undefined),
         countries: getCurrentCountries(state),
         websiteSettings: getSettingsCollection(state).websiteSettings,
         cartSettings: getSettingsCollection(state).cartSettings,
@@ -91,7 +92,7 @@ export interface CheckoutReviewAndSubmitPaymentDetailsStyles {
     payPalButton?: PayPalButtonStyles;
 }
 
-const styles: CheckoutReviewAndSubmitPaymentDetailsStyles = {
+export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmitPaymentDetailsStyles = {
     fieldset: {
         css: css`
             margin: 0;
@@ -209,7 +210,7 @@ const convertApiDataToTokenExCardType = (cardType: string) => {
     return loweredCardType;
 };
 
-export const checkoutReviewAndSubmitPaymentDetailsStyles = styles;
+const styles = checkoutReviewAndSubmitPaymentDetailsStyles;
 const StyledForm = getStyledWrapper("form");
 const StyledFieldSet = getStyledWrapper("fieldset");
 
@@ -293,10 +294,10 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     };
 
     useEffect(() => {
-        if (!billToState.value && cartState.value && cartState.value.billToId) {
+        if (!billToState.value && !billToState.isLoading && cartState.value && cartState.value.billToId) {
             loadBillTo({ billToId: cartState.value.billToId });
         }
-    });
+    }, [billToState]);
 
     useEffect(
         () => {

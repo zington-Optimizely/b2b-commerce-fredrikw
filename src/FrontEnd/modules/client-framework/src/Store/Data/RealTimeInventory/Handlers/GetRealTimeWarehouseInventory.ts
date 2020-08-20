@@ -3,7 +3,7 @@ import {
     getProductRealTimeInventory,
     GetProductRealTimeInventoryApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
-import { RealTimeInventoryModel, WarehouseDto } from "@insite/client-framework/Types/ApiModels";
+import { ProductInventoryDto, WarehouseDto } from "@insite/client-framework/Types/ApiModels";
 
 interface Result {
     errorMessage: string;
@@ -12,9 +12,10 @@ interface Result {
 
 type HandlerType = Handler<GetProductRealTimeInventoryApiV2Parameter & {
     onComplete: (result: Result) => void;
+    unitOfMeasure: string;
 }, {
     apiParameter: GetProductRealTimeInventoryApiV2Parameter,
-    apiResult: RealTimeInventoryModel,
+    apiResult?: ProductInventoryDto,
     result: Result,
 }>;
 
@@ -27,14 +28,12 @@ export const RequestDataFromApi: HandlerType = async props => {
 };
 
 export const FindWarehouseData: HandlerType = props => {
-    const { realTimeInventoryResults } = props.apiResult;
-
     props.result = {
         errorMessage: "Inventory is not currently available",
     };
 
-    if (realTimeInventoryResults?.length && realTimeInventoryResults[0].inventoryWarehousesDtos) {
-        const inventoryWarehousesDto = realTimeInventoryResults[0].inventoryWarehousesDtos
+    if (props.apiResult && props.apiResult.inventoryWarehousesDtos) {
+        const inventoryWarehousesDto = props.apiResult.inventoryWarehousesDtos
             .find(o => o.unitOfMeasure.toLowerCase() === props.parameter.unitOfMeasure.toLowerCase());
 
         if (inventoryWarehousesDto && inventoryWarehousesDto.warehouseDtos) {

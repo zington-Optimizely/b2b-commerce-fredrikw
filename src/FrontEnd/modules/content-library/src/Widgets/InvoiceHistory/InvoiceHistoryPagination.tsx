@@ -17,9 +17,9 @@ export interface InvoiceHistoryPaginationStyles {
     pagination?: PaginationPresentationProps;
 }
 
-const styles: InvoiceHistoryPaginationStyles = {};
+export const paginationStyles: InvoiceHistoryPaginationStyles = {};
 
-export const paginationStyles = styles;
+const styles = paginationStyles;
 
 const InvoiceHistoryPagination: FC<Props> = ({ updateSearchFields }) => {
     const invoicesDataView = useContext(InvoicesDataViewContext);

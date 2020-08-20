@@ -147,7 +147,6 @@ const InventoryMessage = styled.div<{ color: string; }>`
         margin-right: 10px;
     }
 `;
-// /* background-color: ; */
 
 const getAvailabilityColor = (availability?: AvailabilityDto) => {
     let color = "success";

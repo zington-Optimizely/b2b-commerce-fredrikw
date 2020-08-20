@@ -15,5 +15,5 @@ module.exports = {
         "^@insite/shell/(.*)$": "<rootDir>/shell/src/$1",
         "^@insite/mobius/(.*)$": "<rootDir>/mobius/src/$1",
     },
-    testPathIgnorePatterns: ["/node_modules/", "/mobius/"],
+    testPathIgnorePatterns: ["/node_modules/", "/mobius/", "/spire-linter/"],
 };

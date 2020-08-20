@@ -5,7 +5,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
 import translate from "@insite/client-framework/Translate";
-import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
+import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
 import WishListSharingStatus, { WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";

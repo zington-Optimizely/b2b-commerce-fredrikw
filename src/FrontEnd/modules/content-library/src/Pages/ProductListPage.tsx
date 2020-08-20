@@ -1,13 +1,16 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { setOpenGraphInfo } from "@insite/client-framework/Common/Utilities/setOpenGraphInfo";
+import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
+import { trackPageChange } from "@insite/client-framework/Common/Utilities/tracking";
 import { HasShellContext } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
 import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import dispatchClearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/DispatchClearProducts";
-import loadProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/LoadProducts";
+import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import clearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearProducts";
+import displayProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/DisplayProducts";
 import translate from "@insite/client-framework/Translate";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
@@ -20,19 +23,21 @@ import { connect, ResolveThunks } from "react-redux";
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     const selectedCategoryPath = getSelectedCategoryPath(state);
+    const path = selectedCategoryPath || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
+    const { pages: { productList: { productFilters, parameter, isSearchPage, filterQuery, productInfosByProductId } } } = state;
 
-    const { pages: { productList: { productFilters, productsState, catalogPage, isSearchPage, filterQuery } } } = state;
-
+    const productsDataView = getProductsDataView(state, parameter);
     return ({
         stockedItemsOnly: productFilters.stockedItemsOnly,
         query: productFilters.query,
-        productsState,
+        productsDataView,
+        firstProductDetailPath: productsDataView.value ? productInfosByProductId[productsDataView.value[0]?.id]?.productDetailPath : undefined,
         filterQuery,
         isSearchPage,
         search: location.search,
-        path: selectedCategoryPath || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname),
+        path,
         breadcrumbLinks: state.components.breadcrumbs.links,
-        productListCatalogPage: catalogPage,
+        productListCatalogPage: getCatalogPageStateByPath(state, path).value,
         websiteName: state.context.website.name,
         pages: state.pages,
         location: getLocation(state),
@@ -40,9 +45,9 @@ const mapStateToProps = (state: ApplicationState) => {
 };
 
 const mapDispatchToProps = {
-    loadProducts,
-    dispatchClearProducts,
+    displayProducts,
     setBreadcrumbs,
+    clearProducts,
 };
 
 export const ProductListPageDataContext = React.createContext<{ ref?: React.RefObject<HTMLSpanElement> }>({ ref: undefined });
@@ -53,9 +58,9 @@ class ProductListPage extends React.Component<Props> {
     afterFilters = React.createRef<HTMLSpanElement>();
 
     loadProducts() {
-        const { loadProducts, path, search } = this.props;
+        const { displayProducts, path, search } = this.props;
 
-        loadProducts({
+        displayProducts({
             path,
             queryString: search,
             isSearch: this.isSearchPath(),
@@ -67,9 +72,8 @@ class ProductListPage extends React.Component<Props> {
     }
 
     UNSAFE_componentWillMount(): void {
-        const { productsState } = this.props;
-        if (!productsState.value) {
-            // load here only on the server side or if we switch between category and search
+        const { productsDataView } = this.props;
+        if (!productsDataView.value && !productsDataView.isLoading) {
             this.loadProducts();
         }
 
@@ -78,14 +82,16 @@ class ProductListPage extends React.Component<Props> {
         } else if (this.props.isSearchPage && !this.props.breadcrumbLinks) {
             this.setSearchBreadcrumbs();
         }
+
+        this.setMetadata();
     }
 
     componentWillUnmount(): void {
-        this.props.dispatchClearProducts();
+        this.props.clearProducts();
     }
 
     componentDidUpdate(prevProps: Props): void {
-        const { filterQuery, location: { pathname, search } } = this.props;
+        const { filterQuery, location: { pathname, search }, firstProductDetailPath, websiteName, productListCatalogPage } = this.props;
 
         // handle the query string change requests initiated by the filtering widget setQueryFilter calls
         if (filterQuery !== prevProps.filterQuery) {
@@ -93,19 +99,19 @@ class ProductListPage extends React.Component<Props> {
             return;
         }
 
-        if (this.props.productsState.value && pathname === prevProps.location.pathname) {
-            const productCollection = this.props.productsState.value;
-            if (productCollection.searchTermRedirectUrl) {
-                if (productCollection.searchTermRedirectUrl.lastIndexOf("http", 0) === 0) {
-                    window.location.replace(productCollection.searchTermRedirectUrl);
+        if (this.props.productsDataView.value && pathname === prevProps.location.pathname) {
+            const { searchTermRedirectUrl, exactMatch, value: products } = this.props.productsDataView;
+            if (searchTermRedirectUrl) {
+                if (searchTermRedirectUrl.lastIndexOf("http", 0) === 0) {
+                    window.location.replace(searchTermRedirectUrl);
                 } else {
-                    this.props.history.replace(productCollection.searchTermRedirectUrl);
+                    this.props.history.replace(searchTermRedirectUrl);
                 }
                 return;
             }
 
-            if (productCollection.exactMatch && !this.props.stockedItemsOnly) {
-                let productDetailUrl = productCollection.products![0].productDetailPath;
+            if (exactMatch && !this.props.stockedItemsOnly) {
+                let productDetailUrl = firstProductDetailPath ?? products[0].canonicalUrl;
                 const parsedQuery = parseQueryString<{ query: string }>(search);
                 const query = parsedQuery.query;
                 if (!query) {
@@ -126,13 +132,37 @@ class ProductListPage extends React.Component<Props> {
             this.loadProducts();
         }
 
-        if (this.props.productListCatalogPage && this.props.productListCatalogPage !== prevProps.productListCatalogPage) {
-            setOpenGraphInfo(this.props.pages, "ProductListPage", null, this.props.websiteName);
+        if (productListCatalogPage && productListCatalogPage !== prevProps.productListCatalogPage) {
+            this.setMetadata();
+            trackPageChange();
             this.setProductListBreadcrumbs();
         }
-        if (this.props.isSearchPage && this.props.query !== prevProps.query) {
-            this.setSearchBreadcrumbs();
+
+        if (productListCatalogPage) {
+            if (this.props.isSearchPage && this.props.query !== prevProps.query) {
+                this.setSearchBreadcrumbs();
+            }
         }
+    }
+
+    setMetadata() {
+        const { productListCatalogPage, websiteName } = this.props;
+        if (!productListCatalogPage) {
+            return;
+        }
+
+        const { metaDescription, metaKeywords, openGraphImage, openGraphTitle, openGraphUrl, title, primaryImagePath, canonicalPath } = productListCatalogPage;
+
+        setPageMetadata({
+            metaDescription,
+            metaKeywords,
+            openGraphImage: openGraphImage || primaryImagePath,
+            openGraphTitle,
+            openGraphUrl,
+            title,
+            canonicalPath,
+            websiteName,
+        });
     }
 
     setProductListBreadcrumbs() {
@@ -144,7 +174,7 @@ class ProductListPage extends React.Component<Props> {
     }
 
     render() {
-        if (this.props.productsState.value?.exactMatch && !this.props.stockedItemsOnly) {
+        if (this.props.productsDataView.value && this.props.productsDataView.exactMatch && !this.props.stockedItemsOnly) {
             // prevent a flash of data when PLP immediately redirects to PDP
             return null;
         }

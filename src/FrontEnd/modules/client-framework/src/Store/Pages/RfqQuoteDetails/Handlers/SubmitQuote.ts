@@ -1,11 +1,10 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { updateQuote as updateQuoteApi, UpdateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{
     quote: QuoteModel,
-    onError?: (error: string) => void,
-} & HasOnSuccess, UpdateQuoteApiParameter, QuoteModel>;
+} & HasOnSuccess & HasOnError<string>, UpdateQuoteApiParameter, QuoteModel>;
 
 export const CheckExpirationDate: HandlerType = props => {
     if (!props.parameter.quote.isSalesperson) {
@@ -19,6 +18,7 @@ export const CheckExpirationDate: HandlerType = props => {
     props.dispatch({
         type: "Pages/RfqQuoteDetails/SetExpirationDate",
         expirationDate: undefined,
+        forceValidation: true,
     });
 
     return false;

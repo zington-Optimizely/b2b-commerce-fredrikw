@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";

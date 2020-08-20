@@ -38,7 +38,7 @@ export interface BillingAndShippingAddressStyles {
     billingAddress?: BillingAddressInfoDisplayStyles;
 }
 
-const baseStyles: BillingAndShippingAddressStyles = {
+export const billingAndShippingAddressStyles: BillingAndShippingAddressStyles = {
     container: { gap: 20 },
     carrierGridItem: {
         width: [6, 6, 3, 3, 3],
@@ -63,8 +63,6 @@ const baseStyles: BillingAndShippingAddressStyles = {
     },
 };
 
-export const billingAndShippingAddressStyles = baseStyles;
-
 const BillingAndShippingInfo = ({
     billTo,
     shipTo,
@@ -75,7 +73,7 @@ const BillingAndShippingInfo = ({
     onEditShipTo,
     extendedStyles,
 }: OwnProps) => {
-    const styles = mergeToNew(baseStyles, extendedStyles);
+    const styles = mergeToNew(billingAndShippingAddressStyles, extendedStyles);
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.carrierGridItem}>

@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";

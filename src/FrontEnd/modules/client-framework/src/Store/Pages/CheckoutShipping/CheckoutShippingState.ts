@@ -22,6 +22,7 @@ type ShippingAddressFormState = {
 };
 
 export default interface CheckoutShippingState {
+    cartId?: string;
     editedCartNotes?: string;
     isPreloadingData: boolean;
     isUpdatingCart: boolean;

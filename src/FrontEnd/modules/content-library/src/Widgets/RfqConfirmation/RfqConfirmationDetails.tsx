@@ -9,7 +9,7 @@ import { RfqConfirmationPageContext } from "@insite/content-library/Pages/RfqCon
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import React from "react";
+import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -39,7 +39,7 @@ export interface RfqConfirmationDetailsStyles {
     notesHeadingAndText?: SmallHeadingAndTextStyles;
 }
 
-const styles: RfqConfirmationDetailsStyles = {
+export const rfqConfirmationDetailsStyles: RfqConfirmationDetailsStyles = {
     detailsGridContainer: { gap: 10, css: css` margin-bottom: 20px; ` },
     leftColumnGridItem: { width: [12, 12, 12, 6, 6] },
     leftColumnInnerGridContainer: { gap: 10 },
@@ -74,9 +74,9 @@ const styles: RfqConfirmationDetailsStyles = {
     },
 };
 
-export const detailsStyles = styles;
+const styles = rfqConfirmationDetailsStyles;
 
-const RfqConfirmationDetails: React.FC<Props> = ({
+const RfqConfirmationDetails: FC<Props> = ({
     quoteState,
 }) => {
     if (!quoteState.value) {

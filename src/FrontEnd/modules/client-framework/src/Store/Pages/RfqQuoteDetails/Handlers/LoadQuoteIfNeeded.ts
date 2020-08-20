@@ -15,7 +15,7 @@ export const DispatchSetQuoteId: HandlerType = props => {
 
 export const DispatchLoadQuoteIfNeeded: HandlerType = props => {
     const quoteState = getQuoteState(props.getState(), props.parameter.quoteId);
-    if (!quoteState.value) {
+    if (!quoteState.value || !quoteState.value.quoteLineCollection) {
         props.dispatch(loadQuote({ quoteId: props.parameter.quoteId }));
     }
 };

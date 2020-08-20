@@ -1,10 +1,10 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { ApiParameter, del, get, HasPagingParameters, patch, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, del, doesNotHaveExpand, get, HasPagingParameters, patch, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { QuoteCollectionModel, QuoteLineModel, QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 const quotesUrl = "/api/v1/quotes";
 
-export type QuoteType = "sales" | "job";
+export type QuoteType = "quote" | "job";
 
 export interface GetQuotesApiParameter extends ApiParameter, HasPagingParameters {
     userProfileId?: string;
@@ -16,8 +16,8 @@ export interface GetQuotesApiParameter extends ApiParameter, HasPagingParameters
     toDate?: string;
     expireFromDate?: string;
     expireToDate?: string;
-    getSalespersonList?: boolean;
     types?: QuoteType;
+    expand?: ("salesList")[];
 }
 
 export interface GetQuoteApiParameter extends ApiParameter {
@@ -26,6 +26,7 @@ export interface GetQuoteApiParameter extends ApiParameter {
 
 export async function getQuotes(getQuotesParameter: GetQuotesApiParameter) {
     const quotes = await get<QuoteCollectionModel>(quotesUrl, getQuotesParameter);
+    cleanQuoteCollection(quotes, getQuotesParameter);
     quotes.quotes?.forEach(cleanQuote);
     return quotes;
 }
@@ -36,15 +37,21 @@ export async function getQuote(parameter: GetQuoteApiParameter) {
     return quote;
 }
 
-function cleanQuote(quoteModel: QuoteModel) {
-    quoteModel.orderDate = quoteModel.orderDate ? new Date(quoteModel.orderDate) : null;
-    quoteModel.expirationDate = quoteModel.expirationDate ? new Date(quoteModel.expirationDate) : null;
-    quoteModel.cartLines = quoteModel.quoteLineCollection;
-    quoteModel.messageCollection?.forEach(message => {
+function cleanQuote(quote: QuoteModel) {
+    quote.orderDate = quote.orderDate ? new Date(quote.orderDate) : null;
+    quote.expirationDate = quote.expirationDate ? new Date(quote.expirationDate) : null;
+    quote.cartLines = quote.quoteLineCollection;
+    quote.messageCollection?.forEach(message => {
         if (message.createdDate) {
             message.createdDate = new Date(message.createdDate);
         }
     });
+}
+
+function cleanQuoteCollection(quoteCollection: QuoteCollectionModel, parameter?: { expand?: string[] }) {
+    if (doesNotHaveExpand(parameter, "salesList")) {
+        delete quoteCollection.salespersonList;
+    }
 }
 
 export interface CreateQuoteApiParameter {
@@ -115,6 +122,30 @@ export async function deleteQuote(parameter: UpdateQuoteApiParameter): Promise<S
         return {
             successful: true,
             result,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
+}
+
+export interface UpdateQuoteLineApiParameter extends ApiParameter {
+    quoteId: string;
+    quoteLineId: string;
+    quoteLine: QuoteLineModel;
+}
+
+export async function updateQuoteLine(parameter: UpdateQuoteLineApiParameter): Promise<ServiceResult<QuoteLineModel>> {
+    try {
+        const quoteLine = await patch<QuoteLineModel>(`${quotesUrl}/${parameter.quoteId}/quotelines/${parameter.quoteLineId}`, parameter.quoteLine);
+        return {
+            successful: true,
+            result: quoteLine,
         };
     } catch (error) {
         if (isApiError(error) && error.status === 400) {

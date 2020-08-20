@@ -1,13 +1,13 @@
 import {
     ApiHandlerDiscreteParameter,
-    createHandlerChainRunnerOptionalParameter, HasOnSuccess,
+    createHandlerChainRunnerOptionalParameter, HasOnError, HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { createQuote, CreateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<
-    HasOnSuccess<QuoteModel> & { onError?: (error: string) => void },
+    HasOnSuccess<QuoteModel> & HasOnError<string>,
     CreateQuoteApiParameter,
     QuoteModel>;
 

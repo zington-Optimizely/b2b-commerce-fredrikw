@@ -110,7 +110,7 @@ export type PanelMenuProps = PanelMenuComponentProps & PanelMenuPresentationProp
 type PanelMenuPropsCompleted = PanelMenuPresentationProps & Omit<PanelMenuComponentProps, "maxDepth"> & Required<Pick<PanelMenuComponentProps, "maxDepth">>;
 
 class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
-    static defaultProps = { maxDepth: 3, closeOverlayOnClick: true };
+    static defaultProps = { maxDepth: 3 };
 
     state = {
         layer: this.props.layer + 1,
@@ -155,7 +155,7 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
                         <PanelRow
                             key={item.title}
                             isCurrent={currentUrl === item.url}
-                            onClick={currentUrl ===  item.url ? this.props.closeOverlay : undefined}
+                            onClick={this.props.closeOverlay}
                             color={applyProp("bodyColor")}
                             hasChildren={(renderChildren) || false}
                             tabIndex={this.state.layer === 0 ? 0 : -1}
@@ -236,7 +236,6 @@ class PanelMenu extends React.Component<PanelMenuPropsCompleted> {
 
 PanelMenu.defaultProps = {
     maxDepth: 3,
-    closeOverlayOnClick: true,
 };
 
 /** @component */

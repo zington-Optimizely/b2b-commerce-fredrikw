@@ -5,12 +5,10 @@ import { FulfillmentMethod } from "@insite/client-framework/Services/SessionServ
 import validateAddress, { AddressErrors } from "@insite/client-framework/Store/CommonHandlers/ValidateAddress";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import loadShipTos from "@insite/client-framework/Store/Pages/Addresses/Handlers/LoadShipTos";
-import validateBillingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateBillingAddressForm";
-import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
 import { BillToModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -23,7 +21,9 @@ type HandlerType = Handler<{}, {
 }>;
 
 export const SetCart: HandlerType = props => {
-    const cart = getCurrentCartState(props.getState()).value;
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
     if (!cart) {
         throw new Error("There was no current cart and we are trying to use it to set initial values");
     }

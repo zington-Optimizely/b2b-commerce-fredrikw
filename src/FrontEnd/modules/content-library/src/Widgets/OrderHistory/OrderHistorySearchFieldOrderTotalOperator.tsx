@@ -29,8 +29,8 @@ export interface OrderHistorySearchFieldOrderTotalOpertatorStyles {
     wrapper?: SearchFieldWrapperStyles;
 }
 
-const styles: OrderHistorySearchFieldOrderTotalOpertatorStyles = {};
-export const orderTotalOperatorStyles = styles;
+export const orderTotalOperatorStyles: OrderHistorySearchFieldOrderTotalOpertatorStyles = {};
+const styles = orderTotalOperatorStyles;
 
 class OrderHistorySearchFieldOrderTotalOperator extends React.Component<Props> {
     orderTotalOperators = ["Greater Than", "Less Than", "Equal To"];
@@ -52,6 +52,7 @@ class OrderHistorySearchFieldOrderTotalOperator extends React.Component<Props> {
                     onChange={this.handleChange}>
                     <option value="">{translate("Select")}</option>
                     {this.orderTotalOperators.map(operator =>
+                        /* eslint-disable-next-line spire/avoid-dynamic-translate */ // our rule isn't smart enough for this
                         <option key={operator} value={operator}>{translate(operator)}</option>,
                     )}
                 </Select>

@@ -41,7 +41,7 @@ export interface BudgetManagementHeaderStyles {
     overflowMenuClickables?: ClickableProps;
 }
 
-const styles: BudgetManagementHeaderStyles = {
+export const headerStyles: BudgetManagementHeaderStyles = {
     titleGridItem: {
         width: [11, 9, 7, 5, 6],
     },
@@ -78,7 +78,7 @@ const styles: BudgetManagementHeaderStyles = {
     },
 };
 
-export const headerStyles = styles;
+const styles = headerStyles;
 
 const BudgetManagementHeader: React.FunctionComponent<Props> = props => {
 

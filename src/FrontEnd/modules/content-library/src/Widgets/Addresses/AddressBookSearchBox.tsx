@@ -12,11 +12,11 @@ export interface AddressBookSearchBoxStyles {
     searchText?: TextFieldProps;
 }
 
-const styles: AddressBookSearchBoxStyles = {
+export const searchBoxStyles: AddressBookSearchBoxStyles = {
     searchText: { iconProps: { src: Search } },
 };
 
-export const searchBoxStyles = styles;
+const styles = searchBoxStyles;
 
 interface OwnProps extends WidgetProps {
 }

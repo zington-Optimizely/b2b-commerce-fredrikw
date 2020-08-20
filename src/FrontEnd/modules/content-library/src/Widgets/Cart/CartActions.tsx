@@ -1,4 +1,3 @@
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
@@ -50,7 +49,7 @@ export interface CartActionsStyles {
     saveOrderButton?: ButtonPresentationProps;
 }
 
-const styles: CartActionsStyles = {
+export const cartActionsStyles: CartActionsStyles = {
     narrowHidden: {
         above: "sm",
         css: css`
@@ -75,7 +74,7 @@ const styles: CartActionsStyles = {
     },
 };
 
-export const cartActionsStyles = styles;
+const styles = cartActionsStyles;
 
 const CartActions: FC<Props> = ({
     cart,
@@ -103,14 +102,14 @@ const CartActions: FC<Props> = ({
             return;
         }
 
-        const products = cart.cartLines?.map(cartLine => ({
-            id: cartLine.productId,
-            qtyOrdered: cartLine.qtyOrdered,
-            selectedUnitOfMeasure: cartLine.unitOfMeasure,
-        }) as ProductModelExtended) || [];
+        const productInfos = cart.cartLines?.filter(o => o.productId && o.qtyOrdered).map(cartLine => ({
+            productId: cartLine.productId!,
+            qtyOrdered: cartLine.qtyOrdered!,
+            unitOfMeasure: cartLine.unitOfMeasure,
+        })) || [];
         if (!wishListSettings.allowMultipleWishLists) {
             addToWishList({
-                products,
+                productInfos,
                 onSuccess: () => {
                     toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
                 },
@@ -118,7 +117,7 @@ const CartActions: FC<Props> = ({
             return;
         }
 
-        setAddToListModalIsOpen({ modalIsOpen: true, products });
+        setAddToListModalIsOpen({ modalIsOpen: true, productInfos });
     };
 
     const requestAQuoteClickHandler = () => {

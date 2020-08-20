@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import { setMainNavigation } from "@insite/client-framework/Components/ShellHoleConnect";
 import { MainNavigationStyles, MappedLink } from "@insite/content-library/Widgets/Header/MainNavigation";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";

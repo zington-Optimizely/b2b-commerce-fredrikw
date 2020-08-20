@@ -64,7 +64,7 @@ export interface SavedPaymentsCardListStyles {
     deleteCardModal?: TwoButtonModalStyles;
 }
 
-const styles: SavedPaymentsCardListStyles = {
+export const cardListStyles: SavedPaymentsCardListStyles = {
     headerContainer: { gap: 20 },
     titleGridItem: { width: [12, 12, 5, 5, 5] },
     titleText: {
@@ -177,7 +177,7 @@ const styles: SavedPaymentsCardListStyles = {
     },
 };
 
-export const cardListStyles = styles;
+const styles = cardListStyles;
 
 const getImageName = (cardType: string) => {
     if (cardType.toLowerCase() === "american express") {

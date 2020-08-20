@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";

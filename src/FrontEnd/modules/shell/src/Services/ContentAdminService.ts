@@ -68,9 +68,31 @@ export const getReorderingPages = () => get<{
 
 export const saveReorderPages = (pages: PageReorderModel[]) => post<SavePageResponseModel>("saveReorderPages", pages);
 
-export const getPagePublishInfo = (pageId: string) => post<PublishablePageInfoModel>("getPagePublishInfo", pageId);
+export const getPagePublishInfo = async (pageId: string) => {
+    const model = await post<PagePublishInfoModel>("getPagePublishInfo", pageId);
+    return cleanPagePublishInfoModel(model);
+};
 
-export const getPageBulkPublishInfo = () => get<PublishablePageInfoModel[]>("getPageBulkPublishInfo");
+export const getPageBulkPublishInfo = async () => {
+    const models = await get<PagePublishInfoModel[]>("getPageBulkPublishInfo");
+    const result: PagePublishInfo[] = [];
+    models.forEach(o => cleanPagePublishInfoModel(o, result));
+    return result;
+};
+
+function cleanPagePublishInfoModel(model: PagePublishInfoModel, result?: PagePublishInfo[]) {
+    const realResult = result ?? [];
+
+    model?.unpublishedContexts?.forEach(o => {
+        realResult.push({
+            ...o,
+            pageId: model.pageId,
+            name: model.name,
+        });
+    });
+
+    return realResult;
+}
 
 export const publishPages = (publishInfo: { pages: { pageId: string, contexts?: ContentContextModel[] }[], futurePublish: boolean, publishOn?: Date, rollbackOn?: Date }) =>
     post<PublishResultModel>("publishPages", publishInfo);
@@ -85,7 +107,7 @@ export type ContentContextModel = {
     deviceType: DeviceType,
 };
 
-export type PublishablePageInfoContextModel = ContentContextModel & {
+export type PublishableContentContextModel = ContentContextModel & {
     modifiedOn: string,
     modifiedBy: string,
     publishOn: string;
@@ -93,11 +115,13 @@ export type PublishablePageInfoContextModel = ContentContextModel & {
     rollbackOn: string;
 };
 
-export type PublishablePageInfoModel = {
+export type PagePublishInfoModel = {
     pageId: string;
     name: string;
-    unpublishedContexts: PublishablePageInfoContextModel[],
+    unpublishedContexts: PublishableContentContextModel[],
 };
+
+export type PagePublishInfo = PublishableContentContextModel & { pageId: string; name: string; };
 
 export type PublishResultModel = {
     success: boolean;

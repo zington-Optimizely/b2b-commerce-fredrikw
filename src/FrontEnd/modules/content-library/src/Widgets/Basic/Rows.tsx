@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import Zone from "@insite/client-framework/Components/Zone";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";

@@ -1,18 +1,25 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { addWishList, addWishListLine, addWishListLines } from "@insite/client-framework/Services/WishListService";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { addWishList, addWishListLines } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface AddToWishListParameter {
-    products: ProductModelExtended[];
+    productInfos: Omit<ProductInfo, "productDetailPath">[];
     selectedWishList?: WishListModel;
     newListName?: string;
     onSuccess?: (wishList: WishListModel) => void;
     onError?: (errorMessage: string) => void;
 }
 
-type HandlerType = HandlerWithResult<AddToWishListParameter, { wishList?: WishListModel, errorMessage?: string }>;
+interface Props {
+    result: {
+        wishList?: WishListModel,
+        errorMessage?: string,
+    },
+}
+
+type HandlerType = Handler<AddToWishListParameter, Props>;
 
 export const AddWishList: HandlerType = async props => {
     props.result = {};
@@ -33,22 +40,12 @@ export const AddLineToWishList: HandlerType = async props => {
     }
 
     try {
-        if (props.parameter.products.length === 1) {
-            const product = props.parameter.products[0];
-            const line = {
-                productId: product.id,
-                qtyOrdered: product.qtyOrdered || 1,
-                unitOfMeasure: product.selectedUnitOfMeasure,
-            };
-            await addWishListLine({ wishList: props.result.wishList, line });
-        } else {
-            const lines = props.parameter.products.map(product => ({
-                productId: product.id,
-                qtyOrdered: product.qtyOrdered || 1,
-                unitOfMeasure: product.selectedUnitOfMeasure,
-            }));
-            await addWishListLines({ wishList: props.result.wishList, lines });
-        }
+        const lines = props.parameter.productInfos.map(productInfo => ({
+            productId: productInfo.productId,
+            qtyOrdered: productInfo.qtyOrdered,
+            unitOfMeasure: productInfo.unitOfMeasure,
+        }));
+        await addWishListLines({ wishList: props.result.wishList, lines });
     } catch (error) {
         if (isApiError(error) && error.status === 400) {
             props.result.errorMessage = error.errorJson.message;

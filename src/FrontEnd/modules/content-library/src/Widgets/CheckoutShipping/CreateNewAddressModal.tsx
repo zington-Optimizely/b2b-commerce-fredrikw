@@ -29,9 +29,7 @@ export interface CreateNewAddressModalStyles {
     addressForm?: CustomerAddressFormStyles;
 }
 
-const baseStyles: CreateNewAddressModalStyles = {};
-
-export const createNewAddressModalStyles = baseStyles;
+export const createNewAddressModalStyles: CreateNewAddressModalStyles = {};
 
 const CreateNewAddressModal = ({
                                    newAddress,
@@ -46,7 +44,7 @@ const CreateNewAddressModal = ({
         return null;
     }
 
-    const [styles] = useState(() => mergeToNew(baseStyles, extendedStyles));
+    const [styles] = useState(() => mergeToNew(createNewAddressModalStyles, extendedStyles));
 
     return (
         <Modal

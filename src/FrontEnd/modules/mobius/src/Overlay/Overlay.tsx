@@ -27,9 +27,9 @@ export interface OverlayOwnProps {
     /* String indicating the role of the modal, allowing the "dialog" role to be applied if desired. Defaults to "dialog". */
     role: string | null;
     /* Function accepting the ref for the content. */
-    contentRef?: (ref: HTMLDivElement) => void;
+    setContentRef?: (ref: React.Ref<HTMLDivElement>) => void;
     /* Function accepting the ref for the scrim. */
-    scrimRef?: (ref: HTMLDivElement) => void;
+    setScrimRef?: (ref: React.Ref<HTMLDivElement>) => void;
 }
 
 export type OverlayComponentProps = MobiusStyledComponentProps<"div", {
@@ -47,6 +47,8 @@ export type OverlayComponentProps = MobiusStyledComponentProps<"div", {
     closeOnScrimClick?: boolean;
     /** Text that will be used for the aria label describing the overlay. */
     contentLabel?: string;
+    /** Handler for the open event */
+    handleOpen?: React.EventHandler<React.SyntheticEvent>;
     /** Handler for the close event */
     handleClose?: React.EventHandler<React.SyntheticEvent>;
     /**
@@ -55,7 +57,9 @@ export type OverlayComponentProps = MobiusStyledComponentProps<"div", {
      * */
     isCloseable?: boolean;
     /** Represents the current open (or closed) state of the overlay. */
-    isOpen: boolean;
+    isOpen?: boolean;
+    /** A persisted overlay is one that is always present in the DOM. */
+    persisted?: boolean;
     /** Id that will be used to describe the content of the overlay. */
     titleId: number | string;
     /** Id that will be used to describe the content of the overlay. */
@@ -74,6 +78,10 @@ class Overlay extends React.Component<OverlayProps> {
 
     private node?: HTMLElement;
     private manager?: OverlayManager | null;
+
+    static defaultProps = {
+        persisted: false,
+    };
 
     static setAppElement(element: string): void {
         ariaAppHider.setElement(element);

@@ -1,5 +1,6 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -13,7 +14,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    productsState: state.pages.productList.productsState,
+    pagination: getProductListDataViewProperty(state, "pagination"),
 });
 
 const mapDispatchToProps = {
@@ -26,7 +27,7 @@ export interface ProductListSortSelectStyles {
     select?: SelectPresentationProps;
 }
 
-const styles: ProductListSortSelectStyles = {
+export const sortSelectStyles: ProductListSortSelectStyles = {
     select: {
         labelProps: {
             css: css` width: unset; `,
@@ -37,14 +38,14 @@ const styles: ProductListSortSelectStyles = {
     },
 };
 
-export const sortSelectStyles = styles;
+const styles = sortSelectStyles;
 
-const ProductListSortSelect: FC<Props> = ({ addProductFilters, productsState }) => {
-    if (!productsState.value) {
+const ProductListSortSelect: FC<Props> = ({ addProductFilters, pagination }) => {
+    if (!pagination) {
         return null;
     }
 
-    const sortOptions = productsState.value.pagination!.sortOptions;
+    const sortOptions = pagination.sortOptions;
 
     const onChangeSortHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
         addProductFilters({ sort: event.currentTarget.value });
@@ -54,7 +55,7 @@ const ProductListSortSelect: FC<Props> = ({ addProductFilters, productsState }) 
         <Select
             {...styles.select}
             label={translate("Sort by")}
-            value={productsState.value.pagination!.sortType}
+            value={pagination!.sortType}
             labelPosition="left"
             onChange={onChangeSortHandler}
             data-test-selector="productListSortSelect"

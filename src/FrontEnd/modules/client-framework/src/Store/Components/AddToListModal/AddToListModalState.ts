@@ -1,6 +1,6 @@
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 
 export default interface AddToListModalState {
     isOpen: boolean;
-    products?: ProductModelExtended[];
+    productInfos?: Omit<ProductInfo, "productDetailPath">[];
 }

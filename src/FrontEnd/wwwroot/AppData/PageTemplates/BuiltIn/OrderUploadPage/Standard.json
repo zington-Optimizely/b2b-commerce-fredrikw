@@ -6,7 +6,6 @@
     "sortOrder": 12,
     "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
     "fields": {
-        "url": "OrderUpload",
         "title": "Order Upload",
         "name": "Order Upload",
         "urlSegment": "OrderUpload"

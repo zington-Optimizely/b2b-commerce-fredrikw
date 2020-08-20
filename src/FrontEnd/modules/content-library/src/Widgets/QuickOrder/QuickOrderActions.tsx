@@ -37,13 +37,13 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState) => {
     const settingsCollection = getSettingsCollection(state);
-    return {
-        products: state.pages.quickOrder.products,
+    return ({
+        productInfos: state.pages.quickOrder.productInfos,
         orderUploadPageLink: getPageLinkByPageType(state, "OrderUploadPage"),
         cartPageLink: getPageLinkByPageType(state, "CartPage"),
         showAddToCartConfirmationDialog: settingsCollection.productSettings.showAddToCartConfirmationDialog,
         canOrderUpload: settingsCollection.orderSettings.canOrderUpload,
-    };
+    });
 };
 
 const mapDispatchToProps = {
@@ -65,7 +65,7 @@ export interface QuickOrderActionsStyles {
     uploadOrderButton?: ButtonPresentationProps;
 }
 
-const styles: QuickOrderActionsStyles = {
+export const actionsStyles: QuickOrderActionsStyles = {
     wrapper: {
         css: css`
             display: flex;
@@ -111,11 +111,11 @@ const styles: QuickOrderActionsStyles = {
     },
 };
 
-export const actionsStyles = styles;
+const styles = actionsStyles;
 
 const QuickOrderActions: FC<Props> = ({
                                           fields,
-                                          products,
+                                          productInfos,
                                           history,
                                           orderUploadPageLink,
                                           cartPageLink,
@@ -126,7 +126,7 @@ const QuickOrderActions: FC<Props> = ({
                                           clearProducts,
                                           loadCurrentCart,
                                       }) => {
-    if (!products || products.length === 0) {
+    if (!productInfos || productInfos.length === 0) {
         return null;
     }
 
@@ -136,12 +136,12 @@ const QuickOrderActions: FC<Props> = ({
 
     React.useEffect(
         () => {
-            const isValid = products.every(product => {
-                return product.qtyOrdered && parseFloat(product.qtyOrdered.toString()) > 0;
+            const isValid = productInfos.every(productInfo => {
+                return productInfo.qtyOrdered > 0;
             });
             setAllQtysIsValid(isValid);
         },
-        [products],
+        [productInfos],
     );
 
     const uploadOrderClickHandler = () => {
@@ -149,7 +149,7 @@ const QuickOrderActions: FC<Props> = ({
     };
 
     const addAllToCartClickHandler = async () => {
-        await addCartLines({ products });
+        await addCartLines({ productInfos });
         if (showAddToCartConfirmationDialog) {
             toasterContext.addToast({ body: siteMessage("Cart_AllProductsAddedToCart"), messageType: "success" });
         }
@@ -159,7 +159,7 @@ const QuickOrderActions: FC<Props> = ({
     };
 
     const addToListClickHandler = () => {
-        setAddToListModalIsOpen({ modalIsOpen: true, products });
+        setAddToListModalIsOpen({ modalIsOpen: true, productInfos });
     };
 
     const buttons = <>

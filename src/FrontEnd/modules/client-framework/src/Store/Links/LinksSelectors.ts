@@ -1,7 +1,8 @@
-import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCategoryDepthLoaded as actualGetCategoryDepthLoaded, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
+
 
 export const getPageLinkByNodeId = (state: HasLinksState, nodeId: string) => {
     const path = state.links.nodeIdToPageLinkPath[nodeId];
@@ -72,10 +73,16 @@ export function mapLinks<L extends LinkModel, R = {}>(
     });
 }
 
+/**
+ * @deprecated Use getCategoryState instead
+ */
 export function getCategoryLink(state: HasLinksState, categoryId: string) {
-    return state.links.UNSAFE_categoryLinksById[categoryId];
+    return getCategoryState(state as ApplicationState, categoryId).value;
 }
 
+/**
+ * @deprecated Use @insite/client-framework/Store/Data/Categories/CategoriesSelectors/getCategoryDepthLoaded instead
+ */
 export function getCategoryDepthLoaded(state: HasLinksState, categoryId: string) {
-    return state.links.UNSAFE_categoryDepthLoaded[categoryId];
+    return actualGetCategoryDepthLoaded(state as ApplicationState, categoryId);
 }

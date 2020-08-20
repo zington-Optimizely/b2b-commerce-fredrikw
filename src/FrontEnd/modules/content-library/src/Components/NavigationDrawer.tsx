@@ -3,6 +3,7 @@ import { createWidgetElement } from "@insite/client-framework/Components/Content
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setInitialValues from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetInitialValues";
+import setNavDrawerIsOpen from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetNavDrawerIsOpen";
 import { getCurrencies, getFulfillmentLabel, getLanguages, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
@@ -33,7 +34,6 @@ import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
-
 const mapStateToProps = (state: ApplicationState) => {
     const linkListStateLinks = getWidgetsByPageId(state, getHeader(state).id).find(
         (widget: WidgetProps) => {
@@ -58,6 +58,7 @@ const mapStateToProps = (state: ApplicationState) => {
         })),
         showCustomerMenuItem: getSettingsCollection(state).accountSettings.enableWarehousePickup,
         fulfillmentLabel: getFulfillmentLabel(state),
+        drawerIsOpen: state.components.addressDrawer.navDrawerIsOpen,
     };
 };
 
@@ -66,6 +67,7 @@ const mapDispatchToProps = {
     setLanguage,
     signOut,
     setInitialValues,
+    setNavDrawerIsOpen,
 };
 
 interface OwnProps {
@@ -75,7 +77,7 @@ interface OwnProps {
 }
 
 interface NavigationDrawerState extends Pick<NavigationDrawerProps, "currentLocation"> {
-    open: boolean;
+    open?: boolean;
 }
 
 type NavigationDrawerProps = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -104,7 +106,7 @@ export interface NavigationDrawerStyles {
 const StyledSection = getStyledWrapper("section");
 const StyledSpan = getStyledWrapper("span");
 
-const styles: NavigationDrawerStyles = {
+export const navigationDrawerStyles: NavigationDrawerStyles = {
     menuTriggerButton: {
         shape: "pill",
         color: "secondary",
@@ -211,34 +213,24 @@ const styles: NavigationDrawerStyles = {
     applyButtonGridItem: { width: 12 },
 };
 
-export const navigationDrawerStyles = styles;
+const styles = navigationDrawerStyles;
 
 class NavigationDrawer extends React.Component<NavigationDrawerProps, NavigationDrawerState> {
     constructor(props: NavigationDrawerProps) {
         super(props);
         this.state = {
-            open: false,
             currentLocation: props.currentLocation,
         };
     }
 
-    static getDerivedStateFromProps(nextProps: NavigationDrawerProps, prevState: NavigationDrawerState) {
-        if (prevState.open) {
-            const nextPage = nextProps.currentLocation;
-            const currentPage = prevState.currentLocation;
-            if (nextPage !== currentPage) {
-                return { open: false, currentLocation: nextPage };
-            }
-        }
-        return null;
-    }
-
     openDrawer = () => {
-        this.setState({ open: true }, () => this.props.setInitialValues({}));
+        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: true });
+        this.props.setInitialValues({});
     };
 
     closeDrawer = () => {
-        this.setState({ open: false });
+        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
+        setTimeout(() => this.props.setNavDrawerIsOpen({ navDrawerIsOpen: undefined }), 300);
     };
 
     render() {
@@ -271,9 +263,10 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                     <VisuallyHidden>{translate("menu")}</VisuallyHidden>
                 </Button>
                 <Drawer
+                    draggable
                     position="left"
                     {...styles.drawer as DrawerProps}
-                    isOpen={this.state.open}
+                    isOpen={this.props.drawerIsOpen}
                     handleClose={this.closeDrawer}
                     contentLabel="menu drawer"
                 >
@@ -300,7 +293,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                             : <PanelRow
                                 {...styles.mainNavigationRow}
                                 isCurrent={currentPageUrl === signInUrl?.url}
-                                onClick={currentPageUrl === signInUrl?.url ? this.closeDrawer : undefined}
+                                onClick={this.closeDrawer}
                                 href={signInUrl?.url}>
                                 <StyledSpan {...styles.panelSectionWrapper}>
                                     <Icon src={User} {...styles.mainNavigationRowIcon} />
@@ -346,7 +339,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                         { showQuickOrder && quickOrderLink && (
                             <PanelRow
                                 isCurrent={currentPageUrl === quickOrderLink.url}
-                                onClick={currentPageUrl === quickOrderLink.url ? this.closeDrawer : undefined}
+                                onClick={this.closeDrawer}
                                 href={quickOrderLink.url}
                                 {...styles.mainNavigationRow}
                             >
@@ -360,7 +353,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 key={link.title}
                                 {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
                                 isCurrent={currentPageUrl === link.url}
-                                onClick={currentPageUrl === link.url ? this.closeDrawer : undefined}
+                                onClick={this.closeDrawer}
                                 href={link.url}
                                 target={link.openInNewWindow ? "_blank" : ""}
                             >

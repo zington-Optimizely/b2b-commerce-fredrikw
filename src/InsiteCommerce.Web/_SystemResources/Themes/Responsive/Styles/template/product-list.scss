@@ -972,7 +972,9 @@
         .vm-grid {
             .item-price {
                 margin-bottom: 0 !important;
-
+                .product-info {
+                    display: block;
+                }
                 .product-info .um .pack {
                     margin-left: 0;
                 }

@@ -45,7 +45,7 @@ type TextFieldComponentProps = MobiusStyledComponentPropsWithRef<"input", { ref?
 
 export type TextFieldProps = TextFieldComponentProps & TextFieldPresentationProps;
 
-const omitKeys = ["sizeVariant", "border", "label", "labelPosition", "theme", "cssOverrides", "iconProps", "backgroundColor", "labelProps",
+const omitKeys = ["sizeVariant", "border", "label", "labelPosition", "theme", "cssOverrides", "iconProps", "backgroundColor", "labelProps", "dispatch",
     ] as (
 keyof Omit<TextFieldProps, "id" |  "clickableText" | "disabled" | "error" | "hint" | "iconClickableProps" | "id" | "placeholder" | "required" | "disable">)[];
 

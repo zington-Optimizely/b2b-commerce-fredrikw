@@ -1,3 +1,4 @@
+/* eslint-disable spire/export-styles */
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import styled from "styled-components";

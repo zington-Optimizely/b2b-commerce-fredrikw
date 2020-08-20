@@ -6,6 +6,7 @@ import { Draft } from "immer";
 
 const initialState: AddressDrawerState = {
     isOpen: false,
+    navDrawerIsOpen: undefined,
     fulfillmentMethod: FulfillmentMethod.Ship,
     selectedBillTo: undefined,
     selectedShipTo: undefined,
@@ -17,6 +18,9 @@ const initialState: AddressDrawerState = {
 const reducer = {
     "Components/AddressDrawer/SetIsOpen": (draft: Draft<AddressDrawerState>, action: { isOpen: boolean; }) => {
         draft.isOpen = action.isOpen;
+    },
+    "Components/AddressDrawer/SetNavDrawerIsOpen": (draft: Draft<AddressDrawerState>, action: { navDrawerIsOpen?: boolean; }) => {
+        draft.navDrawerIsOpen = action.navDrawerIsOpen;
     },
     "Components/AddressDrawer/ChangeFulfillmentMethod": (draft: Draft<AddressDrawerState>, action: { fulfillmentMethod: string; }) => {
         draft.fulfillmentMethod = action.fulfillmentMethod;

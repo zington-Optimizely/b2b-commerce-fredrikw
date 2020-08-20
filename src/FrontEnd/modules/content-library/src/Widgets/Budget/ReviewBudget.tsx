@@ -90,7 +90,7 @@ export interface ReviewBudgetStyles {
     spinner?: LoadingSpinnerProps;
 }
 
-const styles: ReviewBudgetStyles = {
+export const reviewBudgetStyles: ReviewBudgetStyles = {
     filterWrapper: {
         css: css`
             display: inline-block;
@@ -141,7 +141,7 @@ const styles: ReviewBudgetStyles = {
     },
 };
 
-export const reviewBudgetStyles = styles;
+const styles = reviewBudgetStyles;
 
 class ReviewBudget extends React.Component<Props, State> {
     constructor(props: Props) {

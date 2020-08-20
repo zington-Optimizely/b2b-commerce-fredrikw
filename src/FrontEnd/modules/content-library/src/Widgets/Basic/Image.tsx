@@ -38,13 +38,13 @@ export interface ImageStyles {
     imageLink?: LinkPresentationProps;
 }
 
-const styles: ImageStyles = {
+export const imageStyles: ImageStyles = {
     image: {
         css: css` max-width: 100%; `,
     },
 };
 
-export const imageStyles = styles;
+const styles = imageStyles;
 
 const Image: React.FunctionComponent<Props> = ({
     fields,

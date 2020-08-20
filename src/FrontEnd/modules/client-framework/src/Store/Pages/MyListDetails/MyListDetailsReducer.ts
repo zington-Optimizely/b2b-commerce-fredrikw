@@ -1,16 +1,19 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import { SetAllWishListLinesIsSelectedParameter } from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
 import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
+import { ProductInventoryDto, ProductPriceDto } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: MyListDetailsState = {
     loadWishListLinesParameter: { wishListId: "", page: 1, sort: "SortOrder" },
     selectedWishListLineIds: [],
     editingSortOrder: false,
-    changedWishListLineQuantities: {},
     wishListLinesWithUpdatedQuantity: {},
     quantityAdjustmentModalIsOpen: false,
+    productInfosByWishListLineId: {},
 };
 
 const reducer = {
@@ -35,6 +38,7 @@ const reducer = {
     },
     "Pages/MyListDetails/SetWishListId": (draft: Draft<MyListDetailsState>, action: { wishListId: string }) => {
         draft.wishListId = action.wishListId;
+        draft.productInfosByWishListLineId = {};
     },
     "Pages/MyListDetails/SetWishListLineIsSelected": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string; isSelected: boolean }) => {
         if (action.isSelected) {
@@ -49,22 +53,45 @@ const reducer = {
     "Pages/MyListDetails/SetEditingSortOrder": (draft: Draft<MyListDetailsState>, action: { editingSortOrder: boolean }) => {
         draft.editingSortOrder = action.editingSortOrder;
     },
-    "Pages/MyListDetails/SetWishListLineQuantity": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string; quantity?: number }) => {
-        draft.wishListLinesWithUpdatedQuantity = {};
-        if (action.quantity) {
-            draft.changedWishListLineQuantities[action.wishListLineId] = action.quantity;
-        } else {
-            delete draft.changedWishListLineQuantities[action.wishListLineId];
-        }
-    },
-    "Pages/MyListDetails/CompleteUpdateWishListLineQuantities": (draft: Draft<MyListDetailsState>, action: { isQuantityAdjusted: boolean }) => {
-        draft.wishListLinesWithUpdatedQuantity = {};
-        Object.keys(draft.changedWishListLineQuantities).forEach(o => { draft.wishListLinesWithUpdatedQuantity[o] = true; });
-        draft.changedWishListLineQuantities = {};
+    "Pages/MyListDetails/CompleteUpdateWishListLineQuantities": (draft: Draft<MyListDetailsState>, action: { isQuantityAdjusted: boolean, wishListLinesWithUpdatedQuantity: SafeDictionary<number> }) => {
+        Object.keys(action.wishListLinesWithUpdatedQuantity).forEach(o => { draft.wishListLinesWithUpdatedQuantity[o] = true; });
         draft.quantityAdjustmentModalIsOpen = action.isQuantityAdjusted;
     },
     "Pages/MyListDetails/SetQuantityAdjustmentModalIsOpen": (draft: Draft<MyListDetailsState>, action: { modalIsOpen: boolean }) => {
         draft.quantityAdjustmentModalIsOpen = action.modalIsOpen;
+    },
+    "Pages/MyListDetails/CompleteLoadProductInfos": (draft: Draft<MyListDetailsState>, action: { productInfosByWishListLineId: SafeDictionary<ProductInfo> }) => {
+        for (const wishListLineId in action.productInfosByWishListLineId) {
+            const productInfo = action.productInfosByWishListLineId[wishListLineId]!;
+            const existingProductInfo = draft.productInfosByWishListLineId[wishListLineId];
+            if (existingProductInfo) {
+                existingProductInfo.pricing = productInfo.pricing ?? existingProductInfo.pricing;
+                existingProductInfo.inventory = productInfo.inventory ?? existingProductInfo.inventory;
+            } else {
+                draft.productInfosByWishListLineId[wishListLineId] = productInfo;
+            }
+        }
+    },
+
+    "Pages/MyListDetails/UpdateQuantity": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string, qtyOrdered: number }) => {
+        const productInfo = draft.productInfosByWishListLineId[action.wishListLineId];
+        if (!productInfo) {
+            return; // TODO ISC-133147 should this be an error?
+        }
+
+        draft.wishListLinesWithUpdatedQuantity[action.wishListLineId] = false;
+        productInfo.qtyOrdered = action.qtyOrdered;
+    },
+
+    "Pages/MyListDetails/UpdateUnitOfMeasure": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string, unitOfMeasure: string, pricing?: ProductPriceDto, inventory?: ProductInventoryDto }) => {
+        const productInfo = draft.productInfosByWishListLineId[action.wishListLineId];
+        if (!productInfo) {
+            return; // TODO ISC-133147 should this be an error?
+        }
+
+        productInfo.unitOfMeasure = action.unitOfMeasure;
+        productInfo.pricing = action.pricing;
+        productInfo.inventory = action.inventory;
     },
 };
 

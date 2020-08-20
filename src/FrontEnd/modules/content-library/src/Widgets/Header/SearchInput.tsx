@@ -80,7 +80,7 @@ export interface SearchInputStyles {
     autocompleteProductsStyles?: AutocompleteProductsStyles;
 }
 
-const baseStyles: SearchInputStyles = {
+export const searchInputStyles: SearchInputStyles = {
     input: {
         sizeVariant: "default",
         iconProps: { src: Search },
@@ -122,13 +122,15 @@ const baseStyles: SearchInputStyles = {
     },
 };
 
+const styles = searchInputStyles;
+
 class SearchInput extends React.Component<Props, State> {
     private readonly styles: SearchInputStyles;
 
     constructor(props: Props) {
         super(props);
 
-        this.styles = mergeToNew(baseStyles, props.extendedStyles);
+        this.styles = mergeToNew(styles, props.extendedStyles);
 
         this.state = {
             query: "",

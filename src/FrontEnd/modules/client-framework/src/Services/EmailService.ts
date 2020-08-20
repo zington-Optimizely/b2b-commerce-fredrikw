@@ -17,6 +17,16 @@ export interface ShareEntityApiParameter extends ApiParameter {
     url: string;
 }
 
+export interface SubmitContactUsFormApiParameter extends ApiParameter {
+    topic?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    emailAddress?: string;
+    message?: string;
+    emailTo?: string;
+}
+
 export function tellAFriend(parameter: TellAFriendApiParameter) {
     return post<TellAFriendModel>(`${emailsUrl}/tellafriend`, parameter.tellAFriendModel);
 }
@@ -27,4 +37,8 @@ export function shareEntity(parameter: ShareEntityApiParameter) {
 
 export function subscribeToList(parameter: SubscribeToListApiParameter) {
     return post<SubscribeToListApiParameter>(`${emailSubscriptionUrl}/SubscribeToList`, parameter);
+}
+
+export function submitContactUsForm(parameter: SubmitContactUsFormApiParameter) {
+    return post<SubmitContactUsFormApiParameter, void>(`${emailsUrl}/contactUs`, parameter);
 }

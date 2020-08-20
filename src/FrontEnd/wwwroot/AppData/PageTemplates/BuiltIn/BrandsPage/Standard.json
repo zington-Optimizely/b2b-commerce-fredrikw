@@ -4,7 +4,6 @@
     "type": "BrandsPage",
     "sortOrder": 0,
     "fields": {
-        "url": "Brands",
         "title": "Brands",
         "name": "Brands",
         "urlSegment": "Brands"

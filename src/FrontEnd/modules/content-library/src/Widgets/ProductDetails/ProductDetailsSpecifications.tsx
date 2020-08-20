@@ -1,11 +1,10 @@
 import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { ProductDetailPageContext } from "@insite/content-library/Pages/ProductDetailPage";
+import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import Accordion, { AccordionProps } from "@insite/mobius/Accordion";
 import { AccordionSectionPresentationProps, ManagedAccordionSection } from "@insite/mobius/AccordionSection";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -17,7 +16,6 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import * as React from "react";
-import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
@@ -25,13 +23,7 @@ const enum fields {
     showAttributes = "showAttributes",
 }
 
-type OwnProps = WidgetProps & HasProductContext & ReturnType<typeof mapStateToProps>;
-
-const mapStateToProps = (state: ApplicationState) => ({
-    documents: state.pages.productDetail.product?.documents,
-    attributeTypes: state.pages.productDetail.product?.attributeTypes,
-    specifications: state.pages.productDetail.product?.specifications,
-});
+type Props = WidgetProps & HasProduct;
 
 export interface ProductDetailsSpecificationsStyles {
     specificationsAccordion?: AccordionProps;
@@ -46,7 +38,7 @@ export interface ProductDetailsSpecificationsStyles {
     attributeTypeValuesText?: TypographyPresentationProps;
 }
 
-const styles: ProductDetailsSpecificationsStyles = {
+export const specificationsStyles: ProductDetailsSpecificationsStyles = {
     specificationsAccordion: {
         headingLevel: 2,
     },
@@ -66,17 +58,14 @@ const styles: ProductDetailsSpecificationsStyles = {
     },
 };
 
-export const specificationsStyles = styles;
+const styles = specificationsStyles;
 
-const ProductDetailsSpecifications: React.FC<OwnProps> = ({
-    product,
-    documents,
-    attributeTypes,
-    specifications,
+const ProductDetailsSpecifications: React.FC<Props> = ({
+    product: { brand, attributeTypes, documents, specifications },
     fields: { showDocuments, showAttributes },
 }) => {
     const renderingDocuments = showDocuments && documents && documents.length > 0;
-    const renderingAttributes = showAttributes && (product.brand || attributeTypes);
+    const renderingAttributes = showAttributes && (brand || attributeTypes);
     if (!renderingDocuments && !renderingAttributes && (!specifications?.length)) {
         return null;
     }
@@ -108,10 +97,10 @@ const ProductDetailsSpecifications: React.FC<OwnProps> = ({
                 data-test-selector="productDetails_specifications_attributes"
                 {...styles.specificationsAccordionSection}
             >
-                {product.brand
+                {brand
                     && <StyledWrapper {...styles.attributeTypeWrapper}>
                         <Typography {...styles.attributeTypeLabelText}>{translate("Brand")}:&nbsp;</Typography>
-                        <Typography {...styles.attributeTypeValuesText}>{product.brand.name}</Typography>
+                        <Typography {...styles.attributeTypeValuesText}>{brand.name}</Typography>
                     </StyledWrapper>
                 }
                 {attributeTypes && attributeTypes.map(attributeType =>
@@ -139,11 +128,11 @@ const ProductDetailsSpecifications: React.FC<OwnProps> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withProduct(ProductDetailsSpecifications)),
+    component: withProduct(ProductDetailsSpecifications),
     definition: {
         displayName: "Specification",
         group: "Product Details",
-        allowedContexts: [ProductDetailPageContext],
+        allowedContexts: [ProductDetailsPageContext],
         fieldDefinitions: [
             {
                 name: fields.showDocuments,

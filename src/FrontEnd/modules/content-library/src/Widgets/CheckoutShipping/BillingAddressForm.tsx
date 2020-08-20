@@ -39,9 +39,13 @@ export interface BillingAddressFormStyles {
     formFields?: CustomerAddressFormFieldStyles;
 }
 
-const baseStyles: BillingAddressFormStyles = {};
+export const billingAddressFormStyles: BillingAddressFormStyles = {};
 
-export const oneTimeAddressFormStyles = baseStyles;
+/**
+ * @deprecated Use billingAddressFormStyles instead.
+ */
+export const oneTimeAddressFormStyles = billingAddressFormStyles;
+const styles = billingAddressFormStyles;
 
 class BillingAddressForm extends React.Component<Props, { styles: BillingAddressFormStyles }> {
     static contextType = CheckoutShippingFormContext;
@@ -51,7 +55,7 @@ class BillingAddressForm extends React.Component<Props, { styles: BillingAddress
     constructor(props: Props) {
         super(props);
         this.state = {
-            styles: mergeToNew(baseStyles, this.props.extendedStyles),
+            styles: mergeToNew(styles, this.props.extendedStyles),
         };
     }
 

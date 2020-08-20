@@ -1,6 +1,7 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -21,8 +22,8 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = ({ pages: { productList: { productsState } } }: ApplicationState) => ({
-    attributeTypeFacets: productsState.value ? productsState.value.attributeTypeFacets : undefined,
+const mapStateToProps = (state: ApplicationState) => ({
+    attributeTypeFacets: getProductListDataViewProperty(state, "attributeTypeFacets"),
 });
 
 const mapDispatchToProps = {
@@ -52,11 +53,11 @@ const ProductListAttributeFilters: FC<Props> = ({ attributeTypeFacets, addProduc
     };
 
     return <>
-        {attributeTypeFacets?.map(a => a.attributeValueFacets
+        {attributeTypeFacets.map(a => a.attributeValueFacets
             ? <ProductListFiltersAccordionSection
                 key={a.attributeTypeId}
                 title={a.nameDisplay}
-                facets={a.attributeValueFacets?.map<FacetModel>(av => ({
+                facets={a.attributeValueFacets.map<FacetModel>(av => ({
                     ...av,
                     id: av.attributeValueId,
                     name: av.valueDisplay,

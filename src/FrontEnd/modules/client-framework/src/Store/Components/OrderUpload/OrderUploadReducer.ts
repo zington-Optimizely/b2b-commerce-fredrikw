@@ -2,7 +2,6 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import { BatchLoadProductsResult } from "@insite/client-framework/Store/Components/OrderUpload/Handlers/BatchLoadProducts";
 import { ProcessFileResult } from "@insite/client-framework/Store/Components/OrderUpload/Handlers/ProcessFile";
 import OrderUploadState from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
-import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: OrderUploadState = {

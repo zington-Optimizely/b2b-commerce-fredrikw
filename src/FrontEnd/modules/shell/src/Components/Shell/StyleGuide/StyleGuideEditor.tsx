@@ -17,7 +17,6 @@ import TextField from "@insite/mobius/TextField";
 import Typography from "@insite/mobius/Typography";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import get from "@insite/mobius/utilities/get";
-import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
 import { RedoSrc } from "@insite/shell/Components/Icons/Redo";

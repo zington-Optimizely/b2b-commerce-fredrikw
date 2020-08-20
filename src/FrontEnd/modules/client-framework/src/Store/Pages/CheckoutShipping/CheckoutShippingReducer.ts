@@ -67,6 +67,9 @@ const reducer = {
             formErrors: {},
         };
     },
+    "Pages/CheckoutShipping/SetCartId": (draft: Draft<CheckoutShippingState>, action: { cartId?: string }) => {
+        draft.cartId = action.cartId;
+    },
     "Pages/CheckoutShipping/SetIsPreloadingData": (draft: Draft<CheckoutShippingState>, action: { isPreloadingData: boolean }) => {
         draft.isPreloadingData = action.isPreloadingData;
     },

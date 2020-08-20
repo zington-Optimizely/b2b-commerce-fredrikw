@@ -12,12 +12,12 @@ export interface OrderUploadPageContainerStyles {
     instructionsGridItem?: GridItemProps;
 }
 
-const styles: OrderUploadPageContainerStyles = {
+export const orderUploadPageContainerStyles: OrderUploadPageContainerStyles = {
     fileUploadGridItem: { width: [12, 12, 6, 6, 6] },
     instructionsGridItem: { width: [12, 12, 6, 6, 6] },
 };
 
-export const orderUploadPageContainerStyles = styles;
+const styles = orderUploadPageContainerStyles;
 
 const OrderUploadPageContainer: FC<WidgetProps> = (props) => {
     return (

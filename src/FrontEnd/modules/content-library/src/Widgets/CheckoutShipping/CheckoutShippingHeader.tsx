@@ -1,6 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -18,10 +18,11 @@ import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const cart = getCurrentCartState(state);
+    const { cartId } = state.pages.checkoutShipping;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     const { isUpdatingCart } = state.pages.checkoutShipping;
     return {
-        isContinueButtonDisabled: !cart.value || cart.isLoading || isUpdatingCart,
+        isContinueButtonDisabled: !cartState.value || cartState.isLoading || isUpdatingCart,
         pageTitle: getCurrentPage(state).fields.title,
     };
 };
@@ -36,7 +37,7 @@ export interface CheckoutShippingHeaderStyles {
     continueButton?: ButtonPresentationProps;
 }
 
-const styles: CheckoutShippingHeaderStyles = {
+export const pageHeaderStyles: CheckoutShippingHeaderStyles = {
     gridItem: { width: 12 },
     heading: { variant: "h2" },
     buttonsWrapper: {
@@ -62,7 +63,7 @@ const styles: CheckoutShippingHeaderStyles = {
     continueButton: { css: css` width: 100%; ` },
 };
 
-export const pageHeaderStyles = styles;
+const styles = pageHeaderStyles;
 
 const CheckoutShippingHeader: FC<Props> = ({
     pageTitle,

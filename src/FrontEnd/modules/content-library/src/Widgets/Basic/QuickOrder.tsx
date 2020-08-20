@@ -1,5 +1,5 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -46,7 +46,7 @@ export interface QuickOrderStyles {
     productSelector?: ProductSelectorStyles;
 }
 
-const styles: QuickOrderStyles = {
+export const quickOrderStyles: QuickOrderStyles = {
     container: {
         gap: 15,
     },
@@ -86,7 +86,7 @@ const styles: QuickOrderStyles = {
     },
 };
 
-export const quickOrderStyles = styles;
+const styles = quickOrderStyles;
 
 const QuickOrder: FC<Props> = ({
     canOrderUpload,
@@ -98,11 +98,11 @@ const QuickOrder: FC<Props> = ({
 }) => {
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
 
-    const addProductToCart = async (product: ProductModelExtended) => {
+    const addProductToCart = async (productInfo: ProductInfo) => {
         await addToCart({
-            productId: product.id.toString(),
-            qtyOrdered: product.qtyOrdered,
-            unitOfMeasure: product.unitOfMeasure,
+            productId: productInfo.productId,
+            qtyOrdered: productInfo.qtyOrdered,
+            unitOfMeasure: productInfo.unitOfMeasure,
             onError: () => {
                 setErrorMessage(siteMessage("Product_NotFound"));
             },

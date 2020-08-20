@@ -33,7 +33,7 @@ export interface LanguageMenuStyles {
     languageSelect?: SelectPresentationProps;
 }
 
-const styles: LanguageMenuStyles = {
+export const languageMenuStyles: LanguageMenuStyles = {
     languageWrapper: {
         css: css`
             display: flex;
@@ -66,7 +66,7 @@ interface OwnProps extends WidgetProps {
 export const LogoImage = styled.img` height: 22px; `;
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
-export const languageMenuStyles = styles;
+const styles = languageMenuStyles;
 const LanguageMenu: FC<Props> = ({ languages, currentLanguage, fields, setLanguage }) => {
     if (!languages || languages.length <= 1) {
         return null;

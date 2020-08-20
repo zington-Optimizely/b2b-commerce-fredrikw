@@ -1,5 +1,5 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import translate from "@insite/client-framework/Translate";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
@@ -14,7 +14,6 @@ import React, { FC } from "react";
 import { css } from "styled-components";
 
 interface OwnProps {
-    product: ProductModelExtended;
     extendedStyles?: ProductQuantityBreakPricingStyles;
 }
 
@@ -53,15 +52,10 @@ export const productQuantityBreakPricingStyles: ProductQuantityBreakPricingStyle
     savingsCell: { alignX: "center" },
 };
 
-const ProductQuantityBreakPricing: FC<OwnProps> = ({
-    product,
+const ProductQuantityBreakPricing: FC<OwnProps & HasProduct> = ({
+    productInfo: { pricing },
     extendedStyles,
 }) => {
-    const { pricing } = product;
-    if (!pricing || !pricing.unitRegularBreakPrices || pricing.unitRegularBreakPrices.length < 2) {
-        return null;
-    }
-
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
     const modalCloseHandler = () => {
         setModalIsOpen(false);
@@ -71,6 +65,10 @@ const ProductQuantityBreakPricing: FC<OwnProps> = ({
     };
 
     const [styles] = React.useState(() => mergeToNew(productQuantityBreakPricingStyles, extendedStyles));
+
+    if (!pricing || !pricing.unitRegularBreakPrices || pricing.unitRegularBreakPrices.length < 2) {
+        return null;
+    }
 
     return <>
         <Link {...styles.viewLink} onClick={viewLinkClickHandler} data-test-selector="quantityBreakPricingLink">
@@ -90,7 +88,7 @@ const ProductQuantityBreakPricing: FC<OwnProps> = ({
                     <DataTableHeader {...styles.savingsHeader} title={translate("Savings")} />
                 </DataTableHead>
                 <DataTableBody {...styles.tableBody}>
-                    {product.pricing!.unitRegularBreakPrices!.map(breakPrice =>
+                    {pricing!.unitRegularBreakPrices!.map(breakPrice =>
                         <DataTableRow {...styles.tableRow} key={breakPrice.breakQty} data-test-selector="breakPriceRow">
                             <DataTableCell {...styles.breakQtyCell} data-test-selector="breakQty">{breakPrice.breakQty}</DataTableCell>
                             <DataTableCell {...styles.breakPriceCell} data-test-selector="price">{breakPrice.breakPriceDisplay}</DataTableCell>
@@ -103,4 +101,4 @@ const ProductQuantityBreakPricing: FC<OwnProps> = ({
     </>;
 };
 
-export default ProductQuantityBreakPricing;
+export default withProduct(ProductQuantityBreakPricing);

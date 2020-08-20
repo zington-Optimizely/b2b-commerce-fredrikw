@@ -52,7 +52,7 @@ export interface RecentWishListsStyles {
     wishListCard?: WishListCardStyles;
 }
 
-const styles: RecentWishListsStyles = {
+export const recentWishListsStyles: RecentWishListsStyles = {
     wishListCardGridItem: {
         width: 12,
         css: css` padding: 0; `,
@@ -66,7 +66,7 @@ const styles: RecentWishListsStyles = {
     },
 };
 
-export const recentWishListsStyles = styles;
+const styles = recentWishListsStyles;
 
 class RecentWishLists extends React.Component<Props> {
     componentDidMount() {

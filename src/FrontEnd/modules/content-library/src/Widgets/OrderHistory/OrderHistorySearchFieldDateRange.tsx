@@ -34,7 +34,7 @@ export interface OrderHistoryDateRangeStyles {
     toDate?: DatePickerPresentationProps;
 }
 
-const styles: OrderHistoryDateRangeStyles = {
+export const dateRangeStyles: OrderHistoryDateRangeStyles = {
     datePickersWrapper: { css: css` display: flex; ` },
     fromDate: {
         cssOverrides: {
@@ -53,7 +53,7 @@ const styles: OrderHistoryDateRangeStyles = {
     },
 };
 
-export const dateRangeStyles = styles;
+const styles = dateRangeStyles;
 
 const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = (props) => {
 

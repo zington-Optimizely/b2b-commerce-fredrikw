@@ -14,7 +14,7 @@ export interface OrderDetailsStatusStyles {
     status?: TypographyProps;
 }
 
-const styles: OrderDetailsStatusStyles = {
+export const statusStyles: OrderDetailsStatusStyles = {
     wrapper: {
         css: css` padding-bottom: 10px; `,
     },
@@ -28,7 +28,7 @@ const styles: OrderDetailsStatusStyles = {
     },
 };
 
-export const statusStyles = styles;
+const styles = statusStyles;
 
 const OrderDetailsStatus: FC = () => {
     const { value: order } = useContext(OrderStateContext);

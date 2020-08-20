@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
 import { BaseTheme } from "../globals/baseTheme";
-import LoadingSpinner, { LoadingSpinnerStyle } from "../LoadingSpinner";
+import LoadingSpinner from "../LoadingSpinner";
 import DisablerContext from "../utilities/DisablerContext";
 import getProp from "../utilities/getProp";
 import { StyledProp } from "../utilities/InjectableCss";

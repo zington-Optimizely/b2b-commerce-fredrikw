@@ -1,4 +1,4 @@
-import { HasProductContext, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import { ProductCardSelections } from "@insite/content-library/Widgets/ProductList/ProductCardSelections";
 import ProductListActions from "@insite/content-library/Widgets/ProductList/ProductListActions";
 import ProductListProductImage from "@insite/content-library/Widgets/ProductList/ProductListProductImage";
@@ -8,8 +8,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends ProductCardSelections, HasProductContext {
-}
+type Props = ProductCardSelections & HasProduct;
 
 export interface ProductListProductCardStyles {
     gridContainer?: GridContainerProps;
@@ -20,7 +19,7 @@ export interface ProductListProductCardStyles {
     actionsGridItem?: GridItemProps;
 }
 
-const styles: ProductListProductCardStyles = {
+export const productCardStyles: ProductListProductCardStyles = {
     gridContainer: {
         gap: 0,
         css: css`
@@ -43,21 +42,26 @@ const styles: ProductListProductCardStyles = {
     },
 };
 
-export const productCardStyles = styles;
+const styles = productCardStyles;
 
-const ProductListProductCard: FC<OwnProps> = ({ product, ...otherProps }) => {
+const ProductListProductCard: FC<Props> = props => {
     return (
-        <GridContainer {...styles.gridContainer} data-test-selector={`productListProductCard${product.id}`}>
+        <GridContainer {...styles.gridContainer} data-test-selector={`productListProductCard${props.product.id}`}>
             <GridItem {...styles.leftColumnGridItem}>
-                <ProductListProductImage {...otherProps}/>
+                <ProductListProductImage showImage={props.showImage} showCompare={props.showCompare} />
             </GridItem>
             <GridItem {...styles.rightColumnGridItem}>
                 <GridContainer {...styles.rightColumnGridContainer}>
                     <GridItem {...styles.infoGridItem}>
-                        <ProductListProductInformation {...otherProps}/>
+                        <ProductListProductInformation
+                            showBrand={props.showBrand}
+                            showTitle={props.showTitle}
+                            showPartNumbers={props.showPartNumbers}
+                            showAvailability={props.showAvailability}
+                            showAttributes={props.showAttributes} />
                     </GridItem>
                     <GridItem {...styles.actionsGridItem}>
-                        <ProductListActions {...otherProps}/>
+                        <ProductListActions showPrice={props.showPrice} showAddToList={props.showAddToList}/>
                     </GridItem>
                 </GridContainer>
             </GridItem>

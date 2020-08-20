@@ -1,8 +1,8 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getDefaultPageSize, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getCurrentPromotionsDataView, getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CartLinesList, { CartLinesListStyles } from "@insite/content-library/Components/CartLinesList";
@@ -13,12 +13,18 @@ import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    cartState: getCurrentCartState(state),
-    promotionsDataView: getCurrentPromotionsDataView(state),
-    defaultPageSize: getDefaultPageSize(state),
-    settingsCollection: getSettingsCollection(state),
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+    const promotionsDataView = cartId ? getPromotionsDataView(state, cartId) : getCurrentPromotionsDataView(state);
+
+    return {
+        cartState,
+        promotionsDataView,
+        defaultPageSize: getDefaultPageSize(state),
+        settingsCollection: getSettingsCollection(state),
+    };
+};
 
 const mapDispatchToProps = {
 };
@@ -30,7 +36,7 @@ export interface CheckoutReviewAndSubmitProductListStyles {
     orderLinesList?: CartLinesListStyles;
 }
 
-const styles: CheckoutReviewAndSubmitProductListStyles = {
+export const productListStyles: CheckoutReviewAndSubmitProductListStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -41,19 +47,19 @@ const styles: CheckoutReviewAndSubmitProductListStyles = {
     },
 };
 
-export const productListStyles = styles;
+const styles = productListStyles;
 
 const CheckoutReviewAndSubmitProductList: FC<Props> = ({
-                                                           cartState,
-                                                           promotionsDataView,
-                                                           settingsCollection,
-                                                       }) => {
+    cartState,
+    promotionsDataView,
+    settingsCollection,
+}) => {
     const [isCondensed, setIsCondensed] = useState(false);
 
     if (!cartState.value || !cartState.value.cartLines || !promotionsDataView.value) {
         return (
             <StyledWrapper {...styles.centeringWrapper}>
-                <LoadingSpinner/>
+                <LoadingSpinner />
             </StyledWrapper>
         );
     }

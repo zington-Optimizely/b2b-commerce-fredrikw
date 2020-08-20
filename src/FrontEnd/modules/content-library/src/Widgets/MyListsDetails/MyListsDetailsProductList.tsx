@@ -1,5 +1,6 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
@@ -9,7 +10,6 @@ import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetail
 import setQuantityAdjustmentModalIsOpen from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetQuantityAdjustmentModalIsOpen";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
 import updateWishListLine from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLine";
-import updateWishListLineQuantities from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineQuantities";
 import translate from "@insite/client-framework/Translate";
 import { WishListLineModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -37,6 +37,7 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => ({
     wishListDataView: getWishListState(state, state.pages.myListDetails.wishListId),
     wishListLinesDataView: getWishListLinesDataView(state, state.pages.myListDetails.loadWishListLinesParameter),
+    productInfosByWishListLineId: state.pages.myListDetails.productInfosByWishListLineId,
     loadWishListLinesParameter: state.pages.myListDetails.loadWishListLinesParameter,
     editingSortOrder: state.pages.myListDetails.editingSortOrder,
     quantityAdjustmentModalIsOpen: state.pages.myListDetails.quantityAdjustmentModalIsOpen,
@@ -47,7 +48,6 @@ const mapDispatchToProps = {
     loadWishListLines,
     updateWishListLine,
     deleteWishListLine,
-    updateWishListLineQuantities,
     setQuantityAdjustmentModalIsOpen,
 };
 
@@ -75,7 +75,7 @@ export interface MyListsDetailsProductListStyles {
     quantityAdjustedText?: TypographyPresentationProps;
 }
 
-const styles: MyListsDetailsProductListStyles = {
+export const productListStyles: MyListsDetailsProductListStyles = {
     centeringWrapper: {
         css: css` 
             height: 300px;
@@ -175,21 +175,21 @@ const styles: MyListsDetailsProductListStyles = {
     quantityAdjustmentModal: { sizeVariant: "medium" },
 };
 
-export const productListStyles = styles;
+const styles = productListStyles;
 
 const MyListsDetailsProductList: React.FC<Props> = ({
-    wishListDataView,
-    wishListLinesDataView,
-    loadWishListLinesParameter,
-    editingSortOrder,
-    quantityAdjustmentModalIsOpen,
-    updateLoadWishListLinesParameter,
-    loadWishListLines,
-    updateWishListLine,
-    deleteWishListLine,
-    updateWishListLineQuantities,
-    setQuantityAdjustmentModalIsOpen,
-}) => {
+                                                        wishListDataView,
+                                                        wishListLinesDataView,
+                                                        productInfosByWishListLineId,
+                                                        loadWishListLinesParameter,
+                                                        editingSortOrder,
+                                                        quantityAdjustmentModalIsOpen,
+                                                        updateLoadWishListLinesParameter,
+                                                        loadWishListLines,
+                                                        updateWishListLine,
+                                                        deleteWishListLine,
+                                                        setQuantityAdjustmentModalIsOpen,
+                                                    }) => {
     if (!wishListDataView.value || !wishListLinesDataView.value || wishListLinesDataView.isLoading || !wishListLinesDataView.pagination) {
         return <StyledWrapper {...styles.centeringWrapper}>
             <LoadingSpinner {...styles.spinner} />
@@ -198,7 +198,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
 
     const wishList = wishListDataView.value;
     const wishListLines = wishListLinesDataView.value;
-    const { pagination, products } = wishListLinesDataView;
+    const { pagination } = wishListLinesDataView;
 
     const [wishListLineToAction, setWishListLineToAction] = React.useState<WishListLineModel | null>(null);
     const [deleteLineModalIsOpen, setDeleteLineModalIsOpen] = React.useState(false);
@@ -318,11 +318,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
         setQuantityAdjustmentModalIsOpen({ modalIsOpen: false });
     };
 
-    const updateQuantityClickHandler = () => {
-        updateWishListLineQuantities();
-    };
-
-    if (!wishListLines || wishListLines.length === 0 || products.length === 0) {
+    if (!wishListLines || wishListLines.length === 0 || Object.keys(productInfosByWishListLineId).length === 0) {
         return <StyledWrapper {...styles.centeringWrapper}>
             <Typography {...styles.messageText} data-test-selector="noItemsMessage">
                 {loadWishListLinesParameter.query ? siteMessage("Lists_NoResultsMessage") : siteMessage("Lists_NoItemsInList")}
@@ -334,12 +330,11 @@ const MyListsDetailsProductList: React.FC<Props> = ({
         <LinesContainer
             wishList={wishList}
             wishListLines={wishListLines}
-            products={products}
+            productInfosByWishListLineId={productInfosByWishListLineId}
             editingSortOrder={editingSortOrder}
             updateSortOrder={updateSortOrder}
             onDeleteClick={deleteClickHandler}
             onEditNotesClick={editNotesClickHandler}
-            onUpdateQuantityClick={updateQuantityClickHandler}
             useDragHandle={true}
             lockAxis="y"
             onSortStart={(_, e) => e.preventDefault()}
@@ -355,7 +350,7 @@ const MyListsDetailsProductList: React.FC<Props> = ({
                     resultsCount={pagination.totalItemCount}
                     resultsPerPageOptions={pagination.pageSizeOptions}
                     onChangePage={changePageHandler}
-                    onChangeResultsPerPage={changeResultsPerPageHandler} />
+                    onChangeResultsPerPage={changeResultsPerPageHandler}/>
             </GridItem>
         </GridContainer>
         <TwoButtonModal
@@ -369,14 +364,14 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             submitTestSelector="submitDeleteListItem"
         />
         {wishListLineToAction
-            && <Modal
-                {...styles.editNotesModal}
-                headline={translate(`${wishListLineToAction.notes ? "Edit" : "Add"} Notes`)}
-                isOpen={editNotesModalIsOpen}
-                handleClose={editNotesModalCancelHandler}
-            >
-                <EditNotesForm wishListLine={wishListLineToAction} onCancel={editNotesModalCancelHandler} onSubmit={editNotesModalSubmitHandler} />
-            </Modal>
+        && <Modal
+            {...styles.editNotesModal}
+            headline={translate(`${wishListLineToAction.notes ? "Edit" : "Add"} Notes`)}
+            isOpen={editNotesModalIsOpen}
+            handleClose={editNotesModalCancelHandler}
+        >
+            <EditNotesForm wishListLine={wishListLineToAction} onCancel={editNotesModalCancelHandler} onSubmit={editNotesModalSubmitHandler}/>
+        </Modal>
         }
         <Modal
             {...styles.quantityAdjustmentModal}
@@ -394,24 +389,22 @@ const DragHandle = SortableHandle(() => <Icon {...styles.dragHandleIcon} />);
 interface LineItemProps {
     wishList: WishListModel;
     wishListLine: WishListLineModel;
-    product: ProductModelExtended;
+    productInfo?: ProductInfo;
     editingSortOrder: boolean;
     updateSortOrder: (wishListLine: WishListLineModel, value: number | string) => void;
     onDeleteClick: (wishListLine: WishListLineModel) => void;
     onEditNotesClick: (wishListLine: WishListLineModel) => void;
-    onUpdateQuantityClick: () => void;
 }
 
 const LineItem = SortableElement(({
-    wishList,
-    wishListLine,
-    product,
-    editingSortOrder,
-    updateSortOrder,
-    onDeleteClick,
-    onEditNotesClick,
-    onUpdateQuantityClick,
-}: LineItemProps) => {
+                                      wishList,
+                                      wishListLine,
+                                      productInfo,
+                                      editingSortOrder,
+                                      updateSortOrder,
+                                      onDeleteClick,
+                                      onEditNotesClick,
+                                  }: LineItemProps) => {
     const sortOrderBlurHandler = (event: React.FocusEvent<HTMLInputElement>) => {
         updateSortOrder(wishListLine, event.target.value);
     };
@@ -422,28 +415,31 @@ const LineItem = SortableElement(({
         }
     };
 
+    if (!productInfo) {
+        return null;
+    }
+
     return <GridItem {...styles.lineGridItem} data-test-selector="lineContainer">
         {editingSortOrder
-            && <StyledWrapper {...styles.sortOrderWrapper}>
-                <DragHandle />
-                <TextField
-                    {...styles.sortOrderTextField}
-                    label={translate("Sort Order")}
-                    type="number"
-                    min={1}
-                    defaultValue={wishListLine.sortOrder}
-                    onBlur={sortOrderBlurHandler}
-                    onKeyPress={sortOrderKeyPressHandler}
-                />
-            </StyledWrapper>
+        && <StyledWrapper {...styles.sortOrderWrapper}>
+            <DragHandle/>
+            <TextField
+                {...styles.sortOrderTextField}
+                label={translate("Sort Order")}
+                type="number"
+                min={1}
+                defaultValue={wishListLine.sortOrder}
+                onBlur={sortOrderBlurHandler}
+                onKeyPress={sortOrderKeyPressHandler}
+            />
+        </StyledWrapper>
         }
         <MyListsDetailsProductListLine
             wishList={wishList}
             wishListLine={wishListLine}
-            product={product}
+            productInfo={productInfo}
             onDeleteClick={onDeleteClick}
             onEditNotesClick={onEditNotesClick}
-            onUpdateQuantityClick={onUpdateQuantityClick}
         />
     </GridItem>;
 });
@@ -451,24 +447,22 @@ const LineItem = SortableElement(({
 interface LinesContainerProps {
     wishList: WishListModel;
     wishListLines: WishListLineModel[];
-    products: readonly ProductModelExtended[];
+    productInfosByWishListLineId: SafeDictionary<ProductInfo>;
     editingSortOrder: boolean;
     updateSortOrder: (wishListLine: WishListLineModel, value: number | string) => void;
     onDeleteClick: (wishListLine: WishListLineModel) => void;
     onEditNotesClick: (wishListLine: WishListLineModel) => void;
-    onUpdateQuantityClick: () => void;
 }
 
 const LinesContainer = SortableContainer(({
-    wishList,
-    wishListLines,
-    products,
-    editingSortOrder,
-    updateSortOrder,
-    onDeleteClick,
-    onEditNotesClick,
-    onUpdateQuantityClick,
-}: LinesContainerProps) =>
+                                              wishList,
+                                              wishListLines,
+                                              productInfosByWishListLineId,
+                                              editingSortOrder,
+                                              updateSortOrder,
+                                              onDeleteClick,
+                                              onEditNotesClick,
+                                          }: LinesContainerProps) =>
     <GridContainer {...styles.container} data-test-selector="linesContainer">
         {wishListLines.map((wishListLine, index) => (
             <LineItem
@@ -476,12 +470,11 @@ const LinesContainer = SortableContainer(({
                 index={index}
                 wishList={wishList}
                 wishListLine={wishListLine}
-                product={products[index]}
+                productInfo={productInfosByWishListLineId[wishListLine.id]}
                 editingSortOrder={editingSortOrder}
                 updateSortOrder={updateSortOrder}
                 onDeleteClick={onDeleteClick}
                 onEditNotesClick={onEditNotesClick}
-                onUpdateQuantityClick={onUpdateQuantityClick}
             />
         ))}
     </GridContainer>,
@@ -494,10 +487,10 @@ interface EditNotesFormProps {
 }
 
 const EditNotesForm: React.FC<EditNotesFormProps> = ({
-    wishListLine,
-    onCancel,
-    onSubmit,
-}) => {
+                                                         wishListLine,
+                                                         onCancel,
+                                                         onSubmit,
+                                                     }) => {
     const [notes, setNotes] = React.useState(wishListLine.notes);
     const notesChangeHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNotes(event.target.value.length > 300 ? event.target.value.slice(0, 300) : event.target.value);
@@ -509,10 +502,10 @@ const EditNotesForm: React.FC<EditNotesFormProps> = ({
     };
 
     return <>
-        <TextArea {...styles.notesTextArea} value={notes} onChange={notesChangeHandler} hint={`${300 - notes.length} ${translate("characters left")}`} />
+        <TextArea {...styles.notesTextArea} value={notes} onChange={notesChangeHandler} hint={`${300 - notes.length} ${translate("characters left")}`}/>
         <StyledWrapper {...styles.editNotesModalButtonsWrapper}>
             {wishListLine.notes
-                && <Button {...styles.editNotesModalDeleteButton} onClick={deleteHandler}>{translate("Delete Note")}</Button>
+            && <Button {...styles.editNotesModalDeleteButton} onClick={deleteHandler}>{translate("Delete Note")}</Button>
             }
             <Button {...styles.editNotesModalCancelButton} onClick={onCancel}>{translate("Cancel")}</Button>
             <Button {...styles.editNotesModalSubmitButton} onClick={() => onSubmit(notes)}>

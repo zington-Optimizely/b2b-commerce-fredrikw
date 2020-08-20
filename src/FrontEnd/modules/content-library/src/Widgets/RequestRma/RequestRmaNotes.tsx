@@ -25,13 +25,13 @@ export interface RequestRmaNotesStyles {
     notesTextArea?: TextAreaProps;
 }
 
-const styles: RequestRmaNotesStyles = {
+export const notesStyles: RequestRmaNotesStyles = {
     wrapper: {
         css: css` padding-bottom: 20px; `,
     },
 };
 
-export const notesStyles = styles;
+const styles = notesStyles;
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 

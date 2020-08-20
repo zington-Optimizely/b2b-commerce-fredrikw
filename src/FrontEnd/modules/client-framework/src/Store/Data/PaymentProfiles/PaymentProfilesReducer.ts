@@ -2,7 +2,7 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import { GetPaymentProfilesApiParameter } from "@insite/client-framework/Services/AccountService";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { PaymentProfilesState } from "@insite/client-framework/Store/Data/PaymentProfiles/PaymentProfilesState";
-import { AccountPaymentProfileCollectionModel, AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
+import { AccountPaymentProfileCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: PaymentProfilesState = {

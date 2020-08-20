@@ -1,7 +1,7 @@
 import Color from "color";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import Clickable, { ClickableComponentProps, ClickablePresentationProps } from "../Clickable";
+import Clickable, { ClickableComponentProps } from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps }  from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";

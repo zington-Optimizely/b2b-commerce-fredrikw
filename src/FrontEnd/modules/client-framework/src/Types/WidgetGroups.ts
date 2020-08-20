@@ -5,6 +5,7 @@ const WidgetGroups = [
     "Testing",
     "Basic",
     "Common",
+    "Contact Us",
     "Categories",
     "Header",
     "Catalog",

@@ -19,13 +19,13 @@ export interface RfqRequestQuoteHeaderStyles {
     titleText?: TypographyPresentationProps;
 }
 
-const styles: RfqRequestQuoteHeaderStyles = {
+export const rfqRequestQuoteHeaderStyles: RfqRequestQuoteHeaderStyles = {
     titleText: {
         variant: "h2",
     },
 };
 
-export const rfqRequestQuoteHeaderStyles = styles;
+const styles = rfqRequestQuoteHeaderStyles;
 
 const RfqRequestQuoteHeader: FC<Props> = ({ pageTitle, cart }) => {
     if (!cart) {

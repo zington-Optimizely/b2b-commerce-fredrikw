@@ -10,7 +10,7 @@ import FormField, {
     FormFieldPresentationProps,
     FormFieldSizeVariant,
 } from "../FormField";
-import { borderTypes, sizeVariantValues, VariantValues } from "../FormField/formStyles";
+import { sizeVariantValues, VariantValues } from "../FormField/formStyles";
 import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
 import { IconPresentationProps } from "../Icon";
 import applyPropBuilder from "../utilities/applyPropBuilder";

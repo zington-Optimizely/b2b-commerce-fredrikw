@@ -12,7 +12,7 @@
         cartId: string;
         countries: CountryModel[];
         selectedShipTo: ShipToModel;
-        shipTos: ShipToModel[];
+        shipTos: ShipToModel[] = [];
         continueCheckoutInProgress = false;
         isReadOnly = false;
         account: AccountModel;
@@ -25,6 +25,17 @@
         enableWarehousePickup: boolean;
         editMode: boolean;
         reviewAndPayUrl: string;
+
+        defaultPageSize = 20;
+        totalShipTosCount: number;
+        shipToSearch: string;
+        shipToOptions: any;
+        shipToOptionsPlaceholder: string;
+        recipientAddressOptionsPlaceholder: string;
+        noShipToAndCantCreate = false;
+        loadedShipTos: ShipToModel[];
+        firstTimeShipTostLoad = true;
+        firstShipToSearch = true;
 
         static $inject = [
             "$scope",
@@ -41,7 +52,8 @@
             "sessionService",
             "$localStorage",
             "$attrs",
-            "$rootScope"
+            "$rootScope",
+            "spinnerService"
         ];
 
         constructor(
@@ -59,7 +71,8 @@
             protected sessionService: SessionService,
             protected $localStorage: common.IWindowStorage,
             protected $attrs: ICheckoutAddressControllerAttributes,
-            protected $rootScope: ng.IRootScopeService) {
+            protected $rootScope: ng.IRootScopeService,
+            protected spinnerService: core.ISpinnerService) {
         }
 
         $onInit(): void {
@@ -110,7 +123,7 @@
         protected getAddressFieldsCompleted(addressFields: AddressFieldCollectionModel): void {
             this.addressFields = addressFields;
 
-            this.cartService.expand = "shiptos,validation";
+            this.cartService.expand = "validation";
             this.cartService.getCart(this.cartId).then(
                 (cart: CartModel) => { this.getCartCompleted(cart); },
                 (error: any) => { this.getCartFailed(error); });
@@ -125,8 +138,12 @@
 
             this.enableEditModeIfRequired();
 
+            // for reviewAndPayUrl case
+            const initAutocomplete = this.editMode;
+
+            this.spinnerService.show();
             this.websiteService.getCountries("states").then(
-                (countryCollection: CountryCollectionModel) => { this.getCountriesCompleted(countryCollection); },
+                (countryCollection: CountryCollectionModel) => { this.getCountriesCompleted(countryCollection, initAutocomplete); },
                 (error: any) => { this.getCountriesFailed(error); });
         }
 
@@ -156,11 +173,18 @@
         protected getAccountFailed(error: any): void {
         }
 
-        protected getCountriesCompleted(countryCollection: CountryCollectionModel) {
+        protected getCountriesCompleted(countryCollection: CountryCollectionModel, initAutocomplete?: boolean) {
             this.countries = countryCollection.countries;
             this.setUpBillTo();
-            this.setUpShipTos();
-            this.setSelectedShipTo();
+            if (initAutocomplete) {
+                this.initCustomerAutocomplete();
+            } else {
+                this.setSelectedShipTo();
+                if (this.selectedShipTo && this.selectedShipTo.country && this.selectedShipTo.country.states) {
+                    this.replaceObjectWithReference(this.selectedShipTo, this.countries, "country");
+                    this.replaceObjectWithReference(this.selectedShipTo, this.selectedShipTo.country.states, "state");
+                }
+            }
         }
 
         protected getCountriesFailed(error: any): void {
@@ -179,7 +203,7 @@
         }
 
         protected setUpShipTos(): void {
-            this.shipTos = angular.copy(this.cart.billTo.shipTos);
+            this.shipTos = angular.copy(this.loadedShipTos);
 
             let shipToBillTo: ShipToModel = null;
             this.shipTos.forEach(shipTo => {
@@ -204,10 +228,14 @@
 
         protected setSelectedShipTo(): void {
             this.selectedShipTo = this.cart.shipTo;
+            if (this.selectedShipTo) {
+                this.shipToSearch = this.selectedShipTo.label;
+            }
 
             this.shipTos.forEach(shipTo => {
                 if (this.cart.shipTo && shipTo.id === this.cart.shipTo.id || !this.selectedShipTo && shipTo.isNew) {
                     this.selectedShipTo = shipTo;
+                    this.shipToSearch = shipTo.label;
                 }
             });
 
@@ -259,7 +287,7 @@
             this.updateValidationRules("stcountry", this.selectedShipTo.validation.country);
             this.updateValidationRules("ststate", this.selectedShipTo.validation.state);
             this.updateValidationRules("stcity", this.selectedShipTo.validation.city);
-            this.updateValidationRules("stpostalCode", this.selectedShipTo.validation.postalCode);
+            this.updateValidationRules("stpostalcode", this.selectedShipTo.validation.postalCode);
             this.updateValidationRules("stphone", this.selectedShipTo.validation.phone);
             this.updateValidationRules("stfax", this.selectedShipTo.validation.fax);
             this.updateValidationRules("stemail", this.selectedShipTo.validation.email);
@@ -361,8 +389,8 @@
         protected updateShipTo(continueUri: string, customerWasUpdated?: boolean): void {
             if (this.selectedShipTo.oneTimeAddress || this.selectedShipTo.isNew) {
                 this.cart.shipTo = this.selectedShipTo;
-            } else {
-                const shipToMatches = this.cart.billTo.shipTos.filter(shipTo => { return shipTo.id === this.selectedShipTo.id; });
+            } else if (this.loadedShipTos) {
+                const shipToMatches = this.loadedShipTos.filter(shipTo => { return shipTo.id === this.selectedShipTo.id; });
                 if (shipToMatches.length === 1) {
                     this.cart.shipTo = this.selectedShipTo;
                 }
@@ -497,6 +525,9 @@
 
         protected enableEditMode(): void {
             this.editMode = true;
+            if (this.countries) {
+                this.initCustomerAutocomplete();
+            }
         }
 
         protected customerHasEditableFields(customer: BillToModel | ShipToModel): boolean {
@@ -511,6 +542,114 @@
             }
 
             return false;
+        }
+
+        hasCustomerWithLabel(customers: ShipToModel[], label: string): boolean {
+            label = (label || "").toLowerCase(); 
+            for (let i = 0; i < customers.length; i++) {
+                if (customers[i].label.toLowerCase() === label) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        renderMessage(values: string[], templateId: string): string {
+            let template = angular.element(`#${templateId}`).html();
+            for (var i = 0; i < values.length; i++) {
+                template = template.replace(`{${i}}`, values[i]);
+            }
+
+            return template;
+        }
+
+        initCustomerAutocomplete(): void {
+            const shipToValues = ["{{vm.defaultPageSize}}", "{{vm.totalShipTosCount}}"];
+            this.shipToOptions = {
+                headerTemplate: this.renderMessage(shipToValues, "totalShipToCountTemplate"),
+                dataSource: new kendo.data.DataSource({
+                    serverFiltering: true,
+                    serverPaging: true,
+                    transport: {
+                        read: (options: kendo.data.DataSourceTransportReadOptions) => {
+                            this.onShipToAutocompleteRead(options);
+                        }
+                    }
+                }),
+                select: (event: kendo.ui.AutoCompleteSelectEvent) => {
+                    this.onShipToAutocompleteSelect(event);
+                },
+                minLength: 0,
+                dataTextField: "label",
+                dataValueField: "id",
+                placeholder: this.getShipToPlaceholder()
+            };
+
+            this.shipToOptions.dataSource.read();
+        }
+
+        protected getDefaultPagination(): PaginationModel {
+            return { page: 1, pageSize: this.defaultPageSize } as PaginationModel;
+        }
+
+        protected onShipToAutocompleteRead(options: kendo.data.DataSourceTransportReadOptions): void {
+            this.spinnerService.show();
+            this.customerService.getShipTos("excludeshowall,validation", this.firstShipToSearch ? "" : this.shipToSearch, this.getDefaultPagination(), this.cart.billTo.id).then(
+                (shipToCollection: ShipToCollectionModel) => { this.getShipTosCompleted(options, shipToCollection); },
+                (error: any) => { this.getShipTosFailed(error); });
+            this.firstShipToSearch = false;
+        }
+
+        protected getShipTosCompleted(options: kendo.data.DataSourceTransportReadOptions, shipToCollection: ShipToCollectionModel): void {
+            const shipTos = shipToCollection.shipTos;
+            this.loadedShipTos = shipTos;
+
+            this.setUpShipTos();
+            if (this.firstTimeShipTostLoad) {
+                this.firstTimeShipTostLoad = false;
+                this.setSelectedShipTo();
+            }
+
+            this.totalShipTosCount = shipToCollection.pagination.totalItemCount;
+            if (!this.hasCustomerWithLabel(shipTos, this.shipToSearch)) {
+                this.selectedShipTo = null;
+            }
+
+            this.noShipToAndCantCreate = false;
+            if (this.customerSettings && !this.customerSettings.allowCreateNewShipToAddress && !this.shipToSearch && shipTos.length === 0) {
+                this.noShipToAndCantCreate = true;
+            }
+
+            // need to wrap this in setTimeout for prevent double scroll
+            this.$timeout(() => { options.success(this.shipTos); }, 0);
+        }
+
+        protected getShipTosFailed(error: any): void {
+        }
+
+        openAutocomplete($event: ng.IAngularEvent, selector: string): void {
+            const autoCompleteElement = angular.element(selector) as any;
+            const kendoAutoComplete = autoCompleteElement.data("kendoAutoComplete");
+            kendoAutoComplete.popup.open();
+        }
+
+        protected onShipToAutocompleteSelect(event: kendo.ui.AutoCompleteSelectEvent): void {
+            if (event.item == null) {
+                return;
+            }
+
+            const dataItem = event.sender.dataItem(event.item.index());
+            this.selectShipTo(dataItem);
+        }
+
+        selectShipTo(dataItem: ShipToModel): void {
+            this.selectedShipTo = dataItem;
+            this.checkSelectedShipTo();
+        }
+
+        protected getShipToPlaceholder(): string {
+            return this.enableWarehousePickup && this.cart.fulfillmentMethod === 'PickUp' ? this.recipientAddressOptionsPlaceholder : this.shipToOptionsPlaceholder;
         }
     }
 

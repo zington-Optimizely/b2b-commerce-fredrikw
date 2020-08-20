@@ -27,7 +27,7 @@ export interface InvoiceDetailsTotalStyles {
     totalValueText?: TypographyProps;
 }
 
-const styles: InvoiceDetailsTotalStyles = {
+export const totalStyles: InvoiceDetailsTotalStyles = {
     container: {
         gap: 10,
         css: css`
@@ -49,7 +49,7 @@ const styles: InvoiceDetailsTotalStyles = {
     },
 };
 
-export const totalStyles = styles;
+const styles = totalStyles;
 const InvoiceDetailsTotal: FC = () => {
     const { value: invoice } = useContext(InvoiceStateContext);
     if (!invoice) {

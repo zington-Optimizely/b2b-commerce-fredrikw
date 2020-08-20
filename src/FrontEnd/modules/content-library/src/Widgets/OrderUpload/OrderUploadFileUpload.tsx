@@ -23,10 +23,10 @@ export interface OrderUploadFileUploadStyles {
     orderUploadErrorsModalStyles?: OrderUploadErrorsModalStyles;
 }
 
-const styles: OrderUploadFileUploadStyles = {
+export const orderUploadFileUploadStyles: OrderUploadFileUploadStyles = {
 };
 
-export const orderUploadFileUploadStyles = styles;
+const styles = orderUploadFileUploadStyles;
 
 const OrderUploadFileUpload: FC<Props> = ({
     addCartLineCollectionFromProducts,

@@ -57,7 +57,7 @@ interface UseBillingAddressStyles {
     button?: ButtonPresentationProps;
 }
 
-const styles: CurrentShippingAddressStyles = {
+export const currentShippingAddressStyles: CurrentShippingAddressStyles = {
     gridContainer: { gap: 5 },
     headingGridItem: { width: 10 },
     headingText: { variant: "h5" },
@@ -73,7 +73,7 @@ const styles: CurrentShippingAddressStyles = {
     },
 };
 
-export const currentShippingAddressStyles = styles;
+const styles = currentShippingAddressStyles;
 
 const CurrentShippingAddress: React.FunctionComponent<Props> = (props: Props) => {
     const { currentShipTo, currentBillTo, currentShipTosDataView, loadCurrentShipTos } = props;

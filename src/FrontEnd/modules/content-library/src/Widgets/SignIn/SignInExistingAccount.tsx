@@ -54,7 +54,7 @@ export interface SignInExistingAccountStyles {
     resetPasswordModal?: ModalPresentationProps;
 }
 
-const styles: SignInExistingAccountStyles = {
+export const signInExistingAccountStyles: SignInExistingAccountStyles = {
     icon: {
         css: css` padding-top: 50px; `,
     },
@@ -101,7 +101,11 @@ const styles: SignInExistingAccountStyles = {
     },
 };
 
-export const signInExistingAccount = styles;
+/**
+ * @deprecated Use signInExistingAccountStyles instead.
+ */
+export const signInExistingAccount = signInExistingAccountStyles;
+const styles = signInExistingAccountStyles;
 
 const SignInExistingAccount: FC<Props> = props => {
     const [rememberMe, setRememberMe] = React.useState(false);

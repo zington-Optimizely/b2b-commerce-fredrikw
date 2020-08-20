@@ -53,7 +53,7 @@ export interface SubscribeStyles {
     disclaimerText?: TypographyPresentationProps;
 }
 
-export const styles: SubscribeStyles = {
+export const subscribeStyles: SubscribeStyles = {
     mainGridContainer: {
         gap: 10,
         css: css`
@@ -92,6 +92,8 @@ export const styles: SubscribeStyles = {
         css: css` font-size: 12px; `,
     },
 };
+
+const styles = subscribeStyles;
 
 const emailRegexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 const emailRequiredFieldMessage = siteMessage("EmailSubscription_EmailIsRequiredErrorMessage");

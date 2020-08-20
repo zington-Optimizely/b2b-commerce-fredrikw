@@ -37,7 +37,7 @@ export interface AccountSettingsUserInformationStyles {
     changePasswordLink?: LinkPresentationProps;
 }
 
-const styles: AccountSettingsUserInformationStyles = {
+export const userInformationStyles: AccountSettingsUserInformationStyles = {
     userInformationGridItem: {
         width: 12,
     },
@@ -49,7 +49,7 @@ const styles: AccountSettingsUserInformationStyles = {
     },
 };
 
-export const userInformationStyles = styles;
+const styles = userInformationStyles;
 const password = "*************";
 
 const AccountSettingsUserInformation: FC<Props> = props => {

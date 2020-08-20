@@ -10,17 +10,20 @@ function updateFile(path, data) {
 }
 
 function doWork(isDevBuild, blueprint) {
-    updateFile(path.resolve(__dirname, "../../modules/server-framework/Entry.ts"), `import \"@insite/server-framework/Winston\";
+    updateFile(path.resolve(__dirname, "../../modules/server-framework/Entry.ts"), `/* eslint-disable ordered-imports/ordered-imports */
+import \"@insite/server-framework/Winston\";
 import \"../${blueprint}/src/Start\";
 
 export * from \"./src/StartServer\";
 `);
 
-    updateFile(path.resolve(__dirname, "../../modules/shell/Entry.ts"), `import \"../${blueprint}/src/Start\";
+    updateFile(path.resolve(__dirname, "../../modules/shell/Entry.ts"), `/* eslint-disable ordered-imports/ordered-imports */
+import \"../${blueprint}/src/Start\";
 import \"@insite/shell/ClientApp\";
 `);
 
-    updateFile(path.resolve(__dirname, "../../modules/client-framework/Entry.ts"), `import \"../${blueprint}/src/Start\";
+    updateFile(path.resolve(__dirname, "../../modules/client-framework/Entry.ts"), `/* eslint-disable ordered-imports/ordered-imports */
+import \"../${blueprint}/src/Start\";
 import \"@insite/client-framework/ClientApp\";
 `);
 }

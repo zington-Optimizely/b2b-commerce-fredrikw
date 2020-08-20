@@ -1,7 +1,7 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { HasPagingParameters } from "@insite/client-framework/Services/ApiService";
-import { ProductCollectionModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import { CatalogPageModel } from "@insite/client-framework/Types/ApiModels";
-import LoadedState from "@insite/client-framework/Types/LoadedState";
+import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
 
 export interface ProductFilters extends HasPagingParameters {
     pageCategoryId?: string;
@@ -23,10 +23,13 @@ export interface ProductFilters extends HasPagingParameters {
 export type ProductListViewType = "List" | "Grid";
 
 export default interface ProductListState {
-    productsState: LoadedState<ProductCollectionModelExtended>
-    unfilteredProductCollection?: ProductCollectionModelExtended;
+    // needed because we don't immediately have the new parameter available for retrieving the next productDataView
+    isLoading: boolean;
+    parameter?: GetProductCollectionApiV2Parameter;
+    lastParameter?: GetProductCollectionApiV2Parameter;
+    productInfosByProductId: SafeDictionary<ProductInfo>
+    unfilteredApiParameter?: GetProductCollectionApiV2Parameter;
     productFilters: ProductFilters;
-    catalogPage?: CatalogPageModel;
     filterQuery?: string;
     isSearchPage?: boolean;
     view?: ProductListViewType;

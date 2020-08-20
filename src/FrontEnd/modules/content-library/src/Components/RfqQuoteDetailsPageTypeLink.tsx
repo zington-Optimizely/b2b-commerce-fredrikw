@@ -1,4 +1,6 @@
+/* eslint-disable spire/export-styles */
 import { createWidgetElement } from "@insite/client-framework/Components/ContentItemStore";
+import { FC } from "react";
 
 interface OwnProps {
     title: string;
@@ -7,7 +9,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const RfqQuoteDetailsPageTypeLink: React.FunctionComponent<Props> = ({ title, quoteId }) => {
+const RfqQuoteDetailsPageTypeLink: FC<Props> = ({ title, quoteId }) => {
     return createWidgetElement(
         "Basic/PageTypeLink",
         {

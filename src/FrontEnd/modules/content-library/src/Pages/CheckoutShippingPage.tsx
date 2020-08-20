@@ -1,6 +1,8 @@
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import setInitialValues from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetInitialValues";
@@ -21,8 +23,10 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
+    cartId: state.pages.checkoutShipping.cartId,
     isPreloadingData: state.pages.checkoutShipping.isPreloadingData,
     reviewAndSubmitPageLink: getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage"),
+    location: getLocation(state),
 });
 
 type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps> & HasHistory;
@@ -54,11 +58,16 @@ class CheckoutShippingPage extends Component<Props, State> {
     }
 
     componentDidMount() {
+        const parsedQuery = parseQueryString<{ cartId?: string }>(this.props.location.search);
+        const cartId = parsedQuery.cartId;
         if (!this.props.isPreloadingData) {
-            this.props.preloadCheckoutShippingData({ onSuccess: () => {
+            this.props.preloadCheckoutShippingData({
+                cartId,
+                onSuccess: () => {
                     this.props.setInitialValues();
                     this.props.setIsPreloadingData({ isPreloadingData: false });
-                } });
+                },
+            });
         } else {
             this.props.setIsPreloadingData({ isPreloadingData: false });
             this.props.setInitialValues();
@@ -99,7 +108,10 @@ class CheckoutShippingPage extends Component<Props, State> {
             this.setState({ isRedirecting: true });
             // TODO ISC-12556
             await this.props.updateCart({});
-            this.props.history.push(this.props.reviewAndSubmitPageLink!.url);
+            const continueUrl = this.props.cartId
+                ? `${this.props.reviewAndSubmitPageLink!.url}?cartId=${this.props.cartId}`
+                : this.props.reviewAndSubmitPageLink!.url;
+            this.props.history.push(continueUrl);
         } else {
             this.scrollToFirstFormError();
         }

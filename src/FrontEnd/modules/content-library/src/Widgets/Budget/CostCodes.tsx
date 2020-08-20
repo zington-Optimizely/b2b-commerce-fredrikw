@@ -74,7 +74,7 @@ export interface CostCodesStyles {
     wrapper?: InjectableCss;
 }
 
-const styles: CostCodesStyles = {
+export const costCodesStyles: CostCodesStyles = {
     titleText: {
         variant: "h4",
         css: css` margin: 0; `,
@@ -140,7 +140,7 @@ const styles: CostCodesStyles = {
     },
 };
 
-export const configureBudgetStyles = styles;
+const styles = costCodesStyles;
 
 const CostCodes: React.FC<Props> = ({
     displayedWidgetName,

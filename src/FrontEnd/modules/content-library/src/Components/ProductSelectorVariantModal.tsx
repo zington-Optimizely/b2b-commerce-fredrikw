@@ -1,10 +1,14 @@
+import useFilteredVariantTraits from "@insite/client-framework/Common/Hooks/useFilteredVariantTraits";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import closeVariantModal from "@insite/client-framework/Store/Components/ProductSelector/Handlers/CloseVariantModal";
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
 import updateVariantSelection from "@insite/client-framework/Store/Components/ProductSelector/Handlers/UpdateVariantSelection";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
+import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
 import ProductPrice from "@insite/content-library/Components/ProductPrice";
@@ -21,14 +25,15 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const { variantModalIsOpen, variantParentProduct, selectedVariant, variantSelection, filteredVariantTraits } = getProductSelector(state);
-    return ({
+    const { variantModalIsOpen, variantModalProductId, variantSelection, selectedVariantProductInfo } = getProductSelector(state);
+    return {
         variantModalIsOpen,
-        variantParentProduct,
-        selectedVariant,
+        variantParentProduct: getProductState(state, variantModalProductId).value,
+        variantChildren: getVariantChildrenDataView(state, variantModalProductId).value,
+        selectedVariant: getProductState(state, selectedVariantProductInfo?.productId).value,
+        selectedVariantProductInfo,
         variantSelection,
-        filteredVariantTraits,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -77,39 +82,41 @@ export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
 };
 
 const ProductSelectorVariantModal: React.FC<Props> = ({
-    variantModalIsOpen,
-    variantParentProduct,
-    selectedVariant,
-    variantSelection,
-    filteredVariantTraits,
-    extendedStyles,
-    closeVariantModal,
-    updateVariantSelection,
-    setProduct,
-}) => {
-    if (!filteredVariantTraits || filteredVariantTraits.length === 0) {
+                                                          variantModalIsOpen,
+                                                          variantParentProduct,
+                                                          variantChildren,
+                                                          selectedVariant,
+                                                          variantSelection,
+                                                          extendedStyles,
+                                                          closeVariantModal,
+                                                          updateVariantSelection,
+                                                          setProduct,
+                                                          selectedVariantProductInfo,
+                                                      }) => {
+    const [styles] = React.useState(() => mergeToNew(quickOrderVariantModalStyles, extendedStyles));
+
+    if (!variantParentProduct?.variantTraits || !variantChildren) {
         return null;
     }
-
-    const [styles] = React.useState(() => mergeToNew(quickOrderVariantModalStyles, extendedStyles));
 
     const closeModalHandler = () => {
         closeVariantModal();
     };
 
-    const variantChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>, index: number, variantTrait: VariantTraitModel) => {
-        const traitValue = variantTrait.traitValues!.find(item => `${item.id}` === event.currentTarget.value);
-        updateVariantSelection({ index, traitValue });
+    const variantChangeHandler = (traitValueId: string, variantTraitId: string) => {
+        updateVariantSelection({ traitValueId, variantTraitId });
     };
 
     const selectButtonClickHandler = () => {
         setProduct({
-            productId: variantParentProduct?.id,
+            productId: variantParentProduct.id,
             variantId: selectedVariant?.id,
             validateProduct: true,
         });
         closeVariantModal();
     };
+
+    const filteredVariantTraits = useFilteredVariantTraits(variantParentProduct.variantTraits, variantChildren, variantSelection);
 
     return <Modal
         {...styles.modal}
@@ -118,23 +125,24 @@ const ProductSelectorVariantModal: React.FC<Props> = ({
         handleClose={closeModalHandler}
     >
         <StyledWrapper {...styles.wrapper}>
-            {filteredVariantTraits.slice().sort((a, b) => a.sortOrder - b.sortOrder).map((variantTrait, index) =>
+            {filteredVariantTraits.map((variantTrait, index) =>
                 <Select
                     {...styles.variantSelect}
                     key={variantTrait.id.toString()}
                     label={variantTrait.nameDisplay}
-                    value={variantSelection[index] ? `${variantSelection[index]!.id}` : ""}
-                    onChange={(event) => { variantChangeHandler(event, index, variantTrait); }}
+                    value={variantSelection[variantTrait.id]}
+                    onChange={(event) => { variantChangeHandler(event.currentTarget.value, variantTrait.id); }}
                 >
-                    <option value="">{variantTrait.unselectedValue ? variantTrait.unselectedValue : `${translate("Select")} ${variantTrait.nameDisplay}`}</option>
-                    {variantTrait.traitValues?.slice().sort((a, b) => a.sortOrder - b.sortOrder).map(traitValue =>
+                    <option
+                        value="">{variantTrait.unselectedValue ? variantTrait.unselectedValue : `${translate("Select")} ${variantTrait.nameDisplay}`}</option>
+                    {variantTrait.traitValues?.map(traitValue =>
                         <option value={`${traitValue.id}`} key={`${traitValue.id}`}>{traitValue.valueDisplay}</option>)
                     }
                 </Select>)
             }
         </StyledWrapper>
-        {selectedVariant && selectedVariant.id
-            && <ProductPrice product={selectedVariant} showLabel={false} />
+        {selectedVariant && selectedVariantProductInfo
+        && <ProductPrice product={{ product: selectedVariant, productInfo: selectedVariantProductInfo }} showLabel={false}/>
         }
         <Button {...styles.selectButton} disabled={!selectedVariant || !selectedVariant.id} onClick={selectButtonClickHandler}>
             {translate("Select")}

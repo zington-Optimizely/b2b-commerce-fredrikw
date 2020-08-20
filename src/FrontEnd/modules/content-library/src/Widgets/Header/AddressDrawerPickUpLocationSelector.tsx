@@ -36,7 +36,7 @@ export interface AddressDrawerPickUpLocationSelectorStyles {
     findLocationModal?: FindLocationModalStyles;
 }
 
-const styles: AddressDrawerPickUpLocationSelectorStyles = {
+export const addressDrawerPickUpLocationSelectorStyles: AddressDrawerPickUpLocationSelectorStyles = {
     headerText: {
         weight: 600,
     },
@@ -45,7 +45,7 @@ const styles: AddressDrawerPickUpLocationSelectorStyles = {
     },
 };
 
-export const addressDrawerPickUpLocationSelectorStyles = styles;
+const styles = addressDrawerPickUpLocationSelectorStyles;
 
 const AddressDrawerPickUpLocationSelector = ({
     fulfillmentMethod,

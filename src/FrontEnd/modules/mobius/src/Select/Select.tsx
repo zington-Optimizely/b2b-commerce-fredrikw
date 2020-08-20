@@ -114,7 +114,7 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                             value={this.state.value}
                             {...{ disabled: isDisabled, required }}
                             {...inputLabelObj}
-                            {...omitMultiple(otherProps, ["sizeVariant", "border", "label", "cssOverrides", "labelPosition", "labelProps", "theme", "backgroundColor"])}
+                            {...omitMultiple(otherProps, ["sizeVariant", "border", "label", "cssOverrides", "labelPosition", "labelProps", "theme", "backgroundColor", "dispatch"])}
                         >
                             {children}
                         </select>

@@ -55,7 +55,7 @@ export interface MyListsDetailsCopyListFormStyles {
     createButton?: ButtonPresentationProps;
 }
 
-const styles: MyListsDetailsCopyListFormStyles = {
+export const copyListFormStyles: MyListsDetailsCopyListFormStyles = {
     nameGridItem: {
         width: 12,
     },
@@ -78,7 +78,7 @@ const styles: MyListsDetailsCopyListFormStyles = {
     },
 };
 
-export const copyListFormStyles = styles;
+const styles = copyListFormStyles;
 
 class MyListsDetailsCopyListForm extends React.Component<Props, State> {
 

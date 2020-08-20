@@ -1,5 +1,5 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { HasProductContext } from "@insite/client-framework/Components/ProductContext";
+import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
@@ -11,13 +11,12 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends HasProductContext {
-    variantSelectionCompleted?: boolean;
+interface OwnProps {
     labelOverride?: string;
     extendedStyles?: ProductAddToListLinkStyles;
 }
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasProductContext;
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
@@ -32,12 +31,16 @@ export interface ProductAddToListLinkStyles {
     link?: LinkPresentationProps;
 }
 
-export const productAddToListLink: ProductAddToListLinkStyles = {};
+export const productAddToListLinkStyles: ProductAddToListLinkStyles = {};
+
+/**
+ * @deprecated Use productAddToListLinkStyles instead.
+ */
+export const productAddToListLink = productAddToListLinkStyles;
 
 const ProductAddToListLink: React.FC<Props> = ({
-                                                   product,
+                                                   productContext: { product, productInfo },
                                                    wishListSettings,
-                                                   variantSelectionCompleted,
                                                    labelOverride,
                                                    setAddToListModalIsOpen,
                                                    addToWishList,
@@ -47,14 +50,14 @@ const ProductAddToListLink: React.FC<Props> = ({
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productAddToListLink, extendedStyles));
 
-    if (!product || !wishListSettings || (!product.canAddToWishlist && !variantSelectionCompleted)) {
+    if (!product.canAddToWishlist) {
         return null;
     }
 
     const addToListLinkClickHandler = () => {
         if (!wishListSettings.allowMultipleWishLists) {
             addToWishList({
-                products: [product],
+                productInfos: [productInfo],
                 onSuccess: () => {
                     toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
                 },
@@ -62,10 +65,10 @@ const ProductAddToListLink: React.FC<Props> = ({
             return;
         }
 
-        setAddToListModalIsOpen({ modalIsOpen: true, products: [product] });
+        setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
     };
 
     return <Link {...styles.link} onClick={addToListLinkClickHandler} {...otherProps}>{labelOverride ?? translate("Add to List")}</Link>;
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductAddToListLink);
+export default connect(mapStateToProps, mapDispatchToProps)(withProductContext(ProductAddToListLink));

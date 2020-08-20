@@ -26,7 +26,7 @@ export interface OrderConfirmationProductListStyles {
     orderLinesList?: CartLinesListStyles;
 }
 
-const styles: OrderConfirmationProductListStyles = {
+export const productListStyles: OrderConfirmationProductListStyles = {
     centeringWrapper: {
         css: css`
             display: flex;
@@ -37,7 +37,7 @@ const styles: OrderConfirmationProductListStyles = {
     },
 };
 
-export const productListStyles = styles;
+const styles = productListStyles;
 
 const OrderConfirmationProductList: FC<Props> = ({
                                                      cartState,

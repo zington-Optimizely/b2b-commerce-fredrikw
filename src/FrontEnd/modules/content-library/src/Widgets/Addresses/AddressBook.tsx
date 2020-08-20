@@ -86,7 +86,7 @@ interface AddressCardStyles {
     overflowMenu?: OverflowMenuPresentationProps;
 }
 
-const styles: AddressBookStyles = {
+export const addressBookStyles: AddressBookStyles = {
     gridContainer: { gap: 20 },
     titleTextGridItem: { width: 12 },
     addressHeaderGridItem: { width: 12 },
@@ -139,7 +139,7 @@ const styles: AddressBookStyles = {
     addressFormModal: { sizeVariant: "medium" },
 };
 
-export const addressBookStyles = styles;
+const styles = addressBookStyles;
 
 type ContextType = {
     isSettingShipTo: boolean;

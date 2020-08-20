@@ -27,7 +27,7 @@ export interface ChangePasswordHeaderStyles {
     actions?: HiddenProps;
 }
 
-const styles: ChangePasswordHeaderStyles = {
+export const changePasswordHeaderStyles: ChangePasswordHeaderStyles = {
     headerGridContainer: {
         gap: 0,
     },
@@ -47,7 +47,7 @@ const styles: ChangePasswordHeaderStyles = {
     },
 };
 
-export const changePasswordHeaderStyles = styles;
+const styles = changePasswordHeaderStyles;
 
 const ChangePasswordHeader: FC<Props> = props => {
     const title = props.title || translate("Change Password");

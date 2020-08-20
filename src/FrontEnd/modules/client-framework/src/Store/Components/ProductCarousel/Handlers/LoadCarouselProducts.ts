@@ -1,16 +1,14 @@
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { Category } from "@insite/client-framework/Services/CategoryService";
 import {
-    getProductCollectionV2,
-    getRelatedProductsCollectionV2,
-    ProductModelExtended,
+    GetProductCollectionApiV2Parameter, GetRelatedProductCollectionApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
-import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
-import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import loadProductInfoList from "@insite/client-framework/Store/Components/ProductInfoList/Handlers/LoadProductInfoList";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { BrandModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import { BrandModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface LoadCarouselProductsParameter {
+interface Parameter {
     carouselId: string;
     carouselType: string;
     relatedProductType: string;
@@ -19,128 +17,88 @@ export interface LoadCarouselProductsParameter {
     selectedCategoryIds: string[];
     numberOfProductsToDisplay: number;
     isProductDetailsPage: boolean;
-    parentProduct?: ProductModelExtended;
+    productId?: string;
     isProductListPage: boolean;
-    category?: CategoryModel;
+    category?: Category;
     isBrandDetailsPage: boolean;
     brand?: BrandModel;
 }
 
-export interface LoadCarouselProductsResult {
-    products: ProductModelExtended[];
+interface Props {
+    getProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
+    extraProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
 }
 
-type HandlerType = HandlerWithResult<LoadCarouselProductsParameter, LoadCarouselProductsResult>;
+type HandlerType = Handler<Parameter, Props>;
 
-export const DispatchBeginLoadCarouselProducts: HandlerType = props => {
-    props.dispatch({
-        type: "Components/ProductCarousel/BeginLoadCarouselProducts",
-        carouselId: props.parameter.carouselId,
-    });
-};
-
-export const InitializeResult: HandlerType = props => {
-    props.result = { products: [] };
-};
-
-export const LoadRecentlyViewed: HandlerType = async ({
-    parameter: { carouselType, isProductDetailsPage, parentProduct },
-    result,
-}) => {
-    if (carouselType !== "recentlyViewed") {
+export const LoadRecentlyViewed: HandlerType = props => {
+    const { parameter: { carouselType, isProductDetailsPage, productId } } = props;
+    if (carouselType !== "recentlyViewed"
+        || (isProductDetailsPage && !productId)) {
         return;
     }
 
-    if (isProductDetailsPage && !parentProduct) {
-        return;
-    }
-
-    const productCollection = await getProductCollectionV2({ filter: "recentlyViewed" });
-    result.products = productCollection.products || [];
+    props.getProductCollectionParameter = { filter: "recentlyViewed" };
 };
 
-export const LoadCrossSells: HandlerType = async ({
-    parameter: { carouselType, numberOfProductsToDisplay },
-    result,
-}) => {
+export const LoadCrossSells: HandlerType = props => {
+    const { parameter: { carouselType, numberOfProductsToDisplay } } = props;
     if (carouselType !== "crossSells") {
         return;
     }
 
-    const productCollection = await getProductCollectionV2({ filter: "siteCrosssells", pageSize: numberOfProductsToDisplay });
-    result.products = productCollection.products || [];
+    props.getProductCollectionParameter = { filter: "siteCrosssells", pageSize: numberOfProductsToDisplay };
 };
 
-export const LoadRelatedProducts: HandlerType = async ({
-    parameter: { carouselType, relatedProductType, parentProduct },
-    result,
-}) => {
-    if (carouselType !== "relatedProducts" || !parentProduct || !relatedProductType) {
+export const LoadRelatedProducts: HandlerType = props => {
+    const { parameter: { carouselType, relatedProductType, productId } } = props;
+    if (carouselType !== "relatedProducts" || !productId || !relatedProductType) {
         return;
     }
 
-    const productCollection = await getRelatedProductsCollectionV2({ productId: parentProduct.id, relationship: relatedProductType });
-    result.products = productCollection.products || [];
+    props.getProductCollectionParameter = { productId, relationship: relatedProductType };
 };
 
-export const LoadCustomersAlsoPurchased: HandlerType = async ({
-    parameter: { carouselType, numberOfProductsToDisplay, seedWithManuallyAssigned, isProductDetailsPage, parentProduct },
-    result,
-    getState,
-}) => {
+export const LoadCustomersAlsoPurchased: HandlerType = props => {
+    const { parameter: { carouselType, numberOfProductsToDisplay, seedWithManuallyAssigned, isProductDetailsPage, productId }, getState } = props;
+
     if (carouselType !== "customersAlsoPurchased") {
         return;
     }
 
-    if (getSettingsCollection(getState()).websiteSettings.enableDynamicRecommendations) {
+    if (!getSettingsCollection(getState()).websiteSettings.enableDynamicRecommendations) {
         return;
     }
 
     if (isProductDetailsPage) {
-        if (!parentProduct) {
+        if (!productId) {
             return;
         }
 
-        const alsoPurchasedProductsCollection = await getRelatedProductsCollectionV2({
-            productId: parentProduct.id,
+        props.getProductCollectionParameter = {
             pageSize: numberOfProductsToDisplay,
-            relationship: "alsoPurchased",
-        });
+            filter: "alsoPurchased",
+        };
 
-        const alsoPurchasedProducts = alsoPurchasedProductsCollection.products || [];
-
-        if (seedWithManuallyAssigned && alsoPurchasedProducts.length < numberOfProductsToDisplay) {
-            const relatedProductsCollection =  await getRelatedProductsCollectionV2({
-                productId: parentProduct.id,
+        if (seedWithManuallyAssigned) {
+            props.extraProductCollectionParameter = {
+                productId,
                 pageSize: numberOfProductsToDisplay,
                 relationship: seedWithManuallyAssigned,
-            });
-
-            relatedProductsCollection.products?.forEach(o => {
-                    if (alsoPurchasedProducts.length < numberOfProductsToDisplay
-                        && alsoPurchasedProducts.every(p => p.id !== o.id)) {
-                        alsoPurchasedProducts.push(o);
-                    }
-                });
+            };
         }
-
-        result.products = alsoPurchasedProducts;
     } else {
-        const alsoPurchasedProductsCollection = await getProductCollectionV2({
+        props.getProductCollectionParameter = {
             cartId: API_URL_CURRENT_FRAGMENT,
             pageSize: numberOfProductsToDisplay,
             filter: "alsoPurchased",
-        });
-
-        result.products = alsoPurchasedProductsCollection.products || [];
+        };
     }
 };
 
-export const LoadTopSellers: HandlerType = async ({
-    parameter: { carouselType, numberOfProductsToDisplay, displayProductsFrom, selectedCategoryIds, isProductListPage, category, isBrandDetailsPage, brand },
-    result,
-    getState,
-}) => {
+export const LoadTopSellers: HandlerType = props => {
+    const { parameter: { carouselType, numberOfProductsToDisplay, displayProductsFrom, selectedCategoryIds, isProductListPage, category, isBrandDetailsPage, brand }, getState } = props;
+
     if (carouselType !== "topSellers") {
         return;
     }
@@ -168,21 +126,19 @@ export const LoadTopSellers: HandlerType = async ({
         return;
     }
 
-    const productCollection = await getProductCollectionV2({
+    props.getProductCollectionParameter = {
         topSellersCategoryIds,
         topSellersPersonaIds,
         topSellersMaxResults: numberOfProductsToDisplay,
         brandIds,
         makeBrandUrls: brandIds.length > 0,
         filter: "topSellers",
-    });
-    result.products = productCollection.products || [];
+    };
 };
 
-export const LoadFeaturedCategory: HandlerType = async ({
-    parameter: { carouselType, isProductListPage, category },
-    result,
-}) => {
+export const LoadFeaturedCategory: HandlerType = props => {
+    const { parameter: { carouselType, isProductListPage, category } } = props;
+
     if (carouselType !== "featuredCategory") {
         return;
     }
@@ -191,80 +147,35 @@ export const LoadFeaturedCategory: HandlerType = async ({
         return;
     }
 
-    const productCollection = await getProductCollectionV2({ categoryId: category.id, pageSize: 3 });
-    result.products = productCollection.products || [];
+    props.getProductCollectionParameter = { categoryId: category.id, pageSize: 3 };
 };
 
-export const ExcludeParentProduct: HandlerType = ({
-    parameter: { isProductDetailsPage, parentProduct },
-    result,
-}) => {
-    if (!isProductDetailsPage || !parentProduct) {
+export const LoadProducts: HandlerType = props => {
+    if (!props.getProductCollectionParameter) {
         return;
     }
 
-    result.products = result.products.filter(product => product.id !== parentProduct.id);
-};
+    const extraProductOptions = props.extraProductCollectionParameter ? {
+        getProductCollectionParameter: props.extraProductCollectionParameter,
+        numberOfProductsToDisplay: props.parameter.numberOfProductsToDisplay,
+    } : undefined;
 
-export const DispatchCompleteLoadCarouselProducts: HandlerType = props => {
-    props.dispatch({
-        type: "Components/ProductCarousel/CompleteLoadCarouselProducts",
-        carouselId: props.parameter.carouselId,
-        products: props.result.products,
-    });
-};
-
-export const LoadRealTimePrices: HandlerType = props => {
-    if (props.result.products?.length) {
-        props.dispatch(loadRealTimePricing({
-            parameter: { products: props.result.products },
-            onSuccess: (realTimePricing) => {
-                props.dispatch({
-                    type: "Components/ProductCarousel/CompleteLoadRealTimePricing",
-                    carouselId: props.parameter.carouselId,
-                    realTimePricing,
-                });
-            },
-            onError: () => {
-                props.dispatch({
-                    type: "Components/ProductCarousel/FailedLoadRealTimePricing",
-                    carouselId: props.parameter.carouselId,
-                });
-            },
-        }));
-    }
-};
-
-export const LoadRealTimeInventory: HandlerType = props => {
-    if (props.result.products?.length) {
-        props.dispatch(loadRealTimeInventory({
-            parameter: { products: props.result.products },
-            onSuccess: realTimeInventory => {
-                props.dispatch({
-                    type: "Components/ProductCarousel/CompleteLoadRealTimeInventory",
-                    carouselId: props.parameter.carouselId,
-                    realTimeInventory,
-                });
-            },
-        }));
-    }
+    props.dispatch(loadProductInfoList({
+        id: props.parameter.carouselId,
+        getProductCollectionParameter: props.getProductCollectionParameter,
+        extraProductOptions,
+    }));
 };
 
 export const chain = [
-    DispatchBeginLoadCarouselProducts,
-    InitializeResult,
     LoadRecentlyViewed,
     LoadCrossSells,
     LoadRelatedProducts,
     LoadCustomersAlsoPurchased,
     LoadTopSellers,
     LoadFeaturedCategory,
-    ExcludeParentProduct,
-    DispatchCompleteLoadCarouselProducts,
-    LoadRealTimePrices,
-    LoadRealTimeInventory,
+    LoadProducts,
 ];
 
 const loadCarouselProducts = createHandlerChainRunner(chain, "LoadCarouselProducts");
-
 export default loadCarouselProducts;

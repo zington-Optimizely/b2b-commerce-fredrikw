@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -13,10 +14,16 @@ import { css } from "styled-components";
 interface OwnProps extends WidgetProps {
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    productsState: state.pages.productList.productsState,
-    productFilters: state.pages.productList.productFilters,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const pagination = getProductListDataViewProperty(state, "pagination");
+    const correctedQuery = getProductListDataViewProperty(state,  "correctedQuery");
+    const { productFilters } = state.pages.productList;
+
+    return ({
+        totalItemCount: pagination?.totalItemCount,
+        query: correctedQuery || productFilters.query,
+    });
+};
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
@@ -27,7 +34,7 @@ export interface ProductListProductCountStyles {
     queryText?: TypographyPresentationProps;
 }
 
-const styles: ProductListProductCountStyles = {
+export const productCountStyles: ProductListProductCountStyles = {
     wrapper: {
         css: css` margin-top: 10px; `,
     },
@@ -42,20 +49,18 @@ const styles: ProductListProductCountStyles = {
     },
 };
 
-export const productCountStyles = styles;
+const styles = productCountStyles;
 
-const ProductListProductCount: FC<Props> = ({ productsState, productFilters }) => {
-    if (!productsState.value) {
+const ProductListProductCount: FC<Props> = ({ totalItemCount, query }) => {
+    if (!totalItemCount) {
         return null;
     }
 
-    const count = productsState.value.pagination!.totalItemCount;
-    const query = productsState.value.correctedQuery || productFilters.query;
-    const itemsText = (count !== 1 ? " items" : " item") + (query ? " for " : "");
+    const itemsText = (totalItemCount !== 1 ? " items" : " item") + (query ? " for " : "");
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.countText} data-test-selector="productListCountText">{count}</Typography>
+            <Typography {...styles.countText} data-test-selector="productListCountText">{totalItemCount}</Typography>
             <Typography {...styles.itemsText}>{translate(itemsText)}</Typography>
             {query && <Typography {...styles.queryText} data-test-selector="productListQueryText">{query}</Typography>}
         </StyledWrapper>

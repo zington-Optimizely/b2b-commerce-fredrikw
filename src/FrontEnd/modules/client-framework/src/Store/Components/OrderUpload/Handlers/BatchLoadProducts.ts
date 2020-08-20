@@ -1,14 +1,12 @@
 import {
-    createHandlerChainRunner,
+    createHandlerChainRunner, executeAwaitableHandlerChain,
     HandlerWithResult,
-    makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
 import {
     batchGetProducts,
     BatchGetProductsApiParameter,
 } from "@insite/client-framework/Services/ProductService";
-import { ProductModelExtended } from "@insite/client-framework/Services/ProductServiceV2";
-import loadRealTimeInventory, { LoadRealTimeInventoryParameter } from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
+import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import { OrderUploadRowError, UploadedItem } from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
 import { ProductDto, RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -66,9 +64,9 @@ export const LoadRealTimeInventory: HandlerType = async ({ result: { apiResult }
         return;
     }
 
-    const realTimeInventory = await makeHandlerChainAwaitable<LoadRealTimeInventoryParameter, RealTimeInventoryModel>(loadRealTimeInventory)({
-        parameter: { products: products as unknown as ProductModelExtended[] },
-    })(dispatch, getState);
+    const realTimeInventory = await executeAwaitableHandlerChain<Parameters<typeof loadRealTimeInventory>[0], RealTimeInventoryModel>(loadRealTimeInventory, {
+        productIds: products.map(o => o.id),
+    }, { dispatch, getState });
 
     realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
         products.filter(p => p.id === inventory.productId).forEach(product => {

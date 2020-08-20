@@ -16,13 +16,13 @@ export interface PopupMessageStyles {
     bodyText?: TypographyProps;
 }
 
-const styles: PopupMessageStyles = {
+export const popupMessageStyles: PopupMessageStyles = {
     modal: {
         sizeVariant: "small",
     },
 };
 
-export const popupMessageStyles = styles;
+const styles = popupMessageStyles;
 
 const PopupMessage: React.FunctionComponent<Props> = (props) => {
     return(
