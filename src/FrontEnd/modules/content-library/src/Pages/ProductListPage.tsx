@@ -146,7 +146,7 @@ class ProductListPage extends React.Component<Props> {
     }
 
     setMetadata() {
-        const { productListCatalogPage, websiteName } = this.props;
+        const { productListCatalogPage, websiteName, location } = this.props;
         if (!productListCatalogPage) {
             return;
         }
@@ -160,6 +160,7 @@ class ProductListPage extends React.Component<Props> {
             openGraphTitle,
             openGraphUrl,
             title,
+            currentPath: location.pathname,
             canonicalPath,
             websiteName,
         });

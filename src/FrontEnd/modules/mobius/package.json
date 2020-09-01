@@ -28,8 +28,7 @@
     "core-js": "^2.6.1",
     "exenv": "^1.2.2",
     "focus-within-polyfill": "^5.0.6",
-    "react-datetime-picker": "^2.9.0",
-    "react-transition-group": "^4.3.0"
+    "react-datetime-picker": "^2.9.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -64,6 +63,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-test-renderer": "^16.13.1",
+    "react-transition-group": "^4.3.0",
     "regenerator-runtime": "^0.13.1",
     "rimraf": "^2.6.2",
     "styled-components": "^5.0.1",

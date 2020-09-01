@@ -70,6 +70,7 @@ class PublicPage extends React.Component<Props> {
             openGraphTitle: page.fields["openGraphTitle"],
             openGraphImage: page.fields["openGraphImage"],
             title: page.fields["title"],
+            currentPath: pathname,
             canonicalPath: pathname,
             websiteName,
         });

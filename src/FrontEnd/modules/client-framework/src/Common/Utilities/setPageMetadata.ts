@@ -6,6 +6,7 @@ export interface PreparedMetadata {
     openGraphImage: string;
     openGraphTitle: string;
     openGraphUrl: string;
+    canonicalUrl?: string;
     title: string;
 }
 
@@ -15,15 +16,15 @@ export interface Metadata {
     openGraphImage?: string;
     openGraphTitle?: string;
     openGraphUrl?: string;
+    currentPath: string;
     canonicalPath?: string;
     title?: string;
     websiteName: string;
 }
 
-export default function setPageMetadata({ metaDescription, metaKeywords, openGraphImage, openGraphTitle, openGraphUrl, canonicalPath, title, websiteName }: Metadata) {
+export default function setPageMetadata({ metaDescription, metaKeywords, openGraphImage, openGraphTitle, openGraphUrl, currentPath, canonicalPath, title, websiteName }: Metadata) {
     const url: { protocol: string, host: string } = IS_SERVER_SIDE ? getUrl()! : window.location;
     const authority = `${url.protocol}//${url.host}`;
-    const currentUrl = canonicalPath ? `${authority}${canonicalPath}` : url.toString();
 
     const cleanUrl = (url?: string, alternativeUrl = "") => {
         if (!url) {
@@ -37,10 +38,12 @@ export default function setPageMetadata({ metaDescription, metaKeywords, openGra
         return `${authority}${url.startsWith("/") ? url : `/${url}`}`;
     };
 
+    const currentUrl = cleanUrl(currentPath);
     const actualTitle = websiteName + (title ? ` | ${title}` : "");
     const ogTitle = openGraphTitle || actualTitle || "";
     const ogImage = cleanUrl(openGraphImage);
     const ogUrl = cleanUrl(openGraphUrl, currentUrl);
+    const canonicalUrl = cleanUrl(canonicalPath, currentUrl);
 
     if (IS_SERVER_SIDE) {
         setServerPageMetadata({
@@ -49,6 +52,7 @@ export default function setPageMetadata({ metaDescription, metaKeywords, openGra
             openGraphUrl: ogUrl,
             openGraphTitle: ogTitle,
             openGraphImage: ogImage,
+            canonicalUrl,
             title: actualTitle,
         });
     } else {
@@ -58,5 +62,6 @@ export default function setPageMetadata({ metaDescription, metaKeywords, openGra
         document.getElementById("ogUrl")?.setAttribute("content", ogUrl);
         document.querySelector("meta[name=\"keywords\"]")?.setAttribute("content", metaKeywords || "");
         document.querySelector("meta[name=\"description\"]")?.setAttribute("content", metaDescription || "");
+        document.querySelector("link[rel=\"canonical\"]")?.setAttribute("href", canonicalUrl || "");
     }
 }

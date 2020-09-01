@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import injectCss from "../utilities/injectCss";
+import { TypographyComponentProps } from "./Typography";
 import TypographyStyle from "./TypographyStyle";
 
 export const TypographyEllipsisStyle = styled(TypographyStyle)`
@@ -10,11 +11,11 @@ export const TypographyEllipsisStyle = styled(TypographyStyle)`
     ${injectCss}
 `;
 
-interface TypographyEllipsisProps {
+interface TypographyEllipsisProps extends TypographyComponentProps {
     title?: string;
 }
 
-class TypographyEllipsis extends React.Component<TypographyEllipsisProps> {
+class TypographyEllipsis extends React.Component<any> {
     element = React.createRef<HTMLSpanElement>();
 
     componentDidMount() {

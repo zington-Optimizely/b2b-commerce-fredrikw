@@ -2,7 +2,27 @@ import "core-js/fn/array/includes"; // needed for IE
 import styled, { ThemeProps } from "styled-components";
 import { BaseTheme } from "../globals/baseTheme";
 import resolveColor from "../utilities/resolveColor";
-import { TypographyPresentationProps } from "./Typography";
+import { TypographyComponentProps, TypographyPresentationProps } from "./Typography";
+
+/**
+ * This is a highly simplified version of the styled-components internal utility functions `flatten` and `interleave`.
+ * `flatten` and `interleave` are not exported and therefore not safe to use as utility functions in this library.
+ * They provide browser-specific support for various css properties and handle recursive tagged template literals,
+ * as well as support for nonstandard types of tagged interpolations. This is used only to render styles within the
+ * rich text editor, and therefore ideally should not require as robust of functionality.
+ *  */
+const hydrateCssTaggedTemplate = (css: TypographyPresentationProps["css"], theme: BaseTheme) => {
+    const hydratedSegments: string[] = [];
+    if (typeof css === "object") {
+        css.forEach((segment: any) => {
+            if (typeof segment === "function") {
+                hydratedSegments.push(segment({ theme }));
+            }
+            hydratedSegments.push(segment);
+        });
+    }
+    return hydratedSegments.join("");
+};
 
 const typographyStyleStringGenerator = ({
     _color,
@@ -18,11 +38,7 @@ const typographyStyleStringGenerator = ({
     variantCss,
     weight,
     ...otherProps
-}: TypographyPresentationProps & ThemeProps<BaseTheme> & {
-    _color?: TypographyPresentationProps["color"],
-    _size?: TypographyPresentationProps["size"],
-    variantCss?: TypographyPresentationProps["css"],
-}) => `
+}: TypographyComponentProps) => `
     ${_color ? `color: ${resolveColor(_color, theme)};` : ""}
     ${color ? `color: ${resolveColor(color, theme)};` : ""}
     ${italic ? "font-style: italic;" : ""}
@@ -33,8 +49,8 @@ const typographyStyleStringGenerator = ({
     ${underline ? "text-decoration: underline;" : ""}
     ${(weight !== undefined) ? `font-weight: ${weight};` : ""}
     ${(fontFamily !== undefined) ? `font-family: ${fontFamily};` : ""}
-    ${variantCss || ""}
-    ${otherProps.css ? otherProps.css : ""}
+    ${hydrateCssTaggedTemplate(variantCss, theme) || ""}
+    ${otherProps.css ? hydrateCssTaggedTemplate(otherProps.css, theme) : ""}
 `;
 
 export const themeTypographyStyleString = ({ theme }: ThemeProps<BaseTheme>) => {
@@ -52,7 +68,7 @@ export const themeTypographyStyleString = ({ theme }: ThemeProps<BaseTheme>) => 
 };
 
 /**
- * This is the correct typing for the typographyStyle, however it causes a deep type instantiation error.
+ * This is likely the correct typing for the typographyStyle, however it causes a deep type instantiation error.
  *
  * type TypographyStyleProps = Omit<TypographyProps, "color" | "ellipsis" | "size" | "forwardAs">
  *     & {
@@ -60,12 +76,30 @@ export const themeTypographyStyleString = ({ theme }: ThemeProps<BaseTheme>) => 
  *         _size?: number | string;
  *         variantCss?: StyledProp<any>;
  *     };
- * const TypographyStyle = styled.span.attrs<TypographyStyleProps, { as: keyof JSX.IntrinsicElements }>((props: TypographyStyleProps) => ({
+ * const TypographyStyle = styled.span.attrs<TypographyStyleProps, { as: keyof JSX.IntrinsicElements }>((props: TypographyComponentProps) => ({
  */
+/* eslint-disable no-unneeded-ternary */
 const TypographyStyle = styled.span.attrs<any, { as: any }>((props: any) => ({
     as: props.as || props.variant,
 }))`
-    ${typographyStyleStringGenerator}
+    /*
+     * UH OH! Is this extremely repetitive code that should be refactored?
+     * Nope! we need tagged template literals to be in full force here for variantCss and css to work as expected.
+    */
+    ${({ _color, theme }: TypographyComponentProps) => _color ? `color: ${resolveColor(_color, theme)};` : ""}
+
+    ${({ color, theme }: TypographyComponentProps) => color ? `color: ${resolveColor(color, theme)};` : ""}
+    ${({ italic }: TypographyComponentProps) => italic ? "font-style: italic;" : ""}
+    ${({ lineHeight }: TypographyComponentProps) => (lineHeight !== undefined) ? `line-height: ${lineHeight};` : ""}
+    ${({ _size }: TypographyComponentProps) => (_size !== undefined) ? `font-size: ${(typeof _size === "string") ? _size : `${_size}px`};` : ""}
+    ${({ size }: TypographyComponentProps) => (size !== undefined) ? `font-size: ${(typeof size === "string") ? size : `${size}px`};` : ""}
+    ${({ transform }: TypographyComponentProps) => transform ? `text-transform: ${transform};` : ""}
+    ${({ underline }: TypographyComponentProps) => underline ? "text-decoration: underline;" : ""}
+    ${({ weight }: TypographyComponentProps) => (weight !== undefined) ? `font-weight: ${weight};` : ""}
+    ${({ fontFamily }: TypographyComponentProps) => (fontFamily !== undefined) ? `font-family: ${fontFamily};` : ""}
+    ${({ variantCss }: any) => variantCss || ""}
+    ${({ css }: any) => css ? css : ""}
 `;
+/* eslint-enable no-unneeded-ternary */
 
 export default TypographyStyle;

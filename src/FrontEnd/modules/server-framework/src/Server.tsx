@@ -291,6 +291,7 @@ async function pageRenderer(request: Request, response: Response) {
             <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl}/>
             <meta name="keywords" content={metadata?.metaKeywords}/>
             <meta name="description" content={metadata?.metaDescription}/>
+            <link rel="canonical" href={metadata?.canonicalUrl}/>
             <base href="/"/>
             {shellFont}
             {storefrontFont}

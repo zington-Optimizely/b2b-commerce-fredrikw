@@ -72,7 +72,7 @@ class ProductDetailsPage extends React.Component<Props, State> {
     }
 
     setMetadata() {
-        const { productState: { value: product }, websiteName } = this.props;
+        const { productState: { value: product }, websiteName, location } = this.props;
         if (!product || !product.content) {
             return;
         }
@@ -85,6 +85,8 @@ class ProductDetailsPage extends React.Component<Props, State> {
             openGraphImage,
             openGraphTitle,
             openGraphUrl,
+            currentPath: location.pathname,
+            canonicalPath: product.canonicalUrl,
             title: pageTitle || product.productTitle,
             websiteName,
         });

@@ -29,6 +29,10 @@ const enum fields {
     buttonVariant = "variant",
     bannerWidth = "bannerWidth",
     imageOverlay = "imageOverlay",
+    partialOverlay = "partialOverlay",
+    partialOverlayPositioning = "partialOverlayPositioning",
+    disableButton = "disableButton",
+    contentPadding = "contentPadding",
 }
 
 interface OwnProps extends WidgetProps {
@@ -44,6 +48,10 @@ interface OwnProps extends WidgetProps {
         [fields.buttonLink]: LinkFieldValue;
         [fields.buttonVariant]: "primary" | "secondary" | "tertiary";
         [fields.imageOverlay]: string;
+        [fields.partialOverlay]: boolean;
+        [fields.partialOverlayPositioning]: "top" | "middle" | "bottom";
+        [fields.disableButton]: boolean;
+        [fields.contentPadding]: number;
     };
     extendedStyles?: BannerStyles;
 }
@@ -70,15 +78,14 @@ export const bannerStyles: BannerStyles = {
     wrapper: {
         css: css`
             width: 100%;
+            display: flex;
         `,
     },
     overlayWrapper: {
         css: css`
             width: 100%;
-            height: 100%;
             color: white;
             text-align: center;
-            padding: 70px 100px 50px 100px;
         `,
     },
 };
@@ -150,6 +157,17 @@ const Banner: React.FC<Props> = ({
             break;
     }
 
+    let overlayPositioningStyles;
+    if (!fields.partialOverlay) {
+        overlayPositioningStyles = "align-items: stretch;";
+    } else if (fields.partialOverlayPositioning === "top") {
+        overlayPositioningStyles = "align-items: flex-start;";
+    } else if (fields.partialOverlayPositioning === "middle") {
+        overlayPositioningStyles = "align-items: center;";
+    } else if (fields.partialOverlayPositioning === "bottom") {
+        overlayPositioningStyles = "align-items: flex-end;";
+    }
+
     const [styles] = React.useState(() => mergeToNew(bannerStyles, extendedStyles));
 
     const wrapperStyles = {
@@ -157,6 +175,8 @@ const Banner: React.FC<Props> = ({
             ${styles.wrapper?.css || ""}
             ${backgroundStyles}
             ${focalPointStyles}
+            ${minimumHeightStyles}
+            ${overlayPositioningStyles}
         `,
     };
 
@@ -164,19 +184,23 @@ const Banner: React.FC<Props> = ({
         css: css`
             ${styles.overlayWrapper?.css || ""}
             background-color: ${fields.background === "image" ? fields.imageOverlay : ""};
-            ${minimumHeightStyles}
+            padding: ${fields.contentPadding}px;
         `,
     };
 
-    return <StyledWrapper {...wrapperStyles}>
-        <StyledWrapper {...overlayWrapperStyles}>
-            <Typography>{parse(fields.heading, parserOptions)}</Typography>
-            <Typography>{parse(fields.subheading, parserOptions)}</Typography>
-            <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
-                {fields.buttonLabel || title || url}
-            </Button>
+    return (
+        <StyledWrapper {...wrapperStyles}>
+            <StyledWrapper {...overlayWrapperStyles}>
+                <Typography>{parse(fields.heading, parserOptions)}</Typography>
+                <Typography>{parse(fields.subheading, parserOptions)}</Typography>
+                {!fields.disableButton && (
+                    <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
+                        {fields.buttonLabel || title || url}
+                    </Button>
+                )}
+            </StyledWrapper>
         </StyledWrapper>
-    </StyledWrapper>;
+    );
 };
 
 const banner: WidgetModule = {
@@ -211,6 +235,25 @@ const banner: WidgetModule = {
                 editorTemplate: "ColorPickerField",
                 defaultValue: "",
                 isVisible: widget => widget.fields.background === "image",
+            },
+            {
+                fieldType: "General",
+                name: fields.partialOverlay,
+                editorTemplate: "CheckboxField",
+                defaultValue: false,
+            },
+            {
+                fieldType: "General",
+                name: fields.partialOverlayPositioning,
+                editorTemplate: "DropDownField",
+                options: [
+                    { displayName: "Top", value: "top" },
+                    { displayName: "Middle", value: "middle" },
+                    { displayName: "Bottom", value: "bottom" },
+                ],
+                hideEmptyOption: true,
+                defaultValue: "bottom",
+                isVisible: widget => widget.fields.partialOverlay,
             },
             {
                 fieldType: "General",
@@ -304,6 +347,18 @@ const banner: WidgetModule = {
                 ],
                 defaultValue: "1/4 viewport",
                 hideEmptyOption: true,
+            },
+            {
+                fieldType: "General",
+                name: fields.disableButton,
+                editorTemplate: "CheckboxField",
+                defaultValue: false,
+            },
+            {
+                fieldType: "General",
+                name: fields.contentPadding,
+                editorTemplate: "IntegerField",
+                defaultValue: 50,
             },
         ],
     },
