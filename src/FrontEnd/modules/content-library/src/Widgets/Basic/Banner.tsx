@@ -1,4 +1,4 @@
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -110,36 +110,7 @@ const Banner: React.FC<Props> = ({
            background-size: cover;`
         : `background-color: ${fields.backgroundColor};`;
 
-    let focalPointStyles;
-    switch (fields.focalPoint) {
-        case "topLeft":
-            focalPointStyles = "background-position: left top;";
-            break;
-        case "topCenter":
-            focalPointStyles = "background-position: center top;";
-            break;
-        case "topRight":
-            focalPointStyles = "background-position: right top;";
-            break;
-        case "centerLeft":
-            focalPointStyles = "background-position: left center;";
-            break;
-        case "center":
-            focalPointStyles = "background-position: center center;";
-            break;
-        case "centerRight":
-            focalPointStyles = "background-position: right center;";
-            break;
-        case "bottomLeft":
-            focalPointStyles = "background-position: left bottom;";
-            break;
-        case "bottomCenter":
-            focalPointStyles = "background-position: center bottom;";
-            break;
-        case "bottomRight":
-            focalPointStyles = "background-position: right bottom;";
-            break;
-    }
+    const focalPointStyles = getFocalPointStyles(fields.focalPoint);
 
     let minimumHeightStyles;
     switch (fields.minimumHeight) {

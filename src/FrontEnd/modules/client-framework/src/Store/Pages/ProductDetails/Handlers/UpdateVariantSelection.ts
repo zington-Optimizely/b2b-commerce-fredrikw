@@ -2,9 +2,7 @@ import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import { getSelectedProductPath } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getProductState, getProductStateByPath, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import cloneDeep from "lodash/cloneDeep";
 
 interface Parameter {

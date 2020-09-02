@@ -3,9 +3,9 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import { ItemProps } from "@insite/client-framework/Types/PageProps";
 import { SavePageResponseModel } from "@insite/shell/Services/ContentAdminService";
 
-export interface SelectProductModel {
+export interface ProductSearchModel {
     id: string;
-    shortDescription: string;
+    displayName: string;
     path: string;
 }
 
@@ -28,12 +28,26 @@ export interface SelectBrandsState {
     selectedBrands?: SelectBrandModel[];
 }
 
+export interface CategorySearchModel {
+    id: string;
+    displayName: string;
+    path: string;
+}
+
+export interface BrandSearchModel {
+    id: string;
+    displayName: string;
+    path: string;
+}
+
 export interface PageEditorState {
-    products?: SelectProductModel[];
+    productSearchResults?: ProductSearchModel[];
     categories?: SelectCategoryModel[];
+    categorySearchResults?: CategorySearchModel[];
     categoryIndexByParentId?: Dictionary<number[]>;
     categoryIndexById?: Dictionary<number>;
     brands?: SelectBrandModel[];
+    brandSearchResults?: BrandSearchModel[];
     selectBrandsState?: SelectBrandsState;
     /** only has a value if we are editing a widget/page */
     editingId?: string;

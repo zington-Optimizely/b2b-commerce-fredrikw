@@ -1,4 +1,4 @@
-import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -33,6 +33,7 @@ interface SlideModel {
         buttonLabel: string;
         buttonLink: LinkFieldValue;
         buttonVariant: "primary" | "secondary" | "tertiary";
+        focalPoint: "topLeft" | "topCenter" | "topRight" | "centerLeft" | "center" | "centerRight" | "bottomLeft" | "bottomCenter" | "bottomRight";
     }
 }
 
@@ -258,12 +259,14 @@ const Slideshow: React.FC<Props> = ({
                         ? `background-image: url(${slide.fields.image});
                            background-size: cover;`
                         : `background-color: ${slide.fields.backgroundColor};`;
+                    const focalPointStyles = getFocalPointStyles(slide.fields.focalPoint);
                     const slideWrapperStyles = {
                         css: css`
                             ${styles.slideContentWrapper?.css || ""}
                             ${heightStyles}
                             ${textAlignStyles}
                             ${backgroundStyles}
+                            ${focalPointStyles}
                         `,
                     };
                     return (
@@ -416,6 +419,24 @@ const widgetModule: WidgetModule = {
                         displayName: "Color",
                         defaultValue: "black",
                         isVisible: widget => widget.fields.background === "color",
+                    },
+                    {
+                        name: "focalPoint",
+                        displayName: "Focal Point",
+                        editorTemplate: "DropDownField",
+                        options: [
+                            { displayName: "Top Left", value: "topLeft" },
+                            { displayName: "Top Center", value: "topCenter" },
+                            { displayName: "Top Right", value: "topRight" },
+                            { displayName: "Center Left", value: "centerLeft" },
+                            { displayName: "Center", value: "center" },
+                            { displayName: "Center Right", value: "centerRight" },
+                            { displayName: "Bottom Left", value: "bottomLeft" },
+                            { displayName: "Bottom Center", value: "bottomCenter" },
+                            { displayName: "Bottom Right", value: "bottomRight" },
+                        ],
+                        defaultValue: "center",
+                        hideEmptyOption: true,
                     },
                     {
                         name: "heading",

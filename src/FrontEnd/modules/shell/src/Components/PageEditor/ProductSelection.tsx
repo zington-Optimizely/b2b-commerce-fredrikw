@@ -1,65 +1,54 @@
-import { loadProducts, selectProduct } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
+import { clearModelSelection, searchProducts, selectProduct } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import styled from "styled-components";
 
-interface OwnProps {
-
-}
-
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: ShellState) => ({
     selectedProductPath: state.pageEditor.selectedProductPath,
-    products: state.pageEditor.products,
+    productSearchResults: state.pageEditor.productSearchResults,
 });
 
 const mapDispatchToProps = {
     selectProduct,
-    loadProducts,
+    searchProducts,
+    clearModelSelection,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 class ProductSelection extends React.Component<Props> {
-    UNSAFE_componentWillMount(): void {
-        if (!this.props.products) {
-            this.props.loadProducts();
+    onSelectionChange = (productPath?: string) => {
+        let selectedPath = productPath ?? "";
+        const queryStringIndex = selectedPath.indexOf("?");
+        if (queryStringIndex > -1) {
+            selectedPath = selectedPath.substring(0, queryStringIndex);
         }
+        this.props.selectProduct(selectedPath);
+    };
+
+    componentWillUnmount() {
+        this.props.clearModelSelection();
     }
 
-    onChange = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.selectProduct(event.currentTarget.value);
-    };
-
-    getValue = () => {
-        return this.props.selectedProductPath ? this.props.selectedProductPath : "";
-    };
-
     render() {
-        if (!this.props.products) {
-            return null;
-        }
+        const productSearchResults = this.props.productSearchResults ?? [];
 
-        return <Wrapper>
-            <label>
-                Product:
-                <select onChange={this.onChange} value={this.getValue()}>
-                    <option key="" value="">Select Product</option>
-                    {this.props.products.map(product =>
-                        <option key={product.id} value={product.path}>{product.shortDescription}</option>,
-                    )}
-                </select>
-            </label>
-        </Wrapper>;
+        const options = productSearchResults.map(o => ({
+            optionText: o.displayName,
+            optionValue: o.path,
+        }));
+
+        return (
+            <ModelSelection
+                modelType="Product"
+                selectedValue={this.props.selectedProductPath ?? ""}
+                onSelectionChange={this.onSelectionChange}
+                onInputChange={this.props.searchProducts}
+                options={options}
+            />
+        );
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSelection);
-
-const Wrapper = styled.div`
-    white-space: nowrap;
-    max-width: 50%;
-    select {
-        max-width: 100%;
-    }
-`;

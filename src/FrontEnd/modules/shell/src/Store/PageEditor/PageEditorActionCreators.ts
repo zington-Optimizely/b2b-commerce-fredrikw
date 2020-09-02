@@ -1,12 +1,12 @@
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import sleep from "@insite/client-framework/Common/Sleep";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
+import { autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { AdminODataApiParameter, getAdminBrands } from "@insite/shell/Services/AdminService";
 import {
     getBrands,
     getCategories,
-    getProducts,
     savePage as savePageApi,
     SavePageResponseModel,
 } from "@insite/shell/Services/ContentAdminService";
@@ -22,21 +22,52 @@ export const selectProduct = (path: string): AnyShellAction => ({
     type: "PageEditor/SelectProduct",
 });
 
-export const loadProducts = (): ShellThunkAction => dispatch => {
-    addTask(async function () {
-        const products = await getProducts();
+export const searchProducts = (search: string): ShellThunkAction => dispatch => {
+    addTask(
+        (async function () {
+            const autocompleteModel = await autocompleteSearch({
+                query: search,
+            });
 
-        dispatch({
-            products,
-            type: "PageEditor/CompleteLoadProducts",
-        });
-    }());
+            dispatch({
+                type: "PageEditor/CompleteProductSearch",
+                productSearchResults: autocompleteModel.products!.map(o => ({
+                    path: o.url,
+                    id: o.id!,
+                    displayName: o.title,
+                })),
+            });
+        }()),
+    );
 };
+
+export const clearModelSelection = (): AnyShellAction => ({
+    type: "PageEditor/ClearModelSelection",
+});
 
 export const selectBrand = (path: string): AnyShellAction => ({
     brandPath: path,
     type: "PageEditor/SelectBrand",
 });
+
+export const searchBrands = (search: string): ShellThunkAction => dispatch => {
+    addTask(
+        (async function () {
+            const autocompleteModel = await autocompleteSearch({
+                query: search,
+            });
+
+            dispatch({
+                type: "PageEditor/CompleteBrandSearch",
+                brandSearchResults: autocompleteModel.brands!.map(o => ({
+                    path: o.url,
+                    id: o.id!,
+                    displayName: o.productLineName ? `${o.productLineName} in ${o.title}` : o.title,
+                })),
+            });
+        }()),
+    );
+};
 
 export const loadBrands = (): ShellThunkAction => dispatch => {
     addTask(async function () {
@@ -75,6 +106,25 @@ export const selectCategory = (path: string): AnyShellAction => ({
     categoryPath: path,
     type: "PageEditor/SelectCategory",
 });
+
+export const searchCategories = (search: string): ShellThunkAction => dispatch => {
+    addTask(
+        (async function () {
+            const autocompleteModel = await autocompleteSearch({
+                query: search,
+            });
+
+            dispatch({
+                type: "PageEditor/CompleteCategorySearch",
+                categorySearchResults: autocompleteModel.categories!.map(o => ({
+                    path: o.url,
+                    id: o.id!,
+                    displayName: o.title,
+                })),
+            });
+        }()),
+    );
+};
 
 export const loadCategories = (): ShellThunkAction => dispatch => {
     addTask(async function () {

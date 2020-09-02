@@ -1,66 +1,49 @@
-import { loadCategories, selectCategory } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
+import { clearModelSelection, searchCategories, selectCategory } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
-import sortBy from "lodash/sortBy";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import styled from "styled-components";
 
-interface OwnProps {
-
-}
-
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: ShellState) => ({
     selectedCategoryPath: state.pageEditor.selectedCategoryPath,
-    categories: state.pageEditor.categories,
+    categorySearchResults: state.pageEditor.categorySearchResults,
 });
 
 const mapDispatchToProps = {
     selectCategory,
-    loadCategories,
+    searchCategories,
+    clearModelSelection,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 class CategorySelection extends React.Component<Props> {
-    UNSAFE_componentWillMount(): void {
-        if (!this.props.categories) {
-            this.props.loadCategories();
-        }
+    onSelectionChange = (categoryPath?: string) => {
+        this.props.selectCategory(categoryPath ?? "");
+    };
+
+    componentWillUnmount() {
+        this.props.clearModelSelection();
     }
 
-    onChange = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.selectCategory(event.currentTarget.value);
-    };
-
-    getValue = () => {
-        return this.props.selectedCategoryPath ? this.props.selectedCategoryPath : "";
-    };
-
     render() {
-        if (!this.props.categories) {
-            return null;
-        }
+        const categorySearchResults = this.props.categorySearchResults ?? [];
 
-        return <Wrapper>
-            <label>
-                Category:
-                <select onChange={this.onChange} value={this.getValue()}>
-                    <option key="" value="">Select Category</option>
-                    {sortBy(this.props.categories, [o => o.displayName]).map(category =>
-                        <option key={category.id} value={category.path}>{category.displayName}</option>,
-                    )}
-                </select>
-            </label>
-        </Wrapper>;
+        const options = categorySearchResults.map(o => ({
+            optionText: o.displayName,
+            optionValue: o.path,
+        }));
+
+        return (
+            <ModelSelection
+                modelType="Category"
+                selectedValue={this.props.selectedCategoryPath ?? ""}
+                onSelectionChange={this.onSelectionChange}
+                onInputChange={this.props.searchCategories}
+                options={options}
+            />
+        );
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategorySelection);
-
-const Wrapper = styled.div`
-    white-space: nowrap;
-    max-width: 50%;
-    select {
-        max-width: 100%;
-    }
-`;

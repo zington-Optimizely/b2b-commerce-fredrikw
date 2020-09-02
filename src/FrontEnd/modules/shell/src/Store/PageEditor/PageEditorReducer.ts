@@ -5,10 +5,11 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { SavePageResponseModel } from "@insite/shell/Services/ContentAdminService";
 import {
-    PageEditorState,
+    BrandSearchModel,
+    CategorySearchModel,
+    PageEditorState, ProductSearchModel,
     SelectBrandModel,
     SelectCategoryModel,
-    SelectProductModel,
 } from "@insite/shell/Store/PageEditor/PageEditorState";
 import { Draft } from "immer";
 
@@ -60,12 +61,16 @@ const reducer = {
         draft.selectedBrandPath = action.brandPath;
     },
 
-    "PageEditor/CompleteLoadProducts": (draft: Draft<PageEditorState>, action: { products: SelectProductModel[]; }) => {
-        draft.products = action.products;
+    "PageEditor/CompleteProductSearch": (draft: Draft<PageEditorState>, action: { productSearchResults: ProductSearchModel[]; }) => {
+        draft.productSearchResults = action.productSearchResults;
     },
 
     "PageEditor/CompleteLoadBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[]; }) => {
         draft.brands = action.brands;
+    },
+
+    "PageEditor/CompleteBrandSearch": (draft: Draft<PageEditorState>, action: { brandSearchResults: BrandSearchModel[]; }) => {
+        draft.brandSearchResults = action.brandSearchResults;
     },
 
     "PageEditor/CompleteLoadSelectBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[]; }) => {
@@ -80,6 +85,10 @@ const reducer = {
             ...draft.selectBrandsState,
             selectedBrands: action.brands,
         };
+    },
+
+    "PageEditor/CompleteCategorySearch": (draft: Draft<PageEditorState>, action: { categorySearchResults: CategorySearchModel[]; }) => {
+        draft.categorySearchResults = action.categorySearchResults;
     },
 
     "PageEditor/CompleteLoadCategories": (draft: Draft<PageEditorState>, action: { categories: SelectCategoryModel[]; }) => {
@@ -109,8 +118,18 @@ const reducer = {
             category.displayName = displayName;
         }
     },
+
     "PageEditor/UpdateAddWidgetData": (draft: Draft<PageEditorState>, action: { data?: AddWidgetData }) => {
         draft.addWidgetData = action.data;
+    },
+
+    "PageEditor/ClearModelSelection": (draft: Draft<PageEditorState>) => {
+        delete draft.productSearchResults;
+        delete draft.categorySearchResults;
+        delete draft.brandSearchResults;
+        delete draft.selectedBrandPath;
+        delete draft.selectedCategoryPath;
+        delete draft.selectedProductPath;
     },
 };
 

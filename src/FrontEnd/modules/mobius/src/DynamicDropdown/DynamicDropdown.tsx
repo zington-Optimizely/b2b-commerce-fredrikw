@@ -100,6 +100,8 @@ interface DynamicDropdownComponentProps extends Partial<FormFieldComponentProps>
     selected?: string;
     /** A callback function that will be called when any key is pressed */
     onKeyPress?: (event: React.KeyboardEvent) => void;
+    /** If the user has not typed anything into the field to search, and there are no options, this lets you hide the "no options" item */
+    hideNoOptionsIfEmptySearch?: boolean;
 }
 
 interface DynamicDropdownState {
@@ -454,6 +456,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
             placeholder,
             sizeVariant,
             theme,
+            hideNoOptionsIfEmptySearch,
             ...otherProps
         } = this.props;
         const {
@@ -486,6 +489,8 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
             ];
         } else if (renderOptions && renderOptions.length > 0) {
             renderList = renderOptions;
+        } else if (!typedInput && hideNoOptionsIfEmptySearch) {
+            renderList = [];
         }
 
         let selectedString;

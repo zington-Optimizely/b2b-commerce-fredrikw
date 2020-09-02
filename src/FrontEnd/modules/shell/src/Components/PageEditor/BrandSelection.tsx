@@ -1,8 +1,8 @@
-import { loadBrands, selectBrand } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
+import { clearModelSelection, searchBrands, selectBrand } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import styled from "styled-components";
 
 interface OwnProps {
 
@@ -10,56 +10,44 @@ interface OwnProps {
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     selectedBrandPath: state.pageEditor.selectedBrandPath,
-    brands: state.pageEditor.brands,
+    brandSearchResults: state.pageEditor.brandSearchResults,
 });
 
 const mapDispatchToProps = {
     selectBrand,
-    loadBrands,
+    searchBrands,
+    clearModelSelection,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 class BrandSelection extends React.Component<Props> {
-    UNSAFE_componentWillMount(): void {
-        if (!this.props.brands) {
-            this.props.loadBrands();
-        }
+    onSelectionChange = (brandPath?: string) => {
+        this.props.selectBrand(brandPath ?? "");
+    };
+
+    componentWillUnmount() {
+        this.props.clearModelSelection();
     }
 
-    onChange = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.selectBrand(event.currentTarget.value);
-    };
-
-    getValue = () => {
-        return this.props.selectedBrandPath || "";
-    };
-
     render() {
-        if (!this.props.brands) {
-            return null;
-        }
+        const brandSearchResults = this.props.brandSearchResults ?? [];
 
-        return <Wrapper>
-            <label>
-                Brand:
-                <select onChange={this.onChange} value={this.getValue()}>
-                    <option key="">Select Brand</option>
-                    {this.props.brands.map(brand =>
-                        <option key={brand.id} value={brand.path}>{brand.name}</option>,
-                    )}
-                </select>
-            </label>
-        </Wrapper>;
+        const options = brandSearchResults.map(o => ({
+            optionText: o.displayName,
+            optionValue: o.path,
+        }));
+
+        return (
+            <ModelSelection
+                modelType="Brand"
+                selectedValue={this.props.selectedBrandPath ?? ""}
+                onSelectionChange={this.onSelectionChange}
+                onInputChange={this.props.searchBrands}
+                options={options}
+            />
+        );
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrandSelection);
-
-const Wrapper = styled.div`
-    white-space: nowrap;
-    max-width: 50%;
-    select {
-        max-width: 100%;
-    }
-`;

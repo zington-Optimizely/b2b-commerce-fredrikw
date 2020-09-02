@@ -8,7 +8,6 @@ import { get as baseGet, post as basePost, postVoid as basePostVoid, requestJson
 import {
     SelectBrandModel,
     SelectCategoryModel,
-    SelectProductModel,
 } from "@insite/shell/Store/PageEditor/PageEditorState";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import { LanguageModel, PersonaModel } from "@insite/shell/Store/ShellContext/ShellContextState";
@@ -37,8 +36,6 @@ export const savePage = (page: PageModel) => post<SavePageResponseModel>("savePa
 export const addPage = (page: PageModel) => post<SavePageResponseModel>("addPage", page);
 
 export const deletePage = (nodeId: string) => requestJson(`deletePage/${nodeId}`, "POST");
-
-export const getProducts = () => get<SelectProductModel[]>("products");
 
 export const getCategories = () => get<SelectCategoryModel[]>("categories");
 
