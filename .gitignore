@@ -98,3 +98,5 @@ dist/
 /src/FrontEnd/config/settings.js
 
 /src/FrontEnd/report*.json
+
+/src/FrontEnd/tsconfig.paths.json
