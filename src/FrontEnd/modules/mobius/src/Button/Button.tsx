@@ -89,6 +89,7 @@ type BWT = Pick<ButtonProps, "shadow"> & InjectableCss & {
     _shape: ButtonProps["shape"];
 };
 
+// TODO ISC-13955 figure outer why we need any on these
 const ButtonWrapper = styled.button<BWT>`
     cursor: pointer;
     font-family: inherit;
@@ -100,9 +101,9 @@ const ButtonWrapper = styled.button<BWT>`
         box-shadow: ${get(theme, "shadows.1")};
     `}
     padding: ${({ _sizeVariant }) => get(buttonSizeVariants, [_sizeVariant, "padding"]) || "0 1em"};
-    ${applyStyleModifiers(buttonShapes, "_shape")}
-    ${applyStyleModifiers(buttonTypes, "buttonType")}
-    ${applyStyleModifiers(hoverAnimations, "hoverAnimation")}
+    ${applyStyleModifiers(buttonShapes, "_shape") as any}
+    ${applyStyleModifiers(buttonTypes, "buttonType") as any}
+    ${applyStyleModifiers(hoverAnimations, "hoverAnimation") as any}
     &:disabled {
         cursor: not-allowed;
     }

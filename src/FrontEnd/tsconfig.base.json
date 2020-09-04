@@ -25,5 +25,13 @@
     },
     "exclude": [
         "node_modules"
+    ],
+    "files": [
+        "./modules/server-framework/Entry.ts",
+        "./modules/client-framework/Entry.ts",
+        "./modules/shell/Entry.ts",
+        "constants.d.ts",
+        "./modules/mobius/src/entry.nostyle.d.ts",
+        "./modules/mobius/src/react-datetime-picker.d.ts"
     ]
 }
