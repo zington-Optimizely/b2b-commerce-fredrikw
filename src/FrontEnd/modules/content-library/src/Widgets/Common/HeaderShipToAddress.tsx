@@ -61,7 +61,9 @@ const baseDrawerStyles: DrawerPresentationProps = {
             overflow-x: inherit;
             overflow-y: inherit;
         `,
-        drawerTitle: css` background: ${getColor("common.background")}; `,
+        drawerTitle: css`
+            background: ${getColor("common.background")};
+        `,
     },
     headlineTypographyProps: {
         color: "text.main",
@@ -85,7 +87,9 @@ export const headerShipToAddressStyles: HeaderShipToAddressStyles = {
         size: 22,
     },
     titleTypography: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
         ellipsis: true,
         transform: "uppercase",
     },
@@ -110,13 +114,7 @@ interface OwnProps extends WidgetProps {
 
 const styles = headerShipToAddressStyles;
 
-const HeaderShipToAddress: FC<Props> = ({
-    id,
-    fulfillmentLabel,
-    isDrawerOpen,
-    setDrawerIsOpen,
-    shellContext,
-}) => {
+const HeaderShipToAddress: FC<Props> = ({ id, fulfillmentLabel, isDrawerOpen, setDrawerIsOpen, shellContext }) => {
     const handleClickAddress = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setDrawerIsOpen({ isOpen: !isDrawerOpen });
     };
@@ -130,18 +128,21 @@ const HeaderShipToAddress: FC<Props> = ({
     return (
         <>
             <StyledWrapper {...styles.shipToAddressWrapper}>
-                <Clickable {...styles.titleClickable} onClick={handleClickAddress} data-test-selector="header_shipToButton">
+                <Clickable
+                    {...styles.titleClickable}
+                    onClick={handleClickAddress}
+                    data-test-selector="header_shipToButton"
+                >
                     {/* As this doesn't look final, but is the pattern on which the mobile nav drawer was based,
                     please also make changes to `NavigationDrawer.tsx` when you change this. */}
-                    <Icon
-                        {...styles.titleIcon}
-                        src={MapPin}
-                    />
-                    <Typography {...styles.titleTypography} data-test-selector="header_shipToLabel">{fulfillmentLabel}</Typography>
+                    <Icon {...styles.titleIcon} src={MapPin} />
+                    <Typography {...styles.titleTypography} data-test-selector="header_shipToLabel">
+                        {fulfillmentLabel}
+                    </Typography>
                 </Clickable>
             </StyledWrapper>
             <Drawer
-                {...drawerStyles as DrawerProps}
+                {...(drawerStyles as DrawerProps)}
                 position="top"
                 isOpen={isDrawerOpen}
                 headline={translate("Change Customer")}

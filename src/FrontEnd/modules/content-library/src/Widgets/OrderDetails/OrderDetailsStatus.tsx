@@ -16,13 +16,17 @@ export interface OrderDetailsStatusStyles {
 
 export const statusStyles: OrderDetailsStatusStyles = {
     wrapper: {
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
     titleText: {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -38,8 +42,12 @@ const OrderDetailsStatus: FC = () => {
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.titleText} id="orderDetailsStatus">{translate("Status")}</Typography>
-            <Typography {...styles.status} aria-labelledby="orderDetailsStatus">{order.statusDisplay}</Typography>
+            <Typography {...styles.titleText} id="orderDetailsStatus">
+                {translate("Status")}
+            </Typography>
+            <Typography {...styles.status} aria-labelledby="orderDetailsStatus">
+                {order.statusDisplay}
+            </Typography>
         </StyledWrapper>
     );
 };

@@ -32,8 +32,16 @@ type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<t
 
 class AddressesPage extends React.Component<Props> {
     UNSAFE_componentWillMount() {
-        const { currentBillToState, currentShipToState, shouldLoadAddressFields, shouldLoadCountries,
-            loadCurrentBillTo, loadCurrentShipTo, loadAddressFields, loadCurrentCountries } = this.props;
+        const {
+            currentBillToState,
+            currentShipToState,
+            shouldLoadAddressFields,
+            shouldLoadCountries,
+            loadCurrentBillTo,
+            loadCurrentShipTo,
+            loadAddressFields,
+            loadCurrentCountries,
+        } = this.props;
 
         if (!currentBillToState.value) {
             loadCurrentBillTo();
@@ -51,7 +59,7 @@ class AddressesPage extends React.Component<Props> {
     render() {
         return (
             <Page>
-                <Zone contentId={this.props.id} zoneName="Content"/>
+                <Zone contentId={this.props.id} zoneName="Content" />
             </Page>
         );
     }

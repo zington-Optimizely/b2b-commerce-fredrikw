@@ -10,7 +10,8 @@ import updateUnitOfMeasure from "@insite/client-framework/Store/Pages/MyListDeta
 import updateWishListLineQuantities from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateWishListLineQuantities";
 import translate from "@insite/client-framework/Translate";
 import {
-    AvailabilityMessageType, ProductModel,
+    AvailabilityMessageType,
+    ProductModel,
     WishListLineModel,
     WishListModel,
 } from "@insite/client-framework/Types/ApiModels";
@@ -22,7 +23,9 @@ import ProductDescription, { ProductDescriptionStyles } from "@insite/content-li
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import ProductQuantityBreakPricing, {
+    ProductQuantityBreakPricingStyles,
+} from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
@@ -118,7 +121,9 @@ export interface MyListsDetailsProductListLineStyles {
 export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     editNotesLink: {
         typographyProps: { size: 12 },
-        css: css` margin-top: 5px; `,
+        css: css`
+            margin-top: 5px;
+        `,
     },
     lineInnerContainer: {
         gap: 10,
@@ -131,7 +136,9 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     selectedCheckbox: {
         sizeVariant: "small",
         css: css`
-            @media print { display: none; }
+            @media print {
+                display: none;
+            }
             margin-right: 10px;
         `,
     },
@@ -150,19 +157,27 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     descriptionGridItem: {
         width: [8, 8, 4, 4, 4],
         printWidth: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productPartNumbersStyles: {
         erpNumberGridItem: {
-            css: css` flex-direction: column; `,
+            css: css`
+                flex-direction: column;
+            `,
         },
         erpNumberLabelText: { variant: "legend" },
         customerNameGridItem: {
-            css: css` flex-direction: column; `,
+            css: css`
+                flex-direction: column;
+            `,
         },
         customerNameLabelText: { variant: "legend" },
         manufacturerItemGridItem: {
-            css: css` flex-direction: column; `,
+            css: css`
+                flex-direction: column;
+            `,
         },
         manufacturerItemLabelText: { variant: "legend" },
     },
@@ -173,7 +188,9 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     partNumbersHidden: {
         below: "md",
         css: css`
-            @media print { display: block; }
+            @media print {
+                display: block;
+            }
             width: 100%;
         `,
     },
@@ -186,14 +203,20 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     priceGridItem: {
         width: [12, 12, 12, 12, 5],
         printWidth: 5,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productPriceStyles: {
         priceLabelText: {
             variant: "p",
             transform: "uppercase",
             weight: 600,
-            css: css` @media print { font-size: 12px; } `,
+            css: css`
+                @media print {
+                    font-size: 12px;
+                }
+            `,
         },
     },
     quantityBreakPricing: {
@@ -207,7 +230,8 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
         gap: 10,
         css: css`
             @media print {
-                input, select {
+                input,
+                select {
                     height: 18px !important;
                     font-size: 11px !important;
                 }
@@ -218,18 +242,34 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     quantityGridItem: { width: 3, printWidth: 6 },
     productQuantityOrderedStyles: {
         labelProps: {
-            css: css` @media print { font-size: 12px; } `,
+            css: css`
+                @media print {
+                    font-size: 12px;
+                }
+            `,
         },
         cssOverrides: {
-            inputSelect: css` @media print { width: 100px; } `,
+            inputSelect: css`
+                @media print {
+                    width: 100px;
+                }
+            `,
         },
     },
     productUnitOfMeasureSelectStyles: {
         labelProps: {
-            css: css` @media print { font-size: 12px; } `,
+            css: css`
+                @media print {
+                    font-size: 12px;
+                }
+            `,
         },
         iconProps: {
-            css: css` @media print { display: none; } `,
+            css: css`
+                @media print {
+                    display: none;
+                }
+            `,
         },
     },
     availabilityGridItem: { width: 12 },
@@ -244,12 +284,18 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     notesHidden: {
         above: "sm",
         css: css`
-            @media print { display: none; }
+            @media print {
+                display: none;
+            }
             width: 100%;
         `,
     },
     notesGridItem: { width: 12 },
-    addToCartButton: { css: css` width: 100%; ` },
+    addToCartButton: {
+        css: css`
+            width: 100%;
+        `,
+    },
     deleteLinkHidden: {
         below: "md",
         css: css`
@@ -261,7 +307,9 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     },
     deleteLink: {
         typographyProps: { size: 12 },
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
     updateQuantityWrapper: {
         css: css`
@@ -281,7 +329,9 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     quantityUpdatedIcon: {
         src: Check,
         size: 16,
-        css: css` margin-right: 5px; `,
+        css: css`
+            margin-right: 5px;
+        `,
     },
     quantityUpdatedText: {
         size: 12,
@@ -289,7 +339,9 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
     restrictedDescriptionGridItem: {
         width: [12, 12, 6, 6, 5],
         printWidth: 5,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     restrictedMessageText: { color: "warning" },
 };
@@ -297,19 +349,19 @@ export const productListLineStyles: MyListsDetailsProductListLineStyles = {
 const styles = productListLineStyles;
 
 const MyListsDetailsProductListLine: React.FC<Props> = ({
-                                                            wishList,
-                                                            wishListLine,
-                                                            productInfo,
-                                                            isSelected,
-                                                            settingsCollection,
-                                                            isQuantityUpdated,
-                                                            onDeleteClick,
-                                                            onEditNotesClick,
-                                                            updateWishListLineQuantities,
-                                                            setWishListLineIsSelected,
-                                                            updateUnitOfMeasure,
-                                                            updateQuantity,
-                                                        }) => {
+    wishList,
+    wishListLine,
+    productInfo,
+    isSelected,
+    settingsCollection,
+    isQuantityUpdated,
+    onDeleteClick,
+    onEditNotesClick,
+    updateWishListLineQuantities,
+    setWishListLineIsSelected,
+    updateUnitOfMeasure,
+    updateQuantity,
+}) => {
     const product = mapWishListLineToProduct(wishListLine);
 
     const selectChangeHandler: CheckboxProps["onChange"] = (_, value) => {
@@ -321,9 +373,14 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
     };
 
     const isDiscontinued = () => {
-        const availability = productInfo.inventory?.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure.toLowerCase() === productInfo.unitOfMeasure.toLowerCase())?.availability;
+        const availability = productInfo.inventory?.inventoryAvailabilityDtos?.find(
+            o => o.unitOfMeasure.toLowerCase() === productInfo.unitOfMeasure.toLowerCase(),
+        )?.availability;
 
-        return !wishListLine.isActive || (wishListLine.isDiscontinued && availability?.messageType === AvailabilityMessageType.OutOfStock);
+        return (
+            !wishListLine.isActive ||
+            (wishListLine.isDiscontinued && availability?.messageType === AvailabilityMessageType.OutOfStock)
+        );
     };
 
     const isRestricted = () => {
@@ -338,7 +395,10 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
 
     if (isRestricted() || isDiscontinued()) {
         return (
-            <GridContainer {...styles.lineInnerContainer} data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
+            <GridContainer
+                {...styles.lineInnerContainer}
+                data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}
+            >
                 <GridItem {...styles.restrictedDescriptionGridItem}>
                     <Typography {...styles.restrictedDescriptionText}>{wishListLine.shortDescription}</Typography>
                     <Hidden {...styles.partNumbersHidden}>
@@ -360,24 +420,20 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                 </GridItem>
                 <GridItem {...styles.priceAndAvailabilityGridItem}>
                     <Typography {...styles.restrictedMessageText} data-test-selector="restrictedMessage">
-                        {isRestricted()
-                        && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Restrictions")}</>
-                        }
-                        {isDiscontinued()
-                        && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Discontinued")}</>
-                        }
+                        {isRestricted() && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Restrictions")}</>}
+                        {isDiscontinued() && <>{siteMessage("Lists_Item_Not_Displayed_Due_To_Discontinued")}</>}
                     </Typography>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
-                    {canEditWishList
-                    && <Link
-                        {...styles.restrictedRemoveItemLink}
-                        onClick={() => onDeleteClick(wishListLine)}
-                        data-test-selector="removeRestricted"
-                    >
-                        {translate("Remove item")}
-                    </Link>
-                    }
+                    {canEditWishList && (
+                        <Link
+                            {...styles.restrictedRemoveItemLink}
+                            onClick={() => onDeleteClick(wishListLine)}
+                            data-test-selector="removeRestricted"
+                        >
+                            {translate("Remove item")}
+                        </Link>
+                    )}
                 </GridItem>
             </GridContainer>
         );
@@ -395,29 +451,66 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
         },
     };
 
-    return <ProductContext.Provider value={productContext}>
-        <GridContainer {...styles.lineInnerContainer} data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}>
-            <GridItem {...styles.imageGridItem}>
-                <Hidden {...styles.selectedCheckboxHidden}>
-                    <Checkbox {...styles.selectedCheckbox} checked={isSelected} onChange={selectChangeHandler} data-test-selector="selectItem"/>
-                </Hidden>
-                <StyledWrapper {...styles.imageWrapper}>
-                    <ProductImage product={productContext} extendedStyles={styles.productImageStyles}/>
-                    {canEditWishList
-                    && <Hidden {...styles.editNotesHidden}>
-                        <Link {...styles.editNotesLink} onClick={() => onEditNotesClick(wishListLine)}>
-                            {translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}
-                        </Link>
+    return (
+        <ProductContext.Provider value={productContext}>
+            <GridContainer
+                {...styles.lineInnerContainer}
+                data-test-selector={`${wishListLine.productId}_${wishListLine.selectedUnitOfMeasure}`}
+            >
+                <GridItem {...styles.imageGridItem}>
+                    <Hidden {...styles.selectedCheckboxHidden}>
+                        <Checkbox
+                            {...styles.selectedCheckbox}
+                            checked={isSelected}
+                            onChange={selectChangeHandler}
+                            data-test-selector="selectItem"
+                        />
                     </Hidden>
-                    }
-                </StyledWrapper>
-            </GridItem>
-            <GridItem {...styles.descriptionGridItem}>
-                {product.brand
-                && <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles}/>
-                }
-                <ProductDescription product={productContext} extendedStyles={styles.productDescriptionStyles}/>
-                <Hidden {...styles.partNumbersHidden}>
+                    <StyledWrapper {...styles.imageWrapper}>
+                        <ProductImage product={productContext} extendedStyles={styles.productImageStyles} />
+                        {canEditWishList && (
+                            <Hidden {...styles.editNotesHidden}>
+                                <Link {...styles.editNotesLink} onClick={() => onEditNotesClick(wishListLine)}>
+                                    {translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}
+                                </Link>
+                            </Hidden>
+                        )}
+                    </StyledWrapper>
+                </GridItem>
+                <GridItem {...styles.descriptionGridItem}>
+                    {product.brand && <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles} />}
+                    <ProductDescription product={productContext} extendedStyles={styles.productDescriptionStyles} />
+                    <Hidden {...styles.partNumbersHidden}>
+                        <GridItem {...styles.partNumbersGridItem}>
+                            <ProductPartNumbers
+                                productNumber={product.productNumber}
+                                customerProductNumber={product.customerProductNumber}
+                                manufacturerItem={product.manufacturerItem}
+                                extendedStyles={styles.productPartNumbersStyles}
+                            />
+                        </GridItem>
+                        {wishListLine.notes && (
+                            <GridItem {...styles.notesGridItem}>
+                                <SmallHeadingAndText
+                                    heading={translate("Notes")}
+                                    text={wishListLine.notes}
+                                    extendedStyles={styles.notesStyles}
+                                />
+                            </GridItem>
+                        )}
+                    </Hidden>
+                </GridItem>
+                {canEditWishList && (
+                    <GridItem {...styles.overflowMenuGridItem}>
+                        <OverflowMenu position="end">
+                            <Clickable onClick={() => onEditNotesClick(wishListLine)}>
+                                {translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}
+                            </Clickable>
+                            <Clickable onClick={() => onDeleteClick(wishListLine)}>{translate("Delete")}</Clickable>
+                        </OverflowMenu>
+                    </GridItem>
+                )}
+                <Hidden {...styles.notesHidden}>
                     <GridItem {...styles.partNumbersGridItem}>
                         <ProductPartNumbers
                             productNumber={product.productNumber}
@@ -426,115 +519,98 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                             extendedStyles={styles.productPartNumbersStyles}
                         />
                     </GridItem>
-                    {wishListLine.notes
-                    && <GridItem {...styles.notesGridItem}>
-                        <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles}/>
-                    </GridItem>
-                    }
                 </Hidden>
-            </GridItem>
-            {canEditWishList
-            && <GridItem {...styles.overflowMenuGridItem}>
-                <OverflowMenu position="end">
-                    <Clickable onClick={() => onEditNotesClick(wishListLine)}>{translate(`${wishListLine.notes ? "Edit" : "Add"} Notes`)}</Clickable>
-                    <Clickable onClick={() => onDeleteClick(wishListLine)}>{translate("Delete")}</Clickable>
-                </OverflowMenu>
-            </GridItem>
-            }
-            <Hidden {...styles.notesHidden}>
-                <GridItem {...styles.partNumbersGridItem}>
-                    <ProductPartNumbers
-                        productNumber={product.productNumber}
-                        customerProductNumber={product.customerProductNumber}
-                        manufacturerItem={product.manufacturerItem}
-                        extendedStyles={styles.productPartNumbersStyles}
-                    />
+                <GridItem {...styles.priceAndAvailabilityGridItem}>
+                    <GridContainer {...styles.priceAndAvailabilityInnerContainer}>
+                        <GridItem {...styles.priceGridItem}>
+                            <ProductPrice
+                                product={productContext}
+                                showSavings={true}
+                                showSavingsAmount={productSettings.showSavingsAmount}
+                                showSavingsPercent={productSettings.showSavingsPercent}
+                                extendedStyles={styles.productPriceStyles}
+                            />
+                            <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing} />
+                        </GridItem>
+                        <GridItem {...styles.uomAndQuantityGridItem}>
+                            <GridContainer {...styles.uomAndQuantityInnerContainer}>
+                                {product.unitOfMeasures && product.unitOfMeasures.length > 1 && (
+                                    <GridItem {...styles.uomGridItem}>
+                                        <ProductUnitOfMeasureSelect
+                                            disabled={!canEditWishList}
+                                            extendedStyles={styles.productUnitOfMeasureSelectStyles}
+                                        />
+                                    </GridItem>
+                                )}
+                                <GridItem {...styles.quantityGridItem}>
+                                    <ProductQuantityOrdered extendedStyles={styles.productQuantityOrderedStyles} />
+                                </GridItem>
+                            </GridContainer>
+                        </GridItem>
+                        <GridItem {...styles.availabilityGridItem}>
+                            {productInfo.inventory && (
+                                <ProductContextAvailability extendedStyles={styles.productAvailabilityStyles} />
+                            )}
+                        </GridItem>
+                    </GridContainer>
                 </GridItem>
-            </Hidden>
-            <GridItem {...styles.priceAndAvailabilityGridItem}>
-                <GridContainer {...styles.priceAndAvailabilityInnerContainer}>
-                    <GridItem {...styles.priceGridItem}>
-                        <ProductPrice
-                            product={productContext}
-                            showSavings={true}
-                            showSavingsAmount={productSettings.showSavingsAmount}
-                            showSavingsPercent={productSettings.showSavingsPercent}
-                            extendedStyles={styles.productPriceStyles}/>
-                        <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing}/>
-                    </GridItem>
-                    <GridItem {...styles.uomAndQuantityGridItem}>
-                        <GridContainer {...styles.uomAndQuantityInnerContainer}>
-                            {product.unitOfMeasures && product.unitOfMeasures.length > 1
-                            && <GridItem {...styles.uomGridItem}>
-                                <ProductUnitOfMeasureSelect
-                                    disabled={!canEditWishList}
-                                    extendedStyles={styles.productUnitOfMeasureSelectStyles}/>
-                            </GridItem>
-                            }
-                            <GridItem {...styles.quantityGridItem}>
-                                <ProductQuantityOrdered extendedStyles={styles.productQuantityOrderedStyles}/>
-                            </GridItem>
-                        </GridContainer>
-                    </GridItem>
-                    <GridItem {...styles.availabilityGridItem}>
-                        {productInfo.inventory
-                        && <ProductContextAvailability extendedStyles={styles.productAvailabilityStyles}/>
-                        }
-                    </GridItem>
-                </GridContainer>
-            </GridItem>
-            {wishListLine.notes
-            && <Hidden {...styles.notesHidden}>
-                <GridItem {...styles.notesGridItem}>
-                    <SmallHeadingAndText heading={translate("Notes")} text={wishListLine.notes} extendedStyles={styles.notesStyles}/>
-                </GridItem>
-            </Hidden>
-            }
-            <GridItem {...styles.buttonsGridItem}>
-                <ProductAddToCartButton
-                    extendedStyles={styles.addToCartButton}
-                    data-test-selector="addToCart"
-                />
-                {canEditWishList
-                && <>
-                    <Hidden {...styles.deleteLinkHidden}>
-                        <Link
-                            {...styles.deleteLink}
-                            onClick={() => onDeleteClick(wishListLine)}
-                            data-test-selector="deleteListItem"
-                        >
-                            {translate("Delete")}
-                        </Link>
+                {wishListLine.notes && (
+                    <Hidden {...styles.notesHidden}>
+                        <GridItem {...styles.notesGridItem}>
+                            <SmallHeadingAndText
+                                heading={translate("Notes")}
+                                text={wishListLine.notes}
+                                extendedStyles={styles.notesStyles}
+                            />
+                        </GridItem>
                     </Hidden>
-                    <StyledWrapper {...styles.updateQuantityWrapper}>
-                        {wishListLine.qtyOrdered !== productInfo.qtyOrdered
-                        && <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
-                            {translate("Update QTY")}
-                        </Link>
-                        }
-                        {isQuantityUpdated && wishListLine.qtyOrdered === productInfo.qtyOrdered
-                        && <>
-                            <Icon {...styles.quantityUpdatedIcon} />
-                            <Typography {...styles.quantityUpdatedText}>{translate("QTY updated")}</Typography>
+                )}
+                <GridItem {...styles.buttonsGridItem}>
+                    <ProductAddToCartButton extendedStyles={styles.addToCartButton} data-test-selector="addToCart" />
+                    {canEditWishList && (
+                        <>
+                            <Hidden {...styles.deleteLinkHidden}>
+                                <Link
+                                    {...styles.deleteLink}
+                                    onClick={() => onDeleteClick(wishListLine)}
+                                    data-test-selector="deleteListItem"
+                                >
+                                    {translate("Delete")}
+                                </Link>
+                            </Hidden>
+                            <StyledWrapper {...styles.updateQuantityWrapper}>
+                                {wishListLine.qtyOrdered !== productInfo.qtyOrdered && (
+                                    <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
+                                        {translate("Update QTY")}
+                                    </Link>
+                                )}
+                                {isQuantityUpdated && wishListLine.qtyOrdered === productInfo.qtyOrdered && (
+                                    <>
+                                        <Icon {...styles.quantityUpdatedIcon} />
+                                        <Typography {...styles.quantityUpdatedText}>
+                                            {translate("QTY updated")}
+                                        </Typography>
+                                    </>
+                                )}
+                            </StyledWrapper>
                         </>
-                        }
-                    </StyledWrapper>
-                </>
-                }
-            </GridItem>
-        </GridContainer>
-    </ProductContext.Provider>;
+                    )}
+                </GridItem>
+            </GridContainer>
+        </ProductContext.Provider>
+    );
 };
 
 const mapWishListLineToProduct = (wishListLine: WishListLineModel) => {
-    const product = cloneDeep(wishListLine) as any as ProductModel;
+    const product = (cloneDeep(wishListLine) as any) as ProductModel;
     product.id = wishListLine.productId;
     product.productNumber = wishListLine.erpNumber;
     product.productTitle = wishListLine.shortDescription;
-    product.unitOfMeasures = wishListLine?.productUnitOfMeasures?.map(u => ({
-        id: u.productUnitOfMeasureId,
-        ...u,
-    })) || null;
+    product.unitOfMeasures =
+        wishListLine?.productUnitOfMeasures?.map(u => ({
+            id: u.productUnitOfMeasureId,
+            ...u,
+        })) || null;
     return product;
 };
 

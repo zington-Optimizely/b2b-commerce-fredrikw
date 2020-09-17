@@ -95,30 +95,38 @@ class AutocompleteCategories extends React.Component<Props> {
         }
 
         const styles = this.styles;
-        return <>
-            <Typography {...styles.headerText}>{translate("Categories")}</Typography>
-            {categories.map(category => (
-                <Fragment key={`${category.id}`}>
-                    {category.subtitle
-                        && <Typography
-                            {...(this.props.focusedItem === category ? styles.focusedCategoryItemText : styles.categoryItemText)}
-                            onClick={() => { this.props.goToUrl(category.url); }}
-                        >
-                            <Link {...styles.link}>{category.title}</Link>
-                            <>{` ${translate("in")} ${category.subtitle}`}</>
-                        </Typography>
-                    }
-                    {!category.subtitle
-                        && <Link
-                            {...(this.props.focusedItem === category ? styles.focusedLink : styles.link)}
-                            onClick={() => { this.props.goToUrl(category.url); }}
-                        >
-                            {category.title}
-                        </Link>
-                    }
-                </Fragment>
-            ))}
-        </>;
+        return (
+            <>
+                <Typography {...styles.headerText}>{translate("Categories")}</Typography>
+                {categories.map(category => (
+                    <Fragment key={`${category.id}`}>
+                        {category.subtitle && (
+                            <Typography
+                                {...(this.props.focusedItem === category
+                                    ? styles.focusedCategoryItemText
+                                    : styles.categoryItemText)}
+                                onClick={() => {
+                                    this.props.goToUrl(category.url);
+                                }}
+                            >
+                                <Link {...styles.link}>{category.title}</Link>
+                                <>{` ${translate("in")} ${category.subtitle}`}</>
+                            </Typography>
+                        )}
+                        {!category.subtitle && (
+                            <Link
+                                {...(this.props.focusedItem === category ? styles.focusedLink : styles.link)}
+                                onClick={() => {
+                                    this.props.goToUrl(category.url);
+                                }}
+                            >
+                                {category.title}
+                            </Link>
+                        )}
+                    </Fragment>
+                ))}
+            </>
+        );
     }
 }
 

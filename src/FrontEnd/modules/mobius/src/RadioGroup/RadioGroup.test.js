@@ -1,10 +1,10 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import RadioGroup from './RadioGroup';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import RadioGroup from "./RadioGroup";
 
-describe('RadioGroup', () => {
+describe("RadioGroup", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -12,7 +12,7 @@ describe('RadioGroup', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <RadioGroup {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -23,7 +23,7 @@ describe('RadioGroup', () => {
         mountedWrapper = undefined;
     });
 
-    test('renders a fieldset by default', () => {
+    test("renders a fieldset by default", () => {
         const root = wrapper().find(RadioGroup).getDOMNode();
         expect(root instanceof HTMLFieldSetElement).toBe(true);
     });

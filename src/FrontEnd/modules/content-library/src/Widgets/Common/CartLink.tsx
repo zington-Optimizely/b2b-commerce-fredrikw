@@ -74,12 +74,12 @@ let retainedTotalCountToDisplay: number | undefined;
 
 const styles = cartLinkStyles;
 const CartLink: FC<Props> = ({
-                                 shouldLoadCart,
-                                 cartUrl,
-                                 totalCountDisplay,
-                                 fields: { visibilityState, icon: selectedIcon },
-                                 loadCurrentCart,
-                             }) => {
+    shouldLoadCart,
+    cartUrl,
+    totalCountDisplay,
+    fields: { visibilityState, icon: selectedIcon },
+    loadCurrentCart,
+}) => {
     useEffect(() => {
         if (shouldLoadCart) {
             loadCurrentCart();
@@ -105,8 +105,8 @@ const CartLink: FC<Props> = ({
             data-test-selector="cartLink"
         >
             <Hidden below="lg" as="span">
-                {showLabel && `${translate("Cart")} `}
-                (<span data-test-selector="cartLinkQuantity">{retainedTotalCountToDisplay}</span>)
+                {showLabel && `${translate("Cart")} `}(
+                <span data-test-selector="cartLinkQuantity">{retainedTotalCountToDisplay}</span>)
             </Hidden>
             <VisuallyHidden>{siteMessage("Header_CartCount")}</VisuallyHidden>
         </Link>

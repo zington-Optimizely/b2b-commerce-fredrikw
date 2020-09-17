@@ -8,19 +8,10 @@ export const poNumberStyles: SearchTextFieldStyles = {};
 const styles = poNumberStyles;
 
 const OrderHistorySearchPoNumber: React.FunctionComponent<WidgetProps> = () => {
-    return(
-        <SearchTextField
-            styles={styles}
-            parameterField="poNumber"
-            label="PO #"
-            inputType="text"
-            placeholder=""
-        />
-    );
+    return <SearchTextField styles={styles} parameterField="poNumber" label="PO #" inputType="text" placeholder="" />;
 };
 
 const widgetModule: WidgetModule = {
-
     component: OrderHistorySearchPoNumber,
     definition: {
         group: "Order History",

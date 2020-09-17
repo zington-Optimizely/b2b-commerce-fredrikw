@@ -14,9 +14,11 @@ const reducers = StoreModule.reducers;
 
 export function configureStore(initialState?: ApplicationState) {
     // Build middleware. These are functions that can process the actions before they reach the store.
-    const windowIfDefined = typeof window === "undefined" ? null : window as any;
+    const windowIfDefined = typeof window === "undefined" ? null : (window as any);
     // If devTools is installed, connect to it
-    const devToolsExtension = windowIfDefined?.__REDUX_DEVTOOLS_EXTENSION__ as (options?: { trace?: boolean }) => StoreEnhancer;
+    const devToolsExtension = windowIfDefined?.__REDUX_DEVTOOLS_EXTENSION__ as (options?: {
+        trace?: boolean;
+    }) => StoreEnhancer;
     const createStoreWithMiddleware = compose<StoreEnhancerStoreCreator<ApplicationState>>(
         applyMiddleware(reduxThunk),
         devToolsExtension ? devToolsExtension({ trace: true }) : <S>(next: StoreEnhancerStoreCreator<S>) => next,

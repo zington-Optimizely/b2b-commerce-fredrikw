@@ -41,11 +41,15 @@ export const twoButtonModalStyles: TwoButtonModalStyles = {
     },
     buttonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         variant: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
     submitButton: {
         color: "secondary",
@@ -80,20 +84,21 @@ class TwoButtonModal extends React.Component<Props> {
                 {...styles.modal}
                 isOpen={this.props.modalIsOpen}
                 data-test-selector={this.props.dataTestSelector}
-                handleClose={this.formCancelHandler}>
+                handleClose={this.formCancelHandler}
+            >
                 <GridContainer {...styles.container}>
                     <GridItem {...styles.textGridItem}>
                         <Typography {...styles.messageText}>{this.props.messageText}</Typography>
                     </GridItem>
                     <GridItem {...styles.buttonsGridItem}>
-                        <Button
-                            {...styles.cancelButton}
-                            onClick={this.formCancelHandler}>
+                        <Button {...styles.cancelButton} onClick={this.formCancelHandler}>
                             {this.props.cancelButtonText}
                         </Button>
-                        <Button {...styles.submitButton}
+                        <Button
+                            {...styles.submitButton}
                             onClick={this.formSubmitHandler}
-                            data-test-selector={this.props.submitTestSelector}>
+                            data-test-selector={this.props.submitTestSelector}
+                        >
                             {this.props.submitButtonText}
                         </Button>
                     </GridItem>

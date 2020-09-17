@@ -34,54 +34,80 @@ interface AddressDrawerContainerStyles {
 
 export const addressDrawerContainerStyles: AddressDrawerContainerStyles = {
     drawerContainer: {
-        css: [({ gap, theme }) => css`
-            margin-left: ${gap !== undefined && gap > 0 ? `${gap / 2}px` : "0"};
-            width: ${gap !== undefined && gap > 0 ? `calc(100% - ${gap}px)` : "100%"};
-            ${breakpointMediaQueries(theme, [css` max-width: inherit; `], "min")}
-        `],
+        css: [
+            ({ gap, theme }) => css`
+                margin-left: ${gap !== undefined && gap > 0 ? `${gap / 2}px` : "0"};
+                width: ${gap !== undefined && gap > 0 ? `calc(100% - ${gap}px)` : "100%"};
+                ${breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            max-width: inherit;
+                        `,
+                    ],
+                    "min",
+                )}
+            `,
+        ],
     },
     fulfillmentMethodGridItem: {
-        css: css` order: 1; `,
+        css: css`
+            order: 1;
+        `,
         width: 2,
     },
     addressesGridItem: {
-        css: css` order: 2; `,
+        css: css`
+            order: 2;
+        `,
         width: 5,
     },
     addressesGridItemAnonymousUser: {
-        css: css` order: 3; `,
+        css: css`
+            order: 3;
+        `,
         width: 5,
     },
     pickUpAddressGridItem: {
-        css: css` order: 3; `,
+        css: css`
+            order: 3;
+        `,
         width: 5,
     },
     pickUpAddressGridItemAnonymousUser: {
-        css: css` order: 2; `,
+        css: css`
+            order: 2;
+        `,
         width: 5,
     },
     applyButtonGridItem: {
-        css: css` order: 4; `,
+        css: css`
+            order: 4;
+        `,
         width: 7,
     },
 };
 
 const styles = addressDrawerContainerStyles;
 
-const AddressDrawerContainer = ({
-    id,
-    isAuthenticated,
-    fulfillmentMethod,
-}: Props) => {
+const AddressDrawerContainer = ({ id, isAuthenticated, fulfillmentMethod }: Props) => {
     return (
         <GridContainer {...styles.drawerContainer}>
             <GridItem {...styles.fulfillmentMethodGridItem}>
                 <Zone zoneName="FulfillmentMethod" contentId={id} />
             </GridItem>
-            <GridItem {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp ? styles.addressesGridItemAnonymousUser : styles.addressesGridItem)}>
+            <GridItem
+                {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
+                    ? styles.addressesGridItemAnonymousUser
+                    : styles.addressesGridItem)}
+            >
                 <Zone zoneName="Addresses" contentId={id} />
             </GridItem>
-            <GridItem {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp ? styles.pickUpAddressGridItemAnonymousUser : styles.pickUpAddressGridItem)}>
+            <GridItem
+                {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
+                    ? styles.pickUpAddressGridItemAnonymousUser
+                    : styles.pickUpAddressGridItem)}
+            >
                 <Zone zoneName="PickUpAddress" contentId={id} />
             </GridItem>
             <GridItem {...styles.applyButtonGridItem}>

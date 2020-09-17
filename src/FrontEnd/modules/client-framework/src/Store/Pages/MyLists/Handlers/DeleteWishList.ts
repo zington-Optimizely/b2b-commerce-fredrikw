@@ -7,7 +7,8 @@ type HandlerType = Handler<
         wishListId: string;
         reloadWishLists?: boolean;
         onSuccess?: () => void;
-    }, {
+    },
+    {
         error: boolean;
     }
 >;
@@ -19,10 +20,9 @@ export const DispatchBeginDeleteWishLists: HandlerType = props => {
 };
 
 export const RequestRemoveWishlist: HandlerType = props => {
-    return deleteWishListApi({ wishListId: props.parameter.wishListId })
-        .then(() => {
-            props.error = false;
-        });
+    return deleteWishListApi({ wishListId: props.parameter.wishListId }).then(() => {
+        props.error = false;
+    });
 };
 
 export const ResetWishListsData: HandlerType = props => {

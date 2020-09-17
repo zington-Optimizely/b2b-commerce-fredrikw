@@ -6,9 +6,7 @@ export const ToggleOrdersFilter: Handler = props => {
     });
 };
 
-export const chain = [
-    ToggleOrdersFilter,
-];
+export const chain = [ToggleOrdersFilter];
 
 const toggleFiltersOpen = createHandlerChainRunnerOptionalParameter(chain, {}, "ToggleFiltersOpen");
 export default toggleFiltersOpen;

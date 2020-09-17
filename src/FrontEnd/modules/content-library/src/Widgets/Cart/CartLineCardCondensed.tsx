@@ -6,10 +6,7 @@ import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSel
 import removeCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/RemoveCartLine";
 import updateCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/UpdateCartLine";
 import translate from "@insite/client-framework/Translate";
-import {
-    ProductSettingsModel,
-    PromotionModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { ProductSettingsModel, PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
@@ -77,10 +74,18 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
                     null,
                 ])}
         `,
@@ -88,7 +93,9 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
     cartLineInfoGridItem: { width: [8, 8, 8, 9, 9] },
     productBrandAndDescriptionGridItem: {
         width: [12, 12, 12, 6, 5],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productErpNumberText: {
         css: css`
@@ -99,12 +106,16 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
     productPriceAndQuantityGridItem: { width: [12, 12, 12, 6, 7] },
     productPriceAndAvailabilityGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     cartLineErrorMessageText: { color: "danger" },
     quantityGridItem: { width: 6 },
     removeCartLineGridItem: {
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
         width: [2, 2, 2, 1, 1],
     },
     removeCartLineIcon: { src: XCircle },
@@ -142,16 +153,18 @@ const CartLineCardCondensed: FC<Props> = ({
         removeCartLine({ cartLineId: cartLine.id });
     };
 
-    const sumQtyPerUom = cart.cartLines!.reduce(
-        (sum, current) => {
-            return current.productId === cartLine.productId
-                ? sum + current.qtyPerBaseUnitOfMeasure * current.qtyOrdered!
-                : sum;
-        },
-        0);
+    const sumQtyPerUom = cart.cartLines!.reduce((sum, current) => {
+        return current.productId === cartLine.productId
+            ? sum + current.qtyPerBaseUnitOfMeasure * current.qtyOrdered!
+            : sum;
+    }, 0);
     const errorMessages: React.ReactNode[] = [];
     if (showInventoryAvailability && cartLine.hasInsufficientInventory && !isOutOfStock(cartLine)) {
-        const tooManyRequestedMessage = siteMessage("Cart_ToManyQtyRequested", cartLine.qtyOnHand.toLocaleString(), sumQtyPerUom.toLocaleString());
+        const tooManyRequestedMessage = siteMessage(
+            "Cart_ToManyQtyRequested",
+            cartLine.qtyOnHand.toLocaleString(),
+            sumQtyPerUom.toLocaleString(),
+        );
         errorMessages.push(tooManyRequestedMessage);
     }
 
@@ -166,41 +179,51 @@ const CartLineCardCondensed: FC<Props> = ({
     const [styles] = React.useState(() => mergeToNew(cartLineCardCondensedStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.container} data-test-selector={`cartline_condensed_${cartLine.productId}_${cartLine.unitOfMeasure}`}>
+        <GridContainer
+            {...styles.container}
+            data-test-selector={`cartline_condensed_${cartLine.productId}_${cartLine.unitOfMeasure}`}
+        >
             <GridItem {...styles.productImageGridItem}>
                 <ProductImage product={cartLine} extendedStyles={styles.productImage} />
             </GridItem>
             <GridItem {...styles.cartLineInfoGridItem}>
                 <GridContainer {...styles.cartLineInfoContainer}>
                     <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                        {cartLine.brand
-                            && <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
-                        }
+                        {cartLine.brand && <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />}
                         <ProductDescription product={cartLine} extendedStyles={styles.productDescription} />
                         <Typography {...styles.productErpNumberText}>{cartLine.erpNumber}</Typography>
                     </GridItem>
                     <GridItem {...styles.productPriceAndQuantityGridItem}>
                         <GridContainer {...styles.productPriceAndQuantityContainer}>
                             <GridItem {...styles.productPriceAndAvailabilityGridItem}>
-                                {!cart.cartNotPriced
-                                    && <ProductPrice
+                                {!cart.cartNotPriced && (
+                                    <ProductPrice
                                         product={cartLine}
                                         currencySymbol={cart.currencySymbol}
                                         showSavings={false}
-                                        extendedStyles={styles.productPrice} />
-                                }
-                                {showInventoryAvailability && !cartLine.quoteRequired
-                                    && <ProductAvailability
+                                        extendedStyles={styles.productPrice}
+                                    />
+                                )}
+                                {showInventoryAvailability && !cartLine.quoteRequired && (
+                                    <ProductAvailability
                                         productId={cartLine.productId!}
                                         availability={cartLine.availability!}
                                         unitOfMeasure={cartLine.unitOfMeasure}
                                         trackInventory={cartLine.trackInventory}
-                                        extendedStyles={styles.productAvailability} />
-                                }
-                                {errorMessages.length > 0 && errorMessages.map((message, index) => (
-                                    // eslint-disable-next-line react/no-array-index-key
-                                    <Typography {...styles.cartLineErrorMessageText} key={index} data-test-selector="cartline_errorMessage">{message}</Typography>
-                                ))}
+                                        extendedStyles={styles.productAvailability}
+                                    />
+                                )}
+                                {errorMessages.length > 0 &&
+                                    errorMessages.map((message, index) => (
+                                        <Typography
+                                            {...styles.cartLineErrorMessageText}
+                                            // eslint-disable-next-line react/no-array-index-key
+                                            key={index}
+                                            data-test-selector="cartline_errorMessage"
+                                        >
+                                            {message}
+                                        </Typography>
+                                    ))}
                             </GridItem>
                             <GridItem {...styles.quantityGridItem}>
                                 <CartLineQuantity
@@ -215,11 +238,11 @@ const CartLineCardCondensed: FC<Props> = ({
                 </GridContainer>
             </GridItem>
             <GridItem {...styles.removeCartLineGridItem}>
-                {showRemoveAction
-                    && <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                {showRemoveAction && (
+                    <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
                         <IconMemo {...styles.removeCartLineIcon} />
                     </Clickable>
-                }
+                )}
             </GridItem>
         </GridContainer>
     );

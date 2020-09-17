@@ -12,7 +12,9 @@ import { getSettingsCollection } from "@insite/client-framework/Store/Context/Co
 import { getWarehousesDataView } from "@insite/client-framework/Store/Data/Warehouses/WarehousesSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PaginationModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
+import AddressInfoCondensedDisplay, {
+    AddressInfoCondensedDisplayStyles,
+} from "@insite/content-library/Components/AddressInfoCondensedDisplay";
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import WarehouseFindLocationPagination from "@insite/content-library/Components/WarehouseFindLocationPagination";
@@ -138,13 +140,19 @@ export const findLocationModalStyles: FindLocationModalStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     modal: {
         sizeVariant: "large",
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     modalContent: {
@@ -154,7 +162,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
         width: [12, 12, 12, 6, 5],
     },
     form: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     searchGridContainer: {
         gap: 0,
@@ -167,7 +177,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
         align: "middle",
     },
     searchResultsText: {
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
     distanceUnitOfMeasureGridItem: {
         width: 8,
@@ -197,7 +209,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     searchResultGridItem: {
         width: 12,
-        css: css` padding-top: 30px; `,
+        css: css`
+            padding-top: 30px;
+        `,
     },
     searchResultGridContainer: {
         gap: 10,
@@ -210,7 +224,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     searchResultDisplayNumberGridItem: {
         width: 2,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     warehouseDisplayNumberText: {
         color: "primary",
@@ -226,7 +242,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     searchResultAddressInfoOffsetGridItem: {
         width: 2,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     searchResultAddressInfoIcon: {
         color: "primary",
@@ -236,7 +254,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     searchResultPhoneOffsetGridItem: {
         width: 2,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     searchResultPhoneIcon: {
         color: "primary",
@@ -282,11 +302,28 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     paginationGridItem: {
         width: 12,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     pagination: {
         cssOverrides: {
-            perPageSelect: css` ${({ theme }) => (breakpointMediaQueries(theme, [css` display: none; `, null, null, null, null], "min"))} `,
+            perPageSelect: css`
+                ${({ theme }) =>
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            css`
+                                display: none;
+                            `,
+                            null,
+                            null,
+                            null,
+                            null,
+                        ],
+                        "min",
+                    )}
+            `,
         },
     },
     rightColumnGridItem: {
@@ -303,7 +340,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     selectedWarehouseDetailsGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     selectedWarehouseNameText: {
         color: "primary",
@@ -311,7 +350,9 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     },
     selectedWarehouseLinksGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     warehouseGoogleMapGridItem: {
         width: 12,
@@ -319,12 +360,18 @@ export const findLocationModalStyles: FindLocationModalStyles = {
     warehouseHoursModal: {
         sizeVariant: "small",
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     hoursContainer: {
-        css: css` white-space: pre-wrap; `,
+        css: css`
+            white-space: pre-wrap;
+        `,
     },
 };
 
@@ -364,8 +411,8 @@ const FindLocationModal: React.FC<Props> = ({
     });
 
     // Manage Selected Warehouse
-    const [selectedWarehouse, setSelectedWarehouse] =  React.useState<WarehouseModel | undefined>(undefined);
-    const [showSelectedWarehouse, setShowSelectedWarehouse] =  React.useState<boolean>(false);
+    const [selectedWarehouse, setSelectedWarehouse] = React.useState<WarehouseModel | undefined>(undefined);
+    const [showSelectedWarehouse, setShowSelectedWarehouse] = React.useState<boolean>(false);
     const [defaultRadius, setDefaultRadius] = React.useState<number>(0);
     React.useEffect(() => {
         setSelectedWarehouse(session.pickUpWarehouse || undefined);
@@ -436,7 +483,7 @@ const FindLocationModal: React.FC<Props> = ({
                 defaultLongitude,
             } = warehousesDataView;
             // Find default location
-            getGeoCodeFromLatLng(defaultLatitude, defaultLongitude).then((result) => {
+            getGeoCodeFromLatLng(defaultLatitude, defaultLongitude).then(result => {
                 setWarehouseSearchFilter(result[0].formatted_address);
                 setWarehousesPagination(pagination || undefined);
                 setResultCount(pagination?.totalItemCount || 0);
@@ -481,7 +528,7 @@ const FindLocationModal: React.FC<Props> = ({
         if (!warehousesPagination) {
             return false;
         }
-        return warehousesPagination.pageSize > (resultIndex + 1);
+        return warehousesPagination.pageSize > resultIndex + 1;
     };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -490,167 +537,262 @@ const FindLocationModal: React.FC<Props> = ({
         doSearch(filter);
     };
 
-    return <Modal
-        {...styles.modal}
-        headline={translate("Select Pick Up Location")}
-        isOpen={modalIsOpen}
-        handleClose={modalCloseHandler}
-    >
-        <GridContainer {...styles.modalContent} data-test-selector="findLocationModal">
-            <GridItem {...styles.leftColumnGridItem}>
-                <StyledForm {...styles.form} onSubmit={handleSubmit}>
-                    <GridContainer {...styles.searchGridContainer}>
-                        <GridItem {...styles.searchTextFieldGridItem}>
-                            <SearchLocationsTextField
-                                styles={styles.searchTextField}
-                                doSearch={textFieldSearch}
-                                warehouseSearchFilter={warehouseSearchFilter}
-                            />
+    return (
+        <Modal
+            {...styles.modal}
+            headline={translate("Select Pick Up Location")}
+            isOpen={modalIsOpen}
+            handleClose={modalCloseHandler}
+        >
+            <GridContainer {...styles.modalContent} data-test-selector="findLocationModal">
+                <GridItem {...styles.leftColumnGridItem}>
+                    <StyledForm {...styles.form} onSubmit={handleSubmit}>
+                        <GridContainer {...styles.searchGridContainer}>
+                            <GridItem {...styles.searchTextFieldGridItem}>
+                                <SearchLocationsTextField
+                                    styles={styles.searchTextField}
+                                    doSearch={textFieldSearch}
+                                    warehouseSearchFilter={warehouseSearchFilter}
+                                />
+                            </GridItem>
+                            <GridItem {...styles.searchResultsTextGridItem}>
+                                <Typography {...styles.searchResultsText}>
+                                    {translate("{0} Results").replace("{0}", `${resultCount}`)}
+                                </Typography>
+                            </GridItem>
+                            <GridItem {...styles.distanceUnitOfMeasureGridItem}>
+                                <RadioGroup
+                                    {...styles.distanceUnitOfMeasureRadioGroup}
+                                    value={distanceUnitOfMeasure}
+                                    onChangeHandler={handleDistanceUnitOfMeasureChange}
+                                >
+                                    <Radio {...styles.distanceUnitOfMeasureImperialRadio} value="Imperial">
+                                        {translate("Miles")}
+                                    </Radio>
+                                    <Radio {...styles.distanceUnitOfMeasureMetricRadio} value="Metric">
+                                        {translate("Kilometers")}
+                                    </Radio>
+                                </RadioGroup>
+                            </GridItem>
+                            <GridItem {...styles.siteMessageGridItem}>
+                                {!isLoading && !locationKnown && (
+                                    <Typography {...styles.siteMessageGeocodeErrorText}>
+                                        {siteMessage("PickUpLocation_GeocodeErrorMessage")}
+                                    </Typography>
+                                )}
+                                {!isLoading && locationKnown && warehouses.length === 0 && (
+                                    <Typography {...styles.siteMessageResultsErrorText}>
+                                        {showSelectedWarehouse
+                                            ? siteMessage("PickUpLocation_SelectedLocationIsOnlyResult")
+                                            : siteMessage("PickUpLocation_NoResultsMessage")}
+                                    </Typography>
+                                )}
+                            </GridItem>
+                            {(!warehousesDataView || !warehousesDataView.value) && (
+                                <GridItem {...styles.searchResultGridItem}>
+                                    <StyledWrapper {...styles.centeringWrapper}>
+                                        <LoadingSpinner {...styles.spinner} />
+                                    </StyledWrapper>
+                                </GridItem>
+                            )}
+                            {warehousesDataView &&
+                                warehousesDataView.value &&
+                                warehouses.map((warehouse, index) => (
+                                    <GridItem key={warehouse.id} {...styles.searchResultGridItem}>
+                                        <GridContainer
+                                            {...styles.searchResultGridContainer}
+                                            data-test-selector="findLocationModal_warehouse"
+                                            data-test-key={`${warehouse.id}`}
+                                        >
+                                            <GridItem {...styles.searchResultLeftGridItem}>
+                                                <GridContainer {...styles.searchResultWarehouseDetailsGridContainer}>
+                                                    <GridItem {...styles.searchResultDisplayNumberGridItem}>
+                                                        <Typography {...styles.warehouseDisplayNumberText}>
+                                                            {getWarehouseNumber(index)}
+                                                        </Typography>
+                                                    </GridItem>
+                                                    <GridItem {...styles.searchResultWarehouseGridItem}>
+                                                        <Typography {...styles.warehouseNameText}>
+                                                            {warehouse.description || warehouse.name}
+                                                        </Typography>
+                                                    </GridItem>
+                                                    <GridItem {...styles.searchResultAddressInfoOffsetGridItem}>
+                                                        <IconMemo
+                                                            {...styles.searchResultAddressInfoIcon}
+                                                            src={MapPin}
+                                                        />
+                                                    </GridItem>
+                                                    <GridItem {...styles.searchResultAddressInfoGridItem}>
+                                                        <AddressInfoCondensedDisplay
+                                                            {...styles.warehouseAddressInfoCondensed}
+                                                            {...warehouse}
+                                                        />
+                                                    </GridItem>
+                                                    {warehouse.phone && (
+                                                        <>
+                                                            <GridItem {...styles.searchResultPhoneOffsetGridItem}>
+                                                                <IconMemo
+                                                                    src={Phone}
+                                                                    {...styles.searchResultPhoneIcon}
+                                                                />
+                                                            </GridItem>
+                                                            <GridItem {...styles.searchResultPhoneGridItem}>
+                                                                <Link
+                                                                    href={`tel:${warehouse.phone}`}
+                                                                    {...styles.searchResultPhoneLink}
+                                                                    target="_blank"
+                                                                >
+                                                                    {warehouse.phone}
+                                                                </Link>
+                                                            </GridItem>
+                                                        </>
+                                                    )}
+                                                </GridContainer>
+                                            </GridItem>
+                                            <GridItem {...styles.searchResultSelectGridItem}>
+                                                <Button
+                                                    {...styles.searchResultSelectButton}
+                                                    type="button"
+                                                    onClick={generateWarehouseSelectClickHandler(warehouse)}
+                                                    data-test-selector="findLocationModal_warehouseSelect"
+                                                >
+                                                    {translate("Select")}
+                                                </Button>
+                                            </GridItem>
+                                            <GridContainer {...styles.searchResultLinksAndDistanceContainer}>
+                                                <GridItem {...styles.searchResultLinksOffsetGridItem}>
+                                                    {/* This is here to give the grid an indentation */}
+                                                </GridItem>
+                                                {warehouse.hours && (
+                                                    <GridItem {...styles.searchResultHoursGridItem}>
+                                                        <WarehouseHoursLink
+                                                            {...styles.warehouseHoursLink}
+                                                            warehouse={warehouse}
+                                                            onOpenWarehouseHours={generateOpenWarehouseHoursFor(
+                                                                warehouse,
+                                                            )}
+                                                        />
+                                                    </GridItem>
+                                                )}
+                                                <GridItem {...styles.searchResultGoogleMapsDirectionLinkGridItem}>
+                                                    <GoogleMapsDirectionLink
+                                                        {...styles.warehouseGoogleMapsDirectionLink}
+                                                        {...warehouse}
+                                                    />
+                                                </GridItem>
+                                                <GridItem {...styles.searchResultDistanceGridItem}>
+                                                    <DistanceDisplay
+                                                        {...styles.warehouseDistanceDisplayText}
+                                                        distance={warehouse.distance}
+                                                        unitOfMeasure={distanceUnitOfMeasure}
+                                                    />
+                                                </GridItem>
+                                                {isNotFinalResult(index) && (
+                                                    <GridItem {...styles.searchResultDividerGridItem}>
+                                                        <StyledHr {...styles.searchResultDivider} />
+                                                    </GridItem>
+                                                )}
+                                            </GridContainer>
+                                        </GridContainer>
+                                    </GridItem>
+                                ))}
+                            <GridItem {...styles.paginationGridItem}>
+                                <WarehouseFindLocationPagination
+                                    {...styles.pagination}
+                                    warehouses={warehouses}
+                                    warehousesPagination={warehousesPagination}
+                                    setPage={setPage}
+                                    setPageSize={setPageSize}
+                                />
+                            </GridItem>
+                        </GridContainer>
+                    </StyledForm>
+                </GridItem>
+
+                <GridItem {...styles.rightColumnGridItem}>
+                    <GridContainer {...styles.currentlySelectedGridContainer}>
+                        <GridItem {...styles.currentlySelectedHeaderGridItem}>
+                            <Typography {...styles.currentlySelectedHeaderText}>
+                                {translate("Currently Selected Location")}
+                            </Typography>
                         </GridItem>
-                        <GridItem {...styles.searchResultsTextGridItem}>
-                            <Typography {...styles.searchResultsText}>{translate("{0} Results").replace("{0}", `${resultCount}`)}</Typography>
-                        </GridItem>
-                        <GridItem {...styles.distanceUnitOfMeasureGridItem}>
-                            <RadioGroup
-                                {...styles.distanceUnitOfMeasureRadioGroup}
-                                value={distanceUnitOfMeasure}
-                                onChangeHandler={handleDistanceUnitOfMeasureChange}
-                            >
-                                <Radio {...styles.distanceUnitOfMeasureImperialRadio} value="Imperial">
-                                    {translate("Miles")}
-                                </Radio>
-                                <Radio {...styles.distanceUnitOfMeasureMetricRadio} value="Metric">
-                                    {translate("Kilometers")}
-                                </Radio>
-                            </RadioGroup>
-                        </GridItem>
-                        <GridItem {...styles.siteMessageGridItem}>
-                            {!isLoading && !locationKnown && <Typography {...styles.siteMessageGeocodeErrorText}>
-                                {siteMessage("PickUpLocation_GeocodeErrorMessage")}
-                            </Typography>}
-                            {!isLoading && locationKnown && warehouses.length === 0 && <Typography {...styles.siteMessageResultsErrorText}>
-                                {showSelectedWarehouse ? siteMessage("PickUpLocation_SelectedLocationIsOnlyResult") : siteMessage("PickUpLocation_NoResultsMessage")}
-                            </Typography>}
-                        </GridItem>
-                        {(!warehousesDataView || !warehousesDataView.value) && <GridItem {...styles.searchResultGridItem}>
-                            <StyledWrapper {...styles.centeringWrapper}>
-                                <LoadingSpinner {...styles.spinner} />
-                            </StyledWrapper>
-                        </GridItem>}
-                        {warehousesDataView && warehousesDataView.value && warehouses.map((warehouse, index) => <GridItem key={warehouse.id} {...styles.searchResultGridItem}>
-                            <GridContainer {...styles.searchResultGridContainer} data-test-selector="findLocationModal_warehouse" data-test-key={`${warehouse.id}`}>
-                                <GridItem {...styles.searchResultLeftGridItem}>
-                                    <GridContainer {...styles.searchResultWarehouseDetailsGridContainer}>
-                                        <GridItem {...styles.searchResultDisplayNumberGridItem}>
-                                            <Typography {...styles.warehouseDisplayNumberText}>
-                                                {getWarehouseNumber(index)}
-                                            </Typography>
-                                        </GridItem>
-                                        <GridItem {...styles.searchResultWarehouseGridItem}>
-                                            <Typography {...styles.warehouseNameText}>{warehouse.description || warehouse.name}</Typography>
-                                        </GridItem>
-                                        <GridItem {...styles.searchResultAddressInfoOffsetGridItem}>
-                                            <IconMemo {...styles.searchResultAddressInfoIcon} src={MapPin} />
-                                        </GridItem>
-                                        <GridItem {...styles.searchResultAddressInfoGridItem}>
-                                            <AddressInfoCondensedDisplay
-                                                {...styles.warehouseAddressInfoCondensed}
-                                                {...warehouse}
+                        {selectedWarehouse && (
+                            <GridItem {...styles.currentlySelectedDetailsGridItem}>
+                                <GridContainer {...styles.selectedWarehouseGridContainer}>
+                                    <GridItem {...styles.selectedWarehouseDetailsGridItem}>
+                                        <Typography
+                                            {...styles.selectedWarehouseNameText}
+                                            data-test-selector="pickupLocationModal_selectedWarehouseName"
+                                        >
+                                            {selectedWarehouse.description || selectedWarehouse.name}
+                                        </Typography>
+                                        <AddressInfoCondensedDisplay
+                                            {...selectedWarehouse}
+                                            extendedStyles={styles.selectedWarehouseAddressDisplay}
+                                        />
+                                        {selectedWarehouse.phone && (
+                                            <>
+                                                <Link
+                                                    href={`tel:${selectedWarehouse.phone}`}
+                                                    {...styles.selectedWarehousePhoneLink}
+                                                    target="_blank"
+                                                >
+                                                    {selectedWarehouse.phone}
+                                                </Link>
+                                            </>
+                                        )}
+                                    </GridItem>
+                                    <GridItem {...styles.selectedWarehouseLinksGridItem}>
+                                        {selectedWarehouse.hours && (
+                                            <WarehouseHoursLink
+                                                {...styles.selectedWarehouseLink}
+                                                warehouse={selectedWarehouse}
+                                                onOpenWarehouseHours={handleOpenHoursModal}
                                             />
-                                        </GridItem>
-                                        {warehouse.phone && <>
-                                            <GridItem {...styles.searchResultPhoneOffsetGridItem}>
-                                                <IconMemo src={Phone} {...styles.searchResultPhoneIcon} />
-                                            </GridItem>
-                                            <GridItem {...styles.searchResultPhoneGridItem}>
-                                                <Link href={`tel:${warehouse.phone}`} {...styles.searchResultPhoneLink} target="_blank">{warehouse.phone}</Link>
-                                            </GridItem>
-                                        </>}
-                                    </GridContainer>
-                                </GridItem>
-                                <GridItem {...styles.searchResultSelectGridItem}>
-                                    <Button {...styles.searchResultSelectButton} type="button" onClick={generateWarehouseSelectClickHandler(warehouse)}
-                                        data-test-selector="findLocationModal_warehouseSelect"
-                                    >{translate("Select")}</Button>
-                                </GridItem>
-                                <GridContainer {...styles.searchResultLinksAndDistanceContainer}>
-                                    <GridItem {...styles.searchResultLinksOffsetGridItem}>
-                                        {/* This is here to give the grid an indentation */}
+                                        )}
+                                        <GoogleMapsDirectionLink
+                                            {...styles.selectedWarehouseGoogleMapsDirectionLink}
+                                            {...selectedWarehouse}
+                                        />
+                                        {selectedWarehouse.distance > 0.01 && (
+                                            <DistanceDisplay
+                                                {...styles.selectedWarehouseDistanceText}
+                                                distance={selectedWarehouse.distance}
+                                                unitOfMeasure={distanceUnitOfMeasure}
+                                            />
+                                        )}
                                     </GridItem>
-                                    {warehouse.hours && <GridItem {...styles.searchResultHoursGridItem}>
-                                        <WarehouseHoursLink {...styles.warehouseHoursLink} warehouse={warehouse} onOpenWarehouseHours={generateOpenWarehouseHoursFor(warehouse)} />
-                                    </GridItem>}
-                                    <GridItem {...styles.searchResultGoogleMapsDirectionLinkGridItem}>
-                                        <GoogleMapsDirectionLink {...styles.warehouseGoogleMapsDirectionLink} {...warehouse} />
-                                    </GridItem>
-                                    <GridItem {...styles.searchResultDistanceGridItem}>
-                                        <DistanceDisplay {...styles.warehouseDistanceDisplayText} distance={warehouse.distance} unitOfMeasure={distanceUnitOfMeasure} />
-                                    </GridItem>
-                                    {isNotFinalResult(index) && <GridItem {...styles.searchResultDividerGridItem}>
-                                        <StyledHr {...styles.searchResultDivider} />
-                                    </GridItem>}
                                 </GridContainer>
-                            </GridContainer>
-                        </GridItem>)}
-                        <GridItem {...styles.paginationGridItem}>
-                            <WarehouseFindLocationPagination
-                                {...styles.pagination}
-                                warehouses={warehouses}
-                                warehousesPagination={warehousesPagination}
-                                setPage={setPage}
-                                setPageSize={setPageSize}
+                            </GridItem>
+                        )}
+                        <GridItem {...styles.warehouseGoogleMapGridItem}>
+                            <WarehouseGoogleMap
+                                extendedStyles={styles.warehouseGoogleMap}
+                                currentLocation={currentLocation}
+                                warehouseSearchFilter={warehouseSearchFilter}
+                                distanceUnitOfMeasure={distanceUnitOfMeasure}
+                                setGoogleMap={setGoogleMap}
+                                mapMarkerElements={mapMarkersElements}
+                                warehouseInfoWindow={warehouseInfoWindow}
+                                currentLocationInfoWindow={currentLocationInfoWindow}
+                                handleOpenWarehouseHours={handleOpenHoursModal}
                             />
                         </GridItem>
                     </GridContainer>
-                </StyledForm>
-            </GridItem>
-
-            <GridItem {...styles.rightColumnGridItem}>
-                <GridContainer {...styles.currentlySelectedGridContainer}>
-                    <GridItem {...styles.currentlySelectedHeaderGridItem}>
-                        <Typography {...styles.currentlySelectedHeaderText}>{translate("Currently Selected Location")}</Typography>
-                    </GridItem>
-                    {selectedWarehouse && <GridItem {...styles.currentlySelectedDetailsGridItem}>
-                        <GridContainer {...styles.selectedWarehouseGridContainer}>
-                            <GridItem {...styles.selectedWarehouseDetailsGridItem}>
-                                <Typography {...styles.selectedWarehouseNameText} data-test-selector="pickupLocationModal_selectedWarehouseName">{selectedWarehouse.description || selectedWarehouse.name}</Typography>
-                                <AddressInfoCondensedDisplay {...selectedWarehouse} extendedStyles={styles.selectedWarehouseAddressDisplay} />
-                                {selectedWarehouse.phone && <>
-                                    <Link href={`tel:${selectedWarehouse.phone}`} {...styles.selectedWarehousePhoneLink} target="_blank">{selectedWarehouse.phone}</Link>
-                                </>}
-                            </GridItem>
-                            <GridItem {...styles.selectedWarehouseLinksGridItem}>
-                                {selectedWarehouse.hours && <WarehouseHoursLink {...styles.selectedWarehouseLink} warehouse={selectedWarehouse} onOpenWarehouseHours={handleOpenHoursModal} />}
-                                <GoogleMapsDirectionLink {...styles.selectedWarehouseGoogleMapsDirectionLink} {...selectedWarehouse} />
-                                {selectedWarehouse.distance > 0.01 && <DistanceDisplay {...styles.selectedWarehouseDistanceText} distance={selectedWarehouse.distance} unitOfMeasure={distanceUnitOfMeasure} />}
-                            </GridItem>
-                        </GridContainer>
-                    </GridItem>}
-                    <GridItem {...styles.warehouseGoogleMapGridItem}>
-                        <WarehouseGoogleMap
-                            extendedStyles={styles.warehouseGoogleMap}
-                            currentLocation={currentLocation}
-                            warehouseSearchFilter={warehouseSearchFilter}
-                            distanceUnitOfMeasure={distanceUnitOfMeasure}
-                            setGoogleMap={setGoogleMap}
-                            mapMarkerElements={mapMarkersElements}
-                            warehouseInfoWindow={warehouseInfoWindow}
-                            currentLocationInfoWindow={currentLocationInfoWindow}
-                            handleOpenWarehouseHours={handleOpenHoursModal}
-                        />
-                    </GridItem>
-                </GridContainer>
-            </GridItem>
-        </GridContainer>
-        <Modal
-            {...styles.warehouseHoursModal}
-            headline={translate("Hours")}
-            isOpen={warehouseHoursToDisplayModalOpen}
-            handleClose={handleHoursModalClose}
-        >
-            <StyledWrapper {...styles.hoursContainer}>{parse(warehouseHoursToDisplay?.hours || "", parserOptions)}</StyledWrapper>
+                </GridItem>
+            </GridContainer>
+            <Modal
+                {...styles.warehouseHoursModal}
+                headline={translate("Hours")}
+                isOpen={warehouseHoursToDisplayModalOpen}
+                handleClose={handleHoursModalClose}
+            >
+                <StyledWrapper {...styles.hoursContainer}>
+                    {parse(warehouseHoursToDisplay?.hours || "", parserOptions)}
+                </StyledWrapper>
+            </Modal>
         </Modal>
-    </Modal>;
+    );
 };
 
 interface SearchLocationsTextFieldProps {
@@ -676,16 +818,18 @@ const SearchLocationsTextField: React.FC<SearchLocationsTextFieldProps> = ({
         setSearchLocationFilter(warehouseSearchFilter);
     }, [warehouseSearchFilter]);
 
-    return (<TextField
-        {...styles}
-        label={translate("Search Locations")}
-        iconProps={{ src: Search }}
-        iconClickableProps={{ onClick: iconOnClick }}
-        value={searchLocationFilter}
-        onChange={handleSearchLocationsChanged}
-        placeholder={translate("Search by location name, city, state, or zip")}
-        data-test-selector="findLocationModal_locationSearch"
-    />);
+    return (
+        <TextField
+            {...styles}
+            label={translate("Search Locations")}
+            iconProps={{ src: Search }}
+            iconClickableProps={{ onClick: iconOnClick }}
+            value={searchLocationFilter}
+            onChange={handleSearchLocationsChanged}
+            placeholder={translate("Search by location name, city, state, or zip")}
+            data-test-selector="findLocationModal_locationSearch"
+        />
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FindLocationModal);

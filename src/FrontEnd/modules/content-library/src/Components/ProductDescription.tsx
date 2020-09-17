@@ -21,7 +21,9 @@ export interface ProductDescriptionStyles {
 
 export const productDescriptionStyles: ProductDescriptionStyles = {
     productDetailLink: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
         typographyProps: {
             css: css`
                 width: 100%;
@@ -31,22 +33,22 @@ export const productDescriptionStyles: ProductDescriptionStyles = {
     },
 };
 
-const ProductDescription: FC<Props> = ({
-    product,
-    extendedStyles,
-}) => {
+const ProductDescription: FC<Props> = ({ product, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(productDescriptionStyles, extendedStyles));
 
-    const description = ("product" in product)
-        ? product.product.productTitle
-        : product.shortDescription || ("description" in product ? product.description : "");
-    const productDetailPath = ("product" in product)
-        ? product.productInfo.productDetailPath
-        : product.productUri;
+    const description =
+        "product" in product
+            ? product.product.productTitle
+            : product.shortDescription || ("description" in product ? product.description : "");
+    const productDetailPath = "product" in product ? product.productInfo.productDetailPath : product.productUri;
 
-    return productDetailPath && (!("isActiveProduct" in product) || product.isActiveProduct)
-        ? <Link {...styles.productDetailLink} href={productDetailPath} data-test-selector="productDescriptionLink">{description}</Link>
-        : <Typography {...styles.productDetailDescription}>{description}</Typography>;
+    return productDetailPath && (!("isActiveProduct" in product) || product.isActiveProduct) ? (
+        <Link {...styles.productDetailLink} href={productDetailPath} data-test-selector="productDescriptionLink">
+            {description}
+        </Link>
+    ) : (
+        <Typography {...styles.productDetailDescription}>{description}</Typography>
+    );
 };
 
 export default ProductDescription;

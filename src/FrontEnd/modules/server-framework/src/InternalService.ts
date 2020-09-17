@@ -7,12 +7,13 @@ import { PageModel } from "@insite/client-framework/Types/PageProps";
 
 const internalContentUrl = "/api/internal/content/";
 
-export const getSiteGenerationData = () => request<{
-    defaultLanguage: BasicLanguageModel,
-    defaultPersonaId: string,
-    websiteId: string,
-    pageTypeToNodeId: SafeDictionary<string>,
-}>(`${internalContentUrl}siteGenerationData`, "GET");
+export const getSiteGenerationData = () =>
+    request<{
+        defaultLanguage: BasicLanguageModel;
+        defaultPersonaId: string;
+        websiteId: string;
+        pageTypeToNodeId: SafeDictionary<string>;
+    }>(`${internalContentUrl}siteGenerationData`, "GET");
 
 export async function saveInitialPages(pages: PageModel[]) {
     const data = new URLSearchParams();
@@ -23,9 +24,13 @@ export async function saveInitialPages(pages: PageModel[]) {
     const spireClientSecret = (process.env.SPIRE_CLIENT_SECRET ?? defaultClientSecret).trim();
     if (spireClientSecret.toUpperCase() === defaultClientSecret && IS_PRODUCTION) {
         if (process.env.ACCEPT_RISKS_OF_USING_DEFAULT_SPIRE_CLIENT_SECRET) {
-            logger.warn("Spire is running in production but did not have an environment variable for SPIRE_CLIENT_SECRET defined. It is using the default insecure client secret. Consult documentation for the procedure to configure this securely.");
+            logger.warn(
+                "Spire is running in production but did not have an environment variable for SPIRE_CLIENT_SECRET defined. It is using the default insecure client secret. Consult documentation for the procedure to configure this securely.",
+            );
         } else {
-            throw new Error("Spire is running in production but did not have an environment variable for SPIRE_CLIENT_SECRET defined. Consult documentation for the procedure to configure this securely or set the environment variable ACCEPT_RISKS_OF_USING_DEFAULT_SPIRE_CLIENT_SECRET to true.");
+            throw new Error(
+                "Spire is running in production but did not have an environment variable for SPIRE_CLIENT_SECRET defined. Consult documentation for the procedure to configure this securely or set the environment variable ACCEPT_RISKS_OF_USING_DEFAULT_SPIRE_CLIENT_SECRET to true.",
+            );
         }
     }
 
@@ -41,11 +46,17 @@ export async function saveInitialPages(pages: PageModel[]) {
     });
 
     if (response.status !== 200) {
-        throw new Error(JSON.stringify(`Spire was not able to authenticate itself with InsiteCommerce. This is could indicate a problem with mismatched SpireClientSecrets. \n Response: ${JSON.stringify(response)}`));
+        throw new Error(
+            JSON.stringify(
+                `Spire was not able to authenticate itself with InsiteCommerce. This is could indicate a problem with mismatched SpireClientSecrets. \n Response: ${JSON.stringify(
+                    response,
+                )}`,
+            ),
+        );
     }
 
     const tokenData = await (response.json() as Promise<{
-        readonly access_token: string,
+        readonly access_token: string;
     }>);
 
     const headers = {

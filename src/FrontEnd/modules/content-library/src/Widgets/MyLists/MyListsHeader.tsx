@@ -18,7 +18,9 @@ export interface MyListsHeaderStyles {
 export const headerStyles: MyListsHeaderStyles = {
     container: {
         gap: 10,
-        css: css` padding-bottom: 20px; `,
+        css: css`
+            padding-bottom: 20px;
+        `,
     },
     leftTopGridItem: {
         width: [10, 10, 6, 6, 6],

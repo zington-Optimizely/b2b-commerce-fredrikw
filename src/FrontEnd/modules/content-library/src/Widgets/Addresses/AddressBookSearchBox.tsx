@@ -18,8 +18,7 @@ export const searchBoxStyles: AddressBookSearchBoxStyles = {
 
 const styles = searchBoxStyles;
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateSearchFields,
@@ -39,14 +38,12 @@ class AddressBookSearchBox extends React.Component<Props> {
         if (searchText.length > 0 && searchText.length < this.searchMinimumCharacterLength) {
             return;
         }
-        this.searchTimeoutId = setTimeout(
-            () => {
-                this.props.updateSearchFields({
-                    filter: searchText,
-                    page: 1,
-                });
-            },
-            250);
+        this.searchTimeoutId = setTimeout(() => {
+            this.props.updateSearchFields({
+                filter: searchText,
+                page: 1,
+            });
+        }, 250);
     };
 
     componentWillUnmount() {
@@ -60,7 +57,8 @@ class AddressBookSearchBox extends React.Component<Props> {
             <TextField
                 placeholder={translate("Search Ship To")}
                 {...styles.searchText}
-                onChange={this.searchTextChangeHandler} />
+                onChange={this.searchTextChangeHandler}
+            />
         );
     }
 }

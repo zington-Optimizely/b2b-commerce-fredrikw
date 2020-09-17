@@ -21,7 +21,7 @@ export function withConfirmation<P extends HasConfirmationContext>(Component: Re
     return function ConfirmationComponent(props: Omit<P, keyof HasConfirmationContext>) {
         return (
             <ConfirmationContext.Consumer>
-                {confirmation => <Component {...props as P} confirmation={confirmation} />}
+                {confirmation => <Component {...(props as P)} confirmation={confirmation} />}
             </ConfirmationContext.Consumer>
         );
     };

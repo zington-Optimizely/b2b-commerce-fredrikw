@@ -1,5 +1,8 @@
 import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { addWishListToCart as addWishListToCartApi, AddWishListToCartApiParameter } from "@insite/client-framework/Services/CartService";
+import {
+    addWishListToCart as addWishListToCartApi,
+    AddWishListToCartApiParameter,
+} from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -8,8 +11,8 @@ type Parameter = {
 } & HasOnSuccess;
 
 type Props = {
-    apiParameter: AddWishListToCartApiParameter,
-    apiResult: CartLineCollectionModel,
+    apiParameter: AddWishListToCartApiParameter;
+    apiResult: CartLineCollectionModel;
 };
 
 type HandlerType = Handler<Parameter, Props>;
@@ -18,8 +21,20 @@ export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = props.parameter.apiParameter;
 };
 
-export const RequestDataFromApi: HandlerType =  async props => {
+export const DispatchBeginAddingProductToCart: HandlerType = props => {
+    props.dispatch({
+        type: "Context/BeginAddingProductToCart",
+    });
+};
+
+export const RequestDataFromApi: HandlerType = async props => {
     props.apiResult = await addWishListToCartApi(props.apiParameter);
+};
+
+export const DispatchCompleteAddingProductToCart: HandlerType = props => {
+    props.dispatch({
+        type: "Context/CompleteAddingProductToCart",
+    });
 };
 
 export const LoadCart: HandlerType = props => {
@@ -32,7 +47,9 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 export const chain = [
     PopulateApiParameter,
+    DispatchBeginAddingProductToCart,
     RequestDataFromApi,
+    DispatchCompleteAddingProductToCart,
     LoadCart,
     ExecuteOnSuccessCallback,
 ];

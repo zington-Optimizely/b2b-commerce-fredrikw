@@ -11,14 +11,16 @@ export const DispatchBeginLoadDealers: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadDealers,
-];
+export const chain = [DispatchBeginLoadDealers];
 
-const setParameter = createHandlerChainRunnerOptionalParameter(chain, {
-    name: "",
-    latitude: 0,
-    longitude: 0,
-    pageSize: 5,
-}, "LocationFinderSetParameter");
+const setParameter = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {
+        name: "",
+        latitude: 0,
+        longitude: 0,
+        pageSize: 5,
+    },
+    "LocationFinderSetParameter",
+);
 export default setParameter;

@@ -95,30 +95,38 @@ class AutocompleteBrands extends React.Component<Props> {
         }
 
         const styles = this.styles;
-        return <>
-            <Typography {...styles.headerText}>{translate("Brands")}</Typography>
-            {brands.map(brand => (
-                <Fragment key={`${brand.id}_${brand.productLineId}`}>
-                    {brand.productLineName
-                        && <Typography
-                            {...(this.props.focusedItem === brand ? styles.focusedBrandItemText : styles.brandItemText)}
-                            onClick={() => { this.props.goToUrl(brand.url); }}
-                        >
-                            <Link {...styles.link}>{brand.productLineName}</Link>
-                            <>{` ${translate("in")} ${brand.title}`}</>
-                        </Typography>
-                    }
-                    {!brand.productLineName
-                        && <Link
-                            {...(this.props.focusedItem === brand ? styles.focusedLink : styles.link)}
-                            onClick={() => { this.props.goToUrl(brand.url); }}
-                        >
-                            {brand.title}
-                        </Link>
-                    }
-                </Fragment>
-            ))}
-        </>;
+        return (
+            <>
+                <Typography {...styles.headerText}>{translate("Brands")}</Typography>
+                {brands.map(brand => (
+                    <Fragment key={`${brand.id}_${brand.productLineId}`}>
+                        {brand.productLineName && (
+                            <Typography
+                                {...(this.props.focusedItem === brand
+                                    ? styles.focusedBrandItemText
+                                    : styles.brandItemText)}
+                                onClick={() => {
+                                    this.props.goToUrl(brand.url);
+                                }}
+                            >
+                                <Link {...styles.link}>{brand.productLineName}</Link>
+                                <>{` ${translate("in")} ${brand.title}`}</>
+                            </Typography>
+                        )}
+                        {!brand.productLineName && (
+                            <Link
+                                {...(this.props.focusedItem === brand ? styles.focusedLink : styles.link)}
+                                onClick={() => {
+                                    this.props.goToUrl(brand.url);
+                                }}
+                            >
+                                {brand.title}
+                            </Link>
+                        )}
+                    </Fragment>
+                ))}
+            </>
+        );
     }
 }
 

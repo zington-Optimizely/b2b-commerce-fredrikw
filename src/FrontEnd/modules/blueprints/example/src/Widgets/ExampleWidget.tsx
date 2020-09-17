@@ -28,19 +28,22 @@ interface Props extends WidgetProps {
     };
 }
 
-const ExampleWidget: React.FC<Props> = (props) => {
-    return <div>
-        <div>Checkbox value:
-            {props.fields.checkboxFieldValue.toString()}
-            {props.fields.checkboxFieldValue && <span>Is True</span>}
-            {!props.fields.checkboxFieldValue && <span>Is False</span>}
+const ExampleWidget: React.FC<Props> = props => {
+    return (
+        <div>
+            <div>
+                Checkbox value:
+                {props.fields.checkboxFieldValue.toString()}
+                {props.fields.checkboxFieldValue && <span>Is True</span>}
+                {!props.fields.checkboxFieldValue && <span>Is False</span>}
+            </div>
+            <div>Text value: {props.fields.textFieldValue}</div>
+            <div>Integer value: {props.fields.integerFieldValue}</div>
+            <div style={{ whiteSpace: "pre" }}>MultilineText value: {props.fields.multilineTextFieldValue}</div>
+            <div>RadioButtons value: {props.fields.radioButtonsFieldValue}</div>
+            <div>DropDown value: {props.fields.dropDownFieldValue}</div>
         </div>
-        <div>Text value: {props.fields.textFieldValue}</div>
-        <div>Integer value: {props.fields.integerFieldValue}</div>
-        <div style={{ whiteSpace: "pre" }}>MultilineText value: {props.fields.multilineTextFieldValue}</div>
-        <div>RadioButtons value: {props.fields.radioButtonsFieldValue}</div>
-        <div>DropDown value: {props.fields.dropDownFieldValue}</div>
-    </div>;
+    );
 };
 
 const definition: WidgetDefinition = {

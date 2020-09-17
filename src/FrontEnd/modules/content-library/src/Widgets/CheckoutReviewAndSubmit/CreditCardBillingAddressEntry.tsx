@@ -14,7 +14,7 @@ import { css } from "styled-components";
 
 interface OwnProps {
     useBillTo: boolean;
-    onUseBillToChange:  (event: React.SyntheticEvent<Element, Event>, value: boolean) => void;
+    onUseBillToChange: (event: React.SyntheticEvent<Element, Event>, value: boolean) => void;
     billTo: BillToModel | undefined;
     address1: string;
     onAddress1Change: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -65,7 +65,9 @@ export const creditCardBillingAddressEntryStyles: CreditCardBillingAddressEntryS
     useBillingAddressGridItem: { width: 12 },
     billingAddressGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     billingAddressLabel: { weight: 600 },
     address1GridItem: { width: 12 },
@@ -107,7 +109,9 @@ const CreditCardBillingAddressEntry = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.headingGridItem}>
-                <Typography {...styles.heading} as="h2">{translate("Credit Card Address")}</Typography>
+                <Typography {...styles.heading} as="h2">
+                    {translate("Credit Card Address")}
+                </Typography>
             </GridItem>
             <GridItem {...styles.useBillingAddressGridItem}>
                 <CheckboxGroup {...styles.useBillingAddressCheckboxGroup}>
@@ -121,8 +125,8 @@ const CreditCardBillingAddressEntry = ({
                     </Checkbox>
                 </CheckboxGroup>
             </GridItem>
-            {useBillTo
-                ? <GridItem {...styles.billingAddressGridItem}>
+            {useBillTo ? (
+                <GridItem {...styles.billingAddressGridItem}>
                     <Typography {...styles.billingAddressLabel}>{translate("Billing Address")}</Typography>
                     <AddressInfoDisplay
                         {...billTo}
@@ -131,7 +135,8 @@ const CreditCardBillingAddressEntry = ({
                         extendedStyles={styles.billingAddress}
                     />
                 </GridItem>
-                : <>
+            ) : (
+                <>
                     <GridItem {...styles.address1GridItem}>
                         <TextField
                             {...styles.address1Text}
@@ -156,7 +161,9 @@ const CreditCardBillingAddressEntry = ({
                         >
                             <option value="">{translate("Select Country")}</option>
                             {availableCountries.map(country => (
-                                <option key={country.id} value={country.id}>{country.name}</option>
+                                <option key={country.id} value={country.id}>
+                                    {country.name}
+                                </option>
                             ))}
                         </Select>
                     </GridItem>
@@ -172,7 +179,9 @@ const CreditCardBillingAddressEntry = ({
                         >
                             <option value="">{translate("Select State")}</option>
                             {availableStates?.map(state => (
-                                <option key={state.id} value={state.id}>{state.name}</option>
+                                <option key={state.id} value={state.id}>
+                                    {state.name}
+                                </option>
                             ))}
                         </Select>
                     </GridItem>
@@ -201,7 +210,7 @@ const CreditCardBillingAddressEntry = ({
                         />
                     </GridItem>
                 </>
-            }
+            )}
         </GridContainer>
     );
 };

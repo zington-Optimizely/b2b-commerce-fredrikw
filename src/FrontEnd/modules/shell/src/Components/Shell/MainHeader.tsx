@@ -1,18 +1,20 @@
 import HeaderBar from "@insite/shell/Components/Shell/HeaderBar";
-import { Switcher } from "@insite/shell/Components/Shell/Switcher";
+import Switcher from "@insite/shell/Components/Shell/Switcher";
 import * as React from "react";
 import { match } from "react-router-dom";
 import styled from "styled-components";
 
-const MainHeader: React.FunctionComponent<{ match?: match, disabled?: boolean }> = ({ disabled, match }) => {
-    return (<>
-        <MainHeaderStyle>
-            <HeaderBarStyle>
-                <HeaderBar disabled={disabled}/>
-            </HeaderBarStyle>
-            <Switcher disabled={disabled}/>
-        </MainHeaderStyle>
-    </>);
+const MainHeader: React.FunctionComponent<{ match?: match; disabled?: boolean }> = ({ disabled, match }) => {
+    return (
+        <>
+            <MainHeaderStyle>
+                <HeaderBarStyle>
+                    <HeaderBar disabled={disabled} />
+                </HeaderBarStyle>
+                <Switcher disabled={disabled} />
+            </MainHeaderStyle>
+        </>
+    );
 };
 
 export default MainHeader;

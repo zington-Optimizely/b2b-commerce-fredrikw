@@ -1,6 +1,9 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
 import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
-import { addWishList as addWishListApi, AddWishListApiParameter } from "@insite/client-framework/Services/WishListService";
+import {
+    addWishList as addWishListApi,
+    AddWishListApiParameter,
+} from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 

@@ -1,6 +1,10 @@
 import { EE } from "../Overlay/helpers/safeHTMLElement";
 
-// eslint-disable-next-line global-require
-const focusWithinImportInBrowser = () => { if (EE.canUseDOM) require("focus-within-polyfill"); };
+const focusWithinImportInBrowser = () => {
+    if (EE.canUseDOM) {
+        // eslint-disable-next-line global-require
+        require("focus-within-polyfill");
+    }
+};
 
 export default focusWithinImportInBrowser;

@@ -33,5 +33,4 @@ export const reducers = {
 
 type Reducers = Omit<typeof reducers, "data">;
 
-export type AnyShellAction = Parameters<Reducers[keyof Reducers]>[1]
-    | Parameters<DataReducers[keyof DataReducers]>[1];
+export type AnyShellAction = Parameters<Reducers[keyof Reducers]>[1] | Parameters<DataReducers[keyof DataReducers]>[1];

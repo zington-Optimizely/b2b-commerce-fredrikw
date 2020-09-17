@@ -12,14 +12,18 @@ import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComp
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 
-export type OverflowWrapperProps = MobiusStyledComponentPropsWithRef<"nav", { ref?: React.RefObject<HTMLElement>; },
+export type OverflowWrapperProps = MobiusStyledComponentPropsWithRef<
+    "nav",
+    { ref?: React.RefObject<HTMLElement> },
     InjectableCss & {
         _width?: string;
         _height?: string;
     }
 >;
 
-export type ContentBodyProps = MobiusStyledComponentPropsWithRef<"ul", { ref?: React.RefObject<HTMLUListElement>; },
+export type ContentBodyProps = MobiusStyledComponentPropsWithRef<
+    "ul",
+    { ref?: React.RefObject<HTMLUListElement> },
     InjectableCss & {
         _width?: number;
         _height?: string;
@@ -27,12 +31,12 @@ export type ContentBodyProps = MobiusStyledComponentPropsWithRef<"ul", { ref?: R
 >;
 
 export type PositionStyle = {
-    left?: number | string,
-    right?: number | string,
-    top?: number | string,
-    position: "fixed" | "absolute",
-    width?: string,
-    height?: string,
+    left?: number | string;
+    right?: number | string;
+    top?: number | string;
+    position: "fixed" | "absolute";
+    width?: string;
+    height?: string;
 };
 
 export interface PopoverPresentationProps {
@@ -58,31 +62,35 @@ export interface PopoverPresentationProps {
     positionFunction?: (element: React.RefObject<HTMLUListElement>) => PositionStyle;
 }
 
-export type PopoverProps = MobiusStyledComponentPropsWithRef<"ul", { ref?: React.RefObject<HTMLUListElement>; }, {
-    /**
-     * Unique id to be passed into the `popoverTrigger` element.
-     * If not provided, a random id is assigned (an id is required for accessibility purposes).
-     * */
-    controlsId?: string;
-    /** Trigger component for popover. */
-    popoverTrigger: React.ReactElement;
-    /** Components to be rendered alongside the trigger. */
-    triggerSiblings?: React.ReactElement;
-    /* Props passed into the component containing the content presented in the popover. */
-    contentBodyProps: ContentBodyProps;
-    /** Whether the menu initializes open or closed. */
-    isOpen?: boolean;
-    /** Function that will be called after the menu is closed. */
-    onClose?: (event: Event) => void;
-    /** Function that will be called after the menu is opened. */
-    onOpen?: (event: Event) => void;
-    /** Function that will be called after popover handleKeydown. */
-    handleKeyDown?: (event: KeyboardEvent) => void;
-    /** Function that will be called after popover handleClickOutside. */
-    handleClickOutside?: (event: MouseEvent) => void;
-    /** All refs that should be treated as being 'inside' the popover for key and click interaction. */
-    insideRefs?: React.RefObject<any>[];
-} & PopoverPresentationProps>;
+export type PopoverProps = MobiusStyledComponentPropsWithRef<
+    "ul",
+    { ref?: React.RefObject<HTMLUListElement> },
+    {
+        /**
+         * Unique id to be passed into the `popoverTrigger` element.
+         * If not provided, a random id is assigned (an id is required for accessibility purposes).
+         * */
+        controlsId?: string;
+        /** Trigger component for popover. */
+        popoverTrigger: React.ReactElement;
+        /** Components to be rendered alongside the trigger. */
+        triggerSiblings?: React.ReactElement;
+        /* Props passed into the component containing the content presented in the popover. */
+        contentBodyProps: ContentBodyProps;
+        /** Whether the menu initializes open or closed. */
+        isOpen?: boolean;
+        /** Function that will be called after the menu is closed. */
+        onClose?: (event: Event) => void;
+        /** Function that will be called after the menu is opened. */
+        onOpen?: (event: Event) => void;
+        /** Function that will be called after popover handleKeydown. */
+        handleKeyDown?: (event: KeyboardEvent) => void;
+        /** Function that will be called after popover handleClickOutside. */
+        handleClickOutside?: (event: MouseEvent) => void;
+        /** All refs that should be treated as being 'inside' the popover for key and click interaction. */
+        insideRefs?: React.RefObject<any>[];
+    } & PopoverPresentationProps
+>;
 
 const ESC_KEY = 27;
 
@@ -97,12 +105,10 @@ type TransitionStateProperty = {
     transitionState: TransitionStatus;
 };
 
-type PopoverStyleProps =
-    Pick<PopoverProps, "xPosition" | "yPosition" | "zIndexKey" | "shadowDepth">
-    & ContentBodyProps
-    & TransitionStateProperty
-    & InjectableCss
-    & {
+type PopoverStyleProps = Pick<PopoverProps, "xPosition" | "yPosition" | "zIndexKey" | "shadowDepth"> &
+    ContentBodyProps &
+    TransitionStateProperty &
+    InjectableCss & {
         transitionLength: keyof ThemeTransitionDuration;
         wrapperHeight: string;
         wrapperWidth: string;
@@ -117,21 +123,22 @@ const PopoverStyle = styled.ul<PopoverStyleProps>`
     box-shadow: ${({ theme, shadowDepth }) => get(theme, `shadows.${shadowDepth}`)};
     ${({ transitionState, _height }) => {
         switch (transitionState) {
-        case "entering":
-        case "exiting":
-            return `max-height: 0;
+            case "entering":
+            case "exiting":
+                return `max-height: 0;
             color: transparent;
             overflow: hidden;`;
-        case "entered":
-            return `max-height: ${typeof _height === "string" ? _height : "250px"};
+            case "entered":
+                return `max-height: ${typeof _height === "string" ? _height : "250px"};
             overflow: auto;`;
-        case "exited":
-            return "display: none";
-        default:
-            return "";
+            case "exited":
+                return "display: none";
+            default:
+                return "";
         }
     }}
-    transition: all ease-in-out ${({ theme, transitionLength }) => get(theme, `transition.duration.${transitionLength}`)}ms;
+    transition: all ease-in-out ${({ theme, transitionLength }) =>
+        get(theme, `transition.duration.${transitionLength}`)}ms;
     width: ${getProp("_width")}px;
     ${injectCss}
 `;
@@ -139,7 +146,7 @@ const PopoverStyle = styled.ul<PopoverStyleProps>`
 type State = {
     open: boolean;
     controlsId: string;
-    positionStyle?: PositionStyle
+    positionStyle?: PositionStyle;
 };
 
 /**
@@ -192,14 +199,14 @@ class Popover extends React.Component<PopoverProps, State> {
         } else if (!this.isTargetInsideRef(event.target as Node)) {
             this.closePopover(event);
         }
-        (typeof this.props.handleKeyDown === "function") && this.props.handleKeyDown(event);
+        typeof this.props.handleKeyDown === "function" && this.props.handleKeyDown(event);
     };
 
     handleClickOutside = (event: MouseEvent) => {
         if (this.state.open && !this.isTargetInsideRef(event.target as Node)) {
             this.closePopover(event);
         }
-        (typeof this.props.handleClickOutside === "function") && this.props.handleClickOutside(event);
+        typeof this.props.handleClickOutside === "function" && this.props.handleClickOutside(event);
     };
 
     handleScroll = () => {
@@ -217,13 +224,17 @@ class Popover extends React.Component<PopoverProps, State> {
     isTargetInsideRef = (target: Node) => {
         const { insideRefs } = this.props;
         const doesPopoverContainTarget = !!this.element.current?.contains(target);
-        return ((insideRefs as []).length > 0) && insideRefs?.reduce(
-            (acc: boolean, element: React.RefObject<HTMLElement>) => {
-                if (acc) return acc;
-                if (element?.current?.contains(target)) return true;
+        return (
+            (insideRefs as []).length > 0 &&
+            insideRefs?.reduce((acc: boolean, element: React.RefObject<HTMLElement>) => {
+                if (acc) {
+                    return acc;
+                }
+                if (element?.current?.contains(target)) {
+                    return true;
+                }
                 return false;
-            },
-            doesPopoverContainTarget,
+            }, doesPopoverContainTarget)
         );
     };
 
@@ -251,17 +262,24 @@ class Popover extends React.Component<PopoverProps, State> {
             if (this.props.positionFunction) {
                 positionStyle = this.props.positionFunction(this.element);
             } else {
-                const { xPosition, yPosition, contentBodyProps: { _width }, knownHeight } = this.props;
+                const {
+                    xPosition,
+                    yPosition,
+                    contentBodyProps: { _width },
+                    knownHeight,
+                } = this.props;
                 const rect = this.element.current.getBoundingClientRect();
                 positionStyle.position = "fixed";
                 positionStyle.top = rect.top + (knownHeight ?? rect.height); // default to 'bottom'
-                if (yPosition === "top") positionStyle.top = rect.top;
+                if (yPosition === "top") {
+                    positionStyle.top = rect.top;
+                }
                 switch (xPosition) {
                     case "start":
                         positionStyle.left = rect.left;
                         break;
                     case "middle":
-                        positionStyle.left = rect.left - (((_width || rect.width) - rect.width) / 2);
+                        positionStyle.left = rect.left - ((_width || rect.width) - rect.width) / 2;
                         break;
                     case "after":
                         positionStyle.left = rect.left + rect.width;
@@ -269,12 +287,17 @@ class Popover extends React.Component<PopoverProps, State> {
                     case "before":
                         positionStyle.left = rect.left - (_width || rect.width);
                         break;
-                    default: // default to 'end'
+                    default:
+                        // default to 'end'
                         positionStyle.left = rect.right - (_width || rect.width);
                         break;
                 }
-                if (positionStyle.left && positionStyle.left < 0) positionStyle.left = 0;
-                if (positionStyle.right && positionStyle.right < 0) positionStyle.right = 0;
+                if (positionStyle.left && positionStyle.left < 0) {
+                    positionStyle.left = 0;
+                }
+                if (positionStyle.right && positionStyle.right < 0) {
+                    positionStyle.right = 0;
+                }
             }
         }
 
@@ -297,14 +320,11 @@ class Popover extends React.Component<PopoverProps, State> {
 
         return (
             <OverflowWrapper ref={this.element} {...wrapperProps}>
-                {React.cloneElement(
-                    popoverTrigger,
-                    {
-                        onClick: toggle ? this.togglePopover : this.openPopover,
-                        "aria-expanded": open,
-                        "aria-controls": controlsId,
-                    },
-                )}
+                {React.cloneElement(popoverTrigger, {
+                    onClick: toggle ? this.togglePopover : this.openPopover,
+                    "aria-expanded": open,
+                    "aria-controls": controlsId,
+                })}
                 {triggerSiblings}
                 <Transition
                     mountOnEnter

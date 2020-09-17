@@ -2,7 +2,10 @@ import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    getProductState,
+    getVariantChildrenDataView,
+} from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import cloneDeep from "lodash/cloneDeep";
 
 interface Parameter {
@@ -35,7 +38,9 @@ export const SetVariantSelection: HandlerType = props => {
 
 export const SetVariantSelectionCompleted: HandlerType = props => {
     const selectedVariantTraitIds = Object.keys(props.variantSelection);
-    props.variantSelectionCompleted = selectedVariantTraitIds.length > 0 && selectedVariantTraitIds.every(traitValueId => props.variantSelection[traitValueId]);
+    props.variantSelectionCompleted =
+        selectedVariantTraitIds.length > 0 &&
+        selectedVariantTraitIds.every(traitValueId => props.variantSelection[traitValueId]);
 };
 
 export const SelectVariantProduct: HandlerType = props => {
@@ -95,7 +100,9 @@ export const SetProductInfo: HandlerType = props => {
 
     props.productInfo = {
         ...newProductInfo,
-        unitOfMeasure: product.unitOfMeasures!.some(o => o.unitOfMeasure === currentProductInfo.unitOfMeasure) ? currentProductInfo.unitOfMeasure : newProductInfo.unitOfMeasure,
+        unitOfMeasure: product.unitOfMeasures!.some(o => o.unitOfMeasure === currentProductInfo.unitOfMeasure)
+            ? currentProductInfo.unitOfMeasure
+            : newProductInfo.unitOfMeasure,
         qtyOrdered: Math.max(currentProductInfo.qtyOrdered, product.minimumOrderQty),
     };
 };
@@ -106,29 +113,33 @@ export const LoadRealTimePricing: HandlerType = props => {
         return;
     }
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: [productInfo],
-        onSuccess: realTimePricing => {
-            const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productInfo.productId);
-            if (pricing) {
-                props.dispatch({
-                    type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
-                    pricing,
-                });
-            } else {
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: [productInfo],
+            onSuccess: realTimePricing => {
+                const pricing = realTimePricing.realTimePricingResults!.find(
+                    o => o.productId === productInfo.productId,
+                );
+                if (pricing) {
+                    props.dispatch({
+                        type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
+                        pricing,
+                    });
+                } else {
+                    props.dispatch({
+                        type: "Pages/ProductDetails/FailedLoadRealTimePricing",
+                        productId,
+                    });
+                }
+            },
+            onError: () => {
                 props.dispatch({
                     type: "Pages/ProductDetails/FailedLoadRealTimePricing",
                     productId,
                 });
-            }
-        },
-        onError: () => {
-            props.dispatch({
-                type: "Pages/ProductDetails/FailedLoadRealTimePricing",
-                productId,
-            });
-        },
-    }));
+            },
+        }),
+    );
 };
 
 export const DispatchUpdateVariantSelection: HandlerType = props => {
@@ -139,7 +150,6 @@ export const DispatchUpdateVariantSelection: HandlerType = props => {
         selectedProductInfo: props.productInfo!,
     });
 };
-
 
 export const chain = [
     CopyCurrentValues,

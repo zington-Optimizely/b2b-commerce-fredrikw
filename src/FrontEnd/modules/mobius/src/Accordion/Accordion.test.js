@@ -1,11 +1,11 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import Accordion from './Accordion';
-import AccordionSection from '../AccordionSection';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import Accordion from "./Accordion";
+import AccordionSection from "../AccordionSection";
 
-describe('Accordion', () => {
+describe("Accordion", () => {
     let props;
     let sectionProps;
     let mountedWrapper;
@@ -16,7 +16,7 @@ describe('Accordion', () => {
                     <Accordion {...props}>
                         <AccordionSection {...sectionProps} />
                     </Accordion>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -24,11 +24,11 @@ describe('Accordion', () => {
 
     beforeEach(() => {
         props = { headingLevel: 1 };
-        sectionProps = { title: 'title' };
+        sectionProps = { title: "title" };
         mountedWrapper = undefined;
     });
 
-    test('renders as a dl by default', () => {
+    test("renders as a dl by default", () => {
         const root = wrapper().find(Accordion).getDOMNode();
         expect(root instanceof HTMLDListElement).toBe(true);
     });

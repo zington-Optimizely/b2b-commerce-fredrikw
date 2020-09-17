@@ -4,25 +4,30 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getAccountsDataView } from "@insite/client-framework/Store/Data/Accounts/AccountsSelector";
 import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import { getBudgetsDataView, getBudgetYears, getYearEnd } from "@insite/client-framework/Store/Data/Budgets/BudgetsSelectors";
+import {
+    getBudgetsDataView,
+    getBudgetYears,
+    getYearEnd,
+} from "@insite/client-framework/Store/Data/Budgets/BudgetsSelectors";
 import loadReviews from "@insite/client-framework/Store/Data/Budgets/Handlers/LoadReviews";
 import updateBudget from "@insite/client-framework/Store/Data/Budgets/Handlers/UpdateBudget";
 import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BudgetEnforcementLevel } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
-import { isSearchUserSelectDisabled, isShipToAddressSelectDisabled } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementSelectors";
+import {
+    isSearchUserSelectDisabled,
+    isShipToAddressSelectDisabled,
+} from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementSelectors";
 import setDisplayedWidgetName from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetDisplayedWidgetName";
 import updateLoadMaintenanceInfoParameter from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/UpdateLoadMaintenanceInfoParameter";
 import updateMaintenanceInfo from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/UpdateMaintenanceInfo";
 import translate from "@insite/client-framework/Translate";
-import {
-    AccountModel,
-    BudgetModel,
-    ShipToModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { AccountModel, BudgetModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BudgetManagementPageContext } from "@insite/content-library/Pages/BudgetManagementPage";
-import EnforcementLevelDisplay, { EnforcementLevelDisplayStyles } from "@insite/content-library/Widgets/Budget/EnforcementLevelDisplay";
+import EnforcementLevelDisplay, {
+    EnforcementLevelDisplayStyles,
+} from "@insite/content-library/Widgets/Budget/EnforcementLevelDisplay";
 import Button, { ButtonProps } from "@insite/mobius/Button";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
 import DataTableBody from "@insite/mobius/DataTable/DataTableBody";
@@ -109,11 +114,15 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
     },
     titleGridItem: {
         width: [12, 12, 8, 8, 8],
-        css: css` padding: 15px; `,
+        css: css`
+            padding: 15px;
+        `,
     },
     titleText: {
         variant: "h4",
-        css: css` margin: 0; `,
+        css: css`
+            margin: 0;
+        `,
     },
     buttonsGridItem: {
         width: [12, 12, 4, 4, 4],
@@ -121,39 +130,78 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
             padding: 15px;
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
                 ])}
         `,
     },
     cancelButton: {
         variant: "tertiary",
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, css` width: 50%; `, null, null, null], "max")}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            width: 50%;
+                        `,
+                        null,
+                        null,
+                        null,
+                    ],
+                    "max",
+                )}
         `,
     },
     saveButton: {
         css: css`
             margin-left: 10px;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [css` width: 50%; `, css` width: 50%; `, null, null, null])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        width: 50%;
+                    `,
+                    css`
+                        width: 50%;
+                    `,
+                    null,
+                    null,
+                    null,
+                ])}
         `,
     },
     enforcementLevelGridItem: {
         width: 12,
-        css: css` padding: 15px; `,
+        css: css`
+            padding: 15px;
+        `,
     },
     enforcementLevelDisplayStyles: {
         labelText: {
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     budgetYearGridItem: {
         width: 12,
-        css: css` padding: 15px 15px 0 15px; `,
+        css: css`
+            padding: 15px 15px 0 15px;
+        `,
     },
     wrapper: {
         css: css`
@@ -163,7 +211,9 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
         `,
     },
     assignBudgetInstructionsGridItem: {
-        css: css` padding: 15px; `,
+        css: css`
+            padding: 15px;
+        `,
     },
     filterGridItem: {
         width: 12,
@@ -177,22 +227,39 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
             display: inline-block;
             margin-right: 30px;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(
-                    theme,
-                    [css` margin-bottom: 30px; `, css` margin-bottom: 30px; `, css` margin-bottom: 30px; `, css` margin-bottom: 30px; `, null],
-                )}
+                breakpointMediaQueries(theme, [
+                    css`
+                        margin-bottom: 30px;
+                    `,
+                    css`
+                        margin-bottom: 30px;
+                    `,
+                    css`
+                        margin-bottom: 30px;
+                    `,
+                    css`
+                        margin-bottom: 30px;
+                    `,
+                    null,
+                ])}
         `,
     },
     tableGridItem: {
         width: [12, 12, 12, 12, 6],
-        css: css` padding: 15px; `,
+        css: css`
+            padding: 15px;
+        `,
     },
     currencySymbol: {
-        css: css` margin-right: 5px; `,
+        css: css`
+            margin-right: 5px;
+        `,
     },
     budgetAmountTextField: {
         cssOverrides: {
-            formInputWrapper: css` width: 150px; `,
+            formInputWrapper: css`
+                width: 150px;
+            `,
             inputSelect: css`
                 padding-right: 10px;
                 &:focus {
@@ -300,16 +367,15 @@ const AssignBudgets: React.FC<Props> = ({
     };
 
     const accounts = accountsDataView.value || [];
-    const shipTos = shipTosDataView.value
-        ? shipTosDataView.value.filter(o => o.customerSequence !== "-1")
-        : [];
-    const tableRows = maintenanceInfo?.budgetLineCollection?.map((budgetLine, index) => {
-        return {
-            period: budgetLine.period,
-            endDate: getEndDate(index, budgetDataView?.value!).toLocaleDateString() || "",
-            budgetAmount: budgetLine.currentFiscalYearBudget,
-        };
-    }) || [];
+    const shipTos = shipTosDataView.value ? shipTosDataView.value.filter(o => o.customerSequence !== "-1") : [];
+    const tableRows =
+        maintenanceInfo?.budgetLineCollection?.map((budgetLine, index) => {
+            return {
+                period: budgetLine.period,
+                endDate: getEndDate(index, budgetDataView?.value!).toLocaleDateString() || "",
+                budgetAmount: budgetLine.currentFiscalYearBudget,
+            };
+        }) || [];
     const [searchUserWrapperStyles] = React.useState(() => mergeToNew(styles.wrapper, styles.searchUserWrapper));
     const enforcementLevel = billToState.value.budgetEnforcementLevel as keyof typeof BudgetEnforcementLevel;
 
@@ -317,21 +383,27 @@ const AssignBudgets: React.FC<Props> = ({
         <>
             <GridContainer {...styles.gridContainer}>
                 <GridItem {...styles.titleGridItem}>
-                    <Typography as="h2" {...styles.titleText}>{translate("Assign Budgets")}</Typography>
+                    <Typography as="h2" {...styles.titleText}>
+                        {translate("Assign Budgets")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
                         {translate("Cancel")}
                     </Button>
-                    <Button {...styles.saveButton} onClick={handleSaveButtonClick} data-test-selector="saveAssignedBudgetsButton">
+                    <Button
+                        {...styles.saveButton}
+                        onClick={handleSaveButtonClick}
+                        data-test-selector="saveAssignedBudgetsButton"
+                    >
                         {translate("Save")}
                     </Button>
                 </GridItem>
                 <GridItem {...styles.enforcementLevelGridItem}>
                     <EnforcementLevelDisplay
                         enforcementLevel={BudgetEnforcementLevel[enforcementLevel]}
-                        extendedStyles={styles.enforcementLevelDisplayStyles}>
-                    </EnforcementLevelDisplay>
+                        extendedStyles={styles.enforcementLevelDisplayStyles}
+                    ></EnforcementLevelDisplay>
                 </GridItem>
                 <GridItem {...styles.budgetYearGridItem}>
                     <StyledWrapper {...styles.wrapper}>
@@ -340,15 +412,20 @@ const AssignBudgets: React.FC<Props> = ({
                             {...styles.budgetYearSelect}
                             value={budgetYear}
                             onChange={handleBudgetYearChange}
-                            data-test-selector="assignBudgetYearSelector">
-                            {budgetYears.map((budgetYear: number) =>
-                                <option key={budgetYear} value={budgetYear}>{budgetYear}</option>,
-                            )}
+                            data-test-selector="assignBudgetYearSelector"
+                        >
+                            {budgetYears.map((budgetYear: number) => (
+                                <option key={budgetYear} value={budgetYear}>
+                                    {budgetYear}
+                                </option>
+                            ))}
                         </Select>
                     </StyledWrapper>
                 </GridItem>
                 <GridItem {...styles.assignBudgetInstructionsGridItem}>
-                    <Typography {...styles.assignBudgetInstructionsText}>{siteMessage("Budget_AssignBudgetsInstructions")}</Typography>
+                    <Typography {...styles.assignBudgetInstructionsText}>
+                        {siteMessage("Budget_AssignBudgetsInstructions")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.filterGridItem}>
                     <StyledWrapper {...searchUserWrapperStyles}>
@@ -358,11 +435,14 @@ const AssignBudgets: React.FC<Props> = ({
                             value={maintenanceUserId}
                             disabled={isSearchUserSelectDisabled}
                             onChange={(event: React.FormEvent<HTMLSelectElement>) => handleChange(event, "user")}
-                            data-test-selector="assignBudgetUserSelector">
+                            data-test-selector="assignBudgetUserSelector"
+                        >
                             <option value="">{translate("Select User")}</option>,
-                                {accounts.map((account: AccountModel) =>
-                                <option key={account.id} value={account.id}>{account.userName}</option>,
-                            )}
+                            {accounts.map((account: AccountModel) => (
+                                <option key={account.id} value={account.id}>
+                                    {account.userName}
+                                </option>
+                            ))}
                         </Select>
                     </StyledWrapper>
                     <StyledWrapper {...styles.wrapper}>
@@ -371,21 +451,26 @@ const AssignBudgets: React.FC<Props> = ({
                             {...styles.shipToAddressSelect}
                             value={maintenanceShipToId}
                             disabled={isShipToAddressSelectDisabled}
-                            onChange={(event: React.FormEvent<HTMLSelectElement>) => handleChange(event, "shipTo")}>
+                            onChange={(event: React.FormEvent<HTMLSelectElement>) => handleChange(event, "shipTo")}
+                        >
                             <option value="">{translate("Select Ship To")}</option>,
-                                {shipTos.map((shipTo: ShipToModel) =>
-                                <option key={shipTo.id.toString()} value={shipTo.id.toString()}>{shipTo.label}</option>,
-                            )}
+                            {shipTos.map((shipTo: ShipToModel) => (
+                                <option key={shipTo.id.toString()} value={shipTo.id.toString()}>
+                                    {shipTo.label}
+                                </option>
+                            ))}
                         </Select>
                     </StyledWrapper>
                 </GridItem>
                 <GridItem {...styles.tableGridItem}>
-                    {!budgetDataView.isLoading && tableRows.length > 0
-                        && <DataTable {...styles.dataTable}>
+                    {!budgetDataView.isLoading && tableRows.length > 0 && (
+                        <DataTable {...styles.dataTable}>
                             <DataTableHead>
                                 <DataTableHeader {...styles.periodHeader}>{translate("Period")}</DataTableHeader>
                                 <DataTableHeader {...styles.endDateHeader}>{translate("End Date")}</DataTableHeader>
-                                <DataTableHeader {...styles.budgetAmountHeader}>{translate("Budget Amount")}</DataTableHeader>
+                                <DataTableHeader {...styles.budgetAmountHeader}>
+                                    {translate("Budget Amount")}
+                                </DataTableHeader>
                             </DataTableHead>
                             <DataTableBody>
                                 {tableRows.map(({ period, endDate, budgetAmount }, index) => (
@@ -393,19 +478,22 @@ const AssignBudgets: React.FC<Props> = ({
                                         <DataTableCell {...styles.periodCells}>{period}</DataTableCell>
                                         <DataTableCell {...styles.endDateCells}>{endDate}</DataTableCell>
                                         <DataTableCell {...styles.budgetAmountCells}>
-                                            <Typography {...styles.currencySymbol}>{billToState.value.customerCurrencySymbol}</Typography>
+                                            <Typography {...styles.currencySymbol}>
+                                                {billToState.value.customerCurrencySymbol}
+                                            </Typography>
                                             <TextField
                                                 type="number"
                                                 value={budgetAmount}
                                                 {...styles.budgetAmountTextField}
                                                 data-test-selector={`budgetAmountField_${index}`}
-                                                onChange={(budgetAmount) => handleBudgetAmountChange(index, budgetAmount)} />
+                                                onChange={budgetAmount => handleBudgetAmountChange(index, budgetAmount)}
+                                            />
                                         </DataTableCell>
                                     </DataTableRow>
                                 ))}
                             </DataTableBody>
                         </DataTable>
-                    }
+                    )}
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     <Hidden {...styles.buttonsHidden} above="sm">

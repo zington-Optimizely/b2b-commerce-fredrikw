@@ -14,21 +14,16 @@ export interface WarehouseAddressInfoDisplayStyles {
     address?: AddressInfoDisplayStyles;
 }
 
-export const warehouseAddressInfoDisplayStyles: WarehouseAddressInfoDisplayStyles = {
-};
+export const warehouseAddressInfoDisplayStyles: WarehouseAddressInfoDisplayStyles = {};
 
-const WarehouseAddressInfoDisplay = ({
-    warehouse,
-    extendedStyles,
-}: OwnProps) => {
+const WarehouseAddressInfoDisplay = ({ warehouse, extendedStyles }: OwnProps) => {
     const [styles] = React.useState(() => mergeToNew(warehouseAddressInfoDisplayStyles, extendedStyles));
     return (
         <>
-            <Typography as="p" {...styles.warehouseNameText}>{warehouse.description || warehouse.name}</Typography>
-            <AddressInfoDisplay
-                {...warehouse}
-                extendedStyles={styles.address}
-            />
+            <Typography as="p" {...styles.warehouseNameText}>
+                {warehouse.description || warehouse.name}
+            </Typography>
+            <AddressInfoDisplay {...warehouse} extendedStyles={styles.address} />
         </>
     );
 };

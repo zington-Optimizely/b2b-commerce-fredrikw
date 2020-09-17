@@ -1,13 +1,11 @@
-import {
-    createHandlerChainRunnerOptionalParameter, Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
 import { AutocompleteApiParameter, autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
 
 type Parameter = { query: string };
 type Props = {
-    apiParameter: AutocompleteApiParameter,
-    apiResult: ProductAutocompleteItemModel[] | null,
+    apiParameter: AutocompleteApiParameter;
+    apiResult: ProductAutocompleteItemModel[] | null;
 };
 
 type HandlerType = Handler<Parameter, Props>;

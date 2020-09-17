@@ -42,7 +42,9 @@ export const viewStyles: SavedPaymentsViewStyles = {
         `,
     },
     loadingSpinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     noPaymentsWrapper: {
         css: css`
@@ -94,49 +96,49 @@ export const viewStyles: SavedPaymentsViewStyles = {
 
 const styles = viewStyles;
 
-const SavedPaymentsView: React.FC<Props> = ({
-                                                id,
-                                            }) => {
+const SavedPaymentsView: React.FC<Props> = ({ id }) => {
     const paymentProfilesDataView = useContext(PaymentProfilesContext);
 
     const isLoaded = paymentProfilesDataView.value && !paymentProfilesDataView.isLoading;
     const hasSavedPayments = isLoaded && paymentProfilesDataView.value!.length > 0;
 
-    return <>
-        <GridContainer {...styles.headerContainer}>
-            <GridItem  {...styles.headerLeftColumnGridItem}>
-                <Zone contentId={id} zoneName="Content0"/>
-            </GridItem>
-            <GridItem {...styles.headerRightColumnGridItem}>
-                <Zone contentId={id} zoneName="Content1"/>
-            </GridItem>
-        </GridContainer>
-        {!isLoaded
-        && <StyledWrapper {...styles.centeringWrapper}>
-            <LoadingSpinner {...styles.loadingSpinner} />
-        </StyledWrapper>
-        }
-        {isLoaded && !hasSavedPayments
-        && <StyledWrapper {...styles.noPaymentsWrapper}>
-            <StyledWrapper {...styles.noPaymentsIconWrapper}>
-                <Icon {...styles.noPaymentsIcon} />
-            </StyledWrapper>
-            <Typography {...styles.noPaymentsText} data-test-selector="noPaymentsMessage">
-                {siteMessage("SavedPayments_NoSavedPaymentsMessage")}
-            </Typography>
-        </StyledWrapper>
-        }
-        {isLoaded && hasSavedPayments
-        && <GridContainer {...styles.mainContainer}>
-            <GridItem  {...styles.mainLeftColumnGridItem}>
-                <Zone contentId={id} zoneName="Content2"/>
-            </GridItem>
-            <GridItem {...styles.mainRightColumnGridItem}>
-                <Zone contentId={id} zoneName="Content3"/>
-            </GridItem>
-        </GridContainer>
-        }
-    </>;
+    return (
+        <>
+            <GridContainer {...styles.headerContainer}>
+                <GridItem {...styles.headerLeftColumnGridItem}>
+                    <Zone contentId={id} zoneName="Content0" />
+                </GridItem>
+                <GridItem {...styles.headerRightColumnGridItem}>
+                    <Zone contentId={id} zoneName="Content1" />
+                </GridItem>
+            </GridContainer>
+            {!isLoaded && (
+                <StyledWrapper {...styles.centeringWrapper}>
+                    <LoadingSpinner {...styles.loadingSpinner} />
+                </StyledWrapper>
+            )}
+            {isLoaded && !hasSavedPayments && (
+                <StyledWrapper {...styles.noPaymentsWrapper}>
+                    <StyledWrapper {...styles.noPaymentsIconWrapper}>
+                        <Icon {...styles.noPaymentsIcon} />
+                    </StyledWrapper>
+                    <Typography {...styles.noPaymentsText} data-test-selector="noPaymentsMessage">
+                        {siteMessage("SavedPayments_NoSavedPaymentsMessage")}
+                    </Typography>
+                </StyledWrapper>
+            )}
+            {isLoaded && hasSavedPayments && (
+                <GridContainer {...styles.mainContainer}>
+                    <GridItem {...styles.mainLeftColumnGridItem}>
+                        <Zone contentId={id} zoneName="Content2" />
+                    </GridItem>
+                    <GridItem {...styles.mainRightColumnGridItem}>
+                        <Zone contentId={id} zoneName="Content3" />
+                    </GridItem>
+                </GridContainer>
+            )}
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

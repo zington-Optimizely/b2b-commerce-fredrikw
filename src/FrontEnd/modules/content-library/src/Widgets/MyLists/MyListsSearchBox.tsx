@@ -10,8 +10,7 @@ import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -60,28 +59,25 @@ class MyListsSearchBox extends React.Component<Props, MyListsSearchBoxState> {
         const query = event.currentTarget.value;
         this.setState({ query });
 
-        this.searchTimeoutId = setTimeout(
-            () => {
-                props.updateLoadParameter({ query });
-            },
-            250);
+        this.searchTimeoutId = setTimeout(() => {
+            props.updateLoadParameter({ query });
+        }, 250);
     };
 
     render() {
-        return(
+        return (
             <TextField
                 data-test-selector="myListsSearchByName"
                 placeholder={translate("Search lists by name")}
                 {...styles.search}
                 value={this.state.query}
-                onChange={(event: React.FormEvent<HTMLInputElement>) => this.handleChange(event, this.props)}>
-            </TextField>
+                onChange={(event: React.FormEvent<HTMLInputElement>) => this.handleChange(event, this.props)}
+            ></TextField>
         );
     }
 }
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(MyListsSearchBox),
     definition: {
         group: "My Lists",

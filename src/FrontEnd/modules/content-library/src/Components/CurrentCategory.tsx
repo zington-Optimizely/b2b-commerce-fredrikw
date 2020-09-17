@@ -12,16 +12,18 @@ import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
-    const categoryPath = getSelectedCategoryPath(state) || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
+    const categoryPath =
+        getSelectedCategoryPath(state) ||
+        (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
     const catalogPage = getCatalogPageStateByPath(state, categoryPath).value;
 
-    return ({
+    return {
         catalogPage,
         category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
         categoryPath,
         breadcrumbLinks: state.components.breadcrumbs.links,
         location: getLocation(state),
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -49,14 +51,15 @@ class CurrentCategory extends React.Component<Props> {
             if (categoryPath) {
                 this.props.loadCatalogPageByPath({ path: categoryPath });
             }
-        } else if (catalogPage.breadCrumbs
-            && (prevProps.catalogPage !== catalogPage || !this.props.breadcrumbLinks)) {
+        } else if (catalogPage.breadCrumbs && (prevProps.catalogPage !== catalogPage || !this.props.breadcrumbLinks)) {
             this.setBreadcrumbs();
         }
     }
 
     setBreadcrumbs() {
-        this.props.setBreadcrumbs({ links: this.props.catalogPage!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })) });
+        this.props.setBreadcrumbs({
+            links: this.props.catalogPage!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })),
+        });
     }
 
     render() {
@@ -64,9 +67,7 @@ class CurrentCategory extends React.Component<Props> {
             return this.props.children;
         }
 
-        return <CategoryContext.Provider value={this.props.category}>
-                {this.props.children}
-            </CategoryContext.Provider>;
+        return <CategoryContext.Provider value={this.props.category}>{this.props.children}</CategoryContext.Provider>;
     }
 }
 

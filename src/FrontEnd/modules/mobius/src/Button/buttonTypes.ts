@@ -6,23 +6,28 @@ import safeColor from "../utilities/safeColor";
 import styleObjectToString from "../utilities/styleObjectToString";
 import { ButtonIcon, ButtonProps } from "./Button";
 
-type ButtonTypesProps = ThemeProps<BaseTheme> & Pick<ButtonProps, "hoverMode" | "hoverStyle" | "activeMode" | "activeStyle"> & {
-    _color?: string,
-};
+type ButtonTypesProps = ThemeProps<BaseTheme> &
+    Pick<ButtonProps, "hoverMode" | "hoverStyle" | "activeMode" | "activeStyle"> & {
+        _color?: string;
+    };
 
-const calculateHoverColor = ({
-    _color, hoverMode = "darken", hoverStyle, theme = baseTheme,
-}: ButtonTypesProps) => {
-    if (hoverMode === null) return _color;
-    if (hoverStyle?.color) return resolveColor(hoverStyle.color, theme);
+const calculateHoverColor = ({ _color, hoverMode = "darken", hoverStyle, theme = baseTheme }: ButtonTypesProps) => {
+    if (hoverMode === null) {
+        return _color;
+    }
+    if (hoverStyle?.color) {
+        return resolveColor(hoverStyle.color, theme);
+    }
     return safeColor(resolveColor(_color, theme))[hoverMode](0.3).string();
 };
 
-const calculateActiveColor = ({
-    _color, activeMode = "darken", activeStyle, theme = baseTheme,
-}: ButtonTypesProps) => {
-    if (activeMode === null) return _color;
-    if (activeStyle?.color) return resolveColor(activeStyle.color, theme);
+const calculateActiveColor = ({ _color, activeMode = "darken", activeStyle, theme = baseTheme }: ButtonTypesProps) => {
+    if (activeMode === null) {
+        return _color;
+    }
+    if (activeStyle?.color) {
+        return resolveColor(activeStyle.color, theme);
+    }
     return safeColor(resolveColor(_color, theme))[activeMode](0.6).string();
 };
 

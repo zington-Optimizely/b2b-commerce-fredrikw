@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    HandlerWithResult,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
 import { UploadedItem } from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
 import { WorkBook } from "xlsx";
@@ -96,7 +93,11 @@ const processWorkBook = async (workBook: WorkBook, firstRowHeading: boolean, res
                 return;
             }
 
-            result.uploadedItems = rows.map(row => ({ name: row[0], qtyOrdered: parseFloat(row[1]) ? parseFloat(row[1]) : undefined, unitOfMeasure: row[2] }));
+            result.uploadedItems = rows.map(row => ({
+                name: row[0],
+                qtyOrdered: parseFloat(row[1]) ? parseFloat(row[1]) : undefined,
+                unitOfMeasure: row[2],
+            }));
         }
     });
 };
@@ -157,12 +158,7 @@ export const DispatchCompleteProcessFile: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginProcessFile,
-    CreateDefaultResult,
-    ProcessUploadedFile,
-    DispatchCompleteProcessFile,
-];
+export const chain = [DispatchBeginProcessFile, CreateDefaultResult, ProcessUploadedFile, DispatchCompleteProcessFile];
 
 const processFile = createHandlerChainRunner(chain, "ProcessFile");
 export default processFile;

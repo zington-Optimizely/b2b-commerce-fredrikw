@@ -48,34 +48,46 @@ export const totalStyles: OrderDetailsTotalStyles = {
     subtotalLabelGridItem: { width: 6 },
     subtotalValueGridItem: { width: 6 },
     subtotalValue: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     discountsLabelGridItem: { width: 6 },
     discountsValueGridItem: { width: 6 },
     discountsValue: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     shippingAndHandlingLabelGridItem: { width: 6 },
     shippingAndHandlingValueGridItem: { width: 6 },
     shippingAndHandlingValue: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     otherChargesLabelGridItem: { width: 6 },
     otherChargesValueGridItem: { width: 6 },
     otherChargesValue: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     taxLabelGridItem: { width: 6 },
     taxValueGridItem: { width: 6 },
     taxValue: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     totalLabelGridItem: { width: 6 },
     totalLabel: { weight: "bold" },
     totalValueGridItem: { width: 6 },
     totalValue: {
         weight: "bold",
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
 };
 
@@ -95,8 +107,8 @@ const OrderDetailsTotal: FC = () => {
             <GridItem {...styles.subtotalValueGridItem}>
                 <Typography {...styles.subtotalValue}>{order.orderSubTotalDisplay}</Typography>
             </GridItem>
-            {order.discountAmount > 0
-                && <>
+            {order.discountAmount > 0 && (
+                <>
                     <GridItem {...styles.discountsLabelGridItem}>
                         <Typography {...styles.discountsLabel}>{translate("Discounts")}</Typography>
                     </GridItem>
@@ -104,9 +116,9 @@ const OrderDetailsTotal: FC = () => {
                         <Typography {...styles.discountsValue}>{order.orderDiscountAmountDisplay}</Typography>
                     </GridItem>
                 </>
-            }
-            {(order.shippingCharges + order.handlingCharges) > 0
-                && <>
+            )}
+            {order.shippingCharges + order.handlingCharges > 0 && (
+                <>
                     <GridItem {...styles.shippingAndHandlingLabelGridItem}>
                         <Typography {...styles.shippingAndHandlingLabel}>{translate("Shipping & Handling")}</Typography>
                     </GridItem>
@@ -114,9 +126,9 @@ const OrderDetailsTotal: FC = () => {
                         <Typography {...styles.shippingAndHandlingValue}>{order.shippingAndHandlingDisplay}</Typography>
                     </GridItem>
                 </>
-            }
-            {order.otherCharges > 0
-                && <>
+            )}
+            {order.otherCharges > 0 && (
+                <>
                     <GridItem {...styles.otherChargesLabelGridItem}>
                         <Typography {...styles.otherChargesLabel}>{translate("Other Charges")}</Typography>
                     </GridItem>
@@ -124,40 +136,35 @@ const OrderDetailsTotal: FC = () => {
                         <Typography {...styles.otherChargesValue}>{order.otherChargesDisplay}</Typography>
                     </GridItem>
                 </>
-            }
-            {(!order.orderHistoryTaxes || order.orderHistoryTaxes.length === 0)
-                && <>
+            )}
+            {(!order.orderHistoryTaxes || order.orderHistoryTaxes.length === 0) && (
+                <>
                     <GridItem {...styles.taxLabelGridItem}>
                         <Typography {...styles.taxLabel}>{translate("Tax")}</Typography>
                     </GridItem>
                     <GridItem {...styles.taxValueGridItem}>
-                        <Typography
-                            {...styles.taxValue}
-                            data-test-selector="orderDetails_totalTaxDisplay"
-                        >
+                        <Typography {...styles.taxValue} data-test-selector="orderDetails_totalTaxDisplay">
                             {order.totalTaxDisplay}
                         </Typography>
                     </GridItem>
                 </>
-            }
-            {order.orderHistoryTaxes && order.orderHistoryTaxes.map(tax => (
-                <>
-                    <GridItem {...styles.taxLabelGridItem}>
-                        <Typography>{tax.taxDescription || translate("Tax")}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.taxValueGridItem}>
-                        <Typography {...styles.taxValue}>{tax.taxAmountDisplay}</Typography>
-                    </GridItem>
-                </>
-            ))}
+            )}
+            {order.orderHistoryTaxes &&
+                order.orderHistoryTaxes.map(tax => (
+                    <>
+                        <GridItem {...styles.taxLabelGridItem}>
+                            <Typography>{tax.taxDescription || translate("Tax")}</Typography>
+                        </GridItem>
+                        <GridItem {...styles.taxValueGridItem}>
+                            <Typography {...styles.taxValue}>{tax.taxAmountDisplay}</Typography>
+                        </GridItem>
+                    </>
+                ))}
             <GridItem {...styles.totalLabelGridItem}>
                 <Typography {...styles.totalLabel}>{translate("Total")}</Typography>
             </GridItem>
             <GridItem {...styles.totalValueGridItem}>
-                <Typography
-                    {...styles.totalValue}
-                    data-test-selector="orderDetail_orderGrandTotalDisplay"
-                >
+                <Typography {...styles.totalValue} data-test-selector="orderDetail_orderGrandTotalDisplay">
                     {order.orderGrandTotalDisplay}
                 </Typography>
             </GridItem>

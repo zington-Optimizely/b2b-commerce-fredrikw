@@ -14,9 +14,9 @@ export interface AddToWishListParameter {
 
 interface Props {
     result: {
-        wishList?: WishListModel,
-        errorMessage?: string,
-    },
+        wishList?: WishListModel;
+        errorMessage?: string;
+    };
 }
 
 type HandlerType = Handler<AddToWishListParameter, Props>;
@@ -24,7 +24,8 @@ type HandlerType = Handler<AddToWishListParameter, Props>;
 export const AddWishList: HandlerType = async props => {
     props.result = {};
     try {
-        props.result.wishList = props.parameter.selectedWishList ?? await addWishList({ name: props.parameter.newListName });
+        props.result.wishList =
+            props.parameter.selectedWishList ?? (await addWishList({ name: props.parameter.newListName }));
     } catch (error) {
         if (isApiError(error) && error.status === 400) {
             props.result.errorMessage = error.errorJson.message;

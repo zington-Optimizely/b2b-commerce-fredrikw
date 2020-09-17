@@ -19,10 +19,12 @@ module.exports = function startServer(options) {
     }
 
     app.use(express.static("wwwroot"));
-    app.use(cookieParser(undefined,  {
-        // on the .net site we use HttpUtility.UrlEncode which encodes ' ' as '+'
-        decode: value => decodeURIComponent(value.replace(/\+/g, " ")),
-    }));
+    app.use(
+        cookieParser(undefined, {
+            // on the .net site we use HttpUtility.UrlEncode which encodes ' ' as '+'
+            decode: value => decodeURIComponent(value.replace(/\+/g, " ")),
+        }),
+    );
 
     // The items below are forwarded via Api.ts.  The raw parser is needed to support POST requests.
     const rawParser = bodyParser.raw({ type: "*/*", limit: "10mb" });
@@ -45,7 +47,8 @@ module.exports = function startServer(options) {
 
         return createdDomain.run(() => {
             try {
-                return options.getServer(response)(request, response, domain)
+                return options
+                    .getServer(response)(request, response, domain)
                     .catch(error => {
                         next(error);
                     });

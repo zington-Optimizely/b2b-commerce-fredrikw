@@ -2,12 +2,12 @@ import { GetBillTosApiParameter, GetShipTosApiParameter } from "@insite/client-f
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ChangeCustomerPageContext } from "@insite/content-library/Pages/ChangeCustomerPage";
-import ChangeCustomerSelectCustomerContainer, { ChangeCustomerSelectCustomerContainerStyles } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerSelectCustomerContainer";
+import ChangeCustomerSelectCustomerContainer, {
+    ChangeCustomerSelectCustomerContainerStyles,
+} from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerSelectCustomerContainer";
 import React, { FC, useState } from "react";
 
-
-interface Props extends WidgetProps {
-}
+interface Props extends WidgetProps {}
 
 export interface ChangeCustomerSelectCustomerStyles {
     container?: ChangeCustomerSelectCustomerContainerStyles;
@@ -17,7 +17,7 @@ export const changeCustomerSelectCustomerStyles: ChangeCustomerSelectCustomerSty
 
 const styles = changeCustomerSelectCustomerStyles;
 
-const ChangeCustomerSelectCustomer: FC<Props> = (_) => {
+const ChangeCustomerSelectCustomer: FC<Props> = _ => {
     const [billTosParameter, setBillTosParameter] = useState<GetBillTosApiParameter>({
         page: 1,
         pageSize: 20,
@@ -35,7 +35,8 @@ const ChangeCustomerSelectCustomer: FC<Props> = (_) => {
             billTosParameter={billTosParameter}
             setBillTosParameter={setBillTosParameter}
             shipTosParameter={shipTosParameter}
-            setShipTosParameter={setShipTosParameter} />
+            setShipTosParameter={setShipTosParameter}
+        />
     );
 };
 

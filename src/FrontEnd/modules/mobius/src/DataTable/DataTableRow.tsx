@@ -6,11 +6,14 @@ import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import DataTableContext from "./DataTableContext";
 
-export type DataTableRowProps = MobiusStyledComponentProps<"tr", {
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<DataTableRowProps>;
-    evenRowCss?: StyledProp<DataTableRowProps>;
-}>;
+export type DataTableRowProps = MobiusStyledComponentProps<
+    "tr",
+    {
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<DataTableRowProps>;
+        evenRowCss?: StyledProp<DataTableRowProps>;
+    }
+>;
 
 const DataTableRowStyle = styled.tr<DataTableRowProps>`
     background: ${getColor("common.background")};

@@ -1,5 +1,6 @@
 import sleep from "@insite/client-framework/Common/Sleep";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { loadMobileComponents } from "@insite/client-framework/Internal";
 import logger from "@insite/client-framework/Logger";
 
 const Handshake = "Handshake";
@@ -32,20 +33,29 @@ export interface HasFrameHole {
 
 let siteHoleListener: (event: MessageEvent) => void;
 
-export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteHole: HasFrameHole, handlers: Dictionary<(data: any) => void>): Promise<void> {
+export const setupSiteHole = async function (
+    siteFrame: HTMLIFrameElement,
+    siteHole: HasFrameHole,
+    handlers: Dictionary<(data: any) => void>,
+): Promise<void> {
     if (IS_SERVER_SIDE) {
         return;
     }
 
     const sendMessage = function (type: string, data?: {}) {
         if (siteFrame.contentWindow === null) {
-            logger.warn(`Site frame has no content window, message not sent; shell type: ${type} data ${JSON.stringify(data)}`);
+            logger.warn(
+                `Site frame has no content window, message not sent; shell type: ${type} data ${JSON.stringify(data)}`,
+            );
             return;
         }
 
         log(`sending message to site - ${type} data: ${JSON.stringify(data)}`);
 
-        siteFrame.contentWindow.postMessage({ id: "shell", type, data },  `${window.location.protocol}//${window.location.host}`);
+        siteFrame.contentWindow.postMessage(
+            { id: "shell", type, data },
+            `${window.location.protocol}//${window.location.host}`,
+        );
     };
 
     let completedHandshake = false;
@@ -71,7 +81,6 @@ export const setupSiteHole = async function (siteFrame: HTMLIFrameElement, siteH
                 } else {
                     throw new Error(`Did not have a handler on the shell for the message type ${event.data.type}`);
                 }
-
             }
         }
     };
@@ -106,6 +115,8 @@ export const setupShellHole = async function (handlers: Dictionary<(data: any) =
     if (!canSetupShellHole()) {
         return;
     }
+
+    await loadMobileComponents();
 
     let completedHandshake = false;
 

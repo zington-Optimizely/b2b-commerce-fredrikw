@@ -16,7 +16,10 @@ interface OwnProps {
     extendedStyles?: ProductAddToListLinkStyles;
 }
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasProductContext;
+type Props = OwnProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasProductContext;
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
@@ -39,14 +42,14 @@ export const productAddToListLinkStyles: ProductAddToListLinkStyles = {};
 export const productAddToListLink = productAddToListLinkStyles;
 
 const ProductAddToListLink: React.FC<Props> = ({
-                                                   productContext: { product, productInfo },
-                                                   wishListSettings,
-                                                   labelOverride,
-                                                   setAddToListModalIsOpen,
-                                                   addToWishList,
-                                                   extendedStyles,
-                                                   ...otherProps
-                                               }) => {
+    productContext: { product, productInfo },
+    wishListSettings,
+    labelOverride,
+    setAddToListModalIsOpen,
+    addToWishList,
+    extendedStyles,
+    ...otherProps
+}) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productAddToListLink, extendedStyles));
 
@@ -68,7 +71,11 @@ const ProductAddToListLink: React.FC<Props> = ({
         setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
     };
 
-    return <Link {...styles.link} onClick={addToListLinkClickHandler} {...otherProps}>{labelOverride ?? translate("Add to List")}</Link>;
+    return (
+        <Link {...styles.link} onClick={addToListLinkClickHandler} {...otherProps}>
+            {labelOverride ?? translate("Add to List")}
+        </Link>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withProductContext(ProductAddToListLink));

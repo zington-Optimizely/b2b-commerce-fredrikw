@@ -51,16 +51,20 @@ export const pageTitleStyles: ProductDetailsPageTitleStyles = {
 const styles = pageTitleStyles;
 
 const ProductDetailsPageTitle: React.FC<Props> = ({ product }) => {
-    return <GridContainer {...styles.container}>
-        {product.brand
-            && <GridItem {...styles.brandGridItem}>
-                <ProductBrand brand={product.brand} showLogo={true} extendedStyles={styles.brandStyles} />
+    return (
+        <GridContainer {...styles.container}>
+            {product.brand && (
+                <GridItem {...styles.brandGridItem}>
+                    <ProductBrand brand={product.brand} showLogo={true} extendedStyles={styles.brandStyles} />
+                </GridItem>
+            )}
+            <GridItem {...styles.titleGridItem}>
+                <Typography {...styles.titleText} data-test-selector="ProductDetailsPageTitle">
+                    {product.productTitle}
+                </Typography>
             </GridItem>
-        }
-        <GridItem {...styles.titleGridItem}>
-            <Typography {...styles.titleText} data-test-selector="ProductDetailsPageTitle">{product.productTitle}</Typography>
-        </GridItem>
-    </GridContainer>;
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

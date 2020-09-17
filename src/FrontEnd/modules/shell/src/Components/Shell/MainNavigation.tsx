@@ -7,30 +7,38 @@ import { RouteComponentProps, withRouter } from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-interface OwnProps {
-}
+interface OwnProps {}
 
-const mapStateToProps = (state: ShellState) => ({
-    homePageId: state.shellContext.homePageId,
+const mapStateToProps = ({ shellContext: { homePageId, mobileCmsModeActive } }: ShellState) => ({
+    homePageId,
+    mobileCmsModeActive,
 });
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & RouteComponentProps;
 
-const MainNavigation = (props: Props) => {
-    const url = props.location.pathname.toLowerCase();
+const MainNavigation = ({ mobileCmsModeActive, location: { pathname }, homePageId }: Props) => {
+    if (mobileCmsModeActive) {
+        return null;
+    }
+
+    const url = pathname.toLowerCase();
 
     const link = (to: string, title: string, toCheck?: string) => {
         const isActive = url.startsWith((toCheck || to).toLowerCase());
-        return <NavigationLink to={to} data-active={isActive}>{title}</NavigationLink>;
+        return (
+            <NavigationLink to={to} data-active={isActive}>
+                {title}
+            </NavigationLink>
+        );
     };
 
-    return <NavigationWrapper>
-        {link(`/ContentAdmin/Page${props.homePageId}`, "Pages", "/ContentAdmin/Page")}
-        {link("/ContentAdmin/Design/StyleGuide", "Style Guide")}
-        {link("/ContentAdmin/About", "About")}
-    </NavigationWrapper>;
+    return (
+        <NavigationWrapper data-test-selector="shell_navigation">
+            {link(`/ContentAdmin/Page${homePageId}`, "Pages", "/ContentAdmin/Page")}
+            {link("/ContentAdmin/Design/StyleGuide", "Style Guide")}
+        </NavigationWrapper>
+    );
 };
-
 
 export default connect(mapStateToProps)(withRouter(MainNavigation));
 

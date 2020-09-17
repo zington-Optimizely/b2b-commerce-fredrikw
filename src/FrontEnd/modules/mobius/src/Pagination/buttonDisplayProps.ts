@@ -4,38 +4,41 @@ import get from "../utilities/get";
 import getProp from "../utilities/getProp";
 import { PaginationProps } from "./Pagination";
 
-const buttonDisplayProps = (props: PaginationProps, {
-    page, moreCss, cssOverrides, buttonProps, currentPageButtonVariant,
-}: {
-    page: number;
-    moreCss: Interpolation<any>;
-    cssOverrides: any;
-    buttonProps: any;
-    currentPageButtonVariant: ButtonVariants;
-}) => {
+const buttonDisplayProps = (
+    props: PaginationProps,
+    {
+        page,
+        moreCss,
+        cssOverrides,
+        buttonProps,
+        currentPageButtonVariant,
+    }: {
+        page: number;
+        moreCss: Interpolation<any>;
+        cssOverrides: any;
+        buttonProps: any;
+        currentPageButtonVariant: ButtonVariants;
+    },
+) => {
     const {
         onChangePage,
         createHref,
         currentPage,
         theme: { translate },
     } = props;
-    const {
-        variant,
-        css: buttonCss,
-        ...otherButtonProps
-    } = buttonProps;
+    const { variant, css: buttonCss, ...otherButtonProps } = buttonProps;
 
     const baseCss = css`
-            margin: 0 2px;
-            padding: 0;
-            &:focus {
-                outline-color: ${getProp("theme.focus.color", "#09f")};
-                outline-style: ${getProp("theme.focus.style", "solid")};
-                outline-width: ${getProp("theme.focus.width", "2px")};
-            }
-            ${moreCss}
-            ${buttonCss}
-        `;
+        margin: 0 2px;
+        padding: 0;
+        &:focus {
+            outline-color: ${getProp("theme.focus.color", "#09f")};
+            outline-style: ${getProp("theme.focus.style", "solid")};
+            outline-width: ${getProp("theme.focus.width", "2px")};
+        }
+        ${moreCss}
+        ${buttonCss}
+    `;
     const isCurrent = page === currentPage;
     const displayProps = {
         "aria-label": isCurrent
@@ -62,7 +65,7 @@ const buttonDisplayProps = (props: PaginationProps, {
                 background-color: ${getProp("theme.colors.primary.main")};
                 border-color: ${getProp("theme.colors.primary.main")};
             }
-            ${/* sc-block */cssOverrides.currentButton}
+            ${/* sc-block */ cssOverrides.currentButton}
         `;
         displayProps.tabIndex = -1;
     }

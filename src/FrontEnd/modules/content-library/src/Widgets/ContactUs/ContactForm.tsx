@@ -13,11 +13,10 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-
 const enum fields {
     emailRecipients = "emailRecipients",
     submitButtonText = "submitButtonText",
-    successMessage = "successMessage"
+    successMessage = "successMessage",
 }
 
 interface OwnProps extends WidgetProps {
@@ -59,30 +58,29 @@ export const contactFormStyles: ContactFormStyles = {
     messageTextGridItem: { width: 12 },
     buttonGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
 };
 
 const styles = contactFormStyles;
-const emailsRegexp = new RegExp("^[\\W]*([\\w+\\-.%]+@[\\w\\-.]+\\.[A-Za-z]{2,4}[\\W]*,{1}[\\W]*)*([\\w+\\-.%]+@[\\w\\-.]+\\.[A-Za-z]{2,4})[\\W]*$");
+const emailsRegexp = new RegExp(
+    "^[\\W]*([\\w+\\-.%]+@[\\w\\-.]+\\.[A-Za-z]{2,4}[\\W]*,{1}[\\W]*)*([\\w+\\-.%]+@[\\w\\-.]+\\.[A-Za-z]{2,4})[\\W]*$",
+);
 
 type Validator = () => boolean;
 type ContextType = {
     validators: {
         [key: string]: Validator | undefined;
-    },
+    };
 };
 
 export const ContactFormContext = React.createContext<ContextType>({
     validators: {},
 });
 
-const ContactForm: React.FC<Props> = ({
-    id,
-    fields,
-    submitContactForm,
-    clearForm,
-}) => {
+const ContactForm: React.FC<Props> = ({ id, fields, submitContactForm, clearForm }) => {
     const { emailRecipients, submitButtonText, successMessage } = fields;
     const [validators] = React.useState<{ [key: string]: Validator | undefined }>({});
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -112,38 +110,38 @@ const ContactForm: React.FC<Props> = ({
         clearForm();
     };
 
-    return <GridContainer {...styles.container}>
-        <GridItem {...styles.formGridItem}>
-            <ContactFormContext.Provider value={{ validators }}>
-                <form id="contactForm" onSubmit={handleFormSubmit} noValidate>
-                    <Zone contentId={id} zoneName="Content" />
-                    <Button {...styles.submitButton} type="submit">
-                        {submitButtonText}
-                    </Button>
-                    <Modal
-                        headline={translate("Message Sent")}
-                        contentLabel={successMessage}
-                        {...styles.successModal}
-                        isOpen={isModalOpen}
-                        handleClose={modalCloseHandler}
-                    >
-                        <GridContainer {...styles.modalContainer}>
-                            <GridItem {...styles.messageTextGridItem}>
-                                <Typography {...styles.messageText}>{successMessage}</Typography>
-                            </GridItem>
-                            <GridItem {...styles.buttonGridItem}>
-                                <Button
-                                    {...styles.continueButton}
-                                    onClick={continueButtonClickHandler}>
-                                    {translate("Continue")}
-                                </Button>
-                            </GridItem>
-                        </GridContainer>
-                    </Modal>
-                </form>
-            </ContactFormContext.Provider>
-        </GridItem>
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.container}>
+            <GridItem {...styles.formGridItem}>
+                <ContactFormContext.Provider value={{ validators }}>
+                    <form id="contactForm" onSubmit={handleFormSubmit} noValidate>
+                        <Zone contentId={id} zoneName="Content" />
+                        <Button {...styles.submitButton} type="submit">
+                            {submitButtonText}
+                        </Button>
+                        <Modal
+                            headline={translate("Message Sent")}
+                            contentLabel={successMessage}
+                            {...styles.successModal}
+                            isOpen={isModalOpen}
+                            handleClose={modalCloseHandler}
+                        >
+                            <GridContainer {...styles.modalContainer}>
+                                <GridItem {...styles.messageTextGridItem}>
+                                    <Typography {...styles.messageText}>{successMessage}</Typography>
+                                </GridItem>
+                                <GridItem {...styles.buttonGridItem}>
+                                    <Button {...styles.continueButton} onClick={continueButtonClickHandler}>
+                                        {translate("Continue")}
+                                    </Button>
+                                </GridItem>
+                            </GridContainer>
+                        </Modal>
+                    </form>
+                </ContactFormContext.Provider>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

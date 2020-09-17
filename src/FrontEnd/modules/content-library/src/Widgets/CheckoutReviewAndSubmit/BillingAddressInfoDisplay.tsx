@@ -29,16 +29,14 @@ export const billingAddressInfoDisplayStyles: BillingAddressInfoDisplayStyles = 
     headingGridItem: { width: 12 },
     heading: {
         weight: 600,
-        css: css` margin: 0 1rem 0 0; `,
+        css: css`
+            margin: 0 1rem 0 0;
+        `,
     },
     addressGridItem: { width: 12 },
 };
 
-const BillingAddressInfoDisplay = ({
-    billTo,
-    onEdit,
-    extendedStyles,
-}: OwnProps) => {
+const BillingAddressInfoDisplay = ({ billTo, onEdit, extendedStyles }: OwnProps) => {
     const styles = mergeToNew(billingAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container}>
@@ -53,7 +51,8 @@ const BillingAddressInfoDisplay = ({
                     {...billTo}
                     state={billTo.state ? billTo.state.abbreviation : undefined}
                     country={billTo.country ? billTo.country.abbreviation : undefined}
-                    extendedStyles={styles.address} />
+                    extendedStyles={styles.address}
+                />
             </GridItem>
         </GridContainer>
     );

@@ -14,8 +14,12 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
 import { CardListStyles } from "@insite/content-library/Components/CardList";
 import { CartPageContext } from "@insite/content-library/Pages/CartPage";
-import CartLineCardCondensed, { CartLineCardCondensedStyles } from "@insite/content-library/Widgets/Cart/CartLineCardCondensed";
-import CartLineCardExpanded, { CartLineCardExpandedStyles } from "@insite/content-library/Widgets/Cart/CartLineCardExpanded";
+import CartLineCardCondensed, {
+    CartLineCardCondensedStyles,
+} from "@insite/content-library/Widgets/Cart/CartLineCardCondensed";
+import CartLineCardExpanded, {
+    CartLineCardExpandedStyles,
+} from "@insite/content-library/Widgets/Cart/CartLineCardExpanded";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
 import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
@@ -100,7 +104,9 @@ export const cartLinesStyles: CartLinesStyles = {
         src: ShoppingCart,
         size: 45,
         color: "text.link",
-        css: css` margin-bottom: 20px; `,
+        css: css`
+            margin-bottom: 20px;
+        `,
     },
     headerWrapper: {
         css: css`
@@ -112,20 +118,28 @@ export const cartLinesStyles: CartLinesStyles = {
     },
     header: {
         condensedViewCheckboxGroup: {
-            css: css` margin-left: auto; `,
+            css: css`
+                margin-left: auto;
+            `,
         },
         condensedViewCheckbox: {
             typographyProps: {
-                css: css` margin-left: 10px; `,
+                css: css`
+                    margin-left: 10px;
+                `,
             },
         },
         overflowMenu: {
             cssOverrides: {
-                wrapper: css` margin-left: 20px; `,
+                wrapper: css`
+                    margin-left: 20px;
+                `,
             },
         },
         removeAllLink: {
-            css: css` margin-left: 24px; `,
+            css: css`
+                margin-left: 24px;
+            `,
         },
     },
     footerWrapper: {
@@ -136,7 +150,9 @@ export const cartLinesStyles: CartLinesStyles = {
     },
     backToTopButton: {
         variant: "secondary",
-        css: css` margin: 16px 0; `,
+        css: css`
+            margin: 16px 0;
+        `,
     },
 };
 
@@ -145,15 +161,15 @@ const StyledSection = getStyledWrapper("section");
 const styles = cartLinesStyles;
 
 const CartLines: FC<Props> = ({
-                                  cart,
-                                  promotionsDataView,
-                                  settingsCollection,
-                                  removeCart,
-                                  fields,
-                                  isClearingCart,
-                                  updateCartLine,
-                                  removeCartLine,
-                              }) => {
+    cart,
+    promotionsDataView,
+    settingsCollection,
+    removeCart,
+    fields,
+    isClearingCart,
+    updateCartLine,
+    removeCartLine,
+}) => {
     const [isCondensed, setIsCondensed] = useState(false);
 
     if (!promotionsDataView.value) {
@@ -174,8 +190,9 @@ const CartLines: FC<Props> = ({
         return (
             <StyledSection {...styles.centeringWrapper}>
                 <Icon {...styles.noCartLinesIcon} />
-                <Typography {...styles.noCartLinesText}
-                            data-test-selector="cart_noCartLinesMessage">{siteMessage("Cart_NoOrderLines")}</Typography>
+                <Typography {...styles.noCartLinesText} data-test-selector="cart_noCartLinesMessage">
+                    {siteMessage("Cart_NoOrderLines")}
+                </Typography>
             </StyledSection>
         );
     }
@@ -196,8 +213,8 @@ const CartLines: FC<Props> = ({
         const showRemoveAction = !cartLine.isPromotionItem && cart.canModifyOrder;
         return (
             <CartLineContext.Provider value={cartLine} key={cartLine.id}>
-                {isCondensed
-                    ? <CartLineCardCondensed
+                {isCondensed ? (
+                    <CartLineCardCondensed
                         cart={cart}
                         promotions={matchingPromotions}
                         productSettings={productSettings}
@@ -207,7 +224,8 @@ const CartLines: FC<Props> = ({
                         removeCartLine={removeCartLine}
                         showRemoveAction={showRemoveAction}
                     />
-                    : <CartLineCardExpanded
+                ) : (
+                    <CartLineCardExpanded
                         cart={cart}
                         promotions={matchingPromotions}
                         productSettings={productSettings}
@@ -218,7 +236,7 @@ const CartLines: FC<Props> = ({
                         removeCartLine={removeCartLine}
                         showRemoveAction={showRemoveAction}
                     />
-                }
+                )}
             </CartLineContext.Provider>
         );
     });
@@ -229,9 +247,10 @@ const CartLines: FC<Props> = ({
                 totalItemCount={cartLines!.length}
                 isCondensed={isCondensed}
                 onIsCondensedChange={isCondensedChangeHandler}
-                onRemoveAllClick={removeAllClickHandler}/>
+                onRemoveAllClick={removeAllClickHandler}
+            />
             {cartLinesDisplay}
-            <CartLinesFooter/>
+            <CartLinesFooter />
         </StyledSection>
     );
 };
@@ -244,11 +263,11 @@ interface CartLinesHeaderProps {
 }
 
 const CartLinesHeader: FC<CartLinesHeaderProps> = ({
-                                                       totalItemCount,
-                                                       isCondensed,
-                                                       onIsCondensedChange,
-                                                       onRemoveAllClick,
-                                                   }) => {
+    totalItemCount,
+    isCondensed,
+    onIsCondensedChange,
+    onRemoveAllClick,
+}) => {
     const headerStyles = styles.header || {};
 
     return (
@@ -270,8 +289,11 @@ const CartLinesHeader: FC<CartLinesHeaderProps> = ({
                 </OverflowMenu>
             </Hidden>
             <Hidden below="lg">
-                <Link onClick={onRemoveAllClick} {...headerStyles.removeAllLink}
-                      data-test-selector="cartlineHeader_removeAll">
+                <Link
+                    onClick={onRemoveAllClick}
+                    {...headerStyles.removeAllLink}
+                    data-test-selector="cartlineHeader_removeAll"
+                >
                     {translate("Remove All")}
                 </Link>
             </Hidden>
@@ -289,7 +311,9 @@ const CartLinesFooter: FC = () => {
 
     return (
         <StyledSection {...styles.footerWrapper}>
-            <Button onClick={backToTopClickHandler} {...styles.backToTopButton}>{translate("Back to Top")}</Button>
+            <Button onClick={backToTopClickHandler} {...styles.backToTopButton}>
+                {translate("Back to Top")}
+            </Button>
         </StyledSection>
     );
 };

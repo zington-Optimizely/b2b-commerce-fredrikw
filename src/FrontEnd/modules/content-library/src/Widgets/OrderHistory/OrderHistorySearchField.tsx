@@ -45,17 +45,18 @@ const styles = searchTextFieldStyles;
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const OrderHistorySearchField: React.FC<Props> = props => {
-    return <SearchTextField
-        styles={styles}
-        label={props.fields[fields.label]}
-        parameterField={props.fields[fields.parameterField]}
-        placeholder={props.fields[fields.placeholder]}
-        inputType={props.fields[fields.inputType]}
-    />;
+    return (
+        <SearchTextField
+            styles={styles}
+            label={props.fields[fields.label]}
+            parameterField={props.fields[fields.parameterField]}
+            placeholder={props.fields[fields.placeholder]}
+            inputType={props.fields[fields.inputType]}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(OrderHistorySearchField),
     definition: {
         group: "Order History",

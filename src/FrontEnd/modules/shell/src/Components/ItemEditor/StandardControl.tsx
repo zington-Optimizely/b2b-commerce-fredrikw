@@ -8,17 +8,23 @@ interface Props {
     labelId?: string;
 }
 
-const StandardControl: React.FC<Props> = props => <>
+const StandardControl: React.FC<Props> = props => (
+    <>
         <Label htmlFor={props.fieldDefinition.name} id={props.labelId}>
             {props.fieldDefinition.displayName}
             {props.fieldDefinition.isRequired && <RequiredStyle>(Required)</RequiredStyle>}
-            {props.fieldDefinition.tooltip && <ToolTipStyle><Tooltip /> <span>{props.fieldDefinition.tooltip}</span></ToolTipStyle>}
-            {props.fieldDefinition.fieldType && <FieldTypeStyle>{props.fieldDefinition.fieldType.substr(0, 1)}</FieldTypeStyle>}
+            {props.fieldDefinition.tooltip && (
+                <ToolTipStyle>
+                    <Tooltip /> <span>{props.fieldDefinition.tooltip}</span>
+                </ToolTipStyle>
+            )}
+            {props.fieldDefinition.fieldType && (
+                <FieldTypeStyle>{props.fieldDefinition.fieldType.substr(0, 1)}</FieldTypeStyle>
+            )}
         </Label>
-        <div data-test-selector={`controlFor_${props.fieldDefinition.name}`}>
-            {props.children}
-        </div>
-        </>;
+        <div data-test-selector={`controlFor_${props.fieldDefinition.name}`}>{props.children}</div>
+    </>
+);
 
 export default StandardControl;
 

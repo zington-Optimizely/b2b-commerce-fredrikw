@@ -4,7 +4,9 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import addToWishList, { AddToWishListParameter } from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import addToWishList, {
+    AddToWishListParameter,
+} from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import translate from "@insite/client-framework/Translate";
 import { OrderLineModel, OrderModel, WishListSettingsModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -209,12 +211,13 @@ export const summaryTableStyles: OrderDetailSummaryTableStyles = {
 };
 
 const OrderLineProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
-
     let sectionOptions: JSX.Element[] = [];
     if (orderLine.sectionOptions && orderLine.sectionOptions) {
         sectionOptions = orderLine.sectionOptions.map(option => (
             <li {...styles.productInfoSectionOptionsListItem} key={option.sectionOptionId.toString()}>
-                <Typography {...styles.productInfoSectionOptionsText}>{option.sectionName}: {option.optionName}</Typography>
+                <Typography {...styles.productInfoSectionOptionsText}>
+                    {option.sectionName}: {option.optionName}
+                </Typography>
             </li>
         ));
     }
@@ -224,36 +227,36 @@ const OrderLineProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
             <GridContainer {...styles.productInfoGridContainer}>
                 <GridItem {...styles.productInfoBrandDescriptionGridItem}>
                     <GridContainer {...styles.productInfoBrandDescriptionGridContainer}>
-                        {orderLine.brand
-                            && <GridItem {...styles.productInfoBrandGridItem}>
+                        {orderLine.brand && (
+                            <GridItem {...styles.productInfoBrandGridItem}>
                                 <ProductBrand brand={orderLine.brand} extendedStyles={styles.productBrandStyles} />
                             </GridItem>
-                        }
+                        )}
                         <GridItem {...styles.productInfoDescriptionGridItem}>
                             <ProductDescription product={orderLine} extendedStyles={styles.productDescriptionStyles} />
                         </GridItem>
                     </GridContainer>
                 </GridItem>
-                {sectionOptions.length > 0
-                    && <GridItem {...styles.productInfoSectionOptionsGridItem}>
+                {sectionOptions.length > 0 && (
+                    <GridItem {...styles.productInfoSectionOptionsGridItem}>
                         <ul {...styles.productInfoSectionOptionsList}>{sectionOptions}</ul>
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.productInfoPartNumbersGridItem}>
                     <GridContainer>
                         <GridItem {...styles.productInfoErpNumberGridItem}>
                             <SmallHeadingAndText heading="Item #" text={orderLine.productErpNumber} />
                         </GridItem>
-                        {orderLine.manufacturerItem
-                            && <GridItem {...styles.productInfoManufacturerItemGridItem}>
+                        {orderLine.manufacturerItem && (
+                            <GridItem {...styles.productInfoManufacturerItemGridItem}>
                                 <SmallHeadingAndText heading="MFG #" text={orderLine.manufacturerItem} />
                             </GridItem>
-                        }
-                        {orderLine.customerProductNumber
-                            && <GridItem {...styles.productInfoCustomerProductGridItem}>
+                        )}
+                        {orderLine.customerProductNumber && (
+                            <GridItem {...styles.productInfoCustomerProductGridItem}>
                                 <SmallHeadingAndText heading="My Part #" text={orderLine.customerProductNumber} />
                             </GridItem>
-                        }
+                        )}
                     </GridContainer>
                 </GridItem>
             </GridContainer>
@@ -261,8 +264,7 @@ const OrderLineProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
     );
 };
 
-const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel, order: OrderModel }) => {
-
+const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel; order: OrderModel }) => {
     let promotions: JSX.Element[] = [];
     if (order.orderPromotions) {
         promotions = order.orderPromotions
@@ -280,15 +282,17 @@ const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel, order:
                 <GridItem {...styles.orderLinePriceGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Price")}
-                        text={orderLine.unitPriceDisplay + (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")} />
+                        text={
+                            orderLine.unitPriceDisplay +
+                            (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")
+                        }
+                    />
                 </GridItem>
-                {promotions.length > 0
-                    && <GridItem {...styles.orderLineInfoPromotionList}>
-                        <ul {...styles.orderLineInfoPromotionList}>
-                            {promotions}
-                        </ul>
+                {promotions.length > 0 && (
+                    <GridItem {...styles.orderLineInfoPromotionList}>
+                        <ul {...styles.orderLineInfoPromotionList}>{promotions}</ul>
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.productInfoTotalsGridItem}>
                     <GridContainer>
                         <GridItem {...styles.productInfoQtyOrderedGridItem}>
@@ -298,7 +302,10 @@ const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel, order:
                             <SmallHeadingAndText heading={translate("Qty Shipped")} text={`${orderLine.qtyShipped}`} />
                         </GridItem>
                         <GridItem {...styles.productInfoSubtotalGridItem}>
-                            <SmallHeadingAndText heading={translate("Subtotal")} text={orderLine.extendedUnitNetPriceDisplay} />
+                            <SmallHeadingAndText
+                                heading={translate("Subtotal")}
+                                text={orderLine.extendedUnitNetPriceDisplay}
+                            />
                         </GridItem>
                     </GridContainer>
                 </GridItem>
@@ -307,20 +314,29 @@ const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel, order:
     );
 };
 
-const OrderLineNotes = ({ orderLine, extendedStyles } : { orderLine: OrderLineModel, extendedStyles?: OrderLineNotesStyles}) => {
-    return  orderLine.notes
-        ? <GridItem {...extendedStyles?.gridItemStyles}>
+const OrderLineNotes = ({
+    orderLine,
+    extendedStyles,
+}: {
+    orderLine: OrderLineModel;
+    extendedStyles?: OrderLineNotesStyles;
+}) => {
+    return orderLine.notes ? (
+        <GridItem {...extendedStyles?.gridItemStyles}>
             <Typography {...extendedStyles?.typographyStyles}>{orderLine.notes}</Typography>
         </GridItem>
-        : null;
+    ) : null;
 };
 
 const OrderLineCard = (props: {
-    orderLine: OrderLineModel,
-    order: OrderModel,
-    wishListSettings?: WishListSettingsModel,
-    setAddToListModalIsOpen: (parameter: { productInfos?: Omit<ProductInfo, "productDetailPath">[]; modalIsOpen: boolean; }) => void,
-    addToWishList: (parameter: AddToWishListParameter) => void,
+    orderLine: OrderLineModel;
+    order: OrderModel;
+    wishListSettings?: WishListSettingsModel;
+    setAddToListModalIsOpen: (parameter: {
+        productInfos?: Omit<ProductInfo, "productDetailPath">[];
+        modalIsOpen: boolean;
+    }) => void;
+    addToWishList: (parameter: AddToWishListParameter) => void;
 }) => {
     const { orderLine, order, wishListSettings, setAddToListModalIsOpen, addToWishList } = props;
     const toasterContext = React.useContext(ToasterContext);
@@ -350,11 +366,11 @@ const OrderLineCard = (props: {
     return (
         <GridContainer>
             <GridItem {...styles.orderLineCardImageGridItem}>
-                {orderLine.productUri && orderLine.isActiveProduct
-                    && <Link href={orderLine.productUri}>
+                {orderLine.productUri && orderLine.isActiveProduct && (
+                    <Link href={orderLine.productUri}>
                         <LazyImage {...styles.orderLineCardImage} src={orderLine.mediumImagePath} />
                     </Link>
-                }
+                )}
             </GridItem>
             <GridItem {...styles.orderLineCardInfoGridItem}>
                 <GridContainer {...styles.orderLineCardInfoGridContainer}>
@@ -365,16 +381,20 @@ const OrderLineCard = (props: {
             </GridItem>
             <GridItem {...styles.orderLineCardAddToListGridItem}>
                 <Hidden {...styles.orderLineCardActionsWide}>
-                    {orderLine.canAddToWishlist
-                        && <OverflowMenu position="end" {...styles.overflowMenu}>
-                            <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>{translate("Add to List")}</Clickable>
+                    {orderLine.canAddToWishlist && (
+                        <OverflowMenu position="end" {...styles.overflowMenu}>
+                            <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>
+                                {translate("Add to List")}
+                            </Clickable>
                         </OverflowMenu>
-                    }
+                    )}
                 </Hidden>
                 <Hidden {...styles.orderLineCardActionsNarrow}>
-                    {orderLine.canAddToWishlist
-                        && <Button {...styles.orderLineCardAddToListButton} onClick={addToListClickHandler}>{translate("Add to List")}</Button>
-                    }
+                    {orderLine.canAddToWishlist && (
+                        <Button {...styles.orderLineCardAddToListButton} onClick={addToListClickHandler}>
+                            {translate("Add to List")}
+                        </Button>
+                    )}
                 </Hidden>
             </GridItem>
         </GridContainer>
@@ -383,7 +403,12 @@ const OrderLineCard = (props: {
 
 const styles = summaryTableStyles;
 
-const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({ order, wishListSettings, setAddToListModalIsOpen, addToWishList }) => {
+const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({
+    order,
+    wishListSettings,
+    setAddToListModalIsOpen,
+    addToWishList,
+}) => {
     if (!order.value || !order.value.orderLines) {
         return null;
     }
@@ -401,7 +426,8 @@ const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({ order, wishL
                             order={order.value!}
                             wishListSettings={wishListSettings}
                             setAddToListModalIsOpen={setAddToListModalIsOpen}
-                            addToWishList={addToWishList} />
+                            addToWishList={addToWishList}
+                        />
                     </GridItem>
                 </CardContainer>
             ))}

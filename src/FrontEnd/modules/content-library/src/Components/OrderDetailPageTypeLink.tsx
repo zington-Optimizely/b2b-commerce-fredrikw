@@ -9,15 +9,13 @@ interface OwnProps {
 type Props = OwnProps;
 
 const OrderDetailPageTypeLink: React.FunctionComponent<Props> = ({ title, orderNumber }) => {
-    return createWidgetElement(
-        "Basic/PageTypeLink",
-        {
-            fields: {
-                pageType: "OrderDetailsPage",
-                overrideTitle: title,
-                queryString: `orderNumber=${orderNumber}`,
-            },
-        });
+    return createWidgetElement("Basic/PageTypeLink", {
+        fields: {
+            pageType: "OrderDetailsPage",
+            overrideTitle: title,
+            queryString: `orderNumber=${orderNumber}`,
+        },
+    });
 };
 
 export default OrderDetailPageTypeLink;

@@ -1,7 +1,4 @@
-import {
-    ApiHandler,
-    createHandlerChainRunnerOptionalParameter,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandler, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
 import { getDealers, GetDealersApiParameter } from "@insite/client-framework/Services/DealerService";
 import { DealerCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -30,17 +27,16 @@ export const DispatchCompleteLoadDealers: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadDealers,
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadDealers,
-];
+export const chain = [DispatchBeginLoadDealers, PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadDealers];
 
-const loadDealers  = createHandlerChainRunnerOptionalParameter(chain, {
-    name: "",
-    latitude: 0,
-    longitude: 0,
-    pageSize: 5,
-}, "LoadDealers");
+const loadDealers = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {
+        name: "",
+        latitude: 0,
+        longitude: 0,
+        pageSize: 5,
+    },
+    "LoadDealers",
+);
 export default loadDealers;

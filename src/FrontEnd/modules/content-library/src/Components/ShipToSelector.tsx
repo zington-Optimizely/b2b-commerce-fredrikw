@@ -7,7 +7,9 @@ import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/Lo
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BaseAddressModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import CustomerSelector, { CustomerSelectorStyles } from "@insite/content-library/Components/CustomerSelector";
-import CustomerSelectorToolbar, { CustomerSelectorToolbarStyles } from "@insite/content-library/Components/CustomerSelectorToolbar";
+import CustomerSelectorToolbar, {
+    CustomerSelectorToolbarStyles,
+} from "@insite/content-library/Components/CustomerSelectorToolbar";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -53,35 +55,41 @@ export const shipToSelectorStyles: ShipToSelectorStyles = {
     noAddressesText: { variant: "h4" },
 };
 
-const CenteringWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
+const CenteringWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
 const shipToSelector: FC<Props> = ({
-                                       currentShipTo,
-                                       currentBillToId,
-                                       onCreateNewAddressClick,
-                                       onEdit,
-                                       extendedStyles,
-                                       onSelect,
-                                       allowSelectBillTo,
-                                       defaultPageSize,
-                                   }) => {
+    currentShipTo,
+    currentBillToId,
+    onCreateNewAddressClick,
+    onEdit,
+    extendedStyles,
+    onSelect,
+    allowSelectBillTo,
+    defaultPageSize,
+}) => {
     const [parameter, setParameter] = useState<GetShipTosApiParameter>({
         page: 1,
         pageSize: defaultPageSize,
         billToId: currentBillToId,
         expand: ["validation"],
-        exclude: allowSelectBillTo ? ["showAll", "oneTime", "createNew"] : ["showAll", "billTo", "oneTime", "createNew"],
+        exclude: allowSelectBillTo
+            ? ["showAll", "oneTime", "createNew"]
+            : ["showAll", "billTo", "oneTime", "createNew"],
     });
 
-    return <WrappedShipToSelector
-        currentShipTo={currentShipTo}
-        onCreateNewAddressClick={onCreateNewAddressClick}
-        onEdit={onEdit}
-        extendedStyles={extendedStyles}
-        onSelect={onSelect}
-        parameter={parameter}
-        setParameter={setParameter}
-    />;
+    return (
+        <WrappedShipToSelector
+            currentShipTo={currentShipTo}
+            onCreateNewAddressClick={onCreateNewAddressClick}
+            onEdit={onEdit}
+            extendedStyles={extendedStyles}
+            onSelect={onSelect}
+            parameter={parameter}
+            setParameter={setParameter}
+        />
+    );
 };
 
 const ShipToSelector = connect(mapStateToProps)(shipToSelector);
@@ -105,31 +113,30 @@ const mapDispatchToPropsWrapped = {
     loadShipTos,
 };
 
-type WrappedProps = WrappedShipToSelectorProps & ResolveThunks<typeof mapDispatchToPropsWrapped> & ReturnType<typeof mapStateToPropsWrapped>;
+type WrappedProps = WrappedShipToSelectorProps &
+    ResolveThunks<typeof mapDispatchToPropsWrapped> &
+    ReturnType<typeof mapStateToPropsWrapped>;
 
 const wrappedShipToSelector: FC<WrappedProps> = ({
-                                                     currentShipTo,
-                                                     shipTosDataView,
-                                                     customerSettings,
-                                                     loadShipTos,
-                                                     onCreateNewAddressClick,
-                                                     onEdit,
-                                                     extendedStyles,
-                                                     onSelect,
-                                                     parameter,
-                                                     setParameter,
-                                                 }) => {
-
+    currentShipTo,
+    shipTosDataView,
+    customerSettings,
+    loadShipTos,
+    onCreateNewAddressClick,
+    onEdit,
+    extendedStyles,
+    onSelect,
+    parameter,
+    setParameter,
+}) => {
     const [styles] = useState(() => mergeToNew(shipToSelectorStyles, extendedStyles));
     const [searchText, setSearchText] = useState("");
 
-    useEffect(
-        () => {
-            if (!shipTosDataView.value && !shipTosDataView.isLoading) {
-                loadShipTos(parameter);
-            }
-        },
-    );
+    useEffect(() => {
+        if (!shipTosDataView.value && !shipTosDataView.isLoading) {
+            loadShipTos(parameter);
+        }
+    });
 
     const searchHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setParameter({
@@ -141,11 +148,12 @@ const wrappedShipToSelector: FC<WrappedProps> = ({
 
     const selectCustomerHandler = (customer: BaseAddressModel) => onSelect(customer as ShipToModel);
 
-    const editCustomerHandler = (customerSettings?.allowShipToAddressEdit && onEdit)
-    ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
-        onEdit?.(event, customer as ShipToModel);
-    }
-    : undefined;
+    const editCustomerHandler =
+        customerSettings?.allowShipToAddressEdit && onEdit
+            ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
+                  onEdit?.(event, customer as ShipToModel);
+              }
+            : undefined;
 
     const changePageHandler = (page: number) => {
         setParameter({
@@ -166,38 +174,46 @@ const wrappedShipToSelector: FC<WrappedProps> = ({
         <>
             <CustomerSelectorToolbar
                 searchText={searchText}
-                onSearchTextChanged={(event: React.ChangeEvent<HTMLInputElement>) => setSearchText(event.currentTarget.value)}
+                onSearchTextChanged={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchText(event.currentTarget.value)
+                }
                 onSearch={searchHandler}
                 allowCreateAddress={customerSettings !== undefined && customerSettings.allowCreateNewShipToAddress}
                 onCreateNewAddressClick={onCreateNewAddressClick}
                 isSearchDisabled={shipTosDataView.isLoading}
                 extendedStyles={styles.customerSelectorToolbar}
             />
-            {shipTosDataView.isLoading || !shipTosDataView.value
-                ? <CenteringWrapper {...styles.centeringWrapper}>
+            {shipTosDataView.isLoading || !shipTosDataView.value ? (
+                <CenteringWrapper {...styles.centeringWrapper}>
                     <LoadingSpinner {...styles.loadingSpinner} />
                 </CenteringWrapper>
-                : <>
-                    {shipTosDataView.value.length === 0
-                        ? <CenteringWrapper {...styles.centeringWrapper}>
+            ) : (
+                <>
+                    {shipTosDataView.value.length === 0 ? (
+                        <CenteringWrapper {...styles.centeringWrapper}>
                             <Typography {...styles.noAddressesText}>
-                                {searchText.length > 0 ? siteMessage("Addresses_NoResultsFound") : siteMessage("Addresses_NoAddressesFound")}
+                                {searchText.length > 0
+                                    ? siteMessage("Addresses_NoResultsFound")
+                                    : siteMessage("Addresses_NoAddressesFound")}
                             </Typography>
                         </CenteringWrapper>
-                        : <CustomerSelector
+                    ) : (
+                        <CustomerSelector
                             customers={shipTosDataView.value}
                             pagination={shipTosDataView.pagination!}
                             selectedCustomer={currentShipTo}
                             onSelect={selectCustomerHandler}
-                            allowEditCustomer={customerSettings !== undefined && customerSettings.allowShipToAddressEdit}
+                            allowEditCustomer={
+                                customerSettings !== undefined && customerSettings.allowShipToAddressEdit
+                            }
                             onEdit={editCustomerHandler}
                             onChangePage={changePageHandler}
                             onChangeResultsPerPage={changeResultsPerPageHandler}
                             extendedStyles={styles.customerSelector}
                         />
-                    }
+                    )}
                 </>
-            }
+            )}
         </>
     );
 };

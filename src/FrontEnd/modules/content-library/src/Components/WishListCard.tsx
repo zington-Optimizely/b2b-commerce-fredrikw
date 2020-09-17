@@ -7,7 +7,9 @@ import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handler
 import translate from "@insite/client-framework/Translate";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
-import WishListSharingStatus, { WishListSharingStatusStyles } from "@insite/content-library/Components/WishListSharingStatus";
+import WishListSharingStatus, {
+    WishListSharingStatusStyles,
+} from "@insite/content-library/Components/WishListSharingStatus";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -26,6 +28,7 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => ({
     language: state.context.session.language,
     allowEditingOfWishLists: getSettingsCollection(state).wishListSettings.allowEditingOfWishLists,
+    addingProductToCart: state.context.addingProductToCart,
 });
 
 interface OwnProps {
@@ -87,10 +90,16 @@ export const wishListCardStyles: WishListCardStyles = {
         width: [12, 12, 7, 8, 8],
         align: "middle",
     },
-    productImageLink: { css: css` margin-right: 5px; ` },
+    productImageLink: {
+        css: css`
+            margin-right: 5px;
+        `,
+    },
     productImagesGridItem: {
         width: [12, 12, 12, 8, 8],
-        css: css` flex-wrap: wrap; `,
+        css: css`
+            flex-wrap: wrap;
+        `,
     },
     productImage: {
         css: css`
@@ -101,7 +110,9 @@ export const wishListCardStyles: WishListCardStyles = {
         `,
         errorTypographyProps: {
             size: 11,
-            css: css` max-height: 65px; `,
+            css: css`
+                max-height: 65px;
+            `,
         },
     },
     sharingStatusGridItem: { width: [12, 12, 12, 4, 4] },
@@ -113,7 +124,9 @@ export const wishListCardStyles: WishListCardStyles = {
         `,
     },
     actionGridMediumHidden: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     actionAddToCartButton: {
         color: "secondary",
@@ -142,6 +155,7 @@ export const wishListCardStyles: WishListCardStyles = {
 const WishListCard: React.FunctionComponent<Props> = ({
     language,
     allowEditingOfWishLists,
+    addingProductToCart,
     extendedStyles,
     wishList,
     addWishListToCart,
@@ -164,7 +178,9 @@ const WishListCard: React.FunctionComponent<Props> = ({
         dateTime: new Date(wishList.updatedOn),
         language,
         options: {
-            year: "numeric", month: "numeric", day: "numeric",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
         },
     });
     let lastUpdatedDisplay = `${translate("Updated")} ${updatedOnDisplay}`;
@@ -183,29 +199,50 @@ const WishListCard: React.FunctionComponent<Props> = ({
                     <GridItem {...styles.basicInfoGridItem}>
                         <GridContainer {...styles.basicInfoGridContainer}>
                             <GridItem {...styles.detailLinkGridItem}>
-                                <MyListsDetailsPageTypeLink title={wishList.name} wishListId={wishList.id} testSelector="wishListCardName" />
+                                <MyListsDetailsPageTypeLink
+                                    title={wishList.name}
+                                    wishListId={wishList.id}
+                                    testSelector="wishListCardName"
+                                />
                             </GridItem>
-                            {wishList.description
-                                && <GridItem {...styles.descriptionGridItem}>
-                                    <Typography {...styles.descriptionText} data-test-selector="wishListCardDescription">{wishList.description}</Typography>
-                                </GridItem>}
+                            {wishList.description && (
+                                <GridItem {...styles.descriptionGridItem}>
+                                    <Typography
+                                        {...styles.descriptionText}
+                                        data-test-selector="wishListCardDescription"
+                                    >
+                                        {wishList.description}
+                                    </Typography>
+                                </GridItem>
+                            )}
                             <GridItem {...styles.lastUpdatedGridItem}>
-                                <Typography {...styles.lastUpdatedText} data-test-selector="wishListCardLastUpdated">{lastUpdatedDisplay}</Typography>
+                                <Typography {...styles.lastUpdatedText} data-test-selector="wishListCardLastUpdated">
+                                    {lastUpdatedDisplay}
+                                </Typography>
                             </GridItem>
                         </GridContainer>
                     </GridItem>
                     <GridItem {...styles.extendedInfoGridItem}>
                         <GridContainer {...styles.extendedInfoGridContainer}>
                             <GridItem {...styles.productImagesGridItem}>
-                                {wishList.wishListLineCollection && wishList.wishListLineCollection.length > 0 && wishList.wishListLineCollection.slice(0, 3).map(line => (
-                                    <Link key={line.id.toString()} {...styles.productImageLink} href={line.productUri}>
-                                        <LazyImage {...styles.productImage} src={line.smallImagePath} altText={line.altText} />
-                                    </Link>
-                                ))}
+                                {wishList.wishListLineCollection &&
+                                    wishList.wishListLineCollection.length > 0 &&
+                                    wishList.wishListLineCollection.slice(0, 3).map(line => (
+                                        <Link
+                                            key={line.id.toString()}
+                                            {...styles.productImageLink}
+                                            href={line.productUri}
+                                        >
+                                            <LazyImage
+                                                {...styles.productImage}
+                                                src={line.smallImagePath}
+                                                altText={line.altText}
+                                            />
+                                        </Link>
+                                    ))}
                             </GridItem>
                             <GridItem {...styles.sharingStatusGridItem}>
-                                <WishListSharingStatus extendedStyles={styles.sharingStatus}
-                                    wishList={wishList} />
+                                <WishListSharingStatus extendedStyles={styles.sharingStatus} wishList={wishList} />
                             </GridItem>
                         </GridContainer>
                     </GridItem>
@@ -214,39 +251,62 @@ const WishListCard: React.FunctionComponent<Props> = ({
             <GridItem {...styles.actionGridItem}>
                 <Hidden above="sm">
                     <OverflowMenu position="end" {...styles.actionOverflowMenu}>
-                        <Clickable {...styles.actionAddToCartClickable} disabled={!canAddToCart} onClick={clickAddToCartHandler}>{translate("Add List to Cart")}</Clickable>
-                        {allowEditingOfWishLists && !wishList.isSharedList
-                            && <Clickable {...styles.actionDeleteClickable} onClick={() => deleteWishList && deleteWishList()}>{translate("Delete")}</Clickable>
-                        }
-                        {allowEditingOfWishLists && wishList.isSharedList && wishList.shareOption !== ShareOptions.AllCustomerUsers
-                            && <Clickable {...styles.actionLeaveClickable} onClick={() => leaveWishList && leaveWishList()}>{translate("Leave List")}</Clickable>
-                        }
+                        <Clickable
+                            {...styles.actionAddToCartClickable}
+                            disabled={!canAddToCart || addingProductToCart}
+                            onClick={clickAddToCartHandler}
+                        >
+                            {translate("Add List to Cart")}
+                        </Clickable>
+                        {allowEditingOfWishLists && !wishList.isSharedList && (
+                            <Clickable
+                                {...styles.actionDeleteClickable}
+                                onClick={() => deleteWishList && deleteWishList()}
+                            >
+                                {translate("Delete")}
+                            </Clickable>
+                        )}
+                        {allowEditingOfWishLists &&
+                            wishList.isSharedList &&
+                            wishList.shareOption !== ShareOptions.AllCustomerUsers && (
+                                <Clickable
+                                    {...styles.actionLeaveClickable}
+                                    onClick={() => leaveWishList && leaveWishList()}
+                                >
+                                    {translate("Leave List")}
+                                </Clickable>
+                            )}
                     </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.actionGridMediumHidden} below="md">
                     <Button
                         {...styles.actionAddToCartButton}
-                        disabled={!canAddToCart}
+                        disabled={!canAddToCart || addingProductToCart}
                         data-test-selector={`wishListAddToCartButton_${wishList.id}`}
-                        onClick={clickAddToCartHandler}>
+                        onClick={clickAddToCartHandler}
+                    >
                         {translate("Add List to Cart")}
                     </Button>
-                    {allowEditingOfWishLists && !wishList.isSharedList
-                        && <Button
+                    {allowEditingOfWishLists && !wishList.isSharedList && (
+                        <Button
                             {...styles.actionDeleteButton}
                             onClick={() => deleteWishList && deleteWishList()}
-                            data-test-selector={`wishListCardDeleteButton_${wishList.id}`}>
+                            data-test-selector={`wishListCardDeleteButton_${wishList.id}`}
+                        >
                             {translate("Delete")}
                         </Button>
-                    }
-                    {allowEditingOfWishLists && wishList.isSharedList && wishList.shareOption !== ShareOptions.AllCustomerUsers
-                        && <Button
-                            {...styles.actionLeaveButton}
-                            onClick={() => leaveWishList && leaveWishList()}
-                            data-test-selector={`wishListCardLeaveButton_${wishList.id}`}>
-                            {translate("Leave List")}
-                        </Button>
-                    }
+                    )}
+                    {allowEditingOfWishLists &&
+                        wishList.isSharedList &&
+                        wishList.shareOption !== ShareOptions.AllCustomerUsers && (
+                            <Button
+                                {...styles.actionLeaveButton}
+                                onClick={() => leaveWishList && leaveWishList()}
+                                data-test-selector={`wishListCardLeaveButton_${wishList.id}`}
+                            >
+                                {translate("Leave List")}
+                            </Button>
+                        )}
                 </Hidden>
             </GridItem>
         </GridContainer>

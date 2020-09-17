@@ -77,14 +77,18 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
             height: 60px;
             vertical-align: top;
         `,
-        evenRowCss: css` background: transparent; `,
+        evenRowCss: css`
+            background: transparent;
+        `,
     },
     priceBreakWithCalculatorRow: {
         css: css`
             height: 140px;
             vertical-align: top;
         `,
-        evenRowCss: css` background: transparent; `,
+        evenRowCss: css`
+            background: transparent;
+        `,
     },
     qtyCell: {
         css: css`
@@ -94,11 +98,23 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
         `,
     },
     startQtyTextField: {
-        cssOverrides: { formField: css` width: 70px; ` },
+        cssOverrides: {
+            formField: css`
+                width: 70px;
+            `,
+        },
     },
-    toLabelText: { css: css` margin: 0 10px; ` },
+    toLabelText: {
+        css: css`
+            margin: 0 10px;
+        `,
+    },
     endQtyTextField: {
-        cssOverrides: { formField: css` width: 70px; ` },
+        cssOverrides: {
+            formField: css`
+                width: 70px;
+            `,
+        },
     },
     priceCell: {
         css: css`
@@ -110,8 +126,12 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
     },
     priceTextField: {
         cssOverrides: {
-            formField: css` width: 100px; `,
-            inputSelect: css` text-align: right; `,
+            formField: css`
+                width: 100px;
+            `,
+            inputSelect: css`
+                text-align: right;
+            `,
         },
     },
     buttonsCell: {
@@ -142,17 +162,23 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
     },
     percentIcon: {
         src: Percent,
-        css: css` margin: 8px 4px; `,
+        css: css`
+            margin: 8px 4px;
+        `,
     },
     percentTextField: {
         cssOverrides: {
-            formField: css` width: 60px; `,
+            formField: css`
+                width: 60px;
+            `,
         },
     },
     buttonsGridItem: {
         width: 2,
         align: "bottom",
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     applyDiscountIcon: { src: Check },
 };
@@ -214,7 +240,9 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
     };
 
     const calculationMethodChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        setCalculationMethod(quoteLine?.pricingRfq?.calculationMethods?.find(o => o.name === event.currentTarget.value));
+        setCalculationMethod(
+            quoteLine?.pricingRfq?.calculationMethods?.find(o => o.name === event.currentTarget.value),
+        );
     };
 
     const percentChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -240,16 +268,13 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
     return (
         <DataTableRow {...(calculatorIsOpen ? styles.priceBreakWithCalculatorRow : styles.priceBreakRow)}>
             <DataTableCell {...styles.qtyCell}>
-                {quote.isJobQuote
-                    ? <>
+                {quote.isJobQuote ? (
+                    <>
                         <VisuallyHidden>{translate("Quantity Ordered")}</VisuallyHidden>
-                        <TextField
-                            {...styles.qtyOrderedTextField}
-                            value={quoteLine.qtyOrdered || 1}
-                            disabled
-                        />
+                        <TextField {...styles.qtyOrderedTextField} value={quoteLine.qtyOrdered || 1} disabled />
                     </>
-                    : <>
+                ) : (
+                    <>
                         <VisuallyHidden>{translate("From")}</VisuallyHidden>
                         <TextField
                             {...styles.startQtyTextField}
@@ -269,7 +294,7 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                             onBlur={endQtyBlurHandler}
                         />
                     </>
-                }
+                )}
             </DataTableCell>
             <DataTableCell {...styles.priceCell}>
                 <VisuallyHidden>{translate("Price")}</VisuallyHidden>
@@ -284,15 +309,15 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                 />
             </DataTableCell>
             <DataTableCell {...styles.buttonsCell}>
-                {quoteLine.pricingRfq?.priceBreaks && quoteLine.pricingRfq.priceBreaks.length > 1 && !quote.isJobQuote
-                    && <Link {...styles.removePriceBreakLink} onClick={removePriceBreakClickHandler}>
+                {quoteLine.pricingRfq?.priceBreaks && quoteLine.pricingRfq.priceBreaks.length > 1 && !quote.isJobQuote && (
+                    <Link {...styles.removePriceBreakLink} onClick={removePriceBreakClickHandler}>
                         <VisuallyHidden>{translate("Remove price break")}</VisuallyHidden>
                         <Icon {...styles.removePriceBreakIcon} />
                     </Link>
-                }
+                )}
             </DataTableCell>
-            {calculatorIsOpen && calculationMethod
-                && <CalculatorCell {...styles.calculatorCell} top={60 * (index + 2) - 20}>
+            {calculatorIsOpen && calculationMethod && (
+                <CalculatorCell {...styles.calculatorCell} top={60 * (index + 2) - 20}>
                     <GridContainer {...styles.calculatorContainer}>
                         <GridItem {...styles.methodGridItem}>
                             <Select
@@ -302,7 +327,9 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                                 onChange={calculationMethodChangeHandler}
                             >
                                 {quoteLine.pricingRfq?.calculationMethods?.map(cm => (
-                                    <option key={cm.name} value={cm.name}>{cm.displayName}</option>
+                                    <option key={cm.name} value={cm.name}>
+                                        {cm.displayName}
+                                    </option>
                                 ))}
                             </Select>
                         </GridItem>
@@ -312,7 +339,11 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                                 {...styles.percentTextField}
                                 type="number"
                                 min={calculationMethod?.minimumMargin}
-                                max={calculationMethod && parseFloat(calculationMethod.maximumDiscount) > 0 ? parseFloat(calculationMethod.maximumDiscount) : undefined}
+                                max={
+                                    calculationMethod && parseFloat(calculationMethod.maximumDiscount) > 0
+                                        ? parseFloat(calculationMethod.maximumDiscount)
+                                        : undefined
+                                }
                                 value={percent}
                                 onChange={percentChangeHandler}
                                 onBlur={percentBlurHandler}
@@ -327,21 +358,23 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                         </GridItem>
                     </GridContainer>
                 </CalculatorCell>
-            }
+            )}
         </DataTableRow>
     );
 };
 
 const CalculatorCell = ({ css: cellCss, top, children, ...otherProps }: DataTableCellProps & { top: number }) => {
-    return <DataTableCell
-        css={css`
+    return (
+        <DataTableCell
+            css={css`
             ${cellCss}
             top: ${top}px;
         `}
-        {...otherProps}
-    >
-        {children}
-    </DataTableCell>;
+            {...otherProps}
+        >
+            {children}
+        </DataTableCell>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RfqQuoteDetailsQuoteLineCalculatorRow);

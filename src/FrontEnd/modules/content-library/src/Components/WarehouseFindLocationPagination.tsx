@@ -17,12 +17,13 @@ const WarehouseFindLocationPagination: React.FC<Props> = ({
     setPage,
     ...otherProps
 }) => {
-
     const [showPagination, setShowPagination] = React.useState(false);
     React.useEffect(() => {
-        setShowPagination(warehouses.length > 0
-            && !!warehousesPagination
-            && warehousesPagination.totalItemCount > warehousesPagination.pageSize);
+        setShowPagination(
+            warehouses.length > 0 &&
+                !!warehousesPagination &&
+                warehousesPagination.totalItemCount > warehousesPagination.pageSize,
+        );
     }, [warehouses, warehousesPagination]);
 
     const onChangePage = (page: number) => {
@@ -34,8 +35,8 @@ const WarehouseFindLocationPagination: React.FC<Props> = ({
         setPageSize(Number(event.currentTarget.value));
     };
 
-    return (
-        showPagination ? <Pagination
+    return showPagination ? (
+        <Pagination
             currentPage={warehousesPagination!.currentPage}
             resultsPerPage={warehousesPagination!.pageSize}
             resultsCount={warehousesPagination!.totalItemCount}
@@ -43,8 +44,8 @@ const WarehouseFindLocationPagination: React.FC<Props> = ({
             onChangePage={onChangePage}
             onChangeResultsPerPage={onChangeResultsPerPage}
             {...otherProps}
-        /> : null
-    );
+        />
+    ) : null;
 };
 
 export default WarehouseFindLocationPagination;

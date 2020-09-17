@@ -5,13 +5,14 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Select, { SelectProps } from "@insite/mobius/Select";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -45,26 +46,25 @@ class OrderHistorySearchFieldStatus extends React.Component<Props> {
 
     render() {
         const options = this.props.orderStatusMappings || [];
-        const value = this.props.parameter.status && this.props.parameter.status.length > 0 ? this.props.parameter.status[0] : "";
+        const value =
+            this.props.parameter.status && this.props.parameter.status.length > 0 ? this.props.parameter.status[0] : "";
 
         return (
             <SearchFieldWrapper extendedStyles={styles.wrapper}>
-                <Select
-                    label={translate("Status")}
-                    {...styles.select}
-                    value={value}
-                    onChange={this.handleChange}>
+                <Select label={translate("Status")} {...styles.select} value={value} onChange={this.handleChange}>
                     <option value="">{translate("Select")}</option>
-                    {options.map(option =>
-                        <option key={option.erpOrderStatus} value={option.erpOrderStatus}>{option.displayName}</option>,
-                    )}
+                    {options.map(option => (
+                        <option key={option.erpOrderStatus} value={option.erpOrderStatus}>
+                            {option.displayName}
+                        </option>
+                    ))}
                 </Select>
-            </SearchFieldWrapper>);
+            </SearchFieldWrapper>
+        );
     }
 }
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(OrderHistorySearchFieldStatus),
     definition: {
         group: "Order History",

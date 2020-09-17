@@ -10,9 +10,7 @@ export const DispatchUpdateSearchFields: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchUpdateSearchFields,
-];
+export const chain = [DispatchUpdateSearchFields];
 
 const updateSearchFields = createHandlerChainRunner(chain, "UpdateSearchFields");
 export default updateSearchFields;

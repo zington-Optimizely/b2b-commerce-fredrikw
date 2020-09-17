@@ -11,6 +11,13 @@ export function getOrdersDataView(state: ApplicationState, getOrdersParameter: G
     return getDataView(state.data.orders, getOrdersParameter);
 }
 
-export const OrdersDataViewContext = createContext<ReturnType<typeof getOrdersDataView>>({ value: undefined, isLoading: false });
+export const OrdersDataViewContext = createContext<ReturnType<typeof getOrdersDataView>>({
+    value: undefined,
+    isLoading: false,
+});
 
-export const OrderStateContext = createContext<ReturnType<typeof getOrderState>>({ value: undefined, isLoading: false, id: undefined });
+export const OrderStateContext = createContext<ReturnType<typeof getOrderState>>({
+    value: undefined,
+    isLoading: false,
+    id: undefined,
+});

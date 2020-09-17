@@ -24,14 +24,16 @@ export const availabilityStyles: ProductDetailsAvailabilityStyles = {};
 const styles = availabilityStyles;
 
 const ProductDetailsAvailability: React.FC<OwnProps> = ({ product, configurationCompleted }) => {
-    if (!product || product.isVariantParent
-        || (product.configurationType !== ConfigurationType.None && product.configurationType !== ConfigurationType.Fixed && !configurationCompleted)) {
+    if (
+        !product ||
+        (product.configurationType !== ConfigurationType.None &&
+            product.configurationType !== ConfigurationType.Fixed &&
+            !configurationCompleted)
+    ) {
         return null;
     }
 
-    return <ProductContextAvailability
-        isProductDetailsPage={true}
-        extendedStyles={styles.availability} />;
+    return <ProductContextAvailability isProductDetailsPage={true} extendedStyles={styles.availability} />;
 };
 
 const widgetModule: WidgetModule = {

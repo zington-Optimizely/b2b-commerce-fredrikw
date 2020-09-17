@@ -9,8 +9,8 @@ type Parameter = {
 } & HasOnSuccess;
 
 type Props = {
-    apiParameter: AddCartLinesApiParameter,
-    apiResult: CartLineCollectionModel,
+    apiParameter: AddCartLinesApiParameter;
+    apiResult: CartLineCollectionModel;
 };
 
 type HandlerType = Handler<Parameter, Props>;
@@ -25,7 +25,7 @@ export const PopulateApiParameter: HandlerType = props => {
         } as CartLineModel);
     });
 
-    cartLineCollection.forEach((line) => {
+    cartLineCollection.forEach(line => {
         const parsedQty = line.qtyOrdered ? parseFloat(line.qtyOrdered.toString()) : 1;
         line.qtyOrdered = parsedQty > 0 ? parsedQty : 1;
     });
@@ -46,11 +46,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    SendDataToApi,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, SendDataToApi, ExecuteOnSuccessCallback];
 
 const addCartLines = createHandlerChainRunner(chain, "AddCartLines");
 export default addCartLines;

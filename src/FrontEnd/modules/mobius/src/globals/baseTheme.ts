@@ -166,13 +166,13 @@ export interface ComponentThemeProps {
         defaultProps?: CheckboxPresentationProps;
         groupDefaultProps?: FieldSetGroupPresentationProps<CheckboxGroupProps>;
     };
-    clickable: { defaultProps?: { css?: StyledProp<ClickableProps>; } };
-    dataTable: { defaultProps?: DataTablePresentationProps; };
+    clickable: { defaultProps?: { css?: StyledProp<ClickableProps> } };
+    dataTable: { defaultProps?: DataTablePresentationProps };
     datePicker: { defaultProps?: DatePickerPresentationProps };
     drawer: { defaultProps?: DrawerPresentationProps };
     dynamicDropdown: { defaultProps?: DynamicDropdownPresentationProps };
-    fileUpload: { defaultProps?: FileUploadPresentationProps; };
-    icon: { defaultProps?: IconThemableProps; };
+    fileUpload: { defaultProps?: FileUploadPresentationProps };
+    icon: { defaultProps?: IconThemableProps };
     link: { defaultProps?: LinkPresentationProps };
     lists: {
         defaultProps?: InjectableCss;
@@ -189,7 +189,7 @@ export interface ComponentThemeProps {
             medium: number;
             large: number;
         };
-        defaultProps?: ModalPresentationProps
+        defaultProps?: ModalPresentationProps;
     };
     overflowMenu: { defaultProps?: OverflowMenuPresentationProps };
     pagination: { defaultProps?: PaginationPresentationProps };
@@ -198,24 +198,24 @@ export interface ComponentThemeProps {
         defaultProps?: FieldSetPresentationProps<RadioProps>;
         groupDefaultProps?: FieldSetGroupPresentationProps<RadioGroupProps>;
     };
-    select: { defaultProps?: FormFieldPresentationProps<SelectProps> & SelectPresentationProps; };
+    select: { defaultProps?: FormFieldPresentationProps<SelectProps> & SelectPresentationProps };
     tab: {
-        defaultProps?: TabPresentationProps
+        defaultProps?: TabPresentationProps;
         groupDefaultProps?: TabGroupPresentationProps;
     };
     tag: { defaultProps?: TagPresentationProps };
-    textField: { defaultProps?: TextFieldPresentationProps; };
-    tokenExFrame: { defaultProps?: TokenExFramePresentationProps; };
-    textArea: { defaultProps?: FormFieldPresentationProps<TextAreaProps>; };
+    textField: { defaultProps?: TextFieldPresentationProps };
+    tokenExFrame: { defaultProps?: TokenExFramePresentationProps };
+    textArea: { defaultProps?: FormFieldPresentationProps<TextAreaProps> };
     toast: {
-        defaultProps?: ToastPresentationProps,
-        toasterProps?: ToasterPresentationProps,
+        defaultProps?: ToastPresentationProps;
+        toasterProps?: ToasterPresentationProps;
     };
     tooltip: { defaultProps?: TooltipPresentationProps };
 }
 
 export interface CategoryThemeProps {
-    formField: { defaultProps?: FormFieldPresentationProps<FormFieldPropsMock>; };
+    formField: { defaultProps?: FormFieldPresentationProps<FormFieldPropsMock> };
     fieldSet: {
         defaultProps?: FieldSetPresentationProps<FieldSetPropsMock>;
         groupDefaultProps?: FieldSetGroupPresentationProps;
@@ -481,7 +481,9 @@ const baseTheme: BaseTheme = {
     textArea: { defaultProps: {} },
     toast: { defaultProps: ToastPropsDefault, toasterProps: toasterPropsDefault },
     tooltip: { defaultProps: TooltipPropsDefault },
-    translate: () => { throw new Error("Attempted to translate without a configured translator."); },
+    translate: () => {
+        throw new Error("Attempted to translate without a configured translator.");
+    },
 };
 
 export default baseTheme;

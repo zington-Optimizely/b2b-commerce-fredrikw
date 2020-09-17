@@ -12,11 +12,17 @@ const initialState: CountriesState = {
 };
 
 const reducer = {
-    "Data/Countries/BeginLoadCountries": (draft: Draft<CountriesState>, action: { parameter: GetCurrentCountriesApiParameter }) => {
+    "Data/Countries/BeginLoadCountries": (
+        draft: Draft<CountriesState>,
+        action: { parameter: GetCurrentCountriesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Countries/CompleteLoadCountries": (draft: Draft<CountriesState>, action: { parameter: GetCurrentCountriesApiParameter, collection: CountryCollectionModel }) => {
+    "Data/Countries/CompleteLoadCountries": (
+        draft: Draft<CountriesState>,
+        action: { parameter: GetCurrentCountriesApiParameter; collection: CountryCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.countries!);
     },
 

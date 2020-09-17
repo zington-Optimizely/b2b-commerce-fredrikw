@@ -13,7 +13,11 @@ const MissingComponentStyle = styled.div`
 
 const MissingComponent: React.FunctionComponent<Props> = props => {
     if (props.shellContext.isInShell) {
-        return <MissingComponentStyle>There was no {props.isWidget ? "widget" : "page"} found for {props.type}</MissingComponentStyle>;
+        return (
+            <MissingComponentStyle>
+                There was no {props.isWidget ? "widget" : "page"} found for {props.type}
+            </MissingComponentStyle>
+        );
     }
 
     return null;

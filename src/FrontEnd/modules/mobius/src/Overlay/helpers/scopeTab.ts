@@ -4,7 +4,7 @@ export default function scopeTab(node: HTMLElement, event: React.KeyboardEvent<H
     const tabbable: HTMLElement[] = findTabbable(node);
 
     if (!tabbable.length) {
-    // Do nothing, since there are no elements that can receive focus.
+        // Do nothing, since there are no elements that can receive focus.
         event.preventDefault();
         return;
     }
@@ -17,7 +17,9 @@ export default function scopeTab(node: HTMLElement, event: React.KeyboardEvent<H
     // proceed with default browser behavior on tab.
     // Focus on last element on shift + tab.
     if (node === document.activeElement) {
-        if (!shiftKey) return;
+        if (!shiftKey) {
+            return;
+        }
         target = tail;
     }
 
@@ -47,13 +49,14 @@ export default function scopeTab(node: HTMLElement, event: React.KeyboardEvent<H
     // The chrome user agent contains the first ocurrence
     // as the 'chrome/version' and later the 'safari/version'.
     const checkSafari = /(\bChrome\b|\bSafari\b)\//.exec(navigator.userAgent);
-    const isSafariDesktop = checkSafari != null
-    && checkSafari[1] !== "Chrome"
-    && /\biPod\b|\biPad\b/g.exec(navigator.userAgent) == null;
+    const isSafariDesktop =
+        checkSafari != null && checkSafari[1] !== "Chrome" && /\biPod\b|\biPad\b/g.exec(navigator.userAgent) == null;
 
     // If we are not in safari desktop, let the browser control
     // the focus
-    if (!isSafariDesktop) return;
+    if (!isSafariDesktop) {
+        return;
+    }
 
     let x = document.activeElement ? tabbable.indexOf(document.activeElement as HTMLElement) : 0;
 

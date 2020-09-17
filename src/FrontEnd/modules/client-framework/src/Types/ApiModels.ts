@@ -1,7 +1,7 @@
 // this file is auto generated and should not be modified by hand
 export interface BaseModel {
     uri: string;
-    properties: { [key: string]: string};
+    properties: { [key: string]: string };
 }
 
 export interface PaginationModel {
@@ -982,10 +982,10 @@ export interface ShipViaDto {
 
 export interface PaymentOptionsDto {
     canStorePaymentProfile: boolean;
-    cardTypes: { key: string; value: string; }[] | null;
+    cardTypes: { key: string; value: string }[] | null;
     creditCard: CreditCardDto | null;
-    expirationMonths: { key: string; value: number; }[] | null;
-    expirationYears: { key: number; value: number; }[] | null;
+    expirationMonths: { key: string; value: number }[] | null;
+    expirationYears: { key: number; value: number }[] | null;
     isPayPal: boolean;
     paymentMethods: PaymentMethodDto[] | null;
     payPalPayerId: string;
@@ -1918,7 +1918,7 @@ export interface PricingRfqModel extends BaseModel {
     showUnitCost: boolean;
     unitCost: number;
     unitCostDisplay: string;
-    validationMessages: { key: string; value: string; }[] | null;
+    validationMessages: { key: string; value: string }[] | null;
 }
 
 export interface BreakPriceRfqModel {
@@ -2733,8 +2733,8 @@ export interface WishListModel extends BaseModel {
     pagination: PaginationModel | null;
     recipientEmailAddress: string;
     schedule: WishListEmailScheduleModel | null;
-    sendDayOfMonthPossibleValues: { key: number; value: string; }[] | null;
-    sendDayOfWeekPossibleValues: { key: string; value: string; }[] | null;
+    sendDayOfMonthPossibleValues: { key: number; value: string }[] | null;
+    sendDayOfWeekPossibleValues: { key: string; value: string }[] | null;
     sendEmail: boolean;
     senderName: string;
     sharedByDisplayName: string;

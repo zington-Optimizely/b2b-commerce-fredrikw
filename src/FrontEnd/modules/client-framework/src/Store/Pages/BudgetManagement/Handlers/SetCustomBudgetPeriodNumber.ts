@@ -11,9 +11,7 @@ export const DispatchSetCustomBudgetPeriodNumber: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetCustomBudgetPeriodNumber,
-];
+export const chain = [DispatchSetCustomBudgetPeriodNumber];
 
 const setCustomBudgetPeriodNumber = createHandlerChainRunner(chain, "setCustomBudgetPeriodNumber");
 export default setCustomBudgetPeriodNumber;

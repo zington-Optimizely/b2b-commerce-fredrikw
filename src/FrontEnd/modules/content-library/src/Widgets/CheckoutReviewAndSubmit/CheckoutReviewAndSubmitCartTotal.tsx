@@ -3,8 +3,19 @@ import { siteMessageWithCustomParserOptions } from "@insite/client-framework/Sit
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
-import { canPlaceOrder, getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView, getDiscountTotal, getOrderPromotions, getPromotionsDataView, getShippingPromotions } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import {
+    canPlaceOrder,
+    canSubmitForApprovalOrder,
+    getCartState,
+    getCurrentCartState,
+} from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import {
+    getCurrentPromotionsDataView,
+    getDiscountTotal,
+    getOrderPromotions,
+    getPromotionsDataView,
+    getShippingPromotions,
+} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -13,6 +24,7 @@ import CartTotalDisplay, { CartTotalDisplayStyles } from "@insite/content-librar
 import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
+import SubmitForApprovalButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitSubmitForApprovalButton";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -57,6 +69,7 @@ const mapStateToProps = (state: ApplicationState) => {
         discountTotal,
         showPlaceOrderButton: canPlaceOrder(cartState.value),
         placeOrderErrorMessage: state.pages.checkoutReviewAndSubmit.placeOrderErrorMessage,
+        showSubmitForApprovalOrder: canSubmitForApprovalOrder(getCurrentCartState(state).value),
     };
 };
 
@@ -72,6 +85,7 @@ export interface CheckoutReviewAndSubmitCartTotalStyles {
     placeOrderErrorMessageGridItem?: GridItemProps;
     placeOrderErrorMessageText?: TypographyPresentationProps;
     placeOrderButton?: ButtonPresentationProps;
+    submitForApprovalButton?: ButtonPresentationProps;
     findLocationModal?: FindLocationModalStyles;
     defaultFulfillmentMethodRadioGroup?: FieldSetGroupPresentationProps<RadioGroupComponentProps>;
     defaultFulfillmentMethodRadio?: FieldSetPresentationProps<RadioComponentProps>;
@@ -83,7 +97,16 @@ export const cartTotalStyles: CheckoutReviewAndSubmitCartTotalStyles = {
     buttonsGridItem: {
         width: 12,
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` display: none; `], "max")}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            display: none;
+                        `,
+                    ],
+                    "max",
+                )}
             flex-direction: column;
         `,
     },
@@ -107,7 +130,32 @@ export const cartTotalStyles: CheckoutReviewAndSubmitCartTotalStyles = {
         variant: "primary",
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, css` width: 100%; `, css` width: 100%; `, css` width: 100%; `, css` width: 100%; `])}
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
+    },
+    submitForApprovalButton: {
+        variant: "primary",
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "min",
+                )}
         `,
     },
     defaultFulfillmentMethodRadioGroup: {
@@ -136,6 +184,7 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
     placeOrderErrorMessage,
     updatePickUpWarehouse,
     setFulfillmentMethod,
+    showSubmitForApprovalOrder,
 }) => {
     const [isFindLocationOpen, setIsFindLocationOpen] = React.useState(false);
     const openWarehouseSelectionModal = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -169,7 +218,7 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
     };
 
     const parserOptions: HTMLReactParserOptions = {
-        replace: (node) => {
+        replace: node => {
             const { name, children, attribs = { style: "" }, ...rest } = node;
             const { style, class: className, ...otherAttribs } = attribs;
 
@@ -179,11 +228,26 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
                 let onClickHandler: ((event: React.MouseEvent<HTMLElement, MouseEvent>) => void) | undefined;
                 for (const key in otherAttribs) {
                     if (key === "ng-click") {
-                        if (otherAttribs[key] === "vm.openWarehouseSelectionModal()") onClickHandler = openWarehouseSelectionModal;
-                        if (otherAttribs[key] === "vm.openDeliveryMethodPopup()") onClickHandler = openDeliveryMethodPopup;
+                        if (otherAttribs[key] === "vm.openWarehouseSelectionModal()") {
+                            onClickHandler = openWarehouseSelectionModal;
+                        }
+                        if (otherAttribs[key] === "vm.openDeliveryMethodPopup()") {
+                            onClickHandler = openDeliveryMethodPopup;
+                        }
                     }
                 }
-                return <Link css={style as any} id={otherAttribs.name} {...otherAttribs} onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => onClickHandler && onClickHandler(event)}>{children && domToReact(children, parserOptions)}</Link>;
+                return (
+                    <Link
+                        css={style as any}
+                        id={otherAttribs.name}
+                        {...otherAttribs}
+                        onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+                            onClickHandler && onClickHandler(event)
+                        }
+                    >
+                        {children && domToReact(children, parserOptions)}
+                    </Link>
+                );
             }
         },
     };
@@ -199,41 +263,56 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
                     orderPromotions={orderPromotions}
                 />
             </GridItem>
-            {cart && showPlaceOrderButton
-                && <GridItem {...styles.buttonsGridItem}>
+            {cart && showPlaceOrderButton && (
+                <GridItem {...styles.buttonsGridItem}>
                     <PlaceOrderButton styles={styles.placeOrderButton} />
                 </GridItem>
-            }
-            {cart && cart.hasInsufficientInventory === true
-                && <GridItem {...styles.hasInsufficientInventoryGridItem}>
+            )}
+            {cart && showSubmitForApprovalOrder && (
+                <GridItem {...styles.buttonsGridItem}>
+                    <SubmitForApprovalButton extendedStyles={styles.submitForApprovalButton} />
+                </GridItem>
+            )}
+            {cart && cart.hasInsufficientInventory === true && (
+                <GridItem {...styles.hasInsufficientInventoryGridItem}>
                     <Typography
                         {...styles.availabilityErrorMessageText}
-                        data-test-selector="checkoutReviewAndSubmit_availabilityErrorMessage">
+                        data-test-selector="checkoutReviewAndSubmit_availabilityErrorMessage"
+                    >
                         {siteMessageWithCustomParserOptions("ReviewAndPay_NotEnoughInventoryForPickup", parserOptions)}
                     </Typography>
-                    <FindLocationModal modalIsOpen={isFindLocationOpen}
+                    <FindLocationModal
+                        modalIsOpen={isFindLocationOpen}
                         onWarehouseSelected={handleWarehouseSelected}
                         onModalClose={handleFindLocationModalClose}
-                        extendedStyles={styles.findLocationModal} />
+                        extendedStyles={styles.findLocationModal}
+                    />
                     <Modal
                         size={500}
                         headline={translate("Fulfillment Method")}
                         isOpen={isFulfillmentMethodOpen}
-                        handleClose={modalCloseHandler}>
-                            <RadioGroup
-                                value={cart.fulfillmentMethod}
-                                onChangeHandler={fulfillmentMethodChangeHandler}
-                                {...styles.defaultFulfillmentMethodRadioGroup}>
-                                <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
-                                <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
-                            </RadioGroup>
+                        handleClose={modalCloseHandler}
+                    >
+                        <RadioGroup
+                            value={cart.fulfillmentMethod}
+                            onChangeHandler={fulfillmentMethodChangeHandler}
+                            {...styles.defaultFulfillmentMethodRadioGroup}
+                        >
+                            <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>
+                                {translate("Ship")}
+                            </Radio>
+                            <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>
+                                {translate("Pick Up")}
+                            </Radio>
+                        </RadioGroup>
                     </Modal>
                 </GridItem>
-            }
-            {placeOrderErrorMessage
-                && <GridItem {...styles.placeOrderErrorMessageGridItem}>
+            )}
+            {placeOrderErrorMessage && (
+                <GridItem {...styles.placeOrderErrorMessageGridItem}>
                     <Typography {...styles.placeOrderErrorMessageText}>{placeOrderErrorMessage}</Typography>
-                </GridItem>}
+                </GridItem>
+            )}
         </GridContainer>
     );
 };

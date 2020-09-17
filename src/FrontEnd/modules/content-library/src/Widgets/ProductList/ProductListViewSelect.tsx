@@ -15,8 +15,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     loaded: !!getProductListDataView(state).value,
@@ -46,7 +45,9 @@ export const viewSelectStyles: ProductListViewSelectStyles = {
         `,
     },
     listViewClickable: {
-        css: css` margin-right: 20px; `,
+        css: css`
+            margin-right: 20px;
+        `,
     },
     listViewIcon: {
         src: List,
@@ -76,17 +77,16 @@ const ProductListViewSelect: FC<Props> = ({ view, setView, loaded }) => {
     return (
         <StyledWrapper {...styles.wrapper}>
             <Clickable data-test-selector="viewSelectList" {...styles.listViewClickable} onClick={clickListViewHandler}>
-                <Icon {...styles.listViewIcon} color={view === "List" ? "primary" : undefined}/>
+                <Icon {...styles.listViewIcon} color={view === "List" ? "primary" : undefined} />
             </Clickable>
             <Clickable data-test-selector="viewSelectGrid" {...styles.gridViewClickable} onClick={clickGridViewHandler}>
-                <Icon {...styles.gridViewIcon} color={view === "Grid" ? "primary" : undefined}/>
+                <Icon {...styles.gridViewIcon} color={view === "Grid" ? "primary" : undefined} />
             </Clickable>
         </StyledWrapper>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListViewSelect),
     definition: {
         group: "Product List",

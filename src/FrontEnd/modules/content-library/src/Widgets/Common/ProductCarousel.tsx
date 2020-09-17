@@ -10,7 +10,9 @@ import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSe
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ProductCarouselProduct, { ProductCarouselProductStyles } from "@insite/content-library/Components/ProductCarouselProduct";
+import ProductCarouselProduct, {
+    ProductCarouselProductStyles,
+} from "@insite/content-library/Components/ProductCarouselProduct";
 import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
 import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
@@ -21,8 +23,7 @@ import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import EmblaCarousel from "embla-carousel";
-import EmblaCarouselReact from "embla-carousel-react";
+import { useEmblaCarousel } from "embla-carousel/react";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css, ThemeProps, withTheme } from "styled-components";
@@ -74,7 +75,11 @@ const mapDispatchToProps = {
     loadCarouselProducts,
 };
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & ThemeProps<BaseTheme> & HasShellContext;
+type Props = OwnProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    ThemeProps<BaseTheme> &
+    HasShellContext;
 
 export interface ProductCarouselStyles {
     titleText?: TypographyPresentationProps;
@@ -86,6 +91,7 @@ export interface ProductCarouselStyles {
     nextArrowButton?: ButtonPresentationProps;
     carouselGridItem?: GridItemProps;
     carouselWrapper?: InjectableCss;
+    carouselContainer?: InjectableCss;
     carouselSlidesContainer?: InjectableCss;
     carouselSlide?: InjectableCss;
     carouselSlideInner?: InjectableCss;
@@ -107,13 +113,28 @@ export const productCarouselStyles: ProductCarouselStyles = {
         css: css`
             justify-content: flex-start;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                ])}
         `,
     },
     prevArrowButton: {
@@ -130,13 +151,28 @@ export const productCarouselStyles: ProductCarouselStyles = {
         css: css`
             justify-content: flex-end;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-                css` flex-basis: 5%; max-width: 5%; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                    css`
+                        flex-basis: 5%;
+                        max-width: 5%;
+                    `,
+                ])}
         `,
     },
     nextArrowButton: {
@@ -151,13 +187,28 @@ export const productCarouselStyles: ProductCarouselStyles = {
         width: 10,
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` flex-basis: 90%; max-width: 90%; `,
-                css` flex-basis: 90%; max-width: 90%; `,
-                css` flex-basis: 90%; max-width: 90%; `,
-                css` flex-basis: 90%; max-width: 90%; `,
-                css` flex-basis: 90%; max-width: 90%; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        flex-basis: 90%;
+                        max-width: 90%;
+                    `,
+                    css`
+                        flex-basis: 90%;
+                        max-width: 90%;
+                    `,
+                    css`
+                        flex-basis: 90%;
+                        max-width: 90%;
+                    `,
+                    css`
+                        flex-basis: 90%;
+                        max-width: 90%;
+                    `,
+                    css`
+                        flex-basis: 90%;
+                        max-width: 90%;
+                    `,
+                ])}
         `,
     },
     carouselWrapper: {
@@ -166,8 +217,15 @@ export const productCarouselStyles: ProductCarouselStyles = {
             position: relative;
         `,
     },
+    carouselContainer: {
+        css: css`
+            overflow: hidden;
+        `,
+    },
     carouselSlidesContainer: {
-        css: css` display: flex; `,
+        css: css`
+            display: flex;
+        `,
     },
     carouselSlide: {
         css: css`
@@ -191,14 +249,14 @@ export const productCarouselStyles: ProductCarouselStyles = {
 const styles = productCarouselStyles;
 
 const ProductCarousel: React.FC<Props> = ({
-                                              id,
-                                              theme,
-                                              fields,
-                                              products,
-                                              loadCarouselProducts,
-                                              pageType,
-                                              shellContext,
-                                          }) => {
+    id,
+    theme,
+    fields,
+    products,
+    loadCarouselProducts,
+    pageType,
+    shellContext,
+}) => {
     const afterCarousel = React.createRef<HTMLSpanElement>();
     const isProductDetailsPage = pageType === "ProductDetailsPage";
     const isProductListPage = pageType === "ProductListPage";
@@ -207,38 +265,35 @@ const ProductCarousel: React.FC<Props> = ({
     const category = React.useContext(CategoryContext);
     const productContext = React.useContext(ProductContext);
 
-    React.useEffect(
-        () => {
-            loadCarouselProducts({
-                carouselId: id,
-                carouselType: fields.carouselType,
-                relatedProductType: fields.relatedProductType,
-                seedWithManuallyAssigned: fields.seedWithManuallyAssigned,
-                displayProductsFrom: fields.displayProductsFrom,
-                selectedCategoryIds: fields.selectedCategoryIds,
-                numberOfProductsToDisplay: fields.numberOfProductsToDisplay,
-                isProductDetailsPage,
-                productId: productContext?.product?.id,
-                isProductListPage,
-                category,
-                isBrandDetailsPage,
-                brand,
-            });
-        },
-        [
-            fields.carouselType,
-            fields.relatedProductType,
-            fields.seedWithManuallyAssigned,
-            fields.displayProductsFrom,
-            fields.selectedCategoryIds,
-            fields.numberOfProductsToDisplay,
-            productContext?.product?.id,
-            category?.id,
-            brand?.id,
-        ],
-    );
+    React.useEffect(() => {
+        loadCarouselProducts({
+            carouselId: id,
+            carouselType: fields.carouselType,
+            relatedProductType: fields.relatedProductType,
+            seedWithManuallyAssigned: fields.seedWithManuallyAssigned,
+            displayProductsFrom: fields.displayProductsFrom,
+            selectedCategoryIds: fields.selectedCategoryIds,
+            numberOfProductsToDisplay: fields.numberOfProductsToDisplay,
+            isProductDetailsPage,
+            productId: productContext?.product?.id,
+            isProductListPage,
+            category,
+            isBrandDetailsPage,
+            brand,
+        });
+    }, [
+        fields.carouselType,
+        fields.relatedProductType,
+        fields.seedWithManuallyAssigned,
+        fields.displayProductsFrom,
+        fields.selectedCategoryIds,
+        fields.numberOfProductsToDisplay,
+        productContext?.product?.id,
+        category?.id,
+        brand?.id,
+    ]);
 
-    const [embla, setEmbla] = React.useState<EmblaCarousel | null>(null);
+    const [emblaRef, embla] = useEmblaCarousel();
     const [windowResizeTime, setWindowResizeTime] = React.useState(0);
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
@@ -250,27 +305,24 @@ const ProductCarousel: React.FC<Props> = ({
         setCanScrollNext(!!embla && embla.canScrollNext());
     };
 
-    const getSlidesToScroll = React.useCallback(
-        () => {
-            const maxNumberOfColumns = fields.maxNumberOfColumns || 4;
-            if (typeof window === "undefined") {
-                return maxNumberOfColumns;
-            }
+    const getSlidesToScroll = React.useCallback(() => {
+        const maxNumberOfColumns = fields.maxNumberOfColumns || 4;
+        if (typeof window === "undefined") {
+            return maxNumberOfColumns;
+        }
 
-            let localSlidesToScroll: number;
-            if (window.innerWidth < theme.breakpoints.values[1]) {
-                localSlidesToScroll = 1;
-            } else if (window.innerWidth < theme.breakpoints.values[2]) {
-                localSlidesToScroll = 2;
-            } else if (window.innerWidth < theme.breakpoints.values[3]) {
-                localSlidesToScroll = 3;
-            } else {
-                localSlidesToScroll = 4;
-            }
-            return Math.min(localSlidesToScroll, maxNumberOfColumns);
-        },
-        [fields.maxNumberOfColumns],
-    );
+        let localSlidesToScroll: number;
+        if (window.innerWidth < theme.breakpoints.values[1]) {
+            localSlidesToScroll = 1;
+        } else if (window.innerWidth < theme.breakpoints.values[2]) {
+            localSlidesToScroll = 2;
+        } else if (window.innerWidth < theme.breakpoints.values[3]) {
+            localSlidesToScroll = 3;
+        } else {
+            localSlidesToScroll = 4;
+        }
+        return Math.min(localSlidesToScroll, maxNumberOfColumns);
+    }, [fields.maxNumberOfColumns]);
 
     const [slidesToScroll, setSlidesToScroll] = React.useState(getSlidesToScroll());
 
@@ -284,115 +336,131 @@ const ProductCarousel: React.FC<Props> = ({
 
     const [draggable, setDraggable] = React.useState(getDraggable());
 
-    React.useEffect(
-        () => {
-            const newSlidesToScroll = getSlidesToScroll();
-            setSlidesToScroll(newSlidesToScroll);
+    React.useEffect(() => {
+        const newSlidesToScroll = getSlidesToScroll();
+        setSlidesToScroll(newSlidesToScroll);
 
-            const newDraggable = getDraggable();
-            setDraggable(newDraggable);
-        },
-        [fields.maxNumberOfColumns, windowResizeTime],
-    );
+        const newDraggable = getDraggable();
+        setDraggable(newDraggable);
+    }, [fields.maxNumberOfColumns, windowResizeTime]);
 
-    React.useEffect(
-        () => {
-            if (!embla) {
-                return;
-            }
+    React.useEffect(() => {
+        if (!embla) {
+            return;
+        }
 
-            embla.on("init", setCanScroll);
-            embla.on("select", setCanScroll);
+        embla.on("init", setCanScroll);
+        embla.on("select", setCanScroll);
 
-            const onWindowResize = () => {
-                setWindowResizeTime(Date.now());
-            };
+        const onWindowResize = () => {
+            setWindowResizeTime(Date.now());
+        };
 
-            window.addEventListener("resize", onWindowResize);
-            onWindowResize();
+        window.addEventListener("resize", onWindowResize);
+        onWindowResize();
 
-            return () => {
-                window.removeEventListener("resize", onWindowResize);
-            };
-        },
-        [embla],
-    );
+        return () => {
+            window.removeEventListener("resize", onWindowResize);
+        };
+    }, [embla]);
 
-    React.useEffect(
-        () => {
-            if (!embla || !products || products.length === 0) {
-                return;
-            }
+    React.useEffect(() => {
+        if (!embla || !products || products.length === 0) {
+            return;
+        }
 
-            embla.changeOptions({ slidesToScroll, draggable, loop: products.length > slidesToScroll });
-            setCanScroll();
-        },
-        [slidesToScroll, draggable, products],
-    );
+        embla.reInit({
+            align: "start",
+            slidesToScroll,
+            draggable,
+            loop: products.length > slidesToScroll,
+        });
+        setCanScroll();
+    }, [embla, slidesToScroll, draggable, products]);
 
     if (!products || products.length === 0) {
         return null;
     }
 
-    const title = fields.title || translate(carouselTypeOptions.find(o => o.value === fields.carouselType)?.displayName || "Product Carousel");
+    const title =
+        fields.title ||
+        translate(carouselTypeOptions.find(o => o.value === fields.carouselType)?.displayName || "Product Carousel");
     const showBrandBlocks = fields.showBrandName && products.some(o => !!o.brand);
 
-    return <>
-        <SkipNav text={translate("Skip Carousel")} extendedStyles={styles.skipCarouselButton} destination={afterCarousel} />
-        <Typography {...styles.titleText}>{title}</Typography>
-        <GridContainer {...styles.mainContainer} data-test-selector={`productCarousel_${fields.carouselType}${fields.relatedProductType}`}>
-            <GridItem {...styles.prevArrowGridItem}>
-                {products.length > slidesToScroll
-                && <Button
-                    {...styles.prevArrowButton}
-                    onClick={() => embla && embla.scrollPrev()}
-                    disabled={!canScrollPrev}
-                    data-test-selector="prevBtn"
-                >
-                    <ButtonIcon src={ChevronLeft}/>
-                </Button>
-                }
-            </GridItem>
-            <GridItem {...styles.carouselGridItem}>
-                <StyledWrapper {...styles.carouselWrapper}>
-                    <EmblaCarouselReact emblaRef={setEmbla} options={{ align: "start", slidesToScroll, loop: products.length > slidesToScroll, draggable }}>
-                        <StyledWrapper {...styles.carouselSlidesContainer} data-test-selector="slides">
-                            {products.map(product =>
-                                <StyledWrapper {...styles.carouselSlide} key={product.id} style={{ width: `calc(100% / ${slidesToScroll})` }}>
-                                    <StyledWrapper {...styles.carouselSlideInner} id={`product_${product.id}`} data-test-selector="productContainer">
-                                        <ProductCarouselProduct
-                                            carouselId={id}
-                                            product={product}
-                                            showImage={fields.showImage}
-                                            showBrand={showBrandBlocks}
-                                            showTitle={fields.showTitle}
-                                            showPartNumbers={fields.showPartNumbers}
-                                            showPrice={fields.showPrice}
-                                            showAddToCart={fields.showAddToCart}
-                                            showAddToList={fields.showAddToList}
-                                            extendedStyles={styles.carouselProductStyles}/>
+    return (
+        <>
+            <SkipNav
+                text={translate("Skip Carousel")}
+                extendedStyles={styles.skipCarouselButton}
+                destination={afterCarousel}
+            />
+            <Typography {...styles.titleText}>{title}</Typography>
+            <GridContainer
+                {...styles.mainContainer}
+                data-test-selector={`productCarousel_${fields.carouselType}${fields.relatedProductType}`}
+            >
+                <GridItem {...styles.prevArrowGridItem}>
+                    {products.length > slidesToScroll && (
+                        <Button
+                            {...styles.prevArrowButton}
+                            onClick={() => embla && embla.scrollPrev()}
+                            disabled={!canScrollPrev}
+                            data-test-selector="prevBtn"
+                        >
+                            <ButtonIcon src={ChevronLeft} />
+                        </Button>
+                    )}
+                </GridItem>
+                <GridItem {...styles.carouselGridItem}>
+                    <StyledWrapper {...styles.carouselWrapper}>
+                        <StyledWrapper {...styles.carouselContainer} ref={emblaRef}>
+                            <StyledWrapper {...styles.carouselSlidesContainer} data-test-selector="slides">
+                                {products.map(product => (
+                                    <StyledWrapper
+                                        {...styles.carouselSlide}
+                                        key={product.id}
+                                        style={{ width: `calc(100% / ${slidesToScroll})` }}
+                                    >
+                                        <StyledWrapper
+                                            {...styles.carouselSlideInner}
+                                            id={`product_${product.id}`}
+                                            data-test-selector="productContainer"
+                                        >
+                                            <ProductCarouselProduct
+                                                carouselId={id}
+                                                product={product}
+                                                showImage={fields.showImage}
+                                                showBrand={showBrandBlocks}
+                                                showTitle={fields.showTitle}
+                                                showPartNumbers={fields.showPartNumbers}
+                                                showPrice={fields.showPrice}
+                                                showAddToCart={fields.showAddToCart}
+                                                showAddToList={fields.showAddToList}
+                                                extendedStyles={styles.carouselProductStyles}
+                                            />
+                                        </StyledWrapper>
                                     </StyledWrapper>
-                                </StyledWrapper>)
-                            }
+                                ))}
+                            </StyledWrapper>
                         </StyledWrapper>
-                    </EmblaCarouselReact>
-                </StyledWrapper>
-            </GridItem>
-            <GridItem {...styles.nextArrowGridItem}>
-                {products.length > slidesToScroll
-                && <Button
-                    {...styles.nextArrowButton}
-                    onClick={() => embla && embla.scrollNext()}
-                    disabled={!canScrollNext}
-                    data-test-selector="nextBtn"
-                >
-                    <ButtonIcon src={ChevronRight}/>
-                </Button>
-                }
-            </GridItem>
-        </GridContainer>
-        <span ref={afterCarousel} tabIndex={-1}/>
-    </>;
+                    </StyledWrapper>
+                </GridItem>
+                <GridItem {...styles.nextArrowGridItem}>
+                    {products.length > slidesToScroll && (
+                        <Button
+                            {...styles.nextArrowButton}
+                            onClick={() => embla && embla.scrollNext()}
+                            disabled={!canScrollNext}
+                            data-test-selector="nextBtn"
+                        >
+                            <ButtonIcon src={ChevronRight} />
+                        </Button>
+                    )}
+                </GridItem>
+            </GridContainer>
+            <span ref={afterCarousel} tabIndex={-1} />
+        </>
+    );
 };
 
 const carouselTypeOptions = [
@@ -437,7 +505,7 @@ const widgetModule: WidgetModule = {
                 ],
                 defaultValue: "allCategories",
                 fieldType: "General",
-                isVisible: (item) => item.fields[fields.carouselType] === "topSellers",
+                isVisible: item => item.fields[fields.carouselType] === "topSellers",
                 sortOrder: 2,
             },
             {
@@ -446,7 +514,9 @@ const widgetModule: WidgetModule = {
                 editorTemplate: "CategoriesField",
                 defaultValue: [],
                 fieldType: "General",
-                isVisible: (item) => item.fields[fields.carouselType] === "topSellers" && item.fields[fields.displayProductsFrom] === "selectedCategories",
+                isVisible: item =>
+                    item.fields[fields.carouselType] === "topSellers" &&
+                    item.fields[fields.displayProductsFrom] === "selectedCategories",
                 sortOrder: 3,
             },
             {
@@ -456,7 +526,7 @@ const widgetModule: WidgetModule = {
                 systemListName: "ProductRelationship",
                 defaultValue: "",
                 fieldType: "General",
-                isVisible: (item) => item.fields[fields.carouselType] === "relatedProducts",
+                isVisible: item => item.fields[fields.carouselType] === "relatedProducts",
                 sortOrder: 4,
             },
             {
@@ -467,7 +537,7 @@ const widgetModule: WidgetModule = {
                 max: 20,
                 defaultValue: 10,
                 fieldType: "General",
-                isVisible: (item) => item.fields[fields.carouselType] === "customersAlsoPurchased",
+                isVisible: item => item.fields[fields.carouselType] === "customersAlsoPurchased",
                 sortOrder: 5,
             },
             {
@@ -477,7 +547,7 @@ const widgetModule: WidgetModule = {
                 systemListName: "ProductRelationship",
                 defaultValue: "",
                 fieldType: "General",
-                isVisible: (item) => item.fields[fields.carouselType] === "customersAlsoPurchased",
+                isVisible: item => item.fields[fields.carouselType] === "customersAlsoPurchased",
                 sortOrder: 6,
             },
             {

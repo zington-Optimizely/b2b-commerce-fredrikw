@@ -1,14 +1,19 @@
 import formatDateWithTimezone from "@insite/client-framework/Common/Utilities/formatDateWithTimezone";
 import { trackCompletedOrder } from "@insite/client-framework/Common/Utilities/tracking";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { Cart, CartResult, UpdateCartApiParameter, updateCartWithResult } from "@insite/client-framework/Services/CartService";
+import {
+    Cart,
+    CartResult,
+    UpdateCartApiParameter,
+    updateCartWithResult,
+} from "@insite/client-framework/Services/CartService";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import cloneDeep from "lodash/cloneDeep";
 
-const convertDateToApiFormat = (date: Date | null) => date ? formatDateWithTimezone(date) : "";
+const convertDateToApiFormat = (date: Date | null) => (date ? formatDateWithTimezone(date) : "");
 
 interface PlaceOrderParameter {
     paymentMethod: string;
@@ -31,9 +36,14 @@ interface PlaceOrderParameter {
     payPalPayerId?: string;
 }
 
-type HandlerType = ApiHandlerDiscreteParameter<PlaceOrderParameter, UpdateCartApiParameter, CartResult, {
-    cartToUpdate: Cart;
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    PlaceOrderParameter,
+    UpdateCartApiParameter,
+    CartResult,
+    {
+        cartToUpdate: Cart;
+    }
+>;
 
 export const DispatchBeginPlaceOrder: HandlerType = props => {
     props.dispatch({
@@ -72,7 +82,9 @@ export const SetPaymentMethod: HandlerType = props => {
         return;
     }
 
-    const paymentMethodDto = cartToUpdate.paymentOptions.paymentMethods.find(method => method.name === props.parameter.paymentMethod);
+    const paymentMethodDto = cartToUpdate.paymentOptions.paymentMethods.find(
+        method => method.name === props.parameter.paymentMethod,
+    );
     if (!paymentMethodDto) {
         return;
     }
@@ -132,9 +144,19 @@ export const PopulateApiParameter: HandlerType = props => {
         return;
     }
 
-    const { pages: { checkoutReviewAndSubmit: { requestedDeliveryDate, requestedPickupDate } } } = props.getState();
-    const tempDeliveryDate = typeof requestedDeliveryDate !== "undefined" ? requestedDeliveryDate : props.cartToUpdate.requestedDeliveryDateDisplay;
-    const tempPickupDate = typeof requestedPickupDate !== "undefined" ? requestedPickupDate : props.cartToUpdate.requestedPickupDateDisplay;
+    const {
+        pages: {
+            checkoutReviewAndSubmit: { requestedDeliveryDate, requestedPickupDate },
+        },
+    } = props.getState();
+    const tempDeliveryDate =
+        typeof requestedDeliveryDate !== "undefined"
+            ? requestedDeliveryDate
+            : props.cartToUpdate.requestedDeliveryDateDisplay;
+    const tempPickupDate =
+        typeof requestedPickupDate !== "undefined"
+            ? requestedPickupDate
+            : props.cartToUpdate.requestedPickupDateDisplay;
 
     props.apiParameter = {
         cart: {
@@ -185,6 +207,12 @@ export const DispatchCompletePlaceOrder: HandlerType = props => {
     });
 };
 
+export const DispatchResetOrderApprovals: HandlerType = props => {
+    props.dispatch({
+        type: "Data/OrderApprovals/Reset",
+    });
+};
+
 export const DispatchResetOrders: HandlerType = props => {
     props.dispatch({
         type: "Data/Orders/Reset",
@@ -212,6 +240,7 @@ export const chain = [
     DispatchCompletePlaceOrder,
     DispatchResetOrders,
     DispatchResetPaymentProfiles,
+    DispatchResetOrderApprovals,
 ];
 
 const placeOrder = createHandlerChainRunner(chain, "PlaceOrder");

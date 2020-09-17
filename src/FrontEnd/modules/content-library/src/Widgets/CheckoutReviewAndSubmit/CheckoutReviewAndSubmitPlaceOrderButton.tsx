@@ -14,7 +14,11 @@ const mapStateToProps = (state: ApplicationState) => {
     const { cartId, isPlacingOrder, isCheckingOutWithPayPay } = state.pages.checkoutReviewAndSubmit;
     const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     return {
-        isDisabled: cartState.isLoading || isPlacingOrder || isCheckingOutWithPayPay || cartState.value?.hasInsufficientInventory === true,
+        isDisabled:
+            cartState.isLoading ||
+            isPlacingOrder ||
+            isCheckingOutWithPayPay ||
+            cartState.value?.hasInsufficientInventory === true,
     };
 };
 

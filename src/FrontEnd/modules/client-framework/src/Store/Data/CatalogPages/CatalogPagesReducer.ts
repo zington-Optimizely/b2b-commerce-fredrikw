@@ -16,7 +16,10 @@ const reducer = {
         draft.isLoading[action.id] = true;
     },
 
-    "Data/CatalogPages/CompleteLoadCatalogPage": (draft: Draft<CatalogPagesState>, action: { model: CatalogPage, path?: string }) => {
+    "Data/CatalogPages/CompleteLoadCatalogPage": (
+        draft: Draft<CatalogPagesState>,
+        action: { model: CatalogPage; path?: string },
+    ) => {
         const { model, path } = action;
         const lowerPath = path?.toLowerCase();
         const lowerCanonicalPath = model.canonicalPath.toLowerCase();

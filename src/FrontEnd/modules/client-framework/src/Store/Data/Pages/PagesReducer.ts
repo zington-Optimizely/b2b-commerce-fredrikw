@@ -1,7 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { nullPage, PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import {
-    createContextualIds, getContextualId,
+    createContextualIds,
+    getContextualId,
     prepareFields,
 } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
@@ -52,7 +53,16 @@ const reducer = {
     },
 
     "Data/Pages/CompleteLoadPage": (draft: Draft<PagesState>, action: LoadPageCompleteAction) => {
-        const { page, currentLanguageId, defaultLanguageId, currentPersonaIds, defaultPersonaId, currentDeviceType, path, pageType } = action;
+        const {
+            page,
+            currentLanguageId,
+            defaultLanguageId,
+            currentPersonaIds,
+            defaultPersonaId,
+            currentDeviceType,
+            path,
+            pageType,
+        } = action;
         if (path) {
             draft.isLoading[path] = false;
         }
@@ -71,9 +81,19 @@ const reducer = {
             return;
         }
 
-        const contextualIds = createContextualIds(currentLanguageId, defaultLanguageId, currentDeviceType, currentPersonaIds, defaultPersonaId);
+        const contextualIds = createContextualIds(
+            currentLanguageId,
+            defaultLanguageId,
+            currentDeviceType,
+            currentPersonaIds,
+            defaultPersonaId,
+        );
 
         prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
+        const { fields } = page;
+        if (fields) {
+            fields["variantName"] = page.variantName;
+        }
 
         draft.widgetIdsByPageId[page.id] = [];
         draft.widgetIdsByParentIdAndZone[page.id] = {};
@@ -135,12 +155,15 @@ const reducer = {
         };
     },
 
-    "Data/Pages/MoveWidgetTo": (draft: Draft<PagesState>, action: {
-        id: string;
-        parentId: string;
-        zoneName: string;
-        index: number;
-    }) => {
+    "Data/Pages/MoveWidgetTo": (
+        draft: Draft<PagesState>,
+        action: {
+            id: string;
+            parentId: string;
+            zoneName: string;
+            index: number;
+        },
+    ) => {
         const widget = draft.widgetsById[action.id];
         const oldParentId = widget.parentId;
         const oldZone = widget.zone;
@@ -169,7 +192,7 @@ const reducer = {
         draft.draggingWidgetId = undefined;
     },
 
-    "Data/Pages/BeginDraggingWidget": (draft: Draft<PagesState>, action: { id: string; }) => {
+    "Data/Pages/BeginDraggingWidget": (draft: Draft<PagesState>, action: { id: string }) => {
         draft.draggingWidgetId = action.id;
     },
 
@@ -177,11 +200,14 @@ const reducer = {
         draft.draggingWidgetId = undefined;
     },
 
-    "Data/Pages/AddWidget": (draft: Draft<PagesState>, action: {
-        widget: WidgetProps;
-        index: number;
-        pageId: string;
-    }) => {
+    "Data/Pages/AddWidget": (
+        draft: Draft<PagesState>,
+        action: {
+            widget: WidgetProps;
+            index: number;
+            pageId: string;
+        },
+    ) => {
         const { widget, index, pageId } = action;
         const { id, parentId, zone } = widget;
         const { widgetsById } = draft;
@@ -208,7 +234,17 @@ const reducer = {
     },
 
     "Data/Pages/UpdateField": (draft: Draft<PagesState>, action: UpdateFieldParameter) => {
-        const { fieldName, id, value, fieldType, language, defaultLanguageId, personaId, defaultPersonaId, deviceType } = action;
+        const {
+            fieldName,
+            id,
+            value,
+            fieldType,
+            language,
+            defaultLanguageId,
+            personaId,
+            defaultPersonaId,
+            deviceType,
+        } = action;
         const { id: languageId } = language;
 
         const contentItemModel = draft.byId[id] || draft.widgetsById[id];
@@ -246,9 +282,11 @@ const reducer = {
                 contextualField = contextualFields[fieldName] = {};
             }
 
-            const contextualId = getContextualId(language.id,
+            const contextualId = getContextualId(
+                language.id,
                 language.hasDeviceSpecificContent ? deviceType : "Desktop",
-                language.hasPersonaSpecificContent ? personaId : defaultPersonaId);
+                language.hasPersonaSpecificContent ? personaId : defaultPersonaId,
+            );
             if (!contextualField[contextualId]) {
                 contextualField[contextualId] = {};
             }
@@ -271,12 +309,18 @@ const reducer = {
             }
         }
 
-        const contextualIds = createContextualIds(languageId, defaultLanguageId, deviceType, [personaId], defaultPersonaId);
+        const contextualIds = createContextualIds(
+            languageId,
+            defaultLanguageId,
+            deviceType,
+            [personaId],
+            defaultPersonaId,
+        );
 
         prepareFields(contentItemModel, languageId, defaultLanguageId, contextualIds);
     },
 
-    "Data/Pages/RemoveWidget": (draft: Draft<PagesState>, action: { id: string; }) => {
+    "Data/Pages/RemoveWidget": (draft: Draft<PagesState>, action: { id: string }) => {
         const widget = draft.widgetsById[action.id];
         delete draft.widgetsById[action.id];
 
@@ -285,7 +329,7 @@ const reducer = {
         oldLocation.splice(oldIndex, 1);
     },
 
-    "Data/Pages/ReplaceItem": (draft: Draft<PagesState>, action: { item: ItemProps; }) => {
+    "Data/Pages/ReplaceItem": (draft: Draft<PagesState>, action: { item: ItemProps }) => {
         if (draft.byId[action.item.id]) {
             draft.byId[action.item.id] = action.item as PageProps;
         } else {
@@ -293,16 +337,25 @@ const reducer = {
         }
     },
 
-    "Data/Pages/CompleteChangeContext": (draft: Draft<PagesState>, action: {
-        languageId: string;
-        personaId: string;
-        deviceType: DeviceType;
-        defaultLanguageId: string;
-        defaultPersonaId: string;
-    }) => {
+    "Data/Pages/CompleteChangeContext": (
+        draft: Draft<PagesState>,
+        action: {
+            languageId: string;
+            personaId: string;
+            deviceType: DeviceType;
+            defaultLanguageId: string;
+            defaultPersonaId: string;
+        },
+    ) => {
         const { languageId, defaultLanguageId, personaId, deviceType, defaultPersonaId } = action;
 
-        const contextualIds = createContextualIds(languageId, defaultLanguageId, deviceType, [personaId], defaultPersonaId);
+        const contextualIds = createContextualIds(
+            languageId,
+            defaultLanguageId,
+            deviceType,
+            [personaId],
+            defaultPersonaId,
+        );
 
         for (const pageId in draft.byId) {
             prepareFields(draft.byId[pageId], languageId, defaultLanguageId, contextualIds);
@@ -312,7 +365,10 @@ const reducer = {
         }
     },
 
-    "Data/Pages/PageDefinitions": (draft: Draft<PagesState>, action: { pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>; }) => {
+    "Data/Pages/PageDefinitions": (
+        draft: Draft<PagesState>,
+        action: { pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">> },
+    ) => {
         draft.pageDefinitionsByType = action.pageDefinitionsByType;
     },
 };

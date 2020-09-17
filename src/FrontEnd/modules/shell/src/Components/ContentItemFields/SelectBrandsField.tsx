@@ -20,7 +20,6 @@ interface State {
 type OwnProps = ContentItemFieldProps<string[], SelectBrandsFieldDefinition>;
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
-
     const selectBrands = state.pageEditor.selectBrandsState?.selectBrands || [];
     const selectedBrands = state.pageEditor.selectBrandsState?.selectedBrands || [];
 
@@ -38,7 +37,6 @@ const mapDispatchToProps = {
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 class SelectBrandsField extends React.Component<Props, State> {
-
     constructor(props: Props) {
         super(props);
 
@@ -53,7 +51,7 @@ class SelectBrandsField extends React.Component<Props, State> {
         this.loadSelectedBrands(this.props.fieldValue);
     }
 
-    private loadSelectBrands(brands: string[], filter?:string) {
+    private loadSelectBrands(brands: string[], filter?: string) {
         let queryFilter = "logoSmallImagePath ne '' and Products/any()";
         if (filter) {
             queryFilter = `${queryFilter} and contains(name,'${filter}') eq true`;
@@ -62,7 +60,7 @@ class SelectBrandsField extends React.Component<Props, State> {
             $filter: queryFilter,
             $select: "id,name",
             $orderBy: "name",
-            $top: `${(20 + brands.length)}`,
+            $top: `${20 + brands.length}`,
         });
     }
 
@@ -79,7 +77,7 @@ class SelectBrandsField extends React.Component<Props, State> {
             $filter: filter,
             $select: "id,name",
             $orderBy: "name",
-            $top: `${(20 + brands.length)}`,
+            $top: `${20 + brands.length}`,
         });
     }
 
@@ -99,10 +97,7 @@ class SelectBrandsField extends React.Component<Props, State> {
             return;
         }
         const updateFieldValue = [...this.props.fieldValue, value];
-        this.props.updateField(
-            this.props.fieldDefinition.name,
-            updateFieldValue,
-        );
+        this.props.updateField(this.props.fieldDefinition.name, updateFieldValue);
         this.loadSelectBrands(updateFieldValue);
         this.loadSelectedBrands(updateFieldValue);
     };
@@ -137,9 +132,7 @@ class SelectBrandsField extends React.Component<Props, State> {
         const listFieldItem = {
             fields: { selectBrandsListField: [...fieldValue.map(brandId => ({ fields: { id: brandId } }))] },
         };
-        const options = selectBrands.map((option) =>
-            ({ optionText: option.name, optionValue: option.id }),
-        );
+        const options = selectBrands.map(option => ({ optionText: option.name, optionValue: option.id }));
         const loadSelectBrandsDebounce = debounce((value: string) => {
             this.loadSelectBrands(this.props.fieldValue, value);
         }, 100);
@@ -147,21 +140,27 @@ class SelectBrandsField extends React.Component<Props, State> {
             loadSelectBrandsDebounce(event.target.value);
         };
 
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-            {loaded && <DynamicDropdown
-                uid={this.props.fieldDefinition.name}
-                onSelectionChange={this.onChange}
-                options={options}
-                onInputChange={onInputChanged}
-                placeholder={translate("Select a Brand")}
-            />}
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                {loaded && (
+                    <DynamicDropdown
+                        uid={this.props.fieldDefinition.name}
+                        onSelectionChange={this.onChange}
+                        options={options}
+                        onInputChange={onInputChanged}
+                        placeholder={translate("Select a Brand")}
+                    />
+                )}
 
-            <FieldsEditor fieldDefinitions={[listFieldDefinition]}
-                item={listFieldItem}
-                updateField={this.updateBrandListFromListField}
-                registerHasValidationErrors={() => false}
-                updateHasValidationErrors={() => false} />
-        </StandardControl>;
+                <FieldsEditor
+                    fieldDefinitions={[listFieldDefinition]}
+                    item={listFieldItem}
+                    updateField={this.updateBrandListFromListField}
+                    registerHasValidationErrors={() => false}
+                    updateHasValidationErrors={() => false}
+                />
+            </StandardControl>
+        );
     }
 }
 

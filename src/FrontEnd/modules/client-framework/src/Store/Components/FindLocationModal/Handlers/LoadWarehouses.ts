@@ -1,7 +1,4 @@
-import {
-    ApiHandler,
-    createHandlerChainRunnerOptionalParameter,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandler, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
 import { getWarehouses, GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
 import { WarehouseCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -41,10 +38,14 @@ export const chain = [
     DispatchCompleteLoadWarehouses,
 ];
 
-const loadWarehouses = createHandlerChainRunnerOptionalParameter(chain, {
-    search: "",
-    latitude: 0,
-    longitude: 0,
-    pageSize: 5,
-}, "LoadWarehouses");
+const loadWarehouses = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {
+        search: "",
+        latitude: 0,
+        longitude: 0,
+        pageSize: 5,
+    },
+    "LoadWarehouses",
+);
 export default loadWarehouses;

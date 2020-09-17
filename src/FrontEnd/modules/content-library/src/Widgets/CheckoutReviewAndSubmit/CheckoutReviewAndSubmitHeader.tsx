@@ -1,6 +1,11 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { canPlaceOrder, getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import {
+    canPlaceOrder,
+    canSubmitForApprovalOrder,
+    getCartState,
+    getCurrentCartState,
+} from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
@@ -9,6 +14,7 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
 import PlaceOrderButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitPlaceOrderButton";
+import SubmitForApprovalButton from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitSubmitForApprovalButton";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -32,6 +38,7 @@ const mapStateToProps = (state: ApplicationState) => {
         checkoutShippingPageLink: getPageLinkByPageType(state, "CheckoutShippingPage"),
         cart: cartState.value,
         showPlaceOrderButton: canPlaceOrder(cartState.value),
+        showSubmitForApprovalOrder: canSubmitForApprovalOrder(getCurrentCartState(state).value),
         pageTitle: getCurrentPage(state).fields.title,
     };
 };
@@ -49,18 +56,23 @@ export interface CheckoutReviewAndSubmitHeaderStyles {
     buttonsWrapper?: InjectableCss;
     backButton?: ButtonPresentationProps;
     placeOrderButton?: ButtonPresentationProps;
+    submitForApprovalButton?: ButtonPresentationProps;
 }
 
 export const checkoutReviewAndSubmitHeaderStyles: CheckoutReviewAndSubmitHeaderStyles = {
     gridItem: { width: 12 },
-    headingText: { variant: "h2", css: css` margin-bottom: 0; ` },
+    headingText: {
+        variant: "h2",
+        css: css`
+            margin-bottom: 0;
+        `,
+    },
     buttonsWrapper: {
         css: css`
             display: flex;
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
                         position: fixed;
                         left: 0px;
                         bottom: 0px;
@@ -69,33 +81,84 @@ export const checkoutReviewAndSubmitHeaderStyles: CheckoutReviewAndSubmitHeaderS
                         justify-content: center;
                         z-index: ${get(theme, "zIndex.stickyFooter")};
                     `,
-                css` margin-left: 16px; `,
-                css` margin-left: auto; `,
-                css` margin-left: auto; `,
-                css` margin-left: auto; `,
-            ])}
+                    css`
+                        margin-left: 16px;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                ])}
         `,
     },
     backButton: {
         variant: "secondary",
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css` width: 50%; `,
-                css` flex-shrink: 1; `,
-                css` flex-shrink: 1; `,
-                css` flex-shrink: 1; `,
-                css` flex-shrink: 1; `,
-            ],
-            "max")}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 50%;
+                        `,
+                        css`
+                            flex-shrink: 1;
+                        `,
+                        css`
+                            flex-shrink: 1;
+                        `,
+                        css`
+                            flex-shrink: 1;
+                        `,
+                        css`
+                            flex-shrink: 1;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
     placeOrderButton: {
         css: css`
             flex-shrink: 0;
             margin-left: 10px;
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 50%; `, null, null, null, null])}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 50%;
+                        `,
+                        css`
+                            width: unset;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
+    },
+    submitForApprovalButton: {
+        css: css`
+            flex-shrink: 0;
+            margin-left: 10px;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 50%;
+                        `,
+                        css`
+                            width: unset;
+                        `,
+                    ],
+                    "min",
+                )}
         `,
     },
 };
@@ -115,6 +178,7 @@ const CheckoutReviewAndSubmitHeader: FC<Props> = ({
     preloadCheckoutShippingData,
     cart,
     cartId,
+    showSubmitForApprovalOrder,
 }) => {
     const backClickHandler = () => {
         preloadCheckoutShippingData({
@@ -131,9 +195,11 @@ const CheckoutReviewAndSubmitHeader: FC<Props> = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.gridItem}>
-                <Typography {...styles.headingText} as="h1">{pageTitle}</Typography>
-                {cart
-                    && <StyledWrapper {...styles.buttonsWrapper}>
+                <Typography {...styles.headingText} as="h1">
+                    {pageTitle}
+                </Typography>
+                {cart && (
+                    <StyledWrapper {...styles.buttonsWrapper}>
                         <Button
                             {...styles.backButton}
                             onClick={backClickHandler}
@@ -143,8 +209,11 @@ const CheckoutReviewAndSubmitHeader: FC<Props> = ({
                             {translate("Back")}
                         </Button>
                         {showPlaceOrderButton && <PlaceOrderButton styles={styles.placeOrderButton} />}
+                        {showSubmitForApprovalOrder && (
+                            <SubmitForApprovalButton extendedStyles={styles.submitForApprovalButton} />
+                        )}
                     </StyledWrapper>
-                }
+                )}
             </GridItem>
         </GridContainer>
     );

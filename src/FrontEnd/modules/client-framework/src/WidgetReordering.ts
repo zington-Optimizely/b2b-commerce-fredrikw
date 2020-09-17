@@ -35,7 +35,7 @@ export function dragLeaveZone(event: React.DragEvent<HTMLElement>) {
         if (!inZone) {
             placeholder!.style.display = "none";
         }
-    },         100);
+    }, 100);
 }
 
 export function dragWidgetOverZone(event: React.DragEvent<HTMLElement>) {

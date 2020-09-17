@@ -9,8 +9,7 @@ import parse from "html-react-parser";
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
 
-interface Props extends WidgetProps {
-}
+interface Props extends WidgetProps {}
 
 export interface BrandDetailsContentStyles {
     container?: InjectableCss;
@@ -18,7 +17,9 @@ export interface BrandDetailsContentStyles {
 
 export const contentStyles: BrandDetailsContentStyles = {
     container: {
-        css: css` margin: 30px 15px; `,
+        css: css`
+            margin: 30px 15px;
+        `,
     },
 };
 

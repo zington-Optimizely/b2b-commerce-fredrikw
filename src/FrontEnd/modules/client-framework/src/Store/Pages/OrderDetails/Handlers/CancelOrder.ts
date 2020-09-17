@@ -1,4 +1,7 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { updateOrder, UpdateOrderApiParameter } from "@insite/client-framework/Services/OrderService";
 import loadOrderByOrderNumber from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrderByOrderNumber";
 import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
@@ -37,15 +40,12 @@ export const DispatchCompleteCancelOrder: HandlerType = props => {
     props.dispatch({
         type: "Pages/OrderDetails/CompleteCancelOrder",
     });
-    props.dispatch(loadOrderByOrderNumber({ orderNumber: props.apiResult.webOrderNumber || props.apiResult.erpOrderNumber }));
+    props.dispatch(
+        loadOrderByOrderNumber({ orderNumber: props.apiResult.webOrderNumber || props.apiResult.erpOrderNumber }),
+    );
 };
 
-export const chain = [
-    DispatchBeginCancelOrder,
-    PopulateApiParameter,
-    SendDataToApi,
-    DispatchCompleteCancelOrder,
-];
+export const chain = [DispatchBeginCancelOrder, PopulateApiParameter, SendDataToApi, DispatchCompleteCancelOrder];
 
 const cancelOrder = createHandlerChainRunnerOptionalParameter(chain, {}, "CancelOrder");
 export default cancelOrder;

@@ -5,15 +5,16 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps  {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -35,17 +36,29 @@ export interface OrderHistoryDateRangeStyles {
 }
 
 export const dateRangeStyles: OrderHistoryDateRangeStyles = {
-    datePickersWrapper: { css: css` display: flex; ` },
+    datePickersWrapper: {
+        css: css`
+            display: flex;
+        `,
+    },
     fromDate: {
         cssOverrides: {
-            inputSelect: css` width: 100%; `,
-            formField: css` padding-right: 10px; `,
+            inputSelect: css`
+                width: 100%;
+            `,
+            formField: css`
+                padding-right: 10px;
+            `,
         },
     },
     toDate: {
         cssOverrides: {
-            inputSelect: css` width: 100%; `,
-            formField: css` padding-left: 10px; `,
+            inputSelect: css`
+                width: 100%;
+            `,
+            formField: css`
+                padding-left: 10px;
+            `,
         },
         labelProps: {
             color: "common.background",
@@ -55,23 +68,28 @@ export const dateRangeStyles: OrderHistoryDateRangeStyles = {
 
 const styles = dateRangeStyles;
 
-const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = (props) => {
-
+const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = props => {
     const fromDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
-        const loadParameter = { ...props.parameter, fromDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined };
+        const loadParameter = {
+            ...props.parameter,
+            fromDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined,
+        };
         props.updateSearchFields(loadParameter);
     };
 
     const toDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
-        const loadParameter = { ...props.parameter, toDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined };
+        const loadParameter = {
+            ...props.parameter,
+            toDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined,
+        };
         props.updateSearchFields(loadParameter);
     };
 
     // replacing - with / prevents a date in the format "yyyy-mm-dd" from losing a day (doesn't add a time zone that can change the day)
-    const fromDate = props.parameter.fromDate ? new Date(props.parameter.fromDate.replace(/-/g, "\/")) : undefined;
-    const toDate = props.parameter.toDate ? new Date(props.parameter.toDate.replace(/-/g, "\/")) : undefined;
+    const fromDate = props.parameter.fromDate ? new Date(props.parameter.fromDate.replace(/-/g, "/")) : undefined;
+    const toDate = props.parameter.toDate ? new Date(props.parameter.toDate.replace(/-/g, "/")) : undefined;
 
-    return(
+    return (
         <SearchFieldWrapper extendedStyles={styles.searchFieldWrapper}>
             <StyledWrapper {...styles.datePickersWrapper} data-test-selector="tst_orderHistory_filterDateRange">
                 <DatePicker

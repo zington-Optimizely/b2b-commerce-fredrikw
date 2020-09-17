@@ -77,7 +77,9 @@ export const shareEntityButtonStyles: ShareEntityButtonStyles = {
         variant: "secondary",
     },
     sendButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
 };
 
@@ -116,10 +118,10 @@ const ShareEntityButton: React.FC<Props> = ({
     const emailFieldMessage = translate("Enter a valid email address");
     const checkForErrors = () => {
         // Regular expression to validate email address
-        const regexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
-        const localEmailToError = !emailTo ? requiredFieldMessage : (regexp.test(emailFrom) ? "" : emailFieldMessage);
+        const regexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+        const localEmailToError = !emailTo ? requiredFieldMessage : regexp.test(emailFrom) ? "" : emailFieldMessage;
         setEmailToError(localEmailToError);
-        const localEmailFromError = !emailFrom ? requiredFieldMessage : (regexp.test(emailFrom) ? "" : emailFieldMessage);
+        const localEmailFromError = !emailFrom ? requiredFieldMessage : regexp.test(emailFrom) ? "" : emailFieldMessage;
         setEmailFromError(localEmailFromError);
 
         return !!(localEmailToError || localEmailFromError);
@@ -183,60 +185,87 @@ const ShareEntityButton: React.FC<Props> = ({
         });
     };
 
-    return <>
-        {variant === "clickable"
-            && <Clickable {...styles.clickable} onClick={emailButtonClickHandler} data-test-selector="invoiceDetails_email">{translate("Email")}</Clickable>
-        }
-        {variant === "button"
-            && <Button {...styles.button} onClick={emailButtonClickHandler} data-test-selector="invoiceDetails_email">{translate("Email")}</Button>
-        }
-        <Modal
-            {...styles.modal}
-            headline={`${translate(`Email ${entityName}`)} #${entityId}`}
-            isOpen={modalIsOpen}
-            handleClose={modalCloseHandler}>
-            <GridContainer {...styles.container} data-test-selector="shareEntity_modal">
-                <GridItem {...styles.emailToGridItem}>
-                    <TextField
-                        label={`${translate("Email To")}*`}
-                        value={emailTo}
-                        error={emailToError}
-                        onChange={emailToChangeHandler}
-                        data-test-selector="shareEntity_emailTo"
-                        {...styles.emailToTextField} />
-                </GridItem>
-                <GridItem {...styles.emailFromGridItem}>
-                    <TextField
-                        label={`${translate("Email From")}*`}
-                        value={emailFrom}
-                        error={emailFromError}
-                        onChange={emailFromChangeHandler}
-                        data-test-selector="shareEntity_emailFrom"
-                        {...styles.emailFromTextField} />
-                </GridItem>
-                <GridItem {...styles.subjectGridItem}>
-                    <TextField
-                        label={translate("Subject")}
-                        value={subject}
-                        onChange={subjectChangeHandler}
-                        data-test-selector="shareEntity_subject"
-                        {...styles.subjectTextField} />
-                </GridItem>
-                <GridItem {...styles.messageGridItem}>
-                    <TextArea
-                        label={translate("Message")}
-                        value={message}
-                        onChange={messageChangeHandler}
-                        data-test-selector="shareEntity_message"
-                        {...styles.messageTextArea} />
-                </GridItem>
-            </GridContainer>
-            <StyledWrapper {...styles.buttonsWrapper}>
-                <Button {...styles.cancelButton} onClick={modalCloseHandler} data-test-selector="shareEntity_cancel">{translate("Cancel")}</Button>
-                <Button {...styles.sendButton} onClick={sendButtonClickHandler} data-test-selector="shareEntity_submit">{translate("Send")}</Button>
-            </StyledWrapper>
-        </Modal>
-    </>;
+    return (
+        <>
+            {variant === "clickable" && (
+                <Clickable
+                    {...styles.clickable}
+                    onClick={emailButtonClickHandler}
+                    data-test-selector="invoiceDetails_email"
+                >
+                    {translate("Email")}
+                </Clickable>
+            )}
+            {variant === "button" && (
+                <Button {...styles.button} onClick={emailButtonClickHandler} data-test-selector="invoiceDetails_email">
+                    {translate("Email")}
+                </Button>
+            )}
+            <Modal
+                {...styles.modal}
+                headline={`${translate(`Email ${entityName}`)} #${entityId}`}
+                isOpen={modalIsOpen}
+                handleClose={modalCloseHandler}
+            >
+                <GridContainer {...styles.container} data-test-selector="shareEntity_modal">
+                    <GridItem {...styles.emailToGridItem}>
+                        <TextField
+                            label={`${translate("Email To")}*`}
+                            value={emailTo}
+                            error={emailToError}
+                            onChange={emailToChangeHandler}
+                            data-test-selector="shareEntity_emailTo"
+                            {...styles.emailToTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.emailFromGridItem}>
+                        <TextField
+                            label={`${translate("Email From")}*`}
+                            value={emailFrom}
+                            error={emailFromError}
+                            onChange={emailFromChangeHandler}
+                            data-test-selector="shareEntity_emailFrom"
+                            {...styles.emailFromTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.subjectGridItem}>
+                        <TextField
+                            label={translate("Subject")}
+                            value={subject}
+                            onChange={subjectChangeHandler}
+                            data-test-selector="shareEntity_subject"
+                            {...styles.subjectTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.messageGridItem}>
+                        <TextArea
+                            label={translate("Message")}
+                            value={message}
+                            onChange={messageChangeHandler}
+                            data-test-selector="shareEntity_message"
+                            {...styles.messageTextArea}
+                        />
+                    </GridItem>
+                </GridContainer>
+                <StyledWrapper {...styles.buttonsWrapper}>
+                    <Button
+                        {...styles.cancelButton}
+                        onClick={modalCloseHandler}
+                        data-test-selector="shareEntity_cancel"
+                    >
+                        {translate("Cancel")}
+                    </Button>
+                    <Button
+                        {...styles.sendButton}
+                        onClick={sendButtonClickHandler}
+                        data-test-selector="shareEntity_submit"
+                    >
+                        {translate("Send")}
+                    </Button>
+                </StyledWrapper>
+            </Modal>
+        </>
+    );
 };
 
 export default connect(null, mapDispatchToProps)(ShareEntityButton);

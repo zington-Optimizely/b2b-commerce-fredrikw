@@ -11,6 +11,13 @@ export function getInvoicesDataView(state: ApplicationState, getInvoicesParamete
     return getDataView(state.data.invoices, getInvoicesParameter);
 }
 
-export const InvoicesDataViewContext = createContext<ReturnType<typeof getInvoicesDataView>>({ value: undefined, isLoading: false });
+export const InvoicesDataViewContext = createContext<ReturnType<typeof getInvoicesDataView>>({
+    value: undefined,
+    isLoading: false,
+});
 
-export const InvoiceStateContext = createContext<ReturnType<typeof getInvoiceState>>({ value: undefined, isLoading: false, id: undefined });
+export const InvoiceStateContext = createContext<ReturnType<typeof getInvoiceState>>({
+    value: undefined,
+    isLoading: false,
+    id: undefined,
+});

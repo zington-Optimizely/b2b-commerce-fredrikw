@@ -1,8 +1,5 @@
 import { siteHoleMessenger } from "@insite/shell/Components/Shell/SiteHole";
-import {
-    connectRouter,
-    routerMiddleware,
-} from "connected-react-router";
+import { connectRouter, routerMiddleware } from "connected-react-router";
 import { History } from "history";
 import {
     applyMiddleware,
@@ -21,9 +18,11 @@ const reducers = StoreModule.reducers;
 
 export function configureStore(history: History, initialState?: ShellState) {
     // Build middleware. These are functions that can process the actions before they reach the store.
-    const windowIfDefined = typeof window === "undefined" ? null : window as any;
+    const windowIfDefined = typeof window === "undefined" ? null : (window as any);
     // If devTools is installed, connect to it
-    const devToolsExtension = windowIfDefined?.__REDUX_DEVTOOLS_EXTENSION__ as (options?: { trace?: boolean }) => StoreEnhancer;
+    const devToolsExtension = windowIfDefined?.__REDUX_DEVTOOLS_EXTENSION__ as (options?: {
+        trace?: boolean;
+    }) => StoreEnhancer;
     const createStoreWithMiddleware = compose<StoreEnhancerStoreCreator<ShellState>>(
         applyMiddleware(siteHoleMessenger, reduxThunk, routerMiddleware(history)),
         devToolsExtension ? devToolsExtension({ trace: true }) : <S>(next: StoreEnhancerStoreCreator<S>) => next,

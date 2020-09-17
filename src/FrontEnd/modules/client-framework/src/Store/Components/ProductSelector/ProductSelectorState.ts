@@ -5,11 +5,11 @@ import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/Api
 export default interface ProductSelectorState {
     selectedProductInfo?: ProductInfo;
     isSearching: boolean;
-    searchResults?: ProductAutocompleteItemModel[],
+    searchResults?: ProductAutocompleteItemModel[];
     errorType?: string;
     variantModalIsOpen: boolean;
     variantModalProductId?: string;
-    variantSelection: SafeDictionary<string>
+    variantSelection: SafeDictionary<string>;
     variantSelectionCompleted: boolean;
     selectedVariantProductInfo?: ProductInfo;
 }

@@ -1,10 +1,10 @@
 /* eslint-disable */
-const fse = require('fs-extra');
-const path = require('path');
-const glob = require('glob');
+const fse = require("fs-extra");
+const path = require("path");
+const glob = require("glob");
 
-const srcPath = 'src';
-const buildPath = 'build';
+const srcPath = "src";
+const buildPath = "build";
 
 async function copy(sourcePath, destinationPath) {
     try {
@@ -34,9 +34,9 @@ function copyTypescriptDefinitions() {
     tsFiles.forEach(copyFromSrc);
 }
 
-copyFromRoot('package-lock.json');
-copy('CHANGELOG.md', 'build/CHANGELOG.md')
-copy('npmREADME.md', 'build/README.md')
-copy('npmpackage.json', 'build/package.json')
-copyFromSrc('Icon/assets');
+copyFromRoot("package-lock.json");
+copy("CHANGELOG.md", "build/CHANGELOG.md");
+copy("npmREADME.md", "build/README.md");
+copy("npmpackage.json", "build/package.json");
+copyFromSrc("Icon/assets");
 copyTypescriptDefinitions();

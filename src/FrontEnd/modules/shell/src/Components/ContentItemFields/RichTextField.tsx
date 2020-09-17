@@ -10,7 +10,6 @@ import * as React from "react";
 type Props = ContentItemFieldProps<string, RichTextFieldDefinition>;
 
 export default class RichTextField extends React.Component<Props> {
-
     onChange = (model: string) => {
         this.props.updateField(this.props.fieldDefinition.name, model);
     };

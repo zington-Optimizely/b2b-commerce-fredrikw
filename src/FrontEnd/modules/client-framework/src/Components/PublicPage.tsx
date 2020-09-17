@@ -77,34 +77,45 @@ class PublicPage extends React.Component<Props> {
     }
 
     wrapContent(content: ReturnType<typeof createPageElement>) {
-        const { page, shellContext } = this.props;
-        switch (page.type) {
-        case "Header":
-        case "Footer":
-            return <>{content}</>;
+        const {
+            page: {
+                type,
+                fields: { hideHeader, hideBreadcrumbs, hideFooter },
+            },
+            shellContext: { isInShell },
+        } = this.props;
+
+        switch (type) {
+            case "Header":
+            case "Footer":
+            case "VariantRootPage":
+                return <>{content}</>;
         }
 
-        const { isInShell } = shellContext;
+        /** Mobile pages only need the content. */
+        const enablePeripheralContent = !type.startsWith("Mobile/");
 
-        return <div data-test-selector={`page_${this.props.page?.type}`}>
-                {!page.fields.hideHeader
-                    && <ShellContext.Provider value={{ isInShell }}>
+        return (
+            <div data-test-selector={`page_${type}`}>
+                {enablePeripheralContent && !hideHeader && (
+                    <ShellContext.Provider value={{ isInShell }}>
                         <Header />
                     </ShellContext.Provider>
-                }
-                {!page.fields.hideBreadcrumbs
-                    && <Page as="div">
+                )}
+                {enablePeripheralContent && !hideBreadcrumbs && (
+                    <Page as="div">
                         <PageBreadcrumbs />
                     </Page>
-                }
+                )}
                 {content}
-                <ErrorModal/>
-                {!page.fields.hideFooter
-                    && <ShellContext.Provider value={{ isInShell }}>
+                <ErrorModal />
+                {enablePeripheralContent && !hideFooter && (
+                    <ShellContext.Provider value={{ isInShell }}>
                         <Footer />
                     </ShellContext.Provider>
-                }
-        </div>;
+                )}
+            </div>
+        );
     }
 
     render() {

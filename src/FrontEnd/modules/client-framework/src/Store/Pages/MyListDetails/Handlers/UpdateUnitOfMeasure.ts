@@ -1,4 +1,9 @@
-import { createHandlerChainRunner, Handler, HasOnSuccess, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnSuccess,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { updateWishListLine as updateWishListLineApi } from "@insite/client-framework/Services/WishListService";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
@@ -54,7 +59,13 @@ export const ReloadIfProductsHaveSameUnitOfMeasure: HandlerType = props => {
         return;
     }
 
-    if (wishListLinesDataView.value.find(o => o.unitOfMeasure === props.parameter.unitOfMeasure && o.productId === props.updatedWishListLine.productId)) {
+    if (
+        wishListLinesDataView.value.find(
+            o =>
+                o.unitOfMeasure === props.parameter.unitOfMeasure &&
+                o.productId === props.updatedWishListLine.productId,
+        )
+    ) {
         // two products now have the same unit of measure, one will get deleted so reload all
         props.reloadAllLines = true;
         props.dispatch({
@@ -69,14 +80,19 @@ export const UpdatePrice: HandlerType = async props => {
         return;
     }
 
-    const awaitableLoadRealTimePricing = makeHandlerChainAwaitable<Parameters<typeof loadRealTimePricing>[0], RealTimePricingModel>(loadRealTimePricing);
+    const awaitableLoadRealTimePricing = makeHandlerChainAwaitable<
+        Parameters<typeof loadRealTimePricing>[0],
+        RealTimePricingModel
+    >(loadRealTimePricing);
 
     const parameter = {
-        productPriceParameters: [{
-            productId: props.apiResult.productId,
-            unitOfMeasure: props.apiResult.unitOfMeasure,
-            qtyOrdered: props.apiResult.qtyOrdered,
-        }],
+        productPriceParameters: [
+            {
+                productId: props.apiResult.productId,
+                unitOfMeasure: props.apiResult.unitOfMeasure,
+                qtyOrdered: props.apiResult.qtyOrdered,
+            },
+        ],
     };
     const realTimePricingModel = await awaitableLoadRealTimePricing(parameter)(props.dispatch, props.getState);
     props.pricing = realTimePricingModel.realTimePricingResults?.find(o => o.productId === props.apiResult.productId);
@@ -87,10 +103,18 @@ export const UpdateInventory: HandlerType = async props => {
         return;
     }
 
-    const awaitableLoadRealTimeInventory = makeHandlerChainAwaitable<Parameters<typeof loadRealTimeInventory>[0], RealTimeInventoryModel>(loadRealTimeInventory);
+    const awaitableLoadRealTimeInventory = makeHandlerChainAwaitable<
+        Parameters<typeof loadRealTimeInventory>[0],
+        RealTimeInventoryModel
+    >(loadRealTimeInventory);
 
-    const realTimeInventoryModel = await awaitableLoadRealTimeInventory({ productIds: [props.apiResult.productId] })(props.dispatch, props.getState);
-    props.inventory = realTimeInventoryModel.realTimeInventoryResults?.find(o => o.productId === props.apiResult.productId);
+    const realTimeInventoryModel = await awaitableLoadRealTimeInventory({ productIds: [props.apiResult.productId] })(
+        props.dispatch,
+        props.getState,
+    );
+    props.inventory = realTimeInventoryModel.realTimeInventoryResults?.find(
+        o => o.productId === props.apiResult.productId,
+    );
 };
 
 export const DispatchUpdateWishListLine: HandlerType = props => {

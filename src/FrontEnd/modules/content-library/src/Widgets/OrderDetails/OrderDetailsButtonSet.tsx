@@ -41,10 +41,10 @@ const enum buttons {
 
 interface ButtonMapper {
     [key: string]: {
-        button: any,
-        clickable: any,
-        showButtonOnTablet?: boolean,
-    }
+        button: any;
+        clickable: any;
+        showButtonOnTablet?: boolean;
+    };
 }
 
 interface OwnProps extends WidgetProps {
@@ -55,7 +55,7 @@ interface OwnProps extends WidgetProps {
 
 interface ButtonModel {
     fields: {
-        name: string,
+        name: string;
     };
 }
 
@@ -140,7 +140,9 @@ export const orderDetailsButtonSetStyles: OrderDetailsButtonSetStyles = {
         `,
     },
     buttonWrapper: {
-        css: css` margin-left: 20px; `,
+        css: css`
+            margin-left: 20px;
+        `,
     },
     cancelButton: {
         variant: "secondary",
@@ -159,11 +161,15 @@ export const orderDetailsButtonSetStyles: OrderDetailsButtonSetStyles = {
     },
     spinner: {
         size: 22,
-        css: css` margin: 8px 50px 0 34px; `,
+        css: css`
+            margin: 8px 50px 0 34px;
+        `,
     },
     reorderClickableSpinner: {
         size: 22,
-        css: css` margin: 10px 0 5px 15px; `,
+        css: css`
+            margin: 10px 0 5px 15px;
+        `,
     },
 };
 
@@ -209,10 +215,15 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                     return;
                 }
                 toasterContext.addToast({
-                    children: <>
-                        <OrderDetailPageTypeLink title={order.webOrderNumber} orderNumber={order.webOrderNumber || order.erpOrderNumber} />
-                        &nbsp;{translate("added to cart")}
-                    </>,
+                    children: (
+                        <>
+                            <OrderDetailPageTypeLink
+                                title={order.webOrderNumber}
+                                orderNumber={order.webOrderNumber || order.erpOrderNumber}
+                            />
+                            &nbsp;{translate("added to cart")}
+                        </>
+                    ),
                     messageType: "success",
                     timeoutLength: 6000,
                 });
@@ -227,50 +238,93 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     const buttonList: ButtonMapper = {};
     if (order.canAddToCart && canCancel) {
         buttonList[buttons.cancel] = {
-            button: <Button {...styles.cancelButton} onClick={onClickCancel}>{translate("Cancel")}</Button>,
-            clickable: <Clickable {...styles.cancelClickable} onClick={onClickCancel}>{translate("Cancel")}</Clickable>,
+            button: (
+                <Button {...styles.cancelButton} onClick={onClickCancel}>
+                    {translate("Cancel")}
+                </Button>
+            ),
+            clickable: (
+                <Clickable {...styles.cancelClickable} onClick={onClickCancel}>
+                    {translate("Cancel")}
+                </Clickable>
+            ),
         };
     }
 
     if (order.canAddToCart && canReorderItems) {
         buttonList[buttons.reorder] = {
-            button: <>
-                {!isReordering
-                    && <Button {...styles.reorderButton} onClick={onClickReorder} disabled={isReordering}>{translate("Reorder")}</Button>
-                }
-                {isReordering
-                    && <LoadingSpinner {...styles.spinner} />
-                }
-            </>,
-            clickable: <>
-                {!isReordering
-                    && <Clickable {...styles.reorderClickable} onClick={onClickReorder} disabled={isReordering}>{translate("Reorder")}</Clickable>
-                }
-                {isReordering
-                    && <LoadingSpinner {...styles.reorderClickableSpinner} />
-                }
-            </>,
+            button: (
+                <>
+                    {!isReordering && (
+                        <Button {...styles.reorderButton} onClick={onClickReorder} disabled={isReordering}>
+                            {translate("Reorder")}
+                        </Button>
+                    )}
+                    {isReordering && <LoadingSpinner {...styles.spinner} />}
+                </>
+            ),
+            clickable: (
+                <>
+                    {!isReordering && (
+                        <Clickable {...styles.reorderClickable} onClick={onClickReorder} disabled={isReordering}>
+                            {translate("Reorder")}
+                        </Clickable>
+                    )}
+                    {isReordering && <LoadingSpinner {...styles.reorderClickableSpinner} />}
+                </>
+            ),
             showButtonOnTablet: true,
         };
     }
 
     if (allowRma && rmaLink) {
         buttonList[buttons.rma] = {
-            button: <Button {...styles.rmaButton} onClick={() => onClickRma(rmaLink.url)} data-test-selector="orderDetails_returnRequestButton">
-                {translate("Return Request")}
-            </Button>,
-            clickable: <Clickable {...styles.rmaClickable} onClick={() => onClickRma(rmaLink.url)} >{translate("Return Request")}</Clickable>,
+            button: (
+                <Button
+                    {...styles.rmaButton}
+                    onClick={() => onClickRma(rmaLink.url)}
+                    data-test-selector="orderDetails_returnRequestButton"
+                >
+                    {translate("Return Request")}
+                </Button>
+            ),
+            clickable: (
+                <Clickable {...styles.rmaClickable} onClick={() => onClickRma(rmaLink.url)}>
+                    {translate("Return Request")}
+                </Clickable>
+            ),
         };
     }
 
     buttonList[buttons.email] = {
-        button: <ShareEntityButton entityId={order.webOrderNumber} entityName="Order" extendedStyles={styles.shareEntityButtonStyles} />,
-        clickable: <ShareEntityButton entityId={order.webOrderNumber} entityName="Order" variant="clickable" extendedStyles={styles.shareEntityButtonStyles} />,
+        button: (
+            <ShareEntityButton
+                entityId={order.webOrderNumber}
+                entityName="Order"
+                extendedStyles={styles.shareEntityButtonStyles}
+            />
+        ),
+        clickable: (
+            <ShareEntityButton
+                entityId={order.webOrderNumber}
+                entityName="Order"
+                variant="clickable"
+                extendedStyles={styles.shareEntityButtonStyles}
+            />
+        ),
     };
 
     buttonList[buttons.print] = {
-        button: <Button {...styles.printButton} onClick={onClickPrint}>{translate("Print")}</Button>,
-        clickable: <Clickable {...styles.printClickable} onClick={onClickPrint}>{translate("Print")}</Clickable>,
+        button: (
+            <Button {...styles.printButton} onClick={onClickPrint}>
+                {translate("Print")}
+            </Button>
+        ),
+        clickable: (
+            <Clickable {...styles.printClickable} onClick={onClickPrint}>
+                {translate("Print")}
+            </Clickable>
+        ),
     };
 
     const buttonsToRender = fields.buttonsOrder.map(button => buttonList[button.fields.name]).filter(button => button);
@@ -278,39 +332,39 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     return (
         <StyledWrapper {...styles.buttonsWrapper}>
             <Hidden {...styles.buttonHidden}>
-                {buttonsToRender.map((button, index) =>
+                {buttonsToRender.map((button, index) => (
                     // eslint-disable-next-line react/no-array-index-key
                     <StyledWrapper {...styles.buttonWrapper} key={index}>
                         {button.button}
-                    </StyledWrapper>)
-                }
+                    </StyledWrapper>
+                ))}
             </Hidden>
             <Hidden {...styles.tabletButtonHidden}>
-                {buttonsToRender.filter(o => o.showButtonOnTablet).map((button, index) =>
-                    // eslint-disable-next-line react/no-array-index-key
-                    <StyledWrapper {...styles.buttonWrapper} key={index}>
-                        {button.button}
-                    </StyledWrapper>)
-                }
+                {buttonsToRender
+                    .filter(o => o.showButtonOnTablet)
+                    .map((button, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <StyledWrapper {...styles.buttonWrapper} key={index}>
+                            {button.button}
+                        </StyledWrapper>
+                    ))}
             </Hidden>
             <Hidden {...styles.tabletMenuHidden}>
                 <OverflowMenu position="end" {...styles.overflowMenu}>
-                    {buttonsToRender.filter(o => !o.showButtonOnTablet).map((button, index) =>
-                        // eslint-disable-next-line react/no-array-index-key
-                        <div key={index}>
-                            {button.clickable}
-                        </div>)
-                    }
+                    {buttonsToRender
+                        .filter(o => !o.showButtonOnTablet)
+                        .map((button, index) => (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <div key={index}>{button.clickable}</div>
+                        ))}
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.menuHidden}>
                 <OverflowMenu position="end" {...styles.overflowMenu}>
-                    {buttonsToRender.map((button, index) =>
+                    {buttonsToRender.map((button, index) => (
                         // eslint-disable-next-line react/no-array-index-key
-                        <div key={index}>
-                            {button.clickable}
-                        </div>)
-                    }
+                        <div key={index}>{button.clickable}</div>
+                    ))}
                 </OverflowMenu>
             </Hidden>
         </StyledWrapper>

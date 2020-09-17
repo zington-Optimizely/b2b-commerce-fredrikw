@@ -74,17 +74,25 @@ export interface OrderUploadStyles {
 
 export const orderUploadStyles: OrderUploadStyles = {
     mainWrapper: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     orderCancellationSuccessfulText: {
         color: "warning",
-        css: css` line-height: 25px; `,
+        css: css`
+            line-height: 25px;
+        `,
     },
     uploadLinkTooltipText: {
-        css: css` margin-bottom: 15px; `,
+        css: css`
+            margin-bottom: 15px;
+        `,
     },
     downloadTemplateButton: {
-        css: css` margin-bottom: 15px; `,
+        css: css`
+            margin-bottom: 15px;
+        `,
         variant: "tertiary",
     },
     includeFirstRowCheckbox: {
@@ -100,7 +108,9 @@ export const orderUploadStyles: OrderUploadStyles = {
     },
     cancelUploadButton: {
         variant: "secondary",
-        css: css` float: right; `,
+        css: css`
+            float: right;
+        `,
     },
     uploadFileButton: {
         css: css`
@@ -110,7 +120,9 @@ export const orderUploadStyles: OrderUploadStyles = {
     },
     spinner: {
         size: 22,
-        css: css` margin-right: 8px; `,
+        css: css`
+            margin-right: 8px;
+        `,
     },
     uploadingButtonLabel: {
         css: css`
@@ -159,26 +171,19 @@ const OrderUpload: FC<Props> = ({
     const [file, setFile] = useState<any>(null);
     const [incorrectFileExtension, setIncorrectFileExtension] = React.useState(false);
     const [firstRowHeading, setFirstRowHeading] = React.useState(true);
-    const firstRowHeadingChangeHandler: CheckboxProps["onChange"] = (_, value) => { setFirstRowHeading(value); };
+    const firstRowHeadingChangeHandler: CheckboxProps["onChange"] = (_, value) => {
+        setFirstRowHeading(value);
+    };
 
-    React.useEffect(
-        () => batchGetProducts(),
-        [uploadedItems],
-    );
+    React.useEffect(() => batchGetProducts(), [uploadedItems]);
 
-    React.useEffect(
-        () => checkCompletion(),
-        [productsProcessed],
-    );
+    React.useEffect(() => checkCompletion(), [productsProcessed]);
 
-    React.useEffect(
-        () => {
-            if (isBadFile || uploadLimitExceeded) {
-                setErrorsModalIsOpen({ errorsModalIsOpen: true });
-            }
-        },
-        [isBadFile, uploadLimitExceeded],
-    );
+    React.useEffect(() => {
+        if (isBadFile || uploadLimitExceeded) {
+            setErrorsModalIsOpen({ errorsModalIsOpen: true });
+        }
+    }, [isBadFile, uploadLimitExceeded]);
 
     const downloadTemplateHandler = () => {
         window.open(`${window.location.origin}${templateUrl}`);
@@ -189,7 +194,9 @@ const OrderUpload: FC<Props> = ({
         setIsUploading({ isUploading: false });
         cleanupUploadData();
         setFile(null);
-        if (fileUploadRef.current?.value) fileUploadRef.current.value = "";
+        if (fileUploadRef.current?.value) {
+            fileUploadRef.current.value = "";
+        }
         setFirstRowHeading(false);
     };
 
@@ -230,21 +237,18 @@ const OrderUpload: FC<Props> = ({
         batchLoadProducts({ extendedNames, firstRowHeading, checkInventory });
     };
 
-    const checkCompletion = React.useCallback(
-        () => {
-            if (!productsProcessed || uploadCancelled) {
-                return;
-            }
+    const checkCompletion = React.useCallback(() => {
+        if (!productsProcessed || uploadCancelled) {
+            return;
+        }
 
-            if (uploadedItems.length === products.length && rowErrors.length === 0) {
-                uploadProducts();
-            } else {
-                setIsUploading({ isUploading: false });
-                setErrorsModalIsOpen({ errorsModalIsOpen: true });
-            }
-        },
-        [productsProcessed, uploadCancelled, uploadedItems, products, rowErrors],
-    );
+        if (uploadedItems.length === products.length && rowErrors.length === 0) {
+            uploadProducts();
+        } else {
+            setIsUploading({ isUploading: false });
+            setErrorsModalIsOpen({ errorsModalIsOpen: true });
+        }
+    }, [productsProcessed, uploadCancelled, uploadedItems, products, rowErrors]);
 
     const uploadProducts = () => {
         setAllowCancel({ allowCancel: false });
@@ -252,14 +256,11 @@ const OrderUpload: FC<Props> = ({
         onUploadingSuccess();
     };
 
-    const onUploadingSuccess = React.useCallback(
-        () => {
-            setIsUploading({ isUploading: false });
-            cleanupUploadData();
-            toasterContext.addToast({ body: `${products.length} ${translate("items uploaded")}`, messageType: "success" });
-        },
-        [products],
-    );
+    const onUploadingSuccess = React.useCallback(() => {
+        setIsUploading({ isUploading: false });
+        cleanupUploadData();
+        toasterContext.addToast({ body: `${products.length} ${translate("items uploaded")}`, messageType: "success" });
+    }, [products]);
 
     React.useEffect(() => {
         if (continueUpload) {
@@ -286,11 +287,17 @@ const OrderUpload: FC<Props> = ({
 
     return (
         <StyledWrapper {...styles.mainWrapper}>
-            {uploadCancelled
-                && <Typography as="p" {...styles.orderCancellationSuccessfulText}>{siteMessage("OrderUpload_CancellationSuccessful")}</Typography>
-            }
-            <Typography as="p" {...styles.uploadLinkTooltipText}>{descriptionText}</Typography>
-            <Button {...styles.downloadTemplateButton} onClick={downloadTemplateHandler}>{translate("Download Template")}</Button>
+            {uploadCancelled && (
+                <Typography as="p" {...styles.orderCancellationSuccessfulText}>
+                    {siteMessage("OrderUpload_CancellationSuccessful")}
+                </Typography>
+            )}
+            <Typography as="p" {...styles.uploadLinkTooltipText}>
+                {descriptionText}
+            </Typography>
+            <Button {...styles.downloadTemplateButton} onClick={downloadTemplateHandler}>
+                {translate("Download Template")}
+            </Button>
             <FileUpload
                 {...styles.fileUploader}
                 inputRef={fileUploadRef}
@@ -302,19 +309,28 @@ const OrderUpload: FC<Props> = ({
                 onFileChange={fileChangeHandler}
                 uid="orderUploadFileUpload"
             />
-            <Checkbox {...styles.includeFirstRowCheckbox} onChange={firstRowHeadingChangeHandler} checked={firstRowHeading} uid="includeHeading">
+            <Checkbox
+                {...styles.includeFirstRowCheckbox}
+                onChange={firstRowHeadingChangeHandler}
+                checked={firstRowHeading}
+                uid="includeHeading"
+            >
                 {translate("Include First Row Column Heading")}
             </Checkbox>
             <Button {...styles.uploadFileButton} disabled={!file || isUploading} onClick={uploadFileHandler}>
-                {isUploading
-                    && <>
+                {isUploading && (
+                    <>
                         <LoadingSpinner {...styles.spinner} />
                         <Typography {...styles.uploadingButtonLabel}>{translate("Uploading")}</Typography>
-                    </>}
-                {!isUploading
-                    && <Typography {...styles.uploadFileButtonLabel}>{translate("Upload File")}</Typography>}
+                    </>
+                )}
+                {!isUploading && <Typography {...styles.uploadFileButtonLabel}>{translate("Upload File")}</Typography>}
             </Button>
-            <Button {...styles.cancelUploadButton} onClick={cancelUploadingHandler} disabled={!isUploading || !allowCancel || uploadCancelled}>
+            <Button
+                {...styles.cancelUploadButton}
+                onClick={cancelUploadingHandler}
+                disabled={!isUploading || !allowCancel || uploadCancelled}
+            >
                 {translate("Cancel Upload")}
             </Button>
         </StyledWrapper>

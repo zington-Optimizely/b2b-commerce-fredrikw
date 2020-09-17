@@ -13,7 +13,10 @@ const initialState: OrderHistoryState = {
 };
 
 const reducer = {
-    "Pages/OrderHistory/UpdateSearchFields": (draft: Draft<OrderHistoryState>, action: { parameter: GetOrdersApiParameter & UpdateSearchFieldsType; }) => {
+    "Pages/OrderHistory/UpdateSearchFields": (
+        draft: Draft<OrderHistoryState>,
+        action: { parameter: GetOrdersApiParameter & UpdateSearchFieldsType },
+    ) => {
         const { type } = action.parameter;
         delete action.parameter.type;
         if (type === "Replace") {
@@ -34,8 +37,12 @@ const reducer = {
 
             for (const key in action.parameter) {
                 // go back to page 1 if any other parameters changed
-                if (draft.getOrdersParameter.page && draft.getOrdersParameter.page > 1
-                    && key !== "page" && key !== "pageSize") {
+                if (
+                    draft.getOrdersParameter.page &&
+                    draft.getOrdersParameter.page > 1 &&
+                    key !== "page" &&
+                    key !== "pageSize"
+                ) {
                     draft.getOrdersParameter.page = 1;
                 }
             }
@@ -48,7 +55,7 @@ const reducer = {
         draft.isReordering[action.orderNumber] = true;
     },
     "Pages/OrderHistory/CompleteReorder": (draft: Draft<OrderHistoryState>, action: { orderNumber: string }) => {
-        draft.isReordering[action.orderNumber] = false;
+        delete draft.isReordering[action.orderNumber];
     },
     "Pages/OrderHistory/ToggleFiltersOpen": (draft: Draft<OrderHistoryState>) => {
         draft.filtersOpen = !draft.filtersOpen;

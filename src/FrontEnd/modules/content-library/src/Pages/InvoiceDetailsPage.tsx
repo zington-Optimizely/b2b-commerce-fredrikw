@@ -20,11 +20,11 @@ const mapStateToProps = (state: ApplicationState) => {
         invoiceNumber = parsedQuery.invoiceNumber;
     }
 
-    return ({
+    return {
         invoiceNumber,
         invoiceState: getInvoiceState(state, invoiceNumber),
         shouldLoadOrderStatusMappings: !getOrderStatusMappingDataView(state).value,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -41,11 +41,13 @@ class InvoiceDetailsPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <InvoiceStateContext.Provider value={this.props.invoiceState}>
-                <Zone contentId={this.props.id} zoneName="Content" />
-            </InvoiceStateContext.Provider>
-        </Page>;
+        return (
+            <Page>
+                <InvoiceStateContext.Provider value={this.props.invoiceState}>
+                    <Zone contentId={this.props.id} zoneName="Content" />
+                </InvoiceStateContext.Provider>
+            </Page>
+        );
     }
 }
 

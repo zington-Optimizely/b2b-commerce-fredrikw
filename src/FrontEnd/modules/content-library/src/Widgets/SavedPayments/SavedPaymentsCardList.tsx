@@ -70,30 +70,46 @@ export const cardListStyles: SavedPaymentsCardListStyles = {
     titleText: {
         variant: "h3",
         as: "h2",
-        css: css` margin-bottom: 0; `,
+        css: css`
+            margin-bottom: 0;
+        `,
     },
     sortByGridItem: { width: [12, 12, 7, 7, 7] },
     sortBySelect: {
         labelPosition: "left",
         labelProps: {
-            css: css` width: auto; `,
+            css: css`
+                width: auto;
+            `,
         },
         cssOverrides: {
             formField: css`
                 margin-bottom: 1rem;
                 ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
-                ])}
+                    breakpointMediaQueries(theme, [
+                        css`
+                            justify-content: flex-start;
+                        `,
+                        css`
+                            justify-content: flex-start;
+                        `,
+                        css`
+                            justify-content: flex-end;
+                        `,
+                        css`
+                            justify-content: flex-end;
+                        `,
+                        css`
+                            justify-content: flex-end;
+                        `,
+                    ])}
             `,
         },
     },
     cardHeaderWrapper: {
-        css: css` display: flex; `,
+        css: css`
+            display: flex;
+        `,
     },
     cardTypeImage: {
         imgProps: {
@@ -110,26 +126,38 @@ export const cardListStyles: SavedPaymentsCardListStyles = {
     },
     leftColumnGridItem: {
         width: [6, 6, 4, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     nameOnCardLabelText: {
         weight: "bold",
-        css: css` margin-bottom: 4px; `,
+        css: css`
+            margin-bottom: 4px;
+        `,
     },
     nameOnCardText: {
-        css: css` margin-bottom: 20px; `,
+        css: css`
+            margin-bottom: 20px;
+        `,
     },
     expirationLabelText: {
         weight: "bold",
-        css: css` margin-bottom: 4px; `,
+        css: css`
+            margin-bottom: 4px;
+        `,
     },
     centerColumnGridItem: {
         width: [6, 6, 4, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     billingAddressLabelText: {
         weight: "bold",
-        css: css` margin-bottom: 4px; `,
+        css: css`
+            margin-bottom: 4px;
+        `,
     },
     billingAddressText: {
         css: css`
@@ -145,7 +173,9 @@ export const cardListStyles: SavedPaymentsCardListStyles = {
     },
     linksContainer: {
         gap: 20,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     useAsDefaultGridItem: {
         width: 12,
@@ -195,11 +225,7 @@ const getImageName = (cardType: string) => {
     return "";
 };
 
-const SavedPaymentsCardList: React.FC<Props> = ({
-                                                    updateEditModal,
-                                                    updatePaymentProfile,
-                                                    deletePaymentProfile,
-                                                }) => {
+const SavedPaymentsCardList: React.FC<Props> = ({ updateEditModal, updatePaymentProfile, deletePaymentProfile }) => {
     const [sortByProperty, setSortByProperty] = React.useState("maskedCardNumber");
     const sortByChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSortByProperty(event.target.value);
@@ -250,103 +276,146 @@ const SavedPaymentsCardList: React.FC<Props> = ({
         return null;
     }
 
-    const sortedAndFilteredSavedPayments = sortBy(paymentProfilesDataView.value.filter(o => !o.isDefault), sortByProperty);
+    const sortedAndFilteredSavedPayments = sortBy(
+        paymentProfilesDataView.value.filter(o => !o.isDefault),
+        sortByProperty,
+    );
     if (sortedAndFilteredSavedPayments.length === 0) {
         return null;
     }
 
-    return <>
-        <GridContainer {...styles.headerContainer} data-test-selector="cardListHeader">
-            <GridItem {...styles.titleGridItem}>
-                <Typography {...styles.titleText} id="listTitle">{translate("Saved Cards")}</Typography>
-            </GridItem>
-            <GridItem {...styles.sortByGridItem}>
-                <Select
-                    {...styles.sortBySelect}
-                    label={translate("Sort by")}
-                    value={sortByProperty}
-                    onChange={sortByChangeHandler}
-                    data-test-selector="sortBy"
-                >
-                    <option value="maskedCardNumber">{translate("Card Number")}</option>
-                    <option value="description">{translate("Card Nickname")}</option>
-                    <option value="cardType">{translate("Card Type")}</option>
-                </Select>
-            </GridItem>
-        </GridContainer>
-        <Accordion headingLevel={4} aria-labelledby="listTitle" data-test-selector="cardList">
-            {sortedAndFilteredSavedPayments.map((savedPayment, index) =>
-                <ManagedAccordionSection
-                    key={savedPayment.id.toString()}
-                    initialExpanded={index === 0}
-                    title={
-                        <StyledWrapper {...styles.cardHeaderWrapper} data-test-selector={`cardHeader-${savedPayment.id}`}>
-                            <LazyImage {...styles.cardTypeImage} src={`/images/card-types/${getImageName(savedPayment.cardType)}.png`} altText=""/>
-                            <Typography {...styles.descriptionText}>
-                                {savedPayment.description
-                                && <>{savedPayment.description}&nbsp;&mdash;&nbsp;</>
-                                }
-                                {`${savedPayment.cardType} ${translate("ending in")} ${savedPayment.maskedCardNumber.substring(savedPayment.maskedCardNumber.length - 4)}`}
-                            </Typography>
-                        </StyledWrapper>
-                    }
-                >
-                    <GridContainer {...styles.cardInfoContainer} data-test-selector={`cardBody-${savedPayment.id}`}>
-                        <GridItem {...styles.leftColumnGridItem}>
-                            <Typography {...styles.nameOnCardLabelText} id="nameOnCard">{translate("Name on Card")}</Typography>
-                            <Typography {...styles.nameOnCardText} aria-labelledby="nameOnCard">{savedPayment.cardHolderName}</Typography>
-                            <Typography {...styles.expirationLabelText} id="expiration">{translate("Expiration")}</Typography>
-                            <Typography {...styles.expirationText} aria-labelledby="expiration">{savedPayment.expirationDate}</Typography>
-                        </GridItem>
-                        <GridItem {...styles.centerColumnGridItem}>
-                            <Typography {...styles.billingAddressLabelText} id="billingAddress">{translate("Billing Address")}</Typography>
-                            <Typography {...styles.billingAddressText} aria-labelledby="billingAddress">
-                                {[savedPayment.address1, savedPayment.address2, savedPayment.address3, savedPayment.address4].filter(o => !!o).join(", ")}<br/>
-                                {savedPayment.city}, {savedPayment.state}<br/>
-                                {savedPayment.postalCode}<br/>
-                                {savedPayment.country}
-                            </Typography>
-                        </GridItem>
-                        <GridItem {...styles.rightColumnGridItem}>
-                            <GridContainer {...styles.linksContainer}>
-                                <GridItem {...styles.useAsDefaultGridItem}>
-                                    <Button
-                                        {...styles.useAsDefaultButton}
-                                        onClick={() => useAsDefaultClickHandler(savedPayment)}
-                                        data-test-selector="useAsDefaultButton"
-                                    >{translate("Use as Default")}</Button>
-                                </GridItem>
-                                <GridItem {...styles.editLinkGridItem}>
-                                    <Link
-                                        {...styles.editLink}
-                                        onClick={() => editClickHandler(savedPayment)}
-                                        data-test-selector="editButton"
-                                    >{translate("Edit")}</Link>
-                                </GridItem>
-                                <GridItem {...styles.deleteLinkGridItem}>
-                                    <Link
-                                        {...styles.deleteLink}
-                                        onClick={() => deleteClickHandler(savedPayment)}
-                                        data-test-selector="deleteButton"
-                                    >{translate("Delete")}</Link>
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                    </GridContainer>
-                </ManagedAccordionSection>)
-            }
-        </Accordion>
-        <TwoButtonModal
-            {...styles.deleteCardModal}
-            modalIsOpen={deleteCardModalIsOpen}
-            headlineText={translate("Delete Card")}
-            messageText={translate("Are you sure you want to delete this card?")}
-            cancelButtonText={translate("Cancel")}
-            submitButtonText={translate("Delete")}
-            onCancel={deleteCancelHandler}
-            onSubmit={deleteSubmitHandler}
-            submitTestSelector="submitDeleteCardButton"/>
-    </>;
+    return (
+        <>
+            <GridContainer {...styles.headerContainer} data-test-selector="cardListHeader">
+                <GridItem {...styles.titleGridItem}>
+                    <Typography {...styles.titleText} id="listTitle">
+                        {translate("Saved Cards")}
+                    </Typography>
+                </GridItem>
+                <GridItem {...styles.sortByGridItem}>
+                    <Select
+                        {...styles.sortBySelect}
+                        label={translate("Sort by")}
+                        value={sortByProperty}
+                        onChange={sortByChangeHandler}
+                        data-test-selector="sortBy"
+                    >
+                        <option value="maskedCardNumber">{translate("Card Number")}</option>
+                        <option value="description">{translate("Card Nickname")}</option>
+                        <option value="cardType">{translate("Card Type")}</option>
+                    </Select>
+                </GridItem>
+            </GridContainer>
+            <Accordion headingLevel={4} aria-labelledby="listTitle" data-test-selector="cardList">
+                {sortedAndFilteredSavedPayments.map((savedPayment, index) => (
+                    <ManagedAccordionSection
+                        key={savedPayment.id.toString()}
+                        initialExpanded={index === 0}
+                        title={
+                            <StyledWrapper
+                                {...styles.cardHeaderWrapper}
+                                data-test-selector={`cardHeader-${savedPayment.id}`}
+                            >
+                                <LazyImage
+                                    {...styles.cardTypeImage}
+                                    src={`/images/card-types/${getImageName(savedPayment.cardType)}.png`}
+                                    altText=""
+                                />
+                                <Typography {...styles.descriptionText}>
+                                    {savedPayment.description && <>{savedPayment.description}&nbsp;&mdash;&nbsp;</>}
+                                    {`${savedPayment.cardType} ${translate(
+                                        "ending in",
+                                    )} ${savedPayment.maskedCardNumber.substring(
+                                        savedPayment.maskedCardNumber.length - 4,
+                                    )}`}
+                                </Typography>
+                            </StyledWrapper>
+                        }
+                    >
+                        <GridContainer {...styles.cardInfoContainer} data-test-selector={`cardBody-${savedPayment.id}`}>
+                            <GridItem {...styles.leftColumnGridItem}>
+                                <Typography {...styles.nameOnCardLabelText} id="nameOnCard">
+                                    {translate("Name on Card")}
+                                </Typography>
+                                <Typography {...styles.nameOnCardText} aria-labelledby="nameOnCard">
+                                    {savedPayment.cardHolderName}
+                                </Typography>
+                                <Typography {...styles.expirationLabelText} id="expiration">
+                                    {translate("Expiration")}
+                                </Typography>
+                                <Typography {...styles.expirationText} aria-labelledby="expiration">
+                                    {savedPayment.expirationDate}
+                                </Typography>
+                            </GridItem>
+                            <GridItem {...styles.centerColumnGridItem}>
+                                <Typography {...styles.billingAddressLabelText} id="billingAddress">
+                                    {translate("Billing Address")}
+                                </Typography>
+                                <Typography {...styles.billingAddressText} aria-labelledby="billingAddress">
+                                    {[
+                                        savedPayment.address1,
+                                        savedPayment.address2,
+                                        savedPayment.address3,
+                                        savedPayment.address4,
+                                    ]
+                                        .filter(o => !!o)
+                                        .join(", ")}
+                                    <br />
+                                    {savedPayment.city}, {savedPayment.state}
+                                    <br />
+                                    {savedPayment.postalCode}
+                                    <br />
+                                    {savedPayment.country}
+                                </Typography>
+                            </GridItem>
+                            <GridItem {...styles.rightColumnGridItem}>
+                                <GridContainer {...styles.linksContainer}>
+                                    <GridItem {...styles.useAsDefaultGridItem}>
+                                        <Button
+                                            {...styles.useAsDefaultButton}
+                                            onClick={() => useAsDefaultClickHandler(savedPayment)}
+                                            data-test-selector="useAsDefaultButton"
+                                        >
+                                            {translate("Use as Default")}
+                                        </Button>
+                                    </GridItem>
+                                    <GridItem {...styles.editLinkGridItem}>
+                                        <Link
+                                            {...styles.editLink}
+                                            onClick={() => editClickHandler(savedPayment)}
+                                            data-test-selector="editButton"
+                                        >
+                                            {translate("Edit")}
+                                        </Link>
+                                    </GridItem>
+                                    <GridItem {...styles.deleteLinkGridItem}>
+                                        <Link
+                                            {...styles.deleteLink}
+                                            onClick={() => deleteClickHandler(savedPayment)}
+                                            data-test-selector="deleteButton"
+                                        >
+                                            {translate("Delete")}
+                                        </Link>
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                        </GridContainer>
+                    </ManagedAccordionSection>
+                ))}
+            </Accordion>
+            <TwoButtonModal
+                {...styles.deleteCardModal}
+                modalIsOpen={deleteCardModalIsOpen}
+                headlineText={translate("Delete Card")}
+                messageText={translate("Are you sure you want to delete this card?")}
+                cancelButtonText={translate("Cancel")}
+                submitButtonText={translate("Delete")}
+                onCancel={deleteCancelHandler}
+                onSubmit={deleteSubmitHandler}
+                submitTestSelector="submitDeleteCardButton"
+            />
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

@@ -1,5 +1,8 @@
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { createShipTo as createShipToApi, CreateShipToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import {
+    createShipTo as createShipToApi,
+    CreateShipToApiParameter,
+} from "@insite/client-framework/Services/CustomersService";
 import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<CreateShipToApiParameter, ShipToCollectionModel>;
@@ -18,11 +21,7 @@ export const DispatchShipTosReset: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    CreateShipTo,
-    DispatchShipTosReset,
-];
+export const chain = [PopulateApiParameter, CreateShipTo, DispatchShipTosReset];
 
 const createShipTo = createHandlerChainRunner(chain, "CreateShipTo");
 export default createShipTo;

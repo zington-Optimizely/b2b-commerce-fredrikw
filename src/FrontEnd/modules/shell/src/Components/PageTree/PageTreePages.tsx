@@ -26,21 +26,24 @@ const PageTreePages: React.FC<Props> = ({
     isEditMode,
     selectedPageId,
     permissions,
-}) => <ul>
-    {nodesByParentId[parentId] && nodesByParentId[parentId].map(node =>
-        <PageTreeItem
-            isEditMode={isEditMode}
-            selectedPageId={selectedPageId}
-            nodesByParentId={nodesByParentId}
-            expandedNodes={expandedNodes}
-            onExpandNode={onExpandNode}
-            key={node.key}
-            node={node}
-            onFlyOutNode={onFlyOutNode}
-            flyOutNode={flyOutNode}
-            permissions={permissions}
-        />,
-    )}
-</ul>;
+}) => (
+    <ul>
+        {nodesByParentId[parentId] &&
+            nodesByParentId[parentId].map(node => (
+                <PageTreeItem
+                    isEditMode={isEditMode}
+                    selectedPageId={selectedPageId}
+                    nodesByParentId={nodesByParentId}
+                    expandedNodes={expandedNodes}
+                    onExpandNode={onExpandNode}
+                    key={node.key}
+                    node={node}
+                    onFlyOutNode={onFlyOutNode}
+                    flyOutNode={flyOutNode}
+                    permissions={permissions}
+                />
+            ))}
+    </ul>
+);
 
 export default PageTreePages;

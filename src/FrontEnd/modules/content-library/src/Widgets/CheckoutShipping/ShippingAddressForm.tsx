@@ -4,8 +4,15 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import resetShippingAddressFormValidation from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ResetShippingAddressFormValidation";
 import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import { AddressFieldDisplayCollectionModel, BaseAddressModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import CustomerAddressFormFields, { CustomerAddressFormFieldStyles } from "@insite/content-library/Components/CustomerAddressFormFields";
+import {
+    AddressFieldDisplayCollectionModel,
+    BaseAddressModel,
+    CountryModel,
+    ShipToModel,
+} from "@insite/client-framework/Types/ApiModels";
+import CustomerAddressFormFields, {
+    CustomerAddressFormFieldStyles,
+} from "@insite/content-library/Components/CustomerAddressFormFields";
 import { CheckoutShippingFormContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import React from "react";
@@ -18,7 +25,11 @@ interface OwnProps {
     extendedStyles?: ShippingAddressFormStyles;
 }
 
-const mapStateToProps = ({ pages: { checkoutShipping: { shippingAddressFormState } } }: ApplicationState) => ({
+const mapStateToProps = ({
+    pages: {
+        checkoutShipping: { shippingAddressFormState },
+    },
+}: ApplicationState) => ({
     shippingAddressFormState,
 });
 
@@ -29,7 +40,9 @@ const mapDispatchToProps = {
             address,
         });
     },
-    validateForm: makeHandlerChainAwaitable<Parameters<typeof validateShippingAddressForm>[0], boolean>(validateShippingAddressForm),
+    validateForm: makeHandlerChainAwaitable<Parameters<typeof validateShippingAddressForm>[0], boolean>(
+        validateShippingAddressForm,
+    ),
     resetShippingAddressFormValidation,
 };
 
@@ -70,27 +83,29 @@ class ShippingAddressForm extends React.Component<Props, State> {
             return;
         }
 
-        const shouldValidate = validation.firstName?.isDisabled === false
-            || validation.lastName?.isDisabled === false
-            || validation.companyName?.isDisabled === false
-            || validation.attention?.isDisabled === false
-            || validation.address1?.isDisabled === false
-            || validation.address2?.isDisabled === false
-            || validation.address3?.isDisabled === false
-            || validation.address4?.isDisabled === false
-            || validation.city?.isDisabled === false
-            || validation.state?.isDisabled === false
-            || validation.country?.isDisabled === false
-            || validation.postalCode?.isDisabled === false
-            || validation.phone?.isDisabled === false
-            || validation.email?.isDisabled === false
-            || validation.fax?.isDisabled === false;
+        const shouldValidate =
+            validation.firstName?.isDisabled === false ||
+            validation.lastName?.isDisabled === false ||
+            validation.companyName?.isDisabled === false ||
+            validation.attention?.isDisabled === false ||
+            validation.address1?.isDisabled === false ||
+            validation.address2?.isDisabled === false ||
+            validation.address3?.isDisabled === false ||
+            validation.address4?.isDisabled === false ||
+            validation.city?.isDisabled === false ||
+            validation.state?.isDisabled === false ||
+            validation.country?.isDisabled === false ||
+            validation.postalCode?.isDisabled === false ||
+            validation.phone?.isDisabled === false ||
+            validation.email?.isDisabled === false ||
+            validation.fax?.isDisabled === false;
         if (shouldValidate) {
-            this.context.validators.shippingAddress = () => validateForm({
-                address,
-                validation,
-                fieldDisplay,
-            });
+            this.context.validators.shippingAddress = () =>
+                validateForm({
+                    address,
+                    validation,
+                    fieldDisplay,
+                });
             this.props.resetShippingAddressFormValidation();
         }
     }
@@ -105,32 +120,36 @@ class ShippingAddressForm extends React.Component<Props, State> {
         if (prevShippingAddressFormState !== shippingAddressFormState && shippingAddressFormState) {
             const { address } = shippingAddressFormState;
             const { validation } = address;
-            if ((!prevShippingAddressFormState
-                || prevShippingAddressFormState.address !== address
-                || prevShippingAddressFormState.address.validation !== validation
-                || prevFieldDisplay !== fieldDisplay)
-                && validation) {
-                const shouldValidate = validation.firstName?.isDisabled === false
-                    || validation.lastName?.isDisabled === false
-                    || validation.companyName?.isDisabled === false
-                    || validation.attention?.isDisabled === false
-                    || validation.address1?.isDisabled === false
-                    || validation.address2?.isDisabled === false
-                    || validation.address3?.isDisabled === false
-                    || validation.address4?.isDisabled === false
-                    || validation.city?.isDisabled === false
-                    || validation.state?.isDisabled === false
-                    || validation.country?.isDisabled === false
-                    || validation.postalCode?.isDisabled === false
-                    || validation.phone?.isDisabled === false
-                    || validation.email?.isDisabled === false
-                    || validation.fax?.isDisabled === false;
+            if (
+                (!prevShippingAddressFormState ||
+                    prevShippingAddressFormState.address !== address ||
+                    prevShippingAddressFormState.address.validation !== validation ||
+                    prevFieldDisplay !== fieldDisplay) &&
+                validation
+            ) {
+                const shouldValidate =
+                    validation.firstName?.isDisabled === false ||
+                    validation.lastName?.isDisabled === false ||
+                    validation.companyName?.isDisabled === false ||
+                    validation.attention?.isDisabled === false ||
+                    validation.address1?.isDisabled === false ||
+                    validation.address2?.isDisabled === false ||
+                    validation.address3?.isDisabled === false ||
+                    validation.address4?.isDisabled === false ||
+                    validation.city?.isDisabled === false ||
+                    validation.state?.isDisabled === false ||
+                    validation.country?.isDisabled === false ||
+                    validation.postalCode?.isDisabled === false ||
+                    validation.phone?.isDisabled === false ||
+                    validation.email?.isDisabled === false ||
+                    validation.fax?.isDisabled === false;
                 if (shouldValidate) {
-                    this.context.validators.shippingAddress = () => validateForm({
-                        address,
-                        validation,
-                        fieldDisplay,
-                    });
+                    this.context.validators.shippingAddress = () =>
+                        validateForm({
+                            address,
+                            validation,
+                            fieldDisplay,
+                        });
 
                     if (this.context.formSubmitAttempted) {
                         validateForm({
@@ -146,7 +165,7 @@ class ShippingAddressForm extends React.Component<Props, State> {
         }
     }
 
-    handleInputChange: TextFieldProps["onChange"] = (event) => {
+    handleInputChange: TextFieldProps["onChange"] = event => {
         const { shippingAddressFormState, setAddress } = this.props;
         if (!shippingAddressFormState) {
             return;

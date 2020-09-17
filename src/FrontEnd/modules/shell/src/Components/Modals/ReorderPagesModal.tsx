@@ -13,8 +13,7 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     return {
@@ -52,11 +51,11 @@ class ReorderPagesModal extends React.Component<Props> {
 
     save = () => {
         const pages: PageReorderModel[] = [];
-        this.reorderTree.current!.querySelectorAll("ul").forEach((listElement) => {
+        this.reorderTree.current!.querySelectorAll("ul").forEach(listElement => {
             const parentId = listElement.getAttribute("data-id") as string;
             let sortOrder = 0;
-            listElement.childNodes.forEach((pageElement) => {
-                const id = (pageElement as (HTMLElement)).querySelector("h3")!.getAttribute("data-id") as string;
+            listElement.childNodes.forEach(pageElement => {
+                const id = (pageElement as HTMLElement).querySelector("h3")!.getAttribute("data-id") as string;
                 if (!id) {
                     return;
                 }
@@ -139,13 +138,18 @@ class ReorderPagesModal extends React.Component<Props> {
                         return;
                     }
 
-                    if ((theUl.children.length === 0 || (theUl.children.length === 1 && theUl.children[0] === this.placeholder))) {
+                    if (
+                        theUl.children.length === 0 ||
+                        (theUl.children.length === 1 && theUl.children[0] === this.placeholder)
+                    ) {
                         theUl.appendChild(this.placeholder);
                         return;
                     }
                 }
                 if (closestLi === this.placeholder && closestLi.previousSibling) {
-                    ((closestLi.previousSibling as HTMLElement).querySelector("ul") as HTMLElement).appendChild(this.placeholder);
+                    ((closestLi.previousSibling as HTMLElement).querySelector("ul") as HTMLElement).appendChild(
+                        this.placeholder,
+                    );
                 }
             }
 
@@ -188,10 +192,12 @@ class ReorderPagesModal extends React.Component<Props> {
         const boundingRect = event.currentTarget.getBoundingClientRect();
         const clientX = event.clientX;
         const clientY = event.clientY;
-        if (clientX < boundingRect.left
-            || clientX > boundingRect.left + boundingRect.width
-            || clientY < boundingRect.top
-            || clientY > boundingRect.top + boundingRect.height) {
+        if (
+            clientX < boundingRect.left ||
+            clientX > boundingRect.left + boundingRect.width ||
+            clientY < boundingRect.top ||
+            clientY > boundingRect.top + boundingRect.height
+        ) {
             this.placeholder!.style.display = "none";
         }
     };
@@ -199,7 +205,10 @@ class ReorderPagesModal extends React.Component<Props> {
     drop = (event: React.DragEvent<HTMLElement>) => {
         event.stopPropagation();
 
-        this.placeholder!.parentElement!.insertBefore(this.draggedElement!.parentElement!, this.placeholder!.nextSibling);
+        this.placeholder!.parentElement!.insertBefore(
+            this.draggedElement!.parentElement!,
+            this.placeholder!.nextSibling,
+        );
 
         this.placeholder!.style.display = "none";
     };
@@ -207,65 +216,85 @@ class ReorderPagesModal extends React.Component<Props> {
     renderTreeChunk(parentId: string) {
         const { reorderPagesByParentId } = this.props;
 
-        return <ul onDragOver={this.dragOver} onDrop={this.drop} data-id={parentId}>
-            {reorderPagesByParentId![parentId] && reorderPagesByParentId![parentId].map(page => {
-                return <ReorderTreeItemStyle key={page.id}>
-                    <TitleStyle data-id={page.id} draggable={true} onDragStart={this.dragStart}
-                                onDragEnd={this.dragEnd} onDrag={this.drag}>
-                        <Drag color1={shellTheme.colors.text.accent} height={18} />
-                        {page.name}
-                    </TitleStyle>
-                    {this.renderTreeChunk(page.id)}
-                </ReorderTreeItemStyle>;
-            })}
-        </ul>;
+        return (
+            <ul onDragOver={this.dragOver} onDrop={this.drop} data-id={parentId}>
+                {reorderPagesByParentId![parentId] &&
+                    reorderPagesByParentId![parentId].map(page => {
+                        return (
+                            <ReorderTreeItemStyle key={page.id}>
+                                <TitleStyle
+                                    data-id={page.id}
+                                    draggable={true}
+                                    onDragStart={this.dragStart}
+                                    onDragEnd={this.dragEnd}
+                                    onDrag={this.drag}
+                                >
+                                    <Drag color1={shellTheme.colors.text.accent} height={18} />
+                                    {page.name}
+                                </TitleStyle>
+                                {this.renderTreeChunk(page.id)}
+                            </ReorderTreeItemStyle>
+                        );
+                    })}
+            </ul>
+        );
     }
 
     render() {
-        return <Modal
-            headline="Reorder Pages"
-            isOpen={this.props.displayReorderPages}
-            handleClose={this.cancel}
-            size={500}
-            closeOnEsc
-            cssOverrides={{
-                modalContent: css`
-                    padding: 0 0 15px 0;
-                    overflow-y: hidden;
-                `,
-            }}
-        >
-            {this.props.reorderPagesByParentId && this.props.reorderPagesByParentId[this.props.homeNodeId]
-            ? (
-                <>
-                    <ReorderTreeWarningStyle>
-                        <Icon src={AlertTriangle} />
-                        Warning: Moving pages will change their URL. Make sure to set up any necessary redirects for relocated pages.
-                    </ReorderTreeWarningStyle>
-                    <ReorderTreeStyle onDragLeave={this.dragLeaveArea} ref={this.reorderTree}>
-                        {this.props.reorderPagesByParentId && this.renderTreeChunk(this.props.homeNodeId)}
-                    </ReorderTreeStyle>
-                    <ButtonBar>
-                        <Button variant="tertiary" onClick={this.cancel}>Cancel</Button>
-                        <Button
-                            variant="primary"
-                            onClick={this.save}
-                            disabled={this.props.savingReorderPages}
-                            css={css` margin-right: 30px; `}
-                        >Save</Button>
-                    </ButtonBar>
-                </>
-            ) : (
-                <>
-                    <LoadingStyle>
-                        <LoadingSpinner/>
-                    </LoadingStyle>
-                    <ButtonBar>
-                        <Button variant="tertiary" onClick={this.cancel}>Cancel</Button>
-                    </ButtonBar>
-                </>
-            )}
-        </Modal>;
+        return (
+            <Modal
+                headline="Reorder Pages"
+                isOpen={this.props.displayReorderPages}
+                handleClose={this.cancel}
+                size={500}
+                closeOnEsc
+                cssOverrides={{
+                    modalContent: css`
+                        padding: 0 0 15px 0;
+                        overflow-y: hidden;
+                    `,
+                }}
+            >
+                {this.props.reorderPagesByParentId && this.props.reorderPagesByParentId[this.props.homeNodeId] ? (
+                    <>
+                        <ReorderTreeWarningStyle>
+                            <Icon src={AlertTriangle} />
+                            Warning: Moving pages will change their URL. Make sure to set up any necessary redirects for
+                            relocated pages.
+                        </ReorderTreeWarningStyle>
+                        <ReorderTreeStyle onDragLeave={this.dragLeaveArea} ref={this.reorderTree}>
+                            {this.props.reorderPagesByParentId && this.renderTreeChunk(this.props.homeNodeId)}
+                        </ReorderTreeStyle>
+                        <ButtonBar>
+                            <Button variant="tertiary" onClick={this.cancel}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="primary"
+                                onClick={this.save}
+                                disabled={this.props.savingReorderPages}
+                                css={css`
+                                    margin-right: 30px;
+                                `}
+                            >
+                                Save
+                            </Button>
+                        </ButtonBar>
+                    </>
+                ) : (
+                    <>
+                        <LoadingStyle>
+                            <LoadingSpinner />
+                        </LoadingStyle>
+                        <ButtonBar>
+                            <Button variant="tertiary" onClick={this.cancel}>
+                                Cancel
+                            </Button>
+                        </ButtonBar>
+                    </>
+                )}
+            </Modal>
+        );
     }
 }
 
@@ -306,7 +335,8 @@ const ReorderTreeItemStyle = styled.li`
     }
     ul {
         padding-left: 10px;
-        h3, ul {
+        h3,
+        ul {
             margin-left: 20px;
         }
         li {

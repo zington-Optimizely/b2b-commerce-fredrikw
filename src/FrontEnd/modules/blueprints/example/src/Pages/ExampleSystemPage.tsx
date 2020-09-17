@@ -6,10 +6,12 @@ import Page from "@insite/mobius/Page";
 import React from "react";
 
 const ExamplePage = ({ id }: PageProps) => {
-    return <Page>
+    return (
+        <Page>
             <Zone contentId={id} zoneName="Content"></Zone>
-        <AddToListModal/>
-    </Page>;
+            <AddToListModal />
+        </Page>
+    );
 };
 
 const pageModule: PageModule = {

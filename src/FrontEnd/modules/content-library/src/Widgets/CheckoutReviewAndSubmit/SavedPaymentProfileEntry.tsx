@@ -28,7 +28,9 @@ export interface SavedPaymentProfileEntryStyles {
 
 export const savedPaymentProfileEntryStyles: SavedPaymentProfileEntryStyles = {
     tokenExFrameWrapper: {
-        css: css` height: inherit; `,
+        css: css`
+            height: inherit;
+        `,
     },
     securityCodeHelpModalImageWrapper: {
         css: css`
@@ -38,8 +40,12 @@ export const savedPaymentProfileEntryStyles: SavedPaymentProfileEntryStyles = {
     },
 };
 
-const TokenExFrameWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
-const SecurityCodeImageWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
+const TokenExFrameWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
+const SecurityCodeImageWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
 const SavedPaymentProfileEntry = (props: OwnProps) => {
     const [styles] = useState(() => mergeToNew(savedPaymentProfileEntryStyles, props.extendedStyles));
@@ -57,22 +63,20 @@ const SavedPaymentProfileEntry = (props: OwnProps) => {
 
     return (
         <>
-            {props.useTokenExGateway
-                ? <TokenExFrame
+            {props.useTokenExGateway ? (
+                <TokenExFrame
                     {...styles.tokenExFrame}
                     label={translate("Security Code")}
                     hint={securityCodeHint}
                     tokenExIFrameContainer={
-                        <TokenExFrameWrapper
-                            {...styles.tokenExFrameWrapper}
-                            id="ppTokenExSecurityCode"
-                        />
+                        <TokenExFrameWrapper {...styles.tokenExFrameWrapper} id="ppTokenExSecurityCode" />
                     }
                     required
                     error={props.securityCodeError}
                     data-test-selector="checkoutReviewAndSubmit_securityCode"
                 />
-                : <TextField
+            ) : (
+                <TextField
                     {...styles.text}
                     label={translate("Security Code")}
                     hint={securityCodeHint}
@@ -84,7 +88,7 @@ const SavedPaymentProfileEntry = (props: OwnProps) => {
                     error={props.securityCodeError}
                     data-test-selector="checkoutReviewAndSubmit_securityCode"
                 />
-            }
+            )}
             <Modal
                 headline={securityCodeHelpLabel}
                 isOpen={isSecurityCodeModalOpen}

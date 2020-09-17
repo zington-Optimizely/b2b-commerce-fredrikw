@@ -1,6 +1,13 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { createHandlerChainRunnerOptionalParameter, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { updateWishListLines as updateWishListLinesApi, UpdateWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
+import {
+    createHandlerChainRunnerOptionalParameter,
+    Handler,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    updateWishListLines as updateWishListLinesApi,
+    UpdateWishListLinesApiParameter,
+} from "@insite/client-framework/Services/WishListService";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import { WishListLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -12,7 +19,7 @@ interface Props {
     };
 }
 
-type Parameter = { reloadWishListLines?: boolean; } & HasOnSuccess<Props["result"]>;
+type Parameter = { reloadWishListLines?: boolean } & HasOnSuccess<Props["result"]>;
 
 type HandlerType = Handler<Parameter, Props>;
 
@@ -95,5 +102,9 @@ export const chain = [
     DispatchLoadWishListLines,
 ];
 
-const updateWishListLineQuantities = createHandlerChainRunnerOptionalParameter(chain, {}, "UpdateWishListLineQuantities");
+const updateWishListLineQuantities = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {},
+    "UpdateWishListLineQuantities",
+);
 export default updateWishListLineQuantities;

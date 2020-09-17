@@ -1,17 +1,22 @@
 import {
-    createHandlerChainRunnerOptionalParameter, Handler, HasOnSuccess,
+    createHandlerChainRunnerOptionalParameter,
+    Handler,
+    HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { CartResult, getCart, GetCartApiParameter } from "@insite/client-framework/Services/CartService";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
-type HandlerType = Handler<{
-    shouldLoadFullCart?: boolean;
-} & HasOnSuccess, {
-    apiParameter: GetCartApiParameter,
-    apiResult: CartResult,
-    needFullCart: boolean,
-}>;
+type HandlerType = Handler<
+    {
+        shouldLoadFullCart?: boolean;
+    } & HasOnSuccess,
+    {
+        apiParameter: GetCartApiParameter;
+        apiResult: CartResult;
+        needFullCart: boolean;
+    }
+>;
 
 export const DispatchBeginLoadCart: HandlerType = props => {
     props.dispatch({
@@ -22,11 +27,12 @@ export const DispatchBeginLoadCart: HandlerType = props => {
 
 export const SetNeedFullCart: HandlerType = props => {
     const pageType = getCurrentPage(props.getState()).type;
-    props.needFullCart = props.parameter.shouldLoadFullCart
-        || pageType === "CheckoutShippingPage"
-        || pageType === "CheckoutReviewAndSubmitPage"
-        || pageType === "CartPage"
-        || pageType === "RfqRequestQuotePage";
+    props.needFullCart =
+        props.parameter.shouldLoadFullCart ||
+        pageType === "CheckoutShippingPage" ||
+        pageType === "CheckoutReviewAndSubmitPage" ||
+        pageType === "CartPage" ||
+        pageType === "RfqRequestQuotePage";
 };
 
 export const PopulateApiParameter: HandlerType = props => {
@@ -38,7 +44,8 @@ export const PopulateApiParameter: HandlerType = props => {
     if (props.needFullCart) {
         props.apiParameter.forceRecalculation = true;
         props.apiParameter.allowInvalidAddress = true;
-        props.apiParameter.expand = [...(props.apiParameter.expand || []),
+        props.apiParameter.expand = [
+            ...(props.apiParameter.expand || []),
             "cartLines",
             "restrictions",
             "shipping",
@@ -67,6 +74,8 @@ export const DispatchCompleteLoadCart: HandlerType = props => {
     props.dispatch({
         type: "Data/Carts/CompleteLoadCart",
         model: props.apiResult.cart,
+        isCurrent: true,
+        replaceCart: !props.needFullCart,
     });
 };
 

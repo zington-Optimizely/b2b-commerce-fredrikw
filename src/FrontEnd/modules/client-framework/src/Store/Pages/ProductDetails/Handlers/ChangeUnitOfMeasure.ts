@@ -3,8 +3,8 @@ import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/L
 import { getProductState } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 
 type Parameter = {
-    unitOfMeasure: string,
-    productId: string,
+    unitOfMeasure: string;
+    productId: string;
 };
 
 type HandlerType = Handler<Parameter>;
@@ -35,41 +35,40 @@ export const UpdatePrice: HandlerType = props => {
         return;
     }
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: [
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: [
                 {
                     productId,
                     qtyOrdered: productInfo.qtyOrdered,
                     unitOfMeasure: unitOfMeasure ?? "",
                 },
             ],
-        onSuccess: realTimePricing => {
-            const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productId);
-            if (pricing) {
-                props.dispatch({
-                    type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
-                    pricing,
-                });
-            } else {
+            onSuccess: realTimePricing => {
+                const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productId);
+                if (pricing) {
+                    props.dispatch({
+                        type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
+                        pricing,
+                    });
+                } else {
+                    props.dispatch({
+                        type: "Pages/ProductDetails/FailedLoadRealTimePricing",
+                        productId,
+                    });
+                }
+            },
+            onError: () => {
                 props.dispatch({
                     type: "Pages/ProductDetails/FailedLoadRealTimePricing",
                     productId,
                 });
-            }
-        },
-        onError: () => {
-            props.dispatch({
-                type: "Pages/ProductDetails/FailedLoadRealTimePricing",
-                productId,
-            });
-        },
-    }));
+            },
+        }),
+    );
 };
 
-export const chain = [
-    DispatchChangeUnitOfMeasure,
-    UpdatePrice,
-];
+export const chain = [DispatchChangeUnitOfMeasure, UpdatePrice];
 
 const changeUnitOfMeasure = createHandlerChainRunner(chain, "ChangeUnitOfMeasure");
 export default changeUnitOfMeasure;

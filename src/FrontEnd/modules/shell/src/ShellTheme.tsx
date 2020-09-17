@@ -8,8 +8,8 @@ export interface ShellThemeProps {
 
 type ShellThemeInferred = typeof shellTheme;
 
-export type ShellTheme = Omit<ShellThemeInferred, "sideBarWidth" | "headerHeight">
-    & Partial<Pick<ShellThemeInferred, "sideBarWidth" | "headerHeight">>;
+export type ShellTheme = Omit<ShellThemeInferred, "sideBarWidth" | "headerHeight"> &
+    Partial<Pick<ShellThemeInferred, "sideBarWidth" | "headerHeight">>;
 
 export interface ShellColors extends ThemeColors {
     custom: {
@@ -161,7 +161,7 @@ const shellTheme = {
     typography: {
         ...baseTheme.typography,
         body: {
-            fontFamily: "\"Roboto Condensed\", sans-serif;",
+            fontFamily: '"Roboto Condensed", sans-serif;',
             color: colors.text.main,
         },
         h1: {
@@ -176,14 +176,18 @@ const shellTheme = {
             size: "18px",
             lineHeight: "21px",
             weight: "bold",
-            css: css` margin: 30px 0 10px; `,
+            css: css`
+                margin: 30px 0 10px;
+            `,
         },
         h3: {
             ...baseTheme.typography.h3,
             size: "18px",
             lineHeight: "21px",
             weight: 300,
-            css: css` margin: 30px 0 10px; `,
+            css: css`
+                margin: 30px 0 10px;
+            `,
         },
         p: {
             ...baseTheme.typography.p,
@@ -203,8 +207,12 @@ const shellTheme = {
                         margin: -5px 0; /* makes sure modal title height does not differ if there is or is not a close button. */
                     }
                 `,
-                headlineTypography: css` margin-bottom: 0; `,
-                modalContent: css` padding: 15px; `,
+                headlineTypography: css`
+                    margin-bottom: 0;
+                `,
+                modalContent: css`
+                    padding: 15px;
+                `,
                 modalBody: css`
                     border-radius: 8px;
                     background-color: ${({ theme }) => theme.colors.common.accent};

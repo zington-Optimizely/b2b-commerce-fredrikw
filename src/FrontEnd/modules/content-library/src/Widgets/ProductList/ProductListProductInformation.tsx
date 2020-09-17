@@ -44,11 +44,15 @@ export interface ProductListProductInformationStyles {
 export const productInformationStyles: ProductListProductInformationStyles = {
     container: {
         gap: 10,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     descriptionStyles: {
         productDetailLink: {
-            css: css` width: 100%; `,
+            css: css`
+                width: 100%;
+            `,
             typographyProps: {
                 size: 20,
             },
@@ -80,8 +84,8 @@ const ProductListProductInformation: FC<Props> = ({
     showTitle,
     showPartNumbers,
     showAvailability,
-    showAttributes }) => {
-
+    showAttributes,
+}) => {
     const { product } = productContext;
 
     if (!product) {
@@ -90,18 +94,18 @@ const ProductListProductInformation: FC<Props> = ({
 
     return (
         <GridContainer {...styles.container}>
-            {product.brand && showBrand
-                && <GridItem {...styles.brandGridItem}>
-                    <ProductBrand brand={product.brand} extendedStyles={styles.brandStyles}/>
+            {product.brand && showBrand && (
+                <GridItem {...styles.brandGridItem}>
+                    <ProductBrand brand={product.brand} extendedStyles={styles.brandStyles} />
                 </GridItem>
-            }
-            {showTitle
-                && <GridItem {...styles.descriptionGridItem}>
-                    <ProductDescription product={productContext} extendedStyles={styles.descriptionStyles}/>
+            )}
+            {showTitle && (
+                <GridItem {...styles.descriptionGridItem}>
+                    <ProductDescription product={productContext} extendedStyles={styles.descriptionStyles} />
                 </GridItem>
-            }
-            {showPartNumbers
-                && <GridItem {...styles.partNumbersGridItem}>
+            )}
+            {showPartNumbers && (
+                <GridItem {...styles.partNumbersGridItem}>
                     <ProductPartNumbers
                         productNumber={product.productNumber}
                         customerProductNumber={product.customerProductNumber}
@@ -109,17 +113,17 @@ const ProductListProductInformation: FC<Props> = ({
                         extendedStyles={styles.partNumbersStyles}
                     />
                 </GridItem>
-            }
-            {settingsCollection.productSettings.showInventoryAvailability && showAvailability
-                && <GridItem {...styles.availabilityGridItem}>
+            )}
+            {settingsCollection.productSettings.showInventoryAvailability && showAvailability && (
+                <GridItem {...styles.availabilityGridItem}>
                     <ProductContextAvailability extendedStyles={styles.availabilityStyles} />
                 </GridItem>
-            }
-            {showAttributes
-                && <GridItem {...styles.attributesGridItem}>
+            )}
+            {showAttributes && (
+                <GridItem {...styles.attributesGridItem}>
                     <ProductAttributes maximumNumberAttributeTypes={3} extendedStyles={styles.attributes} />
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };

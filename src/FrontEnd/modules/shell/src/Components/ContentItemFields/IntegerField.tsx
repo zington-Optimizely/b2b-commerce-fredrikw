@@ -14,7 +14,9 @@ const onInput = (event: React.FormEvent<HTMLInputElement>) => {
     event.currentTarget.value = event.currentTarget.value.replace(/[^0-9]*/g, "");
 };
 
-export default class IntegerField extends React.Component<ContentItemFieldProps<number | null, IntegerFieldDefinition>> {
+export default class IntegerField extends React.Component<
+    ContentItemFieldProps<number | null, IntegerFieldDefinition>
+> {
     onChange = (event: React.FormEvent<HTMLInputElement>) => {
         let value: number | null = !event.currentTarget.value ? null : Number(event.currentTarget.value);
 
@@ -32,23 +34,28 @@ export default class IntegerField extends React.Component<ContentItemFieldProps<
     };
 
     render() {
-        const value = this.props.fieldValue !== undefined && this.props.fieldValue !== null
-            ? this.props.fieldValue : undefined;
+        const value =
+            this.props.fieldValue !== undefined && this.props.fieldValue !== null ? this.props.fieldValue : undefined;
 
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-            <TextField
-                id={this.props.fieldDefinition.name}
-                className="input"
-                type="number"
-                onKeyDown={onKeyDown}
-                onInput={onInput}
-                min={this.props.fieldDefinition.min !== undefined ? this.props.fieldDefinition.min : undefined}
-                max={this.props.fieldDefinition.max !== undefined ? this.props.fieldDefinition.max : undefined}
-                step="1"
-                value={value}
-                placeholder={this.props.fieldDefinition.placeholder}
-                disabled={this.props.fieldDefinition.isEnabled && !this.props.fieldDefinition.isEnabled(this.props.item)}
-                onChange={this.onChange}/>
-        </StandardControl>;
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                <TextField
+                    id={this.props.fieldDefinition.name}
+                    className="input"
+                    type="number"
+                    onKeyDown={onKeyDown}
+                    onInput={onInput}
+                    min={this.props.fieldDefinition.min !== undefined ? this.props.fieldDefinition.min : undefined}
+                    max={this.props.fieldDefinition.max !== undefined ? this.props.fieldDefinition.max : undefined}
+                    step="1"
+                    value={value}
+                    placeholder={this.props.fieldDefinition.placeholder}
+                    disabled={
+                        this.props.fieldDefinition.isEnabled && !this.props.fieldDefinition.isEnabled(this.props.item)
+                    }
+                    onChange={this.onChange}
+                />
+            </StandardControl>
+        );
     }
 }

@@ -37,16 +37,14 @@ const nameText: TypographyProps = {
 export const productBrandStyles: ProductBrandStyles = {
     nameText,
     nameLink: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
         typographyProps: nameText,
     },
 };
 
-const ProductBrand: FC<Props> = ({
-    brand,
-    showLogo = false,
-    extendedStyles,
-}) => {
+const ProductBrand: FC<Props> = ({ brand, showLogo = false, extendedStyles }) => {
     if (!brand) {
         return null;
     }
@@ -58,16 +56,22 @@ const ProductBrand: FC<Props> = ({
         const altText = brand.logoImageAltText || brand.name;
         brandDisplay = <LazyImage {...styles.logoImage} src={brand.logoSmallImagePath} altText={altText} />;
     } else {
-        brandDisplay = brand.detailPagePath
-            ? brand.name
-            : <Typography {...styles.nameText} data-test-selector="brandName">{brand.name}</Typography>;
+        brandDisplay = brand.detailPagePath ? (
+            brand.name
+        ) : (
+            <Typography {...styles.nameText} data-test-selector="brandName">
+                {brand.name}
+            </Typography>
+        );
     }
 
-    return brand.detailPagePath
-        ? <Link {...styles.nameLink} href={brand.detailPagePath} data-test-selector="brandLink">
+    return brand.detailPagePath ? (
+        <Link {...styles.nameLink} href={brand.detailPagePath} data-test-selector="brandLink">
             {brandDisplay}
         </Link>
-        : <>{brandDisplay}</>;
+    ) : (
+        <>{brandDisplay}</>
+    );
 };
 
 export default ProductBrand;

@@ -1,7 +1,20 @@
 import { updateContext } from "@insite/client-framework/Context";
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnError, HasOnSuccess, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnError,
+    HasOnSuccess,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
-import { FulfillmentMethod, getSession as getSessionApi, Session, UpdateSessionApiParameter, updateSessionWithResult, UpdateSessionWithResultApiParameter } from "@insite/client-framework/Services/SessionService";
+import {
+    FulfillmentMethod,
+    getSession as getSessionApi,
+    Session,
+    UpdateSessionApiParameter,
+    updateSessionWithResult,
+    UpdateSessionWithResultApiParameter,
+} from "@insite/client-framework/Services/SessionService";
 import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
@@ -9,16 +22,22 @@ import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelec
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { BillToModel, ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{
-    billToId?: string;
-    shipToId?: string;
-    fulfillmentMethod: string;
-    pickUpWarehouse: WarehouseModel | null;
-    isDefault?: boolean;
-    returnUrl?: string;
-} & HasOnSuccess & HasOnError<string>, UpdateSessionApiParameter, Session, {
-    cart: Cart;
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {
+        billToId?: string;
+        shipToId?: string;
+        fulfillmentMethod: string;
+        pickUpWarehouse: WarehouseModel | null;
+        isDefault?: boolean;
+        returnUrl?: string;
+    } & HasOnSuccess &
+        HasOnError<string>,
+    UpdateSessionApiParameter,
+    Session,
+    {
+        cart: Cart;
+    }
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
@@ -27,7 +46,8 @@ export const PopulateApiParameter: HandlerType = props => {
             shipToId: props.parameter.shipToId,
             billToId: props.parameter.billToId,
             fulfillmentMethod: props.parameter.fulfillmentMethod,
-            pickUpWarehouse: props.parameter.fulfillmentMethod === FulfillmentMethod.PickUp ? props.parameter.pickUpWarehouse : null,
+            pickUpWarehouse:
+                props.parameter.fulfillmentMethod === FulfillmentMethod.PickUp ? props.parameter.pickUpWarehouse : null,
         },
     };
 };
@@ -38,7 +58,10 @@ export const PopulateApiParameter: HandlerType = props => {
 export const UpdateSession: HandlerType = async props => {
     const newApiParameter: UpdateSessionWithResultApiParameter = { ...props.apiParameter };
     if (props.apiParameter.session.billToId) {
-        newApiParameter.session.billTo = { id: props.parameter.billToId, isDefault: props.parameter.isDefault } as BillToModel;
+        newApiParameter.session.billTo = {
+            id: props.parameter.billToId,
+            isDefault: props.parameter.isDefault,
+        } as BillToModel;
     }
     if (props.apiParameter.session.shipToId) {
         newApiParameter.session.shipTo = { id: props.parameter.shipToId } as ShipToModel;
@@ -119,7 +142,8 @@ export const LoadCurrentCart: HandlerType = async props => {
         };
 
         let x = 0;
-        while(x < 600) { // wait 30 seconds max
+        while (x < 600) {
+            // wait 30 seconds max
             if (checkData()) {
                 break;
             }

@@ -25,15 +25,15 @@ export enum ShareOptions {
 export interface GetWishListsApiParameter extends ApiParameter, HasPagingParameters {
     sort?: string;
     query?: string;
-    expand?: ("top3products")[];
+    expand?: "top3products"[];
     additionalExpands?: string[];
     filter?: string;
 }
 
 export interface GetWishListApiParameter extends ApiParameter {
     wishListId: string;
-    exclude?: ("listLines")[];
-    expand?: ("schedule" | "sharedUsers")[]
+    exclude?: "listLines"[];
+    expand?: ("schedule" | "sharedUsers")[];
 }
 
 export interface GetWishListLinesApiParameter extends ApiParameter, HasPagingParameters {
@@ -56,16 +56,16 @@ export interface SendWishListCopyApiParameter extends ApiParameter {
 
 export interface UpdateWishListApiParameter extends ApiParameter {
     /**
-    * @deprecated Use the `wishList.id` property instead.
-    */
+     * @deprecated Use the `wishList.id` property instead.
+     */
     wishListId?: string;
     /**
-    * @deprecated Use the `wishList.name` property instead.
-    */
+     * @deprecated Use the `wishList.name` property instead.
+     */
     name?: string;
     /**
-    * @deprecated Use the `wishList.description` property instead.
-    */
+     * @deprecated Use the `wishList.description` property instead.
+     */
     description?: string;
     wishList?: WishListModel;
 }
@@ -144,7 +144,10 @@ export function getWishListLines(parameter: GetWishListLinesApiParameter) {
 }
 
 export function addWishList(parameter: AddWishListApiParameter) {
-    return post<WishListModel>(wishListUrl, { name: parameter.name, description: parameter.description } as WishListModel);
+    return post<WishListModel>(wishListUrl, {
+        name: parameter.name,
+        description: parameter.description,
+    } as WishListModel);
 }
 
 export async function sendWishListCopy(parameter: SendWishListCopyApiParameter) {
@@ -170,21 +173,31 @@ export function deleteWishList(parameter: DeleteWishListApiParameter) {
 }
 
 export function addWishListLine(parameter: AddWishListLineApiParameter) {
-    const wishListLinesUri = parameter.wishList.wishListLinesUri.substr(parameter.wishList.wishListLinesUri.indexOf("/api/v1"));
+    const wishListLinesUri = parameter.wishList.wishListLinesUri.substr(
+        parameter.wishList.wishListLinesUri.indexOf("/api/v1"),
+    );
     return post(`${wishListLinesUri}`, parameter.line);
 }
 
 export function addWishListLines(parameter: AddWishListLinesApiParameter) {
-    const wishListLinesUri = parameter.wishList.wishListLinesUri.substr(parameter.wishList.wishListLinesUri.indexOf("/api/v1"));
+    const wishListLinesUri = parameter.wishList.wishListLinesUri.substr(
+        parameter.wishList.wishListLinesUri.indexOf("/api/v1"),
+    );
     return post(`${wishListLinesUri}/batch`, { wishListLines: parameter.lines });
 }
 
 export function updateWishListLine(parameter: UpdateWishListLineApiParameter) {
-    return patch<WishListLineModel>(`${wishListUrl}/${parameter.wishListId}/wishlistlines/${parameter.wishListLineId}`, parameter.wishListLine);
+    return patch<WishListLineModel>(
+        `${wishListUrl}/${parameter.wishListId}/wishlistlines/${parameter.wishListLineId}`,
+        parameter.wishListLine,
+    );
 }
 
 export function updateWishListLines(parameter: UpdateWishListLinesApiParameter) {
-    return patch<WishListLineCollectionModel>(`${wishListUrl}/${parameter.wishListId}/wishlistlines/batch`, parameter as unknown as WishListLineCollectionModel);
+    return patch<WishListLineCollectionModel>(
+        `${wishListUrl}/${parameter.wishListId}/wishlistlines/batch`,
+        (parameter as unknown) as WishListLineCollectionModel,
+    );
 }
 
 export function deleteWishListLine(parameter: DeleteWishListLineApiParameter) {
@@ -193,7 +206,9 @@ export function deleteWishListLine(parameter: DeleteWishListLineApiParameter) {
 
 export function deleteWishListLines(parameter: DeleteWishListLinesApiParameter) {
     const query = parameter.wishListLineIds.map(o => `wishListLineIds=${o}`).join("&");
-    return requestVoid(`${wishListUrl}/${parameter.wishListId}/wishlistlines/batch?${query}`, "DELETE", { "Content-Type": "application/json" });
+    return requestVoid(`${wishListUrl}/${parameter.wishListId}/wishlistlines/batch?${query}`, "DELETE", {
+        "Content-Type": "application/json",
+    });
 }
 
 export function updateWishListSchedule(parameter: UpdateWishListScheduleApiParameter) {
@@ -205,7 +220,7 @@ export function deleteWishListShare(parameter: DeleteWishListShareApiParameter) 
 }
 
 export function activateInvite(parameter: ActivateInviteApiParameter) {
-    return patch<WishListModel>(`${wishListUrl}/activateinvite`, parameter as unknown as WishListModel);
+    return patch<WishListModel>(`${wishListUrl}/activateinvite`, (parameter as unknown) as WishListModel);
 }
 
 function cleanWishList(wishList: WishListModel, parameter?: { expand?: string[] }) {

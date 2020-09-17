@@ -19,15 +19,17 @@ export const AbortOnDuplicateFilter: HandlerType = props => {
 };
 
 export const ResetPage: HandlerType = props => {
-    if (props.parameter.pageSize
-        || props.parameter.sort
-        || props.parameter.pageCategoryId
-        || props.parameter.categoryId
-        || props.parameter.searchWithinQueries?.length
-        || props.parameter.brandIds?.length
-        || props.parameter.productLineIds?.length
-        || props.parameter.priceFilters?.length
-        || props.parameter.attributeValueIds?.length) {
+    if (
+        props.parameter.pageSize ||
+        props.parameter.sort ||
+        props.parameter.pageCategoryId ||
+        props.parameter.categoryId ||
+        props.parameter.searchWithinQueries?.length ||
+        props.parameter.brandIds?.length ||
+        props.parameter.productLineIds?.length ||
+        props.parameter.priceFilters?.length ||
+        props.parameter.attributeValueIds?.length
+    ) {
         props.result.page = undefined;
     }
 };

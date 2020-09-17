@@ -28,16 +28,15 @@ export interface MyListsPaginationStyles {
 
 export const paginationStyles: MyListsPaginationStyles = {
     wrapper: {
-        css: css` padding: 20px 0; `,
+        css: css`
+            padding: 20px 0;
+        `,
     },
 };
 
 const styles = paginationStyles;
 
-const MyListsPagination: React.FC<Props> = ({
-    wishListsDataView,
-    updateLoadParameter,
-}) => {
+const MyListsPagination: React.FC<Props> = ({ wishListsDataView, updateLoadParameter }) => {
     if (!wishListsDataView.value || !wishListsDataView.pagination) {
         return null;
     }
@@ -57,16 +56,19 @@ const MyListsPagination: React.FC<Props> = ({
         return null;
     }
 
-    return (<StyledWrapper {...styles.wrapper}>
-        <Pagination
-            {...styles.pagination}
-            resultsCount={pagination.totalItemCount}
-            currentPage={pagination.page}
-            resultsPerPage={pagination.pageSize}
-            resultsPerPageOptions={pagination.pageSizeOptions}
-            onChangePage={changePage}
-            onChangeResultsPerPage={changeResultsPerPage} />
-    </StyledWrapper>);
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <Pagination
+                {...styles.pagination}
+                resultsCount={pagination.totalItemCount}
+                currentPage={pagination.page}
+                resultsPerPage={pagination.pageSize}
+                resultsPerPageOptions={pagination.pageSizeOptions}
+                onChangePage={changePage}
+                onChangeResultsPerPage={changeResultsPerPage}
+            />
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

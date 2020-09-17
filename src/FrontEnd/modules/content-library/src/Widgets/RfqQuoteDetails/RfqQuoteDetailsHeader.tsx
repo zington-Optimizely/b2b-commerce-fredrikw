@@ -69,23 +69,33 @@ export const rfqQuoteDetailsHeaderStyles: RfqQuoteDetailsHeaderStyles = {
         gap: 10,
     },
     deleteQuoteButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     submitQuoteButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     declineQuoteButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     acceptQuoteButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     printButton: {
         buttonType: "outline",
         variant: "secondary",
     },
     buttonGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [2, 2, 2, 7, 6],
     },
     titleGridItem: {
@@ -94,7 +104,11 @@ export const rfqQuoteDetailsHeaderStyles: RfqQuoteDetailsHeaderStyles = {
     title: {
         variant: "h3",
         as: "h1",
-        css: css` @media print { font-size: 11px; } `,
+        css: css`
+            @media print {
+                font-size: 11px;
+            }
+        `,
     },
     buttonsHiddenContainer: {
         below: "lg",
@@ -223,91 +237,108 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
     const canBeSubmittedOrDeleted = quote.isSalesperson && quote.isEditable;
     const expirationDateIsValid = expirationDateIsGreaterThanCurrentDate();
     const canBeDeclined = !quote.isSalesperson && quote.status === "QuoteProposed" && expirationDateIsValid;
-    const canBeAccepted = !quote.isSalesperson && (quote.status === "QuoteProposed" || quote.status === "AwaitingApproval") && expirationDateIsValid;
+    const canBeAccepted =
+        !quote.isSalesperson &&
+        (quote.status === "QuoteProposed" || quote.status === "AwaitingApproval") &&
+        expirationDateIsValid;
 
-    return (<>
-        <GridContainer {...styles.headerGridContainer}>
-            <GridItem {...styles.titleGridItem}>
-                <Typography {...styles.title}>
-                    {`${translate(quoteType)} ${quote.quoteNumber}`}
-                </Typography>
-            </GridItem>
-            <GridItem {...styles.buttonGridItem}>
-                <Hidden {...styles.menuHiddenContainer}>
-                    <OverflowMenu  {...styles.narrowOverflowMenu}>
-                        <Clickable {...styles.printClickable} onClick={openPrintDialog}>{printLabel}</Clickable>
-                        {canBeSubmittedOrDeleted
-                            && <>
-                                <Clickable {...styles.deleteQuoteClickable} onClick={deleteQuoteClickHandler}>{deleteQuoteLabel}</Clickable>
-                                <Clickable {...styles.submitQuoteClickable} onClick={submitQuoteClickHandler}>{submitQuoteLabel}</Clickable>
+    return (
+        <>
+            <GridContainer {...styles.headerGridContainer}>
+                <GridItem {...styles.titleGridItem}>
+                    <Typography {...styles.title}>{`${translate(quoteType)} ${quote.quoteNumber}`}</Typography>
+                </GridItem>
+                <GridItem {...styles.buttonGridItem}>
+                    <Hidden {...styles.menuHiddenContainer}>
+                        <OverflowMenu {...styles.narrowOverflowMenu}>
+                            <Clickable {...styles.printClickable} onClick={openPrintDialog}>
+                                {printLabel}
+                            </Clickable>
+                            {canBeSubmittedOrDeleted && (
+                                <>
+                                    <Clickable {...styles.deleteQuoteClickable} onClick={deleteQuoteClickHandler}>
+                                        {deleteQuoteLabel}
+                                    </Clickable>
+                                    <Clickable {...styles.submitQuoteClickable} onClick={submitQuoteClickHandler}>
+                                        {submitQuoteLabel}
+                                    </Clickable>
+                                </>
+                            )}
+                            {canBeDeclined && (
+                                <Clickable {...styles.declineQuoteClickable} onClick={declineQuoteClickHandler}>
+                                    {declineQuoteLabel}
+                                </Clickable>
+                            )}
+                            {canBeAccepted && (
+                                <Clickable {...styles.acceptQuoteClickable} onClick={acceptQuoteClickHandler}>
+                                    {acceptQuoteLabel}
+                                </Clickable>
+                            )}
+                        </OverflowMenu>
+                    </Hidden>
+                    <Hidden {...styles.buttonsHiddenContainer}>
+                        <Button {...styles.printButton} onClick={openPrintDialog}>
+                            {printLabel}
+                        </Button>
+                        {canBeSubmittedOrDeleted && (
+                            <>
+                                <Button {...styles.deleteQuoteButton} onClick={deleteQuoteClickHandler}>
+                                    {deleteQuoteLabel}
+                                </Button>
+                                <Button
+                                    {...styles.submitQuoteButton}
+                                    onClick={submitQuoteClickHandler}
+                                    data-test-selector="rfqQuoteDetails_submitQuote"
+                                >
+                                    {submitQuoteLabel}
+                                </Button>
                             </>
-                        }
-                        {canBeDeclined
-                            && <Clickable {...styles.declineQuoteClickable} onClick={declineQuoteClickHandler}>{declineQuoteLabel}</Clickable>
-                        }
-                        {canBeAccepted
-                            && <Clickable {...styles.acceptQuoteClickable} onClick={acceptQuoteClickHandler}>{acceptQuoteLabel}</Clickable>
-                        }
-                    </OverflowMenu>
-                </Hidden>
-                <Hidden {...styles.buttonsHiddenContainer}>
-                    <Button {...styles.printButton} onClick={openPrintDialog}>{printLabel}</Button>
-                    {canBeSubmittedOrDeleted
-                        && <>
-                            <Button {...styles.deleteQuoteButton} onClick={deleteQuoteClickHandler}>{deleteQuoteLabel}</Button>
+                        )}
+                        {canBeDeclined && (
                             <Button
-                                {...styles.submitQuoteButton}
-                                onClick={submitQuoteClickHandler}
-                                data-test-selector="rfqQuoteDetails_submitQuote"
+                                {...styles.declineQuoteButton}
+                                onClick={declineQuoteClickHandler}
+                                data-test-selector="rfqQuoteDetails_declineQuote"
                             >
-                                {submitQuoteLabel}
+                                {declineQuoteLabel}
                             </Button>
-                        </>
-                    }
-                    {canBeDeclined
-                        && <Button
-                            {...styles.declineQuoteButton}
-                            onClick={declineQuoteClickHandler}
-                            data-test-selector="rfqQuoteDetails_declineQuote"
-                        >
-                            {declineQuoteLabel}
-                        </Button>
-                    }
-                    {canBeAccepted
-                        && <Button
-                            {...styles.acceptQuoteButton}
-                            onClick={acceptQuoteClickHandler}
-                            data-test-selector="rfqQuoteDetails_acceptQuote"
-                        >
-                            {acceptQuoteLabel}
-                        </Button>
-                    }
-                </Hidden>
-            </GridItem>
-        </GridContainer>
-        <TwoButtonModal
-            {...styles.deleteQuoteModal}
-            modalIsOpen={deleteQuoteModalIsOpen}
-            headlineText={translate("Delete Quote")}
-            messageText={siteMessage("Rfq_DeleteQuoteConfirmation")}
-            cancelButtonText={translate("Cancel")}
-            submitButtonText={translate("Delete")}
-            onCancel={cancelDeleteQuoteHandler}
-            onSubmit={submitDeleteQuoteHandler}
-            submitTestSelector="submitDeleteQuote"
-        />
-        <TwoButtonModal
-            {...styles.cartNotificationModal}
-            modalIsOpen={cartNotificationModalIsOpen}
-            headlineText={translate("Cart Notification")}
-            messageText={siteMessage("Rfq_CartNotificationMessage")}
-            cancelButtonText={translate("Cancel")}
-            submitButtonText={translate("Continue")}
-            onCancel={cancelCartNotificationHandler}
-            onSubmit={submitCartNotificationHandler}
-            submitTestSelector="submitCartNotification"
-        />
-    </>);
+                        )}
+                        {canBeAccepted && (
+                            <Button
+                                {...styles.acceptQuoteButton}
+                                onClick={acceptQuoteClickHandler}
+                                data-test-selector="rfqQuoteDetails_acceptQuote"
+                            >
+                                {acceptQuoteLabel}
+                            </Button>
+                        )}
+                    </Hidden>
+                </GridItem>
+            </GridContainer>
+            <TwoButtonModal
+                {...styles.deleteQuoteModal}
+                modalIsOpen={deleteQuoteModalIsOpen}
+                headlineText={translate("Delete Quote")}
+                messageText={siteMessage("Rfq_DeleteQuoteConfirmation")}
+                cancelButtonText={translate("Cancel")}
+                submitButtonText={translate("Delete")}
+                onCancel={cancelDeleteQuoteHandler}
+                onSubmit={submitDeleteQuoteHandler}
+                submitTestSelector="submitDeleteQuote"
+            />
+            <TwoButtonModal
+                {...styles.cartNotificationModal}
+                modalIsOpen={cartNotificationModalIsOpen}
+                headlineText={translate("Cart Notification")}
+                messageText={siteMessage("Rfq_CartNotificationMessage")}
+                cancelButtonText={translate("Cancel")}
+                submitButtonText={translate("Continue")}
+                onCancel={cancelCartNotificationHandler}
+                onSubmit={submitCartNotificationHandler}
+                submitTestSelector="submitCartNotification"
+            />
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

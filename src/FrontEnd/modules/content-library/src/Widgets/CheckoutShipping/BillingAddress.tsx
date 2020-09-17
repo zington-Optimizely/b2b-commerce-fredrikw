@@ -3,11 +3,17 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
-import { AddressFieldDisplayCollectionModel, BillToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    AddressFieldDisplayCollectionModel,
+    BillToModel,
+    CountryModel,
+} from "@insite/client-framework/Types/ApiModels";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import BillToSelector, { BillToSelectorStyles } from "@insite/content-library/Components/BillToSelector";
 import CustomerAddressForm, { CustomerAddressFormStyles } from "@insite/content-library/Components/CustomerAddressForm";
-import BillingAddressForm, { BillingAddressFormStyles } from "@insite/content-library/Widgets/CheckoutShipping/BillingAddressForm";
+import BillingAddressForm, {
+    BillingAddressFormStyles,
+} from "@insite/content-library/Widgets/CheckoutShipping/BillingAddressForm";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -143,36 +149,39 @@ const BillingAddress = ({
         <>
             <GridContainer {...styles.container}>
                 <GridItem {...styles.headingGridItem}>
-                    <Typography {...styles.headingText} as="h3">{translate("Billing Address")}</Typography>
-                    {!currentUserIsGuest
-                        && <Link
+                    <Typography {...styles.headingText} as="h3">
+                        {translate("Billing Address")}
+                    </Typography>
+                    {!currentUserIsGuest && (
+                        <Link
                             {...styles.selectSavedAddressLink}
                             type="button"
                             onClick={selectAddressClickHandler}
                             data-test-selector="checkoutShipping_selectSavedAddress"
-                            >
-                                {translate("Select Saved Address")}
-                            </Link>
-                    }
+                        >
+                            {translate("Select Saved Address")}
+                        </Link>
+                    )}
                 </GridItem>
                 <GridItem {...styles.addressDisplayAndFormGridItem}>
-                    {currentUserIsGuest || isBillingAddressUpdateRequired
-                        ? <>
-                            {addressFieldDisplayCollection && countries
-                                && <BillingAddressForm
+                    {currentUserIsGuest || isBillingAddressUpdateRequired ? (
+                        <>
+                            {addressFieldDisplayCollection && countries && (
+                                <BillingAddressForm
                                     countries={countries}
                                     fieldDisplay={addressFieldDisplayCollection}
                                     extendedStyles={styles.addressForm}
                                 />
-                            }
+                            )}
                         </>
-                        : <AddressInfoDisplay
+                    ) : (
+                        <AddressInfoDisplay
                             {...address}
                             state={address.state?.abbreviation}
                             country={address.country?.abbreviation}
                             extendedStyles={styles.addressDisplay}
                         />
-                    }
+                    )}
                 </GridItem>
             </GridContainer>
             <Modal
@@ -186,7 +195,6 @@ const BillingAddress = ({
                     onSelect={selectCustomerHandler}
                     onEdit={editCustomerHandler}
                     extendedStyles={styles.billToSelector}
-
                 />
                 <StyledWrapper {...styles.addressBookModalButtonsWrapper}>
                     <Button
@@ -198,25 +206,25 @@ const BillingAddress = ({
                     </Button>
                 </StyledWrapper>
             </Modal>
-            {addressBeingEdited
-                && <Modal
-                        {...styles.addressBookModal}
-                        headline={translate("Edit Address")}
-                        isOpen={isEditAddressModalOpen}
-                        handleClose={editAddressModalCloseHandler}
-                        data-test-selector="checkoutShipping_editAddressModal"
-                    >
-                        <CustomerAddressForm
-                            address={addressBeingEdited}
-                            countries={countries}
-                            addressFieldDisplayCollection={addressFieldDisplayCollection}
-                            onSubmit={editAddressFormSubmitHandler}
-                            saveButtonTextOverride={translate("Save & Apply")}
-                            onCancel={editAddressModalCloseHandler}
-                            extendedStyles={styles.editAddressForm}
-                        />
-                    </Modal>
-            }
+            {addressBeingEdited && (
+                <Modal
+                    {...styles.addressBookModal}
+                    headline={translate("Edit Address")}
+                    isOpen={isEditAddressModalOpen}
+                    handleClose={editAddressModalCloseHandler}
+                    data-test-selector="checkoutShipping_editAddressModal"
+                >
+                    <CustomerAddressForm
+                        address={addressBeingEdited}
+                        countries={countries}
+                        addressFieldDisplayCollection={addressFieldDisplayCollection}
+                        onSubmit={editAddressFormSubmitHandler}
+                        saveButtonTextOverride={translate("Save & Apply")}
+                        onCancel={editAddressModalCloseHandler}
+                        extendedStyles={styles.editAddressForm}
+                    />
+                </Modal>
+            )}
         </>
     );
 };

@@ -38,9 +38,9 @@ interface OwnProps {
     securityCode: string;
     onSecurityCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     securityCodeError?: string;
-    availableCardTypes: { key: string; value: string; }[];
-    availableMonths: { key: string; value: number; }[];
-    availableYears: { key: number; value: number; }[];
+    availableCardTypes: { key: string; value: string }[];
+    availableMonths: { key: string; value: number }[];
+    availableYears: { key: number; value: number }[];
     extendedStyles?: CreditCardDetailsEntryStyles;
 }
 
@@ -84,11 +84,15 @@ export const creditCardDetailsEntryStyles: CreditCardDetailsEntryStyles = {
     cardHolderNameGridItem: { width: 12 },
     cardNumberGridItem: { width: 12 },
     cardNumberTokenExFrameWrapper: {
-        css: css` height: inherit; `,
+        css: css`
+            height: inherit;
+        `,
     },
     cardTypeGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     cardTypeTokenExLabel: { weight: 600 },
     expirationDateGridItem: { width: 12 },
@@ -97,7 +101,9 @@ export const creditCardDetailsEntryStyles: CreditCardDetailsEntryStyles = {
     expirationYearGridItem: { width: 6 },
     securityCodeGridItem: { width: 12 },
     securityCodeTokenExFrameWrapper: {
-        css: css` height: inherit; `,
+        css: css`
+            height: inherit;
+        `,
     },
     securityCodeHelpModalImageWrapper: {
         css: css`
@@ -107,9 +113,15 @@ export const creditCardDetailsEntryStyles: CreditCardDetailsEntryStyles = {
     },
 };
 
-const CardNumberTokenExFrameWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
-const SecurityCodeTokenExFrameWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
-const SecurityCodeImageWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
+const CardNumberTokenExFrameWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
+const SecurityCodeTokenExFrameWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
+const SecurityCodeImageWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
 const CreditCardDetailsEntry = ({
     useTokenExGateway,
@@ -155,21 +167,19 @@ const CreditCardDetailsEntry = ({
     return (
         <GridContainer {...styles.creditCardDetailsContainer}>
             <GridItem {...styles.creditCardDetailsHeadingGridItem}>
-                <Typography {...styles.creditCardDetailsHeading} as="h2">{translate("Credit Card Details")}</Typography>
+                <Typography {...styles.creditCardDetailsHeading} as="h2">
+                    {translate("Credit Card Details")}
+                </Typography>
             </GridItem>
-            {canSaveCard
-                && <GridItem {...styles.saveCardGridItem}>
+            {canSaveCard && (
+                <GridItem {...styles.saveCardGridItem}>
                     <CheckboxGroup {...styles.saveCardCheckboxGroup}>
-                        <Checkbox
-                            {...styles.saveCardCheckbox}
-                            checked={saveCard}
-                            onChange={onSaveCardChange}
-                        >
+                        <Checkbox {...styles.saveCardCheckbox} checked={saveCard} onChange={onSaveCardChange}>
                             {translate("Save card information")}
                         </Checkbox>
                     </CheckboxGroup>
                 </GridItem>
-            }
+            )}
             <GridItem {...styles.cardHolderNameGridItem}>
                 <TextField
                     {...styles.cardHolderNameText}
@@ -183,8 +193,8 @@ const CreditCardDetailsEntry = ({
                 />
             </GridItem>
             <GridItem {...styles.cardNumberGridItem}>
-                {useTokenExGateway
-                    ? <TokenExFrame
+                {useTokenExGateway ? (
+                    <TokenExFrame
                         {...styles.cardNumberTokenExFrame}
                         label={translate("Card Number")}
                         tokenExIFrameContainer={
@@ -197,7 +207,8 @@ const CreditCardDetailsEntry = ({
                         error={cardNumberError}
                         data-test-selector="checkoutReviewAndSubmit_cardNumber"
                     />
-                    : <TextField
+                ) : (
+                    <TextField
                         {...styles.cardNumberText}
                         label={translate("Card Number")}
                         value={cardNumber}
@@ -207,15 +218,12 @@ const CreditCardDetailsEntry = ({
                         error={cardNumberError}
                         data-test-selector="checkoutReviewAndSubmit_cardNumber"
                     />
-                }
+                )}
             </GridItem>
             <GridItem {...styles.cardTypeGridItem}>
-                {useTokenExGateway
-                    ? <>
-                        <Typography
-                            {...styles.cardTypeTokenExLabel}
-                            id="cardTypeTokenEx"
-                        >
+                {useTokenExGateway ? (
+                    <>
+                        <Typography {...styles.cardTypeTokenExLabel} id="cardTypeTokenEx">
                             {translate("Card Type")}
                         </Typography>
                         <TokenExCardTypeDisplay
@@ -224,7 +232,8 @@ const CreditCardDetailsEntry = ({
                             aria-labelledby="cardTypeTokenEx"
                         />
                     </>
-                    : <Select
+                ) : (
+                    <Select
                         {...styles.cardTypeSelect}
                         label={translate("Card Type")}
                         value={cardType}
@@ -235,10 +244,12 @@ const CreditCardDetailsEntry = ({
                     >
                         <option value="">{translate("Select Card")}</option>
                         {availableCardTypes.map(ct => (
-                            <option key={ct.value} value={ct.value}>{ct.key}</option>
+                            <option key={ct.value} value={ct.value}>
+                                {ct.key}
+                            </option>
                         ))}
                     </Select>
-                }
+                )}
             </GridItem>
             <GridItem {...styles.expirationDateGridItem}>
                 <GridContainer {...styles.expirationDateContainer}>
@@ -253,7 +264,9 @@ const CreditCardDetailsEntry = ({
                             data-test-selector="checkoutReviewAndSubmit_expirationMonth"
                         >
                             {availableMonths.map(month => (
-                                <option key={month.value} value={month.value}>{month.key}</option>
+                                <option key={month.value} value={month.value}>
+                                    {month.key}
+                                </option>
                             ))}
                         </Select>
                     </GridItem>
@@ -267,15 +280,17 @@ const CreditCardDetailsEntry = ({
                             data-test-selector="checkoutReviewAndSubmit_expirationYear"
                         >
                             {availableYears.map(year => (
-                                <option key={year.value} value={year.value}>{year.key}</option>
+                                <option key={year.value} value={year.value}>
+                                    {year.key}
+                                </option>
                             ))}
                         </Select>
                     </GridItem>
                 </GridContainer>
             </GridItem>
             <GridItem {...styles.securityCodeGridItem}>
-                {useTokenExGateway
-                    ? <TokenExFrame
+                {useTokenExGateway ? (
+                    <TokenExFrame
                         {...styles.securityCodeTokenExFrame}
                         label={translate("Security Code")}
                         hint={securityCodeHint}
@@ -289,7 +304,8 @@ const CreditCardDetailsEntry = ({
                         error={securityCodeError}
                         data-test-selector="checkoutReviewAndSubmit_securityCode"
                     />
-                    : <TextField
+                ) : (
+                    <TextField
                         {...styles.securityCodeText}
                         label={translate("Security Code")}
                         hint={securityCodeHint}
@@ -301,7 +317,7 @@ const CreditCardDetailsEntry = ({
                         error={securityCodeError}
                         data-test-selector="checkoutReviewAndSubmit_securityCode"
                     />
-                }
+                )}
                 <Modal
                     headline={securityCodeLabel}
                     isOpen={isSecurityCodeModalOpen}
@@ -326,10 +342,7 @@ type TokenExCardTypeDisplayProps = TypographyProps & {
     possibleCardType: string;
 };
 
-const TokenExCardTypeDisplay = ({
-    possibleCardType,
-    ...otherProps
-}: TokenExCardTypeDisplayProps) => {
+const TokenExCardTypeDisplay = ({ possibleCardType, ...otherProps }: TokenExCardTypeDisplayProps) => {
     let cardTypeDisplay = "";
     if (possibleCardType === "masterCard") {
         cardTypeDisplay = "Mastercard";

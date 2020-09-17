@@ -8,8 +8,7 @@ import Pagination, { PaginationPresentationProps } from "@insite/mobius/Paginati
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     pagination: getProductListDataViewProperty(state, "pagination"),
@@ -51,12 +50,12 @@ const ProductListPagination: FC<Props> = ({ addProductFilters, pagination }) => 
             resultsPerPage={pagination!.pageSize}
             resultsPerPageOptions={pagination!.pageSizeOptions}
             onChangePage={changePage}
-            onChangeResultsPerPage={changeResultsPerPage} />
+            onChangeResultsPerPage={changeResultsPerPage}
+        />
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListPagination),
     definition: {
         group: "Product List",

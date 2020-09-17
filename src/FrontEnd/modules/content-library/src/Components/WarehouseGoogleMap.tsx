@@ -1,9 +1,15 @@
-import { CurrentLocationInfoWindow, WarehouseGoogleMapsMarker, WarehouseInfoWindow } from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
+import {
+    CurrentLocationInfoWindow,
+    WarehouseGoogleMapsMarker,
+    WarehouseInfoWindow,
+} from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
-import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
+import AddressInfoCondensedDisplay, {
+    AddressInfoCondensedDisplayStyles,
+} from "@insite/content-library/Components/AddressInfoCondensedDisplay";
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import WarehouseHoursLink from "@insite/content-library/Components/WarehouseHoursLink";
@@ -62,13 +68,13 @@ export const warehouseGoogleMapStyles: WarehouseGoogleMapStyles = {
     },
     infoWindowLeftGridItem: {
         width: 8,
-        css: css` 
+        css: css`
             flex-direction: column;
         `,
     },
     infoWindowRightGridItem: {
         width: 4,
-        css: css` 
+        css: css`
             flex-direction: column;
         `,
     },
@@ -117,41 +123,76 @@ const WarehouseGoogleMap: React.FC<Props> = ({
         setGoogleMap(undefined);
     };
 
-    return <GoogleMap
-        {...styles.googleMap}
-        center={currentLocation}
-        onLoad={handleLoad}
-        onUnmount={handleUnmount}
-    >
-        {mapMarkerElements.map(marker => <>
-            {marker.type === "WAREHOUSE" && <Marker key={marker.key} {...marker} {...styles.warehouseMarker} />}
-            {marker.type === "CURRENT_LOCATION" && <Marker key={marker.key} {...marker} {...styles.currentLocationMarker} />}
-            {marker.type === "SELECTED" && <Marker key={marker.key} {...marker} {...styles.selectedMarker} />}
-        </>)}
-        {warehouseInfoWindow && <InfoWindow {...styles.warehouseInfoWindow} key={newGuid()} position={warehouseInfoWindow?.position}>
-            {warehouseInfoWindow && <GridContainer {...styles.infoWindowGridContainer}>
-                <GridItem {...styles.infoWindowLeftGridItem}>
-                    <Typography {...styles.selectedLocationName}>{warehouseInfoWindow.warehouse.description || warehouseInfoWindow.warehouse.name}</Typography>
-                    <AddressInfoCondensedDisplay {...warehouseInfoWindow.warehouse} extendedStyles={styles.selectedLocationAddressDisplay} />
-                </GridItem>
-                <GridItem {...styles.infoWindowRightGridItem}>
-                    {warehouseInfoWindow.warehouse.hours && <WarehouseHoursLink {...styles.infoWindowWarehouseHoursLink} warehouse={warehouseInfoWindow.warehouse} onOpenWarehouseHours={handleOpenWarehouseHours} />}
-                    <GoogleMapsDirectionLink {...styles.infoWindowGoogleMapsDirectionLink} {...warehouseInfoWindow.warehouse} />
-                    {warehouseInfoWindow.warehouse.distance > 0.01 && <DistanceDisplay {...styles.infoWindowDistanceDisplay} distance={warehouseInfoWindow.warehouse.distance} unitOfMeasure={distanceUnitOfMeasure} />}
-                </GridItem>
-            </GridContainer>}
-        </InfoWindow>}
-        {currentLocationInfoWindow && <InfoWindow {...styles.currentLocationInfoWindow} key={newGuid()} position={currentLocationInfoWindow.position}>
-            <GridContainer {...styles.currentLocationInfoWindowGridContainer}>
-                <GridItem {...styles.currentLocationInfoWindowHeaderGridItem} >
-                    <Typography {...styles.currentLocationInfoWindowHeaderText}>{translate("Current Location")}</Typography>
-                </GridItem>
-                <GridItem {...styles.currentLocationInfoWindowSearchFilterGridItem} >
-                    <Typography {...styles.currentLocationInfoWindowSearchFilterText}>{warehouseSearchFilter}</Typography>
-                </GridItem>
-            </GridContainer>
-        </InfoWindow>}
-    </GoogleMap>;
+    return (
+        <GoogleMap {...styles.googleMap} center={currentLocation} onLoad={handleLoad} onUnmount={handleUnmount}>
+            {mapMarkerElements.map(marker => (
+                <>
+                    {marker.type === "WAREHOUSE" && <Marker key={marker.key} {...marker} {...styles.warehouseMarker} />}
+                    {marker.type === "CURRENT_LOCATION" && (
+                        <Marker key={marker.key} {...marker} {...styles.currentLocationMarker} />
+                    )}
+                    {marker.type === "SELECTED" && <Marker key={marker.key} {...marker} {...styles.selectedMarker} />}
+                </>
+            ))}
+            {warehouseInfoWindow && (
+                <InfoWindow {...styles.warehouseInfoWindow} key={newGuid()} position={warehouseInfoWindow?.position}>
+                    {warehouseInfoWindow && (
+                        <GridContainer {...styles.infoWindowGridContainer}>
+                            <GridItem {...styles.infoWindowLeftGridItem}>
+                                <Typography {...styles.selectedLocationName}>
+                                    {warehouseInfoWindow.warehouse.description || warehouseInfoWindow.warehouse.name}
+                                </Typography>
+                                <AddressInfoCondensedDisplay
+                                    {...warehouseInfoWindow.warehouse}
+                                    extendedStyles={styles.selectedLocationAddressDisplay}
+                                />
+                            </GridItem>
+                            <GridItem {...styles.infoWindowRightGridItem}>
+                                {warehouseInfoWindow.warehouse.hours && (
+                                    <WarehouseHoursLink
+                                        {...styles.infoWindowWarehouseHoursLink}
+                                        warehouse={warehouseInfoWindow.warehouse}
+                                        onOpenWarehouseHours={handleOpenWarehouseHours}
+                                    />
+                                )}
+                                <GoogleMapsDirectionLink
+                                    {...styles.infoWindowGoogleMapsDirectionLink}
+                                    {...warehouseInfoWindow.warehouse}
+                                />
+                                {warehouseInfoWindow.warehouse.distance > 0.01 && (
+                                    <DistanceDisplay
+                                        {...styles.infoWindowDistanceDisplay}
+                                        distance={warehouseInfoWindow.warehouse.distance}
+                                        unitOfMeasure={distanceUnitOfMeasure}
+                                    />
+                                )}
+                            </GridItem>
+                        </GridContainer>
+                    )}
+                </InfoWindow>
+            )}
+            {currentLocationInfoWindow && (
+                <InfoWindow
+                    {...styles.currentLocationInfoWindow}
+                    key={newGuid()}
+                    position={currentLocationInfoWindow.position}
+                >
+                    <GridContainer {...styles.currentLocationInfoWindowGridContainer}>
+                        <GridItem {...styles.currentLocationInfoWindowHeaderGridItem}>
+                            <Typography {...styles.currentLocationInfoWindowHeaderText}>
+                                {translate("Current Location")}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.currentLocationInfoWindowSearchFilterGridItem}>
+                            <Typography {...styles.currentLocationInfoWindowSearchFilterText}>
+                                {warehouseSearchFilter}
+                            </Typography>
+                        </GridItem>
+                    </GridContainer>
+                </InfoWindow>
+            )}
+        </GoogleMap>
+    );
 };
 
 export default WarehouseGoogleMap;

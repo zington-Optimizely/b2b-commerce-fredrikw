@@ -6,7 +6,9 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PaginationModel } from "@insite/client-framework/Types/ApiModels";
-import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
+import AddressInfoCondensedDisplay, {
+    AddressInfoCondensedDisplayStyles,
+} from "@insite/content-library/Components/AddressInfoCondensedDisplay";
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import LocationContentLink from "@insite/content-library/Components/LocationContentLink";
@@ -55,8 +57,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     settings: getSettingsCollection(state),
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -120,10 +121,14 @@ export const locationSearchFormStyles: LocationSearchFormStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     form: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     searchContainer: {
         css: css`
@@ -154,7 +159,9 @@ export const locationSearchFormStyles: LocationSearchFormStyles = {
         `,
     },
     searchResultsText: {
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
     searchResultsTextGridItem: {
         width: 4,
@@ -202,7 +209,9 @@ export const locationSearchFormStyles: LocationSearchFormStyles = {
     },
     searchResultDisplayNumberGridItem: {
         width: 1,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     locationDisplayNumberText: {
         color: "primary",
@@ -225,7 +234,9 @@ export const locationSearchFormStyles: LocationSearchFormStyles = {
     },
     searchResultAddressInfoOffsetGridItem: {
         width: 1,
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
     },
     searchResultAddressInfoGridItem: {
         width: 11,
@@ -268,8 +279,25 @@ export const locationSearchFormStyles: LocationSearchFormStyles = {
     },
     pagination: {
         cssOverrides: {
-            pagination: css` justify-content: center; `,
-            perPageSelect: css` ${({ theme }) => (breakpointMediaQueries(theme, [css` display: none; `, null, null, null, null], "min"))} `,
+            pagination: css`
+                justify-content: center;
+            `,
+            perPageSelect: css`
+                ${({ theme }) =>
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            css`
+                                display: none;
+                            `,
+                            null,
+                            null,
+                            null,
+                            null,
+                        ],
+                        "min",
+                    )}
+            `,
         },
     },
 };
@@ -328,11 +356,11 @@ const LocationSearchForm: React.FC<Props> = ({
         if (!locationsPagination) {
             return false;
         }
-        return locationsPagination.pageSize > (resultIndex + 1);
+        return locationsPagination.pageSize > resultIndex + 1;
     };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if(!isLoading) {
+        if (!isLoading) {
             onSearch(searchGeoLocationFilter, searchLocationFilter);
         }
     };
@@ -343,137 +371,185 @@ const LocationSearchForm: React.FC<Props> = ({
         setSearchLocationFilter(event.target.value);
     };
 
-    return <StyledForm {...styles.form} onSubmit={handleSubmit} noValidate>
-        <Container {...styles.searchContainer}>
-            <ContainerCell {...styles.searchInputRow}>
-                <GridContainer {...styles.searchInputGridContainer}>
-                    <GridItem {...styles.searchGeoLocationGridItem}>
-                        <TextField id="searchGeoLocation"
-                            {...styles.searchGeoLocationText}
-                            label={translate("Search by Postal Code, Province or Country")}
-                            required={true}
-                            value={searchGeoLocationFilter}
-                            onChange={handleSearchGeoLocationChanged}
-                            placeholder={translate("Search by Postal Code, Province or Country")}
-                            data-test-selector="locationSearchForm_searchGeoLocation"
-                            error={showGeoLocationErrorMessage ? geoLocationErrorMessage : undefined}
-                        />
-                    </GridItem>
-                    <GridItem {...styles.searchLocationsGridItem} >
-                        <TextField id="searchLocations"
-                            {...styles.searchLocationsText}
-                            label={translate("Search for Location")}
-                            value={searchLocationFilter}
-                            onChange={handleSearchLocationsChanged}
-                            placeholder={translate("Search for Location")}
-                            data-test-selector="locationSearchForm_searchLocations"
-                        />
-                    </GridItem>
-                    <GridItem {...styles.searchButtonGridItem}>
-                        <Button {...styles.searchButton}
-                            type="submit"
-                            data-test-selector="locationSearchForm_searchButton" >
-                            {translate("Search")}
-                        </Button>
-                    </GridItem>
-                    <GridItem {...styles.searchResultsTextGridItem}>
-                        <Typography {...styles.searchResultsText}>{translate("{0} Results").replace("{0}", `${resultCount}`)}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.distanceUnitOfMeasureGridItem}>
-                        <RadioGroup
-                            {...styles.distanceUnitOfMeasureRadioGroup}
-                            id="distanceUoM"
-                            name="distanceUoM"
-                            value={distanceUnitOfMeasure}
-                            onChangeHandler={handleDistanceUnitOfMeasureChange}
-                        >
-                            <Radio {...styles.distanceUnitOfMeasureImperialRadio} value="Imperial">
-                                {translate("Miles")}
-                            </Radio>
-                            <Radio {...styles.distanceUnitOfMeasureMetricRadio} value="Metric">
-                                {translate("Kilometers")}
-                            </Radio>
-                        </RadioGroup>
-                    </GridItem>
-                    <GridItem {...styles.siteMessageGridItem}>
-                        {!isLoading && !locationKnown && geoLocationSearchText.length > 0 && <Typography {...styles.siteMessageGeocodeErrorText}>
-                            {siteMessage("PickUpLocation_GeocodeErrorMessage")}
-                        </Typography>}
-                        {!isLoading && locationKnown && locations.length === 0 && siteMessageResultsErrorMessage && <Typography {...styles.siteMessageResultsErrorText} data-test-selector="locationSearchForm_siteErrorMessage">
-                            {siteMessageResultsErrorMessage}
-                        </Typography>}
-                    </GridItem>
-                </GridContainer>
-            </ContainerCell>
-
-            <ContainerCell {...styles.searchResultRow}>
-                <GridContainer {...styles.searchResultGridContainer}>
-                    {isLoading && locations.length === 0 && <GridItem {...styles.searchResultGridItem}>
-                        <StyledWrapper {...styles.centeringWrapper}>
-                            <LoadingSpinner {...styles.spinner} />
-                        </StyledWrapper>
-                    </GridItem>}
-                    {locations.map((location, index) => <GridItem key={location.id} {...styles.searchResultGridItem}>
-                        <GridContainer  {...styles.searchResultGridContainer}data-test-selector="locationSearchForm_location" data-test-key={`${location.id}`}>
-                            <GridItem {...styles.searchResultDisplayNumberGridItem}>
-                                <Typography {...styles.locationDisplayNumberText}>
-                                    {getLocationNumberFromPagination(index)}
+    return (
+        <StyledForm {...styles.form} onSubmit={handleSubmit} noValidate>
+            <Container {...styles.searchContainer}>
+                <ContainerCell {...styles.searchInputRow}>
+                    <GridContainer {...styles.searchInputGridContainer}>
+                        <GridItem {...styles.searchGeoLocationGridItem}>
+                            <TextField
+                                id="searchGeoLocation"
+                                {...styles.searchGeoLocationText}
+                                label={translate("Search by Postal Code, Province or Country")}
+                                required={true}
+                                value={searchGeoLocationFilter}
+                                onChange={handleSearchGeoLocationChanged}
+                                placeholder={translate("Search by Postal Code, Province or Country")}
+                                data-test-selector="locationSearchForm_searchGeoLocation"
+                                error={showGeoLocationErrorMessage ? geoLocationErrorMessage : undefined}
+                            />
+                        </GridItem>
+                        <GridItem {...styles.searchLocationsGridItem}>
+                            <TextField
+                                id="searchLocations"
+                                {...styles.searchLocationsText}
+                                label={translate("Search for Location")}
+                                value={searchLocationFilter}
+                                onChange={handleSearchLocationsChanged}
+                                placeholder={translate("Search for Location")}
+                                data-test-selector="locationSearchForm_searchLocations"
+                            />
+                        </GridItem>
+                        <GridItem {...styles.searchButtonGridItem}>
+                            <Button
+                                {...styles.searchButton}
+                                type="submit"
+                                data-test-selector="locationSearchForm_searchButton"
+                            >
+                                {translate("Search")}
+                            </Button>
+                        </GridItem>
+                        <GridItem {...styles.searchResultsTextGridItem}>
+                            <Typography {...styles.searchResultsText}>
+                                {translate("{0} Results").replace("{0}", `${resultCount}`)}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.distanceUnitOfMeasureGridItem}>
+                            <RadioGroup
+                                {...styles.distanceUnitOfMeasureRadioGroup}
+                                id="distanceUoM"
+                                name="distanceUoM"
+                                value={distanceUnitOfMeasure}
+                                onChangeHandler={handleDistanceUnitOfMeasureChange}
+                            >
+                                <Radio {...styles.distanceUnitOfMeasureImperialRadio} value="Imperial">
+                                    {translate("Miles")}
+                                </Radio>
+                                <Radio {...styles.distanceUnitOfMeasureMetricRadio} value="Metric">
+                                    {translate("Kilometers")}
+                                </Radio>
+                            </RadioGroup>
+                        </GridItem>
+                        <GridItem {...styles.siteMessageGridItem}>
+                            {!isLoading && !locationKnown && geoLocationSearchText.length > 0 && (
+                                <Typography {...styles.siteMessageGeocodeErrorText}>
+                                    {siteMessage("PickUpLocation_GeocodeErrorMessage")}
                                 </Typography>
+                            )}
+                            {!isLoading && locationKnown && locations.length === 0 && siteMessageResultsErrorMessage && (
+                                <Typography
+                                    {...styles.siteMessageResultsErrorText}
+                                    data-test-selector="locationSearchForm_siteErrorMessage"
+                                >
+                                    {siteMessageResultsErrorMessage}
+                                </Typography>
+                            )}
+                        </GridItem>
+                    </GridContainer>
+                </ContainerCell>
+
+                <ContainerCell {...styles.searchResultRow}>
+                    <GridContainer {...styles.searchResultGridContainer}>
+                        {isLoading && locations.length === 0 && (
+                            <GridItem {...styles.searchResultGridItem}>
+                                <StyledWrapper {...styles.centeringWrapper}>
+                                    <LoadingSpinner {...styles.spinner} />
+                                </StyledWrapper>
                             </GridItem>
-                            <GridItem {...styles.searchResultLocationGridItem}>
-                            <Link {...styles.locationNameLink}
-                                onClick={generateLocationSelectClickHandler(location)}
-                                data-test-selector="findLocationModal_locationSelect">
-                                {location.name}
-                            </Link>
+                        )}
+                        {locations.map((location, index) => (
+                            <GridItem key={location.id} {...styles.searchResultGridItem}>
+                                <GridContainer
+                                    {...styles.searchResultGridContainer}
+                                    data-test-selector="locationSearchForm_location"
+                                    data-test-key={`${location.id}`}
+                                >
+                                    <GridItem {...styles.searchResultDisplayNumberGridItem}>
+                                        <Typography {...styles.locationDisplayNumberText}>
+                                            {getLocationNumberFromPagination(index)}
+                                        </Typography>
+                                    </GridItem>
+                                    <GridItem {...styles.searchResultLocationGridItem}>
+                                        <Link
+                                            {...styles.locationNameLink}
+                                            onClick={generateLocationSelectClickHandler(location)}
+                                            data-test-selector="findLocationModal_locationSelect"
+                                        >
+                                            {location.name}
+                                        </Link>
+                                    </GridItem>
+                                    <GridItem {...styles.searchResultAddressInfoOffsetGridItem}>
+                                        {/* Layout Indentation */}
+                                    </GridItem>
+                                    <GridItem {...styles.searchResultAddressInfoGridItem}>
+                                        <AddressInfoCondensedDisplay
+                                            {...styles.locationAddressInfoCondensed}
+                                            {...location}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.searchResultPhoneOffsetGridItem}>
+                                        {/* Layout Indentation */}
+                                    </GridItem>
+                                    {location.phone && (
+                                        <>
+                                            <GridItem {...styles.searchResultPhoneGridItem}>
+                                                <Link
+                                                    href={`tel:${location.phone}`}
+                                                    {...styles.searchResultPhoneLink}
+                                                    target="_blank"
+                                                >
+                                                    {location.phone}
+                                                </Link>
+                                            </GridItem>
+                                            <GridItem {...styles.searchResultLinksOffsetGridItem}>
+                                                {/* Layout Indentation */}
+                                            </GridItem>
+                                        </>
+                                    )}
+                                    {location.htmlContent && (
+                                        <GridItem {...styles.searchResultContentGridItem}>
+                                            <LocationContentLink
+                                                {...styles.locationContentLink}
+                                                location={location}
+                                                onOpenLocationContent={generateOpenLocationContentFor(location)}
+                                            />
+                                        </GridItem>
+                                    )}
+                                    <GridItem {...styles.searchResultGoogleMapsDirectionLinkGridItem}>
+                                        <GoogleMapsDirectionLink
+                                            {...styles.locationGoogleMapsDirectionLink}
+                                            {...location}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.searchResultDistanceGridItem}>
+                                        <DistanceDisplay
+                                            {...styles.locationDistanceDisplayText}
+                                            distance={location.distance}
+                                            unitOfMeasure={distanceUnitOfMeasure}
+                                        />
+                                    </GridItem>
+                                    {isNotFinalResult(index) && (
+                                        <GridItem {...styles.searchResultDividerGridItem}>
+                                            <StyledHr {...styles.searchResultDivider} />
+                                        </GridItem>
+                                    )}
+                                </GridContainer>
                             </GridItem>
-                            <GridItem {...styles.searchResultAddressInfoOffsetGridItem}>
-                                {/* Layout Indentation */}
-                            </GridItem>
-                            <GridItem {...styles.searchResultAddressInfoGridItem}>
-                                <AddressInfoCondensedDisplay
-                                    {...styles.locationAddressInfoCondensed}
-                                    {...location}
-                                />
-                            </GridItem>
-                            <GridItem {...styles.searchResultPhoneOffsetGridItem}>
-                                {/* Layout Indentation */}
-                            </GridItem>
-                            {location.phone && <>
-                                <GridItem {...styles.searchResultPhoneGridItem}>
-                                    <Link href={`tel:${location.phone}`} {...styles.searchResultPhoneLink} target="_blank">{location.phone}</Link>
-                                </GridItem>
-                                <GridItem {...styles.searchResultLinksOffsetGridItem}>
-                                    {/* Layout Indentation */}
-                                </GridItem>
-                            </>}
-                            {location.htmlContent && <GridItem {...styles.searchResultContentGridItem}>
-                                <LocationContentLink {...styles.locationContentLink} location={location} onOpenLocationContent={generateOpenLocationContentFor(location)} />
-                            </GridItem>}
-                            <GridItem {...styles.searchResultGoogleMapsDirectionLinkGridItem}>
-                                <GoogleMapsDirectionLink {...styles.locationGoogleMapsDirectionLink} {...location} />
-                            </GridItem>
-                            <GridItem {...styles.searchResultDistanceGridItem}>
-                                <DistanceDisplay {...styles.locationDistanceDisplayText} distance={location.distance} unitOfMeasure={distanceUnitOfMeasure} />
-                            </GridItem>
-                            {isNotFinalResult(index) && <GridItem {...styles.searchResultDividerGridItem}>
-                                <StyledHr {...styles.searchResultDivider} />
-                            </GridItem>}
-                        </GridContainer>
-                    </GridItem>)}
-                </GridContainer>
-            </ContainerCell>
-            <ContainerCell {...styles.paginationRow}>
-                <LocationPagination
-                    {...styles.pagination}
-                    locations={locations}
-                    locationsPagination={locationsPagination}
-                    setPage={setPage}
-                    setPageSize={setPageSize}
-                />
-            </ContainerCell>
-        </Container>
-    </StyledForm>;
+                        ))}
+                    </GridContainer>
+                </ContainerCell>
+                <ContainerCell {...styles.paginationRow}>
+                    <LocationPagination
+                        {...styles.pagination}
+                        locations={locations}
+                        locationsPagination={locationsPagination}
+                        setPage={setPage}
+                        setPageSize={setPageSize}
+                    />
+                </ContainerCell>
+            </Container>
+        </StyledForm>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationSearchForm);

@@ -32,14 +32,14 @@ export interface CreateNewAddressModalStyles {
 export const createNewAddressModalStyles: CreateNewAddressModalStyles = {};
 
 const CreateNewAddressModal = ({
-                                   newAddress,
-                                   isModalOpen,
-                                   onModalClose,
-                                   onFormSubmit,
-                                   extendedStyles,
-                                   countries,
-                                   shipToAddressFields,
-                               }: Props) => {
+    newAddress,
+    isModalOpen,
+    onModalClose,
+    onFormSubmit,
+    extendedStyles,
+    countries,
+    shipToAddressFields,
+}: Props) => {
     if (!countries || !shipToAddressFields) {
         return null;
     }

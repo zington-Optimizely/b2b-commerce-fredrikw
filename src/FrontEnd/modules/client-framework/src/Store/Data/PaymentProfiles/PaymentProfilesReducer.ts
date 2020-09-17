@@ -12,11 +12,17 @@ const initialState: PaymentProfilesState = {
 };
 
 const reducer = {
-    "Data/PaymentProfiles/BeginLoadPaymentProfiles": (draft: Draft<PaymentProfilesState>, action: { parameter: GetPaymentProfilesApiParameter }) => {
+    "Data/PaymentProfiles/BeginLoadPaymentProfiles": (
+        draft: Draft<PaymentProfilesState>,
+        action: { parameter: GetPaymentProfilesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/PaymentProfiles/CompleteLoadPaymentProfiles": (draft: Draft<PaymentProfilesState>, action: { parameter: GetPaymentProfilesApiParameter, collection: AccountPaymentProfileCollectionModel }) => {
+    "Data/PaymentProfiles/CompleteLoadPaymentProfiles": (
+        draft: Draft<PaymentProfilesState>,
+        action: { parameter: GetPaymentProfilesApiParameter; collection: AccountPaymentProfileCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.accountPaymentProfiles!);
     },
 

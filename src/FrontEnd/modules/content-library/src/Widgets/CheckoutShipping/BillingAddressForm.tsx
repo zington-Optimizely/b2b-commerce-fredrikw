@@ -4,8 +4,15 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import resetBillingAddressFormValidation from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ResetBillingAddressFormValidation";
 import validateBillingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateBillingAddressForm";
 import { AnyAction } from "@insite/client-framework/Store/Reducers";
-import { AddressFieldDisplayCollectionModel, BaseAddressModel, BillToModel, CountryModel } from "@insite/client-framework/Types/ApiModels";
-import CustomerAddressFormFields, { CustomerAddressFormFieldStyles } from "@insite/content-library/Components/CustomerAddressFormFields";
+import {
+    AddressFieldDisplayCollectionModel,
+    BaseAddressModel,
+    BillToModel,
+    CountryModel,
+} from "@insite/client-framework/Types/ApiModels";
+import CustomerAddressFormFields, {
+    CustomerAddressFormFieldStyles,
+} from "@insite/content-library/Components/CustomerAddressFormFields";
 import { CheckoutShippingFormContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import React from "react";
@@ -18,7 +25,11 @@ interface OwnProps {
     extendedStyles?: BillingAddressFormStyles;
 }
 
-const mapStateToProps = ({ pages: { checkoutShipping: { billingAddressFormState } } }: ApplicationState) => ({
+const mapStateToProps = ({
+    pages: {
+        checkoutShipping: { billingAddressFormState },
+    },
+}: ApplicationState) => ({
     billingAddressFormState,
 });
 
@@ -29,7 +40,9 @@ const mapDispatchToProps = {
             address,
         });
     },
-    validateForm: makeHandlerChainAwaitable<Parameters<typeof validateBillingAddressForm>[0], boolean>(validateBillingAddressForm),
+    validateForm: makeHandlerChainAwaitable<Parameters<typeof validateBillingAddressForm>[0], boolean>(
+        validateBillingAddressForm,
+    ),
     resetBillingAddressFormValidation,
 };
 
@@ -69,11 +82,12 @@ class BillingAddressForm extends React.Component<Props, { styles: BillingAddress
         if (!validation) {
             return;
         }
-        this.context.validators.billingAddress = () => validateForm({
-            address,
-            validation,
-            fieldDisplay,
-        });
+        this.context.validators.billingAddress = () =>
+            validateForm({
+                address,
+                validation,
+                fieldDisplay,
+            });
     }
 
     componentWillUnmount() {
@@ -86,12 +100,19 @@ class BillingAddressForm extends React.Component<Props, { styles: BillingAddress
         if (prevBillingAddressFormState !== billingAddressFormState && billingAddressFormState) {
             const { address } = billingAddressFormState;
             const { validation } = address;
-            if ((!prevBillingAddressFormState || prevBillingAddressFormState.address !== address || prevBillingAddressFormState.address.validation !== validation || prevFieldDisplay !== fieldDisplay) && validation) {
-                this.context.validators.billingAddress = () => validateForm({
-                    address,
-                    validation,
-                    fieldDisplay,
-                });
+            if (
+                (!prevBillingAddressFormState ||
+                    prevBillingAddressFormState.address !== address ||
+                    prevBillingAddressFormState.address.validation !== validation ||
+                    prevFieldDisplay !== fieldDisplay) &&
+                validation
+            ) {
+                this.context.validators.billingAddress = () =>
+                    validateForm({
+                        address,
+                        validation,
+                        fieldDisplay,
+                    });
 
                 if (this.context.formSubmitAttempted) {
                     validateForm({
@@ -104,7 +125,7 @@ class BillingAddressForm extends React.Component<Props, { styles: BillingAddress
         }
     }
 
-    handleInputChange: TextFieldProps["onChange"] = (event) => {
+    handleInputChange: TextFieldProps["onChange"] = event => {
         const { billingAddressFormState, setAddress } = this.props;
         if (!billingAddressFormState) {
             return;

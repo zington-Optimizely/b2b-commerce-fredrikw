@@ -13,9 +13,7 @@ const reducer = {
         draft.onCloseAction = onCloseAction;
     },
 
-    "ErrorModal/HideModal": (
-        draft: Draft<ErrorModalState>,
-    ) => {
+    "ErrorModal/HideModal": (draft: Draft<ErrorModalState>) => {
         delete draft.isOpen;
     },
 };

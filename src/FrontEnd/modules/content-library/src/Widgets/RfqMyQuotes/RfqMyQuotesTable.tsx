@@ -62,7 +62,9 @@ export interface RfqMyQuotesTableStyles {
 
 export const rfqMyQuotesTableStyles: RfqMyQuotesTableStyles = {
     wrapper: {
-        css: css` overflow: auto; `,
+        css: css`
+            overflow: auto;
+        `,
     },
     centeringWrapper: {
         css: css`
@@ -72,7 +74,9 @@ export const rfqMyQuotesTableStyles: RfqMyQuotesTableStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     noResultsContainer: {
         css: css`
@@ -136,7 +140,9 @@ const RfqMyQuotesTable = ({
         isJobQuote: quote.isJobQuote,
         status: quote.statusDisplay,
         orderDate: quote.orderDate ? getLocalizedDateTime({ dateTime: new Date(quote.orderDate), language }) : "",
-        expirationDate: quote.expirationDate ? getLocalizedDateTime({ dateTime: new Date(quote.expirationDate), language }) : "",
+        expirationDate: quote.expirationDate
+            ? getLocalizedDateTime({ dateTime: new Date(quote.expirationDate), language })
+            : "",
         salesRep: quote.salespersonName,
         user: quote.userName,
         customer: quote.customerName,
@@ -147,48 +153,83 @@ const RfqMyQuotesTable = ({
         <StyledWrapper {...styles.wrapper}>
             <DataTable {...styles.dataTable}>
                 <DataTableHead {...styles.dataTableHead}>
-                    <DataTableHeader {...styles.quoteNumberHeader} title={translate("Quote Number")}>{translate("Quote #")}</DataTableHeader>
-                    <DataTableHeader tight {...styles.customerHeader}>{translate("Status")}</DataTableHeader>
-                    <DataTableHeader tight {...styles.orderDateHeader}>{translate("Requested")}</DataTableHeader>
-                    <DataTableHeader tight {...styles.expirationDateHeader}>{translate("Expires")}</DataTableHeader>
-                    {session.isSalesPerson
-                        && <>
-                            <DataTableHeader tight {...styles.salesRepHeader}>{translate("Sales Rep")}</DataTableHeader>
-                            <DataTableHeader tight {...styles.userHeader}>{translate("User")}</DataTableHeader>
+                    <DataTableHeader {...styles.quoteNumberHeader} title={translate("Quote Number")}>
+                        {translate("Quote #")}
+                    </DataTableHeader>
+                    <DataTableHeader tight {...styles.customerHeader}>
+                        {translate("Status")}
+                    </DataTableHeader>
+                    <DataTableHeader tight {...styles.orderDateHeader}>
+                        {translate("Requested")}
+                    </DataTableHeader>
+                    <DataTableHeader tight {...styles.expirationDateHeader}>
+                        {translate("Expires")}
+                    </DataTableHeader>
+                    {session.isSalesPerson && (
+                        <>
+                            <DataTableHeader tight {...styles.salesRepHeader}>
+                                {translate("Sales Rep")}
+                            </DataTableHeader>
+                            <DataTableHeader tight {...styles.userHeader}>
+                                {translate("User")}
+                            </DataTableHeader>
                         </>
-                    }
-                    <DataTableHeader tight {...styles.customerHeader}>{translate("Customer")}</DataTableHeader>
-                    {!session.isSalesPerson
-                        && <DataTableHeader tight {...styles.shipToHeader} title={translate("Fulfillment")}>{translate("Ship To/Pick Up")}</DataTableHeader>
-                    }
+                    )}
+                    <DataTableHeader tight {...styles.customerHeader}>
+                        {translate("Customer")}
+                    </DataTableHeader>
+                    {!session.isSalesPerson && (
+                        <DataTableHeader tight {...styles.shipToHeader} title={translate("Fulfillment")}>
+                            {translate("Ship To/Pick Up")}
+                        </DataTableHeader>
+                    )}
                 </DataTableHead>
                 <DataTableBody {...styles.dataTableBody}>
-                    {rows.map(({ id, quoteNumber, isJobQuote, status, orderDate, expirationDate, salesRep, user, customer, shipTo }) => (
-                        <DataTableRow key={id} {...styles.dataTableRow} data-test-selector={`rfqMyQuotes_quoteLine_${id}`}>
-                            <DataTableCell {...styles.quoteNumberCell}>
-                                <Link
-                                    {...styles.quoteLink}
-                                    href={`${rfqQuoteDetailsPageUrl}?quoteId=${id}`}
-                                    data-test-selector="link"
-                                >
-                                    {quoteNumber}
-                                </Link>
-                            </DataTableCell>
-                            <DataTableCell {...styles.statusCell}>{status}</DataTableCell>
-                            <DataTableCell {...styles.orderDateCell}>{orderDate}</DataTableCell>
-                            <DataTableCell {...styles.expirationDateCell}>{expirationDate}</DataTableCell>
-                            {session.isSalesPerson
-                                && <>
-                                    <DataTableCell {...styles.salesRepCell}>{salesRep}</DataTableCell>
-                                    <DataTableCell {...styles.userCell} data-test-selector="user">{user}</DataTableCell>
-                                </>
-                            }
-                            <DataTableCell {...styles.customerCell}>{customer}</DataTableCell>
-                            {!session.isSalesPerson
-                                && <DataTableCell {...styles.shipToCell}>{shipTo}</DataTableCell>
-                            }
-                        </DataTableRow>
-                    ))}
+                    {rows.map(
+                        ({
+                            id,
+                            quoteNumber,
+                            isJobQuote,
+                            status,
+                            orderDate,
+                            expirationDate,
+                            salesRep,
+                            user,
+                            customer,
+                            shipTo,
+                        }) => (
+                            <DataTableRow
+                                key={id}
+                                {...styles.dataTableRow}
+                                data-test-selector={`rfqMyQuotes_quoteLine_${id}`}
+                            >
+                                <DataTableCell {...styles.quoteNumberCell}>
+                                    <Link
+                                        {...styles.quoteLink}
+                                        href={`${rfqQuoteDetailsPageUrl}?quoteId=${id}`}
+                                        data-test-selector="link"
+                                    >
+                                        {quoteNumber}
+                                    </Link>
+                                </DataTableCell>
+                                <DataTableCell {...styles.statusCell}>{status}</DataTableCell>
+                                <DataTableCell {...styles.orderDateCell}>{orderDate}</DataTableCell>
+                                <DataTableCell {...styles.expirationDateCell}>{expirationDate}</DataTableCell>
+                                {session.isSalesPerson && (
+                                    <>
+                                        <DataTableCell {...styles.salesRepCell}>{salesRep}</DataTableCell>
+                                        <DataTableCell {...styles.userCell} data-test-selector="user">
+                                            {user}
+                                        </DataTableCell>
+                                    </>
+                                )}
+                                <DataTableCell {...styles.customerCell}>{customer}</DataTableCell>
+                                {!session.isSalesPerson && (
+                                    <DataTableCell {...styles.shipToCell}>{shipTo}</DataTableCell>
+                                )}
+                            </DataTableRow>
+                        ),
+                    )}
                 </DataTableBody>
             </DataTable>
         </StyledWrapper>

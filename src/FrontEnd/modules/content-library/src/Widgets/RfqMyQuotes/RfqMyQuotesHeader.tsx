@@ -37,7 +37,12 @@ export interface RfqMyQuotesHeaderStyles {
 }
 
 export const rfqMyQuotesHeaderStyles: RfqMyQuotesHeaderStyles = {
-    container: { gap: 8, css: css` padding-bottom: 10px; ` },
+    container: {
+        gap: 8,
+        css: css`
+            padding-bottom: 10px;
+        `,
+    },
     quoteCountGridItem: {
         width: 11,
         style: { marginTop: "8px" },
@@ -52,34 +57,29 @@ export const rfqMyQuotesHeaderStyles: RfqMyQuotesHeaderStyles = {
 
 const styles = rfqMyQuotesHeaderStyles;
 
-const RfqMyQuotesHeader = ({
-    id,
-    quotesDataView,
-    toggleFiltersOpen,
-}: Props) => {
-    const quotesCount = quotesDataView.value && quotesDataView.pagination ? quotesDataView.pagination.totalItemCount : 0;
+const RfqMyQuotesHeader = ({ id, quotesDataView, toggleFiltersOpen }: Props) => {
+    const quotesCount =
+        quotesDataView.value && quotesDataView.pagination ? quotesDataView.pagination.totalItemCount : 0;
 
-    return <>
-        <Zone contentId={id} zoneName="Content00" />
-        <GridContainer {...styles.container}>
-            <GridItem {...styles.quoteCountGridItem}>
-                <Typography {...styles.quoteCountText} data-test-selector="rfqMyQuotes_count">
-                    {quotesCount === 1
-                        && translate("{0} Quote", quotesCount.toString())
-                    }
-                    {quotesCount > 1
-                        && translate("{0} Quotes", quotesCount.toString())
-                    }
-                </Typography>
-            </GridItem>
-            <GridItem {...styles.toggleFilterGridItem}>
-                <Clickable onClick={toggleFiltersOpen} data-test-selector="rfqMyQuotes_toggleFilter">
-                    <VisuallyHidden>{translate("toggle filter")}</VisuallyHidden>
-                    <Icon src={Filter} {...styles.toggleFilterIcon} />
-                </Clickable>
-            </GridItem>
-        </GridContainer>
-    </>;
+    return (
+        <>
+            <Zone contentId={id} zoneName="Content00" />
+            <GridContainer {...styles.container}>
+                <GridItem {...styles.quoteCountGridItem}>
+                    <Typography {...styles.quoteCountText} data-test-selector="rfqMyQuotes_count">
+                        {quotesCount === 1 && translate("{0} Quote", quotesCount.toString())}
+                        {quotesCount > 1 && translate("{0} Quotes", quotesCount.toString())}
+                    </Typography>
+                </GridItem>
+                <GridItem {...styles.toggleFilterGridItem}>
+                    <Clickable onClick={toggleFiltersOpen} data-test-selector="rfqMyQuotes_toggleFilter">
+                        <VisuallyHidden>{translate("toggle filter")}</VisuallyHidden>
+                        <Icon src={Filter} {...styles.toggleFilterIcon} />
+                    </Clickable>
+                </GridItem>
+            </GridContainer>
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

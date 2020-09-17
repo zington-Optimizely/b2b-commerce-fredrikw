@@ -14,7 +14,8 @@ export const LoadRealTimePricing: HandlerType = props => {
     if (!props.parameter.unitOfMeasure) {
         return;
     }
-    const productOption = props.getState().components.productInfoLists.productInfoListById[props.parameter.id]?.productInfoByProductId[props.parameter.productId];
+    const productOption = props.getState().components.productInfoLists.productInfoListById[props.parameter.id]
+        ?.productInfoByProductId[props.parameter.productId];
     if (props.parameter.unitOfMeasure === productOption?.unitOfMeasure) {
         return;
     }
@@ -25,22 +26,24 @@ export const LoadRealTimePricing: HandlerType = props => {
         unitOfMeasure: props.parameter.unitOfMeasure,
     };
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: [productParameter],
-        onSuccess: (realTimePricing) => {
-            props.dispatch({
-                type: "Components/ProductInfoLists/CompleteLoadRealTimePricing",
-                id: props.parameter.id,
-                realTimePricing,
-            });
-        },
-        onError: () => {
-            props.dispatch({
-                type: "Components/ProductInfoLists/FailedLoadRealTimePricing",
-                id: props.parameter.id,
-            });
-        },
-    }));
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: [productParameter],
+            onSuccess: realTimePricing => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/CompleteLoadRealTimePricing",
+                    id: props.parameter.id,
+                    realTimePricing,
+                });
+            },
+            onError: () => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/FailedLoadRealTimePricing",
+                    id: props.parameter.id,
+                });
+            },
+        }),
+    );
 };
 
 export const DispatchUpdateCarouselProduct: HandlerType = props => {
@@ -53,10 +56,7 @@ export const DispatchUpdateCarouselProduct: HandlerType = props => {
     });
 };
 
-export const chain = [
-    LoadRealTimePricing,
-    DispatchUpdateCarouselProduct,
-];
+export const chain = [LoadRealTimePricing, DispatchUpdateCarouselProduct];
 
 const updateProductInfo = createHandlerChainRunner(chain, "UpdateProductInfo");
 

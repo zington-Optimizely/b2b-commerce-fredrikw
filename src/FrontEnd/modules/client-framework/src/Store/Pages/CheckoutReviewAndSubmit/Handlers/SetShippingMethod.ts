@@ -47,12 +47,7 @@ export const LoadPromotions: HandlerType = props => {
     props.dispatch(loadCurrentPromotions());
 };
 
-export const chain = [
-    PopulateApiParameter,
-    UpdateCart,
-    LoadCart,
-    LoadPromotions,
-];
+export const chain = [PopulateApiParameter, UpdateCart, LoadCart, LoadPromotions];
 
 const setShippingMethod = createHandlerChainRunner(chain, "SetShippingMethod");
 export default setShippingMethod;

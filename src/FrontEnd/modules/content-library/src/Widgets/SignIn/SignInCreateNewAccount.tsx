@@ -30,7 +30,8 @@ const mapStateToProps = (state: ApplicationState) => {
     const createAccountPageLink = getPageLinkByPageType(state, "CreateAccountPage");
     return {
         allowCreateAccount: accountSettings.allowCreateAccount,
-        allowGuestCheckout: accountSettings.allowGuestCheckout && !state.context.session.isAuthenticated && referredFromShipping,
+        allowGuestCheckout:
+            accountSettings.allowGuestCheckout && !state.context.session.isAuthenticated && referredFromShipping,
         returnUrl,
         createAccountUrl: createAccountPageLink ? `${createAccountPageLink.url}${search}` : undefined,
     };
@@ -88,8 +89,7 @@ export const signInCreateNewAccountStyles: SignInCreateNewAccountStyles = {
                         `,
                     ],
                     "min",
-                )
-            }
+                )}
         `,
     },
     checkoutAsGuestButton: {
@@ -107,8 +107,7 @@ export const signInCreateNewAccountStyles: SignInCreateNewAccountStyles = {
                         `,
                     ],
                     "max",
-                )
-            }
+                )}
         `,
     },
     createNewAccountButton: { variant: "secondary" },
@@ -158,26 +157,27 @@ const SignInCreateNewAccount: FC<Props> = ({
                 <Typography {...styles.signInCreateNewAccountText}>{fields.text}</Typography>
             </GridItem>
             <GridItem {...styles.signInCreateNewAccountButtonGridItem}>
-                {allowGuestCheckout
-                    && <Button
+                {allowGuestCheckout && (
+                    <Button
                         {...styles.checkoutAsGuestButton}
                         onClick={handleCheckoutAsGuest}
                         data-test-selector="signInCreateNewAccount_checkoutAsGuest"
                     >
                         {translate("Checkout as Guest")}
                     </Button>
-                }
-                {createAccountUrl
-                    && <Button
+                )}
+                {createAccountUrl && (
+                    <Button
                         {...styles.createNewAccountButton}
                         onClick={handleCreateNewAccount}
                         data-test-selector="signInCreateNewAccount_createNewAccount"
                     >
                         {translate("Create Account")}
                     </Button>
-                }
+                )}
             </GridItem>
-        </GridContainer>);
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

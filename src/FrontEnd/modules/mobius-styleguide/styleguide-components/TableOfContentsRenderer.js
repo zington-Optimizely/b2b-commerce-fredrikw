@@ -3,7 +3,10 @@ import PropTypes from "prop-types";
 import Styled from "react-styleguidist/lib/client/rsg-components/Styled";
 
 const styles = ({
-    space, color, fontFamily, fontSize, // , borderRadius
+    space,
+    color,
+    fontFamily,
+    fontSize, // , borderRadius
 }) => ({
     root: {
         fontFamily: fontFamily.base,
@@ -49,9 +52,7 @@ const styles = ({
     },
 });
 
-export function TableOfContentsRenderer({
-    classes, children, searchTerm, onSearchTermChange,
-}) {
+export function TableOfContentsRenderer({ classes, children, searchTerm, onSearchTermChange }) {
     return (
         <>
             <div className={classes.root}>

@@ -43,12 +43,16 @@ export const languageMenuStyles: LanguageMenuStyles = {
     languageIcon: {
         size: 22,
         src: Globe,
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
     languageSelect: {
         backgroundColor: "common.accent",
         cssOverrides: {
-            formInputWrapper: css` width: 100px; `,
+            formInputWrapper: css`
+                width: 100px;
+            `,
             inputSelect: css`
                 border: none;
                 text-transform: uppercase;
@@ -63,7 +67,9 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-export const LogoImage = styled.img` height: 22px; `;
+export const LogoImage = styled.img`
+    height: 22px;
+`;
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 const styles = languageMenuStyles;
@@ -75,10 +81,12 @@ const LanguageMenu: FC<Props> = ({ languages, currentLanguage, fields, setLangua
 
     return (
         <StyledWrapper {...styles.languageWrapper}>
-            {fields.showIcon && (currentLanguage?.imageFilePath
-                ? <LogoImage src={currentLanguage.imageFilePath} alt="" />
-                : <Icon {...styles.languageIcon} />)
-            }
+            {fields.showIcon &&
+                (currentLanguage?.imageFilePath ? (
+                    <LogoImage src={currentLanguage.imageFilePath} alt="" />
+                ) : (
+                    <Icon {...styles.languageIcon} />
+                ))}
             <VisuallyHidden as="label" htmlFor={menuId} id={`${menuId}-label`}>
                 {translate("Currency")}
             </VisuallyHidden>
@@ -87,7 +95,8 @@ const LanguageMenu: FC<Props> = ({ languages, currentLanguage, fields, setLangua
                 uid={menuId}
                 data-test-selector="languageSelector"
                 onChange={event => setLanguage({ languageId: event.currentTarget.value })}
-                value={currentLanguage?.id}>
+                value={currentLanguage?.id}
+            >
                 {languages.map(c => (
                     <option value={c.id} key={c.id}>
                         {c.languageCode}

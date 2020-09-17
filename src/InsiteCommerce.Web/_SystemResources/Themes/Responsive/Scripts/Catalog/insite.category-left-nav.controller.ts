@@ -123,9 +123,6 @@ module insite.catalog {
 
             categoryFacet.selected = !categoryFacet.selected;
 
-            this.attributeValueIds.length = 0;
-            this.priceFilterMinimums.length = 0;
-
             this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "category");
         }
 
@@ -172,8 +169,6 @@ module insite.catalog {
         togglePriceFilter(minimumPrice: string): void {
             this.changeArrayValue(minimumPrice, this.priceFilterMinimums);
             this.getSelectedPriceFilters();
-
-            this.attributeValueIds.length = 0;
 
             this.$rootScope.$broadcast("CategoryLeftNavController-filterUpdated", "price");
         }

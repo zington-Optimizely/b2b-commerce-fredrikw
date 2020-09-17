@@ -34,22 +34,21 @@ export const rfqMyQuotesTypeSelectorStyles: RfqMyQuotesTypeSelectorStyles = {
     quoteTypeRadioGroup: {
         // TODO ISC-12425 set these radio buttons to horizontal and remove the  "& > div" selector
         css: css`
-                display: inline-block;
-                padding-bottom: 20px;
-                width: 100%;
-                flex-direction: row;
-                & > div {
-                    margin-right: 20px;
-                    display: inline-flex;
-                }
-            `,
+            display: inline-block;
+            padding-bottom: 20px;
+            width: 100%;
+            flex-direction: row;
+            & > div {
+                margin-right: 20px;
+                display: inline-flex;
+            }
+        `,
     },
 };
 
 const styles = rfqMyQuotesTypeSelectorStyles;
 
 const RfqMyQuotesTypeSelector: FC<Props> = ({ parameter, updateSearchFields }) => {
-
     const quoteTypeChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         updateSearchFields({ types: event.currentTarget.value as QuoteType });
     };
@@ -62,15 +61,18 @@ const RfqMyQuotesTypeSelector: FC<Props> = ({ parameter, updateSearchFields }) =
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="requestQuoteTypeRadio"
             >
-                <Radio {...styles.quoteTypeRadioButton} value="quote">{translate("Sales Quotes")}</Radio>
-                <Radio {...styles.quoteTypeRadioButton} value="job">{translate("Job Quotes")}</Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="quote">
+                    {translate("Sales Quotes")}
+                </Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="job">
+                    {translate("Job Quotes")}
+                </Radio>
             </RadioGroup>
         </StyledWrapper>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(RfqMyQuotesTypeSelector),
     definition: {
         group: "RFQ My Quotes",

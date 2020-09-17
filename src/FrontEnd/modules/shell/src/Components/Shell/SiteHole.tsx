@@ -20,11 +20,13 @@ export const sendToSite = (message: any): boolean => {
 };
 
 export const setSiteFrame = (frame: HTMLIFrameElement, handlers: Dictionary<(data: any) => void>) => {
-    siteHole = { };
+    siteHole = {};
     setupSiteHole(frame, siteHole, handlers);
 };
 
-export const siteHoleMessenger = (store: MiddlewareAPI<Dispatch, ShellState>) => (next: Dispatch) => (action: Action) => {
+export const siteHoleMessenger = (store: MiddlewareAPI<Dispatch, ShellState>) => (next: Dispatch) => (
+    action: Action,
+) => {
     if (action.type && action.type.indexOf("SendToSite/") === 0) {
         sendToSite({
             ...action,

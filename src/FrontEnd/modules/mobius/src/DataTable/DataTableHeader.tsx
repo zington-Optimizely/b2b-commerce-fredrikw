@@ -13,12 +13,14 @@ import { DataTablePresentationProps, SortOrderOptions } from "./DataTable";
 import DataTableCellBase, { DataTableCellBaseProps } from "./DataTableCellBase";
 import DataTableContext from "./DataTableContext";
 
-let sortOrderObject: {} | {
-    [SortOrderOptions.ascending]: string;
-    [SortOrderOptions.descending]: string;
-    [SortOrderOptions.none]: string;
-    [SortOrderOptions.other]: string;
-} = {};
+let sortOrderObject:
+    | {}
+    | {
+          [SortOrderOptions.ascending]: string;
+          [SortOrderOptions.descending]: string;
+          [SortOrderOptions.none]: string;
+          [SortOrderOptions.other]: string;
+      } = {};
 
 type IconsObject = {
     sortable?: React.ComponentType | string;
@@ -36,29 +38,40 @@ const iconsObject: {
     [SortOrderOptions.other]?: React.ReactElement;
 } = {};
 
-const generateIconsObject = (sortOrder: SortOrderOptions[], globalIconSources?: IconsObject, instanceIconSources?: IconsObject) => {
+const generateIconsObject = (
+    sortOrder: SortOrderOptions[],
+    globalIconSources?: IconsObject,
+    instanceIconSources?: IconsObject,
+) => {
     const combinedIconSources: IconsObject = { ...globalIconSources, ...instanceIconSources };
-    iconsObject.sortable = (<IconMemo src={combinedIconSources.sortable as React.ComponentType} key="sortable" />);
+    iconsObject.sortable = <IconMemo src={combinedIconSources.sortable as React.ComponentType} key="sortable" />;
     sortOrder.forEach((iconKey: SortOrderOptions) => {
-        iconsObject[iconKey] = (<IconMemo src={combinedIconSources[iconKey] as React.ComponentType} key={iconKey} />);
+        iconsObject[iconKey] = <IconMemo src={combinedIconSources[iconKey] as React.ComponentType} key={iconKey} />;
     });
 };
 
-export type DataTableHeaderPresentationProps = Pick<DataTablePresentationProps, "sortClickableProps" | "sortIconProps" | "sortIconSources"> & {
+export type DataTableHeaderPresentationProps = Pick<
+    DataTablePresentationProps,
+    "sortClickableProps" | "sortIconProps" | "sortIconSources"
+> & {
     /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<DataTableHeaderProps>;
+    // should be StyledProp<DataTableHeaderProps> but typescript wasn't happy with that for unknown reasons
+    css?: StyledProp;
     /** Props that will be passed to the typography title component if the Title is a string. */
     typographyProps?: TypographyPresentationProps;
 };
 
-export type DataTableHeaderProps = MobiusStyledComponentProps<"th", DataTableCellBaseProps & {
-    /** Callback function to sort when header is clicked. Presence governs sortable UI and accessibility concerns thereof. */
-    onSortClick?: () => void;
-    /** The sort order currently being applied to the column. */
-    sorted?: false | "ascending" | "descending" | "none" | "other";
-    /** A list of sort options describing the order in which they will be applied by the parent component. */
-    sortOrder?: SortOrderOptions[]
-} & DataTableHeaderPresentationProps>;
+export type DataTableHeaderProps = MobiusStyledComponentProps<
+    "th",
+    DataTableCellBaseProps & {
+        /** Callback function to sort when header is clicked. Presence governs sortable UI and accessibility concerns thereof. */
+        onSortClick?: () => void;
+        /** The sort order currently being applied to the column. */
+        sorted?: false | "ascending" | "descending" | "none" | "other";
+        /** A list of sort options describing the order in which they will be applied by the parent component. */
+        sortOrder?: SortOrderOptions[];
+    } & DataTableHeaderPresentationProps
+>;
 
 export const DataTableHeaderStyle = styled(DataTableCellBase).attrs({
     as: "th",
@@ -70,7 +83,14 @@ export const DataTableHeaderStyle = styled(DataTableCellBase).attrs({
 `;
 
 const DataTableHeader: React.FC<DataTableHeaderProps> = ({
-    children, css: headerCss = "", onSortClick, sorted, theme, title, typographyProps, ...otherProps
+    children,
+    css: headerCss = "",
+    onSortClick,
+    sorted,
+    theme,
+    title,
+    typographyProps,
+    ...otherProps
 }) => (
     <DataTableContext.Consumer>
         {({ _cssOverrides, headerTypographyProps, sortClickableProps, sortIconProps, sortIconSources, sortOrder }) => {
@@ -95,21 +115,41 @@ const DataTableHeader: React.FC<DataTableHeaderProps> = ({
                 const currentIndexInSortOrder = thisSortOrder!.findIndex((item: SortOrderOptions) => item === sorted);
                 const nextSortString = !sorted
                     ? thisSortOrder![0]
-                    : thisSortOrder![currentIndexInSortOrder === thisSortOrder!.length - 1 ? 0 : currentIndexInSortOrder + 1];
+                    : thisSortOrder![
+                          currentIndexInSortOrder === thisSortOrder!.length - 1 ? 0 : currentIndexInSortOrder + 1
+                      ];
                 const childrenIfString = typeof children === "string" ? children : "";
-                sortIconText = theme!.translate("sort by {0} in {1} order").replace("{0}", title || childrenIfString).replace("{1}", nextSortString);
-                const theElement = (sorted ? iconsObject[sorted] : iconsObject.sortable);
-                sortIcon = (<>
-                    {theElement && React.cloneElement(theElement, { ...sortIconProps, ...otherProps.sortIconProps })}
-                    <VisuallyHidden>{sortIconText}</VisuallyHidden>
-                </>);
+                sortIconText = theme!
+                    .translate("sort by {0} in {1} order")
+                    .replace("{0}", title || childrenIfString)
+                    .replace("{1}", nextSortString);
+                const theElement = sorted ? iconsObject[sorted] : iconsObject.sortable;
+                sortIcon = (
+                    <>
+                        {theElement &&
+                            React.cloneElement(theElement, { ...sortIconProps, ...otherProps.sortIconProps })}
+                        <VisuallyHidden>{sortIconText}</VisuallyHidden>
+                    </>
+                );
             }
             const cellContents = (
                 <>
                     {title ? <VisuallyHidden>{title}</VisuallyHidden> : null}
-                    {typeof children === "string"
-                        ? <><Typography {...headerTypographyProps} {...typographyProps} aria-hidden={!!title}>{children}</Typography>{sortable && sortIcon}</>
-                        : title ? <span aria-hidden>{children}</span> : <>{children}{sortable && sortIcon}</>}
+                    {typeof children === "string" ? (
+                        <>
+                            <Typography {...headerTypographyProps} {...typographyProps} aria-hidden={!!title}>
+                                {children}
+                            </Typography>
+                            {sortable && sortIcon}
+                        </>
+                    ) : title ? (
+                        <span aria-hidden>{children}</span>
+                    ) : (
+                        <>
+                            {children}
+                            {sortable && sortIcon}
+                        </>
+                    )}
                 </>
             );
             return (
@@ -122,12 +162,13 @@ const DataTableHeader: React.FC<DataTableHeaderProps> = ({
                     title={title}
                     {...omitMultiple(otherProps, ["sortIconProps", "sortIconSources", "sortClickableProps"])}
                 >
-                    {sortable
-                        ? <Clickable onClick={onSortClick} {...sortClickableProps} {...otherProps.sortClickableProps}>
+                    {sortable ? (
+                        <Clickable onClick={onSortClick} {...sortClickableProps} {...otherProps.sortClickableProps}>
                             {cellContents}
                         </Clickable>
-                        : cellContents
-                    }
+                    ) : (
+                        cellContents
+                    )}
                 </DataTableHeaderStyle>
             );
         }}

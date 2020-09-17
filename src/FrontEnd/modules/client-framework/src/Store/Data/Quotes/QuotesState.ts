@@ -5,5 +5,4 @@ export interface QuotesDataView extends DataView {
     salespersonList: SalespersonModel[] | null;
 }
 
-export interface QuotesState extends DataViewState<QuoteModel, QuotesDataView> {
-}
+export interface QuotesState extends DataViewState<QuoteModel, QuotesDataView> {}

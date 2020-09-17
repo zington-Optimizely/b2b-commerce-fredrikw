@@ -22,5 +22,7 @@ shippingAddressStyles.addressDisplay = {
 };
 
 notesStyles.wrapper = {
-    css: css` border: 1px solid ${getColor("secondary")}; `,
+    css: css`
+        border: 1px solid ${getColor("secondary")};
+    `,
 };

@@ -39,15 +39,15 @@ export default function combineTypographyProps({
 
     const combinedProps = passedVariant
         ? {
-            ...defaultOtherProps,
-            ...passedVariantProps,
-            ...passedOtherProps,
-        }
+              ...defaultOtherProps,
+              ...passedVariantProps,
+              ...passedOtherProps,
+          }
         : {
-            ...defaultVariantProps,
-            ...defaultOtherProps,
-            ...passedOtherProps,
-        };
+              ...defaultVariantProps,
+              ...defaultOtherProps,
+              ...passedOtherProps,
+          };
 
     // css?
     // variant on the defaultprops?

@@ -8,9 +8,7 @@ export const DispatchCompleteSetProduct: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchCompleteSetProduct,
-];
+export const chain = [DispatchCompleteSetProduct];
 
 const clearProduct = createHandlerChainRunnerOptionalParameter(chain, {}, "ClearProduct");
 export default clearProduct;

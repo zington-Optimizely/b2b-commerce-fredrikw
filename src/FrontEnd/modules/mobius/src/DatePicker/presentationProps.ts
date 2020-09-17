@@ -4,7 +4,9 @@ import { ComponentThemeProps } from "../globals/baseTheme";
 const DatePickerPresentationPropsDefault: ComponentThemeProps["datePicker"]["defaultProps"] = {
     calendarIconProps: {
         color: "text.main",
-        css: css` margin-right: -9px; `,
+        css: css`
+            margin-right: -9px;
+        `,
         src: "Calendar",
     },
     clearIconProps: {
@@ -12,7 +14,9 @@ const DatePickerPresentationPropsDefault: ComponentThemeProps["datePicker"]["def
         src: "X",
     },
     cssOverrides: {
-        formField: css` width: unset; `,
+        formField: css`
+            width: unset;
+        `,
     },
     dateTimePickerProps: {
         calendarType: "US",

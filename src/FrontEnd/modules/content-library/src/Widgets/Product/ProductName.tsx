@@ -10,15 +10,21 @@ const ProductName: React.FC<HasProduct> = ({ product }) => {
         return null;
     }
 
-    return <div>
-        <span>{product.productNumber}</span>
-        {product.manufacturerItem && <span>
-            {translate("MFG #")}': {product.manufacturerItem}
-        </span>}
-        {product.customerProductNumber && <span>
-            {translate("My Part #")}: {product.customerProductNumber}
-        </span>}
-    </div>;
+    return (
+        <div>
+            <span>{product.productNumber}</span>
+            {product.manufacturerItem && (
+                <span>
+                    {translate("MFG #")}': {product.manufacturerItem}
+                </span>
+            )}
+            {product.customerProductNumber && (
+                <span>
+                    {translate("My Part #")}: {product.customerProductNumber}
+                </span>
+            )}
+        </div>
+    );
 };
 
 const productNameModule: WidgetModule = {

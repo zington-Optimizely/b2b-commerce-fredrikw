@@ -7,8 +7,9 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
 import { productListCategoryFiltersStyles } from "@insite/content-library/Widgets/ProductList/ProductListCategoryFilters";
-import ProductListFiltersAccordionSection, { ProductListFilterAccordionSectionStyles }
-    from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
+import ProductListFiltersAccordionSection, {
+    ProductListFilterAccordionSectionStyles,
+} from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
@@ -33,10 +34,14 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-export const productListAttributeFiltersStyles: ProductListFilterAccordionSectionStyles = {
-};
+export const productListAttributeFiltersStyles: ProductListFilterAccordionSectionStyles = {};
 
-const ProductListAttributeFilters: FC<Props> = ({ attributeTypeFacets, addProductFilters, removeProductFilters, fields }) => {
+const ProductListAttributeFilters: FC<Props> = ({
+    attributeTypeFacets,
+    addProductFilters,
+    removeProductFilters,
+    fields,
+}) => {
     // TODO ISC-11787 - make showMoreLimit configurable
     const showMoreLimit = 10;
 
@@ -52,27 +57,30 @@ const ProductListAttributeFilters: FC<Props> = ({ attributeTypeFacets, addProduc
         }
     };
 
-    return <>
-        {attributeTypeFacets.map(a => a.attributeValueFacets
-            ? <ProductListFiltersAccordionSection
-                key={a.attributeTypeId}
-                title={a.nameDisplay}
-                facets={a.attributeValueFacets.map<FacetModel>(av => ({
-                    ...av,
-                    id: av.attributeValueId,
-                    name: av.valueDisplay,
-                }))}
-                onChangeFacet={onChangeFacet}
-                showMoreLimit={showMoreLimit}
-                expandByDefault={fields.expandByDefault}
-                extendedStyles={productListCategoryFiltersStyles}
-            />
-            : null)}
-        </>;
+    return (
+        <>
+            {attributeTypeFacets.map(a =>
+                a.attributeValueFacets ? (
+                    <ProductListFiltersAccordionSection
+                        key={a.attributeTypeId}
+                        title={a.nameDisplay}
+                        facets={a.attributeValueFacets.map<FacetModel>(av => ({
+                            ...av,
+                            id: av.attributeValueId,
+                            name: av.valueDisplay,
+                        }))}
+                        onChangeFacet={onChangeFacet}
+                        showMoreLimit={showMoreLimit}
+                        expandByDefault={fields.expandByDefault}
+                        extendedStyles={productListCategoryFiltersStyles}
+                    />
+                ) : null,
+            )}
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListAttributeFilters),
     definition: {
         group: "Product List",

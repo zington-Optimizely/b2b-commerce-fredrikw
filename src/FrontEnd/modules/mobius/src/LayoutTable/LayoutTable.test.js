@@ -1,10 +1,10 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import LayoutTable from './LayoutTable';
-import ThemeProvider from '../ThemeProvider';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import LayoutTable from "./LayoutTable";
+import ThemeProvider from "../ThemeProvider";
 
-describe('LayoutTable', () => {
+describe("LayoutTable", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -12,7 +12,7 @@ describe('LayoutTable', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <LayoutTable {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -23,7 +23,7 @@ describe('LayoutTable', () => {
         mountedWrapper = undefined;
     });
 
-    test('renders as a div by default', () => {
+    test("renders as a div by default", () => {
         const root = wrapper().find(LayoutTable).getDOMNode();
         expect(root instanceof HTMLDivElement).toBe(true);
     });

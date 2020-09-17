@@ -12,7 +12,10 @@ const initialState: RfqMyQuotesState = {
 };
 
 const reducer = {
-    "Pages/RfqMyQuotes/UpdateSearchFields": (draft: Draft<RfqMyQuotesState>, action: { parameter: GetQuotesApiParameter & UpdateSearchFieldsType; }) => {
+    "Pages/RfqMyQuotes/UpdateSearchFields": (
+        draft: Draft<RfqMyQuotesState>,
+        action: { parameter: GetQuotesApiParameter & UpdateSearchFieldsType },
+    ) => {
         const { type } = action.parameter;
         delete action.parameter.type;
         if (type === "Replace") {
@@ -33,15 +36,23 @@ const reducer = {
 
             for (const key in action.parameter) {
                 // go back to page 1 if any other parameters changed
-                if (draft.getQuotesParameter.page && draft.getQuotesParameter.page > 1
-                    && key !== "page" && key !== "pageSize") {
+                if (
+                    draft.getQuotesParameter.page &&
+                    draft.getQuotesParameter.page > 1 &&
+                    key !== "page" &&
+                    key !== "pageSize"
+                ) {
                     draft.getQuotesParameter.page = 1;
                 }
             }
         }
     },
-    "Pages/RfqMyQuotes/ClearParameter": (draft: Draft<RfqMyQuotesState>) => {
-        draft.getQuotesParameter = { ...initialState.getQuotesParameter, pageSize: draft.getQuotesParameter.pageSize };
+    "Pages/RfqMyQuotes/ClearParameter": (draft: Draft<RfqMyQuotesState>, action: { isSalesPerson?: boolean }) => {
+        draft.getQuotesParameter = {
+            ...initialState.getQuotesParameter,
+            expand: action.isSalesPerson ? ["salesList"] : undefined,
+            pageSize: draft.getQuotesParameter.pageSize,
+        };
     },
     "Pages/RfqMyQuotes/ToggleFiltersOpen": (draft: Draft<RfqMyQuotesState>) => {
         draft.filtersOpen = !draft.filtersOpen;

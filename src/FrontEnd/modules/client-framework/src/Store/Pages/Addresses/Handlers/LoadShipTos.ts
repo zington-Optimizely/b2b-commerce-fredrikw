@@ -1,11 +1,19 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { getShipTos, GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { ShipToCollectionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{}, GetShipTosApiParameter, ShipToCollectionModel, {
-    newShipTo?: ShipToModel,
-    dataViewParameter: GetShipTosApiParameter,
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {},
+    GetShipTosApiParameter,
+    ShipToCollectionModel,
+    {
+        newShipTo?: ShipToModel;
+        dataViewParameter: GetShipTosApiParameter;
+    }
+>;
 
 export const DispatchBeginLoadShipTos: HandlerType = props => {
     props.dataViewParameter = props.getState().pages.addresses.getShipTosParameter;

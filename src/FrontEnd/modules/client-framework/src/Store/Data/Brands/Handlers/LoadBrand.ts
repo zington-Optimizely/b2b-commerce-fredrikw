@@ -4,7 +4,7 @@ import { BrandModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface LoadBrandByIdParameter {
     brandId: string;
-    expand?: ("htmlContent")[];
+    expand?: "htmlContent"[];
     additionalExpands?: string[];
 }
 
@@ -30,11 +30,7 @@ export const DispatchCompleteLoadBrand: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadBrand,
-    RequestDataFromApi,
-    DispatchCompleteLoadBrand,
-];
+export const chain = [DispatchBeginLoadBrand, RequestDataFromApi, DispatchCompleteLoadBrand];
 
 const loadBrand = createHandlerChainRunner(chain, "LoadBrandById");
 export default loadBrand;

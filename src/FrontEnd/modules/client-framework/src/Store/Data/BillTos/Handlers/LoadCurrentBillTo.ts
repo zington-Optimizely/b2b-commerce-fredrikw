@@ -1,4 +1,7 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { getBillTo, GetBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { BillToModel } from "@insite/client-framework/Types/ApiModels";
@@ -31,12 +34,7 @@ export const DispatchCompleteLoadBillTo: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    DispatchBeginLoadBillTo,
-    GetBillTo,
-    DispatchCompleteLoadBillTo,
-];
+export const chain = [PopulateApiParameter, DispatchBeginLoadBillTo, GetBillTo, DispatchCompleteLoadBillTo];
 
 const loadCurrentBillTo = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentBillTo");
 export default loadCurrentBillTo;

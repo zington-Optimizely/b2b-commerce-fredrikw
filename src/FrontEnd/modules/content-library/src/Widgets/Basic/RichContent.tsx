@@ -20,14 +20,16 @@ interface Props extends WidgetProps {
     };
 }
 
-const RichContent: React.FunctionComponent<Props> = (props) => {
+const RichContent: React.FunctionComponent<Props> = props => {
     if (!props.fields.content) {
         return null;
     }
 
-    return <ContentWrapper backgroundColor={props.fields.backgroundColor} padding={props.fields.padding}>
-        {parse(props.fields.content, parserOptions)}
-    </ContentWrapper>;
+    return (
+        <ContentWrapper backgroundColor={props.fields.backgroundColor} padding={props.fields.padding}>
+            {parse(props.fields.content, parserOptions)}
+        </ContentWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {
@@ -67,9 +69,9 @@ const Style = styled.div`
     padding: 15px;
 `;
 
-const ContentWrapper = styled.div<{ backgroundColor: string, padding: number }>`
-    ${({ backgroundColor }) => backgroundColor ? `background-color: ${backgroundColor};` : null};
-    ${({ padding }) => padding ? `padding: ${padding}px;` : null};
+const ContentWrapper = styled.div<{ backgroundColor: string; padding: number }>`
+    ${({ backgroundColor }) => (backgroundColor ? `background-color: ${backgroundColor};` : null)};
+    ${({ padding }) => (padding ? `padding: ${padding}px;` : null)};
     & > *:first-child {
         margin: 0;
     }

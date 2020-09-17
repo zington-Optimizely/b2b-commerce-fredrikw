@@ -5,10 +5,9 @@ import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
 import LogoutWarningModal from "@insite/shell/Components/Modals/LogoutWarningModal";
 import PageEditor from "@insite/shell/Components/PageEditor/PageEditor";
 import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
-import About from "@insite/shell/Components/Shell/About";
 import MainHeader from "@insite/shell/Components/Shell/MainHeader";
 import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
-import StyleGuideSideBar from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
+import StyleGuideEditor from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
 import StyleGuidePreview from "@insite/shell/Components/Shell/StyleGuide/StyleGuidePreview";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import ShellState from "@insite/shell/Store/ShellState";
@@ -50,30 +49,33 @@ const MainArea = styled.div`
     width: calc(100% - ${(props: ShellThemeProps) => props.theme.sideBarWidth});
 `;
 
-const layout = <FlexWrapper>
-    <SideBarArea>
-        <MainNavigation />
-        <Switch>
-            <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuideSideBar} />
-            <Route path="/ContentAdmin/Page/" component={PageTreeSideBar} />
-        </Switch>
-    </SideBarArea>
-    <MainArea>
-        <Switch>
-            <Route path="/ContentAdmin/Page/*" render={(props) => <MainHeader {...props} />} />
-            <Route path={["/ContentAdmin/Design", "/ContentAdmin/", "/ContentAdmin/About"]}><MainHeader disabled/></Route>
-            <MainHeader/>
-        </Switch>
-        <Switch>
-            <Route exact path="/ContentAdmin/Page/:id" component={PageEditor} />
-            <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuidePreview} />
-            <Route exact path="/ContentAdmin/About" component={About} />
-            <Route component={HomePageLoader} />
-        </Switch>
-    </MainArea>
-    <LogoutWarningModal />
-    <ErrorModal />
-</FlexWrapper>;
+const layout = (
+    <FlexWrapper>
+        <SideBarArea>
+            <MainNavigation />
+            <Switch>
+                <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuideEditor} />
+                <Route path="/ContentAdmin/Page/" component={PageTreeSideBar} />
+            </Switch>
+        </SideBarArea>
+        <MainArea>
+            <Switch>
+                <Route path="/ContentAdmin/Page/*" render={props => <MainHeader {...props} />} />
+                <Route path={["/ContentAdmin/Design", "/ContentAdmin/"]}>
+                    <MainHeader disabled />
+                </Route>
+                <MainHeader />
+            </Switch>
+            <Switch>
+                <Route exact path="/ContentAdmin/Page/:id" component={PageEditor} />
+                <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuidePreview} />
+                <Route component={HomePageLoader} />
+            </Switch>
+        </MainArea>
+        <LogoutWarningModal />
+        <ErrorModal />
+    </FlexWrapper>
+);
 
 export default layout;
 

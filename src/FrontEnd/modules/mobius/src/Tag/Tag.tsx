@@ -26,22 +26,27 @@ export interface TagPresentationProps {
     color?: string;
 }
 
-export type TagComponentProps = MobiusStyledComponentProps<"div", {
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<TagProps>;
-    /** A flag determining whether the tag can be deleted. This governs the presence of the 'delete' icon button. */
-    deletable?: boolean;
-    /** Function that is called when the tag's delete button is clicked. */
-    onDelete?: React.EventHandler<React.SyntheticEvent>;
-    /** Disables the tag deletion while it remains visible. */
-    disabled?: boolean;
-}>;
+export type TagComponentProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<TagProps>;
+        /** A flag determining whether the tag can be deleted. This governs the presence of the 'delete' icon button. */
+        deletable?: boolean;
+        /** Function that is called when the tag's delete button is clicked. */
+        onDelete?: React.EventHandler<React.SyntheticEvent>;
+        /** Disables the tag deletion while it remains visible. */
+        disabled?: boolean;
+    }
+>;
 
 export type TagProps = TagComponentProps & TagPresentationProps;
 
 const TagIcon = styled(ButtonIcon)``;
 
-const TagStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { disabled: boolean, _color: string, iconSize?: number, iconColor: string }>`
+const TagStyle = styled.div<
+    ThemeProps<BaseTheme> & InjectableCss & { disabled: boolean; _color: string; iconSize?: number; iconColor: string }
+>`
     max-width: 250px;
     min-height: 34px;
     box-sizing: border-box;
@@ -59,15 +64,19 @@ const TagStyle = styled.div<ThemeProps<BaseTheme> & InjectableCss & { disabled: 
         border-radius: 5px;
     }
     ${TagIcon} {
-        color: ${({ _color, iconColor, theme }) => iconColor ? resolveColor(iconColor, theme) : getContrastColor(_color, theme)};
+        color: ${({ _color, iconColor, theme }) =>
+            iconColor ? resolveColor(iconColor, theme) : getContrastColor(_color, theme)};
         top: 0;
-        ${/* sc-block */({ theme, disabled, _color }) => {
+        ${/* sc-block */ ({ theme, disabled, _color }) => {
             const tagContrast = getContrastColor(_color, theme);
             const tagBase = resolveColor(_color, theme);
-            return disabled && css`
-                cursor: not-allowed;
-                color: ${safeColor(tagContrast).rgb().mix(safeColor(tagBase), 0.3).toString()}
-            `;
+            return (
+                disabled &&
+                css`
+                    cursor: not-allowed;
+                    color: ${safeColor(tagContrast).rgb().mix(safeColor(tagBase), 0.3).toString()};
+                `
+            );
         }}
     }
     ${injectCss}
@@ -98,15 +107,22 @@ const Tag: React.FC<TagProps> = withTheme(({ children, css, deletable, disabled,
     const iconProps = spreadProps("iconProps");
     return (
         <TagWrapper>
-            <TagStyle css={applyProp("css")} disabled={!!disabled} _color={color} iconSize={iconProps?.size} iconColor={iconProps?.color} {...omitSingle(otherProps, "color")}>
+            <TagStyle
+                css={applyProp("css")}
+                disabled={!!disabled}
+                _color={color}
+                iconSize={iconProps?.size}
+                iconColor={iconProps?.color}
+                {...omitSingle(otherProps, "color")}
+            >
                 <Typography {...spreadProps("typographyProps")}>{children}</Typography>
-                {(deletable && !disabled)
-                    && <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>
+                {deletable && !disabled && (
+                    <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>
                         <VisuallyHidden>{otherProps.theme.translate("delete")}</VisuallyHidden>
                         <TagIcon {...iconProps} />
                     </Button>
-                }
-                {(disabled) && <TagIcon {...iconProps} disabled/>}
+                )}
+                {disabled && <TagIcon {...iconProps} disabled />}
             </TagStyle>
         </TagWrapper>
     );

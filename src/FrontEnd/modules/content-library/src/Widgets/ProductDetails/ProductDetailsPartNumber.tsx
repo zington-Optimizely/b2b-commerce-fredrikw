@@ -18,11 +18,15 @@ export const partNumberStyles: ProductDetailsPartNumberStyles = {
     labelText: {
         size: 16,
         weight: "bold",
-        css: css` margin-right: 15px; `,
+        css: css`
+            margin-right: 15px;
+        `,
     },
     valueText: {
         size: 16,
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
 };
 
@@ -33,7 +37,12 @@ const ProductDetailsPartNumber: React.FC<Props> = ({ product }) => {
         return null;
     }
 
-    return <Typography {...styles.valueText} as="p" data-test-selector="ProductDetailsPartNumber"><Typography {...styles.labelText}>{translate("Part #")}</Typography>{product.productNumber}</Typography>;
+    return (
+        <Typography {...styles.valueText} as="p" data-test-selector="ProductDetailsPartNumber">
+            <Typography {...styles.labelText}>{translate("Part #")}</Typography>
+            {product.productNumber}
+        </Typography>
+    );
 };
 
 const widgetModule: WidgetModule = {

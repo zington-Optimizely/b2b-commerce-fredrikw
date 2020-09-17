@@ -5,9 +5,7 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 
-const HomePage: React.FunctionComponent<PageProps> = ({
-    id,
-}: PageProps) => (
+const HomePage: React.FunctionComponent<PageProps> = ({ id }: PageProps) => (
     <Page data-test-selector="homePage">
         <Zone contentId={id} zoneName="Content" requireRows />
         <AddToListModal />

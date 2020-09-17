@@ -1,19 +1,21 @@
 import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
-import { createHandlerChainRunner, executeAwaitableHandlerChain, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import {
-    getProductByPath,
-    GetProductByPathApiV2Parameter,
-} from "@insite/client-framework/Services/ProductServiceV2";
+    createHandlerChainRunner,
+    executeAwaitableHandlerChain,
+    Handler,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import { getProductByPath, GetProductByPathApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
 import sortProductCollections from "@insite/client-framework/Store/Data/Products/Handlers/SortProductCollections";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
 type Parameter = {
-    path: string,
-    addToRecentlyViewed?: boolean,
+    path: string;
+    addToRecentlyViewed?: boolean;
 } & HasOnSuccess<ProductModel>;
 type Props = {
-    apiParameter: GetProductByPathApiV2Parameter,
-    apiResult: ProductModel,
+    apiParameter: GetProductByPathApiV2Parameter;
+    apiResult: ProductModel;
 };
 
 type HandlerType = Handler<Parameter, Props>;

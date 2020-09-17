@@ -13,7 +13,7 @@ import styled, { css } from "styled-components";
 
 interface OwnProps {
     searchText?: string;
-    onSearchTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onSearchTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onSearch: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     allowCreateAddress?: boolean;
     onCreateNewAddressClick?: React.EventHandler<React.MouseEvent>;
@@ -49,22 +49,30 @@ export const customerSelectorToolbarStyles: CustomerSelectorToolbarStyles = {
     },
     searchButton: {
         variant: "primary",
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     wideHidden: { below: "md" },
     wideCreateNewAddressButton: {
         variant: "tertiary",
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     narrowHidden: { above: "sm" },
     overflowMenu: {
         cssOverrides: {
-            wrapper: css` margin-left: 10px; `,
+            wrapper: css`
+                margin-left: 10px;
+            `,
         },
     },
 };
 
-const ToolbarStyled = styled.div<InjectableCss>` ${({ css }) => css} `;
+const ToolbarStyled = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
 const CustomerSelectorToolbar: FC<OwnProps> = ({
     allowCreateAddress = false,
@@ -86,15 +94,11 @@ const CustomerSelectorToolbar: FC<OwnProps> = ({
                 iconProps={{ src: Search }}
                 onChange={onSearchTextChanged}
             />
-            <Button
-                {...styles.searchButton}
-                onClick={onSearch}
-                disabled={isSearchDisabled}
-            >
+            <Button {...styles.searchButton} onClick={onSearch} disabled={isSearchDisabled}>
                 {translate("Search")}
             </Button>
-            {allowCreateAddress && onCreateNewAddressClick
-                && <>
+            {allowCreateAddress && onCreateNewAddressClick && (
+                <>
                     <Hidden {...styles.wideHidden}>
                         <Button
                             {...styles.wideCreateNewAddressButton}
@@ -106,16 +110,13 @@ const CustomerSelectorToolbar: FC<OwnProps> = ({
                     </Hidden>
                     <Hidden {...styles.narrowHidden}>
                         <OverflowMenu position="end" {...styles.overflowMenu}>
-                            <Clickable
-                                {...styles.narrowCreateNewAddressClickable}
-                                onClick={onCreateNewAddressClick}
-                            >
+                            <Clickable {...styles.narrowCreateNewAddressClickable} onClick={onCreateNewAddressClick}>
                                 {translate("Create New Address")}
                             </Clickable>
                         </OverflowMenu>
                     </Hidden>
                 </>
-            }
+            )}
         </ToolbarStyled>
     );
 };

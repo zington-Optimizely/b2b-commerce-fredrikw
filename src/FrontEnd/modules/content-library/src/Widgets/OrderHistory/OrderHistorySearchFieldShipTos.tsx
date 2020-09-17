@@ -6,13 +6,14 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Select, { SelectProps } from "@insite/mobius/Select";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -48,7 +49,7 @@ class OrderHistorySearchFieldShipTos extends React.Component<Props> {
     };
 
     render() {
-        const shipToOptions = (this.props.currentShipTosDataView.value) || [];
+        const shipToOptions = this.props.currentShipTosDataView.value || [];
 
         return (
             <SearchFieldWrapper extendedStyles={styles.wrapper}>
@@ -56,17 +57,20 @@ class OrderHistorySearchFieldShipTos extends React.Component<Props> {
                     label={translate("Ship To")}
                     {...styles.select}
                     value={this.props.parameter.customerSequence}
-                    onChange={this.handleChange}>
-                    {shipToOptions.map(shipTo =>
-                        <option key={shipTo.customerSequence} value={shipTo.customerSequence}>{shipTo.label}</option>,
-                    )}
+                    onChange={this.handleChange}
+                >
+                    {shipToOptions.map(shipTo => (
+                        <option key={shipTo.customerSequence} value={shipTo.customerSequence}>
+                            {shipTo.label}
+                        </option>
+                    ))}
                 </Select>
-            </SearchFieldWrapper>);
+            </SearchFieldWrapper>
+        );
     }
 }
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(OrderHistorySearchFieldShipTos),
     definition: {
         group: "Order History",

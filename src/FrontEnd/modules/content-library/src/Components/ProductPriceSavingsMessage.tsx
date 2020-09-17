@@ -44,7 +44,12 @@ const ProductPriceSavingsMessage: FC<Props> = ({
 
     let message = "";
     if (showSavingsAmount && showSavingsPercent) {
-        message = translate("Regular Price: {0}, you save {1} ({2}%)", unitListPriceDisplay, localizedSavingsAmount, `${savingsPercent}`);
+        message = translate(
+            "Regular Price: {0}, you save {1} ({2}%)",
+            unitListPriceDisplay,
+            localizedSavingsAmount,
+            `${savingsPercent}`,
+        );
     } else if (showSavingsPercent) {
         message = translate("Regular Price: {0}, you save {1}%", unitListPriceDisplay, `${savingsPercent}`);
     } else if (showSavingsAmount) {
@@ -53,9 +58,11 @@ const ProductPriceSavingsMessage: FC<Props> = ({
         message = translate("Regular Price: {0}", unitListPriceDisplay);
     }
 
-    return (<Typography {...otherProps} data-test-selector="productPriceSavingsMessage">
-        {message}
-    </Typography>);
+    return (
+        <Typography {...otherProps} data-test-selector="productPriceSavingsMessage">
+            {message}
+        </Typography>
+    );
 };
 
 export default connect(mapStateToProps)(ProductPriceSavingsMessage);

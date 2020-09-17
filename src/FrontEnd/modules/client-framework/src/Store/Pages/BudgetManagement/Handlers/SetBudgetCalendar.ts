@@ -23,9 +23,9 @@ export const CalculateBudgetEndPeriods: HandlerType = props => {
         return;
     }
 
-    const budgetEndPeriods = budgetCalendar.budgetPeriods!.filter((x) => !!x) as Date[];
+    const budgetEndPeriods = budgetCalendar.budgetPeriods!.filter(x => !!x) as Date[];
     for (let i = 0; i < budgetEndPeriods.length; i += 1) {
-        if ((i === budgetEndPeriods.length - 1)) {
+        if (i === budgetEndPeriods.length - 1) {
             budgetEndPeriods[i] = getYearEnd(budgetCalendar.fiscalYear, budgetCalendar.fiscalYearEndDate!);
         } else {
             const t = new Date(budgetEndPeriods[i + 1]!.toString());
@@ -45,17 +45,15 @@ export const SetBudgetPeriodType: HandlerType = props => {
         return;
     }
 
-    props.dispatch(setBudgetPeriodType({
-        budgetPeriodType: props.parameter.budgetPeriodType,
-        customBudgetPeriodNumber: props.parameter.customBudgetPeriodNumber,
-    }));
+    props.dispatch(
+        setBudgetPeriodType({
+            budgetPeriodType: props.parameter.budgetPeriodType,
+            customBudgetPeriodNumber: props.parameter.customBudgetPeriodNumber,
+        }),
+    );
 };
 
-export const chain = [
-    DispatchSetBudgetCalendar,
-    CalculateBudgetEndPeriods,
-    SetBudgetPeriodType,
-];
+export const chain = [DispatchSetBudgetCalendar, CalculateBudgetEndPeriods, SetBudgetPeriodType];
 
 const setBudgetCalendar = createHandlerChainRunner(chain, "setBudgetCalendar");
 export default setBudgetCalendar;

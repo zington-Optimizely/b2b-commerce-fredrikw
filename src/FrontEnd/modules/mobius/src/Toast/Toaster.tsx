@@ -20,10 +20,13 @@ export interface ToasterPresentationProps {
     mobileOffset?: number | string;
 }
 
-export type ToasterComponentProps = MobiusStyledComponentProps<"div", {
-    /** The length of time in miliseconds for the toasts in the toaster to display. */
-    timeoutLength?: number;
-}>;
+export type ToasterComponentProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** The length of time in miliseconds for the toasts in the toaster to display. */
+        timeoutLength?: number;
+    }
+>;
 
 export type ToasterProps = ToasterComponentProps & ToasterPresentationProps;
 
@@ -34,17 +37,28 @@ const ToasterWrapper = styled.div`
     left: 0;
 `;
 
-type ToasterSlotsProps = Required<Pick<ToasterProps, "position">> & Pick<ToasterProps, "mobileOffset" | "mobilePosition">;
+type ToasterSlotsProps = Required<Pick<ToasterProps, "position">> &
+    Pick<ToasterProps, "mobileOffset" | "mobilePosition">;
 
 const ToasterSlots = styled.div<ToasterSlotsProps>`
     ${({ theme }) => {
         const { maxWidths } = theme.breakpoints;
         return breakpointMediaQueries(theme, [
-            css` max-width: ${maxWidths[0] + 40}px; `,
-            css` max-width: ${maxWidths[1] + 40}px; `,
-            css` max-width: ${maxWidths[2] + 40}px; `,
-            css` max-width: ${maxWidths[3] + 40}px; `,
-            css` max-width: ${maxWidths[4] + 40}px; `,
+            css`
+                max-width: ${maxWidths[0] + 40}px;
+            `,
+            css`
+                max-width: ${maxWidths[1] + 40}px;
+            `,
+            css`
+                max-width: ${maxWidths[2] + 40}px;
+            `,
+            css`
+                max-width: ${maxWidths[3] + 40}px;
+            `,
+            css`
+                max-width: ${maxWidths[4] + 40}px;
+            `,
         ]);
     }}
     pointer-events: none;
@@ -56,19 +70,20 @@ const ToasterSlots = styled.div<ToasterSlotsProps>`
     flex-direction: column;
     padding: 0 20px 20px;
     ${({ theme, mobileOffset = 10, mobilePosition }) => {
-        const mobileOffsetVal = (typeof mobileOffset === "number") ? `${mobileOffset}px` : mobileOffset;
-        const mobileVal = mobilePosition === "top"
-            ? css`
-                padding: ${mobileOffsetVal} 0 20px;
-                top: 0;
-                bottom: auto;
-            `
-            : css`
-                padding: 20px 0 ${mobileOffsetVal};
-                flex-direction: column-reverse;
-                top: auto;
-                bottom: 0;
-            `;
+        const mobileOffsetVal = typeof mobileOffset === "number" ? `${mobileOffset}px` : mobileOffset;
+        const mobileVal =
+            mobilePosition === "top"
+                ? css`
+                      padding: ${mobileOffsetVal} 0 20px;
+                      top: 0;
+                      bottom: auto;
+                  `
+                : css`
+                      padding: 20px 0 ${mobileOffsetVal};
+                      flex-direction: column-reverse;
+                      top: auto;
+                      bottom: 0;
+                  `;
         return breakpointMediaQueries(theme, [null, mobileVal, null, null, null], "max");
     }}
     z-index: ${({ theme }) => theme.zIndex.toaster};
@@ -89,23 +104,29 @@ const ToasterSlots = styled.div<ToasterSlotsProps>`
     }}
     ${({ position }) => {
         if (position.match(/left$/)) {
-            return css` align-items: flex-start; `;
+            return css`
+                align-items: flex-start;
+            `;
         }
         if (position.match(/right$/)) {
-            return css` align-items: flex-end; `;
+            return css`
+                align-items: flex-end;
+            `;
         }
         /* Default return styling for center */
-        return css` align-items: center; `;
+        return css`
+            align-items: center;
+        `;
     }}
 `;
 
 type State = {
     toasts: {
-        [key: string]: ToastProps,
-    },
-    displayToasts: number[],
-    queuedToasts: number[],
-    lastToastId: number,
+        [key: string]: ToastProps;
+    };
+    displayToasts: number[];
+    queuedToasts: number[];
+    lastToastId: number;
 };
 
 class Toaster extends React.Component<ToasterProps & ThemeProps<BaseTheme>, State> {
@@ -118,24 +139,22 @@ class Toaster extends React.Component<ToasterProps & ThemeProps<BaseTheme>, Stat
 
     applyProp = applyPropBuilder(this.props, { component: "toast", propKey: "toasterProps" }).applyProp;
 
-    addToast: ToastContextData["addToast"] = (toastProps) => {
-        this.setState(({
-            lastToastId, toasts, displayToasts, queuedToasts,
-        }) => {
+    addToast: ToastContextData["addToast"] = toastProps => {
+        this.setState(({ lastToastId, toasts, displayToasts, queuedToasts }) => {
             const toastId = lastToastId + 1;
             const newToasts = toasts;
             newToasts[toastId] = toastProps;
             let topSlice = 3;
-            if (window && window.innerWidth < this.props.theme.breakpoints.values[2]) topSlice = 1;
+            if (window && window.innerWidth < this.props.theme.breakpoints.values[2]) {
+                topSlice = 1;
+            }
             const newDisplayToasts = displayToasts;
             const newQueuedToasts = queuedToasts;
             if (displayToasts.length < topSlice) {
                 newDisplayToasts.unshift(toastId);
-                setTimeout(
-                    () => {
-                        this.removeToast(toastId);
-                    },
-                    toastProps?.timeoutLength || this.applyProp("timeoutLength"));
+                setTimeout(() => {
+                    this.removeToast(toastId);
+                }, toastProps?.timeoutLength || this.applyProp("timeoutLength"));
             } else {
                 newQueuedToasts.push(toastId);
             }
@@ -148,18 +167,16 @@ class Toaster extends React.Component<ToasterProps & ThemeProps<BaseTheme>, Stat
         });
     };
 
-    removeToast: ToastContextData["removeToast"] = (toastId) => {
+    removeToast: ToastContextData["removeToast"] = toastId => {
         this.setState(({ toasts, displayToasts, queuedToasts }) => {
             const newDisplayToasts = displayToasts.filter(item => item !== toastId);
             const nextToastId = queuedToasts[0];
             const newQueuedToasts = queuedToasts;
             if (nextToastId !== undefined) {
                 newDisplayToasts.unshift(nextToastId);
-                setTimeout(
-                    () => {
-                        this.removeToast(nextToastId);
-                    },
-                    toasts[nextToastId]?.timeoutLength || this.applyProp("timeoutLength"));
+                setTimeout(() => {
+                    this.removeToast(nextToastId);
+                }, toasts[nextToastId]?.timeoutLength || this.applyProp("timeoutLength"));
                 newQueuedToasts.shift();
             }
             return { displayToasts: newDisplayToasts, queuedToasts: newQueuedToasts };
@@ -170,11 +187,13 @@ class Toaster extends React.Component<ToasterProps & ThemeProps<BaseTheme>, Stat
         const { children, ...otherProps } = this.props;
         const { displayToasts, toasts } = this.state;
         return (
-            <ToasterContext.Provider value={{
-                addToast: this.addToast,
-                removeToast: this.removeToast,
-                defaultTimeout: this.applyProp("timeoutLength"),
-            }}>
+            <ToasterContext.Provider
+                value={{
+                    addToast: this.addToast,
+                    removeToast: this.removeToast,
+                    defaultTimeout: this.applyProp("timeoutLength"),
+                }}
+            >
                 {children}
                 <ToasterWrapper>
                     <ToasterSlots
@@ -186,7 +205,9 @@ class Toaster extends React.Component<ToasterProps & ThemeProps<BaseTheme>, Stat
                         aria-live="polite"
                     >
                         <TransitionGroup component={null}>
-                            {displayToasts.map(key => (<Toast key={key} toastId={key} {...toasts[key]} />))}
+                            {displayToasts.map(key => (
+                                <Toast key={key} toastId={key} {...toasts[key]} />
+                            ))}
                         </TransitionGroup>
                     </ToasterSlots>
                 </ToasterWrapper>

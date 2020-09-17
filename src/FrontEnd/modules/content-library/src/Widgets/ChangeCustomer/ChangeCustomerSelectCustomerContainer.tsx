@@ -14,9 +14,13 @@ import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import ChangeCustomerBillToSelector, { ChangeCustomerBillToSelectorStyles } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerBillToSelector";
+import ChangeCustomerBillToSelector, {
+    ChangeCustomerBillToSelectorStyles,
+} from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerBillToSelector";
 import ChangeCustomerFulfillmentMethodSelector from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerFulfillmentMethodSelector";
-import ChangeCustomerShipToSelector, { ChangeCustomerShipToSelectorStyles } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerShipToSelector";
+import ChangeCustomerShipToSelector, {
+    ChangeCustomerShipToSelectorStyles,
+} from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerShipToSelector";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -27,10 +31,10 @@ import { css } from "styled-components";
 
 interface OwnProps {
     extendedStyles?: ChangeCustomerSelectCustomerContainerStyles;
-    billTosParameter: GetBillTosApiParameter,
-    setBillTosParameter: (parameter: GetBillTosApiParameter) => void,
-    shipTosParameter: GetShipTosApiParameter,
-    setShipTosParameter: (parameter: GetShipTosApiParameter) => void,
+    billTosParameter: GetBillTosApiParameter;
+    setBillTosParameter: (parameter: GetBillTosApiParameter) => void;
+    shipTosParameter: GetShipTosApiParameter;
+    setShipTosParameter: (parameter: GetShipTosApiParameter) => void;
 }
 
 const mapStateToProps = (state: ApplicationState, props: OwnProps) => ({
@@ -121,7 +125,7 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
     checkoutShippingUrl,
     cartUrl,
     checkoutReviewAndSubmitUrl,
- }) => {
+}) => {
     const [styles] = useState(() => mergeToNew(changeCustomerSelectCustomerContainerStyles, extendedStyles));
     const [billTo, setBillTo] = useState<BillToModel | undefined>(undefined);
 
@@ -129,9 +133,7 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
     const [shipTo, setShipTo] = useState<ShipToModel | undefined>(undefined);
 
     const [noShipToAndCantCreate, setNoShipToAndCantCreate] = useState<boolean>(
-        customerSettings.allowCreateNewShipToAddress
-        && !shipToSearchText
-        && shipTosDataView.value?.length === 0,
+        customerSettings.allowCreateNewShipToAddress && !shipToSearchText && shipTosDataView.value?.length === 0,
     );
 
     const billToSelectedHandler = (billTo: BillToModel) => {
@@ -165,34 +167,25 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
         window.location.href = returnUrl;
     };
 
-    useEffect(
-        () => {
-            setNoShipToAndCantCreate(customerSettings.allowCreateNewShipToAddress
-                && !shipToSearchText
-                && shipTosDataView.value?.length === 0);
-        },
-        [customerSettings, shipToSearchText, shipTosDataView],
-    );
+    useEffect(() => {
+        setNoShipToAndCantCreate(
+            customerSettings.allowCreateNewShipToAddress && !shipToSearchText && shipTosDataView.value?.length === 0,
+        );
+    }, [customerSettings, shipToSearchText, shipTosDataView]);
 
     // Trigger Search for Bill Tos
-    useEffect(
-        () => {
-            if (!billTosDataView.value && !billTosDataView.isLoading) {
-                loadBillTos(billTosParameter);
-            }
-        },
-        [billTosParameter],
-    );
+    useEffect(() => {
+        if (!billTosDataView.value && !billTosDataView.isLoading) {
+            loadBillTos(billTosParameter);
+        }
+    }, [billTosParameter]);
 
     // Trigger Search for Ship Tos
-    useEffect(
-        () => {
-            if (billTo && !shipTosDataView.value && !shipTosDataView.isLoading) {
-                loadShipTos(shipTosParameter);
-            }
-        },
-        [shipTosParameter],
-    );
+    useEffect(() => {
+        if (billTo && !shipTosDataView.value && !shipTosDataView.isLoading) {
+            loadShipTos(shipTosParameter);
+        }
+    }, [shipTosParameter]);
 
     return (
         <GridContainer {...styles.container}>
@@ -203,29 +196,35 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
                     setParameter={setBillTosParameter}
                     noShipToAndCantCreate={noShipToAndCantCreate}
                     onSelect={billToSelectedHandler}
-                    billTo={billTo} />
+                    billTo={billTo}
+                />
             </GridItem>
             <GridItem {...styles.fulfillmentMethodSelectorGridItem}>
                 <ChangeCustomerFulfillmentMethodSelector />
             </GridItem>
-            {billTo && <GridItem {...styles.shipToSelectorGridItem}>
-                <ChangeCustomerShipToSelector
-                    extendedStyles={styles.shipToSelector}
-                    parameter={shipTosParameter}
-                    setParameter={setShipTosParameter}
-                    searchText={shipToSearchText}
-                    setSearchText={setShipToSearchText}
-                    enableWarehousePickup={enableWarehousePickup}
-                    fulfillmentMethod={fulfillmentMethod}
-                    onSelect={shipToSelectedHandler}
-                    billToId={billTo?.id}
-                    shipTo={shipTo} />
-            </GridItem>}
+            {billTo && (
+                <GridItem {...styles.shipToSelectorGridItem}>
+                    <ChangeCustomerShipToSelector
+                        extendedStyles={styles.shipToSelector}
+                        parameter={shipTosParameter}
+                        setParameter={setShipTosParameter}
+                        searchText={shipToSearchText}
+                        setSearchText={setShipToSearchText}
+                        enableWarehousePickup={enableWarehousePickup}
+                        fulfillmentMethod={fulfillmentMethod}
+                        onSelect={shipToSelectedHandler}
+                        billToId={billTo?.id}
+                        shipTo={shipTo}
+                    />
+                </GridItem>
+            )}
             <GridItem {...styles.buttonsGridItem}>
                 <Button {...styles.cancelButton} onClick={handleCancelClicked}>
                     {translate("Cancel")}
                 </Button>
-                <Button {...styles.continueButton} onClick={handleContinueClicked}
+                <Button
+                    {...styles.continueButton}
+                    onClick={handleContinueClicked}
                     disabled={!billTo || !shipTo}
                     data-test-selector="changeCustomer_continue"
                 >
@@ -244,18 +243,14 @@ type GetCustomerContinueReturnUrlType = (props: {
     cartUrl?: string;
     canBypassCheckoutAddress: boolean;
     checkoutReviewAndSubmitUrl?: string;
-
 }) => string;
 
 type GetReturnUrlType = (state: ApplicationState) => string;
 
 const getReturnUrl: GetReturnUrlType = (state: ApplicationState): string => {
     const { search } = getLocation(state);
-    const query = parseQueryString<{ returnUrl?: string; returnurl?: string; }>(search);
-    return query.returnUrl
-        || query.returnurl
-        || getPageLinkByPageType(state, "HomePage")?.url
-        || "/";
+    const query = parseQueryString<{ returnUrl?: string; returnurl?: string }>(search);
+    return query.returnUrl || query.returnurl || getPageLinkByPageType(state, "HomePage")?.url || "/";
 };
 
 export const getCustomerContinueReturnUrl: GetCustomerContinueReturnUrlType = ({

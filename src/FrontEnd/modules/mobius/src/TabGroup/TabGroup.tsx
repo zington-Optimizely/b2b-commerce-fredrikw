@@ -14,31 +14,27 @@ export interface TabGroupPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components.
      * @themable */
     cssOverrides?: {
-        tabContent?: StyledProp<TabGroupProps>,
-        tabGroup?: StyledProp<TabGroupProps>,
-        wrapper?: StyledProp<TabGroupProps>,
+        tabContent?: StyledProp<TabGroupProps>;
+        tabGroup?: StyledProp<TabGroupProps>;
+        wrapper?: StyledProp<TabGroupProps>;
     };
 }
 
-export type TabGroupProps = MobiusStyledComponentProps<"div", {
-    /** Current tab. */
-    current?: string;
-    /** CSS strings or styled-components functions to be injected into nested components.
-     * @themable */
-    cssOverrides?: {
-        tabContent?: StyledProp<TabGroupProps>,
-        tabGroup?: StyledProp<TabGroupProps>,
-        wrapper?: StyledProp<TabGroupProps>,
-    };
-    /** Function to be executed when tab is changed, receives a single argument of the event. */
-    onTabChange?: (event: React.MouseEvent | React.KeyboardEvent) => void;
-} & TabGroupPresentationProps>;
+export type TabGroupProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** Current tab. */
+        current?: string;
+        /** Function to be executed when tab is changed, receives a single argument of the event. */
+        onTabChange?: (event: React.MouseEvent | React.KeyboardEvent) => void;
+    } & TabGroupPresentationProps
+>;
 
 export type TabGroupStyleProps = MobiusStyledComponentProps<"ul", { css?: StyledProp<TabGroupProps> }>;
 
 export type TabGroupWrapperProps = MobiusStyledComponentProps<"div", { css?: StyledProp<TabGroupWrapperProps> }>;
 
-const TabGroupStyle = styled.ul.attrs<unknown, {role: string, css?: any}>(() => ({
+const TabGroupStyle = styled.ul.attrs<unknown, { role: string; css?: any }>(() => ({
     role: "tablist",
 }))`
     margin: 0;
@@ -60,7 +56,7 @@ const TabGroupWrapper = styled.div`
 `;
 
 // TODO ISC-12114 - The getProp call below depends on a (fixed) inaccuracy of the getProp return type definition.
-const TabContent = styled.div.attrs<unknown, {role: string, css?: any}>(() => ({
+const TabContent = styled.div.attrs<unknown, { role: string; css?: any }>(() => ({
     role: "tabPanel",
 }))`
     ${({ hidden }) => hidden && "display: none;"}
@@ -69,7 +65,7 @@ const TabContent = styled.div.attrs<unknown, {role: string, css?: any}>(() => ({
     border-top: 2px solid ${getColor("common.border")};
     border-bottom: 2px solid ${getColor("common.border")};
     padding: 32px 16px;
-    z-index: ${getProp("theme.zIndex.tabGroup") as any - 1};
+    z-index: ${(getProp("theme.zIndex.tabGroup") as any) - 1};
     ${injectCss}
 `;
 
@@ -77,7 +73,7 @@ type AssumedChildrenType = React.ReactElement<TabProps>[];
 
 const selectCurrent = ({ children, current = undefined }: Props) => {
     let currentTab = current;
-    React.Children.forEach(children, (child) => {
+    React.Children.forEach(children, child => {
         if (currentTab === undefined) {
             currentTab = child.props.tabKey;
         }
@@ -86,9 +82,9 @@ const selectCurrent = ({ children, current = undefined }: Props) => {
 };
 
 type Props = TabGroupProps & {
-    /** There's no compile-time enforcement that the children are Tabs, but we assume that they are. */
-    children: AssumedChildrenType,
-    current?: string,
+    /** There's no compile-time enforcement that the children are Tabs, but we assume that they are. Typescript doesn't completely like this */
+    children: AssumedChildrenType;
+    current?: string;
     contentRef?: (content: HTMLDivElement | null) => void;
 };
 
@@ -105,9 +101,9 @@ const DOWN_KEY = 40;
  * in a tabbed interface.
  */
 class TabGroup extends React.Component<Props, State> {
-    tabKeys = this.props.children.map(i => i.props.tabKey);
+    tabKeys = (this.props.children as AssumedChildrenType).map(i => i.props.tabKey);
 
-    tabRefs: {[key: string]: React.RefObject<React.Component<ButtonProps>> } = {};
+    tabRefs: { [key: string]: React.RefObject<React.Component<ButtonProps>> } = {};
 
     content?: HTMLDivElement | null;
 
@@ -119,7 +115,7 @@ class TabGroup extends React.Component<Props, State> {
         this.setState({ currentTab: tabKey });
         // eslint-disable-next-line no-unused-expressions
         this.props.onTabChange && this.props.onTabChange(event);
-        (this.tabRefs[tabKey].current as unknown as HTMLButtonElement).focus();
+        ((this.tabRefs[tabKey].current as unknown) as HTMLButtonElement).focus();
     };
 
     setContentRef = (content: HTMLDivElement | null) => {
@@ -133,18 +129,21 @@ class TabGroup extends React.Component<Props, State> {
         this.content && !this.contentHasFocus() && this.content.focus();
     };
 
-    contentHasFocus = () => document.activeElement === this.content
-    || this.content?.contains(document.activeElement);
+    contentHasFocus = () => document.activeElement === this.content || this.content?.contains(document.activeElement);
 
     handleKeyDown = (event: React.KeyboardEvent) => {
         if (event.keyCode === RIGHT_KEY) {
             const currentIndex = this.tabKeys.findIndex(i => i === this.state.currentTab);
-            if (currentIndex !== this.tabKeys.length - 1) this.changeTab(this.tabKeys[currentIndex + 1], event);
+            if (currentIndex !== this.tabKeys.length - 1) {
+                this.changeTab(this.tabKeys[currentIndex + 1], event);
+            }
         }
 
         if (event.keyCode === LEFT_KEY) {
             const currentIndex = this.tabKeys.findIndex(i => i === this.state.currentTab);
-            if (currentIndex !== 0) this.changeTab(this.tabKeys[currentIndex - 1], event);
+            if (currentIndex !== 0) {
+                this.changeTab(this.tabKeys[currentIndex - 1], event);
+            }
         }
 
         if (event.keyCode === DOWN_KEY) {
@@ -159,7 +158,10 @@ class TabGroup extends React.Component<Props, State> {
             onTabChange,
             ...otherProps
         } = this.props;
-        const { spreadProps } = applyPropBuilder(this.props, { component: "tab", propKey: "groupDefaultProps" });
+        const { spreadProps } = applyPropBuilder(this.props as Props, {
+            component: "tab",
+            propKey: "groupDefaultProps",
+        });
         const cssOverrides = spreadProps("cssOverrides");
 
         const { currentTab } = this.state;
@@ -167,8 +169,10 @@ class TabGroup extends React.Component<Props, State> {
         const content: JSX.Element[] = [];
         const tabs: JSX.Element[] = [];
 
-        React.Children.forEach(children, (thisTab) => {
-            if (!thisTab) return;
+        React.Children.forEach(children as AssumedChildrenType, thisTab => {
+            if (!thisTab) {
+                return;
+            }
             const { tabKey, headline } = thisTab.props;
 
             this.tabRefs[tabKey] = React.createRef();
@@ -178,7 +182,8 @@ class TabGroup extends React.Component<Props, State> {
                     aria-labelledby={tabKey}
                     key={`content-${tabKey}`}
                     hidden={tabKey !== currentTab}
-                    css={get(cssOverrides, "tabContent")}>
+                    css={get(cssOverrides, "tabContent")}
+                >
                     {thisTab.props.children}
                 </TabContent>,
             );
@@ -197,13 +202,12 @@ class TabGroup extends React.Component<Props, State> {
 
         return (
             <TabGroupWrapper {...otherProps} css={get(cssOverrides, "wrapper")}>
-                <TabGroupStyle
-                    data-id="tabGroup"
-                    onKeyDown={this.handleKeyDown}
-                    css={get(cssOverrides, "tabGroup")}>
+                <TabGroupStyle data-id="tabGroup" onKeyDown={this.handleKeyDown} css={get(cssOverrides, "tabGroup")}>
                     {tabs}
                 </TabGroupStyle>
-                <div tabIndex={-1} style={{ outline: "none" }} ref={this.setContentRef} data-id="tabContent">{content}</div>
+                <div tabIndex={-1} style={{ outline: "none" }} ref={this.setContentRef} data-id="tabContent">
+                    {content}
+                </div>
             </TabGroupWrapper>
         );
     }

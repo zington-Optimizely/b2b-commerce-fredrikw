@@ -14,9 +14,7 @@ const Cell = styled.div<VerticalColumnCellProps>`
 `;
 
 const VerticalColumnCell: React.FunctionComponent<VerticalColumnCellProps> = ({ css, ...otherProps }) => {
-    return (
-        <Cell css={css} {...otherProps} />
-    );
+    return <Cell css={css} {...otherProps} />;
 };
 
 export default VerticalColumnCell;

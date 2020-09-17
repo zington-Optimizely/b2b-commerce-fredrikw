@@ -1,5 +1,8 @@
 import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { updateBillTo as updateBillToApi, UpdateBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import {
+    updateBillTo as updateBillToApi,
+    UpdateBillToApiParameter,
+} from "@insite/client-framework/Services/CustomersService";
 import { BillToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<UpdateBillToApiParameter & HasOnSuccess, BillToModel>;
@@ -31,7 +34,7 @@ export const UpdateShipToIfNeeded: HandlerType = props => {
     // only copy over values from billTo that exist on shipTo
     for (const key in shipTo) {
         const billToValue = (props.apiResult as any)[key];
-        if (typeof (billToValue) === "undefined") {
+        if (typeof billToValue === "undefined") {
             continue;
         }
         (shipTo as any)[key] = billToValue;

@@ -35,7 +35,7 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 class SpireRouter extends React.Component<Props> {
     UNSAFE_componentWillMount() {
-        const windowIfDefined = typeof window === "undefined" ? undefined : window as any;
+        const windowIfDefined = typeof window === "undefined" ? undefined : (window as any);
         if (windowIfDefined) {
             windowIfDefined.onpopstate = () => {
                 const { search, pathname } = windowIfDefined.location;
@@ -43,7 +43,6 @@ class SpireRouter extends React.Component<Props> {
                     this.props.loadPage({ pathname, search }, this.historyContext.history, () => {
                         this.props.setBreadcrumbs({ links: undefined });
                     });
-
                 } else {
                     this.setLocation(pathname, search);
                 }
@@ -76,11 +75,15 @@ class SpireRouter extends React.Component<Props> {
     };
 
     push = (url: string, state?: unknown) => {
-        this.updateLocation(url, state, (state: unknown, title: string, url: string) => window.history.pushState(state, title, url));
+        this.updateLocation(url, state, (state: unknown, title: string, url: string) =>
+            window.history.pushState(state, title, url),
+        );
     };
 
     replace = (url: string, state?: unknown) => {
-        this.updateLocation(url, state, (state: unknown, title: string, url: string) => window.history.replaceState(state, title, url));
+        this.updateLocation(url, state, (state: unknown, title: string, url: string) =>
+            window.history.replaceState(state, title, url),
+        );
     };
 
     setLocation = (pathname: string, search: string) => {
@@ -98,16 +101,16 @@ class SpireRouter extends React.Component<Props> {
     };
 
     render() {
-        return <>
-            {this.props.shellContext.isInShell
-            && <ShellHoleConnect history={this.historyContext.history}/>
-            }
-            <Toaster>
-                <HistoryContext.Provider value={this.historyContext}>
-                    <PublicPage />
-                </HistoryContext.Provider>
-            </Toaster>
-        </>;
+        return (
+            <>
+                {this.props.shellContext.isInShell && <ShellHoleConnect history={this.historyContext.history} />}
+                <Toaster>
+                    <HistoryContext.Provider value={this.historyContext}>
+                        <PublicPage />
+                    </HistoryContext.Provider>
+                </Toaster>
+            </>
+        );
     }
 }
 

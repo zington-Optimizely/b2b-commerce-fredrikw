@@ -10,15 +10,13 @@ export default function validateCreditCard(potentialCreditCardNumber?: string) {
         .split("")
         .reverse()
         .map(char => Number.parseInt(char, 10))
-        .reduce(
-            (sum, current, index) => {
-                if (index % 2 === 0) {
-                    return sum + current;
-                }
+        .reduce((sum, current, index) => {
+            if (index % 2 === 0) {
+                return sum + current;
+            }
 
-                const doubled = current * 2;
-                return sum + (doubled > 9 ? doubled - 9 : doubled);
-            },
-            0);
+            const doubled = current * 2;
+            return sum + (doubled > 9 ? doubled - 9 : doubled);
+        }, 0);
     return sum % 10 === 0;
 }

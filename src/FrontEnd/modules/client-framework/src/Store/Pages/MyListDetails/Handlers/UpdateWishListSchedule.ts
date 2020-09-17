@@ -36,20 +36,17 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 export const LoadWishList: HandlerType = props => {
     if (props.result.wishList) {
-        props.dispatch(loadWishList({
-            wishListId: props.result.wishList.id,
-            exclude: ["listLines"],
-            expand: ["schedule", "sharedUsers"],
-        }));
+        props.dispatch(
+            loadWishList({
+                wishListId: props.result.wishList.id,
+                exclude: ["listLines"],
+                expand: ["schedule", "sharedUsers"],
+            }),
+        );
     }
 };
 
-export const chain = [
-    RequestDataFromApi,
-    ResetWishListsData,
-    ExecuteOnSuccessCallback,
-    LoadWishList,
-];
+export const chain = [RequestDataFromApi, ResetWishListsData, ExecuteOnSuccessCallback, LoadWishList];
 
 const updateWishListSchedule = createHandlerChainRunner(chain, "UpdateWishListSchedule");
 export default updateWishListSchedule;

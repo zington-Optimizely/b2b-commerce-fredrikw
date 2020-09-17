@@ -14,7 +14,8 @@ export const reducers = {
 
 type Reducers = Omit<typeof reducers, "components" | "pages" | "data">;
 
-export type AnyAction = Parameters<Reducers[keyof Reducers]>[1]
+export type AnyAction =
+    | Parameters<Reducers[keyof Reducers]>[1]
     | Parameters<ComponentsReducers[keyof ComponentsReducers]>[1]
     | Parameters<PagesReducers[keyof PagesReducers]>[1]
     | Parameters<DataReducers[keyof DataReducers]>[1];

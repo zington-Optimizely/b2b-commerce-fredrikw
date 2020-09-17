@@ -77,10 +77,14 @@ export interface CostCodesStyles {
 export const costCodesStyles: CostCodesStyles = {
     titleText: {
         variant: "h4",
-        css: css` margin: 0; `,
+        css: css`
+            margin: 0;
+        `,
     },
     wrapper: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     titleGridItems: {
         width: [12, 12, 8, 8, 8],
@@ -90,11 +94,21 @@ export const costCodesStyles: CostCodesStyles = {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-start; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
-                    css` justify-content: flex-end; `,
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
                 ])}
         `,
     },
@@ -102,21 +116,27 @@ export const costCodesStyles: CostCodesStyles = {
         variant: "tertiary",
     },
     saveButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     gridItems: {
         width: [12, 12, 9, 9, 9],
     },
     costCodeTitleGridItems: {
         width: [12, 12, 6, 6, 4],
-        css: css` display: block; `,
+        css: css`
+            display: block;
+        `,
     },
     costCodesTableGridItems: {
         width: [12, 12, 12, 12, 6],
     },
     addCostCodeButtonGridItems: {
         width: 12,
-        css: css` padding-bottom: 30px; `,
+        css: css`
+            padding-bottom: 30px;
+        `,
     },
     costCodeTitleText: {
         variant: "h6",
@@ -135,19 +155,16 @@ export const costCodesStyles: CostCodesStyles = {
         `,
     },
     addCostCodeButton: {
-        css: css` display: block; `,
+        css: css`
+            display: block;
+        `,
         variant: "secondary",
     },
 };
 
 const styles = costCodesStyles;
 
-const CostCodes: React.FC<Props> = ({
-    displayedWidgetName,
-    billToState,
-    setDisplayedWidgetName,
-    saveCostCodes,
-}) => {
+const CostCodes: React.FC<Props> = ({ displayedWidgetName, billToState, setDisplayedWidgetName, saveCostCodes }) => {
     if (displayedWidgetName !== "CostCodes" || billToState.isLoading || !billToState.value) {
         return null;
     }
@@ -195,7 +212,7 @@ const CostCodes: React.FC<Props> = ({
             return;
         }
 
-        const updatedCostCodes = immer(costCodes, (draft) => {
+        const updatedCostCodes = immer(costCodes, draft => {
             draft[index].costCode = event.currentTarget.value;
         });
         setCostCodes(updatedCostCodes);
@@ -206,7 +223,7 @@ const CostCodes: React.FC<Props> = ({
             return;
         }
 
-        const updatedCostCodes = immer(costCodes, (draft) => {
+        const updatedCostCodes = immer(costCodes, draft => {
             draft[index].description = event.currentTarget.value;
         });
         setCostCodes(updatedCostCodes);
@@ -217,7 +234,7 @@ const CostCodes: React.FC<Props> = ({
             return;
         }
 
-        const updatedCostCodes = immer(costCodes, (draft) => {
+        const updatedCostCodes = immer(costCodes, draft => {
             draft[index].isActive = false;
         });
         setCostCodes(updatedCostCodes);
@@ -228,12 +245,12 @@ const CostCodes: React.FC<Props> = ({
             return;
         }
 
-        const updatedCostCodes = (costCodes || []).map((costCode) => ({ ...costCode }));
+        const updatedCostCodes = (costCodes || []).map(costCode => ({ ...costCode }));
         updatedCostCodes.push({ costCode: "", isActive: true } as CostCodeModel);
         setCostCodes(updatedCostCodes);
     };
 
-    const rows = (costCodes || []).map((customerCostCode) => {
+    const rows = (costCodes || []).map(customerCostCode => {
         return {
             costCode: customerCostCode.costCode,
             description: customerCostCode.description,
@@ -245,7 +262,9 @@ const CostCodes: React.FC<Props> = ({
         <>
             <GridContainer {...styles.gridContainer}>
                 <GridItem {...styles.titleGridItems}>
-                    <Typography as="h2" {...styles.titleText}>{translate("Cost Codes")}</Typography>
+                    <Typography as="h2" {...styles.titleText}>
+                        {translate("Cost Codes")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
@@ -256,74 +275,102 @@ const CostCodes: React.FC<Props> = ({
                     </Button>
                 </GridItem>
                 <GridItem {...styles.gridItems}>
-                    <Typography {...styles.costCodeInstructionsText}>{siteMessage("Budget_CostCodeInstructions")}</Typography>
+                    <Typography {...styles.costCodeInstructionsText}>
+                        {siteMessage("Budget_CostCodeInstructions")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.costCodeTitleGridItems}>
-                    <Typography as="h4" {...styles.costCodeTitleText}>{translate("Cost Code Title")}</Typography>
-                    <Tooltip {...styles.costCodeTitleTooltip} text={siteMessage("Budget_CostCodeTitleInstructions").toString()} />
+                    <Typography as="h4" {...styles.costCodeTitleText}>
+                        {translate("Cost Code Title")}
+                    </Typography>
+                    <Tooltip
+                        {...styles.costCodeTitleTooltip}
+                        text={siteMessage("Budget_CostCodeTitleInstructions").toString()}
+                    />
                     <TextField
                         value={costCodeTitle}
                         {...styles.costCodeTextField}
                         data-test-selector="costCodeTitleField"
-                        onChange={(event: React.FormEvent<HTMLInputElement>) => handleCostCodeTitleChange(event)}>
-                    </TextField>
+                        onChange={(event: React.FormEvent<HTMLInputElement>) => handleCostCodeTitleChange(event)}
+                    ></TextField>
                 </GridItem>
                 <StyledWrapper {...styles.wrapper}>
                     <GridItem {...styles.costCodesTableGridItems}>
                         <DataTable {...styles.dataTable}>
                             <DataTableHead {...styles.dataTableHead}>
                                 <DataTableHeader {...styles.dataTableHeaders}>{translate("Cost Code")}</DataTableHeader>
-                                <DataTableHeader {...styles.dataTableHeaders}>{translate("Description")}</DataTableHeader>
+                                <DataTableHeader {...styles.dataTableHeaders}>
+                                    {translate("Description")}
+                                </DataTableHeader>
                                 <DataTableHeader {...styles.dataTableHeaders}>
                                     <VisuallyHidden>{translate("remove")}</VisuallyHidden>
                                 </DataTableHeader>
                             </DataTableHead>
                             <DataTableBody {...styles.dataTableBody}>
-                                {rows.map(({ costCode, description, isActive }, index) => (
-                                    isActive
-                                    // eslint-disable-next-line react/no-array-index-key
-                                    && <DataTableRow key={index} {...styles.dataTableRows} data-test-selector="costCodeRow">
-                                        <DataTableCell {...styles.dataTableCells}>
-                                            <TextField
-                                                value={costCode}
-                                                {...styles.costCodeTextField}
-                                                data-test-selector={`costCodeField_${index}`}
-                                                onChange={(event: React.FormEvent<HTMLInputElement>) => handleCostCodeChange(event, index)}>
-                                            </TextField>
-                                        </DataTableCell>
-                                        <DataTableCell {...styles.dataTableCells}>
-                                            <TextField
-                                                value={description}
-                                                {...styles.costCodeTextField}
-                                                onChange={(event: React.FormEvent<HTMLInputElement>) => handleDescriptionChange(event, index)}>
-                                            </TextField>
-                                        </DataTableCell>
-                                        <DataTableCell {...styles.dataTableCells}>
-                                            {/* TODO ISC-12606 needs clickable */}
-                                            <Icon
-                                                {...styles.removeIcon}
-                                                onClick={() => handleRemoveIconClick(index)}
-                                                data-test-selector={`removeCostCode_${index}`} />
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                ))}
+                                {rows.map(
+                                    ({ costCode, description, isActive }, index) =>
+                                        isActive && (
+                                            <DataTableRow
+                                                // eslint-disable-next-line react/no-array-index-key
+                                                key={index}
+                                                {...styles.dataTableRows}
+                                                data-test-selector="costCodeRow"
+                                            >
+                                                <DataTableCell {...styles.dataTableCells}>
+                                                    <TextField
+                                                        value={costCode}
+                                                        {...styles.costCodeTextField}
+                                                        data-test-selector={`costCodeField_${index}`}
+                                                        onChange={(event: React.FormEvent<HTMLInputElement>) =>
+                                                            handleCostCodeChange(event, index)
+                                                        }
+                                                    ></TextField>
+                                                </DataTableCell>
+                                                <DataTableCell {...styles.dataTableCells}>
+                                                    <TextField
+                                                        value={description}
+                                                        {...styles.costCodeTextField}
+                                                        onChange={(event: React.FormEvent<HTMLInputElement>) =>
+                                                            handleDescriptionChange(event, index)
+                                                        }
+                                                    ></TextField>
+                                                </DataTableCell>
+                                                <DataTableCell {...styles.dataTableCells}>
+                                                    {/* TODO ISC-12606 needs clickable */}
+                                                    <Icon
+                                                        {...styles.removeIcon}
+                                                        onClick={() => handleRemoveIconClick(index)}
+                                                        data-test-selector={`removeCostCode_${index}`}
+                                                    />
+                                                </DataTableCell>
+                                            </DataTableRow>
+                                        ),
+                                )}
                             </DataTableBody>
                         </DataTable>
                     </GridItem>
                 </StyledWrapper>
-                {canAddCostCodeRow()
-                    && <GridItem {...styles.addCostCodeButtonGridItems}>
-                        <Button {...styles.addCostCodeButton} onClick={handleAddCostCodeButtonClick} data-test-selector="addCostCodeButton">
+                {canAddCostCodeRow() && (
+                    <GridItem {...styles.addCostCodeButtonGridItems}>
+                        <Button
+                            {...styles.addCostCodeButton}
+                            onClick={handleAddCostCodeButtonClick}
+                            data-test-selector="addCostCodeButton"
+                        >
                             {translate("Add Cost Code")}
                         </Button>
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.buttonsGridItem}>
                     <Hidden above="sm">
                         <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
                             {translate("Cancel")}
                         </Button>
-                        <Button {...styles.saveButton} onClick={handleSaveButtonClick} data-test-selector="saveCostCodesButton">
+                        <Button
+                            {...styles.saveButton}
+                            onClick={handleSaveButtonClick}
+                            data-test-selector="saveCostCodesButton"
+                        >
                             {translate("Save")}
                         </Button>
                     </Hidden>

@@ -93,11 +93,13 @@ const CurrentBillingAddress: React.FunctionComponent<Props> = (props: Props) => 
                 <Typography {...styles.headingText}>{translate("Billing Information")}</Typography>
             </GridItem>
             <GridItem {...styles.editLinkGridItem}>
-                {countries
-                    && <Link {...styles.editLink} onClick={editClickHandler}>{translate("Edit")}</Link>
-                }
-                {countries && billToAddressFields
-                    && <Modal
+                {countries && (
+                    <Link {...styles.editLink} onClick={editClickHandler}>
+                        {translate("Edit")}
+                    </Link>
+                )}
+                {countries && billToAddressFields && (
+                    <Modal
                         headline={translate("Edit Billing Information")}
                         {...styles.addressFormModal}
                         isOpen={modalIsOpen}
@@ -108,9 +110,10 @@ const CurrentBillingAddress: React.FunctionComponent<Props> = (props: Props) => 
                             countries={countries}
                             addressFieldDisplayCollection={billToAddressFields}
                             onCancel={formCancelHandler}
-                            onSubmit={formSubmitHandler} />
+                            onSubmit={formSubmitHandler}
+                        />
                     </Modal>
-                }
+                )}
             </GridItem>
             <GridItem {...styles.addressInfoDisplayGridItem}>
                 <AddressInfoDisplay
@@ -128,7 +131,8 @@ const CurrentBillingAddress: React.FunctionComponent<Props> = (props: Props) => 
                     country={currentBillTo.country ? currentBillTo.country.abbreviation : undefined}
                     phone={currentBillTo.phone}
                     fax={currentBillTo.fax}
-                    email={currentBillTo.email} />
+                    email={currentBillTo.email}
+                />
             </GridItem>
         </GridContainer>
     );

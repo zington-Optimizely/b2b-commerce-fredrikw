@@ -6,9 +6,7 @@ export const ClearForm: Handler = props => {
     });
 };
 
-export const chain = [
-    ClearForm,
-];
+export const chain = [ClearForm];
 
 const clearForm = createHandlerChainRunnerOptionalParameter(chain, {}, "ClearForm");
 export default clearForm;

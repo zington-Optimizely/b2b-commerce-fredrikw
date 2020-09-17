@@ -29,7 +29,24 @@ const ToastPresentationPropsDefault: ComponentThemeProps["toast"]["defaultProps"
         color: "common.border",
     },
     bodyTypographyProps: {
-        css: css` ${({ theme }: ThemeProps<BaseTheme>) => breakpointMediaQueries(theme, [css` font-size: 12px; `, null, css` font-size: 16px; `, null, null], "min")} `,
+        css: css`
+            ${({ theme }: ThemeProps<BaseTheme>) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            font-size: 12px;
+                        `,
+                        null,
+                        css`
+                            font-size: 16px;
+                        `,
+                        null,
+                        null,
+                    ],
+                    "min",
+                )}
+        `,
         color: "common.backgroundContrast",
     },
     transitionDuration: "regular",

@@ -10,7 +10,6 @@ import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from 
 import React, { FC, useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-
 interface OwnProps {
     extendedStyles?: ChangeCustomerShipToSelectorStyles;
     setParameter: (parameter: GetShipTosApiParameter) => void;
@@ -37,8 +36,7 @@ export interface ChangeCustomerShipToSelectorStyles {
     shipToSelectorDynamicDropdown?: DynamicDropdownPresentationProps;
 }
 
-export const changeCustomerShipToSelectorStyles: ChangeCustomerShipToSelectorStyles = {
-};
+export const changeCustomerShipToSelectorStyles: ChangeCustomerShipToSelectorStyles = {};
 
 const ChangeCustomerShipToSelector: FC<Props> = ({
     extendedStyles,
@@ -54,7 +52,6 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
     fulfillmentMethod,
     isLoading,
 }) => {
-
     const [styles] = useState(() => mergeToNew(changeCustomerShipToSelectorStyles, extendedStyles));
     const [options, setOptions] = useState<OptionObject[]>([]);
     let dropdownLabel = translate("Select Ship To");
@@ -65,28 +62,20 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
         dropdownPlaceholder = translate("Search or Select Recipient Address");
     }
 
-    useEffect(
-        () => setLoadShipTosParameter(),
-        [billToId],
-    );
+    useEffect(() => setLoadShipTosParameter(), [billToId]);
 
-    useEffect(
-        () => {
-            if (shipTosDataView.value) {
-                const options: OptionObject[] = shipTosDataView.value.map(billTo => (
-                    {
-                        optionText: billTo.label,
-                        optionValue: billTo.id,
-                    }
-                ));
-                setOptions(options);
-                if (!shipTo && shipTosDataView.value.length === 1) {
-                    onSelect(shipTosDataView.value[0]);
-                }
+    useEffect(() => {
+        if (shipTosDataView.value) {
+            const options: OptionObject[] = shipTosDataView.value.map(billTo => ({
+                optionText: billTo.label,
+                optionValue: billTo.id,
+            }));
+            setOptions(options);
+            if (!shipTo && shipTosDataView.value.length === 1) {
+                onSelect(shipTosDataView.value[0]);
             }
-        },
-        [shipTosDataView],
-    );
+        }
+    }, [shipTosDataView]);
 
     const selectCustomerHandler = (shipToId?: string) => {
         if (shipTosDataView.value && shipToId) {
@@ -121,7 +110,8 @@ const ChangeCustomerShipToSelector: FC<Props> = ({
             placeholder={dropdownPlaceholder}
             isLoading={isLoading}
             options={options}
-            data-test-selector="changeCustomerShipToSelector" />
+            data-test-selector="changeCustomerShipToSelector"
+        />
     );
 };
 

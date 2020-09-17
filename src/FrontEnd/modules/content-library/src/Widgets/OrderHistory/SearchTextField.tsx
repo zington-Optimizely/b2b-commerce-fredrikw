@@ -2,7 +2,9 @@
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import updateSearchFields from "@insite/client-framework/Store/Pages/OrderHistory/Handlers/UpdateSearchFields";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -53,7 +55,7 @@ class SearchTextField extends React.Component<Props, State> {
         if (!value) {
             value = "";
         }
-        return  value;
+        return value;
     };
 
     componentDidUpdate(prevProps: Props) {
@@ -82,7 +84,7 @@ class SearchTextField extends React.Component<Props, State> {
     };
 
     render() {
-        return(
+        return (
             <SearchFieldWrapper extendedStyles={this.props.styles?.wrapper}>
                 <TextField
                     data-test-selector={this.props.testSelector}

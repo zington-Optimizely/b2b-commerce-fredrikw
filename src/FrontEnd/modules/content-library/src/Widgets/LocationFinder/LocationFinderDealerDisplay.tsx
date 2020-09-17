@@ -4,7 +4,9 @@ import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import translate from "@insite/client-framework/Translate";
 import { DealerModel } from "@insite/client-framework/Types/ApiModels";
-import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
+import AddressInfoCondensedDisplay, {
+    AddressInfoCondensedDisplayStyles,
+} from "@insite/content-library/Components/AddressInfoCondensedDisplay";
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -76,36 +78,54 @@ const LocationFinderDealerDisplay: React.FC<LocationFinderDealerDisplayProps> = 
 }) => {
     const [styles] = React.useState(() => mergeToNew(locationFinderDealerDisplayStyles, extendedStyles));
 
-    return (<GridContainer {...styles.container} data-test-selector="locationFinderDealerDisplay" data-test-key={`${dealer.id}`}>
-        <GridItem {...styles.nameGridItem}>
-            <Typography {...styles.nameText}>{dealer.name}</Typography>
-        </GridItem>
-        <GridItem {...styles.addressInfoGridItem}>
-            <AddressInfoCondensedDisplay
-                {...styles.addressInfoCondensed}
-                {...dealer}
-            />
-        </GridItem>
-        {dealer.phone && <GridItem {...styles.phoneGridItem}>
-            <Link href={`tel:${dealer.phone}`} {...styles.phoneLink} target="_blank">{dealer.phone}</Link>
-        </GridItem>}
-        {dealer.htmlContent && <>
-            <GridItem {...styles.htmlContentGridItem}>
-                <StyledWrapper {...styles.container} data-test-selector="locationFinderDealerDisplay_htmlContent">
-                    {parse(dealer.htmlContent, parserOptions)}
-                </StyledWrapper>
+    return (
+        <GridContainer
+            {...styles.container}
+            data-test-selector="locationFinderDealerDisplay"
+            data-test-key={`${dealer.id}`}
+        >
+            <GridItem {...styles.nameGridItem}>
+                <Typography {...styles.nameText}>{dealer.name}</Typography>
             </GridItem>
-        </>}
-        <GridItem {...styles.googleMapsDirectionLinkGridItem}>
-            <GoogleMapsDirectionLink {...styles.googleMapsDirectionLink} {...dealer} />
-        </GridItem>
-        <GridItem {...styles.visitWebsiteLinkGridItem}>
-            <Link href={dealer.webSiteUrl} target="_blank" {...styles.visitWebsiteLink}>{translate("Visit Website")}</Link>
-        </GridItem>
-        <GridItem {...styles.distanceGridItem}>
-            <DistanceDisplay {...styles.distanceDisplayText} distance={dealer.distance} unitOfMeasure={distanceUnitOfMeasure} />
-        </GridItem>
-    </GridContainer>);
+            <GridItem {...styles.addressInfoGridItem}>
+                <AddressInfoCondensedDisplay {...styles.addressInfoCondensed} {...dealer} />
+            </GridItem>
+            {dealer.phone && (
+                <GridItem {...styles.phoneGridItem}>
+                    <Link href={`tel:${dealer.phone}`} {...styles.phoneLink} target="_blank">
+                        {dealer.phone}
+                    </Link>
+                </GridItem>
+            )}
+            {dealer.htmlContent && (
+                <>
+                    <GridItem {...styles.htmlContentGridItem}>
+                        <StyledWrapper
+                            {...styles.container}
+                            data-test-selector="locationFinderDealerDisplay_htmlContent"
+                        >
+                            {parse(dealer.htmlContent, parserOptions)}
+                        </StyledWrapper>
+                    </GridItem>
+                </>
+            )}
+            <GridItem {...styles.googleMapsDirectionLinkGridItem}>
+                <GoogleMapsDirectionLink {...styles.googleMapsDirectionLink} {...dealer} />
+            </GridItem>
+            <GridItem {...styles.visitWebsiteLinkGridItem}>
+                <Link href={dealer.webSiteUrl} target="_blank" {...styles.visitWebsiteLink}>
+                    {translate("Visit Website")}
+                </Link>
+            </GridItem>
+            <GridItem {...styles.distanceGridItem}>
+                <DistanceDisplay
+                    {...styles.distanceDisplayText}
+                    distance={dealer.distance}
+                    unitOfMeasure={distanceUnitOfMeasure}
+                />
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 export default LocationFinderDealerDisplay;

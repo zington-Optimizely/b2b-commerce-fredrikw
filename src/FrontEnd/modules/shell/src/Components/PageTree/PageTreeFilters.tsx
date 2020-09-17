@@ -17,8 +17,7 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 const mapStateToProps = (state: ShellState) => ({
     isLoadingFilters: state.pageTree.isLoadingFilters,
@@ -26,6 +25,7 @@ const mapStateToProps = (state: ShellState) => ({
     treeFiltersQuery: state.pageTree.treeFiltersQuery,
     appliedTreeFilters: state.pageTree.appliedTreeFilters,
     extraTreeFilterCount: state.pageTree.extraTreeFilterCount,
+    mobileCmsModeActive: state.shellContext.mobileCmsModeActive,
 });
 
 const mapDispatchToProps = {
@@ -115,66 +115,87 @@ class PageTreeFilters extends ClickOutside<Props, State> {
             type: "QuickFilter",
         };
 
-        return <QueryResultItem treeFilter={treeFilter} clickFilter={this.clickPotentialFilter}/>;
+        return <QueryResultItem treeFilter={treeFilter} clickFilter={this.clickPotentialFilter} />;
     }
 
     render() {
+        if (this.props.mobileCmsModeActive) {
+            return null;
+        }
+
         const { potentialTreeFilters, extraTreeFilterCount, appliedTreeFilters } = this.props;
         const { potentialFiltersOpen, queryBoxValue } = this.state;
 
-        return <PageTreeFiltersStyle>
-            <QueryBox>
-                <QueryBoxWrapper>
-                    <QueryBoxInput ref={this.queryBoxInput}
-                               data-test-selector="pageTreeFilters_queryBox"
-                               potentialFiltersOpen={this.state.potentialFiltersOpen}
-                               placeholder="Type or click to add filter"
-                               onChange={this.potentialFilterChange}
-                               onFocus={this.potentialFilterFocus}
-                               value={this.state.queryBoxValue}/>
-                    {this.props.isLoadingFilters
-                        && <LoadingSpinner {...loadingSpinnerProps} />
-                    }
-                </QueryBoxWrapper>
-                {potentialFiltersOpen && <QueryResults data-test-selector="pageTreeFilters_potentialFilters" ref={this.setWrapperRef}>
-                    {potentialTreeFilters.map(o =>
-                        <QueryResultItem key={o.key} treeFilter={o} clickFilter={this.clickPotentialFilter}/>,
+        return (
+            <PageTreeFiltersStyle>
+                <QueryBox>
+                    <QueryBoxWrapper>
+                        <QueryBoxInput
+                            ref={this.queryBoxInput}
+                            data-test-selector="pageTreeFilters_queryBox"
+                            potentialFiltersOpen={this.state.potentialFiltersOpen}
+                            placeholder="Type or click to add filter"
+                            onChange={this.potentialFilterChange}
+                            onFocus={this.potentialFilterFocus}
+                            value={this.state.queryBoxValue}
+                        />
+                        {this.props.isLoadingFilters && <LoadingSpinner {...loadingSpinnerProps} />}
+                    </QueryBoxWrapper>
+                    {potentialFiltersOpen && (
+                        <QueryResults data-test-selector="pageTreeFilters_potentialFilters" ref={this.setWrapperRef}>
+                            {potentialTreeFilters.map(o => (
+                                <QueryResultItem key={o.key} treeFilter={o} clickFilter={this.clickPotentialFilter} />
+                            ))}
+                            {potentialTreeFilters.length > 0 && (
+                                <QueryResultItem
+                                    treeFilter={{ value: "Back", key: "Back", type: "Back" }}
+                                    clickFilter={this.clickPotentialFilter}
+                                />
+                            )}
+                            {queryBoxValue !== "" && potentialTreeFilters.length === 0 && (
+                                <li data-test-selector="pageTreeFilters_noResultsFound">No Results Found</li>
+                            )}
+                            {extraTreeFilterCount > 0 && (
+                                <li data-test-selector="pageTreeFilters_moreResultsFound">
+                                    +{extraTreeFilterCount} More Results
+                                </li>
+                            )}
+                            {queryBoxValue === "" && (
+                                <>
+                                    {this.createQuickFilter("Language")}
+                                    {this.createQuickFilter("Customer Segment")}
+                                    {this.createQuickFilter("Device Type")}
+                                    {this.createQuickFilter("Page Status")}
+                                </>
+                            )}
+                        </QueryResults>
                     )}
-                    {potentialTreeFilters.length > 0
-                        && <QueryResultItem treeFilter={{ value: "Back", key: "Back", type: "Back" }} clickFilter={this.clickPotentialFilter}/>}
-                    {queryBoxValue !== "" && potentialTreeFilters.length === 0
-                        && <li data-test-selector="pageTreeFilters_noResultsFound">No Results Found</li>}
-                    {extraTreeFilterCount > 0
-                        && <li data-test-selector="pageTreeFilters_moreResultsFound">+{extraTreeFilterCount} More Results</li>}
-                    {queryBoxValue === ""
-                    && <>
-                        {this.createQuickFilter("Language")}
-                        {this.createQuickFilter("Customer Segment")}
-                        {this.createQuickFilter("Device Type")}
-                        {this.createQuickFilter("Page Status")}
+                </QueryBox>
+                {appliedTreeFilters.length > 0 && (
+                    <>
+                        <AppliedFilters>
+                            {appliedTreeFilters.map(o => (
+                                <AppliedFilter key={o.key} treeFilter={o} clickFilter={this.clickAppliedFilter} />
+                            ))}
+                        </AppliedFilters>
+                        <Clickable
+                            css={clearFiltersCss}
+                            data-test-selector="pageTreeFilters_clearFilters"
+                            onClick={this.props.clearFilters}
+                        >
+                            Clear Filters
+                        </Clickable>
                     </>
-                    }
-                </QueryResults>
-                }
-            </QueryBox>
-            {appliedTreeFilters.length > 0
-            && <>
-                <AppliedFilters>
-                    {appliedTreeFilters.map(o =>
-                        <AppliedFilter key={o.key} treeFilter={o} clickFilter={this.clickAppliedFilter}/>,
-                    )}
-                </AppliedFilters>
-                <Clickable
-                        css={clearFiltersCss}
-                        data-test-selector="pageTreeFilters_clearFilters"
-                        onClick={this.props.clearFilters}>Clear Filters</Clickable>
-            </>
-            }
-        </PageTreeFiltersStyle>;
+                )}
+            </PageTreeFiltersStyle>
+        );
     }
 }
 
-class QueryResultItem extends React.Component<{ treeFilter: TreeFilterModel; clickFilter: (treeFilter: TreeFilterModel) => void; }> {
+class QueryResultItem extends React.Component<{
+    treeFilter: TreeFilterModel;
+    clickFilter: (treeFilter: TreeFilterModel) => void;
+}> {
     onClick = () => {
         this.props.clickFilter(this.props.treeFilter);
     };
@@ -182,15 +203,23 @@ class QueryResultItem extends React.Component<{ treeFilter: TreeFilterModel; cli
     render() {
         const { key, value, type } = this.props.treeFilter;
 
-        const displayType = type.replace("Persona", "Customer Segment").replace("DeviceType", "Device Type").replace("PageStatus", "Page Status");
+        const displayType = type
+            .replace("Persona", "Customer Segment")
+            .replace("DeviceType", "Device Type")
+            .replace("PageStatus", "Page Status");
 
-        return <li key={key}
-                   data-test-selector={`pageTreeFilters_potentialFilters_${value}`}
-                   onClick={this.onClick}>{type === "QuickFilter" || type === "Back" ? "" : `${displayType}:`} {value}</li>;
+        return (
+            <li key={key} data-test-selector={`pageTreeFilters_potentialFilters_${value}`} onClick={this.onClick}>
+                {type === "QuickFilter" || type === "Back" ? "" : `${displayType}:`} {value}
+            </li>
+        );
     }
 }
 
-class AppliedFilter extends React.Component<{ treeFilter: TreeFilterModel; clickFilter: (treeFilter: TreeFilterModel) => void; }> {
+class AppliedFilter extends React.Component<{
+    treeFilter: TreeFilterModel;
+    clickFilter: (treeFilter: TreeFilterModel) => void;
+}> {
     onClick = () => {
         this.props.clickFilter(this.props.treeFilter);
     };
@@ -198,9 +227,15 @@ class AppliedFilter extends React.Component<{ treeFilter: TreeFilterModel; click
     render() {
         const { key, value } = this.props.treeFilter;
 
-        return <AppliedFilterStyle key={key}
-                                   data-test-selector={`pageTreeFilters_appliedFilter_${value}`}
-                                   onClick={this.onClick}>{value} <X color1={shellTheme.colors.secondary.contrast} size={10} /></AppliedFilterStyle>;
+        return (
+            <AppliedFilterStyle
+                key={key}
+                data-test-selector={`pageTreeFilters_appliedFilter_${value}`}
+                onClick={this.onClick}
+            >
+                {value} <X color1={shellTheme.colors.secondary.contrast} size={10} />
+            </AppliedFilterStyle>
+        );
     }
 }
 
@@ -246,7 +281,7 @@ const QueryBoxInput = styled.input<{ potentialFiltersOpen: boolean }>`
     background-color: ${(props: ShellThemeProps) => props.theme.colors.common.accent};
     border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.common.border};
     width: 100%;
-    ${props => props.potentialFiltersOpen ? potentialFiltersOpenStyles : ""}
+    ${props => (props.potentialFiltersOpen ? potentialFiltersOpenStyles : "")}
     &:focus {
         outline: none;
     }

@@ -10,7 +10,9 @@ import {
     CountryModel,
     ShipToModel,
 } from "@insite/client-framework/Types/ApiModels";
-import CustomerAddressFormFields, { CustomerAddressFormFieldStyles } from "@insite/content-library/Components/CustomerAddressFormFields";
+import CustomerAddressFormFields, {
+    CustomerAddressFormFieldStyles,
+} from "@insite/content-library/Components/CustomerAddressFormFields";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -71,7 +73,9 @@ export const customerAddressFormStyles: CustomerAddressFormStyles = {
     },
     cancelButton: {
         color: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
@@ -81,7 +85,10 @@ const StyledForm = getStyledWrapper("form");
 const getRequiredErrorMessage = (fieldDisplay: AddressFieldDisplayModel) =>
     siteMessage("Field_Required", fieldDisplay.displayName);
 
-export default class CustomerAddressForm<Address extends BillToModel | ShipToModel> extends React.Component<OwnProps<Address>, State<Address>> {
+export default class CustomerAddressForm<Address extends BillToModel | ShipToModel> extends React.Component<
+    OwnProps<Address>,
+    State<Address>
+> {
     private styles: CustomerAddressFormStyles;
 
     constructor(props: OwnProps<Address>) {
@@ -106,7 +113,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
         }
     }
 
-    handleInputChange: TextFieldProps["onChange"] = (event) => {
+    handleInputChange: TextFieldProps["onChange"] = event => {
         const { target } = event;
         const propertyName = target.name;
         this.setState({
@@ -128,12 +135,13 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
         });
     };
 
-    handleStateChange = (_: React.ChangeEvent<HTMLSelectElement>, state: BaseAddressModel["state"]) => this.setState({
-        address: {
-            ...this.state.address,
-            state,
-        },
-    });
+    handleStateChange = (_: React.ChangeEvent<HTMLSelectElement>, state: BaseAddressModel["state"]) =>
+        this.setState({
+            address: {
+                ...this.state.address,
+                state,
+            },
+        });
 
     validateForm = () => {
         const fieldDisplay = this.props.addressFieldDisplayCollection;
@@ -170,7 +178,11 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
             formErrors.attention = getRequiredErrorMessage(fieldDisplay.attention);
         }
 
-        if (fieldDisplay.companyName?.isVisible && validation.companyName?.isRequired && companyName.trim().length <= 0) {
+        if (
+            fieldDisplay.companyName?.isVisible &&
+            validation.companyName?.isRequired &&
+            companyName.trim().length <= 0
+        ) {
             formErrors.companyName = getRequiredErrorMessage(fieldDisplay.companyName);
         }
 
@@ -199,7 +211,13 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
         }
 
         const { countryLookup } = this.state;
-        if (countries.length > 0 && countryLookup?.states && countryLookup.states.length > 0 && !state && fieldDisplay.state) {
+        if (
+            countries.length > 0 &&
+            countryLookup?.states &&
+            countryLookup.states.length > 0 &&
+            !state &&
+            fieldDisplay.state
+        ) {
             formErrors.state = getRequiredErrorMessage(fieldDisplay.state);
         }
 
@@ -209,19 +227,19 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
 
         if (fieldDisplay.phone?.isVisible && validation.phone?.isRequired && phone.trim().length <= 0) {
             formErrors.phone = getRequiredErrorMessage(fieldDisplay.phone);
-        } else if (phone.trim().length > 0 && !(/^([\(\)/\-\.\+\s]*\d\s?(ext)?[\(\)/\-\.\+\s]*){10,}$/g.test(phone))) {
+        } else if (phone.trim().length > 0 && !/^([\(\)/\-\.\+\s]*\d\s?(ext)?[\(\)/\-\.\+\s]*){10,}$/g.test(phone)) {
             formErrors.phone = siteMessage("AddressInfo_Phone_Validation");
         }
 
         if (fieldDisplay.email?.isVisible && validation.email?.isRequired && email.trim().length <= 0) {
             formErrors.email = getRequiredErrorMessage(fieldDisplay.email);
-        } else if (email.trim().length > 0 && !(/\w+([-+."]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/g.test(email))) {
+        } else if (email.trim().length > 0 && !/\w+([-+."]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/g.test(email)) {
             formErrors.email = siteMessage("AddressInfo_EmailAddress_Validation");
         }
 
         if (fieldDisplay.fax?.isVisible && validation.fax?.isRequired && fax.trim().length <= 0) {
             formErrors.fax = getRequiredErrorMessage(fieldDisplay.fax);
-        } else if (fax.trim().length > 0 && !(/^([\(\)/\-\.\+\s]*\d\s?(ext)?[\(\)/\-\.\+\s]*){10,}$/g.test(fax))) {
+        } else if (fax.trim().length > 0 && !/^([\(\)/\-\.\+\s]*\d\s?(ext)?[\(\)/\-\.\+\s]*){10,}$/g.test(fax)) {
             formErrors.fax = siteMessage("AddressInfo_Phone_Validation");
         }
 
@@ -238,18 +256,15 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
 
         const formErrors = this.validateForm();
 
-        this.setState(
-            { formErrors },
-            () => {
-                if (Object.keys(this.state.formErrors).length === 0) {
-                    this.props.onSubmit(event, { ...this.props.address, ...this.state.address });
-                } else {
-                    this.setState({
-                        isSubmitting: false,
-                    });
-                }
-            },
-        );
+        this.setState({ formErrors }, () => {
+            if (Object.keys(this.state.formErrors).length === 0) {
+                this.props.onSubmit(event, { ...this.props.address, ...this.state.address });
+            } else {
+                this.setState({
+                    isSubmitting: false,
+                });
+            }
+        });
     };
 
     render() {
@@ -278,20 +293,22 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
         if (!validation) {
             return null;
         }
-        const isSaveDisabled = (validation.firstName!.isDisabled
-            && validation.lastName!.isDisabled
-            && validation.companyName!.isDisabled
-            && validation.attention!.isDisabled
-            && validation.address1!.isDisabled
-            && validation.address2!.isDisabled
-            && validation.address3!.isDisabled
-            && validation.address4!.isDisabled
-            && validation.country!.isDisabled
-            && validation.city!.isDisabled
-            && validation.postalCode!.isDisabled
-            && validation.phone!.isDisabled
-            && validation.fax!.isDisabled
-            && validation.email!.isDisabled) || this.state.isSubmitting;
+        const isSaveDisabled =
+            (validation.firstName!.isDisabled &&
+                validation.lastName!.isDisabled &&
+                validation.companyName!.isDisabled &&
+                validation.attention!.isDisabled &&
+                validation.address1!.isDisabled &&
+                validation.address2!.isDisabled &&
+                validation.address3!.isDisabled &&
+                validation.address4!.isDisabled &&
+                validation.country!.isDisabled &&
+                validation.city!.isDisabled &&
+                validation.postalCode!.isDisabled &&
+                validation.phone!.isDisabled &&
+                validation.fax!.isDisabled &&
+                validation.email!.isDisabled) ||
+            this.state.isSubmitting;
 
         return (
             <StyledForm {...styles.form} onSubmit={this.submitHandler} noValidate>
@@ -347,8 +364,8 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
                     extendedStyles={extendedStyles?.formFields}
                 />
                 <StyledWrapper {...styles.formButtonsWrapper}>
-                    {this.props.onCancel
-                        && <Button
+                    {this.props.onCancel && (
+                        <Button
                             {...this.styles.cancelButton}
                             type="button"
                             onClick={this.props.onCancel}
@@ -356,7 +373,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
                         >
                             {translate("Cancel")}
                         </Button>
-                    }
+                    )}
                     <Button
                         {...this.styles.submitButton}
                         type="submit"

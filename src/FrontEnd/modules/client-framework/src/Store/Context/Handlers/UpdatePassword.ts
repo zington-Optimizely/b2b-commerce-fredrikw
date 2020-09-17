@@ -2,26 +2,22 @@ import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/c
 import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 
 export interface UpdatePasswordParameter {
+    userName?: string;
     password: string;
     newPassword: string;
     onApiResponse: (error?: string) => void;
 }
 
-
-type HandlerType = ApiHandlerDiscreteParameter<
-    UpdatePasswordParameter,
-    UpdateSessionApiParameter,
-    Session
->;
+type HandlerType = ApiHandlerDiscreteParameter<UpdatePasswordParameter, UpdateSessionApiParameter, Session>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
-        session:
-        {
+        session: {
             ...props.parameter,
             uri: "",
             properties: {},
         },
+        accessToken: props.getState().context.accessToken,
     };
 };
 
@@ -35,10 +31,7 @@ export const UpdateSession: HandlerType = async props => {
     }
 };
 
-export const chain = [
-    PopulateApiParameter,
-    UpdateSession,
-];
+export const chain = [PopulateApiParameter, UpdateSession];
 
 const updatePassword = createHandlerChainRunner(chain, "UpdatePassword");
 export default updatePassword;

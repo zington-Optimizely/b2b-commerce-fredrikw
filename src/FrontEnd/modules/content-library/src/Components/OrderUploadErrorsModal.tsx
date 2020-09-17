@@ -79,24 +79,36 @@ export const orderUploadErrorsModalStyles: OrderUploadErrorsModalStyles = {
     modal: {
         sizeVariant: "medium",
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     errorMessagesModal: {
         sizeVariant: "small",
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     uploadErrorText: {
         color: "danger",
-        css: css` line-height: 25px; `,
+        css: css`
+            line-height: 25px;
+        `,
     },
     rowsLimitExceededErrorText: {
         color: "danger",
-        css: css` line-height: 25px; `,
+        css: css`
+            line-height: 25px;
+        `,
     },
     continueButton: {
         variant: "tertiary",
@@ -107,7 +119,9 @@ export const orderUploadErrorsModalStyles: OrderUploadErrorsModalStyles = {
     },
     dataTable: {
         cssOverrides: {
-            table: css` margin-top: 15px; `,
+            table: css`
+                margin-top: 15px;
+            `,
         },
     },
     buttonsWrapper: {
@@ -120,7 +134,9 @@ export const orderUploadErrorsModalStyles: OrderUploadErrorsModalStyles = {
         variant: "secondary",
     },
     continueUploadButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
 };
 
@@ -161,66 +177,78 @@ const OrderUploadErrorsModal: React.FC<Props> = ({
         setContinueUpload({ continueUpload: true });
     };
 
-    return <Modal
-        {...(isBadFile || uploadLimitExceeded ? styles.errorMessagesModal : styles.modal)}
-        headline={translate("Upload Error")}
-        isOpen={errorsModalIsOpen}
-        handleClose={closeModal}
-        onAfterClose={modalOnAfterCloseHandler}
-    >
-        {isBadFile || uploadLimitExceeded
-            ? <>
-                {isBadFile
-                    && <Typography as="p" {...styles.uploadErrorText}>{uploadErrorText}</Typography>
-                }
-                {uploadLimitExceeded
-                    && <Typography as="p" {...styles.rowsLimitExceededErrorText}>{rowsLimitExceededText}</Typography>
-                }
-                <Button {...styles.continueButton} onClick={closeModal}>{translate("Continue")}</Button>
-            </>
-            : <>
-                <Typography {...styles.descriptionText}>{descriptionText}</Typography>
-                <DataTable {...styles.dataTable}>
-                    <DataTableHead {...styles.tableHead}>
-                        <DataTableHeader {...styles.rowNumberHeader}>{translate("Row")}</DataTableHeader>
-                        <DataTableHeader {...styles.itemNumberHeader}>{translate("Item #")}</DataTableHeader>
-                        <DataTableHeader {...styles.qtyHeader}>{translate("QTY")}</DataTableHeader>
-                        <DataTableHeader {...styles.unitOfMeasureHeader}>{translate("U/M")}</DataTableHeader>
-                        <DataTableHeader {...styles.reasonHeader}>{translate("Reason")}</DataTableHeader>
-                    </DataTableHead>
-                    <DataTableBody {...styles.tableBody}>
-                        {rowErrors.map(({ index, name, qtyRequested, umRequested, error }) => (
-                            <DataTableRow key={index} {...styles.tableRow}>
-                                <DataTableCell {...styles.rowNumberCell}>{index}</DataTableCell>
-                                <DataTableCell {...styles.nameCell}>{name}</DataTableCell>
-                                <DataTableCell {...styles.qtyCell}>{qtyRequested}</DataTableCell>
-                                <DataTableCell {...styles.umCell}>{umRequested}</DataTableCell>
-                                <DataTableCell {...styles.reasonCell}>
-                                    {error === UploadError.NotEnough && errorReasons[UploadError.NotEnough]}
-                                    {error === UploadError.ConfigurableProduct && errorReasons[UploadError.ConfigurableProduct]}
-                                    {error === UploadError.StyledProduct && errorReasons[UploadError.StyledProduct]}
-                                    {error === UploadError.Unavailable && errorReasons[UploadError.Unavailable]}
-                                    {error === UploadError.InvalidUnit && errorReasons[UploadError.InvalidUnit]}
-                                    {error === UploadError.NotFound && errorReasons[UploadError.NotFound]}
-                                    {error === UploadError.OutOfStock && errorReasons[UploadError.OutOfStock]}
-                                </DataTableCell>
-                            </DataTableRow>
-                        ))}
-                    </DataTableBody>
-                </DataTable>
-                <StyledWrapper {...styles.buttonsWrapper}>
-                    <Button {...styles.cancelUploadButton} onClick={cancelUploadClickHandler}>{translate("Cancel Upload")}</Button>
-                    <Button
-                        {...styles.continueUploadButton}
-                        onClick={continueUploadClickHandler}
-                        disabled={!products || products.length === 0}
-                    >
-                        {translate("Continue Upload")}
+    return (
+        <Modal
+            {...(isBadFile || uploadLimitExceeded ? styles.errorMessagesModal : styles.modal)}
+            headline={translate("Upload Error")}
+            isOpen={errorsModalIsOpen}
+            handleClose={closeModal}
+            onAfterClose={modalOnAfterCloseHandler}
+        >
+            {isBadFile || uploadLimitExceeded ? (
+                <>
+                    {isBadFile && (
+                        <Typography as="p" {...styles.uploadErrorText}>
+                            {uploadErrorText}
+                        </Typography>
+                    )}
+                    {uploadLimitExceeded && (
+                        <Typography as="p" {...styles.rowsLimitExceededErrorText}>
+                            {rowsLimitExceededText}
+                        </Typography>
+                    )}
+                    <Button {...styles.continueButton} onClick={closeModal}>
+                        {translate("Continue")}
                     </Button>
-                </StyledWrapper>
-            </>
-        }
-    </Modal>;
+                </>
+            ) : (
+                <>
+                    <Typography {...styles.descriptionText}>{descriptionText}</Typography>
+                    <DataTable {...styles.dataTable}>
+                        <DataTableHead {...styles.tableHead}>
+                            <DataTableHeader {...styles.rowNumberHeader}>{translate("Row")}</DataTableHeader>
+                            <DataTableHeader {...styles.itemNumberHeader}>{translate("Item #")}</DataTableHeader>
+                            <DataTableHeader {...styles.qtyHeader}>{translate("QTY")}</DataTableHeader>
+                            <DataTableHeader {...styles.unitOfMeasureHeader}>{translate("U/M")}</DataTableHeader>
+                            <DataTableHeader {...styles.reasonHeader}>{translate("Reason")}</DataTableHeader>
+                        </DataTableHead>
+                        <DataTableBody {...styles.tableBody}>
+                            {rowErrors.map(({ index, name, qtyRequested, umRequested, error }) => (
+                                <DataTableRow key={index} {...styles.tableRow}>
+                                    <DataTableCell {...styles.rowNumberCell}>{index}</DataTableCell>
+                                    <DataTableCell {...styles.nameCell}>{name}</DataTableCell>
+                                    <DataTableCell {...styles.qtyCell}>{qtyRequested}</DataTableCell>
+                                    <DataTableCell {...styles.umCell}>{umRequested}</DataTableCell>
+                                    <DataTableCell {...styles.reasonCell}>
+                                        {error === UploadError.NotEnough && errorReasons[UploadError.NotEnough]}
+                                        {error === UploadError.ConfigurableProduct &&
+                                            errorReasons[UploadError.ConfigurableProduct]}
+                                        {error === UploadError.StyledProduct && errorReasons[UploadError.StyledProduct]}
+                                        {error === UploadError.Unavailable && errorReasons[UploadError.Unavailable]}
+                                        {error === UploadError.InvalidUnit && errorReasons[UploadError.InvalidUnit]}
+                                        {error === UploadError.NotFound && errorReasons[UploadError.NotFound]}
+                                        {error === UploadError.OutOfStock && errorReasons[UploadError.OutOfStock]}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            ))}
+                        </DataTableBody>
+                    </DataTable>
+                    <StyledWrapper {...styles.buttonsWrapper}>
+                        <Button {...styles.cancelUploadButton} onClick={cancelUploadClickHandler}>
+                            {translate("Cancel Upload")}
+                        </Button>
+                        <Button
+                            {...styles.continueUploadButton}
+                            onClick={continueUploadClickHandler}
+                            disabled={!products || products.length === 0}
+                        >
+                            {translate("Continue Upload")}
+                        </Button>
+                    </StyledWrapper>
+                </>
+            )}
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderUploadErrorsModal);

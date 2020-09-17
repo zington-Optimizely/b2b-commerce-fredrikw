@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunnerOptionalParameter,
-    HandlerWithResult,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import cloneDeep from "lodash/cloneDeep";
 import qs from "qs";
 
@@ -24,10 +21,7 @@ export const DispatchSetFilterQuery: HandlerType = props => {
     });
 };
 
-export const chain = [
-    SetFilterQuery,
-    DispatchSetFilterQuery,
-];
+export const chain = [SetFilterQuery, DispatchSetFilterQuery];
 
 const setFilterQuery = createHandlerChainRunnerOptionalParameter(chain, {}, "SetFilterQuery");
 export default setFilterQuery;

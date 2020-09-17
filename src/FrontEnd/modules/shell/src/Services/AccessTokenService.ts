@@ -59,12 +59,14 @@ const checkAccessToken = () => {
     }
 };
 
-export const  refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem(refreshTokenName);
     if (refreshToken && shellContext) {
         const response = await fetch("/identity/connect/token", {
             method: "POST",
-            body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}&client_id=${shellContext.adminClientId}&client_secret=${shellContext.adminClientSecret}`,
+            body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}&client_id=${
+                shellContext.adminClientId
+            }&client_secret=${shellContext.adminClientSecret}`,
             headers: new Headers({
                 "content-type": "application/x-www-form-urlencoded",
             }),
@@ -75,9 +77,9 @@ export const  refreshAccessToken = async () => {
         }
 
         const result = await (response.json() as Promise<{
-            readonly access_token: string,
-            readonly refresh_token: string,
-            readonly expires_in: number,
+            readonly access_token: string;
+            readonly refresh_token: string;
+            readonly expires_in: number;
         }>);
 
         localStorage.setItem(adminAccessTokenName, result.access_token);
@@ -89,7 +91,7 @@ export const  refreshAccessToken = async () => {
 };
 
 const setLastActiveTime = () => {
-    localStorage.setItem(lastActiveTimeName, (new Date()).toISOString());
+    localStorage.setItem(lastActiveTimeName, new Date().toISOString());
 };
 
 let dispatch: Dispatch<AnyShellAction> | undefined;

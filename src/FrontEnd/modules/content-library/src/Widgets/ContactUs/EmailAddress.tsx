@@ -36,17 +36,12 @@ export interface EmailAddressStyles {
     emailAddressTextField?: TextFieldPresentationProps;
 }
 
-export const emailAddressStyles: EmailAddressStyles = {
-};
+export const emailAddressStyles: EmailAddressStyles = {};
 
 const styles = emailAddressStyles;
-const emailRegexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 
-const EmailAddress: React.FC<Props> = ({
-    fields,
-    emailAddress,
-    setFieldValue,
-}) => {
+const EmailAddress: React.FC<Props> = ({ fields, emailAddress, setFieldValue }) => {
     const { label, hintText, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [emailAddressErrorMessage, setEmailAddressErrorMessage] = React.useState("");
@@ -60,11 +55,12 @@ const EmailAddress: React.FC<Props> = ({
     }, [isRequired]);
 
     const validateEmailAddress = () => {
-        const errorMessage = !emailAddress && isRequired
-            ? siteMessage("ContactUsForm_EmailIsRequiredErrorMessage")
-            : (!emailAddress || emailRegexp.test(emailAddress)
+        const errorMessage =
+            !emailAddress && isRequired
+                ? siteMessage("ContactUsForm_EmailIsRequiredErrorMessage")
+                : !emailAddress || emailRegexp.test(emailAddress)
                 ? ""
-                : siteMessage("ContactUsForm_EmailIsInvalidErrorMessage"));
+                : siteMessage("ContactUsForm_EmailIsInvalidErrorMessage");
         setEmailAddressErrorMessage(errorMessage as string);
         return !errorMessage;
     };
@@ -77,16 +73,18 @@ const EmailAddress: React.FC<Props> = ({
         validateEmailAddress();
     };
 
-    return <TextField
-        {...styles.emailAddressTextField}
-        label={label}
-        required={isRequired}
-        placeholder={hintText}
-        value={emailAddress || ""}
-        onChange={emailChangeHandler}
-        onBlur={emailBlurHandler}
-        error={emailAddressErrorMessage}
-    />;
+    return (
+        <TextField
+            {...styles.emailAddressTextField}
+            label={label}
+            required={isRequired}
+            placeholder={hintText}
+            value={emailAddress || ""}
+            onChange={emailChangeHandler}
+            onBlur={emailBlurHandler}
+            error={emailAddressErrorMessage}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

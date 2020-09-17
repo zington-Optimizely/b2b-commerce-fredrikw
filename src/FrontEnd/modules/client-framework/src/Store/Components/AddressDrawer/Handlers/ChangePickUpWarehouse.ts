@@ -12,9 +12,7 @@ export const DispatchSetPickUpWarehouse: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetPickUpWarehouse,
-];
+export const chain = [DispatchSetPickUpWarehouse];
 
 const changePickUpWarehouse = createHandlerChainRunner(chain, "ChangePickUpWarehouse");
 export default changePickUpWarehouse;

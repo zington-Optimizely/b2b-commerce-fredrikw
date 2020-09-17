@@ -50,10 +50,7 @@ export const rfqQuoteDetailsPageContainerStyles: RfqQuoteDetailsPageContainerSty
 
 const styles = rfqQuoteDetailsPageContainerStyles;
 
-const RfqQuoteDetailsPageContainer = ({
-    id,
-    quoteState,
-}: Props) => {
+const RfqQuoteDetailsPageContainer = ({ id, quoteState }: Props) => {
     if (!quoteState.value) {
         return (
             <StyledWrapper {...styles.spinnerWrapper}>

@@ -4,7 +4,12 @@ import { PageLinkModel } from "@insite/client-framework/Services/ContentService"
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setInitialValues from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetInitialValues";
 import setNavDrawerIsOpen from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetNavDrawerIsOpen";
-import { getCurrencies, getFulfillmentLabel, getLanguages, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import {
+    getCurrencies,
+    getFulfillmentLabel,
+    getLanguages,
+    getSettingsCollection,
+} from "@insite/client-framework/Store/Context/ContextSelectors";
 import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
@@ -35,11 +40,9 @@ import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const linkListStateLinks = getWidgetsByPageId(state, getHeader(state).id).find(
-        (widget: WidgetProps) => {
-            return widget.type === "Header/HeaderLinkList";
-        },
-    )?.fields.links;
+    const linkListStateLinks = getWidgetsByPageId(state, getHeader(state).id).find((widget: WidgetProps) => {
+        return widget.type === "Header/HeaderLinkList";
+    })?.fields.links;
 
     return {
         currencies: getCurrencies(state),
@@ -53,9 +56,13 @@ const mapStateToProps = (state: ApplicationState) => {
         isGuest: state.context.session?.isGuest,
         myAccountPageLink: getPageLinkByPageType(state, "MyAccountPage"),
         signInUrl: getPageLinkByPageType(state, "SignInPage"),
-        headerLinkListLinks: mapLinks<LinkModel, { openInNewWindow: boolean }>(state, linkListStateLinks, (widgetLink) => ({
-            openInNewWindow: widgetLink.fields.openInNewWindow,
-        })),
+        headerLinkListLinks: mapLinks<LinkModel, { openInNewWindow: boolean }>(
+            state,
+            linkListStateLinks,
+            widgetLink => ({
+                openInNewWindow: widgetLink.fields.openInNewWindow,
+            }),
+        ),
         showCustomerMenuItem: getSettingsCollection(state).accountSettings.enableWarehousePickup,
         fulfillmentLabel: getFulfillmentLabel(state),
         drawerIsOpen: state.components.addressDrawer.navDrawerIsOpen,
@@ -114,10 +121,12 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
     },
     drawer: {
         size: 300,
-        cssOverrides: { drawerContent: css`
-            margin-top: -2px;
-            overflow-x: hidden;
-        ` },
+        cssOverrides: {
+            drawerContent: css`
+                margin-top: -2px;
+                overflow-x: hidden;
+            `,
+        },
     },
     drawerSectionWrapper: {
         css: css`
@@ -165,7 +174,9 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
     },
     mainNavigationRow: {
         color: "common.backgroundContrast",
-        css: css` margin: 2px; `,
+        css: css`
+            margin: 2px;
+        `,
     },
     mainNavigationRowIcon: {
         color: "common.background",
@@ -190,7 +201,9 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
             ellipsis: true,
             transform: "uppercase",
         },
-        css: css` margin: 2px; `,
+        css: css`
+            margin: 2px;
+        `,
     },
     currencySymbol: {
         size: 22,
@@ -204,7 +217,11 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
         `,
     },
     changeCustomerRow: {
-        css: css` &:focus { outline: none; } `,
+        css: css`
+            &:focus {
+                outline: none;
+            }
+        `,
     },
     changeCustomerRowContainer: { gap: 15 },
     fulfillmentMethodGridItem: { width: 12 },
@@ -265,22 +282,20 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                 <Drawer
                     draggable
                     position="left"
-                    {...styles.drawer as DrawerProps}
+                    {...(styles.drawer as DrawerProps)}
                     isOpen={this.props.drawerIsOpen}
                     handleClose={this.closeDrawer}
                     contentLabel="menu drawer"
                 >
                     <StyledSection {...styles.drawerSectionWrapper}>
-                        {userName && !isGuest
-                            ? <PanelMenu
+                        {userName && !isGuest ? (
+                            <PanelMenu
                                 currentUrl={currentPageUrl}
                                 panelTrigger={
                                     <PanelRow hasChildren {...styles.mainNavigationRow}>
                                         <StyledSpan {...styles.panelSectionWrapper}>
-                                            <Icon src={User} {...styles.mainNavigationRowIcon}/>
-                                            <Typography {...styles.userRowTypography}>
-                                                {userName}
-                                            </Typography>
+                                            <Icon src={User} {...styles.mainNavigationRowIcon} />
+                                            <Typography {...styles.userRowTypography}>{userName}</Typography>
                                         </StyledSpan>
                                     </PanelRow>
                                 }
@@ -290,19 +305,19 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 layer={0}
                                 {...styles.panelMenu}
                             />
-                            : <PanelRow
+                        ) : (
+                            <PanelRow
                                 {...styles.mainNavigationRow}
                                 isCurrent={currentPageUrl === signInUrl?.url}
                                 onClick={this.closeDrawer}
-                                href={signInUrl?.url}>
+                                href={signInUrl?.url}
+                            >
                                 <StyledSpan {...styles.panelSectionWrapper}>
                                     <Icon src={User} {...styles.mainNavigationRowIcon} />
-                                    <Typography {...styles.userRowTypography}>
-                                        Sign In
-                                    </Typography>
+                                    <Typography {...styles.userRowTypography}>Sign In</Typography>
                                 </StyledSpan>
                             </PanelRow>
-                        }
+                        )}
                         {/* covers MainNavigation functionality */}
                         {links.map((link, index) => {
                             if (link.children && link.children.length > 0) {
@@ -314,7 +329,9 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                         closeOverlay={this.closeDrawer}
                                         panelTrigger={
                                             <PanelRow hasChildren {...styles.mainNavigationRow}>
-                                                <Typography {...styles.mainNavigationRowTypography}>{link.title}</Typography>
+                                                <Typography {...styles.mainNavigationRowTypography}>
+                                                    {link.title}
+                                                </Typography>
                                             </PanelRow>
                                         }
                                         menuItems={link.children}
@@ -336,7 +353,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 </PanelRow>
                             );
                         })}
-                        { showQuickOrder && quickOrderLink && (
+                        {showQuickOrder && quickOrderLink && (
                             <PanelRow
                                 isCurrent={currentPageUrl === quickOrderLink.url}
                                 onClick={this.closeDrawer}
@@ -347,23 +364,25 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                             </PanelRow>
                         )}
                     </StyledSection>
-                    {this.props.headerLinkListLinks.length > 0 && <StyledSection {...styles.drawerSectionWrapper}>
-                        {this.props.headerLinkListLinks.map(link => (
-                            <PanelRow
-                                key={link.title}
-                                {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
-                                isCurrent={currentPageUrl === link.url}
-                                onClick={this.closeDrawer}
-                                href={link.url}
-                                target={link.openInNewWindow ? "_blank" : ""}
-                            >
-                                <Typography {...styles.logoLinks?.typographyProps}>{link.title}</Typography>
-                            </PanelRow>
-                        ))}
-                    </StyledSection>}
+                    {this.props.headerLinkListLinks.length > 0 && (
+                        <StyledSection {...styles.drawerSectionWrapper}>
+                            {this.props.headerLinkListLinks.map(link => (
+                                <PanelRow
+                                    key={link.title}
+                                    {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
+                                    isCurrent={currentPageUrl === link.url}
+                                    onClick={this.closeDrawer}
+                                    href={link.url}
+                                    target={link.openInNewWindow ? "_blank" : ""}
+                                >
+                                    <Typography {...styles.logoLinks?.typographyProps}>{link.title}</Typography>
+                                </PanelRow>
+                            ))}
+                        </StyledSection>
+                    )}
                     <StyledSection {...styles.drawerSectionWrapper}>
                         <SelectorMenu
-                            options={currencies?.map((c) => {
+                            options={currencies?.map(c => {
                                 return {
                                     title: c.currencyCode.toUpperCase(),
                                     clickableProps: {
@@ -375,13 +394,14 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 };
                             })}
                             closeModal={this.closeDrawer}
-                            currentOption={currencies?.find((c) => c.id === currentCurrencyId)?.currencyCode}
+                            currentOption={currencies?.find(c => c.id === currentCurrencyId)?.currencyCode}
                             currentOptionIcon={
                                 <Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography>
                             }
                         />
-                        <SelectorMenu dataTestSelector="mobileLanguageSelector"
-                            options={languages?.map((l) => {
+                        <SelectorMenu
+                            dataTestSelector="mobileLanguageSelector"
+                            options={languages?.map(l => {
                                 return {
                                     title: l.languageCode.toUpperCase(),
                                     clickableProps: {
@@ -394,13 +414,16 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                             })}
                             currentOption={currentLanguage?.languageCode}
                             closeModal={this.closeDrawer}
-                            currentOptionIcon={currentLanguage?.imageFilePath
-                                ? <LogoImage src={currentLanguage.imageFilePath} alt="" />
-                                : <Icon src={Globe} {...styles.menuRowIcon} />
+                            currentOptionIcon={
+                                currentLanguage?.imageFilePath ? (
+                                    <LogoImage src={currentLanguage.imageFilePath} alt="" />
+                                ) : (
+                                    <Icon src={Globe} {...styles.menuRowIcon} />
+                                )
                             }
                         />
-                        {showCustomerMenuItem
-                            && <PanelMenu
+                        {showCustomerMenuItem && (
+                            <PanelMenu
                                 {...styles.panelMenu}
                                 panelTrigger={
                                     <PanelRow hasChildren {...styles.logoLinks} color="common.accent">
@@ -413,19 +436,20 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 layer={0}
                                 closeOverlay={this.closeDrawer}
                             >
-                                <PanelRow
-                                    tabIndex={-1}
-                                    {...styles.changeCustomerRow}
-                                >
+                                <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
                                     <GridContainer {...styles.changeCustomerRowContainer}>
                                         <GridItem {...styles.fulfillmentMethodGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", { fields: {} })}
+                                            {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", {
+                                                fields: {},
+                                            })}
                                         </GridItem>
                                         <GridItem {...styles.addressesGridItem}>
                                             {createWidgetElement("Header/AddressDrawerSelectCustomer", { fields: {} })}
                                         </GridItem>
                                         <GridItem {...styles.pickUpAddressGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", { fields: {} })}
+                                            {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", {
+                                                fields: {},
+                                            })}
                                         </GridItem>
                                         <GridItem {...styles.applyButtonGridItem}>
                                             {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
@@ -433,7 +457,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                     </GridContainer>
                                 </PanelRow>
                             </PanelMenu>
-                        }
+                        )}
                     </StyledSection>
                 </Drawer>
             </>
@@ -454,7 +478,13 @@ interface SelectorMenuProps {
     dataTestSelector?: string;
 }
 
-const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, closeModal, currentOption, currentOptionIcon, dataTestSelector }) => {
+const SelectorMenu: React.FC<SelectorMenuProps> = ({
+    options,
+    closeModal,
+    currentOption,
+    currentOptionIcon,
+    dataTestSelector,
+}) => {
     if (!options || options.length <= 1) {
         return null;
     }
@@ -463,7 +493,12 @@ const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, closeModal, curren
         <PanelRow hasChildren {...styles.logoLinks}>
             <StyledSpan {...styles.panelSectionWrapper}>
                 {currentOptionIcon}
-                <Typography data-test-selector={`${dataTestSelector}_currentOption`} {...styles.logoLinks?.typographyProps}>{currentOption}</Typography>
+                <Typography
+                    data-test-selector={`${dataTestSelector}_currentOption`}
+                    {...styles.logoLinks?.typographyProps}
+                >
+                    {currentOption}
+                </Typography>
             </StyledSpan>
         </PanelRow>
     );

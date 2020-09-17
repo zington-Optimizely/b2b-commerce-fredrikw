@@ -1,6 +1,9 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCategoriesDataView, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import {
+    getCategoriesDataView,
+    getCategoryState,
+} from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -66,7 +69,9 @@ export const categoryListStyles: CategoryListStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     container: {
         gap: 20,
@@ -79,7 +84,9 @@ export const categoryListStyles: CategoryListStyles = {
     },
     categoryImageItem: {
         width: 12,
-        css: css` height: 160px; `,
+        css: css`
+            height: 160px;
+        `,
     },
     categoryImage: {
         width: "160px",
@@ -87,7 +94,9 @@ export const categoryListStyles: CategoryListStyles = {
     },
     categoryNameLinkItem: {
         width: 12,
-        css: css` padding-bottom: 8px; `,
+        css: css`
+            padding-bottom: 8px;
+        `,
     },
     categoryName: {
         css: css`
@@ -118,7 +127,10 @@ class CategoryList extends React.Component<Props> {
     }
 
     render() {
-        const { categoriesDataView, fields: { showImages } } = this.props;
+        const {
+            categoriesDataView,
+            fields: { showImages },
+        } = this.props;
         if (categoriesDataView.isLoading) {
             return (
                 <StyledWrapper {...styles.centeringWrapper}>
@@ -133,33 +145,36 @@ class CategoryList extends React.Component<Props> {
 
         return (
             <GridContainer {...styles.container}>
-                {categoriesDataView.value.map((category) => (
+                {categoriesDataView.value.map(category => (
                     <GridItem key={category.id.toString()} {...styles.categoryItem}>
                         <GridContainer {...styles.innerContainer}>
-                            {showImages
-                                && <GridItem {...styles.categoryImageItem}>
-                                    {category.path
-                                        && <Link href={category.path} {...styles.categoryImageLink}>
+                            {showImages && (
+                                <GridItem {...styles.categoryImageItem}>
+                                    {category.path && (
+                                        <Link href={category.path} {...styles.categoryImageLink}>
                                             <LazyImage src={category.smallImagePath} {...styles.categoryImage} />
                                         </Link>
-                                    }
+                                    )}
                                 </GridItem>
-                            }
+                            )}
                             <GridItem {...styles.categoryNameLinkItem}>
                                 <Link href={category.path} {...styles.categoryNameLink}>
                                     <Typography {...styles.categoryName}>{category.shortDescription}</Typography>
                                 </Link>
                             </GridItem>
-                            {category.subCategoryIds && category.subCategoryIds.slice(0, 4).map(subCategoryId => (
-                                <GridItem key={subCategoryId} {...styles.subCategoryNameLinkItem}>
-                                    <SubCategoryLink categoryId={subCategoryId} />
+                            {category.subCategoryIds &&
+                                category.subCategoryIds.slice(0, 4).map(subCategoryId => (
+                                    <GridItem key={subCategoryId} {...styles.subCategoryNameLinkItem}>
+                                        <SubCategoryLink categoryId={subCategoryId} />
+                                    </GridItem>
+                                ))}
+                            {category.subCategoryIds && category.subCategoryIds.length > 4 && (
+                                <GridItem {...styles.viewMoreLinkItem}>
+                                    <Link href={category.path} {...styles.viewMoreLink}>
+                                        {translate("View More")}
+                                    </Link>
                                 </GridItem>
-                            ))}
-                            {category.subCategoryIds && category.subCategoryIds.length > 4
-                                && <GridItem {...styles.viewMoreLinkItem}>
-                                    <Link href={category.path} {...styles.viewMoreLink}>{translate("View More")}</Link>
-                                </GridItem>
-                            }
+                            )}
                         </GridContainer>
                     </GridItem>
                 ))}
@@ -173,9 +188,11 @@ const SubCategoryLinkView = ({ category }: ReturnType<typeof linkMapStateToProps
         return null;
     }
 
-    return <Link href={category.path} {...styles.subCategoryNameLink}>
-        {category.shortDescription}
-    </Link>;
+    return (
+        <Link href={category.path} {...styles.subCategoryNameLink}>
+            {category.shortDescription}
+        </Link>
+    );
 };
 
 const linkMapStateToProps = (state: ApplicationState, ownProps: { categoryId: string }) => ({

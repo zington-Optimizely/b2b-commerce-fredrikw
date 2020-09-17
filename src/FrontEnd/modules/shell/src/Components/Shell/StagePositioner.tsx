@@ -8,7 +8,7 @@ const mapStageModeToProps = (state: ShellState) => ({
 
 const StagePositioner = connect(mapStageModeToProps)(styled.div<ReturnType<typeof mapStageModeToProps>>`
     height: calc(100% - ${({ theme }) => theme.headerHeight});
-    ${({ overflowAuto }) => overflowAuto ? "overflow: auto;" : ""}
+    ${({ overflowAuto }) => (overflowAuto ? "overflow: auto;" : "")}
 `);
 
 export default StagePositioner;

@@ -26,7 +26,7 @@ type Props = {
     isOpen: boolean;
     initialPageSize: number;
     handleClose(): void;
-    styles?: TwoButtonModalStyles
+    styles?: TwoButtonModalStyles;
 };
 
 const PrintAllPagesModal: React.FC<Props> = ({
@@ -41,7 +41,9 @@ const PrintAllPagesModal: React.FC<Props> = ({
     styles,
 }) => {
     const onAfterPrint = (queryEvent: MediaQueryListEvent) => {
-        if (!queryEvent.matches) runQuery(initialPageSize);
+        if (!queryEvent.matches) {
+            runQuery(initialPageSize);
+        }
     };
 
     React.useEffect(() => {
@@ -84,37 +86,27 @@ const PrintAllPagesModal: React.FC<Props> = ({
     };
 
     return (
-        <Modal
-            headline={translate("Print Options")}
-            {...styles}
-            handleClose={handleClose}
-            isOpen={isOpen}>
+        <Modal headline={translate("Print Options")} {...styles} handleClose={handleClose} isOpen={isOpen}>
             <GridContainer {...mergeStyles?.container}>
                 <GridItem {...mergeStyles?.textGridItem}>
                     <Typography {...mergeStyles?.messageText}>
-                        {translate("Would you like to print only the current page of results, or all {0} items?")
-                            .replace("{0}", `${totalItemCount === 999 ? "" : totalItemCount}`)}
+                        {translate(
+                            "Would you like to print only the current page of results, or all {0} items?",
+                        ).replace("{0}", `${totalItemCount === 999 ? "" : totalItemCount}`)}
                     </Typography>
                 </GridItem>
                 <GridItem {...mergeStyles?.buttonsGridItem}>
-                    {!reloading
-                        ? <Button
-                            {...mergeStyles?.cancelButton}
-                            onClick={printFirstPage}>
+                    {!reloading ? (
+                        <Button {...mergeStyles?.cancelButton} onClick={printFirstPage}>
                             {translate("Print this page")}
                         </Button>
-                        : <Button
-                            onClick={cancelPrintAllPages}
-                            {...mergeStyles?.cancelButton}>
+                    ) : (
+                        <Button onClick={cancelPrintAllPages} {...mergeStyles?.cancelButton}>
                             {translate("Cancel Printing")}
                         </Button>
-                    }
-                    <Button {...mergeStyles?.submitButton}
-                        disabled={reloading}
-                        onClick={printAllPages}>
-                        {reloading
-                            ? translate("Loading all pages...")
-                            : translate("Print all pages")}
+                    )}
+                    <Button {...mergeStyles?.submitButton} disabled={reloading} onClick={printAllPages}>
+                        {reloading ? translate("Loading all pages...") : translate("Print all pages")}
                     </Button>
                 </GridItem>
             </GridContainer>

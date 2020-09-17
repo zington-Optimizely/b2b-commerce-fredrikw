@@ -27,7 +27,11 @@ const mapDispatchToProps = {
     updateSearchFields,
 };
 
-type Props = HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext & PageProps;
+type Props = HasHistory &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasShellContext &
+    PageProps;
 
 const RfqMyQuotesPage = ({
     id,
@@ -41,26 +45,23 @@ const RfqMyQuotesPage = ({
 }: Props) => {
     let firstLoad = false;
 
-    useEffect(
-        () => {
-            firstLoad = true;
-            let parsedGetQuotesParameter: GetQuotesApiParameter = {};
-            if (location.search) {
-                parsedGetQuotesParameter = parseQueryString<GetQuotesApiParameter>(location.search);
-                if (typeof parsedGetQuotesParameter.statuses === "string") {
-                    parsedGetQuotesParameter.statuses = [parsedGetQuotesParameter.statuses];
-                }
+    useEffect(() => {
+        firstLoad = true;
+        let parsedGetQuotesParameter: GetQuotesApiParameter = {};
+        if (location.search) {
+            parsedGetQuotesParameter = parseQueryString<GetQuotesApiParameter>(location.search);
+            if (typeof parsedGetQuotesParameter.statuses === "string") {
+                parsedGetQuotesParameter.statuses = [parsedGetQuotesParameter.statuses];
             }
+        }
 
-            updateSearchFields({
-                ...getQuotesParameter,
-                ...parsedGetQuotesParameter,
-                expand: session.isSalesPerson ? ["salesList"] : undefined,
-                type: "Replace",
-            });
-        },
-        [],
-    );
+        updateSearchFields({
+            ...getQuotesParameter,
+            ...parsedGetQuotesParameter,
+            expand: session.isSalesPerson ? ["salesList"] : undefined,
+            type: "Replace",
+        });
+    }, []);
 
     useEffect(() => {
         if (!firstLoad) {
@@ -75,9 +76,11 @@ const RfqMyQuotesPage = ({
         }
     });
 
-    return <Page>
-        <Zone contentId={id} zoneName="Content" />
-    </Page>;
+    return (
+        <Page>
+            <Zone contentId={id} zoneName="Content" />
+        </Page>
+    );
 };
 
 const pageModule: PageModule = {

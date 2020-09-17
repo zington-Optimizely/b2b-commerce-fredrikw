@@ -25,7 +25,6 @@ const mapStateToProps = (state: ApplicationState) => ({
 type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<typeof mapStateToProps>;
 
 class OrderConfirmationPage extends Component<Props> {
-
     componentDidMount() {
         const parsedQuery = parseQueryString<{ cartId?: string }>(this.props.location.search);
         const cartId = parsedQuery.cartId;
@@ -44,7 +43,7 @@ class OrderConfirmationPage extends Component<Props> {
     render() {
         return (
             <Page>
-                <Zone zoneName="Content" contentId={this.props.id}/>
+                <Zone zoneName="Content" contentId={this.props.id} />
             </Page>
         );
     }

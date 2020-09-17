@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ value?: Date[]; }>;
+type HandlerType = Handler<{ value?: Date[] }>;
 
 export const DispatchSetBudgetEndPeriods: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetBudgetEndPeriods: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetBudgetEndPeriods,
-];
+export const chain = [DispatchSetBudgetEndPeriods];
 
 const setBudgetEndPeriods = createHandlerChainRunner(chain, "setBudgetEndPeriods");
 export default setBudgetEndPeriods;

@@ -27,9 +27,7 @@ const containerStyle = (x: number) => css`
 `;
 
 const VerticalColumnContainer: React.FunctionComponent<VerticalColumnContainerProps> = ({ css, ...otherProps }) => {
-    return (
-        <Container css={css} {...otherProps} />
-    );
+    return <Container css={css} {...otherProps} />;
 };
 
 export default VerticalColumnContainer;

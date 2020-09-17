@@ -57,7 +57,9 @@ export const rfqQuoteDetailsMessagesStyles: RfqQuoteDetailsMessagesStyles = {
     },
     messageTextArea: {
         cssOverrides: {
-            formField: css` margin-bottom: 20px; `,
+            formField: css`
+                margin-bottom: 20px;
+            `,
         },
     },
     messagesContainer: {
@@ -83,16 +85,15 @@ export const rfqQuoteDetailsMessagesStyles: RfqQuoteDetailsMessagesStyles = {
         weight: "bold",
     },
     messageBodyText: {
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
 };
 
 const styles = rfqQuoteDetailsMessagesStyles;
 
-const RfqQuoteDetailsMessages = ({
-    quoteState,
-    sendMessage,
-}: Props) => {
+const RfqQuoteDetailsMessages = ({ quoteState, sendMessage }: Props) => {
     const quote = quoteState.value;
     const [message, setMessage] = useState("");
     const messageChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -135,18 +136,24 @@ const RfqQuoteDetailsMessages = ({
                 {translate("Send Message")}
             </Button>
             <GridContainer {...styles.messagesContainer}>
-                {sortedMessages.map(message =>
+                {sortedMessages.map(message => (
                     <GridItem key={message.createdDate.toString()} {...styles.messageGridItem}>
                         <Typography {...styles.userNameText}>{message.displayName}</Typography>
                         <Typography {...styles.messageDateText}>
                             <LocalizedDateTime
                                 dateTime={message.createdDate}
-                                options={{ year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" }}
+                                options={{
+                                    year: "numeric",
+                                    month: "numeric",
+                                    day: "numeric",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                }}
                             />
                         </Typography>
                         <Typography {...styles.messageBodyText}>{message.body}</Typography>
-                    </GridItem>)
-                }
+                    </GridItem>
+                ))}
             </GridContainer>
         </StyledWrapper>
     );

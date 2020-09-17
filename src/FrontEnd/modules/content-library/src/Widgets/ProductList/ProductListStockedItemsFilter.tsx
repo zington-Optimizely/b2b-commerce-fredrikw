@@ -8,13 +8,11 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
 import { productListCategoryFiltersStyles } from "@insite/content-library/Widgets/ProductList/ProductListCategoryFilters";
-import ProductListFiltersAccordionSection
-    from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
+import ProductListFiltersAccordionSection from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     loaded: !!getProductListDataView(state).value,
@@ -28,14 +26,18 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-export interface ProductListStockedItemsFilterStyles {
-}
+export interface ProductListStockedItemsFilterStyles {}
 
 export const productListStockedItemsFilterStyles: ProductListStockedItemsFilterStyles = {};
 
 const styles = productListStockedItemsFilterStyles;
 
-const ProductListStockedItemsFilter: FC<Props> = ({ stockedItemsOnly, loaded, addProductFilters, removeProductFilters }) => {
+const ProductListStockedItemsFilter: FC<Props> = ({
+    stockedItemsOnly,
+    loaded,
+    addProductFilters,
+    removeProductFilters,
+}) => {
     if (!loaded) {
         return null;
     }
@@ -48,12 +50,14 @@ const ProductListStockedItemsFilter: FC<Props> = ({ stockedItemsOnly, loaded, ad
         }
     };
 
-    const facet = [{
+    const facet = [
+        {
             id: "stocked",
             name: translate("Stocked Items Only"),
             count: -1,
             selected: stockedItemsOnly ?? false,
-        }];
+        },
+    ];
 
     return (
         <ProductListFiltersAccordionSection
@@ -68,7 +72,6 @@ const ProductListStockedItemsFilter: FC<Props> = ({ stockedItemsOnly, loaded, ad
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListStockedItemsFilter),
     definition: {
         group: "Product List",

@@ -12,18 +12,12 @@ import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/Ship
 
 type HandlerType = Handler;
 
-export const SetFulfillmentMethod: HandlerType = ({
-    dispatch,
-    getState,
-}) => {
+export const SetFulfillmentMethod: HandlerType = ({ dispatch, getState }) => {
     const { fulfillmentMethod } = getSession(getState());
     dispatch(changeFulfillmentMethod({ fulfillmentMethod }));
 };
 
-export const LoadCurrentBillTo: HandlerType = async ({
-    dispatch,
-    getState,
-}) => {
+export const LoadCurrentBillTo: HandlerType = async ({ dispatch, getState }) => {
     const { isAuthenticated, isGuest } = getSession(getState());
     if (!isAuthenticated || isGuest) {
         return;
@@ -42,10 +36,7 @@ export const LoadCurrentBillTo: HandlerType = async ({
     dispatch(selectBillTo({ billTo: currentBillToState.value }));
 };
 
-export const LoadCurrentShipTo: HandlerType = async ({
-    dispatch,
-    getState,
-}) => {
+export const LoadCurrentShipTo: HandlerType = async ({ dispatch, getState }) => {
     const { isAuthenticated, isGuest } = getSession(getState());
     if (!isAuthenticated || isGuest) {
         return;
@@ -68,23 +59,14 @@ export const SetIsDefault: HandlerType = ({ dispatch }) => {
     dispatch(setAsDefault({ isDefault: false }));
 };
 
-export const SetPickUpWarehouse: HandlerType = ({
-    dispatch,
-    getState,
-}) => {
+export const SetPickUpWarehouse: HandlerType = ({ dispatch, getState }) => {
     const { pickUpWarehouse } = getSession(getState());
     if (pickUpWarehouse) {
         dispatch(changePickUpWarehouse({ warehouse: pickUpWarehouse }));
     }
 };
 
-export const chain = [
-    SetFulfillmentMethod,
-    LoadCurrentBillTo,
-    LoadCurrentShipTo,
-    SetIsDefault,
-    SetPickUpWarehouse,
-];
+export const chain = [SetFulfillmentMethod, LoadCurrentBillTo, LoadCurrentShipTo, SetIsDefault, SetPickUpWarehouse];
 
 const setInitialValues = createHandlerChainRunner(chain, "SetInitialValues");
 export default setInitialValues;

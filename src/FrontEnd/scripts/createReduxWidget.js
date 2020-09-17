@@ -22,7 +22,8 @@ if (widgetGroupAndName.split("/").length !== 2) {
 const fullPath = path.join(__dirname, "../modules/content-library/src/Widgets", `${widgetGroupAndName}.tsx`);
 console.log(`Creating file at ${fullPath}`);
 
-let fullFile = "import * as React from 'react';\n" +
+let fullFile =
+    "import * as React from 'react';\n" +
     "import { WidgetGroups } from '@insite/client-framework/Types/WidgetGroups';\n" +
     "import { WidgetModule } from '@insite/client-framework/Types/WidgetModule';\n" +
     "import { WidgetProps } from '@insite/client-framework/Types/WidgetProps';\n" +
@@ -69,7 +70,7 @@ if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath);
 }
 
-fs.writeFile(fullPath, fullFile, (error) => {
+fs.writeFile(fullPath, fullFile, error => {
     if (error) {
         console.log(error);
         process.exit(1);

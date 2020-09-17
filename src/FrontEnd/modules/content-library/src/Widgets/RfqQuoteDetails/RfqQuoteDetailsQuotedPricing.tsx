@@ -26,7 +26,9 @@ export interface RfqQuoteDetailsQuotedPricingStyles {
 
 export const rfqQuoteDetailsQuotedPricingStyles: RfqQuoteDetailsQuotedPricingStyles = {
     row: {
-        evenRowCss: css` background: transparent; `,
+        evenRowCss: css`
+            background: transparent;
+        `,
     },
     quantityCell: {
         css: css`
@@ -44,14 +46,15 @@ export const rfqQuoteDetailsQuotedPricingStyles: RfqQuoteDetailsQuotedPricingSty
 
 const baseStyles = rfqQuoteDetailsQuotedPricingStyles;
 
-const RfqQuoteDetailsQuotedPricing = ({
-    quote,
-    quoteLine,
-    extendedStyles,
-}: OwnProps) => {
+const RfqQuoteDetailsQuotedPricing = ({ quote, quoteLine, extendedStyles }: OwnProps) => {
     const [styles] = useState(() => mergeToNew(baseStyles, extendedStyles));
 
-    const getBreakQtyText = (quoteLine: QuoteLineModel, breakPrices: BreakPriceDto[], breakPrice: BreakPriceDto, index: number) => {
+    const getBreakQtyText = (
+        quoteLine: QuoteLineModel,
+        breakPrices: BreakPriceDto[],
+        breakPrice: BreakPriceDto,
+        index: number,
+    ) => {
         if (index !== breakPrices.length - 1) {
             return `${breakPrice.breakQty} - ${breakPrices[index + 1].breakQty - 1}`;
         }
@@ -64,16 +67,18 @@ const RfqQuoteDetailsQuotedPricing = ({
     };
 
     const renderRow = (qty: string, price: string) => {
-        return <DataTableRow key={qty} {...styles.row}>
-            <DataTableCell {...styles.quantityCell}>
-                <VisuallyHidden>{translate("Quantity")}</VisuallyHidden>
-                <Typography {...styles.quantityText}>{qty}</Typography>
-            </DataTableCell>
-            <DataTableCell {...styles.priceCell}>
-                <VisuallyHidden>{translate("Price")}</VisuallyHidden>
-                <Typography {...styles.priceText}>{price}</Typography>
-            </DataTableCell>
-        </DataTableRow>;
+        return (
+            <DataTableRow key={qty} {...styles.row}>
+                <DataTableCell {...styles.quantityCell}>
+                    <VisuallyHidden>{translate("Quantity")}</VisuallyHidden>
+                    <Typography {...styles.quantityText}>{qty}</Typography>
+                </DataTableCell>
+                <DataTableCell {...styles.priceCell}>
+                    <VisuallyHidden>{translate("Price")}</VisuallyHidden>
+                    <Typography {...styles.priceText}>{price}</Typography>
+                </DataTableCell>
+            </DataTableRow>
+        );
     };
 
     const renderRows = () => {
@@ -87,17 +92,17 @@ const RfqQuoteDetailsQuotedPricing = ({
 
         const breakPrices = quoteLine.pricing.unitRegularBreakPrices;
 
-        return <>
-            {breakPrices.map((breakPrice, index) => {
-                const breakQtyText = getBreakQtyText(quoteLine, breakPrices, breakPrice, index);
-                return renderRow(breakQtyText, breakPrice.breakPriceDisplay);
-            })}
-        </>;
+        return (
+            <>
+                {breakPrices.map((breakPrice, index) => {
+                    const breakQtyText = getBreakQtyText(quoteLine, breakPrices, breakPrice, index);
+                    return renderRow(breakQtyText, breakPrice.breakPriceDisplay);
+                })}
+            </>
+        );
     };
 
-    return <DataTable {...styles.table}>
-        {renderRows()}
-    </DataTable>;
+    return <DataTable {...styles.table}>{renderRows()}</DataTable>;
 };
 
 export default RfqQuoteDetailsQuotedPricing;

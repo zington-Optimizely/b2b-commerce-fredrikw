@@ -21,12 +21,10 @@ import React, { ChangeEvent, FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
-    account: state.pages.accountSettings.editingAccount,
     accountSettings: getSettingsCollection(state).accountSettings,
 });
 
@@ -69,17 +67,23 @@ export const changeCustomerFulfillmentMethodStyles: ChangeCustomerFulfillmentMet
     },
     pickUpLocation: {
         wrapper: {
-            css: css` margin-top: 20px; `,
+            css: css`
+                margin-top: 20px;
+            `,
         },
         headerText: {
             weight: 600,
         },
         changeLink: {
-            css: css` margin-left: 15px; `,
+            css: css`
+                margin-left: 15px;
+            `,
         },
         warehouseAddress: {
             wrapper: {
-                css: css` margin-top: 8px; `,
+                css: css`
+                    margin-top: 8px;
+                `,
             },
             nameText: {
                 as: "p",
@@ -92,12 +96,11 @@ const styles = changeCustomerFulfillmentMethodStyles;
 
 const ChangeCustomerFulfillmentMethodSelector: FC<Props> = ({
     session,
-    account,
     accountSettings,
     setFulfillmentMethod,
     updatePickUpWarehouse,
 }) => {
-    if (!accountSettings || !accountSettings.enableWarehousePickup || !account) {
+    if (!accountSettings || !accountSettings.enableWarehousePickup) {
         return null;
     }
 
@@ -114,7 +117,6 @@ const ChangeCustomerFulfillmentMethodSelector: FC<Props> = ({
         });
     };
 
-
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.radioGroupGridItem}>
@@ -125,22 +127,26 @@ const ChangeCustomerFulfillmentMethodSelector: FC<Props> = ({
                     {...styles.fulfillmentMethodRadioGroup}
                     data-test-selector="changeCustomerFulfillmentMethod"
                 >
-                    <Radio value={FulfillmentMethod.Ship}
+                    <Radio
+                        value={FulfillmentMethod.Ship}
                         {...styles.fulfillmentMethodRadio}
                         data-test-selector="fulfillmentMethod_ship"
-                    >{translate("Ship")}</Radio>
-                    <Radio value={FulfillmentMethod.PickUp}
+                    >
+                        {translate("Ship")}
+                    </Radio>
+                    <Radio
+                        value={FulfillmentMethod.PickUp}
                         {...styles.fulfillmentMethodRadio}
                         data-test-selector="fulfillmentMethod_pickUp"
-                    >{translate("Pick Up")}</Radio>
+                    >
+                        {translate("Pick Up")}
+                    </Radio>
                 </RadioGroup>
             </GridItem>
             <GridItem {...styles.pickupLocationGridItem}>
-                {session.fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse
-                    && <PickUpLocation warehouse={session.pickUpWarehouse}
-                        onChange={handlePickUpAddressChange}
-                    />
-                }
+                {session.fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse && (
+                    <PickUpLocation warehouse={session.pickUpWarehouse} onChange={handlePickUpAddressChange} />
+                )}
             </GridItem>
         </GridContainer>
     );
@@ -167,13 +173,21 @@ const PickUpLocation: FC<PickUpLocationProps> = ({ warehouse, onChange }) => {
         <>
             <StyledWrapper {...componentStyles.wrapper} data-test-selector="changeCustomer_pickUpLocation">
                 <Typography {...componentStyles.headerText}>{translate("Pick Up Location")}</Typography>
-                <Link onClick={handleOpenFindLocation} {...componentStyles.changeLink} data-test-selector="changeCustomer_pickUpLocation_findLocation">{translate("Change")}</Link>
+                <Link
+                    onClick={handleOpenFindLocation}
+                    {...componentStyles.changeLink}
+                    data-test-selector="changeCustomer_pickUpLocation_findLocation"
+                >
+                    {translate("Change")}
+                </Link>
                 <WarehouseAddressInfoDisplay warehouse={warehouse} />
             </StyledWrapper>
-            <FindLocationModal modalIsOpen={isFindLocationOpen}
+            <FindLocationModal
+                modalIsOpen={isFindLocationOpen}
                 onWarehouseSelected={handleWarehouseSelected}
                 onModalClose={handleFindLocationModalClose}
-                extendedStyles={componentStyles.findLocationModal} />
+                extendedStyles={componentStyles.findLocationModal}
+            />
         </>
     );
 };
@@ -183,11 +197,14 @@ interface WarehouseAddressInfoDisplayProps {
 }
 
 const WarehouseAddressInfoDisplay: FC<WarehouseAddressInfoDisplayProps> = ({ warehouse }) => {
-    const componentStyles = styles.pickUpLocation && styles.pickUpLocation.warehouseAddress ? styles.pickUpLocation.warehouseAddress : {};
+    const componentStyles =
+        styles.pickUpLocation && styles.pickUpLocation.warehouseAddress ? styles.pickUpLocation.warehouseAddress : {};
 
     return (
         <StyledWrapper {...componentStyles.wrapper}>
-            <Typography {...componentStyles.nameText} data-test-selector="changeCustomer_warehouseName">{warehouse.description || warehouse.name }</Typography>
+            <Typography {...componentStyles.nameText} data-test-selector="changeCustomer_warehouseName">
+                {warehouse.description || warehouse.name}
+            </Typography>
             <AddressInfoDisplay
                 address1={warehouse.address1}
                 address2={warehouse.address2}
@@ -195,7 +212,8 @@ const WarehouseAddressInfoDisplay: FC<WarehouseAddressInfoDisplayProps> = ({ war
                 state={warehouse.state}
                 postalCode={warehouse.postalCode}
                 phone={warehouse.phone}
-                extendedStyles={componentStyles.address} />
+                extendedStyles={componentStyles.address}
+            />
         </StyledWrapper>
     );
 };

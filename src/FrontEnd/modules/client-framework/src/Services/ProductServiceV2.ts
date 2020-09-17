@@ -13,18 +13,35 @@ const realTimeInventoryUrl = "/api/v1/realtimeinventory";
 const productsUrl = "/api/v2/products";
 
 export interface GetProductApiV2ParameterBase extends ApiParameter {
-    expand?: ("detail" | "content" | "images" | "documents" | "specifications" | "properties" | "attributes" | "variantTraits" | "facets" | "warehouses")[];
+    expand?: (
+        | "detail"
+        | "content"
+        | "images"
+        | "documents"
+        | "specifications"
+        | "properties"
+        | "attributes"
+        | "variantTraits"
+        | "facets"
+        | "warehouses"
+    )[];
     additionalExpands?: string[];
     includeAttributes?: ("includeOnProduct" | "comparable" | "facets")[];
 }
 
-type ProductFilterTokens = "frequentlyPurchased" | "recentlyPurchased" | "alsoPurchased" | "recentlyViewed" | "topSellers" | "siteCrosssells";
+type ProductFilterTokens =
+    | "frequentlyPurchased"
+    | "recentlyPurchased"
+    | "alsoPurchased"
+    | "recentlyViewed"
+    | "topSellers"
+    | "siteCrosssells";
 
 export interface GetProductCollectionApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
     search?: string;
     categoryId?: string;
-    productIds?: string[],
-    names?: string[],
+    productIds?: string[];
+    names?: string[];
     searchWithin?: string;
     brandIds?: string[];
     makeBrandUrls?: boolean;
@@ -37,6 +54,7 @@ export interface GetProductCollectionApiV2Parameter extends GetProductApiV2Param
     topSellersMaxResults?: number;
     includeSuggestions?: boolean;
     applyPersonalization?: boolean;
+    stockedItemsOnly?: boolean;
     cartId?: string;
     extendedNames?: string[];
 }
@@ -57,11 +75,10 @@ interface ProductPriceParameter {
     productId: string;
     unitOfMeasure: string;
     qtyOrdered: number;
-    configuration?: string[],
+    configuration?: string[];
 }
 
-export interface GetProductRealTimePriceApiV2Parameter extends ApiParameter, ProductPriceParameter {
-}
+export interface GetProductRealTimePriceApiV2Parameter extends ApiParameter, ProductPriceParameter {}
 
 export interface GetProductCollectionRealTimePriceApiV2Parameter extends ApiParameter {
     productPriceParameters: ProductPriceParameter[];
@@ -70,7 +87,7 @@ export interface GetProductCollectionRealTimePriceApiV2Parameter extends ApiPara
 export interface GetProductRealTimeInventoryApiV2Parameter extends ApiParameter {
     productId: string;
     configuration?: string[];
-    expand?: ("warehouses")[];
+    expand?: "warehouses"[];
 }
 
 export interface GetProductCollectionRealTimeInventoryApiV2Parameter extends ApiParameter {
@@ -107,10 +124,7 @@ export interface GetRelatedProductCollectionApiV2Parameter extends GetProductApi
 export function getRelatedProductsCollectionV2(parameter: GetRelatedProductCollectionApiV2Parameter) {
     const productId = parameter.productId;
     delete parameter.productId;
-    return get<ProductCollectionModel>(
-        `${productsUrl}/${productId}/relatedproducts`,
-        parameter,
-    );
+    return get<ProductCollectionModel>(`${productsUrl}/${productId}/relatedproducts`, parameter);
 }
 
 export async function getProductRealTimePrice(parameter: GetProductRealTimePriceApiV2Parameter) {
@@ -149,7 +163,7 @@ export async function getProductRealTimeInventory(parameter: GetProductRealTimeI
 export function getProductCollectionRealTimeInventory(parameter: GetProductCollectionRealTimeInventoryApiV2Parameter) {
     let url = realTimeInventoryUrl;
     if (parameter.expand) {
-        url += (`?expand=${parameter.expand.join(",")}`);
+        url += `?expand=${parameter.expand.join(",")}`;
     }
 
     return post<GetProductCollectionRealTimeInventoryApiV2Parameter, RealTimeInventoryModel>(`${url}`, {
@@ -192,5 +206,8 @@ export function getVariantChild(parameter: GetProductVariantChildApiV2Parameter)
     delete newParameter.variantParentId;
     delete newParameter.id;
 
-    return get<ProductModel>(`${productsUrl}/${parameter.variantParentId}/variantchildren/${parameter.id}`, newParameter);
+    return get<ProductModel>(
+        `${productsUrl}/${parameter.variantParentId}/variantchildren/${parameter.id}`,
+        newParameter,
+    );
 }

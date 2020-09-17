@@ -2,7 +2,7 @@ import { createHandlerChainRunner, Handler } from "@insite/client-framework/Hand
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 
-type HandlerType = Handler<{ wishListId?: string; modalIsOpen: boolean; fromManage?: boolean; }>;
+type HandlerType = Handler<{ wishListId?: string; modalIsOpen: boolean; fromManage?: boolean }>;
 
 export const LoadWishListIfNeeded: HandlerType = ({ parameter, getState, dispatch }) => {
     if (!parameter.modalIsOpen || !parameter.wishListId) {
@@ -14,11 +14,13 @@ export const LoadWishListIfNeeded: HandlerType = ({ parameter, getState, dispatc
         return;
     }
 
-    dispatch(loadWishList({
-        wishListId: parameter.wishListId,
-        exclude: ["listLines"],
-        expand: ["sharedUsers"],
-    }));
+    dispatch(
+        loadWishList({
+            wishListId: parameter.wishListId,
+            exclude: ["listLines"],
+            expand: ["sharedUsers"],
+        }),
+    );
 };
 
 export const DispatchCompleteSetIsOpen: HandlerType = props => {
@@ -30,10 +32,7 @@ export const DispatchCompleteSetIsOpen: HandlerType = props => {
     });
 };
 
-export const chain = [
-    LoadWishListIfNeeded,
-    DispatchCompleteSetIsOpen,
-];
+export const chain = [LoadWishListIfNeeded, DispatchCompleteSetIsOpen];
 
 const setShareListModalIsOpen = createHandlerChainRunner(chain, "SetShareListModalIsOpen");
 export default setShareListModalIsOpen;

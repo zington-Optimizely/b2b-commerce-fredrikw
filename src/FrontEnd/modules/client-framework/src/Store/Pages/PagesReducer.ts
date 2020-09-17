@@ -10,6 +10,8 @@ import InvoiceHistoryReducer from "@insite/client-framework/Store/Pages/InvoiceH
 import LocationFinderReducer from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderReducer";
 import MyListDetailsReducer from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsReducer";
 import MyListsReducer from "@insite/client-framework/Store/Pages/MyLists/MyListsReducer";
+import OrderApprovalDetailsReducer from "@insite/client-framework/Store/Pages/OrderApprovalDetails/OrderApprovalDetailsReducer";
+import OrderApprovalListReducer from "@insite/client-framework/Store/Pages/OrderApprovalList/OrderApprovalListReducer";
 import OrderConfirmationReducer from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationReducer";
 import OrderDetailsReducer from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsReducer";
 import OrderHistoryReducer from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryReducer";
@@ -24,6 +26,8 @@ import RfqQuoteDetailsReducer from "@insite/client-framework/Store/Pages/RfqQuot
 import RfqRequestQuoteReducer from "@insite/client-framework/Store/Pages/RfqRequestQuote/RfqRequestQuoteReducer";
 import SavedPaymentsReducer from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsReducer";
 import SignInReducer from "@insite/client-framework/Store/Pages/SignIn/SignInReducer";
+import UserListReducer from "@insite/client-framework/Store/Pages/UserList/UserListReducer";
+import UserSetupReducer from "@insite/client-framework/Store/Pages/UserSetup/UserSetupReducer";
 import { combineReducers } from "redux";
 
 const reducers = {
@@ -39,6 +43,8 @@ const reducers = {
     locationFinder: LocationFinderReducer,
     myLists: MyListsReducer,
     myListDetails: MyListDetailsReducer,
+    orderApprovalList: OrderApprovalListReducer,
+    orderApprovalDetails: OrderApprovalDetailsReducer,
     orderDetails: OrderDetailsReducer,
     orderHistory: OrderHistoryReducer,
     orderConfirmation: OrderConfirmationReducer,
@@ -53,6 +59,8 @@ const reducers = {
     rfqRequestQuote: RfqRequestQuoteReducer,
     savedPayments: SavedPaymentsReducer,
     signIn: SignInReducer,
+    userList: UserListReducer,
+    userSetup: UserSetupReducer,
 };
 
 export type PagesReducers = typeof reducers;

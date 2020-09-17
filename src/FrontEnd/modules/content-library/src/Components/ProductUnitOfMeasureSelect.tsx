@@ -24,21 +24,24 @@ const mapStateToProps = (state: ApplicationState) => ({
 export const productUnitOfMeasureSelectStyles: SelectPresentationProps = {};
 
 const ProductUnitOfMeasureSelect: React.FC<Props> = ({
-                                                         productContext: {
-                                                             product: { unitOfMeasures },
-                                                             productInfo: { unitOfMeasure, productId },
-                                                             onUnitOfMeasureChanged,
-                                                         },
-                                                         disabled,
-                                                         productSettings,
-                                                         labelOverride,
-                                                         extendedStyles,
-                                                         ...otherProps
-                                                     }) => {
-
+    productContext: {
+        product: { unitOfMeasures },
+        productInfo: { unitOfMeasure, productId },
+        onUnitOfMeasureChanged,
+    },
+    disabled,
+    productSettings,
+    labelOverride,
+    extendedStyles,
+    ...otherProps
+}) => {
     const [styles] = React.useState(() => mergeToNew(productUnitOfMeasureSelectStyles, extendedStyles));
 
-    if (!productSettings?.alternateUnitsOfMeasure || !unitOfMeasures || unitOfMeasures.filter(uom => uom.unitOfMeasure).length <= 1) {
+    if (
+        !productSettings?.alternateUnitsOfMeasure ||
+        !unitOfMeasures ||
+        unitOfMeasures.filter(uom => uom.unitOfMeasure).length <= 1
+    ) {
         return null;
     }
 
@@ -50,21 +53,24 @@ const ProductUnitOfMeasureSelect: React.FC<Props> = ({
         onUnitOfMeasureChanged(event.target.value);
     };
 
-    return <Select
-        label={labelOverride ?? translate("U/M")}
-        value={unitOfMeasure}
-        onChange={uomChangeHandler}
-        disabled={disabled}
-        data-test-selector="product_unitOfMeasureSelect"
-        {...styles}
-        {...otherProps}
-    >
-        {unitOfMeasures.map(uom =>
-            <option key={uom.id.toString()} value={uom.unitOfMeasure}>
-                {uom.description ? uom.description : uom.unitOfMeasureDisplay} {uom.qtyPerBaseUnitOfMeasure !== 1 ? `/${uom.qtyPerBaseUnitOfMeasure}` : ""}
-            </option>)
-        }
-    </Select>;
+    return (
+        <Select
+            label={labelOverride ?? translate("U/M")}
+            value={unitOfMeasure}
+            onChange={uomChangeHandler}
+            disabled={disabled}
+            data-test-selector="product_unitOfMeasureSelect"
+            {...styles}
+            {...otherProps}
+        >
+            {unitOfMeasures.map(uom => (
+                <option key={uom.id.toString()} value={uom.unitOfMeasure}>
+                    {uom.description ? uom.description : uom.unitOfMeasureDisplay}{" "}
+                    {uom.qtyPerBaseUnitOfMeasure !== 1 ? `/${uom.qtyPerBaseUnitOfMeasure}` : ""}
+                </option>
+            ))}
+        </Select>
+    );
 };
 
 export default connect(mapStateToProps)(withProductContext(ProductUnitOfMeasureSelect));

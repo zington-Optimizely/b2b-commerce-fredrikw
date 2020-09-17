@@ -25,19 +25,19 @@ const LogoutWarningModal: React.FC<Props> = ({ dispatch, isOpen }) => {
         close();
     };
 
-    return <Modal
-        size={350}
-        isOpen={!!isOpen}
-        headline="Warning"
-        isCloseable
-        handleClose={close}
-        closeOnEsc>
+    return (
+        <Modal size={350} isOpen={!!isOpen} headline="Warning" isCloseable handleClose={close} closeOnEsc>
             <p>The system will log you out in 3 minutes.</p>
             <ButtonBar>
-                <Button variant="secondary" onClick={close}>Close</Button>
-                <Button variant="primary" onClick={keepLoggedIn}>Keep me logged in</Button>
+                <Button variant="secondary" onClick={close}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={keepLoggedIn}>
+                    Keep me logged in
+                </Button>
             </ButtonBar>
-        </Modal>;
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps)(LogoutWarningModal);

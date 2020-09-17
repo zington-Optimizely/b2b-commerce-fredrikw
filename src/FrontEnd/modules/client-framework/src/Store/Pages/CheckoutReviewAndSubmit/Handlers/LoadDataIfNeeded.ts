@@ -6,11 +6,14 @@ import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countri
 import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadPromotions";
-import { getCurrentPromotionsDataView, getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import {
+    getCurrentPromotionsDataView,
+    getPromotionsDataView,
+} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 
 type HandlerType = Handler<{
     cartId?: string;
-    onSuccess?: () => void,
+    onSuccess?: () => void;
 }>;
 
 export const DispatchSetCartId: HandlerType = props => {
@@ -48,11 +51,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    DispatchSetCartId,
-    LoadData,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [DispatchSetCartId, LoadData, ExecuteOnSuccessCallback];
 
 const loadDataIfNeeded = createHandlerChainRunner(chain, "LoadDataIfNeeded");
 export default loadDataIfNeeded;

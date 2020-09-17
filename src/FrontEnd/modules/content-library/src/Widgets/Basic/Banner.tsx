@@ -39,7 +39,16 @@ interface OwnProps extends WidgetProps {
     fields: {
         [fields.background]: "image" | "color";
         [fields.image]: string;
-        [fields.focalPoint]: "topLeft" | "topCenter" | "topRight" | "centerLeft" | "center" | "centerRight" | "bottomLeft" | "bottomCenter" | "bottomRight";
+        [fields.focalPoint]:
+            | "topLeft"
+            | "topCenter"
+            | "topRight"
+            | "centerLeft"
+            | "center"
+            | "centerRight"
+            | "bottomLeft"
+            | "bottomCenter"
+            | "bottomRight";
         [fields.backgroundColor]: string;
         [fields.heading]: string;
         [fields.minimumHeight]: "1/4 viewport" | "1/2 viewport" | "3/4 viewport" | "fullViewport";
@@ -68,9 +77,9 @@ export interface BannerStyles {
     wrapper?: InjectableCss;
     overlayWrapper?: InjectableCss;
     /**
-    * @deprecated Use the `bannerButton` property instead.
-    */
-    bannerLink?: LinkPresentationProps
+     * @deprecated Use the `bannerButton` property instead.
+     */
+    bannerLink?: LinkPresentationProps;
     bannerButton?: ButtonPresentationProps;
 }
 
@@ -98,17 +107,12 @@ const onClick = (history: History, link: string | undefined) => {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
 
-const Banner: React.FC<Props> = ({
-    fields,
-    url,
-    title,
-    history,
-    extendedStyles,
-}) => {
-    const backgroundStyles = fields.background === "image"
-        ? `background-image: url(${fields.image});
+const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }) => {
+    const backgroundStyles =
+        fields.background === "image"
+            ? `background-image: url(${fields.image});
            background-size: cover;`
-        : `background-color: ${fields.backgroundColor};`;
+            : `background-color: ${fields.backgroundColor};`;
 
     const focalPointStyles = getFocalPointStyles(fields.focalPoint);
 

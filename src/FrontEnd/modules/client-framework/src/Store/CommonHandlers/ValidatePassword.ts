@@ -13,18 +13,24 @@ export const lowerCasePasswordLengthMessage = translate("Password must include a
 export const upperCasePasswordLengthMessage = translate("Password must include at least one uppercase character");
 export const specialPasswordLengthMessage = translate("Password must include at least one non alphanumeric character");
 
-type HandlerType = Handler<{
-    password: string,
-    onComplete: (errorMessage: React.ReactNode) => void,
-}, {
-    passwordErrorMessage: React.ReactNode;
-}>;
+type HandlerType = Handler<
+    {
+        password: string;
+        onComplete: (errorMessage: React.ReactNode) => void;
+    },
+    {
+        passwordErrorMessage: React.ReactNode;
+    }
+>;
 
 export const ValidatePassword: HandlerType = props => {
     let errorMessage: React.ReactNode = "";
     const password = props.parameter.password;
     const settings = getSettingsCollection(props.getState()).accountSettings;
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace("{0}", settings.passwordMinimumLength.toString());
+    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
+        "{0}",
+        settings.passwordMinimumLength.toString(),
+    );
 
     if (!password) {
         errorMessage = passwordRequiredFieldMessage;
@@ -57,10 +63,7 @@ export const CallOnComplete: HandlerType = props => {
     props.parameter.onComplete(props.passwordErrorMessage);
 };
 
-export const chain = [
-    ValidatePassword,
-    CallOnComplete,
-];
+export const chain = [ValidatePassword, CallOnComplete];
 
 const validatePassword = createHandlerChainRunner(chain, "ValidatePassword");
 export default validatePassword;

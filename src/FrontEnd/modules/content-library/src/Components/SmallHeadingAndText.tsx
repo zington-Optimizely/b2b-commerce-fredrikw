@@ -42,8 +42,12 @@ const SmallHeadingAndText: React.FunctionComponent<OwnProps> = ({ heading, text,
 
     return (
         <StyledWrapper {...styles.wrapper} {...otherProps}>
-            <Typography as="p" {...styles.heading} data-test-selector="heading">{heading}</Typography>
-            <Typography as="p" {...styles.text} data-test-selector="text">{text}</Typography>
+            <Typography as="p" {...styles.heading} data-test-selector="heading">
+                {heading}
+            </Typography>
+            <Typography as="p" {...styles.text} data-test-selector="text">
+                {text}
+            </Typography>
         </StyledWrapper>
     );
 };

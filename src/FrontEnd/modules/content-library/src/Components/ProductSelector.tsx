@@ -42,14 +42,14 @@ interface OwnProps {
 const mapStateToProps = (state: ApplicationState) => {
     const { isSearching, searchResults, selectedProductInfo, errorType } = getProductSelector(state);
     const product = getProductState(state, selectedProductInfo?.productId).value;
-    return ({
+    return {
         isSearching,
         searchResults,
         selectedProductInfo,
         product,
         errorType,
         location: getLocation(state),
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -120,7 +120,7 @@ export const productSelectorStyles: ProductSelectorStyles = {
         `,
     },
     infoWrapper: {
-        css: css` 
+        css: css`
             display: flex;
             flex-direction: column;
         `,
@@ -130,13 +130,24 @@ export const productSelectorStyles: ProductSelectorStyles = {
     },
     autocompleteErpText: {
         size: 14,
-        css: css` margin-top: 5px; `,
+        css: css`
+            margin-top: 5px;
+        `,
     },
     selectButton: {
         css: css`
             margin-top: 30px;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, css` width: 100%; `], "max")}
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
 };
@@ -144,24 +155,24 @@ export const productSelectorStyles: ProductSelectorStyles = {
 const ENTER_KEY = 13;
 
 const ProductSelector: React.FC<Props> = ({
-                                              onSelectProduct,
-                                              selectButtonTitle,
-                                              searchProducts,
-                                              isSearching,
-                                              searchResults,
-                                              setProduct,
-                                              clearProduct,
-                                              setUnitOfMeasure,
-                                              selectedProductInfo,
-                                              product,
-                                              errorType,
-                                              extendedStyles,
-                                              customErrorMessage,
-                                              productIsConfigurableMessage,
-                                              productIsUnavailableMessage,
-                                              location,
-                                              reset,
-                                          }) => {
+    onSelectProduct,
+    selectButtonTitle,
+    searchProducts,
+    isSearching,
+    searchResults,
+    setProduct,
+    clearProduct,
+    setUnitOfMeasure,
+    selectedProductInfo,
+    product,
+    errorType,
+    extendedStyles,
+    customErrorMessage,
+    productIsConfigurableMessage,
+    productIsUnavailableMessage,
+    location,
+    reset,
+}) => {
     const [qty, setQty] = React.useState("1");
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
     const [selectedProductId, setSelectedProductId] = React.useState("");
@@ -181,15 +192,17 @@ const ProductSelector: React.FC<Props> = ({
         const newOptions = searchResults.map(product => ({
             optionText: product.title,
             optionValue: product.id || undefined,
-            rowChildren: <StyledWrapper {...styles.optionWrapper}>
-                <StyledWrapper {...styles.imageWrapper}>
-                    <LazyImage {...styles.productImage} src={product.image} />
+            rowChildren: (
+                <StyledWrapper {...styles.optionWrapper}>
+                    <StyledWrapper {...styles.imageWrapper}>
+                        <LazyImage {...styles.productImage} src={product.image} />
+                    </StyledWrapper>
+                    <StyledWrapper {...styles.infoWrapper}>
+                        <Typography {...styles.autocompleteTitleText}>{product.title}</Typography>
+                        <Typography {...styles.autocompleteErpText}>{product.erpNumber}</Typography>
+                    </StyledWrapper>
                 </StyledWrapper>
-                <StyledWrapper {...styles.infoWrapper}>
-                    <Typography {...styles.autocompleteTitleText}>{product.title}</Typography>
-                    <Typography {...styles.autocompleteErpText}>{product.erpNumber}</Typography>
-                </StyledWrapper>
-            </StyledWrapper>,
+            ),
         }));
         setOptions(newOptions);
     }, [searchResults]);
@@ -204,15 +217,15 @@ const ProductSelector: React.FC<Props> = ({
 
     React.useEffect(() => {
         switch (errorType) {
-        case "productIsConfigurable":
-            setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
-            break;
-        case "productIsUnavailable":
-            setErrorMessage(productIsUnavailableMessage || translate("Product is unavailable"));
-            break;
-        default:
-            setErrorMessage("");
-            break;
+            case "productIsConfigurable":
+                setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
+                break;
+            case "productIsUnavailable":
+                setErrorMessage(productIsUnavailableMessage || translate("Product is unavailable"));
+                break;
+            default:
+                setErrorMessage("");
+                break;
         }
     }, [errorType]);
 
@@ -297,21 +310,23 @@ const ProductSelector: React.FC<Props> = ({
                     min={1}
                     label={translate("QTY")}
                     value={qty}
-                    onChange={(e) => {
+                    onChange={e => {
                         setQty(e.currentTarget.value);
                     }}
                     data-test-selector="productSelector_qty"
                 />
             </GridItem>
             <GridItem {...styles.unitOfMeasureGridItem}>
-                {product && selectedProductInfo
-                && <ProductContext.Provider value={{ product, productInfo: selectedProductInfo, onUnitOfMeasureChanged: uomChangeHandler }}>
-                    <ProductUnitOfMeasureSelect
-                        extendedStyles={styles.unitOfMeasureSelect}
-                        data-test-selector="productSelector_uom"
-                    />
-                </ProductContext.Provider>
-                }
+                {product && selectedProductInfo && (
+                    <ProductContext.Provider
+                        value={{ product, productInfo: selectedProductInfo, onUnitOfMeasureChanged: uomChangeHandler }}
+                    >
+                        <ProductUnitOfMeasureSelect
+                            extendedStyles={styles.unitOfMeasureSelect}
+                            data-test-selector="productSelector_uom"
+                        />
+                    </ProductContext.Provider>
+                )}
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
                 <Button

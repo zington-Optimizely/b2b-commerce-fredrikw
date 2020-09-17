@@ -15,7 +15,8 @@ import uniqueId from "../utilities/uniqueId";
 
 focusWithinImportInBrowser();
 
-export interface MappedLink { // expanded from content-library/src/widgets/header/MainNavigation.tsx
+export interface MappedLink {
+    // expanded from content-library/src/widgets/header/MainNavigation.tsx
     title: string;
     url?: string;
     clickableProps?: ClickableProps;
@@ -46,28 +47,32 @@ export interface MenuPresentationProps {
     moreIconProps?: IconPresentationProps;
 }
 
-type MenuComponentProps = MobiusStyledComponentProps<"nav", {
-    /** Aria attributes used internally require an `id`. If not provided, a random id is generated. */
-    descriptionId?: string;
-    /** Maximum number of menus that will appear through submenu cascading. */
-    maxDepth?: number;
-    /** The nested child structure that will be rendered by the menu. */
-    menuItems: MappedLink[];
-    /** The element that triggers the menu. */
-    menuTrigger: React.ReactElement;
-    /** Width of the menu and submenus in pixels. */
-    width?: number;
-}>;
+type MenuComponentProps = MobiusStyledComponentProps<
+    "nav",
+    {
+        /** Aria attributes used internally require an `id`. If not provided, a random id is generated. */
+        descriptionId?: string;
+        /** Maximum number of menus that will appear through submenu cascading. */
+        maxDepth?: number;
+        /** The nested child structure that will be rendered by the menu. */
+        menuItems: MappedLink[];
+        /** The element that triggers the menu. */
+        menuTrigger: React.ReactElement;
+        /** Width of the menu and submenus in pixels. */
+        width?: number;
+    }
+>;
 
 /** MenuComponentProps with defaulted properties now listed as not-optional, plus theme. */
-export type MenuProps = MenuComponentProps
-    & MenuPresentationProps
-    & ThemeProps<BaseTheme>;
+export type MenuProps = MenuComponentProps & MenuPresentationProps & ThemeProps<BaseTheme>;
 
 // eslint-disable-next-line no-unexpected-multiline
-const MenuStyle = styled.ul<ThemeProps<BaseTheme> & InjectableCss & {
-    width?: number;
-}>`
+const MenuStyle = styled.ul<
+    ThemeProps<BaseTheme> &
+        InjectableCss & {
+            width?: number;
+        }
+>`
     background: ${getColor("common.background")};
     z-index: ${getProp("theme.zIndex.menu")};
     box-shadow: ${getProp("theme.shadows.2")};
@@ -82,7 +87,9 @@ const MenuStyle = styled.ul<ThemeProps<BaseTheme> & InjectableCss & {
 
 const MenuWrapper = styled.nav<{ isOpen: boolean } & InjectableCss>`
     position: relative; /* stylelint-disable */
-    ${({ isOpen }) => isOpen && `
+    ${({ isOpen }) =>
+        isOpen &&
+        `
     &:focus-within > ${MenuStyle}  /* stylelint-enable */ {
         display: block;
     }
@@ -95,18 +102,19 @@ const MenuWrapper = styled.nav<{ isOpen: boolean } & InjectableCss>`
 `;
 
 // eslint-disable-next-line no-unexpected-multiline
-const MenuItemStyle = styled.li<ThemeProps<BaseTheme> & InjectableCss & {
-    width?: number;
-}>`
+const MenuItemStyle = styled.li<
+    ThemeProps<BaseTheme> &
+        InjectableCss & {
+            width?: number;
+        }
+>`
     position: relative;
     &:focus-within > ${MenuStyle} {
         display: block;
         left: ${getProp("width", 175)}px;
         top: 0;
     }
-    &:focus > ${MenuStyle},
-    &:hover > ${MenuStyle},
-    &.focus-within > ${MenuStyle} {
+    &:focus > ${MenuStyle}, &:hover > ${MenuStyle}, &.focus-within > ${MenuStyle} {
         display: block;
         left: ${getProp("width", 175)}px;
         top: 0;
@@ -150,63 +158,86 @@ class Menu extends React.Component<MenuProps, MenuState> {
     };
 
     closeMenu = () => {
-        this.setState({ isOpen: false },
-            () => setTimeout(
-                () => {
-                    // The make the all browsers act the same on item click.
-                    if (document.activeElement instanceof HTMLElement) {
-                        document.activeElement.blur();
-                    }
-                    this.setState({ isOpen: true });
-                },
-                100,
-            ));
+        this.setState({ isOpen: false }, () =>
+            setTimeout(() => {
+                // The make the all browsers act the same on item click.
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
+                this.setState({ isOpen: true });
+            }, 100),
+        );
     };
 
     render() {
-        return (<ThemeConsumer>
-            {(theme) => {
-                const { menuItems, menuTrigger, ...otherProps } = this.props;
-                const { applyProp, spreadProps } = applyPropBuilder({ ...otherProps, theme }, { component: "menu" });
-
-                const renderMenuItems = (childMenuItems: MappedLink[], currentDepth: number) => {
-                    const cssOverrides = spreadProps("cssOverrides");
-                    const maxDepth = otherProps.maxDepth || 3;
-                    return (
-                        <MenuStyle width={otherProps.width} css={cssOverrides?.menu}>
-                            {childMenuItems?.filter(item => !item.excludeFromNavigation).map(item => {
-                                const hasChildren = item.children?.length && currentDepth < maxDepth;
-                                return (
-                                    <MenuItemStyle width={otherProps.width} css={cssOverrides?.menuItem} key={item.title}>
-                                        <Clickable href={item.url} onClick={this.closeMenu} {...applyProp("menuItemClickableProps")}>
-                                            <MenuItemText hasChildren={hasChildren} {...applyProp("menuItemTypographyProps")}>
-                                                {item.title}
-                                            </MenuItemText>
-                                            {item.children?.length && currentDepth < maxDepth
-                                                ? <IconMemo {...applyProp("moreIconProps")}/>
-                                                : null}
-                                        </Clickable>
-                                        {hasChildren ?  renderMenuItems(item!.children!, currentDepth + 1) : null}
-                                    </MenuItemStyle>
-                                );
-                            })}
-                        </MenuStyle>
+        return (
+            <ThemeConsumer>
+                {theme => {
+                    const { menuItems, menuTrigger, ...otherProps } = this.props;
+                    const { applyProp, spreadProps } = applyPropBuilder(
+                        { ...otherProps, theme },
+                        { component: "menu" },
                     );
-                };
 
-                const cssOverrides = spreadProps("cssOverrides");
-                const descriptionId = otherProps.descriptionId || uniqueId();
-                return (
-                    <>
-                        <MenuWrapper isOpen={this.state.isOpen} css={cssOverrides?.wrapper} {...{ "aria-labelledby": descriptionId }} {...otherProps}>
-                            {React.cloneElement(menuTrigger, { id: descriptionId, className: "trigger" })}
-                            {renderMenuItems(menuItems, 1)}
-                        </MenuWrapper>
-                        <span ref={trigger} tabIndex={-1} />
-                    </>
-                );
-            }}
-        </ThemeConsumer>);
+                    const renderMenuItems = (childMenuItems: MappedLink[], currentDepth: number) => {
+                        const cssOverrides = spreadProps("cssOverrides");
+                        const maxDepth = otherProps.maxDepth || 3;
+                        return (
+                            <MenuStyle width={otherProps.width} css={cssOverrides?.menu}>
+                                {childMenuItems
+                                    ?.filter(item => !item.excludeFromNavigation)
+                                    .map(item => {
+                                        const hasChildren = item.children?.length && currentDepth < maxDepth;
+                                        return (
+                                            <MenuItemStyle
+                                                width={otherProps.width}
+                                                css={cssOverrides?.menuItem}
+                                                key={item.title}
+                                            >
+                                                <Clickable
+                                                    href={item.url}
+                                                    onClick={this.closeMenu}
+                                                    {...applyProp("menuItemClickableProps")}
+                                                >
+                                                    <MenuItemText
+                                                        hasChildren={hasChildren}
+                                                        {...applyProp("menuItemTypographyProps")}
+                                                    >
+                                                        {item.title}
+                                                    </MenuItemText>
+                                                    {item.children?.length && currentDepth < maxDepth ? (
+                                                        <IconMemo {...applyProp("moreIconProps")} />
+                                                    ) : null}
+                                                </Clickable>
+                                                {hasChildren
+                                                    ? renderMenuItems(item!.children!, currentDepth + 1)
+                                                    : null}
+                                            </MenuItemStyle>
+                                        );
+                                    })}
+                            </MenuStyle>
+                        );
+                    };
+
+                    const cssOverrides = spreadProps("cssOverrides");
+                    const descriptionId = otherProps.descriptionId || uniqueId();
+                    return (
+                        <>
+                            <MenuWrapper
+                                isOpen={this.state.isOpen}
+                                css={cssOverrides?.wrapper}
+                                {...{ "aria-labelledby": descriptionId }}
+                                {...otherProps}
+                            >
+                                {React.cloneElement(menuTrigger, { id: descriptionId, className: "trigger" })}
+                                {renderMenuItems(menuItems, 1)}
+                            </MenuWrapper>
+                            <span ref={trigger} tabIndex={-1} />
+                        </>
+                    );
+                }}
+            </ThemeConsumer>
+        );
     }
 }
 

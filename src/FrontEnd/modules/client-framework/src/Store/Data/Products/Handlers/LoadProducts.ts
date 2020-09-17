@@ -1,5 +1,10 @@
 import caseInsensitiveSort from "@insite/client-framework/Common/Utilities/caseInsensitiveSort";
-import { createHandlerChainRunner, executeAwaitableHandlerChain, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    executeAwaitableHandlerChain,
+    Handler,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import {
     GetProductCollectionApiV2Parameter,
     getProductCollectionV2,
@@ -10,10 +15,11 @@ import sortProductCollections from "@insite/client-framework/Store/Data/Products
 import { ProductCollectionModel, ProductModel } from "@insite/client-framework/Types/ApiModels";
 import sortBy from "lodash/sortBy";
 
-type Parameter = (GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter) & HasOnSuccess<ProductModel[]>;
+type Parameter = (GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter) &
+    HasOnSuccess<ProductModel[]>;
 type Props = {
-    apiParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
-    apiResult: ProductCollectionModel,
+    apiParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
+    apiResult: ProductCollectionModel;
 };
 
 type HandlerType = Handler<Parameter, Props>;
@@ -60,10 +66,18 @@ export const SortFacets: HandlerType = ({ apiResult }) => {
     }
 
     if (apiResult.attributeTypeFacets) {
-        apiResult.attributeTypeFacets = sortBy(apiResult.attributeTypeFacets, o => o.sortOrder, o => o.nameDisplay);
+        apiResult.attributeTypeFacets = sortBy(
+            apiResult.attributeTypeFacets,
+            o => o.sortOrder,
+            o => o.nameDisplay,
+        );
         apiResult.attributeTypeFacets.forEach(a => {
             if (a.attributeValueFacets) {
-                a.attributeValueFacets = sortBy(a.attributeValueFacets, o => o.sortOrder, o => o.valueDisplay);
+                a.attributeValueFacets = sortBy(
+                    a.attributeValueFacets,
+                    o => o.sortOrder,
+                    o => o.valueDisplay,
+                );
             }
         });
     }

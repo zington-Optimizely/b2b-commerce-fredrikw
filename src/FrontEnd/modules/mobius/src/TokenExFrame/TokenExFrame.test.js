@@ -1,12 +1,12 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import TokenExFrame from './TokenExFrame';
-import CreditCard from '../Icons/CreditCard';
-import DisablerContext from '../utilities/DisablerContext';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import TokenExFrame from "./TokenExFrame";
+import CreditCard from "../Icons/CreditCard";
+import DisablerContext from "../utilities/DisablerContext";
 
-describe('TokenExFrame', () => {
+describe("TokenExFrame", () => {
     let props = { tokenExIFrameContainer: <iframe /> };
     let mountedWrapper;
     let disablerValue;
@@ -17,7 +17,7 @@ describe('TokenExFrame', () => {
                     <DisablerContext.Provider value={disablerValue}>
                         <TokenExFrame {...props} />
                     </DisablerContext.Provider>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -28,15 +28,15 @@ describe('TokenExFrame', () => {
         mountedWrapper = undefined;
     });
 
-    test('displays an icon when provided', () => {
+    test("displays an icon when provided", () => {
         props = { iconProps: { src: CreditCard }, tokenExIFrameContainer: <iframe /> };
         expect(wrapper().find(CreditCard)).toHaveLength(1);
     });
 
-    describe('is appropriately disabled', () => {
-        test('renders an input when disabled', () => {
+    describe("is appropriately disabled", () => {
+        test("renders an input when disabled", () => {
             props = { disabled: true, tokenExIFrameContainer: <iframe /> };
-            expect(wrapper().find('input')).toHaveLength(1);
+            expect(wrapper().find("input")).toHaveLength(1);
         });
         test("if DisablerContext is true", () => {
             disablerValue = { disable: true };
@@ -50,18 +50,18 @@ describe('TokenExFrame', () => {
         test("if DisablerContext is false and disabled is false", () => {
             disablerValue = { disable: false };
             // if the input is not disabled, an iframe renders from tokenEx
-            expect(wrapper().exists('input')).toBe(false);
+            expect(wrapper().exists("input")).toBe(false);
         });
     });
 
-    describe('renders a div of the appropriate height', () => {
-        test('when small', () => {
-            props = { sizeVariant: 'small', tokenExIFrameContainer: <iframe /> };
-            expect(wrapper().find('[data-id="frame-wrapper"]')).toHaveStyleRule('height', '30px');
+    describe("renders a div of the appropriate height", () => {
+        test("when small", () => {
+            props = { sizeVariant: "small", tokenExIFrameContainer: <iframe /> };
+            expect(wrapper().find('[data-id="frame-wrapper"]')).toHaveStyleRule("height", "30px");
         });
-        test('when default', () => {
-            props = { sizeVariant: 'default', tokenExIFrameContainer: <iframe /> };
-            expect(wrapper().find('[data-id="frame-wrapper"]')).toHaveStyleRule('height', '40px');
+        test("when default", () => {
+            props = { sizeVariant: "default", tokenExIFrameContainer: <iframe /> };
+            expect(wrapper().find('[data-id="frame-wrapper"]')).toHaveStyleRule("height", "40px");
         });
     });
 });

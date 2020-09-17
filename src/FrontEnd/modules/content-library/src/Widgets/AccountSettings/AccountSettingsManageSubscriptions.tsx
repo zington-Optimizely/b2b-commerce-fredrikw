@@ -12,7 +12,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps { }
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
@@ -38,7 +38,9 @@ export const manageSubscriptionsStyles: AccountSettingsManageSubscriptionsStyles
     },
     manageSubscriptionsCheckbox: {
         typographyProps: {
-            css: css` margin-left: 10px; `,
+            css: css`
+                margin-left: 10px;
+            `,
         },
     },
     manageSubscriptionsCheckboxGroup: {},
@@ -57,14 +59,17 @@ const AccountSettingsManageSubscriptions: FC<Props> = props => {
         <>
             <Typography {...styles.manageSubscriptionsTitle}>{translate("Manage Subscriptions")}</Typography>
             <CheckboxGroup {...styles.manageSubscriptionsCheckboxGroup}>
-                <Checkbox {...styles.manageSubscriptionsCheckbox}
+                <Checkbox
+                    {...styles.manageSubscriptionsCheckbox}
                     onChange={(e, value) => props.updateAccountSettings({ isSubscribed: value })}
                     checked={account.isSubscribed!}
-                    data-test-selector="accountSettings_subscribed">
+                    data-test-selector="accountSettings_subscribed"
+                >
                     {translate("Subcribe")}
                 </Checkbox>
             </CheckboxGroup>
-        </>);
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

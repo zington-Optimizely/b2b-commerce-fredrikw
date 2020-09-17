@@ -5,10 +5,13 @@ import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import DataTableContext from "./DataTableContext";
 
-export type DataTableHeadProps = MobiusStyledComponentProps<"tr", {
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<DataTableHeadProps>;
-}>;
+export type DataTableHeadProps = MobiusStyledComponentProps<
+    "tr",
+    {
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<DataTableHeadProps>;
+    }
+>;
 
 const DataTableHeadStyle = styled.tr`
     ${injectCss}

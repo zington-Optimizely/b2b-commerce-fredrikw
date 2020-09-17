@@ -3,7 +3,13 @@
  * The LoadOrdersHandler is used by the order history page to load order data
  */
 
-import { addToChainAfter, addToChainBefore, addToEndOfChain, addToStartOfChain, replaceInChain } from "@insite/client-framework/HandlerCreator";
+import {
+    addToChainAfter,
+    addToChainBefore,
+    addToEndOfChain,
+    addToStartOfChain,
+    replaceInChain,
+} from "@insite/client-framework/HandlerCreator";
 import { chain, RequestDataFromApi } from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 
 // this will enable HMR for custom handlers
@@ -16,8 +22,9 @@ if (module.hot) {
     });
 }
 
-addToStartOfChain(chain, props => { // The function can be `async` and use `await` in its body.
-   // an anonymous function will show up without a name in the redux tools for handlers
+addToStartOfChain(chain, props => {
+    // The function can be `async` and use `await` in its body.
+    // an anonymous function will show up without a name in the redux tools for handlers
 });
 
 addToEndOfChain(chain, namedFunction);
@@ -30,12 +37,16 @@ function namedFunction(props: loadOrdersHandlerProps) {
     // this requires knowing the type of props to write
 }
 
-addToChainBefore(chain, RequestDataFromApi, props => { });
+addToChainBefore(chain, RequestDataFromApi, props => {});
 
 // trying to reference a handler not in the chain will result in a warning and the chain will not be modified
-replaceInChain(chain, props => {}, props => {  });
+replaceInChain(
+    chain,
+    props => {},
+    props => {},
+);
 
-addToChainAfter(chain, RequestDataFromApi,  props => { });
+addToChainAfter(chain, RequestDataFromApi, props => {});
 
 // replacing RequestDataFromApi with an empty function would lead to the site not working.
 // take care when replacing handlers

@@ -1,5 +1,8 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
-import { addWishListLines as addWishListLinesApi, AddWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
+import {
+    addWishListLines as addWishListLinesApi,
+    AddWishListLinesApiParameter,
+} from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
 
 type HandlerType = Handler<

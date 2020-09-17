@@ -34,5 +34,5 @@ export const chain = [
     DispatchCompleteLoadBrandGallery,
 ];
 
-const loadBrands = createHandlerChainRunnerOptionalParameter(chain, { }, "LoadBrandGallery");
+const loadBrands = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadBrandGallery");
 export default loadBrands;

@@ -10,13 +10,16 @@ export interface ApiParameter {
     additionalQueryStringParameters?: Dictionary<any>;
 }
 
-export type ServiceResult<T> = {
-    successful: true,
-    result: T,
-} | {
-    successful: false,
-    errorMessage: string,
-};
+export type ServiceResult<T> =
+    | {
+          successful: true;
+          result: T;
+      }
+    | {
+          successful: false;
+          errorMessage: string;
+          statusCode?: number;
+      };
 
 export interface HasPagingParameters {
     page?: number;
@@ -63,7 +66,12 @@ export function get<T>(endpoint: string, parameter: ApiParameter = {}, queryStri
 }
 
 export function post<Parameter, Result = Parameter>(endpoint: string, model?: Parameter) {
-    return request<Result>(endpoint, "POST", { "Content-Type": "application/json" }, model ? JSON.stringify(model) : undefined);
+    return request<Result>(
+        endpoint,
+        "POST",
+        { "Content-Type": "application/json" },
+        model ? JSON.stringify(model) : undefined,
+    );
 }
 
 export function patch<T extends BaseModel>(endpoint: string, model: Partial<T> | T) {
@@ -83,30 +91,27 @@ export class ApiError extends Error {
     constructor(url: string, response: Response, errorMessage: string, errorJson: any) {
         /** Node adds additional data to the `Response` type from `fetch`. */
         type PossibleNodeResponse = Response & {
-            _raw?: unknown,
+            _raw?: unknown;
         };
 
         const { body, _raw, ...responseToLog } = response as PossibleNodeResponse;
 
         const t = "";
-        super(`Request to ${url} resulted in a error status ${response.status}. \n`
-            + `${errorMessage !== "" ? `errorMessage: ${errorMessage} \n` : ""}`
-            + `${errorJson ? `errorJson: ${JSON.stringify(errorJson, null, 1)} \n` : ""}`
-            + `response: ${JSON.stringify(responseToLog, null, 1)}`);
+        super(
+            `Request to ${url} resulted in a error status ${response.status}. \n` +
+                `${errorMessage !== "" ? `errorMessage: ${errorMessage} \n` : ""}` +
+                `${errorJson ? `errorJson: ${JSON.stringify(errorJson, null, 1)} \n` : ""}` +
+                `response: ${JSON.stringify(responseToLog, null, 1)}`,
+        );
 
         this.url = url;
         this.errorMessage = errorMessage;
         this.status = response.status;
         this.errorJson = errorJson;
     }
-
 }
 
-const adminEndpoints = [
-    "api/v1/admin",
-    "api/internal/contentadmin",
-    ".spire/",
-] as const;
+const adminEndpoints = ["api/v1/admin", "api/internal/contentadmin", ".spire/"] as const;
 const isAdminEndpoint = (endpoint: string) => adminEndpoints.filter(a => endpoint.toLowerCase().includes(a)).length > 0;
 
 export const rawRequest = async (
@@ -120,7 +125,9 @@ export const rawRequest = async (
 
     if (isAdminEndpoint(endpoint)) {
         if (IS_SERVER_SIDE) {
-            logger.warn(`There was an attempt to make a request to the endpoint ${endpoint} during SSR. The shell doesn't currently support SSR.`);
+            logger.warn(
+                `There was an attempt to make a request to the endpoint ${endpoint} during SSR. The shell doesn't currently support SSR.`,
+            );
         } else {
             headers["Authorization"] = `Bearer ${window.localStorage.getItem("admin-accessToken")}`;
         }
@@ -144,7 +151,7 @@ export const rawRequest = async (
         let message: string;
         let errorJson: any;
         if (response.headers.get("Content-Type")?.startsWith("application/json")) {
-            errorJson = await response.json() as { message: string, exceptionMessage?: string, };
+            errorJson = (await response.json()) as { message: string; exceptionMessage?: string };
             message = errorJson.exceptionMessage ?? errorJson.message;
         } else {
             message = await response.text();
@@ -159,17 +166,30 @@ export async function request<T>(endpoint: string, method: string, headers: Dict
     const response = await rawRequest(endpoint, method, headers, body);
 
     try {
-        return await response.json() as Promise<T>;
+        return (await response.json()) as Promise<T>;
     } catch {
         return {} as Promise<T>;
     }
 }
 
-export async function requestVoid(endpoint: string, method: string, headers: Dictionary<string> = {}, body?: string, isStatusOkay?: (status: number) => boolean) {
+export async function requestVoid(
+    endpoint: string,
+    method: string,
+    headers: Dictionary<string> = {},
+    body?: string,
+    isStatusOkay?: (status: number) => boolean,
+) {
     await rawRequest(endpoint, method, headers, body, isStatusOkay ?? (status => status === 204));
 }
 
-export function doesNotHaveExpand(parameter: { expand?: string[], additionalExpands?: string[] } | undefined, value: string) {
-    return !parameter || ((!parameter.expand || parameter.expand.filter(o => o.toLowerCase() === value.toLowerCase()).length === 0)
-                        && (!parameter.additionalExpands || parameter.additionalExpands.filter(o => o.toLowerCase() === value.toLowerCase()).length === 0));
+export function doesNotHaveExpand(
+    parameter: { expand?: string[]; additionalExpands?: string[] } | undefined,
+    value: string,
+) {
+    return (
+        !parameter ||
+        ((!parameter.expand || parameter.expand.filter(o => o.toLowerCase() === value.toLowerCase()).length === 0) &&
+            (!parameter.additionalExpands ||
+                parameter.additionalExpands.filter(o => o.toLowerCase() === value.toLowerCase()).length === 0))
+    );
 }

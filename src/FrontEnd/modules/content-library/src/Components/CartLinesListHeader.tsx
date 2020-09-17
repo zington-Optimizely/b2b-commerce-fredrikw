@@ -28,7 +28,11 @@ export const cartLinesListHeaderStyles: CartLinesListHeaderStyles = {
     },
     productCountText: { weight: 600 },
     checkboxGroup: {
-        css: css` @media print { display: none; } `,
+        css: css`
+            @media print {
+                display: none;
+            }
+        `,
     },
 };
 
@@ -38,31 +42,23 @@ const CartLinesListHeader: FC<{
     hideCondensedSelector?: boolean;
     onChangeIsCondensed?: (event: React.SyntheticEvent, value: boolean) => void;
     extendedStyles?: CartLinesListHeaderStyles;
-}> = ({
-    productsCount,
-    onChangeIsCondensed,
-    extendedStyles,
-    isCondensed,
-    hideCondensedSelector,
-}) => {
+}> = ({ productsCount, onChangeIsCondensed, extendedStyles, isCondensed, hideCondensedSelector }) => {
     const [styles] = React.useState(() => mergeToNew(cartLinesListHeaderStyles, extendedStyles));
 
     const productsLabel = productsCount > 1 ? "Products" : "Product";
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.productCountText}>{productsCount} {translate(productsLabel)}</Typography>
-            {!hideCondensedSelector
-                && <CheckboxGroup {...styles.checkboxGroup}>
-                    <Checkbox
-                        {...styles.condensedCheckbox}
-                        checked={isCondensed}
-                        onChange={onChangeIsCondensed}
-                    >
+            <Typography {...styles.productCountText}>
+                {productsCount} {translate(productsLabel)}
+            </Typography>
+            {!hideCondensedSelector && (
+                <CheckboxGroup {...styles.checkboxGroup}>
+                    <Checkbox {...styles.condensedCheckbox} checked={isCondensed} onChange={onChangeIsCondensed}>
                         {translate("Condensed View")}
                     </Checkbox>
                 </CheckboxGroup>
-            }
+            )}
         </StyledWrapper>
     );
 };

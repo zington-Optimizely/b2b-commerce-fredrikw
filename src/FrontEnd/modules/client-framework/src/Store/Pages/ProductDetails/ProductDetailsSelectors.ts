@@ -5,9 +5,11 @@ export function canAddToCart(state: ApplicationState, product: ProductModel) {
     if (!product) {
         return false;
     }
-    return product.canAddToCart
-        || (product.canConfigure && state.pages.productDetails.configurationCompleted)
-        || (!product.canConfigure && state.pages.productDetails.variantSelectionCompleted);
+    return (
+        product.canAddToCart ||
+        (product.canConfigure && state.pages.productDetails.configurationCompleted) ||
+        (!product.canConfigure && state.pages.productDetails.variantSelectionCompleted)
+    );
 }
 
 export function getSelectedImage(state: ApplicationState, product: ProductModel | undefined) {

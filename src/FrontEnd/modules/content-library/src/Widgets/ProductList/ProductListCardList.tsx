@@ -6,7 +6,9 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
-import CardContainerMultiColumn, { CardContainerMultiColumnStyles } from "@insite/content-library/Components/CardContainerMultiColumn";
+import CardContainerMultiColumn, {
+    CardContainerMultiColumnStyles,
+} from "@insite/content-library/Components/CardContainerMultiColumn";
 import CardList, { CardListStyles } from "@insite/content-library/Components/CardList";
 import { ProductListPageContext, ProductListPageDataContext } from "@insite/content-library/Pages/ProductListPage";
 import ProductListProductCard from "@insite/content-library/Widgets/ProductList/ProductListProductCard";
@@ -48,8 +50,7 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     isLoading: state.pages.productList.isLoading,
@@ -90,7 +91,9 @@ export const listStyles: ProductListCardListStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     noProductsText: {
         variant: "h4",
@@ -101,10 +104,14 @@ export const listStyles: ProductListCardListStyles = {
     },
     cardContainerStyles: {
         cardDivider: {
-            css: css` width: 100%; `,
+            css: css`
+                width: 100%;
+            `,
         },
         gridItem: {
-            css: css` border-bottom: 1px solid ${getColor("common.border")}; `,
+            css: css`
+                border-bottom: 1px solid ${getColor("common.border")};
+            `,
         },
     },
 };
@@ -113,9 +120,11 @@ const styles = listStyles;
 
 const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fields }) => {
     if (isLoading && !productsDataView.value) {
-        return <StyledWrapper {...styles.centeringWrapper}>
-            <LoadingSpinner {...styles.spinner} data-test-selector="productListCardListSpinner"/>
-        </StyledWrapper>;
+        return (
+            <StyledWrapper {...styles.centeringWrapper}>
+                <LoadingSpinner {...styles.spinner} data-test-selector="productListCardListSpinner" />
+            </StyledWrapper>
+        );
     }
 
     if (!productsDataView.value) {
@@ -125,43 +134,52 @@ const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fie
     const products = productsDataView.value;
 
     if (products.length === 0) {
-        return <StyledWrapper {...styles.wrapper}>
-            <StyledWrapper {...styles.centeringWrapper} data-test-selector="productListNoneFound">
-                <Typography {...styles.noProductsText}>{translate("No products found")}</Typography>
+        return (
+            <StyledWrapper {...styles.wrapper}>
+                <StyledWrapper {...styles.centeringWrapper} data-test-selector="productListNoneFound">
+                    <Typography {...styles.noProductsText}>{translate("No products found")}</Typography>
+                </StyledWrapper>
             </StyledWrapper>
-        </StyledWrapper>;
+        );
     }
 
     const renderProducts = (children: ReactNode) => {
-        return products.map(product =>
+        return products.map(product => (
             <ProductListProductContext product={product} key={product.id}>
                 {children}
-            </ProductListProductContext>);
+            </ProductListProductContext>
+        ));
     };
     return (
         <StyledWrapper {...styles.wrapper}>
             <ProductListPageDataContext.Consumer>
                 {({ ref }) => {
-                    return (ref ? <span ref={ref} tabIndex={-1}/> : undefined);
+                    return ref ? <span ref={ref} tabIndex={-1} /> : undefined;
                 }}
             </ProductListPageDataContext.Consumer>
             <LoadingOverlay loading={isLoading}>
                 <Hidden below="md">
                     <CardList extendedStyles={styles.cardList} data-test-selector={`productListCardContainer${view}`}>
-                        {renderProducts(view === "List"
-                            ? <CardContainer extendedStyles={styles.cardContainerStyles}>
-                                <ProductListProductCard {...fields} />
-                            </CardContainer>
-                            : <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
-                                <ProductListProductGridCard {...fields} />
-                            </CardContainerMultiColumn>)}
+                        {renderProducts(
+                            view === "List" ? (
+                                <CardContainer extendedStyles={styles.cardContainerStyles}>
+                                    <ProductListProductCard {...fields} />
+                                </CardContainer>
+                            ) : (
+                                <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
+                                    <ProductListProductGridCard {...fields} />
+                                </CardContainerMultiColumn>
+                            ),
+                        )}
                     </CardList>
                 </Hidden>
                 <Hidden above="sm">
                     <CardList extendedStyles={styles.cardList} data-test-selector="cardListProductsNarrow">
-                        {renderProducts(<CardContainer extendedStyles={styles.cardContainerStyles}>
+                        {renderProducts(
+                            <CardContainer extendedStyles={styles.cardContainerStyles}>
                                 <ProductListProductCard {...fields} />
-                            </CardContainer>)}
+                            </CardContainer>,
+                        )}
                     </CardList>
                 </Hidden>
             </LoadingOverlay>
@@ -170,7 +188,6 @@ const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fie
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps)(ProductListCardList),
     definition: {
         group: "Product List",

@@ -14,11 +14,13 @@ export const LoadWishListIfNeeded: HandlerType = ({ parameter, getState, dispatc
         return;
     }
 
-    dispatch(loadWishList({
-        wishListId: parameter.wishListId,
-        exclude: ["listLines"],
-        expand: ["sharedUsers"],
-    }));
+    dispatch(
+        loadWishList({
+            wishListId: parameter.wishListId,
+            exclude: ["listLines"],
+            expand: ["sharedUsers"],
+        }),
+    );
 };
 
 export const DispatchCompleteSetIsOpen: HandlerType = props => {
@@ -29,11 +31,7 @@ export const DispatchCompleteSetIsOpen: HandlerType = props => {
     });
 };
 
-
-export const chain = [
-    LoadWishListIfNeeded,
-    DispatchCompleteSetIsOpen,
-];
+export const chain = [LoadWishListIfNeeded, DispatchCompleteSetIsOpen];
 
 const setManageShareListModalIsOpen = createHandlerChainRunner(chain, "SetManageShareListModalIsOpen");
 export default setManageShareListModalIsOpen;

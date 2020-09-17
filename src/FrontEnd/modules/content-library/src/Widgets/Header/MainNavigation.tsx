@@ -4,7 +4,11 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import Logger from "@insite/client-framework/Logger";
 import { Category } from "@insite/client-framework/Services/CategoryService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCategoriesDataView, getCategoryDepthLoaded, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import {
+    getCategoriesDataView,
+    getCategoryDepthLoaded,
+    getCategoryState,
+} from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import loadCategory from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategory";
 import { getPageLinkByNodeId, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -50,13 +54,13 @@ interface OwnProps extends WidgetProps {
 
 interface LinkModel {
     fields: {
-        openInNewWindow: boolean,
-        destination: LinkFieldValue,
-        linkType: "Link" | "MegaMenu" | "CascadingMenu",
-        overrideTitle: string,
+        openInNewWindow: boolean;
+        destination: LinkFieldValue;
+        linkType: "Link" | "MegaMenu" | "CascadingMenu";
+        overrideTitle: string;
         title: string;
-        numberOfColumns: number,
-        maxDepth: number,
+        numberOfColumns: number;
+        maxDepth: number;
     };
 }
 
@@ -72,12 +76,16 @@ export interface MappedLink {
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const { fields: { links } } = ownProps;
+    const {
+        fields: { links },
+    } = ownProps;
     const mappedLinks = [];
     const categoryIdsToLoad: Dictionary<number> = {};
 
     for (const link of links) {
-        const { fields: { linkType, destination, openInNewWindow, overrideTitle, numberOfColumns, maxDepth, title } } = link;
+        const {
+            fields: { linkType, destination, openInNewWindow, overrideTitle, numberOfColumns, maxDepth, title },
+        } = link;
         const { type, value } = destination;
 
         const depthToLoad = linkType === "MegaMenu" ? 2 : maxDepth;
@@ -129,12 +137,21 @@ const getParameter = (categoryId: string, maxDepth: number) => ({
     includeStartCategory: true,
 });
 
-const setupCategoryLink = (state: ApplicationState, value: string, categoryIdsToLoad: Dictionary<number>, maxDepth: number, overrideTitle: string) => {
+const setupCategoryLink = (
+    state: ApplicationState,
+    value: string,
+    categoryIdsToLoad: Dictionary<number>,
+    maxDepth: number,
+    overrideTitle: string,
+) => {
     let mappedLink: MappedLink | undefined;
 
     const depthLoaded = getCategoryDepthLoaded(state, value);
     const subCategoryIds = state.data.categories.parentCategoryIdToChildrenIds[value];
-    if ((depthLoaded < maxDepth || !subCategoryIds) && !getCategoriesDataView(state, getParameter(value, maxDepth)).isLoading) {
+    if (
+        (depthLoaded < maxDepth || !subCategoryIds) &&
+        !getCategoriesDataView(state, getParameter(value, maxDepth)).isLoading
+    ) {
         categoryIdsToLoad[value] = maxDepth;
     } else {
         if (value === emptyGuid) {
@@ -162,7 +179,13 @@ const setupCategoryLink = (state: ApplicationState, value: string, categoryIdsTo
     return mappedLink;
 };
 
-const loadSubCategories = (mappedLink: MappedLink, subCategoryIds: readonly string[] | undefined, currentDepth: number, maxDepth: number, state: ApplicationState) => {
+const loadSubCategories = (
+    mappedLink: MappedLink,
+    subCategoryIds: readonly string[] | undefined,
+    currentDepth: number,
+    maxDepth: number,
+    state: ApplicationState,
+) => {
     if (currentDepth > maxDepth) {
         return;
     }
@@ -191,10 +214,7 @@ const mapDispatchToProps = {
     loadCategories,
 };
 
-type Props =
-    OwnProps
-    & ReturnType<typeof mapStateToProps>
-    & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 interface State {
     selectedLinkIndex?: number;
@@ -274,7 +294,9 @@ export const mainNavigationStyles: MainNavigationStyles = {
         `,
     },
     menuItemIcon: {
-        css: css` margin: -3px 0 0 10px; `,
+        css: css`
+            margin: -3px 0 0 10px;
+        `,
         size: 18,
         color: "secondary.contrast",
     },
@@ -286,26 +308,34 @@ export const mainNavigationStyles: MainNavigationStyles = {
         transitionDuration: "short",
         contentBodyProps: {
             _height: "1200px",
-            css: css` padding: 20px 30px; `,
+            css: css`
+                padding: 20px 30px;
+            `,
         },
     },
     mobileSearchButton: {
         size: 48,
         buttonType: "solid",
         color: "secondary",
-        css: css` padding: 0 10px; `,
+        css: css`
+            padding: 0 10px;
+        `,
     },
     mobileWrapper: {
-        css: css` 
+        css: css`
             display: flex;
             justify-content: space-between;
         `,
     },
     mobileSearchWrapper: {
-        css: css` text-align: right; `,
+        css: css`
+            text-align: right;
+        `,
     },
     mobileMenuWrapper: {
-        css: css` text-align: right; `,
+        css: css`
+            text-align: right;
+        `,
     },
     mobileSearchInputWrapper: {
         css: css`
@@ -316,18 +346,24 @@ export const mainNavigationStyles: MainNavigationStyles = {
     mobileSearchInputStyles: {
         input: {
             cssOverrides: {
-                formField: css` width: 100%; `,
+                formField: css`
+                    width: 100%;
+                `,
             },
         },
         popover: {
             wrapperProps: {
-                css: css` width: calc(100% - 45px); `,
+                css: css`
+                    width: calc(100% - 45px);
+                `,
             },
         },
         popoverContentBody: {
             as: "div",
             _height: "100%",
-            css: css` box-shadow: none; `,
+            css: css`
+                box-shadow: none;
+            `,
         },
         autocompleteWrapper: {
             css: css`
@@ -355,7 +391,9 @@ export const mainNavigationStyles: MainNavigationStyles = {
         },
         autocompleteProductsStyles: {
             titleLink: {
-                css: css` width: 100%; `,
+                css: css`
+                    width: 100%;
+                `,
             },
             erpNumberText: {
                 css: css`
@@ -369,7 +407,9 @@ export const mainNavigationStyles: MainNavigationStyles = {
     mobileSearchModalCloseIcon: {
         src: X,
         size: 18,
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
 };
 
@@ -437,9 +477,17 @@ class MainNavigation extends React.Component<Props, State> {
     };
 
     render() {
-        const { links, quickOrderLink, fields: { showQuickOrder }, id } = this.props;
+        const {
+            links,
+            quickOrderLink,
+            fields: { showQuickOrder },
+            id,
+        } = this.props;
         const { selectedLinkIndex } = this.state;
-        let selectedLink = (typeof selectedLinkIndex !== "undefined" && links.length > selectedLinkIndex) ? links[selectedLinkIndex] : null;
+        let selectedLink =
+            typeof selectedLinkIndex !== "undefined" && links.length > selectedLinkIndex
+                ? links[selectedLinkIndex]
+                : null;
         if (selectedLink && selectedLink.childrenType !== "MegaMenu") {
             selectedLink = null;
         }
@@ -467,25 +515,30 @@ class MainNavigation extends React.Component<Props, State> {
                             return (
                                 // eslint-disable-next-line react/no-array-index-key
                                 <StyledWrapper {...styles.itemWrapper} key={index}>
-                                    <MainNavigationItem index={index} link={link} styles={styles} container={this.container} />
+                                    <MainNavigationItem
+                                        index={index}
+                                        link={link}
+                                        styles={styles}
+                                        container={this.container}
+                                    />
                                 </StyledWrapper>
                             );
                         })}
-                        {showQuickOrder && quickOrderLink
-                        && <StyledWrapper {...styles.itemWrapper}>
-                            <StyledWrapper {...styles.quickOrderItemWrapper}>
-                                <Link
-                                    typographyProps={styles.menuItemTypography}
-                                    color={styles.menuItemTypography?.color}
-                                    {...styles.menuItem}
-                                    id="quickOrder"
-                                    href={quickOrderLink.url}
-                                >
-                                    {quickOrderLink.title}
-                                </Link>
+                        {showQuickOrder && quickOrderLink && (
+                            <StyledWrapper {...styles.itemWrapper}>
+                                <StyledWrapper {...styles.quickOrderItemWrapper}>
+                                    <Link
+                                        typographyProps={styles.menuItemTypography}
+                                        color={styles.menuItemTypography?.color}
+                                        {...styles.menuItem}
+                                        id="quickOrder"
+                                        href={quickOrderLink.url}
+                                    >
+                                        {quickOrderLink.title}
+                                    </Link>
+                                </StyledWrapper>
                             </StyledWrapper>
-                        </StyledWrapper>
-                        }
+                        )}
                     </StyledWrapper>
                 </Hidden>
                 <Modal
@@ -493,12 +546,15 @@ class MainNavigation extends React.Component<Props, State> {
                     isOpen={this.state.mobileSearchModalIsOpen}
                     closeOnEsc={true}
                     handleClose={this.mobileSearchModalCloseHandler}
-                    headline={<SearchInput
-                        id={id}
-                        inputRef={this.mobileSearchInput}
-                        autocompletePositionFunction={this.getMobileSearchAutocompletePosition}
-                        onBeforeGoToUrl={this.mobileSearchModalCloseHandler}
-                        extendedStyles={styles.mobileSearchInputStyles} />}
+                    headline={
+                        <SearchInput
+                            id={id}
+                            inputRef={this.mobileSearchInput}
+                            autocompletePositionFunction={this.getMobileSearchAutocompletePosition}
+                            onBeforeGoToUrl={this.mobileSearchModalCloseHandler}
+                            extendedStyles={styles.mobileSearchInputStyles}
+                        />
+                    }
                 />
             </>
         );
@@ -520,12 +576,12 @@ const mainNavigation: WidgetModule = {
                         index,
                     });
                 },
-                onDoneEditingRow: (dispatch) => {
+                onDoneEditingRow: dispatch => {
                     dispatch({
                         type: "SendToSite/CloseMainNavigation",
                     });
                 },
-                onLoad: (dispatch) => {
+                onLoad: dispatch => {
                     dispatch({
                         type: "SendToSite/CloseMainNavigation",
                     });
@@ -548,9 +604,11 @@ const mainNavigation: WidgetModule = {
                         if (!categoryState.value) {
                             if (!categoryState.isLoading) {
                                 return dispatch => {
-                                    dispatch(loadCategory({
-                                        id: value,
-                                    }));
+                                    dispatch(
+                                        loadCategory({
+                                            id: value,
+                                        }),
+                                    );
                                 };
                             }
                             return "";
@@ -599,25 +657,20 @@ const mainNavigation: WidgetModule = {
                         name: "overrideTitle",
                         editorTemplate: "TextField",
                         defaultValue: "",
-                        isVisible: (item) => item.fields.destination.type !== "Url",
+                        isVisible: item => item.fields.destination.type !== "Url",
                     },
                     {
                         name: "title",
                         editorTemplate: "TextField",
                         defaultValue: "",
                         isRequired: true,
-                        isVisible: (item) => item.fields.destination.type === "Url",
+                        isVisible: item => item.fields.destination.type === "Url",
                     },
                     {
                         name: "numberOfColumns",
                         editorTemplate: "DropDownField",
                         defaultValue: 6,
-                        options: [
-                            { value: 2 },
-                            { value: 3 },
-                            { value: 4 },
-                            { value: 6 },
-                        ],
+                        options: [{ value: 2 }, { value: 3 }, { value: 4 }, { value: 6 }],
                         isRequired: true,
                         isVisible: (item: HasFields) => item.fields.linkType === "MegaMenu",
                     },
@@ -625,12 +678,7 @@ const mainNavigation: WidgetModule = {
                         name: "maxDepth",
                         editorTemplate: "DropDownField",
                         defaultValue: 3,
-                        options: [
-                            { value: 1 },
-                            { value: 2 },
-                            { value: 3 },
-                            { value: 4 },
-                        ],
+                        options: [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }],
                         isRequired: true,
                         isVisible: (item: HasFields) => item.fields.linkType === "CascadingMenu",
                     },

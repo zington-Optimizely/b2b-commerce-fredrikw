@@ -7,10 +7,10 @@ export interface HasProductContext {
 }
 
 export interface ProductContextModel {
-    product: ProductModel,
-    productInfo: ProductInfo,
-    onQtyOrderedChanged?: (qtyOrdered: number) => void,
-    onUnitOfMeasureChanged?: (unitOfMeasure: string) => void,
+    product: ProductModel;
+    productInfo: ProductInfo;
+    onQtyOrderedChanged?: (qtyOrdered: number) => void;
+    onUnitOfMeasureChanged?: (unitOfMeasure: string) => void;
 }
 
 export type HasProduct = ProductContextModel;
@@ -21,7 +21,7 @@ export function withProductContext<P extends HasProductContext>(Component: React
     return function ProductComponent(props: Omit<P, keyof HasProductContext>) {
         return (
             <ProductContext.Consumer>
-                {value => <Component {...props as P} productContext={value}/>}
+                {value => <Component {...(props as P)} productContext={value} />}
             </ProductContext.Consumer>
         );
     };
@@ -29,13 +29,18 @@ export function withProductContext<P extends HasProductContext>(Component: React
 
 export function withProduct<P extends HasProduct>(Component: React.ComponentType<P>) {
     return function ProductComponent(props: Omit<P, keyof HasProduct>) {
-        return <ProductContext.Consumer>
-            {value => <Component {...props as P}
-                                 product={value.product}
-                                 productInfo={value.productInfo}
-                                 onQtyOrderedChanged={value.onQtyOrderedChanged}
-                                 onUnitOfMeasureChanged={value.onUnitOfMeasureChanged}
-            />}
-        </ProductContext.Consumer>;
+        return (
+            <ProductContext.Consumer>
+                {value => (
+                    <Component
+                        {...(props as P)}
+                        product={value.product}
+                        productInfo={value.productInfo}
+                        onQtyOrderedChanged={value.onQtyOrderedChanged}
+                        onUnitOfMeasureChanged={value.onUnitOfMeasureChanged}
+                    />
+                )}
+            </ProductContext.Consumer>
+        );
     };
 }

@@ -12,14 +12,23 @@ export function getPromotionsDataView(state: ApplicationState, cartId: string | 
 }
 
 export function getOrderPromotions(promotions: PromotionModel[]) {
-    return promotions.filter(promotion => promotion.promotionResultType === "AmountOffOrder" || promotion.promotionResultType === "PercentOffOrder");
+    return promotions.filter(
+        promotion =>
+            promotion.promotionResultType === "AmountOffOrder" || promotion.promotionResultType === "PercentOffOrder",
+    );
 }
 
 export function getShippingPromotions(promotions: PromotionModel[]) {
-    return promotions.filter(promotion => promotion.promotionResultType === "AmountOffShipping" || promotion.promotionResultType === "PercentOffShipping");
+    return promotions.filter(
+        promotion =>
+            promotion.promotionResultType === "AmountOffShipping" ||
+            promotion.promotionResultType === "PercentOffShipping",
+    );
 }
 
 export function getDiscountTotal(promotions: PromotionModel[]) {
-    return getOrderPromotions(promotions).concat(getShippingPromotions(promotions))
-        .map(promotion => promotion.amount).reduce((prev, curr) => curr + prev, 0);
+    return getOrderPromotions(promotions)
+        .concat(getShippingPromotions(promotions))
+        .map(promotion => promotion.amount)
+        .reduce((prev, curr) => curr + prev, 0);
 }

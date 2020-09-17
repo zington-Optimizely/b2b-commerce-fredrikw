@@ -20,7 +20,9 @@ const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["def
         `,
     },
     cssOverrides: {
-        ellipsis: css` margin: 0 2px; `,
+        ellipsis: css`
+            margin: 0 2px;
+        `,
         currentButton: css<any>`
             &:hover {
                 background: ${({ theme }) => resolveColor("primary", theme)};
@@ -36,9 +38,15 @@ const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["def
                 width: 240px;
                 padding-right: 15px;
             `,
-            formInputWrapper: css` max-width: 75px; `,
+            formInputWrapper: css`
+                max-width: 75px;
+            `,
         },
-        labelProps: { css: css` width: 155px; ` },
+        labelProps: {
+            css: css`
+                width: 155px;
+            `,
+        },
     },
     navIconsSrc: {
         firstPage: "ChevronsLeft",

@@ -39,19 +39,23 @@ const PayPalButton = ({ extendedStyles, submitPayPalRequest, error }: OwnProps) 
 
     return (
         <StyledWrapper {...styles.container} data-test-selector="payPalButton">
-            <Clickable id={inputId} onClick={submitPayPalRequest} title={translate("PayPal Express Checkout")} data-test-selector="payPalButtonClickable">
-                <LazyImage src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-large.png"
+            <Clickable
+                id={inputId}
+                onClick={submitPayPalRequest}
+                title={translate("PayPal Express Checkout")}
+                data-test-selector="payPalButtonClickable"
+            >
+                <LazyImage
+                    src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-large.png"
                     altText={translate("Express Checkout")}
-                    {...styles.image}>
-                </LazyImage>
+                    {...styles.image}
+                ></LazyImage>
             </Clickable>
-            {error
-                && <Typography
-                    {...styles.errorText}
-                    data-test-selector="payPalButtonError"
-                >
+            {error && (
+                <Typography {...styles.errorText} data-test-selector="payPalButtonError">
                     {error}
-                </Typography>}
+                </Typography>
+            )}
         </StyledWrapper>
     );
 };

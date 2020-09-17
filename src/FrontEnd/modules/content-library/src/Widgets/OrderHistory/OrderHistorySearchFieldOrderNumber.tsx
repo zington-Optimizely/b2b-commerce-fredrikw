@@ -8,7 +8,7 @@ export const orderNumberStyles: SearchTextFieldStyles = {};
 const styles = orderNumberStyles;
 
 const OrderHistorySearchFieldOrderNumber: React.FunctionComponent<WidgetProps> = () => {
-    return(
+    return (
         <SearchTextField
             styles={styles}
             parameterField="orderNumber"
@@ -21,7 +21,6 @@ const OrderHistorySearchFieldOrderNumber: React.FunctionComponent<WidgetProps> =
 };
 
 const widgetModule: WidgetModule = {
-
     component: OrderHistorySearchFieldOrderNumber,
     definition: {
         group: "Order History",

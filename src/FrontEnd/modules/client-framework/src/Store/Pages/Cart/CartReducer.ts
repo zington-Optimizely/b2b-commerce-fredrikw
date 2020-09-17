@@ -17,7 +17,7 @@ const reducer = {
     "Pages/Cart/BeginRemoveCartLine": (draft: Draft<CartState>, action: { cartLineId: string }) => {
         draft.isRemovingCartLine[action.cartLineId] = true;
     },
-    "Pages/Cart/CompleteRemoveCartLine": (draft: Draft<CartState>, action: { cartLineId: string; }) => {
+    "Pages/Cart/CompleteRemoveCartLine": (draft: Draft<CartState>, action: { cartLineId: string }) => {
         delete draft.isRemovingCartLine[action.cartLineId];
     },
 };

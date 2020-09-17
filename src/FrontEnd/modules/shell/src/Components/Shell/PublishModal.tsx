@@ -26,10 +26,7 @@ import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
-        shellContext: {
-            languagesById,
-            personasById,
-        },
+        shellContext: { languagesById, personasById },
         publishModal: {
             showModal,
             publishInTheFuture,
@@ -45,7 +42,7 @@ const mapStateToProps = (state: ShellState) => {
 
     const page = getCurrentPageForShell(state);
 
-    return ({
+    return {
         visible: !!showModal,
         publishImmediately: !publishInTheFuture,
         page,
@@ -59,7 +56,7 @@ const mapStateToProps = (state: ShellState) => {
         failedToPublishPageIds,
         isBulkPublish,
         pagePublishInfoIsSelected,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -96,12 +93,20 @@ const styles: PublishModalStyles = {
                 width: 70%;
                 margin-top: 2px !important;
             `,
-            inputSelect: css` padding: 0 9px 0 9px; `,
-            datePicker: css` span { background-color: transparent; } `,
+            inputSelect: css`
+                padding: 0 9px 0 9px;
+            `,
+            datePicker: css`
+                span {
+                    background-color: transparent;
+                }
+            `,
         },
         calendarIconProps: {
             color: "text.main",
-            css: css` margin-right: -9px; `,
+            css: css`
+                margin-right: -9px;
+            `,
             src: "Calendar",
         },
         clearIconProps: {
@@ -152,40 +157,43 @@ const styles: PublishModalStyles = {
     },
     selectAllCheckbox: {
         css: css`
-        span {
-            background: #fff;
-        }
+            span {
+                background: #fff;
+            }
 
-        padding-top: 2px;
-    `,
+            padding-top: 2px;
+        `,
     },
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const PublishModal: React.FC<Props> = ({
-                                           visible,
-                                           closePublishModal,
-                                           loadAllPagePublishInfo,
-                                           publishImmediately,
-                                           togglePublishInTheFuture,
-                                           pagePublishInfosState,
-                                           page: { id, fields: { title } },
-                                           publish,
-                                           languagesById,
-                                           personasById,
-                                           permissions,
-                                           publishOn,
-                                           rollbackOn,
-                                           setPublishOn,
-                                           setRollbackOn,
-                                           isEditingExistingPublish,
-                                           failedToPublishPageIds,
-                                           isBulkPublish,
-                                           pagePublishInfoIsSelected,
-                                           setIsSelected,
-                                           setIsSelectedForAll,
-                                       }) => {
+    visible,
+    closePublishModal,
+    loadAllPagePublishInfo,
+    publishImmediately,
+    togglePublishInTheFuture,
+    pagePublishInfosState,
+    page: {
+        id,
+        fields: { title },
+    },
+    publish,
+    languagesById,
+    personasById,
+    permissions,
+    publishOn,
+    rollbackOn,
+    setPublishOn,
+    setRollbackOn,
+    isEditingExistingPublish,
+    failedToPublishPageIds,
+    isBulkPublish,
+    pagePublishInfoIsSelected,
+    setIsSelected,
+    setIsSelectedForAll,
+}) => {
     const [selectAll, setSelectAll] = React.useState<boolean | "indeterminate">(true);
 
     useEffect(() => {
@@ -205,14 +213,18 @@ const PublishModal: React.FC<Props> = ({
         }
     }, [pagePublishInfoIsSelected, setIsSelected]);
 
-    const nothingToPublish = pagePublishInfosState.value
-        && pagePublishInfosState.value.length < 1
-        && (isBulkPublish ? "There is no content to publish." : "There is no content on this page to publish.");
+    const nothingToPublish =
+        pagePublishInfosState.value &&
+        pagePublishInfosState.value.length < 1 &&
+        (isBulkPublish ? "There is no content to publish." : "There is no content on this page to publish.");
 
-    const allPagesSkipped = !!failedToPublishPageIds
-        && Object.keys(failedToPublishPageIds).length > 0
-        && !!pagePublishInfosState.value
-        && pagePublishInfoIsSelected.every((o, index) => !o || failedToPublishPageIds[pagePublishInfosState.value![index].pageId]);
+    const allPagesSkipped =
+        !!failedToPublishPageIds &&
+        Object.keys(failedToPublishPageIds).length > 0 &&
+        !!pagePublishInfosState.value &&
+        pagePublishInfoIsSelected.every(
+            (o, index) => !o || failedToPublishPageIds[pagePublishInfosState.value![index].pageId],
+        );
 
     const hasFailedToPublishPages = failedToPublishPageIds && Object.keys(failedToPublishPageIds).length > 0;
 
@@ -229,147 +241,208 @@ const PublishModal: React.FC<Props> = ({
         setSelectAll(value);
     };
 
-    const size = (nothingToPublish || hasFailedToPublishPages) ? 350
-        : isBulkPublish ? 980
-        : undefined;
+    const size = nothingToPublish || hasFailedToPublishPages ? 350 : isBulkPublish ? 980 : undefined;
 
-    return <ModalStyle
-        isCloseable={false}
-        data-test-selector="publishModal"
-        size={size}
-        isOpen={visible}
-        handleClose={closePublishModal}
-        headline="Publish Page"
-        data-hide={pagePublishInfosState.isLoading}
-        {...styles.modal}
-    >
-        <MessageContainer>
-            {nothingToPublish && <Typography color="danger" data-test-selector="publishModal_message">{nothingToPublish}</Typography>}
-            {hasFailedToPublishPages
-            && <Typography color="danger" data-test-selector="publishModal_failed_pages_message">
-                Publication of selected page(s) has failed. Would you like to skip these pages and continue publishing?
-                <ul>
-                    {pagePublishInfosState?.value?.map(({ pageId, name }) => {
-                        return failedToPublishPageIds?.[pageId] ? <li key={pageId}>{name}</li> : null;
-                    })}
-                </ul>
-            </Typography>}
-        </MessageContainer>
-        {!nothingToPublish && !hasFailedToPublishPages && <>
-            <PublishableContextTable cellSpacing={0}>
-                <thead>
-                <tr>
-                    <th>
-                        <Checkbox data-test-selector="publishModal_selectAll" {...styles.selectAllCheckbox}
-                                  disabled={isEditingExistingPublish}
-                                  checked={selectAll}
-                                  onChange={selectAllChangeHandler}></Checkbox>
-                    </th>
-                    <th>Page</th>
-                    <th>Language</th>
-                    <th>Device</th>
-                    <th>Customer Segment</th>
-                    <th>Edited By</th>
-                    <th>Edited On</th>
-                    <th>Compare</th>
-                    {isBulkPublish && <th>Notes</th>}
-                </tr>
-                </thead>
-                <tbody data-test-selector="publishModal_contextsAvailableToPublish">
-                {
-                    pagePublishInfosState?.value?.map((pagePublishInfo, index) => {
-                        const { languageId, personaId, deviceType, modifiedBy, modifiedOn, pageId, name } = pagePublishInfo;
-                        const contextString = getContextualId(languageId, deviceType, personaId, isBulkPublish ? pageId : "");
-                        const testSelector = `publishContextRow${index}`;
-                        return <tr key={contextString} data-test-selector={testSelector}>
-                            <td>
-                                <Checkbox
-                                    data-test-selector={`${testSelector}_check`}
-                                    checked={pagePublishInfoIsSelected[index] || isEditingExistingPublish}
-                                    disabled={isEditingExistingPublish}
-                                    onChange={(_, value) => {
-                                        setIsSelected(index, value);
-                                    }}
-                                />
-                            </td>
-                            <td data-test-selector={`${testSelector}_title`}><NameStyle>{isBulkPublish ? name : title} <BadgeDefault/></NameStyle></td>
-                            <td data-test-selector={`${testSelector}_language`}>{!languageId ? "All" : languagesById[languageId]?.description ?? languageId}</td>
-                            <td data-test-selector={`${testSelector}_device`}>{deviceType || "All"}</td>
-                            <td data-test-selector={`${testSelector}_persona`}>{!personaId ? "All" : personasById[personaId]?.name ?? personaId}</td>
-                            <td data-test-selector={`${testSelector}_modifiedBy`}>{modifiedBy}</td>
-                            <td data-test-selector={`${testSelector}_modifiedOn`}>{new Date(modifiedOn).toLocaleString()}</td>
-                            <td>
-                                <ButtonInTable
-                                    data-test-selector={`${contextString}_compareButton`}
-                                    variant="tertiary"
-                                    disabled // TODO ISC-11132
-                                >Compare</ButtonInTable>
-                            </td>
-                            {isBulkPublish && <td>
-                                <ButtonInTable
-                                    data-test-selector={`${contextString}_addNotesButton`}
-                                    variant="tertiary"
-                                    disabled // TODO ISC-12159
-                                >Add Notes</ButtonInTable>
-                            </td>}
-                        </tr>;
-                    })
-                }
-                </tbody>
-            </PublishableContextTable>
-            <PublishLaterContainer>
-                <div>
-                    <Checkbox checked={publishImmediately}
-                          onChange={togglePublishInTheFuture}>Publish Immediately</Checkbox><br/>
-                </div>
-                <div>
-                    <DatePicker
-                        {...styles.datePicker}
-                        disabled={publishImmediately || !permissions?.canPublishContent}
-                        selectedDay={publishOn}
-                        onDayChange={publishOnChangeHandler}
-                        dateTimePickerProps={{
-                            minDate: new Date(),
-                            maxDate: rollbackOn,
-                        }}
-                        label="Publish On"
-                        format="MM/dd/y hh:mm a"/>
-                </div>
-                <div>
-                    <DatePicker
-                        {...styles.datePicker}
-                        disabled={publishImmediately || !permissions?.canPublishContent}
-                        selectedDay={rollbackOn}
-                        onDayChange={rollbackOnChangeHandler}
-                        dateTimePickerProps={{
-                            minDate: publishOn || new Date(),
-                        }}
-                        format="MM/dd/y hh:mm a"
-                        label={<>
-                            Rollback On (Optional)
-                            <Tooltip
-                                {...styles.rollbackOnTooltip}
-                                text={"When this time is reached the published changes will be rolled back "
-                                + "and the previously published version of the page will display."}/>
-                        </>}/>
-                </div>
-            </PublishLaterContainer>
-        </>}
-        <PublishCancelButtonContainer>
-            <CancelButton variant="tertiary"
-                          onClick={closePublishModal}>Cancel</CancelButton>
-            {!nothingToPublish && <Button
-                variant="primary"
-                data-test-selector="publishModal_publish"
-                disabled={!pagePublishInfosState.value || !!nothingToPublish || !permissions?.canPublishContent || (pagePublishInfoIsSelected.every(o => !o) && !isEditingExistingPublish)
-                || (!publishImmediately && !publishOn && !rollbackOn && !isEditingExistingPublish) || allPagesSkipped}
-                onClick={() => publish()}>{hasFailedToPublishPages ? "Skip and publish" : "Publish"}</Button>}
-        </PublishCancelButtonContainer>
-    </ModalStyle>;
+    return (
+        <ModalStyle
+            isCloseable={false}
+            data-test-selector="publishModal"
+            size={size}
+            isOpen={visible}
+            handleClose={closePublishModal}
+            headline="Publish Page"
+            data-hide={pagePublishInfosState.isLoading}
+            {...styles.modal}
+        >
+            <MessageContainer>
+                {nothingToPublish && (
+                    <Typography color="danger" data-test-selector="publishModal_message">
+                        {nothingToPublish}
+                    </Typography>
+                )}
+                {hasFailedToPublishPages && (
+                    <Typography color="danger" data-test-selector="publishModal_failed_pages_message">
+                        Publication of selected page(s) has failed. Would you like to skip these pages and continue
+                        publishing?
+                        <ul>
+                            {pagePublishInfosState?.value?.map(({ pageId, name }) => {
+                                return failedToPublishPageIds?.[pageId] ? <li key={pageId}>{name}</li> : null;
+                            })}
+                        </ul>
+                    </Typography>
+                )}
+            </MessageContainer>
+            {!nothingToPublish && !hasFailedToPublishPages && (
+                <>
+                    <PublishableContextTable cellSpacing={0}>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <Checkbox
+                                        data-test-selector="publishModal_selectAll"
+                                        {...styles.selectAllCheckbox}
+                                        disabled={isEditingExistingPublish}
+                                        checked={selectAll}
+                                        onChange={selectAllChangeHandler}
+                                    ></Checkbox>
+                                </th>
+                                <th>Page</th>
+                                <th>Language</th>
+                                <th>Device</th>
+                                <th>Customer Segment</th>
+                                <th>Edited By</th>
+                                <th>Edited On</th>
+                                <th>Compare</th>
+                                {isBulkPublish && <th>Notes</th>}
+                            </tr>
+                        </thead>
+                        <tbody data-test-selector="publishModal_contextsAvailableToPublish">
+                            {pagePublishInfosState?.value?.map((pagePublishInfo, index) => {
+                                const {
+                                    languageId,
+                                    personaId,
+                                    deviceType,
+                                    modifiedBy,
+                                    modifiedOn,
+                                    pageId,
+                                    name,
+                                } = pagePublishInfo;
+                                const contextString = getContextualId(
+                                    languageId,
+                                    deviceType,
+                                    personaId,
+                                    isBulkPublish ? pageId : "",
+                                );
+                                const testSelector = `publishContextRow${index}`;
+                                return (
+                                    <tr key={contextString} data-test-selector={testSelector}>
+                                        <td>
+                                            <Checkbox
+                                                data-test-selector={`${testSelector}_check`}
+                                                checked={pagePublishInfoIsSelected[index] || isEditingExistingPublish}
+                                                disabled={isEditingExistingPublish}
+                                                onChange={(_, value) => {
+                                                    setIsSelected(index, value);
+                                                }}
+                                            />
+                                        </td>
+                                        <td data-test-selector={`${testSelector}_title`}>
+                                            <NameStyle>
+                                                {isBulkPublish ? name : title} <BadgeDefault />
+                                            </NameStyle>
+                                        </td>
+                                        <td data-test-selector={`${testSelector}_language`}>
+                                            {!languageId ? "All" : languagesById[languageId]?.description ?? languageId}
+                                        </td>
+                                        <td data-test-selector={`${testSelector}_device`}>{deviceType || "All"}</td>
+                                        <td data-test-selector={`${testSelector}_persona`}>
+                                            {!personaId ? "All" : personasById[personaId]?.name ?? personaId}
+                                        </td>
+                                        <td data-test-selector={`${testSelector}_modifiedBy`}>{modifiedBy}</td>
+                                        <td data-test-selector={`${testSelector}_modifiedOn`}>
+                                            {new Date(modifiedOn).toLocaleString()}
+                                        </td>
+                                        <td>
+                                            <ButtonInTable
+                                                data-test-selector={`${contextString}_compareButton`}
+                                                variant="tertiary"
+                                                disabled // TODO ISC-11132
+                                            >
+                                                Compare
+                                            </ButtonInTable>
+                                        </td>
+                                        {isBulkPublish && (
+                                            <td>
+                                                <ButtonInTable
+                                                    data-test-selector={`${contextString}_addNotesButton`}
+                                                    variant="tertiary"
+                                                    disabled // TODO ISC-12159
+                                                >
+                                                    Add Notes
+                                                </ButtonInTable>
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </PublishableContextTable>
+                    <PublishLaterContainer>
+                        <div>
+                            <Checkbox checked={publishImmediately} onChange={togglePublishInTheFuture}>
+                                Publish Immediately
+                            </Checkbox>
+                            <br />
+                        </div>
+                        <div>
+                            <DatePicker
+                                {...styles.datePicker}
+                                disabled={publishImmediately || !permissions?.canPublishContent}
+                                selectedDay={publishOn}
+                                onDayChange={publishOnChangeHandler}
+                                dateTimePickerProps={{
+                                    minDate: new Date(),
+                                    maxDate: rollbackOn,
+                                }}
+                                label="Publish On"
+                                format="MM/dd/y hh:mm a"
+                            />
+                        </div>
+                        <div>
+                            <DatePicker
+                                {...styles.datePicker}
+                                disabled={publishImmediately || !permissions?.canPublishContent}
+                                selectedDay={rollbackOn}
+                                onDayChange={rollbackOnChangeHandler}
+                                dateTimePickerProps={{
+                                    minDate: publishOn || new Date(),
+                                }}
+                                format="MM/dd/y hh:mm a"
+                                label={
+                                    <>
+                                        Rollback On (Optional)
+                                        <Tooltip
+                                            {...styles.rollbackOnTooltip}
+                                            text={
+                                                "When this time is reached the published changes will be rolled back " +
+                                                "and the previously published version of the page will display."
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
+                        </div>
+                    </PublishLaterContainer>
+                </>
+            )}
+            <PublishCancelButtonContainer>
+                <CancelButton variant="tertiary" onClick={closePublishModal}>
+                    Cancel
+                </CancelButton>
+                {!nothingToPublish && (
+                    <Button
+                        variant="primary"
+                        data-test-selector="publishModal_publish"
+                        disabled={
+                            !pagePublishInfosState.value ||
+                            !!nothingToPublish ||
+                            !permissions?.canPublishContent ||
+                            (pagePublishInfoIsSelected.every(o => !o) && !isEditingExistingPublish) ||
+                            (!publishImmediately && !publishOn && !rollbackOn && !isEditingExistingPublish) ||
+                            allPagesSkipped
+                        }
+                        onClick={() => publish()}
+                    >
+                        {hasFailedToPublishPages ? "Skip and publish" : "Publish"}
+                    </Button>
+                )}
+            </PublishCancelButtonContainer>
+        </ModalStyle>
+    );
 };
 
 const ModalStyle = styled(Modal)`
-    &[data-hide='true'] > div {
+    &[data-hide="true"] > div {
         display: none;
     }
 `;

@@ -1,11 +1,7 @@
 import * as React from "react";
 import DateTimePicker, { DateTimePickerProps } from "react-datetime-picker/dist/entry.nostyle";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import FormField, {
-    FormFieldComponentProps,
-    FormFieldPresentationProps,
-    FormFieldSizeVariant,
-} from "../FormField";
+import FormField, { FormFieldComponentProps, FormFieldPresentationProps, FormFieldSizeVariant } from "../FormField";
 import { sizeVariantValues } from "../FormField/formStyles";
 import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps } from "../Icon";
@@ -22,12 +18,12 @@ import safeColor from "../utilities/safeColor";
 import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden";
 
-export interface DatePickerPresentationProps extends
-    FormFieldPresentationProps<DatePickerComponentProps>,
-    Partial<Pick<DateTimePickerProps, "format">> {
+export interface DatePickerPresentationProps
+    extends FormFieldPresentationProps<DatePickerComponentProps>,
+        Partial<Pick<DateTimePickerProps, "format">> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable
-    */
+     */
     cssOverrides?: {
         datePicker?: StyledProp<DatePickerComponentProps>;
         descriptionWrapper?: StyledProp<DatePickerComponentProps>;
@@ -43,37 +39,37 @@ export interface DatePickerPresentationProps extends
     calendarIconProps?: IconPresentationProps;
     /** Object of values describing the placeholders to be used for each time unit.
      * @themable */
-    placeholders?: Partial<Pick<DateTimePickerProps,
-        "dayPlaceholder" |
-        "monthPlaceholder" |
-        "yearPlaceholder" |
-        "hourPlaceholder" |
-        "minutePlaceholder" |
-        "secondPlaceholder"
-    >>;
+    placeholders?: Partial<
+        Pick<
+            DateTimePickerProps,
+            | "dayPlaceholder"
+            | "monthPlaceholder"
+            | "yearPlaceholder"
+            | "hourPlaceholder"
+            | "minutePlaceholder"
+            | "secondPlaceholder"
+        >
+    >;
     /** react-datetime-picker props that govern presentational concerns.
      * @themable */
-    dateTimePickerProps?: Partial<Pick<DateTimePickerProps,
-        "calendarType" |
-        "showLeadingZeros" |
-        "showFixedNumberOfWeeks" |
-        "showNeighboringMonth"
-    >>;
+    dateTimePickerProps?: Partial<
+        Pick<
+            DateTimePickerProps,
+            "calendarType" | "showLeadingZeros" | "showFixedNumberOfWeeks" | "showNeighboringMonth"
+        >
+    >;
 }
 
 export interface DateTimePickerLibComponentProps extends DateTimePickerProps {}
 
-interface DatePickerComponentProps extends
-    ThemeProps<BaseTheme>,
-    Partial<Pick<FormFieldComponentProps,
-        "disabled" |
-        "error" |
-        "hint" |
-        "label" |
-        "labelPosition" |
-        "labelId" |
-        "required"
->> {
+interface DatePickerComponentProps
+    extends ThemeProps<BaseTheme>,
+        Partial<
+            Pick<
+                FormFieldComponentProps,
+                "disabled" | "error" | "hint" | "label" | "labelPosition" | "labelId" | "required"
+            >
+        > {
     /** Props to be passed into the `react-datetime-picker` input element. */
     dateTimePickerProps?: DateTimePickerProps;
     /**
@@ -99,7 +95,7 @@ export interface DatePickerState {
 
 export type DatePickerProps = DatePickerPresentationProps & DatePickerComponentProps;
 
-const DatePickerIcon = styled(Icon)<{_sizeVariant: FormFieldSizeVariant} & ThemeProps<BaseTheme>>`
+const DatePickerIcon = styled(Icon)<{ _sizeVariant: FormFieldSizeVariant } & ThemeProps<BaseTheme>>`
     width: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
     height: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
     padding: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].iconPadding - 2}px;
@@ -107,7 +103,9 @@ const DatePickerIcon = styled(Icon)<{_sizeVariant: FormFieldSizeVariant} & Theme
     border-radius: 100%;
 `;
 
-const DateTimePickerStyle = styled.div<{_sizeVariant: FormFieldSizeVariant, css?: StyledProp, disabled: boolean} & ThemeProps<BaseTheme>>`
+const DateTimePickerStyle = styled.div<
+    { _sizeVariant: FormFieldSizeVariant; css?: StyledProp; disabled: boolean } & ThemeProps<BaseTheme>
+>`
     button:focus {
         /* outline is added on span for border reasons */
         outline: none;
@@ -118,7 +116,7 @@ const DateTimePickerStyle = styled.div<{_sizeVariant: FormFieldSizeVariant, css?
         }
     }
     .react-datetime-picker {
-        color: ${({ disabled, theme }) => disabled ? theme.colors.text.disabled : theme.colors.text.main};
+        color: ${({ disabled, theme }) => (disabled ? theme.colors.text.disabled : theme.colors.text.main)};
         display: inline-flex;
         position: relative;
         &, & *, & *::before, & *::after {
@@ -308,7 +306,8 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
         };
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps: DatePickerProps) { // eslint-disable-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps: DatePickerProps) {
+        // eslint-disable-line camelcase
         if (nextProps.selectedDay !== this.props.selectedDay) {
             this.setState({
                 isEmpty: !nextProps.selectedDay,
@@ -344,7 +343,8 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                 if (typeof this.props.onDayChange === "function") {
                     this.props.onDayChange(this.state);
                 }
-            });
+            },
+        );
     };
 
     render() {
@@ -360,12 +360,12 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
         } = this.props;
         // Because disabled html attribute doesn't accept undefined
         // eslint-disable-next-line no-unneeded-ternary
-        const isDisabled = (disable || disabled) ? true : false;
+        const isDisabled = disable || disabled ? true : false;
         const { selectedDay, isEmpty, selectedDayDisabled } = this.state;
-        const {
-            applyProp,
-            spreadProps,
-        } = applyPropBuilder(this.props, { component: "datePicker", category: "formField" });
+        const { applyProp, spreadProps } = applyPropBuilder(this.props, {
+            component: "datePicker",
+            category: "formField",
+        });
         const inputId = this.props.uid || uniqueId();
         const descriptionId = `${inputId}-description`;
         const sizeVariant: FormFieldSizeVariant = applyProp("sizeVariant", "default");
@@ -383,22 +383,26 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
             >
                 <DateTimePicker
                     value={selectedDay}
-                    calendarIcon={<>
-                        <DatePickerIcon
-                            _sizeVariant={sizeVariant}
-                            {...calendarIconProps}
-                            color={isDisabled ? "text.disabled" : calendarIconProps.color}
-                        />
-                        <VisuallyHidden>{translate("open or close calendar")}</VisuallyHidden>
-                    </>}
-                    clearIcon={<>
-                        <DatePickerIcon
-                            _sizeVariant={sizeVariant}
-                            {...clearIconProps}
-                            color={isDisabled ? "text.disabled" : clearIconProps.color}
-                        />
-                        <VisuallyHidden>{translate("clear date")}</VisuallyHidden>
-                    </>}
+                    calendarIcon={
+                        <>
+                            <DatePickerIcon
+                                _sizeVariant={sizeVariant}
+                                {...calendarIconProps}
+                                color={isDisabled ? "text.disabled" : calendarIconProps.color}
+                            />
+                            <VisuallyHidden>{translate("open or close calendar")}</VisuallyHidden>
+                        </>
+                    }
+                    clearIcon={
+                        <>
+                            <DatePickerIcon
+                                _sizeVariant={sizeVariant}
+                                {...clearIconProps}
+                                color={isDisabled ? "text.disabled" : clearIconProps.color}
+                            />
+                            <VisuallyHidden>{translate("clear date")}</VisuallyHidden>
+                        </>
+                    }
                     disabled={isDisabled}
                     {...otherProps}
                     format={applyProp("format", "MM/dd/y")}
@@ -417,9 +421,11 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                     formInput={pickerInput}
                     inputId={inputId}
                     cssOverrides={_cssOverrides}
-                    error={selectedDayDisabled || (required && isEmpty)
-                        ? (error || translate("please choose a valid date"))
-                        : null}
+                    error={
+                        selectedDayDisabled || (required && isEmpty)
+                            ? error || translate("please choose a valid date")
+                            : null
+                    }
                     {...this.props}
                 />
             </>

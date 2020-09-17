@@ -32,11 +32,9 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-});
+const mapStateToProps = (state: ApplicationState) => ({});
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -67,17 +65,23 @@ export const productLinesStyles: BrandDetailsProductLinesStyles = {
     },
     title: {
         variant: "h3",
-        css: css` margin-bottom: 0; `,
+        css: css`
+            margin-bottom: 0;
+        `,
     },
     container: {
-        css: css` margin: 15px; `,
+        css: css`
+            margin: 15px;
+        `,
     },
     productLineContainer: {
         gap: 10,
     },
     innerProductLineContainer: {
         gap: 0,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     productLineItemColumn: {
         width: [6, 6, 12, 12, 12],
@@ -141,16 +145,12 @@ const styles = productLinesStyles;
 const BrandDetailsProductLines: FC<Props> = ({ fields }) => {
     const { isLoading, value: brandProductLines } = useContext(BrandProductLinesStateContext);
     const { title, showImages, gridType, maxToShow } = fields;
-    const productLineItemStyles = (gridType === "row") ? styles.productLineItemRow : styles.productLineItemColumn;
+    const productLineItemStyles = gridType === "row" ? styles.productLineItemRow : styles.productLineItemColumn;
     const [viewCount, setViewCount] = React.useState(maxToShow);
-    useEffect(
-        () => {
-            setViewCount(maxToShow);
-        },
-        [maxToShow],
-    );
-    if (isLoading
-        || (brandProductLines && brandProductLines!.length === 0)) {
+    useEffect(() => {
+        setViewCount(maxToShow);
+    }, [maxToShow]);
+    if (isLoading || (brandProductLines && brandProductLines!.length === 0)) {
         return null;
     }
 
@@ -161,36 +161,45 @@ const BrandDetailsProductLines: FC<Props> = ({ fields }) => {
         if (maxToShow === 0 || (brandProductLines || []).length <= viewCount) {
             return null;
         }
-        return (<GridItem {...styles.viewAllButtonItem}>
-            <Button onClick={handleShowAllClicked} {...styles.viewAllButton} data-test-selector="brandProductLineShowAllLink">
-                {translate("Show All")}
-            </Button>
-        </GridItem>);
+        return (
+            <GridItem {...styles.viewAllButtonItem}>
+                <Button
+                    onClick={handleShowAllClicked}
+                    {...styles.viewAllButton}
+                    data-test-selector="brandProductLineShowAllLink"
+                >
+                    {translate("Show All")}
+                </Button>
+            </GridItem>
+        );
     };
 
     return (
         <StyledWrapper {...styles.container} data-test-selector="brandProductLines">
             <GridContainer {...styles.productLineContainer}>
                 <GridItem {...styles.titleItem}>
-                    <Typography
-                        {...styles.title}
-                        data-test-selector="brandProductLinesTitle"
-                    >
+                    <Typography {...styles.title} data-test-selector="brandProductLinesTitle">
                         {title}
                     </Typography>
                 </GridItem>
-                {brandProductLines?.slice(0, viewCount).map(
-                    productLine => <GridItem key={productLine.id} {...productLineItemStyles}>
+                {brandProductLines?.slice(0, viewCount).map(productLine => (
+                    <GridItem key={productLine.id} {...productLineItemStyles}>
                         <GridContainer {...styles.innerProductLineContainer}>
-                            {showImages && <GridItem {...styles.productLineImageItem}>
-                                <Clickable href={productLine.productListPagePath} {...styles.productLineImageClickable}>
-                                    <LazyImage
-                                        src={productLine.featuredImagePath}
-                                        altText={productLine.featuredImageAltText}
-                                        {...styles.productLineImage}
-                                        data-test-selector={`brandProductLineImage_${productLine.id}`} />
-                                </Clickable>
-                            </GridItem>}
+                            {showImages && (
+                                <GridItem {...styles.productLineImageItem}>
+                                    <Clickable
+                                        href={productLine.productListPagePath}
+                                        {...styles.productLineImageClickable}
+                                    >
+                                        <LazyImage
+                                            src={productLine.featuredImagePath}
+                                            altText={productLine.featuredImageAltText}
+                                            {...styles.productLineImage}
+                                            data-test-selector={`brandProductLineImage_${productLine.id}`}
+                                        />
+                                    </Clickable>
+                                </GridItem>
+                            )}
                             <GridItem {...styles.productLineNameLinkItem}>
                                 <Link
                                     href={productLine.productListPagePath}
@@ -201,8 +210,8 @@ const BrandDetailsProductLines: FC<Props> = ({ fields }) => {
                                 </Link>
                             </GridItem>
                         </GridContainer>
-                    </GridItem>)
-                }
+                    </GridItem>
+                ))}
                 {renderShowAllLink()}
             </GridContainer>
         </StyledWrapper>

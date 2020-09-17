@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ requestedPickUpDate?: Date; }>;
+type HandlerType = Handler<{ requestedPickUpDate?: Date }>;
 
 export const DispatchSetRequestedPickUpDate: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetRequestedPickUpDate: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetRequestedPickUpDate,
-];
+export const chain = [DispatchSetRequestedPickUpDate];
 
 const setRequestedPickUpDate = createHandlerChainRunner(chain, "SetRequestedPickUpDate");
 export default setRequestedPickUpDate;

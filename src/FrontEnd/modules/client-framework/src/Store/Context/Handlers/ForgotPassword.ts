@@ -1,8 +1,13 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import {
     forgotPassword as forgotPasswordApi,
-    ForgotPasswordApiParameter, Session,
+    ForgotPasswordApiParameter,
+    Session,
 } from "@insite/client-framework/Services/SessionService";
 
 type ResetPasswordParameter = {
@@ -10,7 +15,11 @@ type ResetPasswordParameter = {
     onError?: (error: string) => void;
 } & HasOnSuccess;
 
-type HandlerType = ApiHandlerDiscreteParameter<ResetPasswordParameter, ForgotPasswordApiParameter, ServiceResult<Session>>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    ResetPasswordParameter,
+    ForgotPasswordApiParameter,
+    ServiceResult<Session>
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = { userName: props.parameter.userName };
@@ -32,12 +41,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     }
 };
 
-export const chain = [
-    PopulateApiParameter,
-    UpdateSession,
-    ExecuteOnErrorCallback,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, UpdateSession, ExecuteOnErrorCallback, ExecuteOnSuccessCallback];
 
 const forgotPassword = createHandlerChainRunner(chain, "ForgotPassword");
 export default forgotPassword;

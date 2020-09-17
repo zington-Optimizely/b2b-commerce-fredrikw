@@ -34,15 +34,16 @@ export const generateTokenExFrameStyleConfig = (props: {
     const border = applyProp("border", "underline");
     const sizeVariant = applyProp("sizeVariant" as any, "default") as keyof typeof sizeVariantValues;
     const cssOverrides = spreadProps("cssOverrides");
-    const baseRaw = `height: ${sizeVariantValues[sizeVariant].height}px;    `
-        + "width: 100%;    "
-        + "box-sizing: border-box;    "
-        + "padding: 0 10px;    "
-        + `font-family: ${get(theme, "typography.body.fontFamily")};    `
-        + `font-size: ${get(theme, "typography.body.size")};    `
-        + `color: ${get(theme, "colors.text.main")};    `
-        + `${borderByState({ border, _sizeVariant: sizeVariant, theme }, "inactive")}    `
-        + `${cssOverrides.inputSelectCss ? cssOverrides.inputSelectCss : ""}`;
+    const baseRaw =
+        `height: ${sizeVariantValues[sizeVariant].height}px;    ` +
+        "width: 100%;    " +
+        "box-sizing: border-box;    " +
+        "padding: 0 10px;    " +
+        `font-family: ${get(theme, "typography.body.fontFamily")};    ` +
+        `font-size: ${get(theme, "typography.body.size")};    ` +
+        `color: ${get(theme, "colors.text.main")};    ` +
+        `${borderByState({ border, _sizeVariant: sizeVariant, theme }, "inactive")}    ` +
+        `${cssOverrides.inputSelectCss ? cssOverrides.inputSelectCss : ""}`;
     const base = baseRaw.replace(/(\r\n|\n|\r)/, "");
     const focusRaw = `${borderByState({ border, _sizeVariant: sizeVariant, theme }, "focus")} outline: 0;`;
     const focus = focusRaw.replace(/(\r\n|\n|\r)/, "");

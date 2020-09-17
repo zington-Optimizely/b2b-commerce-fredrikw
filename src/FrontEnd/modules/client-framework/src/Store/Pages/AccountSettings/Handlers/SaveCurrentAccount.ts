@@ -1,4 +1,7 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { updateAccount, UpdateAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import loadCurrentAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/LoadCurrentAccount";
 import setInitialValues from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/SetInitialValues";
@@ -32,14 +35,7 @@ export const SetInitialValues: HandlerType = props => {
     props.dispatch(setInitialValues());
 };
 
-
-export const chain = [
-    GetCurrentAccount,
-    PopulateApiParameter,
-    CallUpdateAccount,
-    LoadCurrentAccount,
-    SetInitialValues,
-];
+export const chain = [GetCurrentAccount, PopulateApiParameter, CallUpdateAccount, LoadCurrentAccount, SetInitialValues];
 
 const saveCurrentAccount = createHandlerChainRunnerOptionalParameter(chain, {}, "SaveCurrentAccount");
 export default saveCurrentAccount;

@@ -10,15 +10,13 @@ interface OwnProps {
 type Props = OwnProps;
 
 const RfqQuoteDetailsPageTypeLink: FC<Props> = ({ title, quoteId }) => {
-    return createWidgetElement(
-        "Basic/PageTypeLink",
-        {
-            fields: {
-                pageType: "RfqQuoteDetailsPage",
-                overrideTitle: title,
-                queryString: `quoteId=${quoteId}`,
-            },
-        });
+    return createWidgetElement("Basic/PageTypeLink", {
+        fields: {
+            pageType: "RfqQuoteDetailsPage",
+            overrideTitle: title,
+            queryString: `quoteId=${quoteId}`,
+        },
+    });
 };
 
 export default RfqQuoteDetailsPageTypeLink;

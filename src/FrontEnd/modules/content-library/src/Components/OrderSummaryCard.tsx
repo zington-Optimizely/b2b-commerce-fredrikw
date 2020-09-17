@@ -46,19 +46,16 @@ export const orderSummaryCardStyles: OrderSummaryCardStyles = {
     totalGridItem: { width: 6 },
 };
 
-const OrderSummaryCard: FC<Props> = ({
-    language,
-    order,
-    orderSettings,
-    extendedStyles,
-}) => {
+const OrderSummaryCard: FC<Props> = ({ language, order, orderSettings, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(orderSummaryCardStyles, extendedStyles));
 
     const orderDateDisplay = getLocalizedDateTime({
         dateTime: order.orderDate,
         language,
         options: {
-            year: "numeric", month: "numeric", day: "numeric",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
         },
     });
     const orderNumber = order.erpOrderNumber || order.webOrderNumber;
@@ -67,41 +64,43 @@ const OrderSummaryCard: FC<Props> = ({
         <GridItem {...styles.orderSummaryCardGridItem}>
             <GridContainer {...styles.container}>
                 <GridItem {...styles.pageTypeLinkGridItem}>
-                    {orderNumber
-                        && <OrderDetailPageTypeLink title={orderDateDisplay} orderNumber={orderNumber} />
-                    }
+                    {orderNumber && <OrderDetailPageTypeLink title={orderDateDisplay} orderNumber={orderNumber} />}
                 </GridItem>
                 <GridItem {...styles.orderNumberGridItem}>
-                    {order.erpOrderNumber
-                        && <SmallHeadingAndText
+                    {order.erpOrderNumber && (
+                        <SmallHeadingAndText
                             heading={translate("Order #")}
                             text={order.erpOrderNumber}
-                            extendedStyles={styles.orderNumberHeadingAndText} />
-                    }
+                            extendedStyles={styles.orderNumberHeadingAndText}
+                        />
+                    )}
                 </GridItem>
                 <GridItem {...styles.statusGridItem}>
-                    {order.statusDisplay
-                        && <SmallHeadingAndText
+                    {order.statusDisplay && (
+                        <SmallHeadingAndText
                             heading={translate("Status")}
                             text={order.statusDisplay}
-                            extendedStyles={styles.statusHeadingAndText} />
-                    }
+                            extendedStyles={styles.statusHeadingAndText}
+                        />
+                    )}
                 </GridItem>
-                {orderSettings.showWebOrderNumber && order.webOrderNumber
-                    && <GridItem {...styles.webOrderNumberGridItem}>
+                {orderSettings.showWebOrderNumber && order.webOrderNumber && (
+                    <GridItem {...styles.webOrderNumberGridItem}>
                         <SmallHeadingAndText
                             heading={translate("Web Order #")}
                             text={order.webOrderNumber}
-                            extendedStyles={styles.webOrderNumberHeadingAndText} />
+                            extendedStyles={styles.webOrderNumberHeadingAndText}
+                        />
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.totalGridItem}>
-                    {order.orderGrandTotalDisplay
-                        && <SmallHeadingAndText
+                    {order.orderGrandTotalDisplay && (
+                        <SmallHeadingAndText
                             heading={translate("Total")}
                             text={order.orderGrandTotalDisplay}
-                            extendedStyles={styles.totalHeadingAndText} />
-                    }
+                            extendedStyles={styles.totalHeadingAndText}
+                        />
+                    )}
                 </GridItem>
             </GridContainer>
         </GridItem>

@@ -32,24 +32,31 @@ const initialState: ShellContextState = {
 function getStoredContentMode() {
     let contentMode = "Viewing";
     const storedContentMode = getCookie(contentModeCookieName);
-    if (storedContentMode && (storedContentMode === "Viewing" || storedContentMode === "Editing" || storedContentMode === "Reviewing")) {
+    if (
+        storedContentMode &&
+        (storedContentMode === "Viewing" || storedContentMode === "Editing" || storedContentMode === "Reviewing")
+    ) {
         contentMode = storedContentMode;
     }
     return contentMode as ContentMode;
 }
 
-
 const reducer = {
-    "ShellContext/CompleteLoadShellContext": (draft: Draft<ShellContextState>, action: {
-        languages: LanguageModel[],
-        personas: PersonaModel[];
-        deviceTypes: DeviceType[];
-        defaultLanguageId: string;
-        currentLanguageId: string;
-        defaultPersonaId: string;
-        websiteId: string;
-        homePageId: string;
-    }) => {
+    "ShellContext/CompleteLoadShellContext": (
+        draft: Draft<ShellContextState>,
+        action: Pick<
+            ShellContextState,
+            | "languages"
+            | "personas"
+            | "deviceTypes"
+            | "defaultLanguageId"
+            | "currentLanguageId"
+            | "defaultPersonaId"
+            | "websiteId"
+            | "homePageId"
+            | "enableMobileCms"
+        >,
+    ) => {
         draft.languages = action.languages;
         draft.personas = action.personas;
         draft.deviceTypes = action.deviceTypes;
@@ -59,6 +66,7 @@ const reducer = {
         draft.defaultPersonaId = action.defaultPersonaId;
         draft.websiteId = action.websiteId;
         draft.homePageId = action.homePageId;
+        draft.enableMobileCms = action.enableMobileCms;
 
         const languagesById: ShellContextState["languagesById"] = {};
         const personasById: ShellContextState["personasById"] = {};
@@ -75,17 +83,22 @@ const reducer = {
         draft.personasById = personasById;
     },
 
-    "Data/Pages/CompleteChangeContext": (draft: Draft<ShellContextState>, action: {
-        languageId: string;
-        personaId: string;
-        deviceType: DeviceType;
-        defaultLanguageId: string;
-        permissions: PermissionsModel;
-    }) => {
+    "Data/Pages/CompleteChangeContext": (
+        draft: Draft<ShellContextState>,
+        action: {
+            languageId: string;
+            personaId: string;
+            deviceType: DeviceType;
+            defaultLanguageId: string;
+            permissions: PermissionsModel;
+        },
+    ) => {
         draft.currentLanguageId = action.languageId;
         draft.currentPersonaId = action.personaId;
         draft.currentDeviceType = action.deviceType;
-        if (action.permissions) draft.permissions = action.permissions;
+        if (action.permissions) {
+            draft.permissions = action.permissions;
+        }
     },
 
     "ShellContext/ChangeStageMode": (draft: Draft<ShellContextState>, action: Pick<ShellContextState, "stageMode">) => {
@@ -94,6 +107,16 @@ const reducer = {
 
     "ShellContext/LogOut": (draft: Draft<ShellContextState>) => {
         clearCookiesAndStorage();
+    },
+
+    "ShellContext/ToggleMobileCmsMode": (draft: Draft<ShellContextState>) => {
+        if (draft.mobileCmsModeActive) {
+            delete draft.mobileCmsModeActive;
+            draft.stageMode = "Desktop";
+        } else {
+            draft.mobileCmsModeActive = true;
+            draft.stageMode = "Phone";
+        }
     },
 
     "ShellContext/SetContentMode": (draft: Draft<ShellContextState>, action: { contentMode: ContentMode }) => {

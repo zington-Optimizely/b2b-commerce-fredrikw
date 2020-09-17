@@ -23,11 +23,11 @@ import "./polyfills";
  *    * class component, inside the component add `static whyDidYouRender = true;`
  *    * functional component, after the component add `ComponentName.whyDidYouRender = true;`
  */
- // if (process.env.NODE_ENV !== "production") {
- //     // eslint-disable-next-line @typescript-eslint/no-var-requires
- //     const whyDidYouRender = require("@welldone-software/why-did-you-render");
- //     whyDidYouRender(React, { exclude: [/^ConnectFunction/], trackHooks: true });
- // }
+// if (process.env.NODE_ENV !== "production") {
+//     // eslint-disable-next-line @typescript-eslint/no-var-requires
+//     const whyDidYouRender = require("@welldone-software/why-did-you-render");
+//     whyDidYouRender(React, { exclude: [/^ConnectFunction/], trackHooks: true });
+// }
 
 type customWindow = {
     siteMessages: SafeDictionary<string>;
@@ -37,7 +37,7 @@ type customWindow = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const theWindow = window as any as customWindow;
+const theWindow = (window as any) as customWindow;
 
 setResolver(messageName => theWindow.siteMessages[messageName]);
 setTranslationResolver(keyword => theWindow.translationDictionaries[keyword]);
@@ -49,19 +49,21 @@ const store = configureStore(initialState);
 const initialTheme = theWindow.initialTheme;
 
 function renderApp(renderer: Renderer = render) {
-
     let WrappingContext: React.FC = ({ children }) => <>{children}</>;
     if (!!window && window.parent && window.parent.location.toString().toLowerCase().indexOf("/contentadmin/") > 0) {
         setCookie(isSiteInShellCookieName, "true");
         const isEditing = getCookie(contentModeCookieName) === "Editing";
 
-        const ShellWrappingContext: React.FC = ({ children }) => <ShellContext.Provider value={{ isEditing, isCurrentPage: true, isInShell: true }}>
-            {children}
-        </ShellContext.Provider>;
+        const ShellWrappingContext: React.FC = ({ children }) => (
+            <ShellContext.Provider value={{ isEditing, isCurrentPage: true, isInShell: true }}>
+                {children}
+            </ShellContext.Provider>
+        );
 
         WrappingContext = ShellWrappingContext;
     } else if (getCookie(isSiteInShellCookieName)) {
-        if (window.location.pathname === "/") { // TODO ISC-12274 get rid of this to see if the problem exists
+        if (window.location.pathname === "/") {
+            // TODO ISC-12274 get rid of this to see if the problem exists
             window.location.href = "/ContentAdmin/Page";
         } else {
             window.location.href = `/ContentAdmin/Page/SwitchTo${window.location.pathname}${window.location.search}`;
@@ -75,14 +77,20 @@ function renderApp(renderer: Renderer = render) {
     renderer(
         <Provider store={store}>
             <WrappingContext>
-                <ThemeProvider theme={initialTheme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
+                <ThemeProvider
+                    theme={initialTheme}
+                    createGlobalStyle={true}
+                    createChildGlobals={false}
+                    translate={translate}
+                >
                     <SessionLoader location={{ pathname: window.location.pathname, search: window.location.search }}>
                         <SpireRouter />
                     </SessionLoader>
                 </ThemeProvider>
             </WrappingContext>
         </Provider>,
-        document.getElementById("react-app"));
+        document.getElementById("react-app"),
+    );
 }
 
 renderApp(initialState ? hydrate : render);

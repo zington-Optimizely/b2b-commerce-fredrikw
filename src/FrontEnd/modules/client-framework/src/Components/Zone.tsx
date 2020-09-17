@@ -32,7 +32,10 @@ const mapDispatchToProps = {
     moveWidgetTo,
 };
 
-export type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps & HasShellContext;
+export type Props = ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    OwnProps &
+    HasShellContext;
 
 class Zone extends React.Component<Props> {
     private dropWidget = (event: React.DragEvent<HTMLElement>) => {
@@ -79,35 +82,59 @@ class Zone extends React.Component<Props> {
     };
 
     render() {
-        const { contentId, fixed, widgets, draggingWidgetId, zoneName, shellContext: { isEditing, isCurrentPage }, permissions, canChangePage, currentPageType, pageDefinitionsByType } = this.props;
+        const {
+            contentId,
+            fixed,
+            widgets,
+            draggingWidgetId,
+            zoneName,
+            shellContext: { isEditing, isCurrentPage },
+            permissions,
+            canChangePage,
+            currentPageType,
+            pageDefinitionsByType,
+        } = this.props;
 
         if (!contentId) {
             return null;
         }
 
         const pageDefinition = pageDefinitionsByType?.[currentPageType];
-        const renderedWidgets = widgets.length === 0 && isEditing && isCurrentPage
-            ? (draggingWidgetId ? <ZonePlaceholder data-zoneplaceholder /> : null)
-            : widgets.map(widget => <WidgetRenderer key={widget.id} id={widget.id} type={widget.type} fixed={!!fixed}/>);
+        const renderedWidgets =
+            widgets.length === 0 && isEditing && isCurrentPage ? (
+                draggingWidgetId ? (
+                    <ZonePlaceholder data-zoneplaceholder />
+                ) : null
+            ) : (
+                widgets.map(widget => (
+                    <WidgetRenderer key={widget.id} id={widget.id} type={widget.type} fixed={!!fixed} />
+                ))
+            );
 
         if (isEditing && isCurrentPage) {
-            return <ZoneStyle data-contentid={contentId}
-                              onDrop={this.dropWidget}
-                              onDragOver={this.dragOver}
-                              onDragLeave={this.dragLeave}
-            >
-                <ZoneWrapper data-dragging={!!draggingWidgetId} data-empty={widgets.length === 0} data-zone>
-                    {renderedWidgets}
-                    {!draggingWidgetId && !fixed && canChangePage && ((permissions?.canAddWidget && pageDefinition?.pageType === "Content")
-                        || (permissions?.canAddSystemWidget && pageDefinition?.pageType === "System"))
-                        && <AddContainer fullHeight={widgets.length === 0}>
-                            <AddButton onClick={this.add} data-test-selector={`shell_addWidget_${zoneName}`}>
-                                <Icon src={PlusCircle} size={26} color="#4A4A4A" />
-                            </AddButton>
-                        </AddContainer>
-                    }
-                </ZoneWrapper>
-            </ZoneStyle>;
+            return (
+                <ZoneStyle
+                    data-contentid={contentId}
+                    onDrop={this.dropWidget}
+                    onDragOver={this.dragOver}
+                    onDragLeave={this.dragLeave}
+                >
+                    <ZoneWrapper data-dragging={!!draggingWidgetId} data-empty={widgets.length === 0} data-zone>
+                        {renderedWidgets}
+                        {!draggingWidgetId &&
+                            !fixed &&
+                            canChangePage &&
+                            ((permissions?.canAddWidget && pageDefinition?.pageType === "Content") ||
+                                (permissions?.canAddSystemWidget && pageDefinition?.pageType === "System")) && (
+                                <AddContainer fullHeight={widgets.length === 0}>
+                                    <AddButton onClick={this.add} data-test-selector={`shell_addWidget_${zoneName}`}>
+                                        <Icon src={PlusCircle} size={26} color="#4A4A4A" />
+                                    </AddButton>
+                                </AddContainer>
+                            )}
+                    </ZoneWrapper>
+                </ZoneStyle>
+            );
         }
 
         return <Wrapper>{renderedWidgets}</Wrapper>;
@@ -131,11 +158,11 @@ const ZoneWrapper = styled.div`
     margin: 6px;
     height: calc(100% - 12px);
     width: calc(100% - 12px);
-    &[data-dragging='true'] {
+    &[data-dragging="true"] {
         padding-bottom: 42px;
     }
     padding-top: 4px;
-    &[data-dragging='true'][data-empty='true'] {
+    &[data-dragging="true"][data-empty="true"] {
         padding-top: 4px;
     }
 `;
@@ -146,10 +173,10 @@ const ZonePlaceholder = styled.div`
     min-width: 50px;
 `;
 
-const AddContainer = styled.div<{ fullHeight: boolean}>`
+const AddContainer = styled.div<{ fullHeight: boolean }>`
     display: flex;
     justify-content: center;
-    ${props => props.fullHeight ? "height: 100%" : ""};
+    ${props => (props.fullHeight ? "height: 100%" : "")};
 `;
 
 const AddButton = styled.div`

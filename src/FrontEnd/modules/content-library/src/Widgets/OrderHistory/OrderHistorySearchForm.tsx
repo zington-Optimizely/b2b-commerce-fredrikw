@@ -11,8 +11,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     filtersOpen: state.pages.orderHistory.filtersOpen,
@@ -24,7 +23,11 @@ export interface OrderHistorySearchFormStyles {
 }
 
 export const searchFormStyles: OrderHistorySearchFormStyles = {
-    wrapper: { css: css` margin-bottom: 10px; ` },
+    wrapper: {
+        css: css`
+            margin-bottom: 10px;
+        `,
+    },
     headingText: { variant: "h5" },
 };
 
@@ -32,15 +35,17 @@ const styles = searchFormStyles;
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
-const OrderHistorySearchForm: React.FunctionComponent<Props> = (props) => {
+const OrderHistorySearchForm: React.FunctionComponent<Props> = props => {
     if (!props.filtersOpen) {
         return null;
     }
 
-    return(
+    return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography as="h3" {...styles.headingText}>{translate("Filter")}</Typography>
-            <Zone contentId={props.id} zoneName="Content"/>
+            <Typography as="h3" {...styles.headingText}>
+                {translate("Filter")}
+            </Typography>
+            <Zone contentId={props.id} zoneName="Content" />
         </StyledWrapper>
     );
 };

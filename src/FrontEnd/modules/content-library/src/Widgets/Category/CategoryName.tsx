@@ -5,21 +5,14 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Typography from "@insite/mobius/Typography";
 import * as React from "react";
 
-interface Props extends WidgetProps, HasCategoryContext {
-}
+interface Props extends WidgetProps, HasCategoryContext {}
 
-const CategoryImage: React.FunctionComponent<Props> = ({
-    category,
-}: Props) => {
+const CategoryImage: React.FunctionComponent<Props> = ({ category }: Props) => {
     if (!category) {
         return null;
     }
 
-    return (
-        <Typography variant="h2">
-            {category.name}
-        </Typography>
-    );
+    return <Typography variant="h2">{category.name}</Typography>;
 };
 
 const widgetModule: WidgetModule = {

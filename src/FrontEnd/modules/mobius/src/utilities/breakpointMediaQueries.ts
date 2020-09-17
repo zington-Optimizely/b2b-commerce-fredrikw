@@ -25,24 +25,46 @@ export default function breakpointMediaQueries(
 ) {
     const mediaRules = rules.map((rule, index) => {
         const { values } = theme.breakpoints || baseTheme.breakpoints;
-        if (!rule) return null;
+        if (!rule) {
+            return null;
+        }
         if (option === mediaOptions.minMax) {
             switch (index) {
-            case 0:
-                return css` @media (max-width: ${values[index + 1] - 1}px) { ${rule} } `;
-            case (values.length - 1):
-                return css` @media (min-width: ${values[index]}px) { ${rule} } `;
-            default:
-                return css` @media (min-width: ${values[index]}px) and (max-width: ${values[index + 1] - 1}px) { ${rule} } `;
+                case 0:
+                    return css`
+                        @media (max-width: ${values[index + 1] - 1}px) {
+                            ${rule}
+                        }
+                    `;
+                case values.length - 1:
+                    return css`
+                        @media (min-width: ${values[index]}px) {
+                            ${rule}
+                        }
+                    `;
+                default:
+                    return css`
+                        @media (min-width: ${values[index]}px) and (max-width: ${values[index + 1] - 1}px) {
+                            ${rule}
+                        }
+                    `;
             }
         }
 
         if (option === mediaOptions.min) {
-            return css` @media (min-width: ${values[index]}px) { ${rule} } `;
+            return css`
+                @media (min-width: ${values[index]}px) {
+                    ${rule}
+                }
+            `;
         }
 
         if (option === mediaOptions.max) {
-            return css` @media (max-width: ${values[index + 1] - 1}px) { ${rule} } `;
+            return css`
+                @media (max-width: ${values[index + 1] - 1}px) {
+                    ${rule}
+                }
+            `;
         }
 
         return null;

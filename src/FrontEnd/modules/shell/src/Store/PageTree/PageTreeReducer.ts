@@ -20,6 +20,7 @@ const initialState: PageTreeState = {
     treeNodesByParentId: {},
     headerTreeNodesByParentId: {},
     footerTreeNodesByParentId: {},
+    mobileTreeNodesByParentId: {},
     displayReorderPages: false,
     homeNodeId: emptyGuid,
     savingReorderPages: false,
@@ -27,16 +28,57 @@ const initialState: PageTreeState = {
 };
 
 const reducer = {
-    "PageTree/LoadPageStatesComplete": (draft: Draft<PageTreeState>, action: {
-        pageStates: PageStateModel[];
-    }) => {
+    "PageTree/LoadPageStatesComplete": (
+        draft: Draft<PageTreeState>,
+        action: {
+            pageStates: PageStateModel[];
+        },
+    ) => {
         draft.treeNodesByParentId = {};
         draft.headerTreeNodesByParentId = {};
         draft.footerTreeNodesByParentId = {};
+        draft.mobileTreeNodesByParentId = {};
 
         if (draft.appliedTreeFilters.length > 0) {
             draft.expandedNodes = {};
         }
+
+        const insertNode = (treeNode: TreeNodeModel, toTheEnd = true) => {
+            let targetNodes: TreeNodeModel[];
+            if (treeNode.displayName === "Header") {
+                if (!draft.headerTreeNodesByParentId[treeNode.parentId]) {
+                    draft.headerTreeNodesByParentId[treeNode.parentId] = [];
+                }
+
+                targetNodes = draft.headerTreeNodesByParentId[treeNode.parentId];
+            } else if (treeNode.displayName === "Footer") {
+                if (!draft.footerTreeNodesByParentId[treeNode.parentId]) {
+                    draft.footerTreeNodesByParentId[treeNode.parentId] = [];
+                }
+
+                targetNodes = draft.footerTreeNodesByParentId[treeNode.parentId];
+            } else if (treeNode.type.startsWith("Mobile/")) {
+                if (!draft.mobileTreeNodesByParentId[treeNode.parentId]) {
+                    draft.mobileTreeNodesByParentId[treeNode.parentId] = [];
+                }
+
+                targetNodes = draft.mobileTreeNodesByParentId[treeNode.parentId];
+            } else {
+                if (!draft.treeNodesByParentId[treeNode.parentId]) {
+                    draft.treeNodesByParentId[treeNode.parentId] = [];
+                }
+
+                targetNodes = draft.treeNodesByParentId[treeNode.parentId];
+            }
+
+            if (toTheEnd) {
+                targetNodes.push(treeNode);
+            } else {
+                targetNodes.unshift(treeNode);
+            }
+        };
+
+        const treeNodesByNodeId: Dictionary<TreeNodeModel[]> = {};
         for (const pageState of action.pageStates) {
             if (pageState.displayName === "Home" && pageState.pageId) {
                 draft.expandedNodes[pageState.pageId] = true;
@@ -47,61 +89,150 @@ const reducer = {
                 displayName: pageState.displayName,
                 nodeId: pageState.nodeId,
                 pageId: !pageState.pageId ? "" : pageState.pageId,
-                parentId: pageState.parentNodeId ? pageState.parentNodeId
-                    : "",
+                parentId: pageState.parentNodeId ? pageState.parentNodeId : "",
                 isMatchingPage: pageState.attributes.indexOf("NonMatching") < 0,
                 type: pageState.type,
                 futurePublishOn: pageState.futurePublishOn ? new Date(pageState.futurePublishOn) : undefined,
+                variantName: pageState.variantName,
+                isDefaultVariant: pageState.isDefaultVariant,
+                isShared: pageState.isShared,
             };
 
-            if (treeNode.displayName === "Header") {
-                if (!draft.headerTreeNodesByParentId[treeNode.parentId]) {
-                    draft.headerTreeNodesByParentId[treeNode.parentId] = [];
-                }
-
-                draft.headerTreeNodesByParentId[treeNode.parentId].push(treeNode);
-            } else if (treeNode.displayName === "Footer") {
-                if (!draft.footerTreeNodesByParentId[treeNode.parentId]) {
-                    draft.footerTreeNodesByParentId[treeNode.parentId] = [];
-                }
-
-                draft.footerTreeNodesByParentId[treeNode.parentId].push(treeNode);
+            const nodes = treeNodesByNodeId[treeNode.nodeId];
+            if (nodes) {
+                nodes.push(treeNode);
             } else {
-                if (!draft.treeNodesByParentId[treeNode.parentId]) {
-                    draft.treeNodesByParentId[treeNode.parentId] = [];
-                }
-
-                draft.treeNodesByParentId[treeNode.parentId].push(treeNode);
+                treeNodesByNodeId[treeNode.nodeId] = [treeNode];
+                insertNode(treeNode);
             }
 
             if (draft.appliedTreeFilters.length > 0) {
-                // TODO ISC-11833 this will change when we introduce variants
                 draft.expandedNodes[treeNode.pageId] = true;
+            }
+        }
+
+        for (const nodeId in treeNodesByNodeId) {
+            const nodes = treeNodesByNodeId[nodeId];
+            if (nodes.length < 2) {
+                continue;
+            }
+
+            let sharedIndex = -1;
+            for (let i = 0; i < nodes.length; ++i) {
+                if (nodes[i].isShared) {
+                    sharedIndex = i;
+                    break;
+                }
+            }
+
+            if (sharedIndex > -1) {
+                const clone = { ...nodes[0] };
+                Object.assign(nodes[0], nodes[sharedIndex]);
+                nodes[0].isRootVariant = true;
+                Object.assign(nodes[sharedIndex], clone);
+                nodes.shift();
+
+                if (draft.appliedTreeFilters.length > 0 || clone.displayName === "Home") {
+                    draft.expandedNodes[clone.key] = true;
+                }
+
+                for (const node of nodes.reverse()) {
+                    node.isVariant = true;
+                    node.parentId = nodeId;
+                    insertNode(node, false);
+                }
             }
         }
     },
 
-    "PageTree/UpdatePageState": (draft: Draft<PageTreeState>, action: { pageId: string; parentId: string | null; publishOn?: Date; }) => {
-        const pageState = action.parentId ? getPageState(action.pageId, draft.treeNodesByParentId[action.parentId], draft.headerTreeNodesByParentId[action.parentId], draft.footerTreeNodesByParentId[action.parentId])
-            : getPageStateFromDictionaries(action.pageId, draft.treeNodesByParentId, draft.headerTreeNodesByParentId, draft.footerTreeNodesByParentId);
-        if (!pageState) return;
+    "PageTree/UpdatePageState": (
+        draft: Draft<PageTreeState>,
+        action: { pageId: string; parentId: string | null; publishOn?: Date },
+    ) => {
+        const pageState = action.parentId
+            ? getPageState(
+                  action.pageId,
+                  draft.treeNodesByParentId[action.parentId],
+                  draft.headerTreeNodesByParentId[action.parentId],
+                  draft.footerTreeNodesByParentId[action.parentId],
+              )
+            : getPageStateFromDictionaries(
+                  action.pageId,
+                  draft.treeNodesByParentId,
+                  draft.headerTreeNodesByParentId,
+                  draft.footerTreeNodesByParentId,
+              );
+        if (!pageState) {
+            return;
+        }
 
         pageState.futurePublishOn = action.publishOn;
     },
 
-    "PageTree/SetExpandedNodes": (draft: Draft<PageTreeState>, action: { expandedNodes: Dictionary<boolean>; }) => {
+    "PageTree/SetExpandedNodes": (draft: Draft<PageTreeState>, action: { expandedNodes: Dictionary<boolean> }) => {
         draft.expandedNodes = { ...action.expandedNodes };
     },
 
-    "PageTree/OpenAddPage": (draft: Draft<PageTreeState>, action: { parentId: string; }) => {
+    "PageTree/OpenAddPage": (draft: Draft<PageTreeState>, action: { parentId: string }) => {
         draft.addingPageUnderId = action.parentId;
     },
 
-    "PageTree/OpenCopyPage": (draft: Draft<PageTreeState>, action: { parentId: string; pageId: string; nodeDisplayName: string; nodePageType: string; }) => {
+    "PageTree/OpenCopyPage": (
+        draft: Draft<PageTreeState>,
+        action: { parentId: string; pageId: string; nodeDisplayName: string; nodePageType: string },
+    ) => {
         draft.addingPageUnderId = action.parentId;
         draft.copyPageId = action.pageId;
         draft.copyPageDisplayName = action.nodeDisplayName;
         draft.copyPageType = action.nodePageType;
+    },
+
+    "PageTree/OpenCreateVariant": (
+        draft: Draft<PageTreeState>,
+        action: { parentId: string; pageId: string; nodeDisplayName: string; nodePageType: string },
+    ) => {
+        draft.addingPageUnderId = action.parentId;
+        draft.variantPageId = action.pageId;
+        draft.variantPageName = action.nodeDisplayName;
+        draft.variantPageType = action.nodePageType;
+    },
+
+    "PageTree/OpenMakeDefaultVariant": (draft: Draft<PageTreeState>, action: { parentId: string; pageId: string }) => {
+        draft.makingDefaultPageUnderId = action.parentId;
+        draft.variantPageId = action.pageId;
+    },
+
+    "PageTree/CloseMakeDefaultModal": (draft: Draft<PageTreeState>) => {
+        draft.makingDefaultPageUnderId = "";
+        draft.variantPageId = "";
+    },
+
+    "PageTree/OpenRulesEdit": (
+        draft: Draft<PageTreeState>,
+        action: { pageId: string; isNewVariant: boolean | undefined },
+    ) => {
+        draft.variantRulesForPageId = action.pageId;
+        draft.isNewVariant = action.isNewVariant;
+    },
+
+    "PageTree/CloseRulesEdit": (draft: Draft<PageTreeState>) => {
+        draft.variantRulesForPageId = "";
+        delete draft.isNewVariant;
+    },
+
+    "PageTree/UpdateDefaultVariantRoot": (
+        draft: Draft<PageTreeState>,
+        action: { parentId: string; pageId: string },
+    ) => {
+        const nodes =
+            draft.treeNodesByParentId[action.parentId] ||
+            draft.headerTreeNodesByParentId[action.parentId] ||
+            draft.footerTreeNodesByParentId[action.parentId];
+        if (nodes) {
+            for (const node of nodes) {
+                node.isDefaultVariant = node.pageId === action.pageId;
+            }
+        }
     },
 
     "PageTree/CancelAddPage": (draft: Draft<PageTreeState>) => {
@@ -109,6 +240,9 @@ const reducer = {
         draft.copyPageId = "";
         draft.copyPageDisplayName = "";
         draft.copyPageType = "";
+        draft.variantPageId = "";
+        draft.variantPageType = "";
+        draft.variantPageName = "";
     },
 
     "PageTree/AddPageComplete": (draft: Draft<PageTreeState>) => {
@@ -116,21 +250,26 @@ const reducer = {
         draft.copyPageId = "";
         draft.copyPageDisplayName = "";
         draft.copyPageType = "";
+        draft.variantPageId = "";
+        draft.variantPageType = "";
+        draft.variantPageName = "";
     },
 
-    "PageTree/DeletePageComplete": (draft: Draft<PageTreeState>) => {
-    },
+    "PageTree/DeletePageComplete": (draft: Draft<PageTreeState>) => {},
 
-    "PageTree/BeginLoadFiltersForQuery": (draft: Draft<PageTreeState>, action: { query: string; }) => {
+    "PageTree/BeginLoadFiltersForQuery": (draft: Draft<PageTreeState>, action: { query: string }) => {
         draft.isLoadingFilters = true;
         draft.treeFiltersQuery = action.query;
     },
 
-    "PageTree/LoadFiltersForQueryComplete": (draft: Draft<PageTreeState>, action: {
-        treeFilters: TreeFilterModel[];
-        totalResults: number;
-        query: string;
-    }) => {
+    "PageTree/LoadFiltersForQueryComplete": (
+        draft: Draft<PageTreeState>,
+        action: {
+            treeFilters: TreeFilterModel[];
+            totalResults: number;
+            query: string;
+        },
+    ) => {
         const state = draft; // Duplicating the variable for accurate history on the next line.
         if (action.query === state.treeFiltersQuery) {
             draft.isLoadingFilters = false;
@@ -139,8 +278,10 @@ const reducer = {
         }
     },
 
-    "PageTree/AddFilter": (draft: Draft<PageTreeState>, action: { treeFilter: TreeFilterModel; }) => {
-        const { treeFilter: { key, type } } = action;
+    "PageTree/AddFilter": (draft: Draft<PageTreeState>, action: { treeFilter: TreeFilterModel }) => {
+        const {
+            treeFilter: { key, type },
+        } = action;
         if (draft.appliedTreeFilters.filter(o => o.key === key && o.type === type).length === 0) {
             draft.appliedTreeFilters.push(action.treeFilter);
         }
@@ -150,8 +291,10 @@ const reducer = {
         draft.treeFiltersQuery = "";
     },
 
-    "PageTree/RemoveFilter": (draft: Draft<PageTreeState>, action: { treeFilter: TreeFilterModel; }) => {
-        const { treeFilter: { key, type } } = action;
+    "PageTree/RemoveFilter": (draft: Draft<PageTreeState>, action: { treeFilter: TreeFilterModel }) => {
+        const {
+            treeFilter: { key, type },
+        } = action;
         draft.appliedTreeFilters.forEach((item, index) => {
             if (item.key === key && item.type === type) {
                 draft.appliedTreeFilters.splice(index, 1);
@@ -173,7 +316,10 @@ const reducer = {
         draft.reorderPagesByParentId = undefined;
     },
 
-    "PageTree/LoadReorderPagesComplete": (draft: Draft<PageTreeState>, action: { homeNodeId: string, pageReorderingModels: PageReorderModel[]}) => {
+    "PageTree/LoadReorderPagesComplete": (
+        draft: Draft<PageTreeState>,
+        action: { homeNodeId: string; pageReorderingModels: PageReorderModel[] },
+    ) => {
         draft.reorderPagesByParentId = {};
         draft.homeNodeId = action.homeNodeId;
         action.pageReorderingModels.sort((a, b) => a.sortOrder - b.sortOrder);
@@ -201,6 +347,14 @@ const reducer = {
         draft.displayReorderPages = false;
         draft.savingReorderPages = false;
         draft.reorderPagesByParentId = undefined;
+    },
+
+    "PageTree/ToggleFilterToMobile": (draft: Draft<PageTreeState>) => {
+        if (!draft.filterToMobile) {
+            delete draft.filterToMobile;
+        } else {
+            draft.filterToMobile = true;
+        }
     },
 };
 

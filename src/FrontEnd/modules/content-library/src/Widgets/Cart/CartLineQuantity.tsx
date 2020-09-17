@@ -41,7 +41,7 @@ const CartLineQuantity: FC<Props> = ({
     cartLine,
     editable = false,
     label,
-    onQtyOrderedChange = () => { },
+    onQtyOrderedChange = () => {},
     extendedStyles,
 }) => {
     const localOnQtyOrderedChange = (value: string) => {
@@ -53,12 +53,10 @@ const CartLineQuantity: FC<Props> = ({
         onQtyOrderedChange(inputQty);
     };
 
-    const {
-        value,
-        changeHandler,
-        keyDownHandler,
-        blurHandler,
-    } = useAccessibleSubmit(cartLine.qtyOrdered!.toString(), localOnQtyOrderedChange);
+    const { value, changeHandler, keyDownHandler, blurHandler } = useAccessibleSubmit(
+        cartLine.qtyOrdered!.toString(),
+        localOnQtyOrderedChange,
+    );
 
     const [styles] = React.useState(() => mergeToNew(cartLineQuantityStyles, extendedStyles));
 
@@ -74,7 +72,8 @@ const CartLineQuantity: FC<Props> = ({
                 onChange={changeHandler}
                 onKeyDown={keyDownHandler}
                 onBlur={blurHandler}
-                data-test-selector="cartline_qty" />
+                data-test-selector="cartline_qty"
+            />
         );
     }
 

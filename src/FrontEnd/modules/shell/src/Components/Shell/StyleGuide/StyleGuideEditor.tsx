@@ -1,21 +1,10 @@
-import { getTheme } from "@insite/client-framework/Services/ContentService";
-import { theme as defaultTheme } from "@insite/client-framework/Theme";
-import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
-import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { postStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
 import Accordion from "@insite/mobius/Accordion";
-import Button, { ButtonIcon, ButtonVariants } from "@insite/mobius/Button";
-import Checkbox from "@insite/mobius/Checkbox";
+import Button, { ButtonIcon } from "@insite/mobius/Button";
 import CheckboxGroup from "@insite/mobius/CheckboxGroup";
 import Clickable from "@insite/mobius/Clickable";
-import { DateTimePickerLibComponentProps } from "@insite/mobius/DatePicker";
-import { FormFieldComponentProps, FormFieldPresentationProps, FormFieldProps } from "@insite/mobius/FormField";
-import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-import { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
-import Select from "@insite/mobius/Select";
-import TextField from "@insite/mobius/TextField";
 import Typography from "@insite/mobius/Typography";
-import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import get from "@insite/mobius/utilities/get";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
@@ -23,184 +12,124 @@ import { RedoSrc } from "@insite/shell/Components/Icons/Redo";
 import { UndoSrc } from "@insite/shell/Components/Icons/Undo";
 import { SideBarStyle } from "@insite/shell/Components/Layout";
 import ButtonConfig from "@insite/shell/Components/Shell/StyleGuide/ButtonConfig";
-import ConfigMenu, {
-    configCheckboxStyles as defaultConfigCheckboxStyles,
-    configFormFieldStyles as defaultConfigFormFieldStyles,
-} from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
-import DisabledInCodeTooltip from "@insite/shell/Components/Shell/StyleGuide/DisabledInCodeTooltip";
+import CheckboxConfig from "@insite/shell/Components/Shell/StyleGuide/CheckboxConfig";
+import ColorPickerConfig from "@insite/shell/Components/Shell/StyleGuide/ColorPickerConfig";
+import ConfigMenu from "@insite/shell/Components/Shell/StyleGuide/ConfigMenu";
 import ElementTypographyConfig from "@insite/shell/Components/Shell/StyleGuide/ElementTypographyConfig";
+import { createSetNewValueInDraft } from "@insite/shell/Components/Shell/StyleGuide/Helpers";
 import IconConfig from "@insite/shell/Components/Shell/StyleGuide/IconConfig";
 import IconSelector from "@insite/shell/Components/Shell/StyleGuide/IconSelector";
+import SelectConfig from "@insite/shell/Components/Shell/StyleGuide/SelectConfig";
 import SideBarAccordionSection from "@insite/shell/Components/Shell/StyleGuide/SideBarAccordionSection";
-import { RecursivePartial, Updater } from "@insite/shell/Components/Shell/StyleGuide/Types";
+import TextFieldConfig from "@insite/shell/Components/Shell/StyleGuide/TextFieldConfig";
+import { createMergedTheme, Updater } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import TypographyConfig from "@insite/shell/Components/Shell/StyleGuide/TypographyConfig";
-import { saveTheme } from "@insite/shell/Services/ContentAdminService";
-import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
+import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import { colorResultToString } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
-import { LoadStatus, State } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
-import produce from "immer";
-import merge from "lodash/merge";
-import set from "lodash/set";
+import {
+    cancelSave,
+    loadTheme,
+    redo,
+    resetTheme,
+    saveTheme,
+    setTheme,
+    undo,
+} from "@insite/shell/Store/StyleGuide/StyleGuideActionCreators";
 import * as React from "react";
+import { ReactNode } from "react";
 import { ColorResult } from "react-color";
-import { connect, DispatchProp } from "react-redux";
-import { Dispatch } from "redux";
+import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
-export const configFormFieldStyles: Pick<FormFieldProps, "cssOverrides" | "labelProps"> = { ...defaultConfigFormFieldStyles,
-    cssOverrides: {
-        ...defaultConfigFormFieldStyles?.cssOverrides,
-        formField: css<FormFieldProps>`
-            ${() => defaultConfigFormFieldStyles?.cssOverrides?.formField}
-            label {
-                > span {
-                    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-                }
-            }
-        `,
-    },
-    labelProps: {
-        ...defaultConfigFormFieldStyles?.labelProps,
-        css: css`
-            ${() => defaultConfigFormFieldStyles?.labelProps?.css}
-            overflow: visible;
-            white-space: nowrap;
-        ` as any,
-    },
+const createColorPreset = (displayAs: string, name: string, currentValue: string, preventColorReset?: boolean) => ({
+    displayAs,
+    name,
+    currentValue,
+    update: createSetNewValueInDraft(`colors.${name}`),
+    preventColorReset,
+});
+
+const mapStateToProps = (state: ShellState) => ({
+    permissions: state.shellContext.permissions,
+    ...state.styleGuide,
+});
+
+const mapDispatchToProps = {
+    setTheme,
+    saveTheme,
+    loadTheme,
+    cancelSave,
+    undo,
+    redo,
+    resetTheme,
 };
 
-export const configCheckboxStyles = {
-    ...defaultConfigCheckboxStyles,
-    typographyProps: {
-        ...defaultConfigCheckboxStyles.typographyProps,
-        disabledColor: "text.main",
-    },
-};
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const setTheme = (dispatch: Dispatch<AnyShellAction>, theme: Partial<BaseTheme>, update: Updater) => {
-    dispatch({
-        type: "StyleGuide/SetTheme",
-        theme: produce(theme, update),
-    });
-};
-
-const createSetNewValueInDraft = (itemLocation: string) => (draft: Partial<BaseTheme>, newValue: string | undefined | boolean) => {
-    set(draft, itemLocation, newValue);
-};
-
-export const createSetParentIfUndefined = (itemLocation: string) => (draft: BaseTheme | RecursivePartial<BaseTheme>) => {
-    let themeValueToModify = get(draft, itemLocation);
-    if (!themeValueToModify) {
-        set(draft, itemLocation, {});
-        themeValueToModify = get(draft, itemLocation);
-    }
-    return themeValueToModify;
-};
-
-const createColorPreset = (
-    displayAs: string,
-    name: string,
-    currentValue: string,
-    preventColorReset?: boolean,
-) => ({ displayAs, name, currentValue, update: createSetNewValueInDraft(`colors.${name}`), preventColorReset });
-
-export const undefinedIfFunction = (value: string | undefined | Function) => typeof value === "function" ? undefined : value;
-
-const mapStateToProps = (state: ShellState) => ({ permissions: state.shellContext.permissions, ...state.styleGuide });
-
-const ActionBar = styled.div`
-    position: absolute;
-    top: 0;
-    width: 100%;
-    background: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
-    padding: 12px 10px 12px 34px;
-    display: flex;
-    justify-content: space-between;
-    button:disabled {
-        background: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
-        border-color: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
-        ${ButtonIcon} {
-            color: ${(props: ShellThemeProps) => props.theme.colors.common.disabled};
+const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
+    const { setTheme, saveTheme, loadTheme, cancelSave, undo, redo, resetTheme } = props;
+    React.useEffect(() => {
+        if (props.theme) {
+            return;
         }
+        loadTheme();
+    }, []);
+
+    if (!props.theme) {
+        return (
+            <>
+                <SideBarStyle
+                    css={css`
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    `}
+                >
+                    <LoadingSpinner />
+                </SideBarStyle>
+            </>
+        );
     }
-`;
 
-const ConnectableStyleGuideEditor : React.FunctionComponent<State & {permissions: PermissionsModel} & DispatchProp<AnyShellAction>> = (props => {
-    const { dispatch } = props;
-    React.useEffect(
-        () => {
-            switch (props.loadStatus) {
-            case LoadStatus.Loading:
-            case LoadStatus.Loaded:
-                // Don't load again.
-                return;
-            }
-
-            if (!IS_PRODUCTION && window.location.href.indexOf("shell=true") > 0) {
-                dispatch({
-                    type: "StyleGuide/LoadCompleted",
-                    theme: shellTheme,
-                });
-            } else {
-                getTheme()
-                    .then(theme => {
-                        dispatch({
-                            type: "StyleGuide/LoadCompleted",
-                            theme: { ...theme },
-                        });
-                    });
-            }
-        },
-        []);
-
-    if (props.loadStatus !== LoadStatus.Loaded) {
-        return <>
-            <SideBarStyle
-                css={css` 
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                `}
-            >
-                <LoadingSpinner/>
-            </SideBarStyle>
-        </>;
-    }
+    const codeOverridden = (path: string) => !!get(postStyleGuideTheme, path);
 
     // Being from redux, the theme is frozen.
     // `ThemeProvider` wants to write the `translate` property, which is root-level, so a shallow clone allows this.
     const shallowClonedTheme = { ...props.theme };
-    // While the theme will originate with the Mobius theme, it immediately diverges, and therefore should be layered
-    // atop the Mobius theme when rendering in the preview. We may at some point want this to reference the code themes.
-    const theme: BaseTheme = merge({}, defaultTheme, preStyleGuideTheme, shallowClonedTheme, postStyleGuideTheme);
-    const codeOverridden = (path: string) => !!get(postStyleGuideTheme, path);
+    const theme = createMergedTheme(shallowClonedTheme);
 
-    const update = (update: Updater) => setTheme(dispatch, shallowClonedTheme, update);
-
-    const save = async () => {
-        dispatch({ type: "StyleGuide/SaveStarted" });
-
-        await saveTheme(shallowClonedTheme);
-
-        dispatch({ type: "StyleGuide/SaveCompleted" });
-    };
+    const update = (update: Updater) => setTheme(shallowClonedTheme, update);
 
     const exitButtonProps = { color: "common.backgroundContrast", typographyProps: { weight: 400 } };
     const { colors } = theme;
-    const exitLinks = props.history.length !== 1
-        ? (<ActionBar>
-            <Button onClick={save}>Save</Button>
-            <Button {...exitButtonProps} buttonType="solid" onClick={() => dispatch({ type: "StyleGuide/Cancel" })}>Cancel</Button>
-            <Button {...exitButtonProps} buttonType="solid" sizeVariant="small" onClick={() => dispatch({ type: "StyleGuide/Undo" })} disabled={props.historyIndex === 0}>
-                <ButtonIcon src={UndoSrc} />
-            </Button>
-            <Button {...exitButtonProps} buttonType="solid" sizeVariant="small" onClick={() => dispatch({ type: "StyleGuide/Redo" })} disabled={props.historyIndex === props.history.length - 1}>
-                <ButtonIcon src={RedoSrc} />
-            </Button>
-        </ActionBar>)
-        : null;
+    const exitLinks =
+        props.history.length !== 1 ? (
+            <ActionBar>
+                <Button onClick={() => saveTheme(shallowClonedTheme)}>Save</Button>
+                <Button {...exitButtonProps} buttonType="solid" onClick={() => cancelSave()}>
+                    Cancel
+                </Button>
+                <Button
+                    {...exitButtonProps}
+                    buttonType="solid"
+                    sizeVariant="small"
+                    onClick={() => undo()}
+                    disabled={props.historyIndex === 0}
+                >
+                    <ButtonIcon src={UndoSrc} />
+                </Button>
+                <Button
+                    {...exitButtonProps}
+                    buttonType="solid"
+                    sizeVariant="small"
+                    onClick={() => redo()}
+                    disabled={props.historyIndex === props.history.length - 1}
+                >
+                    <ButtonIcon src={RedoSrc} />
+                </Button>
+            </ActionBar>
+        ) : null;
 
     const presets = [
         createColorPreset("Primary", "primary.main", colors.primary.main),
@@ -241,7 +170,9 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & {permissions
 
     const tryMatchColorResultToPresetName = (color: ColorResult) => {
         const colorAsString = colorResultToString(color);
-        if (!colorAsString) return undefined;
+        if (!colorAsString) {
+            return undefined;
+        }
         return presetNamesByColor[colorAsString] || colorAsString;
     };
 
@@ -265,549 +196,413 @@ const ConnectableStyleGuideEditor : React.FunctionComponent<State & {permissions
 
     const disableEditGlobalStyleGuide = !props.permissions?.canEditGlobalStyleGuide;
 
-    return <>
-    {exitLinks}
-    <SideBarStyle>
-        <form spellCheck={false} onSubmit={event => event.preventDefault()}>
-            <Typography variant="h2" transform="uppercase">Site Colors</Typography>
-            {presets.map(preset => <ColorPicker
-                key={preset.name}
-                label={preset.displayAs}
-                id={preset.name}
-                color={preset.currentValue}
-                disabled={codeOverridden(`colors.${preset.name}`) || disableEditGlobalStyleGuide}
-                preventColorReset={preset.preventColorReset}
-                onChange={color => update(draft => preset.update(draft, colorResultToString(color)))}
-            />)}
-            <Typography variant="h2" transform="uppercase">Site Typography</Typography>
-            <Accordion headingLevel={3}>
-                <ElementTypographyConfig element="body" elementDisplayName="Body" {...presetHelpers} disabled={disableEditGlobalStyleGuide}
-                />
-                <ElementTypographyConfig element="p" elementDisplayName="Paragraph (<p>)" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h1" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h2" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h3" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h4" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h5" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="h6" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="legend" elementDisplayName="Legend" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="headerPrimary" elementDisplayName="Header Primary" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="headerSecondary" elementDisplayName="Header Secondary" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ElementTypographyConfig element="headerTertiary" elementDisplayName="Header Tertiary" {...presetHelpers} disabled={disableEditGlobalStyleGuide} />
-                <ConfigMenu title="Link">
-                    <ColorPicker
-                        isInPopover
-                        label="Color"
-                        id="link-color"
-                        color={tryMatchColorStringToPresetValue(theme.link.defaultProps && theme.link.defaultProps.color)}
-                        disabled={codeOverridden("colors.link.defaultProps.color") || disableEditGlobalStyleGuide}
-                        onChange={color => {
-                            const resultVal = tryMatchColorResultToPresetName(color);
-                            update(draft => createSetNewValueInDraft("link.defaultProps.color")(draft, resultVal));
-                        }}
-                        presetColors={presetColors}
-                        preventColorReset
-                    />
-                    <Select
-                        label={codeOverridden("link.defaultProps.hoverMode") ? <><span>Hover Mode </span><DisabledInCodeTooltip /></> : "Hover Mode"}
-                        value={(theme.link.defaultProps && theme.link.defaultProps.hoverMode) || ""}
-                        disabled={codeOverridden("link.defaultProps.hoverMode") || disableEditGlobalStyleGuide}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as LinkPresentationProps["hoverMode"];
-                            update(draft => createSetNewValueInDraft("link.defaultProps.hoverMode")(draft, resultVal));
-                        }}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="darken">Darken</option>
-                        <option value="lighten">Lighten</option>
-                    </Select>
-                    <IconConfig
-                        variant="accordion"
-                        idPrefix="link"
-                        locationInTheme="link.defaultProps.icon.iconProps"
-                        disableSource
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </ConfigMenu>
-            </Accordion>
-            <Typography variant="h2" transform="uppercase">Components</Typography>
-            <Accordion headingLevel={3}>
-                <SideBarAccordionSection title="Accordion">
-                    <TypographyConfig
-                        title="Header Text"
-                        idPrefix="accordion"
-                        locationInTheme="accordion.sectionDefaultProps.titleTypographyProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <IconConfig
-                        idPrefix="accordion"
-                        locationInTheme="accordion.sectionDefaultProps.toggleIconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Breadcrumb">
-                    <TypographyConfig
-                        title="Breadcrumb Typography"
-                        idPrefix="breadcrumb"
-                        locationInTheme="breadcrumbs.defaultProps.typographyProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Button">
-                    <ButtonConfig
-                        title="Primary Button"
-                        idPrefix="primary-button"
-                        locationInTheme="button.primary"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <ButtonConfig
-                        title="Secondary Button"
-                        idPrefix="secondary-button"
-                        locationInTheme="button.secondary"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <ButtonConfig
-                        title="Tertiary Button"
-                        idPrefix="tertiary-button"
-                        locationInTheme="button.tertiary"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Form Field Options">
-                    <Select
-                        label={codeOverridden("formField.defaultProps.border") ? <><span>Border </span><DisabledInCodeTooltip /></> : "Border"}
-                        value={(theme.formField.defaultProps && theme.formField.defaultProps.border) || ""}
-                        disabled={codeOverridden("formField.defaultProps.border") || disableEditGlobalStyleGuide}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as FormFieldPresentationProps<FormFieldComponentProps>["border"];
-                            update(draft => createSetNewValueInDraft("formField.defaultProps.border")(draft, resultVal));
-                        }}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="underline">Underline</option>
-                        <option value="rectangle">Rectangle</option>
-                        <option value="rounded">Rounded</option>
-                    </Select>
-                    <Select
-                        label={codeOverridden("formField.defaultProps.sizeVariant") ? <><span>Size Variant </span><DisabledInCodeTooltip /></> : "Size Variant"}
-                        value={(theme.formField.defaultProps && theme.formField.defaultProps.sizeVariant) || ""}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as FormFieldPresentationProps<FormFieldComponentProps>["sizeVariant"];
-                            update(draft => createSetNewValueInDraft("formField.defaultProps.sizeVariant")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("formField.defaultProps.sizeVariant") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="default">Default</option>
-                        <option value="small">Small</option>
-                    </Select>
-                    <TypographyConfig
-                        title="Error Text"
-                        idPrefix="error-text"
-                        locationInTheme="formField.defaultProps.errorProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <TypographyConfig
-                        title="Label Text"
-                        idPrefix="label-text"
-                        locationInTheme="formField.defaultProps.labelProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <TypographyConfig
-                        title="Hint Text"
-                        idPrefix="hint-text"
-                        locationInTheme="formField.defaultProps.hintProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Field Set Options">
-                    <ColorPicker
-                        firstInput
-                        label="Color"
-                        id="field-set-options-color"
-                        disabled={codeOverridden("formField.defaultProps.border") || disableEditGlobalStyleGuide}
-                        color={tryMatchColorStringToPresetValue(theme.fieldSet.defaultProps && theme.fieldSet.defaultProps.color)}
-                        onChange={color => {
-                            const resultVal = tryMatchColorResultToPresetName(color);
-                            update(draft => createSetNewValueInDraft("fieldSet.defaultProps.color")(draft, resultVal));
-                        }}
-                        presetColors={presetColors}
-                    />
-                    <Select
-                        label={codeOverridden("fieldSet.defaultProps.sizeVariant") ? <><span>Size Variant </span><DisabledInCodeTooltip /></> : "Size Variant"}
-                        value={(theme.fieldSet.groupDefaultProps && theme.fieldSet.groupDefaultProps.sizeVariant) || ""}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as FieldSetGroupPresentationProps["sizeVariant"];
-                            update(draft => createSetNewValueInDraft("fieldSet.groupDefaultProps.sizeVariant")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("fieldSet.defaultProps.sizeVariant") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="default">Default</option>
-                        <option value="small">Small</option>
-                    </Select>
-                    <TypographyConfig
-                        title="Group Label Text Properties"
-                        idPrefix="group-label-text-properties"
-                        locationInTheme="fieldSet.groupDefaultProps.labelProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <TypographyConfig
-                        title="Item Label Text Properties"
-                        idPrefix="item-label-text-properties"
-                        locationInTheme="fieldSet.defaultProps.typographyProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Checkbox">
-                    <IconSelector
-                        label="Icon"
-                        disabled={codeOverridden("checkbox.defaultProps.iconProps.src") || disableEditGlobalStyleGuide}
-                        labelPosition="top"
-                        value={undefinedIfFunction(
-                            theme.checkbox.defaultProps
-                            && theme.checkbox.defaultProps.iconProps
-                            && theme.checkbox.defaultProps.iconProps.src,
-                        )}
-                        onTextFieldChange={event => update(draft => {
-                            const props = createSetParentIfUndefined("checkbox.defaultProps.iconProps")(draft);
-                            if (!event.currentTarget.value) {
-                                delete props.src;
-                            } else {
-                                props.src = event.currentTarget.value;
-                            }
-                        })}
-                        onSelectionChange={value => update(draft => {
-                            const props = createSetParentIfUndefined("checkbox.defaultProps.iconProps")(draft);
-                            if (!value) {
-                                delete props.src;
-                            } else {
-                                props.src = value;
-                            }
-                        })}
-                        {...configFormFieldStyles}
-                    />
-                    <IconSelector
-                        label="Indeterminate Icon"
-                        disabled={codeOverridden("checkbox.defaultProps.indeterminateIconProps.src") || disableEditGlobalStyleGuide}
-                        labelPosition="top"
-                        value={undefinedIfFunction(theme.checkbox.defaultProps?.indeterminateIconProps?.src)}
-                        onTextFieldChange={event => update(draft => {
-                            const props = createSetParentIfUndefined("checkbox.defaultProps.indeterminateIconProps")(draft);
-                            if (!event.currentTarget.value) {
-                                delete props.src;
-                            } else {
-                                props.src = event.currentTarget.value;
-                            }
-                        })}
-                        onSelectionChange={value => update(draft => {
-                            const props = createSetParentIfUndefined("checkbox.defaultProps.indeterminateIconProps")(draft);
-                            if (!value) {
-                                delete props.src;
-                            } else {
-                                props.src = value;
-                            }
-                        })}
-                        {...configFormFieldStyles}
-                    />
-                    <ColorPicker
-                        firstInput
-                        label="Indeterminate Color"
-                        id="indeterminate-color"
-                        disabled={codeOverridden("checkbox.defaultProps.indeterminateColor") || disableEditGlobalStyleGuide}
-                        color={tryMatchColorStringToPresetValue(theme.checkbox.defaultProps && theme.checkbox.defaultProps.indeterminateColor)}
-                        onChange={color => {
-                            const resultVal = tryMatchColorResultToPresetName(color);
-                            update(draft => createSetNewValueInDraft("checkbox.defaultProps.indeterminateColor")(draft, resultVal));
-                        }}
-                        presetColors={presetColors}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Date Picker">
-                    <TextField
-                        label={codeOverridden("datePicker.defaultProps.format") ? <><span>Format </span><DisabledInCodeTooltip /></> : "Format"}
-                        hint={<Clickable href="https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table" target="_blank">Format Reference</Clickable>}
-                        value={theme.datePicker.defaultProps && theme.datePicker.defaultProps.format}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value;
-                            update(draft => createSetNewValueInDraft("datePicker.defaultProps.format")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.format") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    />
-                    <Select
-                        label={codeOverridden("datePicker.defaultProps.dateTimePickerProps.calendarType") ? <><span>Calendar Type </span><DisabledInCodeTooltip /></> : "Calendar Type"}
-                        value={theme.datePicker.defaultProps?.dateTimePickerProps?.calendarType || ""}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as DateTimePickerLibComponentProps["calendarType"];
-                            update(draft => createSetNewValueInDraft("datePicker.defaultProps.dateTimePickerProps.calendarType")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.dateTimePickerProps.calendarType") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="ISO 8601">ISO 8601</option>
-                        <option value="US">US</option>
-                        <option value="Arabic">Arabic</option>
-                        <option value="Hebrew">Hebrew</option>
-                    </Select>
-                    <CheckboxGroup css={css` margin-top: 10px; `}>
-                        <Checkbox
-                            checked={theme.datePicker.defaultProps?.dateTimePickerProps?.showLeadingZeros || false}
-                            onChange={(_, value) => update(draft => {
-                                createSetNewValueInDraft("datePicker.defaultProps.dateTimePickerProps.showLeadingZeros")(draft, value);
-                            })}
-                            disabled={codeOverridden("datePicker.defaultProps.dateTimePickerProps.showLeadingZeros") || disableEditGlobalStyleGuide}
-                            {...configCheckboxStyles}
-                        >
-                            Show Leading Zeros {
-                                codeOverridden("datePicker.defaultProps.dateTimePickerProps.showLeadingZeros")
-                                    && <DisabledInCodeTooltip />}
-                        </Checkbox>
-                        <Checkbox
-                            checked={theme.datePicker.defaultProps?.dateTimePickerProps?.showFixedNumberOfWeeks || false}
-                            onChange={(_, value) => update(draft => {
-                                createSetNewValueInDraft("datePicker.defaultProps.dateTimePickerProps.showFixedNumberOfWeeks")(draft, value);
-                            })}
-                            disabled={codeOverridden("datePicker.defaultProps.dateTimePickerProps.showFixedNumberOfWeeks") || disableEditGlobalStyleGuide}
-                            {...configCheckboxStyles}
-                        >
-                            Show Fixed Number of Weeks {
-                                codeOverridden("datePicker.defaultProps.dateTimePickerProps.showFixedNumberOfWeeks")
-                                    && <DisabledInCodeTooltip />}
-                        </Checkbox>
-                        <Checkbox
-                            checked={theme.datePicker.defaultProps?.dateTimePickerProps?.showNeighboringMonth || false}
-                            onChange={(_, value) => update(draft => {
-                                createSetNewValueInDraft("datePicker.defaultProps.dateTimePickerProps.showNeighboringMonth")(draft, value);
-                            })}
-                            disabled={codeOverridden("datePicker.defaultProps.dateTimePickerProps.showNeighboringMonth") || disableEditGlobalStyleGuide}
-                            {...configCheckboxStyles}
-                        >
-                            Show Neighboring Month {
-                                codeOverridden("datePicker.defaultProps.dateTimePickerProps.showNeighboringMonth")
-                                    && <DisabledInCodeTooltip />}
-                        </Checkbox>
-                    </CheckboxGroup>
-                    <TextField
-                        label={codeOverridden("datePicker.defaultProps.placeholders.yearPlaceholder") ? <><span>Year Placeholder </span><DisabledInCodeTooltip /></> : "Year Placeholder"}
-                        value={theme.datePicker.defaultProps?.placeholders?.yearPlaceholder}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value;
-                            update(draft => createSetNewValueInDraft("datePicker.defaultProps.placeholders.yearPlaceholder")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.placeholders.yearPlaceholder") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    />
-                    <TextField
-                        label={codeOverridden("datePicker.defaultProps.placeholders.monthPlaceholder") ? <><span>Month Placeholder </span><DisabledInCodeTooltip /></> : "Month Placeholder"}
-                        value={theme.datePicker.defaultProps?.placeholders?.monthPlaceholder}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value;
-                            update(draft => createSetNewValueInDraft("datePicker.defaultProps.placeholders.monthPlaceholder")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.placeholders.monthPlaceholder") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    />
-                    <TextField
-                        label={codeOverridden("datePicker.defaultProps.placeholders.dayPlaceholder") ? <><span>Day Placeholder </span><DisabledInCodeTooltip /></> : "Day Placeholder"}
-                        value={theme.datePicker.defaultProps?.placeholders?.dayPlaceholder}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value;
-                            update(draft => createSetNewValueInDraft("datePicker.defaultProps.placeholders.dayPlaceholder")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.placeholders.dayPlaceholder") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    />
-                    <IconConfig
-                        title="Calendar Icon Configuration"
-                        idPrefix="datepicker-calendar"
-                        locationInTheme="datePicker.defaultProps.calendarIconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <IconConfig
-                        title="Clear Icon Configuration"
-                        idPrefix="datepicker-clear"
-                        locationInTheme="datePicker.defaultProps.clearIconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="File Upload">
-                    <ButtonConfig
-                        title="Button Props"
-                        idPrefix="file-upload-button"
-                        locationInTheme="fileUpload.defaultProps.buttonProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <IconConfig
-                        idPrefix="file-upload"
-                        locationInTheme="fileUpload.defaultProps.iconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Spinner">
-                    <ColorPicker
-                        firstInput
-                        label="Color"
-                        id="spinner-color"
-                        disabled={codeOverridden("loadingSpinner.defaultProps.color") || disableEditGlobalStyleGuide}
-                        color={tryMatchColorStringToPresetValue(theme.loadingSpinner.defaultProps && theme.loadingSpinner.defaultProps.color)}
-                        onChange={color => {
-                            const resultVal = tryMatchColorResultToPresetName(color);
-                            update(draft => createSetNewValueInDraft("loadingSpinner.defaultProps.color")(draft, resultVal));
-                        }}
-                        presetColors={presetColors}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Overflow Menu">
-                    <ButtonConfig
-                        title="Primary Button"
-                        idPrefix="overflow-button"
-                        locationInTheme="overflowMenu.defaultProps.buttonProps"
-                        disableTypography
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <IconConfig
-                        idPrefix="overflow-icon"
-                        locationInTheme="overflowMenu.defaultProps.iconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Pagination">
-                    <Select
-                        label={codeOverridden("datePicker.defaultProps.dateTimePickerProps.calendarType") ? <><span>Current Page Variant </span><DisabledInCodeTooltip /></> : "Current Page Variant"}
-                        value={(theme.pagination.defaultProps && theme.pagination.defaultProps.currentPageButtonVariant) || ""}
-                        onChange={event => {
-                            const resultVal = event.currentTarget.value === "" ? undefined : event.currentTarget.value as ButtonVariants;
-                            update(draft => createSetNewValueInDraft("pagination.defaultProps.currentPageButtonVariant")(draft, resultVal));
-                        }}
-                        disabled={codeOverridden("datePicker.defaultProps.dateTimePickerProps.calendarType") || disableEditGlobalStyleGuide}
-                        {...configFormFieldStyles}
-                    >
-                        <option value=""></option>
-                        <option value="primary">Primary</option>
-                        <option value="secondary">Secondary</option>
-                        <option value="tertiary">Tertiary</option>
-                    </Select>
-                    <ButtonConfig
-                        title="Other Buttons"
-                        idPrefix="pagination-button"
-                        locationInTheme="pagination.defaultProps.buttonProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Tag">
-                    <ColorPicker
-                        firstInput
-                        label="Color"
-                        id="tag-color"
-                        color={tryMatchColorStringToPresetValue(theme.tag.defaultProps && theme.tag.defaultProps.color)}
-                        onChange={color => {
-                            const resultVal = tryMatchColorResultToPresetName(color);
-                            update(draft => createSetNewValueInDraft("tag.defaultProps.color")(draft, resultVal));
-                        }}
-                        presetColors={presetColors}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <IconConfig
-                        idPrefix="tag"
-                        locationInTheme="tag.defaultProps.iconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <TypographyConfig
-                        title="Typography"
-                        idPrefix="tag-text-properties"
-                        locationInTheme="tag.defaultProps.typographyProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-                <SideBarAccordionSection title="Tooltip">
-                    <IconConfig
-                        idPrefix="tooltip"
-                        locationInTheme="tooltip.defaultProps.iconProps"
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                    <TypographyConfig
-                        title="Typography"
-                        idPrefix="tooltip-text-properties"
-                        locationInTheme="tooltip.defaultProps.typographyProps"
-                        enableColorPresets
-                        insideForm
-                        {...presetHelpers}
-                        disabled={disableEditGlobalStyleGuide}
-                    />
-                </SideBarAccordionSection>
-            </Accordion>
-        </form>
-        <ResetButton disabled={disableEditGlobalStyleGuide}
-            onClick={() => dispatch({
-                type: "StyleGuide/SetTheme",
-                theme: {},
-            })}
-        >
-            Reset Styles to Default
-            <Typography variant="p" as="span">This can be undone.</Typography>
-        </ResetButton>
-    </SideBarStyle>
-    </>;
-});
+    const selectConfig = (title: string, locationInTheme: string, children: ReactNode) => {
+        return (
+            <SelectConfig
+                title={title}
+                locationInTheme={locationInTheme}
+                {...presetHelpers}
+                disabled={disableEditGlobalStyleGuide}
+            >
+                {children}
+            </SelectConfig>
+        );
+    };
 
-const StyleGuideEditor = connect(mapStateToProps)(ConnectableStyleGuideEditor as any);
+    const buttonConfig = (title: string, idPrefix: string, locationInTheme: string, disableTypography?: boolean) => {
+        return (
+            <ButtonConfig
+                title={title}
+                idPrefix={idPrefix}
+                locationInTheme={locationInTheme}
+                disableTypography={disableTypography}
+                insideForm
+                {...presetHelpers}
+                disabled={disableEditGlobalStyleGuide}
+            />
+        );
+    };
+
+    const typographyConfig = (title: string, idPrefix: string, locationInTheme: string) => {
+        return (
+            <TypographyConfig
+                title={title}
+                idPrefix={idPrefix}
+                locationInTheme={locationInTheme}
+                enableColorPresets
+                insideForm
+                {...presetHelpers}
+                disabled={disableEditGlobalStyleGuide}
+            />
+        );
+    };
+
+    const iconConfig = (idPrefix: string, locationInTheme: string, otherProps?: unknown) => {
+        return (
+            <IconConfig
+                idPrefix={idPrefix}
+                locationInTheme={locationInTheme}
+                insideForm
+                {...presetHelpers}
+                disabled={disableEditGlobalStyleGuide}
+                {...otherProps}
+            />
+        );
+    };
+
+    return (
+        <>
+            {exitLinks}
+            <SideBarStyle>
+                <form spellCheck={false} onSubmit={event => event.preventDefault()}>
+                    <Typography variant="h2" transform="uppercase">
+                        Site Colors
+                    </Typography>
+                    {presets.map(preset => (
+                        <ColorPicker
+                            key={preset.name}
+                            label={preset.displayAs}
+                            id={preset.name}
+                            color={preset.currentValue}
+                            disabled={codeOverridden(`colors.${preset.name}`) || disableEditGlobalStyleGuide}
+                            preventColorReset={preset.preventColorReset}
+                            onChange={color => update(draft => preset.update(draft, colorResultToString(color)))}
+                        />
+                    ))}
+                    <Typography variant="h2" transform="uppercase">
+                        Site Typography
+                    </Typography>
+                    <Accordion headingLevel={3}>
+                        <ElementTypographyConfig
+                            element="body"
+                            elementDisplayName="Body"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="p"
+                            elementDisplayName="Paragraph (<p>)"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h1"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h2"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h3"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h4"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h5"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="h6"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="legend"
+                            elementDisplayName="Legend"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="headerPrimary"
+                            elementDisplayName="Header Primary"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="headerSecondary"
+                            elementDisplayName="Header Secondary"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ElementTypographyConfig
+                            element="headerTertiary"
+                            elementDisplayName="Header Tertiary"
+                            {...presetHelpers}
+                            disabled={disableEditGlobalStyleGuide}
+                        />
+                        <ConfigMenu title="Link">
+                            <ColorPickerConfig
+                                isInPopover
+                                locationInTheme="link.defaultProps.color"
+                                title="Color"
+                                id="link-color"
+                                {...presetHelpers}
+                                preventColorReset
+                            />
+                            {selectConfig(
+                                "Hover Mode",
+                                "link.defaultProps.hoverMode",
+                                <>
+                                    <option value=""></option>
+                                    <option value="darken">Darken</option>
+                                    <option value="lighten">Lighten</option>
+                                </>,
+                            )}
+                            {iconConfig("link", "link.defaultProps.icon.iconProps", {
+                                disableSource: true,
+                                variant: "accordion",
+                            })}
+                        </ConfigMenu>
+                    </Accordion>
+                    <Typography variant="h2" transform="uppercase">
+                        Components
+                    </Typography>
+                    <Accordion headingLevel={3}>
+                        <SideBarAccordionSection title="Accordion">
+                            {typographyConfig(
+                                "Header Text",
+                                "accordion",
+                                "accordion.sectionDefaultProps.titleTypographyProps",
+                            )}
+                            {iconConfig("accordion", "accordion.sectionDefaultProps.toggleIconProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Breadcrumb">
+                            {typographyConfig(
+                                "Breadcrumb Typography",
+                                "breadcrumb",
+                                "breadcrumbs.defaultProps.typographyProps",
+                            )}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Button">
+                            {buttonConfig("Primary Button", "primary-button", "button.primary")}
+                            {buttonConfig("Secondary Button", "secondary-button", "button.secondary")}
+                            {buttonConfig("Tertiary Button", "tertiary-button", "button.tertiary")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Form Field Options">
+                            {selectConfig(
+                                "Border",
+                                "formField.defaultProps.border",
+                                <>
+                                    <option value=""></option>
+                                    <option value="underline">Underline</option>
+                                    <option value="rectangle">Rectangle</option>
+                                    <option value="rounded">Rounded</option>
+                                </>,
+                            )}
+                            {selectConfig(
+                                "Size Variant",
+                                "formField.defaultProps.sizeVariant",
+                                <>
+                                    <option value=""></option>
+                                    <option value="default">Default</option>
+                                    <option value="small">Small</option>
+                                </>,
+                            )}
+                            {typographyConfig("Error Text", "error-text", "formField.defaultProps.errorProps")}
+                            {typographyConfig("Label Text", "label-text", "formField.defaultProps.labelProps")}
+                            {typographyConfig("Hint Text", "hint-text", "formField.defaultProps.hintProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Field Set Options">
+                            <ColorPickerConfig
+                                firstInput
+                                locationInTheme="fieldSet.defaultProps.color"
+                                title="Color"
+                                id="field-set-options-color"
+                                {...presetHelpers}
+                            />
+                            {selectConfig(
+                                "Size Variant",
+                                "fieldSet.defaultProps.sizeVariant",
+                                <>
+                                    <option value=""></option>
+                                    <option value="default">Default</option>
+                                    <option value="small">Small</option>
+                                </>,
+                            )}
+                            {typographyConfig(
+                                "Group Label Text Properties",
+                                "group-label-text-properties",
+                                "fieldSet.groupDefaultProps.labelProps",
+                            )}
+                            {typographyConfig(
+                                "Item Label Text Properties",
+                                "item-label-text-properties",
+                                "fieldSet.defaultProps.typographyProps",
+                            )}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Checkbox">
+                            <IconSelector
+                                title="Icon"
+                                disabled={disableEditGlobalStyleGuide}
+                                locationInTheme="checkbox.defaultProps.iconProps"
+                                {...presetHelpers}
+                            />
+                            <IconSelector
+                                title="Indeterminate Icon"
+                                disabled={disableEditGlobalStyleGuide}
+                                locationInTheme="checkbox.defaultProps.indeterminateIconProps"
+                                {...presetHelpers}
+                            />
+                            <ColorPickerConfig
+                                firstInput
+                                locationInTheme="checkbox.defaultProps.indeterminateColor"
+                                title="Indeterminate Color"
+                                id="indeterminate-color"
+                                {...presetHelpers}
+                            />
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Date Picker">
+                            <TextFieldConfig
+                                title="Format"
+                                hint={
+                                    <Clickable
+                                        href="https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table"
+                                        target="_blank"
+                                    >
+                                        Format Reference
+                                    </Clickable>
+                                }
+                                locationInTheme="datePicker.defaultProps.format"
+                                disabled={disableEditGlobalStyleGuide}
+                                {...presetHelpers}
+                            />
+                            {selectConfig(
+                                "Calendar Type",
+                                "datePicker.defaultProps.dateTimePickerProps.calendarType",
+                                <>
+                                    <option value=""></option>
+                                    <option value="ISO 8601">ISO 8601</option>
+                                    <option value="US">US</option>
+                                    <option value="Arabic">Arabic</option>
+                                    <option value="Hebrew">Hebrew</option>
+                                </>,
+                            )}
+                            <CheckboxGroup
+                                css={css`
+                                    margin-top: 10px;
+                                `}
+                            >
+                                <CheckboxConfig
+                                    locationInTheme="datePicker.defaultProps.dateTimePickerProps.showLeadingZeros"
+                                    title="Show Leading Zeros"
+                                    disabled={disableEditGlobalStyleGuide}
+                                    {...presetHelpers}
+                                />
+                                <CheckboxConfig
+                                    locationInTheme="datePicker.defaultProps.dateTimePickerProps.showFixedNumberOfWeeks"
+                                    title="Show Fixed Number of Weeks"
+                                    disabled={disableEditGlobalStyleGuide}
+                                    {...presetHelpers}
+                                />
+                                <CheckboxConfig
+                                    locationInTheme="datePicker.defaultProps.dateTimePickerProps.showNeighboringMonth"
+                                    title="Show Neighboring Month"
+                                    disabled={disableEditGlobalStyleGuide}
+                                    {...presetHelpers}
+                                />
+                            </CheckboxGroup>
+                            <TextFieldConfig
+                                title="Year Placeholder"
+                                locationInTheme="datePicker.defaultProps.placeholders.yearPlaceholder"
+                                disabled={disableEditGlobalStyleGuide}
+                                {...presetHelpers}
+                            />
+                            <TextFieldConfig
+                                title="Month Placeholder"
+                                locationInTheme="datePicker.defaultProps.placeholders.monthPlaceholder"
+                                disabled={disableEditGlobalStyleGuide}
+                                {...presetHelpers}
+                            />
+                            <TextFieldConfig
+                                title="Day Placeholder"
+                                locationInTheme="datePicker.defaultProps.placeholders.dayPlaceholder"
+                                disabled={disableEditGlobalStyleGuide}
+                                {...presetHelpers}
+                            />
+                            {iconConfig("datepicker-calendar", "datePicker.defaultProps.calendarIconProps", {
+                                title: "Calendar Icon Configuration",
+                            })}
+                            {iconConfig("datepicker-clear", "datePicker.defaultProps.clearIconProps", {
+                                title: "Clear Icon Configuration",
+                            })}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="File Upload">
+                            {buttonConfig("Button Props", "file-upload-button", "fileUpload.defaultProps.buttonProps")}
+                            {iconConfig("file-upload", "fileUpload.defaultProps.iconProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Spinner">
+                            <ColorPickerConfig
+                                firstInput
+                                locationInTheme="loadingSpinner.defaultProps.color"
+                                title="Color"
+                                id="spinner-color"
+                                {...presetHelpers}
+                            />
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Overflow Menu">
+                            {buttonConfig(
+                                "Primary Button",
+                                "overflow-button",
+                                "overflowMenu.defaultProps.buttonProps",
+                                true,
+                            )}
+                            {iconConfig("overflow-icon", "overflowMenu.defaultProps.iconProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Pagination">
+                            {selectConfig(
+                                "Current Page Variant",
+                                "pagination.defaultProps.currentPageButtonVariant",
+                                <>
+                                    <option value=""></option>
+                                    <option value="primary">Primary</option>
+                                    <option value="secondary">Secondary</option>
+                                    <option value="tertiary">Tertiary</option>
+                                </>,
+                            )}
+                            {buttonConfig("Other Buttons", "pagination-button", "pagination.defaultProps.buttonProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Tag">
+                            <ColorPickerConfig
+                                firstInput
+                                locationInTheme="tag.defaultProps.color"
+                                title="Color"
+                                id="tag-color"
+                                {...presetHelpers}
+                            />
+                            {iconConfig("tag", "tag.defaultProps.iconProps")}
+                            {typographyConfig("Typography", "tag-text-properties", "tag.defaultProps.typographyProps")}
+                        </SideBarAccordionSection>
+                        <SideBarAccordionSection title="Tooltip">
+                            {iconConfig("tooltip", "tooltip.defaultProps.iconProps")}
+                            {typographyConfig(
+                                "Typography",
+                                "tooltip-text-properties",
+                                "tooltip.defaultProps.typographyProps",
+                            )}
+                        </SideBarAccordionSection>
+                    </Accordion>
+                </form>
+                <ResetButton disabled={disableEditGlobalStyleGuide} onClick={() => resetTheme()}>
+                    Reset Styles to Default
+                    <Typography variant="p" as="span">
+                        This can be undone.
+                    </Typography>
+                </ResetButton>
+            </SideBarStyle>
+        </>
+    );
+};
+
+const StyleGuideEditor = connect(mapStateToProps, mapDispatchToProps)(ConnectableStyleGuideEditor);
 
 export default StyleGuideEditor;
 
@@ -828,5 +623,22 @@ const ResetButton = styled.button`
     cursor: pointer;
     > span {
         text-transform: none;
+    }
+`;
+
+const ActionBar = styled.div`
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
+    padding: 12px 10px 12px 34px;
+    display: flex;
+    justify-content: space-between;
+    button:disabled {
+        background: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
+        border-color: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
+        ${ButtonIcon} {
+            color: ${(props: ShellThemeProps) => props.theme.colors.common.disabled};
+        }
     }
 `;

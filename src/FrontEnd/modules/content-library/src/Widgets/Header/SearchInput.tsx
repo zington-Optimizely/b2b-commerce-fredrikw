@@ -1,22 +1,39 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { addSearchHistory, getSearchHistory, SearchHistoryItem } from "@insite/client-framework/Services/AutocompleteService";
+import {
+    addSearchHistory,
+    getSearchHistory,
+    SearchHistoryItem,
+} from "@insite/client-framework/Services/AutocompleteService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import getAutocompleteModel from "@insite/client-framework/Store/CommonHandlers/GetAutocompleteModel";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
 import { AutocompleteItemModel, AutocompleteModel } from "@insite/client-framework/Types/ApiModels";
-import AutocompleteBrands, { AutocompleteBrandsStyles } from "@insite/content-library/Widgets/Header/AutocompleteBrands";
-import AutocompleteCategories, { AutocompleteCategoriesStyles } from "@insite/content-library/Widgets/Header/AutocompleteCategories";
-import AutocompleteContent, { AutocompleteContentStyles } from "@insite/content-library/Widgets/Header/AutocompleteContent";
-import AutocompleteProducts, { AutocompleteProductsStyles } from "@insite/content-library/Widgets/Header/AutocompleteProducts";
+import AutocompleteBrands, {
+    AutocompleteBrandsStyles,
+} from "@insite/content-library/Widgets/Header/AutocompleteBrands";
+import AutocompleteCategories, {
+    AutocompleteCategoriesStyles,
+} from "@insite/content-library/Widgets/Header/AutocompleteCategories";
+import AutocompleteContent, {
+    AutocompleteContentStyles,
+} from "@insite/content-library/Widgets/Header/AutocompleteContent";
+import AutocompleteProducts, {
+    AutocompleteProductsStyles,
+} from "@insite/content-library/Widgets/Header/AutocompleteProducts";
 import SearchHistory, { SearchHistoryStyles } from "@insite/content-library/Widgets/Header/SearchHistory";
 import { FormFieldSizeVariant } from "@insite/mobius/FormField";
 import { sizeVariantValues } from "@insite/mobius/FormField/formStyles";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Search from "@insite/mobius/Icons/Search";
-import Popover, { ContentBodyProps, OverflowWrapperProps, PopoverPresentationProps, PositionStyle } from "@insite/mobius/Popover";
+import Popover, {
+    ContentBodyProps,
+    OverflowWrapperProps,
+    PopoverPresentationProps,
+    PositionStyle,
+} from "@insite/mobius/Popover";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
@@ -38,20 +55,26 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const { searchSettings: { autocompleteEnabled, searchHistoryEnabled, searchHistoryLimit } } = getSettingsCollection(state);
-    return ({
+    const {
+        searchSettings: { autocompleteEnabled, searchHistoryEnabled, searchHistoryLimit },
+    } = getSettingsCollection(state);
+    return {
         autocompleteEnabled,
         searchHistoryEnabled,
         searchHistoryLimit,
         location: getLocation(state),
-    });
+    };
 };
 
 const mapDispatchToProps = {
     getAutocompleteModel,
 };
 
-type Props = OwnProps & ThemeProps<BaseTheme> & HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps &
+    ThemeProps<BaseTheme> &
+    HasHistory &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps>;
 
 interface State {
     query: string;
@@ -59,7 +82,7 @@ interface State {
     focusedAutocompleteItem?: AutocompleteItemModel;
     focusedSearchHistoryQuery?: string;
     autoCompleteModel?: AutocompleteModel;
-    isLoading: boolean
+    isLoading: boolean;
 }
 
 const DOWN_KEY = 40;
@@ -86,7 +109,9 @@ export const searchInputStyles: SearchInputStyles = {
         iconProps: { src: Search },
         border: "underline",
         cssOverrides: {
-            formField: css` width: 250px; `,
+            formField: css`
+                width: 250px;
+            `,
         },
     },
     popover: {
@@ -96,7 +121,7 @@ export const searchInputStyles: SearchInputStyles = {
     popoverWrapper: {
         as: "div",
         _height: "auto",
-        css: css` 
+        css: css`
             display: inline-flex;
             justify-content: flex-end;
         `,
@@ -109,7 +134,18 @@ export const searchInputStyles: SearchInputStyles = {
         css: css`
             display: flex;
             flex-direction: row;
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` flex-direction: column-reverse; `], "max")}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            flex-direction: column-reverse;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
     autocompleteColumnWrapper: {
@@ -154,8 +190,11 @@ class SearchInput extends React.Component<Props, State> {
                 this.closeAutocomplete();
             }
         }
-        if (this.state.autoCompleteModel && prevState.autoCompleteModel
-            && this.state.autoCompleteModel !== prevState.autoCompleteModel) {
+        if (
+            this.state.autoCompleteModel &&
+            prevState.autoCompleteModel &&
+            this.state.autoCompleteModel !== prevState.autoCompleteModel
+        ) {
             this.updateFocusableItems();
         }
     }
@@ -180,8 +219,14 @@ class SearchInput extends React.Component<Props, State> {
         const { categories, brands, content, products } = this.state.autoCompleteModel;
         const isProductsOnTop = window.innerWidth < this.props.theme.breakpoints.values[3];
         const newFocusableOptions = isProductsOnTop
-            ? (products || [] as AutocompleteItemModel[]).concat((categories || [])).concat((brands || [])).concat((content || []))
-            : (categories || []).concat((brands || [])).concat((content || [])).concat((products || []));
+            ? (products || ([] as AutocompleteItemModel[]))
+                  .concat(categories || [])
+                  .concat(brands || [])
+                  .concat(content || [])
+            : (categories || [])
+                  .concat(brands || [])
+                  .concat(content || [])
+                  .concat(products || []);
         this.setState({
             focusableAutocompleteItems: newFocusableOptions,
             focusedAutocompleteItem: undefined,
@@ -207,7 +252,8 @@ class SearchInput extends React.Component<Props, State> {
 
     loadAutocomplete = debounce((query: string) => {
         this.props.getAutocompleteModel({
-            query, onSuccess: result => {
+            query,
+            onSuccess: result => {
                 if (this.showAutocomplete) {
                     this.setState({
                         autoCompleteModel: result,
@@ -244,9 +290,11 @@ class SearchInput extends React.Component<Props, State> {
 
         if (element.current) {
             const rect = element.current.getBoundingClientRect();
-            positionStyle.top = rect.top + (rect.height > 100
-                ? sizeVariantValues[this.styles?.input?.sizeVariant || "default" as FormFieldSizeVariant].height
-                : rect.height);
+            positionStyle.top =
+                rect.top +
+                (rect.height > 100
+                    ? sizeVariantValues[this.styles?.input?.sizeVariant || ("default" as FormFieldSizeVariant)].height
+                    : rect.height);
             positionStyle.right = document.documentElement.clientWidth - rect.right;
         }
 
@@ -256,7 +304,8 @@ class SearchInput extends React.Component<Props, State> {
     moveFocus = throttle((direction: "prev" | "next") => {
         if (this.state.query) {
             this.setState(({ focusedAutocompleteItem, focusableAutocompleteItems }) => {
-                const focusableQueue = direction === "prev" ? focusableAutocompleteItems.slice().reverse() : focusableAutocompleteItems;
+                const focusableQueue =
+                    direction === "prev" ? focusableAutocompleteItems.slice().reverse() : focusableAutocompleteItems;
                 const focusedIndex = focusableQueue.indexOf(focusedAutocompleteItem as AutocompleteItemModel);
                 const newFocusedOption = focusableQueue.find((_, index) => index > focusedIndex);
                 return { focusedAutocompleteItem: newFocusedOption };
@@ -275,25 +324,25 @@ class SearchInput extends React.Component<Props, State> {
 
     handlePopoverKeyDown = (event: KeyboardEvent) => {
         switch (event.keyCode) {
-        case DOWN_KEY:
-            this.moveFocus("next");
-            break;
-        case UP_KEY:
-            this.moveFocus("prev");
-            break;
-        case ENTER_KEY:
-            if (this.state.focusedAutocompleteItem) {
-                this.goToUrl(this.state.focusedAutocompleteItem.url);
-            } else if (this.state.focusedSearchHistoryQuery) {
-                this.setState({ query: this.state.focusedSearchHistoryQuery }, () => {
+            case DOWN_KEY:
+                this.moveFocus("next");
+                break;
+            case UP_KEY:
+                this.moveFocus("prev");
+                break;
+            case ENTER_KEY:
+                if (this.state.focusedAutocompleteItem) {
+                    this.goToUrl(this.state.focusedAutocompleteItem.url);
+                } else if (this.state.focusedSearchHistoryQuery) {
+                    this.setState({ query: this.state.focusedSearchHistoryQuery }, () => {
+                        this.doSearch();
+                    });
+                } else {
                     this.doSearch();
-                });
-            } else {
-                this.doSearch();
-            }
-            break;
-        default:
-            break;
+                }
+                break;
+            default:
+                break;
         }
     };
 
@@ -325,83 +374,97 @@ class SearchInput extends React.Component<Props, State> {
 
         const { categories, brands, content, products } = this.state.autoCompleteModel;
 
-        return <StyledWrapper {...this.styles.autocompleteWrapper}>
-            {((categories && categories.length > 0) || (brands && brands.length > 0) || (content && content.length > 0))
-            && <StyledWrapper {...this.styles.autocompleteColumnWrapper}>
-                <AutocompleteCategories
-                    categories={categories}
-                    focusedItem={this.state.focusedAutocompleteItem}
-                    goToUrl={this.goToUrl}
-                    extendedStyles={this.styles.autocompleteCategoriesStyles}/>
-                <AutocompleteBrands
-                    brands={brands}
-                    focusedItem={this.state.focusedAutocompleteItem}
-                    goToUrl={this.goToUrl}
-                    extendedStyles={this.styles.autocompleteBrandsStyles}/>
-                <AutocompleteContent
-                    content={content}
-                    focusedItem={this.state.focusedAutocompleteItem}
-                    goToUrl={this.goToUrl}
-                    extendedStyles={this.styles.autocompleteContentStyles}/>
+        return (
+            <StyledWrapper {...this.styles.autocompleteWrapper}>
+                {((categories && categories.length > 0) ||
+                    (brands && brands.length > 0) ||
+                    (content && content.length > 0)) && (
+                    <StyledWrapper {...this.styles.autocompleteColumnWrapper}>
+                        <AutocompleteCategories
+                            categories={categories}
+                            focusedItem={this.state.focusedAutocompleteItem}
+                            goToUrl={this.goToUrl}
+                            extendedStyles={this.styles.autocompleteCategoriesStyles}
+                        />
+                        <AutocompleteBrands
+                            brands={brands}
+                            focusedItem={this.state.focusedAutocompleteItem}
+                            goToUrl={this.goToUrl}
+                            extendedStyles={this.styles.autocompleteBrandsStyles}
+                        />
+                        <AutocompleteContent
+                            content={content}
+                            focusedItem={this.state.focusedAutocompleteItem}
+                            goToUrl={this.goToUrl}
+                            extendedStyles={this.styles.autocompleteContentStyles}
+                        />
+                    </StyledWrapper>
+                )}
+                {products && products.length > 0 && (
+                    <StyledWrapper {...this.styles.autocompleteColumnWrapper}>
+                        <AutocompleteProducts
+                            products={products}
+                            focusedItem={this.state.focusedAutocompleteItem}
+                            goToUrl={this.goToUrl}
+                            extendedStyles={this.styles.autocompleteProductsStyles}
+                        />
+                    </StyledWrapper>
+                )}
             </StyledWrapper>
-            }
-            {products && products.length > 0
-            && <StyledWrapper {...this.styles.autocompleteColumnWrapper}>
-                <AutocompleteProducts
-                    products={products}
-                    focusedItem={this.state.focusedAutocompleteItem}
-                    goToUrl={this.goToUrl}
-                    extendedStyles={this.styles.autocompleteProductsStyles}/>
-            </StyledWrapper>
-            }
-        </StyledWrapper>;
+        );
     };
 
     render() {
         const styles = this.styles;
         const searchId = `headerSearch-${this.props.id}`;
-        const searchInput = <TextField
-            {...styles.input}
-            ref={this.props.inputRef}
-            iconClickableProps={{ onClick: this.doSearch }}
-            value={this.state.query}
-            onChange={this.handleInputChange}
-            placeholder={translate("Search")}
-            autoComplete="off"
-            clickableText={translate("submit search")}
-            id={searchId}
-            data-test-selector="headerSearchInputTextField"/>;
+        const searchInput = (
+            <TextField
+                {...styles.input}
+                ref={this.props.inputRef}
+                iconClickableProps={{ onClick: this.doSearch }}
+                value={this.state.query}
+                onChange={this.handleInputChange}
+                placeholder={translate("Search")}
+                autoComplete="off"
+                clickableText={translate("submit search")}
+                id={searchId}
+                data-test-selector="headerSearchInputTextField"
+            />
+        );
 
-        return <>
-            <VisuallyHidden as="label" htmlFor={searchId} id={`${searchId}-label`}>
-                {translate("Site Search")}
-            </VisuallyHidden>
-            <Popover
-                {...styles.popover}
-                controlsId={`${searchId}-popover`}
-                ref={this.popover}
-                insideRefs={[this.list]}
-                popoverTrigger={searchInput}
-                positionFunction={this.getPopoverPosition}
-                wrapperProps={styles.popoverWrapper}
-                contentBodyProps={{
-                    ref: this.list,
-                    ...styles.popoverContentBody,
-                } as any}
-                handleKeyDown={this.handlePopoverKeyDown}
-                onClose={this.handlePopoverClose}
-            >
-                {!this.state.query && this.showAutocomplete
-                && <SearchHistory
-                    focusedQuery={this.state.focusedSearchHistoryQuery}
-                    goToUrl={this.goToUrl}
-                    extendedStyles={styles.searchHistoryStyles}/>
-                }
-                {this.state.query
-                && this.renderAutocomplete()
-                }
-            </Popover>
-        </>;
+        return (
+            <>
+                <VisuallyHidden as="label" htmlFor={searchId} id={`${searchId}-label`}>
+                    {translate("Site Search")}
+                </VisuallyHidden>
+                <Popover
+                    {...styles.popover}
+                    controlsId={`${searchId}-popover`}
+                    ref={this.popover}
+                    insideRefs={[this.list]}
+                    popoverTrigger={searchInput}
+                    positionFunction={this.getPopoverPosition}
+                    wrapperProps={styles.popoverWrapper}
+                    contentBodyProps={
+                        {
+                            ref: this.list,
+                            ...styles.popoverContentBody,
+                        } as any
+                    }
+                    handleKeyDown={this.handlePopoverKeyDown}
+                    onClose={this.handlePopoverClose}
+                >
+                    {!this.state.query && this.showAutocomplete && (
+                        <SearchHistory
+                            focusedQuery={this.state.focusedSearchHistoryQuery}
+                            goToUrl={this.goToUrl}
+                            extendedStyles={styles.searchHistoryStyles}
+                        />
+                    )}
+                    {this.state.query && this.renderAutocomplete()}
+                </Popover>
+            </>
+        );
     }
 }
 

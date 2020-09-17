@@ -1,5 +1,14 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { Cart, CartResult, updateCart as updateCartApi, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    Cart,
+    CartResult,
+    updateCart as updateCartApi,
+    UpdateCartApiParameter,
+} from "@insite/client-framework/Services/CartService";
 import { createShipTo, updateBillTo, updateShipTo } from "@insite/client-framework/Services/CustomersService";
 import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
@@ -11,29 +20,36 @@ import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/Loa
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BaseAddressModel, BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<HasOnSuccess, UpdateCartApiParameter, CartResult, {
-    shipTo?: ShipToModel
-    updatedBillTo?: BillToModel;
-    updatedShipTo?: ShipToModel;
-    cart: Cart;
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    HasOnSuccess,
+    UpdateCartApiParameter,
+    CartResult,
+    {
+        shipTo?: ShipToModel;
+        updatedBillTo?: BillToModel;
+        updatedShipTo?: ShipToModel;
+        cart: Cart;
+    }
+>;
 
 function areAddressesTheSame(address1: BaseAddressModel, address2: BaseAddressModel) {
-    return address1.firstName === address2.firstName
-        && address1.lastName === address2.lastName
-        && address1.attention === address2.attention
-        && address1.companyName === address2.companyName
-        && address1.address1 === address2.address1
-        && address1.address2 === address2.address2
-        && address1.address3 === address2.address3
-        && address1.address4 === address2.address4
-        && address1.country?.id === address2.country?.id
-        && address1.city === address2.city
-        && address1.state?.id === address2.state?.id
-        && address1.postalCode === address2.postalCode
-        && address1.phone === address2.phone
-        && address1.email === address2.email
-        && address1.fax === address2.fax;
+    return (
+        address1.firstName === address2.firstName &&
+        address1.lastName === address2.lastName &&
+        address1.attention === address2.attention &&
+        address1.companyName === address2.companyName &&
+        address1.address1 === address2.address1 &&
+        address1.address2 === address2.address2 &&
+        address1.address3 === address2.address3 &&
+        address1.address4 === address2.address4 &&
+        address1.country?.id === address2.country?.id &&
+        address1.city === address2.city &&
+        address1.state?.id === address2.state?.id &&
+        address1.postalCode === address2.postalCode &&
+        address1.phone === address2.phone &&
+        address1.email === address2.email &&
+        address1.fax === address2.fax
+    );
 }
 
 export const DispatchBeginUpdateCart: HandlerType = props => {
@@ -67,7 +83,11 @@ export const PopulateApiParameter: HandlerType = props => {
 export const AddOrUpdateShipTo: HandlerType = async props => {
     const { dispatch, getState, cart } = props;
     const state = getState();
-    const { pages: { checkoutShipping: { shippingAddressFormState } } } = state;
+    const {
+        pages: {
+            checkoutShipping: { shippingAddressFormState },
+        },
+    } = state;
 
     if (!shippingAddressFormState) {
         return;
@@ -95,7 +115,11 @@ export const AddOrUpdateShipTo: HandlerType = async props => {
 export const UpdateBillTo: HandlerType = async props => {
     const { dispatch, getState, cart } = props;
     const state = getState();
-    const { pages: { checkoutShipping: { billingAddressFormState } } } = state;
+    const {
+        pages: {
+            checkoutShipping: { billingAddressFormState },
+        },
+    } = state;
     if (!billingAddressFormState) {
         return;
     }

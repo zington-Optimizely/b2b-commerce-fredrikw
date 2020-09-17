@@ -19,7 +19,9 @@ import resolveColor from "../utilities/resolveColor";
 import uniqueId from "../utilities/uniqueId";
 import ToggleInput from "./ToggleInput";
 
-export interface CheckboxPresentationProps extends FieldSetPresentationProps<CheckboxProps & StyleProps>, CheckboxGroupContextData {
+export interface CheckboxPresentationProps
+    extends FieldSetPresentationProps<CheckboxProps & StyleProps>,
+        CheckboxGroupContextData {
     /** Props to be passed into the inner Icon component.
      * @themable */
     iconProps?: IconPresentationProps;
@@ -71,28 +73,31 @@ const CheckboxStyle = styled.div<InjectableCss & StyleProps>`
     display: inline-flex;
     align-items: center;
     cursor: ${({ disabled }) => (disabled ? "not-allowed" : "default")};
-    ${({ _labelPosition }) => _labelPosition === "left" && css`
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        margin-left: 10px;
-    `}
+    ${({ _labelPosition }) =>
+        _labelPosition === "left" &&
+        css`
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-left: 10px;
+        `}
     span[role=checkbox] {
         box-sizing: border-box;
         min-width: ${({ _sizeVariant }) => checkboxSizes[_sizeVariant].iconSize}px;
         border: 1px solid ${getColor("common.border")};
         border-radius: ${({ _sizeVariant }) => checkboxSizes[_sizeVariant].borderRadius}px;
-        &[aria-checked=true]:not([aria-disabled=true]), &[aria-checked=mixed]:not([aria-disabled=true]) {
+        &[aria-checked="true"]:not([aria-disabled="true"]),
+        &[aria-checked="mixed"]:not([aria-disabled="true"]) {
             background: ${({ _color, theme }) => resolveColor(_color, theme)};
             border: 0;
             color: ${({ _color, theme }) => getContrastColor(_color, theme)};
         }
-        &[aria-disabled=true] {
+        &[aria-disabled="true"] {
             background: ${({ theme }) => Color(get(theme, "colors.common.disabled")).fade(0.8).toString()};
             border: 1px solid ${({ theme }) => Color(get(theme, "colors.common.border")).fade(0.5).toString()};
             color: ${getColor("common.disabled")};
         }
-        &[aria-checked=false] svg {
+        &[aria-checked="false"] svg {
             display: none;
         }
         & + label {
@@ -114,7 +119,10 @@ type Props = CheckboxProps & ThemeProps<BaseTheme>;
 
 type State = Required<Pick<Props, "checked" | "uid">>;
 
-const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<Props, "children" |  "disabled" | "disable" | "error" | "variant" | "indeterminate">)[];
+const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<
+    Props,
+    "children" | "disabled" | "disable" | "error" | "variant" | "indeterminate"
+>)[];
 
 class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     state: State = {
@@ -131,13 +139,11 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     }
 
     toggleCheck = (e: React.SyntheticEvent<HTMLSpanElement>) => {
-        const {
-            disable,
-            disabled,
-            onChange,
-        } = this.props;
+        const { disable, disabled, onChange } = this.props;
 
-        if (disable || disabled) return;
+        if (disable || disabled) {
+            return;
+        }
 
         const currentValue = !this.state.checked;
 
@@ -161,29 +167,25 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     };
 
     render() {
-        const {
-            children,
-            disable,
-            disabled,
-            error,
-            variant = "default",
-            ...otherProps
-        } = this.props;
+        const { children, disable, disabled, error, variant = "default", ...otherProps } = this.props;
         const isIndeterminate = this.state.checked === "indeterminate";
 
         return (
             <CheckboxGroupContext.Consumer>
-                {(context) => {
+                {context => {
                     // NOTE: not destructuring context because in practice the group wrapper is optional for checkboxes.
                     const sizeVariant = context && context.sizeVariant;
                     // Because disabled html attribute doesn't accept undefined
                     // eslint-disable-next-line no-unneeded-ternary
-                    const isDisabled = (disable || disabled) ? true : false;
-                    const { applyProp, spreadProps } = applyPropBuilder({ sizeVariant, ...this.props }, { component: "checkbox", category: "fieldSet" });
+                    const isDisabled = disable || disabled ? true : false;
+                    const { applyProp, spreadProps } = applyPropBuilder(
+                        { sizeVariant, ...this.props },
+                        { component: "checkbox", category: "fieldSet" },
+                    );
                     const sizeVariantApplied = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
                     const color = applyProp(isIndeterminate ? "indeterminateColor" : "color", "primary");
-                    const labelPosition = applyProp("labelPosition")
-                        || (applyProp("variant", "default") === "toggle" ? "left" : "right");
+                    const labelPosition =
+                        applyProp("labelPosition") || (applyProp("variant", "default") === "toggle" ? "left" : "right");
                     const spreadTypographyProps = spreadProps("typographyProps");
                     const typographyProps = combineTypographyProps({
                         theme: otherProps.theme,
@@ -198,8 +200,12 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     let renderLabel;
                     if (children === 0 || children) {
                         let labelColor = typographyProps.color;
-                        if (error) labelColor = spreadTypographyProps.errorColor || "danger";
-                        if (isDisabled) labelColor = spreadTypographyProps.disabledColor || "text.disabled";
+                        if (error) {
+                            labelColor = spreadTypographyProps.errorColor || "danger";
+                        }
+                        if (isDisabled) {
+                            labelColor = spreadTypographyProps.disabledColor || "text.disabled";
+                        }
                         renderLabel = (
                             <Typography
                                 as="label"
@@ -211,7 +217,9 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                                 color={labelColor} // defaults to text.main if undefined
                                 css={css`
                                     cursor: inherit;
-                                    &:focus { outline: 0; }
+                                    &:focus {
+                                        outline: 0;
+                                    }
                                     ${typographyProps.css}
                                 `}
                             >
@@ -222,18 +230,21 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
 
                     const CheckInput = variant === "toggle" ? ToggleInput : IconCheck;
                     let ariaChecked: boolean | "mixed" = !!this.state.checked;
-                    if (isIndeterminate) ariaChecked = "mixed";
+                    if (isIndeterminate) {
+                        ariaChecked = "mixed";
+                    }
                     const checkInputProps = {
                         _color: color,
                         id: this.state.uid,
                         role: "checkbox",
                         _sizeVariant: sizeVariantApplied,
                         tabIndex: isDisabled ? -1 : 0,
-                        "aria-checked": ariaChecked, /* needed for when the `checked` prop is undefined or null */
+                        "aria-checked": ariaChecked /* needed for when the `checked` prop is undefined or null */,
                         "aria-disabled": isDisabled,
                         disabled: isDisabled,
                         "aria-labelledby": labelId,
-                        "data-checkbox-only": (children !== 0 && !children) ? true : null, /* ship this attribute if no children */
+                        "data-checkbox-only":
+                            children !== 0 && !children ? true : null /* ship this attribute if no children */,
                         onKeyUp: this.handleKeyUp,
                     };
 
@@ -249,22 +260,26 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                             {...omitMultiple(otherProps, omitList)}
                         >
                             {labelPosition === "left" && renderLabel}
-                            {isIndeterminate && <IconCheck
-                                {...checkInputProps}
-                                iconProps={{
-                                    size: checkboxSizes[sizeVariantApplied].iconSize,
-                                    color: "currentColor",
-                                    ...spreadProps("indeterminateIconProps"),
-                                }}
-                            />}
-                            {!isIndeterminate && <CheckInput
-                                {...checkInputProps}
-                                iconProps={{
-                                    size: checkboxSizes[sizeVariantApplied].iconSize,
-                                    color: "currentColor",
-                                    ...spreadProps("iconProps"),
-                                }}
-                            />}
+                            {isIndeterminate && (
+                                <IconCheck
+                                    {...checkInputProps}
+                                    iconProps={{
+                                        size: checkboxSizes[sizeVariantApplied].iconSize,
+                                        color: "currentColor",
+                                        ...spreadProps("indeterminateIconProps"),
+                                    }}
+                                />
+                            )}
+                            {!isIndeterminate && (
+                                <CheckInput
+                                    {...checkInputProps}
+                                    iconProps={{
+                                        size: checkboxSizes[sizeVariantApplied].iconSize,
+                                        color: "currentColor",
+                                        ...spreadProps("iconProps"),
+                                    }}
+                                />
+                            )}
                             {labelPosition !== "left" && renderLabel}
                         </CheckboxStyle>
                     );
@@ -274,7 +289,8 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     }
 }
 
+// withTheme is currently incompatible with getDerivedStateFromProps, as unknown as FunctionComponent needed to get typescript to understand that this can have children
 /** @component */
-export default withDisabler(withTheme(Checkbox as React.ComponentType<Props & HasDisablerContext>)); // withTheme is currently incompatible with getDerivedStateFromProps
+export default withDisabler(withTheme((Checkbox as unknown) as React.FunctionComponent<Props & HasDisablerContext>));
 
 export { CheckboxStyle };

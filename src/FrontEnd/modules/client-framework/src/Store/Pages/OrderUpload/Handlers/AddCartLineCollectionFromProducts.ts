@@ -4,11 +4,14 @@ import { AddCartLinesApiParameter, addLineCollection } from "@insite/client-fram
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { CartLineCollectionModel, CartLineModel, ProductDto } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType =
-    ApiHandlerDiscreteParameter<{
+type HandlerType = ApiHandlerDiscreteParameter<
+    {
         products: ProductDto[];
         onSuccess?: () => void;
-    }, AddCartLinesApiParameter, CartLineCollectionModel>;
+    },
+    AddCartLinesApiParameter,
+    CartLineCollectionModel
+>;
 
 export const DispatchBeginAddCartLineCollectionFromProducts: HandlerType = props => {
     props.dispatch({
@@ -26,7 +29,7 @@ export const PopulateApiParameter: HandlerType = props => {
         } as CartLineModel);
     });
 
-    cartLineCollection.forEach((line) => {
+    cartLineCollection.forEach(line => {
         const parsedQty = line.qtyOrdered ? parseFloat(line.qtyOrdered.toString()) : 1;
         line.qtyOrdered = parsedQty > 0 ? parsedQty : 1;
     });

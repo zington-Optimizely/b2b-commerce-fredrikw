@@ -17,8 +17,17 @@ const reducer = {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Orders/CompleteLoadOrders": (draft: Draft<OrdersState>, action: { parameter: GetOrdersApiParameter, collection: OrderCollectionModel }) => {
-        setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.orders!, (order) => storeIdByOrderNumber(draft, order));
+    "Data/Orders/CompleteLoadOrders": (
+        draft: Draft<OrdersState>,
+        action: { parameter: GetOrdersApiParameter; collection: OrderCollectionModel },
+    ) => {
+        setDataViewLoaded(
+            draft,
+            action.parameter,
+            action.collection,
+            collection => collection.orders!,
+            order => storeIdByOrderNumber(draft, order),
+        );
     },
 
     "Data/Orders/BeginLoadOrder": (draft: Draft<OrdersState>, action: { orderNumber: string }) => {

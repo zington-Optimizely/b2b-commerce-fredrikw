@@ -1,10 +1,7 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { LinkProps } from "@insite/mobius/Link";
 
-type HandlerType = Handler<{ links: LinkProps[] | undefined}>;
+type HandlerType = Handler<{ links: LinkProps[] | undefined }>;
 
 export const DispatchSetLinks: HandlerType = props => {
     props.dispatch({
@@ -13,9 +10,7 @@ export const DispatchSetLinks: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetLinks,
-];
+export const chain = [DispatchSetLinks];
 
 const setBreadcrumbs = createHandlerChainRunner(chain, "SetBreadcrumbs");
 export default setBreadcrumbs;

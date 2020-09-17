@@ -1,7 +1,4 @@
-import {
-    ApiHandlerDiscreteParameter,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
@@ -22,29 +19,29 @@ export const DispatchSetWishListId: HandlerType = props => {
 export const DispatchLoadWishListIfNeeded: HandlerType = props => {
     const wishListState = getWishListState(props.getState(), props.parameter.wishListId);
     if (!wishListState.value || wishListState.value.schedule === undefined) {
-        props.dispatch(loadWishList({
-            wishListId: props.parameter.wishListId,
-            exclude: ["listLines"],
-            expand: ["schedule", "sharedUsers"],
-        }));
+        props.dispatch(
+            loadWishList({
+                wishListId: props.parameter.wishListId,
+                exclude: ["listLines"],
+                expand: ["schedule", "sharedUsers"],
+            }),
+        );
     }
 };
 
 export const DispatchLoadWishListLinesIfNeeded: HandlerType = props => {
-    props.dispatch(updateLoadWishListLinesParameter({
-        wishListId: props.parameter.wishListId,
-        defaultPageSize: props.getState().context.settings.settingsCollection.wishListSettings.productsPerPage,
-        query: "",
-    }));
+    props.dispatch(
+        updateLoadWishListLinesParameter({
+            wishListId: props.parameter.wishListId,
+            defaultPageSize: props.getState().context.settings.settingsCollection.wishListSettings.productsPerPage,
+            query: "",
+        }),
+    );
 
     props.dispatch(loadWishListLines());
 };
 
-export const chain = [
-    DispatchSetWishListId,
-    DispatchLoadWishListIfNeeded,
-    DispatchLoadWishListLinesIfNeeded,
-];
+export const chain = [DispatchSetWishListId, DispatchLoadWishListIfNeeded, DispatchLoadWishListLinesIfNeeded];
 
 const loadWishListIfNeeded = createHandlerChainRunner(chain, "LoadWishListIfNeeded");
 export default loadWishListIfNeeded;

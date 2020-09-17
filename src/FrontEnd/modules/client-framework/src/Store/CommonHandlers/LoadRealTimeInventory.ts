@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner, Handler,
-    HasOnSuccess,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import {
     getProductCollectionRealTimeInventory,
     GetProductCollectionRealTimeInventoryApiV2Parameter,
@@ -30,11 +27,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(props.apiResult);
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, ExecuteOnSuccessCallback];
 
 const loadRealTimeInventory = createHandlerChainRunner(chain, "LoadRealTimeInventory");
 

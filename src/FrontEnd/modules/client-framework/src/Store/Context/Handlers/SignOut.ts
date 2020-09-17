@@ -11,10 +11,7 @@ export const ReloadPage: HandlerType = () => {
     window.location.reload();
 };
 
-export const chain = [
-    DeleteSession,
-    ReloadPage,
-];
+export const chain = [DeleteSession, ReloadPage];
 
 const signOut = createHandlerChainRunnerOptionalParameter(chain, {}, "SignOut");
 export default signOut;

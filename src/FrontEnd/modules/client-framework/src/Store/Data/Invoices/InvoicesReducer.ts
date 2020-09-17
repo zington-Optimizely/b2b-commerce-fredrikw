@@ -13,19 +13,37 @@ const initialState: InvoicesState = {
 };
 
 const reducer = {
-    "Data/Invoices/BeginLoadInvoices": (draft: Draft<InvoicesState>, action: { parameter: GetInvoicesApiParameter }) => {
+    "Data/Invoices/BeginLoadInvoices": (
+        draft: Draft<InvoicesState>,
+        action: { parameter: GetInvoicesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Invoices/CompleteLoadInvoices": (draft: Draft<InvoicesState>, action: { parameter: GetInvoicesApiParameter, collection: InvoiceCollectionModel }) => {
-        setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.invoices!, (order) => storeIdByInvoiceNumber(draft, order));
+    "Data/Invoices/CompleteLoadInvoices": (
+        draft: Draft<InvoicesState>,
+        action: { parameter: GetInvoicesApiParameter; collection: InvoiceCollectionModel },
+    ) => {
+        setDataViewLoaded(
+            draft,
+            action.parameter,
+            action.collection,
+            collection => collection.invoices!,
+            order => storeIdByInvoiceNumber(draft, order),
+        );
     },
 
-    "Data/Invoices/BeginLoadInvoiceByInvoiceNumber": (draft: Draft<InvoicesState>, action: { invoiceNumber: string }) => {
+    "Data/Invoices/BeginLoadInvoiceByInvoiceNumber": (
+        draft: Draft<InvoicesState>,
+        action: { invoiceNumber: string },
+    ) => {
         draft.isLoading[action.invoiceNumber] = true;
     },
 
-    "Data/Invoices/CompleteLoadInvoiceByInvoiceNumber": (draft: Draft<InvoicesState>, action: { model: InvoiceModel }) => {
+    "Data/Invoices/CompleteLoadInvoiceByInvoiceNumber": (
+        draft: Draft<InvoicesState>,
+        action: { model: InvoiceModel },
+    ) => {
         delete draft.isLoading[action.model.invoiceNumber];
         draft.byId[action.model.id] = action.model;
         storeIdByInvoiceNumber(draft, action.model);

@@ -62,7 +62,9 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
     },
     countLabelText: {
         weight: 600,
-        css: css` margin-left: 5px; `,
+        css: css`
+            margin-left: 5px;
+        `,
     },
     countValueText: {
         weight: 600,
@@ -90,12 +92,16 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
         gap: 10,
     },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productPrice: {
         wrapper: {
-            css: css` margin-top: 10px; `,
+            css: css`
+                margin-top: 10px;
+            `,
         },
     },
     quantityAndSubtotalGridItem: {
@@ -130,7 +136,9 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
     totalLabelText: {
         size: 20,
         weight: "bold",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
     totalValueText: {
         size: 20,
@@ -139,82 +147,93 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
 
 const styles = rfqQuoteDetailsRequestedDetailsGridStyles;
 
-const RfqQuoteDetailsRequestedDetailsGrid = ({
-    quoteState,
-}: Props) => {
+const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState }: Props) => {
     const quote = quoteState.value;
     if (!quote || !quote.quoteLineCollection) {
         return null;
     }
 
-    return <StyledWrapper {...styles.mainWrapper}>
-        <StyledWrapper {...styles.headerWrapper}>
-            <Typography as="p" {...styles.countValueText}>
-                {quote.quoteLineCollection.length}
-                <Typography {...styles.countLabelText}>{quote.quoteLineCollection.length > 1 ? translate("Products") : translate("Product")}</Typography>
-            </Typography>
+    return (
+        <StyledWrapper {...styles.mainWrapper}>
+            <StyledWrapper {...styles.headerWrapper}>
+                <Typography as="p" {...styles.countValueText}>
+                    {quote.quoteLineCollection.length}
+                    <Typography {...styles.countLabelText}>
+                        {quote.quoteLineCollection.length > 1 ? translate("Products") : translate("Product")}
+                    </Typography>
+                </Typography>
+            </StyledWrapper>
+            {quote.quoteLineCollection.map(quoteLine => (
+                <GridContainer {...styles.container} key={`${quoteLine.productId}_${quoteLine.unitOfMeasure}`}>
+                    <GridItem {...styles.productImageGridItem}>
+                        <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
+                    </GridItem>
+                    <GridItem {...styles.quoteLineInfoGridItem}>
+                        <GridContainer {...styles.quoteLineInfoContainer}>
+                            <GridItem {...styles.infoLeftColumn}>
+                                <GridContainer {...styles.infoLeftColumnContainer}>
+                                    <GridItem {...styles.productBrandAndDescriptionGridItem}>
+                                        {quoteLine.brand && (
+                                            <ProductBrand
+                                                brand={quoteLine.brand}
+                                                extendedStyles={styles.productBrand}
+                                            />
+                                        )}
+                                        <ProductDescription
+                                            product={quoteLine}
+                                            extendedStyles={styles.productDescription}
+                                        />
+                                        <ProductPartNumbers
+                                            productNumber={quoteLine.erpNumber}
+                                            customerProductNumber={quoteLine.customerName}
+                                            manufacturerItem={quoteLine.manufacturerItem}
+                                            extendedStyles={styles.productPartNumbers}
+                                        />
+                                        <ProductPrice
+                                            product={quoteLine}
+                                            currencySymbol={quote.currencySymbol}
+                                            showLabel={false}
+                                            showSavings={true}
+                                            showSavingsAmount={true}
+                                            showSavingsPercent={true}
+                                            extendedStyles={styles.productPrice}
+                                        />
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                            <GridItem {...styles.quantityAndSubtotalGridItem}>
+                                <GridContainer {...styles.quantityAndSubtotalContainer}>
+                                    <GridItem {...styles.quantityGridItem}>
+                                        <SmallHeadingAndText
+                                            heading={translate("QTY_quantity")}
+                                            text={quoteLine.qtyOrdered || 1}
+                                            extendedStyles={styles.quantityHeadingAndText}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.subtotalGridItem}>
+                                        {quoteLine.pricing && (
+                                            <>
+                                                <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
+                                                <Typography {...styles.subtotalText}>
+                                                    {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                                </Typography>
+                                            </>
+                                        )}
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                </GridContainer>
+            ))}
+            <StyledWrapper {...styles.footerWrapper}>
+                <Typography {...styles.totalValueText} as="p">
+                    <Typography {...styles.totalLabelText}>{translate("Total")}:</Typography>
+                    {quote.orderSubTotalDisplay}
+                </Typography>
+            </StyledWrapper>
         </StyledWrapper>
-        {quote.quoteLineCollection.map(quoteLine => (
-            <GridContainer {...styles.container} key={`${quoteLine.productId}_${quoteLine.unitOfMeasure}`}>
-                <GridItem {...styles.productImageGridItem}>
-                    <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
-                </GridItem>
-                <GridItem {...styles.quoteLineInfoGridItem}>
-                    <GridContainer {...styles.quoteLineInfoContainer}>
-                        <GridItem {...styles.infoLeftColumn}>
-                            <GridContainer {...styles.infoLeftColumnContainer}>
-                                <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                                    {quoteLine.brand
-                                        && <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />
-                                    }
-                                    <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
-                                    <ProductPartNumbers
-                                        productNumber={quoteLine.erpNumber}
-                                        customerProductNumber={quoteLine.customerName}
-                                        manufacturerItem={quoteLine.manufacturerItem}
-                                        extendedStyles={styles.productPartNumbers}
-                                    />
-                                    <ProductPrice
-                                        product={quoteLine}
-                                        currencySymbol={quote.currencySymbol}
-                                        showLabel={false}
-                                        showSavings={true}
-                                        showSavingsAmount={true}
-                                        showSavingsPercent={true}
-                                        extendedStyles={styles.productPrice} />
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                        <GridItem {...styles.quantityAndSubtotalGridItem}>
-                            <GridContainer {...styles.quantityAndSubtotalContainer}>
-                                <GridItem {...styles.quantityGridItem}>
-                                    <SmallHeadingAndText
-                                        heading={translate("QTY_quantity")}
-                                        text={quoteLine.qtyOrdered || 1}
-                                        extendedStyles={styles.quantityHeadingAndText}
-                                    />
-                                </GridItem>
-                                <GridItem {...styles.subtotalGridItem}>
-                                    {quoteLine.pricing
-                                        && <>
-                                            <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
-                                            <Typography {...styles.subtotalText} >{quoteLine.pricing.extendedUnitNetPriceDisplay}</Typography>
-                                        </>
-                                    }
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        ))}
-        <StyledWrapper {...styles.footerWrapper}>
-            <Typography {...styles.totalValueText} as="p">
-                <Typography {...styles.totalLabelText}>{translate("Total")}:</Typography>
-                {quote.orderSubTotalDisplay}
-            </Typography>
-        </StyledWrapper>
-    </StyledWrapper>;
+    );
 };
 
 export default connect(mapStateToProps)(RfqQuoteDetailsRequestedDetailsGrid);

@@ -1,7 +1,14 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
-import { getTokenExConfig, GetTokenExConfigApiParameter, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    getTokenExConfig,
+    GetTokenExConfigApiParameter,
+    TokenExConfig,
+} from "@insite/client-framework/Services/SettingsService";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ token?: string; }, GetTokenExConfigApiParameter, TokenExConfig>;
+type HandlerType = ApiHandlerDiscreteParameter<{ token?: string }, GetTokenExConfigApiParameter, TokenExConfig>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = props.parameter;
@@ -19,11 +26,7 @@ export const DispatchCompleteLoadTokenExConfig: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    GetTokenExConfig,
-    DispatchCompleteLoadTokenExConfig,
-];
+export const chain = [PopulateApiParameter, GetTokenExConfig, DispatchCompleteLoadTokenExConfig];
 
 const loadTokenExConfig = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadTokenExConfig");
 export default loadTokenExConfig;

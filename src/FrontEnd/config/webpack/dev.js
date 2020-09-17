@@ -36,5 +36,4 @@ const serverConfig = merge(setupCommonConfig(true, undefined, "ES2019"), commonS
     devtool: "eval-cheap-source-map", // fast build/faster rebuild - line numbers slightly off because they are from transpiled source. inline-source-map wasn't working
 });
 
-
 module.exports = [clientConfig, serverConfig];

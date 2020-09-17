@@ -61,13 +61,17 @@ export const orderConfirmationShippingInformationStyles: OrderConfirmationShippi
     },
     shippingInformationAddressGridItem: {
         width: [12, 12, 4, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     shippingAddressTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -78,50 +82,66 @@ export const orderConfirmationShippingInformationStyles: OrderConfirmationShippi
         gap: 10,
     },
     shippingInformationCarrierGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 6,
     },
     shippingCarrierTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
     shippingInformationDateRequestedGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     shippingDateRequestedTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
     shippingInformationServiceGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 6,
     },
     shippingServiceTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
     shippingInformationPoNumberGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 6,
     },
     shippingPoNumberTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -129,21 +149,19 @@ export const orderConfirmationShippingInformationStyles: OrderConfirmationShippi
 
 type Props = OwnProps;
 
-const OrderConfirmationShippingInformation: FC<Props> = ({
-    cart,
-    shipTo,
-    pickUpWarehouse,
-    extendedStyles,
-}) => {
+const OrderConfirmationShippingInformation: FC<Props> = ({ cart, shipTo, pickUpWarehouse, extendedStyles }) => {
     const [styles] = useState(() => mergeToNew(orderConfirmationShippingInformationStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.shippingInformationGridContainer} data-test-selector="orderConfirmationShippingInformation">
+        <GridContainer
+            {...styles.shippingInformationGridContainer}
+            data-test-selector="orderConfirmationShippingInformation"
+        >
             <GridItem {...styles.shippingInformationTitleGridItem}>
                 <Typography {...styles.shippingInformationTitle}>{translate("Shipping Information")}</Typography>
             </GridItem>
-            {cart.fulfillmentMethod === FulfillmentMethod.Ship
-                && <GridItem {...styles.shippingInformationAddressGridItem}>
+            {cart.fulfillmentMethod === FulfillmentMethod.Ship && (
+                <GridItem {...styles.shippingInformationAddressGridItem}>
                     <Typography {...styles.shippingAddressTitle}>{translate("Shipping Address")}</Typography>
                     <AddressInfoDisplay
                         companyName={shipTo.companyName}
@@ -157,9 +175,9 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
                         extendedStyles={styles.shippingAddress}
                     />
                 </GridItem>
-            }
-            {cart.fulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse
-                && <GridItem {...styles.shippingInformationAddressGridItem}>
+            )}
+            {cart.fulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse && (
+                <GridItem {...styles.shippingInformationAddressGridItem}>
                     <Typography {...styles.shippingAddressTitle}>{translate("Pick Up Location")}</Typography>
                     <AddressInfoDisplay
                         {...pickUpWarehouse}
@@ -167,28 +185,36 @@ const OrderConfirmationShippingInformation: FC<Props> = ({
                         extendedStyles={styles.shippingAddress}
                     />
                 </GridItem>
-            }
+            )}
             <GridItem {...styles.shippingOtherInformationGridItem}>
                 <GridContainer {...styles.shippingOtherInformationGridContainer}>
-                    {cart.fulfillmentMethod === FulfillmentMethod.Ship
-                        && <GridItem {...styles.shippingInformationCarrierGridItem}>
+                    {cart.fulfillmentMethod === FulfillmentMethod.Ship && (
+                        <GridItem {...styles.shippingInformationCarrierGridItem}>
                             <Typography {...styles.shippingCarrierTitle}>{translate("Carrier")}</Typography>
                             <Typography {...styles.shippingCarrierDescription}>{cart.carrier!.description}</Typography>
                         </GridItem>
-                    }
-                    {(cart.requestedDeliveryDate || cart.requestedPickupDate)
-                        && <GridItem {...styles.shippingInformationDateRequestedGridItem}>
-                            <Typography {...styles.shippingDateRequestedTitle}>{translate("Date Requested")}</Typography>
-                            <Typography {...styles.shippingDateRequestedText} data-test-selector="orderConfirmation_requestedDate">
-                                <LocalizedDateTime dateTime={cart.requestedDeliveryDateDisplay || cart.requestedPickupDateDisplay} />
+                    )}
+                    {(cart.requestedDeliveryDate || cart.requestedPickupDate) && (
+                        <GridItem {...styles.shippingInformationDateRequestedGridItem}>
+                            <Typography {...styles.shippingDateRequestedTitle}>
+                                {translate("Date Requested")}
                             </Typography>
-                        </GridItem>}
-                    {cart.fulfillmentMethod === FulfillmentMethod.Ship
-                        && <GridItem {...styles.shippingInformationServiceGridItem}>
+                            <Typography
+                                {...styles.shippingDateRequestedText}
+                                data-test-selector="orderConfirmation_requestedDate"
+                            >
+                                <LocalizedDateTime
+                                    dateTime={cart.requestedDeliveryDateDisplay || cart.requestedPickupDateDisplay}
+                                />
+                            </Typography>
+                        </GridItem>
+                    )}
+                    {cart.fulfillmentMethod === FulfillmentMethod.Ship && (
+                        <GridItem {...styles.shippingInformationServiceGridItem}>
                             <Typography {...styles.shippingServiceTitle}>{translate("Service")}</Typography>
                             <Typography {...styles.shippingServiceDescription}>{cart.shipVia?.description}</Typography>
                         </GridItem>
-                    }
+                    )}
                     <GridItem {...styles.shippingInformationPoNumberGridItem}>
                         <Typography {...styles.shippingPoNumberTitle}>{translate("PO Number")}</Typography>
                         <Typography {...styles.shippingPoNumberText}>{cart.poNumber}</Typography>

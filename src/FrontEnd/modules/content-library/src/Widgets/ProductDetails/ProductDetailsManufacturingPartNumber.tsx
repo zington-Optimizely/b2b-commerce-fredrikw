@@ -18,11 +18,15 @@ export const manufacturingPartNumberStyles: ProductDetailsManufacturingPartNumbe
     labelText: {
         size: 16,
         weight: "bold",
-        css: css` margin-right: 15px; `,
+        css: css`
+            margin-right: 15px;
+        `,
     },
     valueText: {
         size: 16,
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
 };
 
@@ -32,7 +36,12 @@ const ProductDetailsManufacturingPartNumber: React.FC<Props> = ({ product }) => 
     if (!product.manufacturerItem) {
         return null;
     }
-    return <Typography {...styles.valueText} as="p"><Typography {...styles.labelText}>{translate("MFG #")}</Typography>{product.manufacturerItem}</Typography>;
+    return (
+        <Typography {...styles.valueText} as="p">
+            <Typography {...styles.labelText}>{translate("MFG #")}</Typography>
+            {product.manufacturerItem}
+        </Typography>
+    );
 };
 
 const widgetModule: WidgetModule = {

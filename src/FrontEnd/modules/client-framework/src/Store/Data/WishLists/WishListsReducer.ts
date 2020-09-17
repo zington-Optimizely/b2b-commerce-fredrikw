@@ -1,8 +1,15 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
-import { GetWishListLinesApiParameter, GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
+import {
+    GetWishListLinesApiParameter,
+    GetWishListsApiParameter,
+} from "@insite/client-framework/Services/WishListService";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { WishListsState } from "@insite/client-framework/Store/Data/WishLists/WishListsState";
-import { WishListCollectionModel, WishListLineCollectionModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    WishListCollectionModel,
+    WishListLineCollectionModel,
+    WishListModel,
+} from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: WishListsState = {
@@ -12,10 +19,16 @@ const initialState: WishListsState = {
 };
 
 const reducer = {
-    "Data/WishLists/BeginLoadWishLists": (draft: Draft<WishListsState>, action: { parameter: GetWishListsApiParameter }) => {
+    "Data/WishLists/BeginLoadWishLists": (
+        draft: Draft<WishListsState>,
+        action: { parameter: GetWishListsApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
-    "Data/WishLists/CompleteLoadWishLists": (draft: Draft<WishListsState>, action: { parameter: GetWishListsApiParameter, result: WishListCollectionModel }) => {
+    "Data/WishLists/CompleteLoadWishLists": (
+        draft: Draft<WishListsState>,
+        action: { parameter: GetWishListsApiParameter; result: WishListCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.result, collection => collection.wishListCollection!);
     },
     "Data/WishLists/BeginLoadWishList": (draft: Draft<WishListsState>, action: { wishListId: string }) => {
@@ -28,7 +41,10 @@ const reducer = {
     "Data/WishLists/Reset": () => {
         return initialState;
     },
-    "Data/WishLists/CompleteLoadWishListLines": (draft: Draft<WishListsState>, action: { parameter: GetWishListLinesApiParameter, result: WishListLineCollectionModel }) => {
+    "Data/WishLists/CompleteLoadWishListLines": (
+        draft: Draft<WishListsState>,
+        action: { parameter: GetWishListLinesApiParameter; result: WishListLineCollectionModel },
+    ) => {
         if (!draft.byId[action.parameter.wishListId]) {
             return;
         }

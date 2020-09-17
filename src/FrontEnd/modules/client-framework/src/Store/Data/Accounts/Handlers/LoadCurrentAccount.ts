@@ -22,7 +22,14 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const GetAccount: HandlerType = async props => {
-    props.apiResult = await getAccount(props.apiParameter);
+    try {
+        props.apiResult = await getAccount(props.apiParameter);
+    } catch (error) {
+        if ("status" in error && error.status === 403) {
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadCart: HandlerType = props => {
@@ -33,12 +40,7 @@ export const DispatchCompleteLoadCart: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadAccount,
-    PopulateApiParameter,
-    GetAccount,
-    DispatchCompleteLoadCart,
-];
+export const chain = [DispatchBeginLoadAccount, PopulateApiParameter, GetAccount, DispatchCompleteLoadCart];
 
 const loadCurrentAccount = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentAccount");
 export default loadCurrentAccount;

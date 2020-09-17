@@ -37,13 +37,13 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState) => {
     const settingsCollection = getSettingsCollection(state);
-    return ({
+    return {
         productInfos: state.pages.quickOrder.productInfos,
         orderUploadPageLink: getPageLinkByPageType(state, "OrderUploadPage"),
         cartPageLink: getPageLinkByPageType(state, "CartPage"),
         showAddToCartConfirmationDialog: settingsCollection.productSettings.showAddToCartConfirmationDialog,
         canOrderUpload: settingsCollection.orderSettings.canOrderUpload,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -72,38 +72,70 @@ export const actionsStyles: QuickOrderActionsStyles = {
             justify-content: flex-end;
             clear: both;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [css` flex-flow: column; `, css` flex-flow: column; `, null, null, null])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        flex-flow: column;
+                    `,
+                    css`
+                        flex-flow: column;
+                    `,
+                    null,
+                    null,
+                    null,
+                ])}
         `,
     },
     overflowMenu: {
         buttonProps: {
-            css: css` margin-left: 2px; `,
+            css: css`
+                margin-left: 2px;
+            `,
         },
     },
     addAllToCartButton: {
         variant: "primary",
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` margin-top: 10px; `,
-                css` margin-top: 10px; `,
-                css` margin-left: 10px; `,
-                css` margin-left: 10px; `,
-                css` margin-left: 10px; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        margin-top: 10px;
+                    `,
+                    css`
+                        margin-top: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                ])}
         `,
     },
     addToListButton: {
         variant: "tertiary",
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` margin-top: 10px; `,
-                css` margin-top: 10px; `,
-                css` margin-left: 10px; `,
-                css` margin-left: 10px; `,
-                css` margin-left: 10px; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        margin-top: 10px;
+                    `,
+                    css`
+                        margin-top: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                    css`
+                        margin-left: 10px;
+                    `,
+                ])}
         `,
     },
     uploadOrderButton: {
@@ -114,18 +146,18 @@ export const actionsStyles: QuickOrderActionsStyles = {
 const styles = actionsStyles;
 
 const QuickOrderActions: FC<Props> = ({
-                                          fields,
-                                          productInfos,
-                                          history,
-                                          orderUploadPageLink,
-                                          cartPageLink,
-                                          showAddToCartConfirmationDialog,
-                                          canOrderUpload,
-                                          setAddToListModalIsOpen,
-                                          addCartLines,
-                                          clearProducts,
-                                          loadCurrentCart,
-                                      }) => {
+    fields,
+    productInfos,
+    history,
+    orderUploadPageLink,
+    cartPageLink,
+    showAddToCartConfirmationDialog,
+    canOrderUpload,
+    setAddToListModalIsOpen,
+    addCartLines,
+    clearProducts,
+    loadCurrentCart,
+}) => {
     if (!productInfos || productInfos.length === 0) {
         return null;
     }
@@ -134,15 +166,12 @@ const QuickOrderActions: FC<Props> = ({
 
     const [allQtysIsValid, setAllQtysIsValid] = useState(false);
 
-    React.useEffect(
-        () => {
-            const isValid = productInfos.every(productInfo => {
-                return productInfo.qtyOrdered > 0;
-            });
-            setAllQtysIsValid(isValid);
-        },
-        [productInfos],
-    );
+    React.useEffect(() => {
+        const isValid = productInfos.every(productInfo => {
+            return productInfo.qtyOrdered > 0;
+        });
+        setAllQtysIsValid(isValid);
+    }, [productInfos]);
 
     const uploadOrderClickHandler = () => {
         orderUploadPageLink && history.push(orderUploadPageLink.url);
@@ -162,47 +191,52 @@ const QuickOrderActions: FC<Props> = ({
         setAddToListModalIsOpen({ modalIsOpen: true, productInfos });
     };
 
-    const buttons = <>
-        {canOrderUpload
-            && <Button {...styles.uploadOrderButton} onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Button>
-        }
-        <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>{translate("Add To List")}</Button>
-    </>;
+    const buttons = (
+        <>
+            {canOrderUpload && (
+                <Button {...styles.uploadOrderButton} onClick={uploadOrderClickHandler}>
+                    {translate("Upload Order")}
+                </Button>
+            )}
+            <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>
+                {translate("Add To List")}
+            </Button>
+        </>
+    );
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            {fields.useOverflowMenu
-            && <>
-                <Hidden below="lg" {...styles.buttonsHidden}>
-                    {buttons}
-                </Hidden>
-                <Hidden above="sm" {...styles.buttonsHidden}>
-                    {buttons}
-                </Hidden>
-            </>
-            }
-            {!fields.useOverflowMenu
-            && buttons
-            }
+            {fields.useOverflowMenu && (
+                <>
+                    <Hidden below="lg" {...styles.buttonsHidden}>
+                        {buttons}
+                    </Hidden>
+                    <Hidden above="sm" {...styles.buttonsHidden}>
+                        {buttons}
+                    </Hidden>
+                </>
+            )}
+            {!fields.useOverflowMenu && buttons}
             <Button {...styles.addAllToCartButton} onClick={addAllToCartClickHandler} disabled={!allQtysIsValid}>
                 {translate("Add All to Cart & Check Out")}
             </Button>
-            {fields.useOverflowMenu
-            && <Hidden below="md" above="md" {...styles.menuHidden}>
-                <OverflowMenu position="end" {...styles.overflowMenu}>
-                    {canOrderUpload
-                        && <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
-                    }
-                    <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>{translate("Add To List")}</Clickable>
-                </OverflowMenu>
-            </Hidden>
-            }
+            {fields.useOverflowMenu && (
+                <Hidden below="md" above="md" {...styles.menuHidden}>
+                    <OverflowMenu position="end" {...styles.overflowMenu}>
+                        {canOrderUpload && (
+                            <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
+                        )}
+                        <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>
+                            {translate("Add To List")}
+                        </Clickable>
+                    </OverflowMenu>
+                </Hidden>
+            )}
         </StyledWrapper>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(withHistory(QuickOrderActions)),
     definition: {
         group: "Quick Order",

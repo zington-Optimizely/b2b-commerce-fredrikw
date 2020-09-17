@@ -6,6 +6,7 @@ export default interface PageProps extends ContentItemModel {
     name: string;
     nodeId: string;
     sortOrder: number;
+    variantName?: string;
 }
 
 /** All the data needed for saving a page, and provided when retrieving. */
@@ -28,7 +29,7 @@ export function cleanPage(page: PageModel) {
     do {
         length = newLength;
 
-        page.widgets.forEach((widget) => {
+        page.widgets.forEach(widget => {
             if (idsOnPage[widget.parentId]) {
                 idsOnPage[widget.id] = true;
             }

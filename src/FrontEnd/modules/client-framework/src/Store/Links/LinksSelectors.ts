@@ -1,8 +1,10 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCategoryDepthLoaded as actualGetCategoryDepthLoaded, getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
+import {
+    getCategoryDepthLoaded as actualGetCategoryDepthLoaded,
+    getCategoryState,
+} from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
-
 
 export const getPageLinkByNodeId = (state: HasLinksState, nodeId: string) => {
     const path = state.links.nodeIdToPageLinkPath[nodeId];
@@ -31,18 +33,18 @@ export const getPageLinkByPageType = (state: HasLinksState, pageType: string) =>
 
 export const getLink = (state: ApplicationState, { type, value }: LinkFieldValue) => {
     switch (type) {
-    case "Page":
-        return getPageLinkByNodeId(state, value);
-    case "Category":
-        return {
-            url: value, // TODO ISC-10781 make this work
-            title: value,
-        };
-    case "Url":
-        return {
-            url: value,
-            title: value,
-        };
+        case "Page":
+            return getPageLinkByNodeId(state, value);
+        case "Category":
+            return {
+                url: value, // TODO ISC-10781 make this work
+                title: value,
+            };
+        case "Url":
+            return {
+                url: value,
+                title: value,
+            };
     }
 };
 
@@ -51,7 +53,7 @@ export interface LinkModel {
         openInNewWindow: boolean;
         overriddenTitle: string;
         destination: LinkFieldValue;
-    }
+    };
 }
 
 export function mapLinks<L extends LinkModel, R = {}>(
@@ -59,12 +61,13 @@ export function mapLinks<L extends LinkModel, R = {}>(
     links?: L[],
     optionalReturnFunction?: (widgetLink: L, stateLink?: ReturnType<typeof getLink>) => R,
 ) {
-    if (!links || links.length < 1) return [];
-    return links.map((widgetLink) => {
+    if (!links || links.length < 1) {
+        return [];
+    }
+    return links.map(widgetLink => {
         const stateLink = getLink(state, widgetLink.fields.destination);
-        const optionalReturnValues = typeof optionalReturnFunction === "function"
-            ? optionalReturnFunction(widgetLink, stateLink)
-            : {};
+        const optionalReturnValues =
+            typeof optionalReturnFunction === "function" ? optionalReturnFunction(widgetLink, stateLink) : {};
         return {
             url: stateLink?.url,
             title: stateLink?.title,

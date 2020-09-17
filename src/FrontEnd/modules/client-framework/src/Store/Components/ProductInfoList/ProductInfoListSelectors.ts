@@ -3,7 +3,9 @@ import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
 export function getProductsForProductInfoList(state: ApplicationState, id: string): ProductModel[] | undefined {
     const productInfoByProductId = state.components.productInfoLists.productInfoListById[id]?.productInfoByProductId;
-    return productInfoByProductId ? Object.keys(productInfoByProductId).map(o => state.data.products.byId[o]) : undefined;
+    return productInfoByProductId
+        ? Object.keys(productInfoByProductId).map(o => state.data.products.byId[o])
+        : undefined;
 }
 
 export function getProductInfoFromList(state: ApplicationState, id: string, productId: string) {

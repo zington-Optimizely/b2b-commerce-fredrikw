@@ -2,7 +2,9 @@ import { css, keyframes } from "styled-components";
 
 const DrawerPresentationPropsDefault = {
     cssOverrides: {
-        titleButton: css` padding: 0 1em; `,
+        titleButton: css`
+            padding: 0 1em;
+        `,
         headlineTypography: css`
             margin: 7px 0 7px 45px;
         `,

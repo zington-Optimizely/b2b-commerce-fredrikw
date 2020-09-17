@@ -55,7 +55,9 @@ export interface RecentWishListsStyles {
 export const recentWishListsStyles: RecentWishListsStyles = {
     wishListCardGridItem: {
         width: 12,
-        css: css` padding: 0; `,
+        css: css`
+            padding: 0;
+        `,
     },
     wishListCard: {
         actionAddToCartButton: {
@@ -74,31 +76,35 @@ class RecentWishLists extends React.Component<Props> {
         if (!this.props.recentWishListsDataView.value && !this.props.recentWishListsDataView.isLoading) {
             this.props.loadWishLists(recentWishListsParameter);
         }
-
     }
 
     render() {
-        const { recentWishListsDataView: { value: recentWishLists }, myListsPageNavLink } = this.props;
+        const {
+            recentWishListsDataView: { value: recentWishLists },
+            myListsPageNavLink,
+        } = this.props;
         const myListsPageUrl = myListsPageNavLink ? myListsPageNavLink.url : undefined;
 
         return (
             <CardList data-test-selector="cardListRecentWishLists">
                 <CardListHeading heading={translate("My Lists")} viewAllUrl={myListsPageUrl} />
-                {recentWishLists && recentWishLists.length === 0
-                    && <GridItem width={12}>
+                {recentWishLists && recentWishLists.length === 0 && (
+                    <GridItem width={12}>
                         <Typography {...styles.noWishListsText}>{siteMessage("WishLists_NoWishlistsFound")}</Typography>
                     </GridItem>
-                }
-                {recentWishLists && recentWishLists.map(wishList => (
-                    <CardContainer key={wishList.id}>
-                        <GridItem {...styles.wishListCardGridItem}>
-                            <WishListCard
-                                wishList={wishList}
-                                addWishListToCart={this.props.addWishListToCart}
-                                extendedStyles={styles.wishListCard} />
-                        </GridItem>
-                    </CardContainer>
-                ))}
+                )}
+                {recentWishLists &&
+                    recentWishLists.map(wishList => (
+                        <CardContainer key={wishList.id}>
+                            <GridItem {...styles.wishListCardGridItem}>
+                                <WishListCard
+                                    wishList={wishList}
+                                    addWishListToCart={this.props.addWishListToCart}
+                                    extendedStyles={styles.wishListCard}
+                                />
+                            </GridItem>
+                        </CardContainer>
+                    ))}
             </CardList>
         );
     }

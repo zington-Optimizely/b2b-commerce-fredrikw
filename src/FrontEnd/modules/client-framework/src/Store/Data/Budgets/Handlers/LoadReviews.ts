@@ -31,12 +31,7 @@ export const DispatchCompleteLoadReviews: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadReviews,
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadReviews,
-];
+export const chain = [DispatchBeginLoadReviews, PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadReviews];
 
 const loadReviews = createHandlerChainRunner(chain, "loadReviews");
 export default loadReviews;

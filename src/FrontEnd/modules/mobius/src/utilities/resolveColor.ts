@@ -10,7 +10,7 @@ import get from "./get";
 export default function resolveColor(color = "", theme: BaseTheme) {
     // if the theme is not passed in or invalid, default to baseTheme
     let tempTheme = theme;
-    if ((typeof theme !== "object") || theme === null || Object.keys(theme).length === 0) {
+    if (typeof theme !== "object" || theme === null || Object.keys(theme).length === 0) {
         tempTheme = baseTheme;
     }
 

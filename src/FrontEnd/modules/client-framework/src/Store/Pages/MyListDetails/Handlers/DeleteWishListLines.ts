@@ -2,17 +2,18 @@ import { createHandlerChainRunner, Handler } from "@insite/client-framework/Hand
 import { deleteWishListLines as deleteWishListLinesApi } from "@insite/client-framework/Services/WishListService";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 
-type HandlerType = Handler<
-    {
-        wishListId: string;
-        wishListLineIds: string[];
-        reloadWishListLines?: boolean;
-        onSuccess?: () => void;
-    }
->;
+type HandlerType = Handler<{
+    wishListId: string;
+    wishListLineIds: string[];
+    reloadWishListLines?: boolean;
+    onSuccess?: () => void;
+}>;
 
 export const RequestRemoveWishListLine: HandlerType = async props => {
-    await deleteWishListLinesApi({ wishListId: props.parameter.wishListId, wishListLineIds: props.parameter.wishListLineIds });
+    await deleteWishListLinesApi({
+        wishListId: props.parameter.wishListId,
+        wishListLineIds: props.parameter.wishListLineIds,
+    });
 };
 
 export const ResetWishListData: HandlerType = props => {
@@ -34,12 +35,7 @@ export const DispatchLoadWishLists: HandlerType = props => {
     }
 };
 
-export const chain = [
-    RequestRemoveWishListLine,
-    ResetWishListData,
-    ExecuteOnSuccessCallback,
-    DispatchLoadWishLists,
-];
+export const chain = [RequestRemoveWishListLine, ResetWishListData, ExecuteOnSuccessCallback, DispatchLoadWishLists];
 
 const deleteWishListLines = createHandlerChainRunner(chain, "DeleteWishListLines");
 export default deleteWishListLines;

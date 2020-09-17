@@ -14,8 +14,7 @@ import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     loaded: !!getProductListDataView(state).value,
@@ -41,7 +40,9 @@ export const searchWithinStyles: ProductListSearchWithinStyles = {
     searchTextField: {
         iconProps: { src: Search },
         cssOverrides: {
-            formField: css` width: 100%; `,
+            formField: css`
+                width: 100%;
+            `,
         },
     },
 };
@@ -53,7 +54,7 @@ const ProductListSearchWithin: FC<Props> = ({ loaded, addProductFilters, product
         return null;
     }
 
-    const [searchText, setSearchText]  = useState("");
+    const [searchText, setSearchText] = useState("");
 
     const doSearch = () => {
         if (searchText.trim() !== "") {
@@ -72,11 +73,11 @@ const ProductListSearchWithin: FC<Props> = ({ loaded, addProductFilters, product
     };
 
     let pageType: string;
-    if(productFilters.pageProductLineId) {
+    if (productFilters.pageProductLineId) {
         pageType = "Product Line";
     } else if (productFilters.pageBrandId) {
         pageType = "Brand";
-    } else if(productFilters.pageCategoryId) {
+    } else if (productFilters.pageCategoryId) {
         pageType = "Category";
     } else {
         pageType = "Results";
@@ -103,7 +104,6 @@ const ProductListSearchWithin: FC<Props> = ({ loaded, addProductFilters, product
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListSearchWithin),
     definition: {
         group: "Product List",

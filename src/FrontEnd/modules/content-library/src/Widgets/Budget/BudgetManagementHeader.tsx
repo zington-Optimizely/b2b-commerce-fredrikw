@@ -53,7 +53,9 @@ export const headerStyles: BudgetManagementHeaderStyles = {
         `,
     },
     actionButtonsHidden: {
-        css: css` display: inline-block; `,
+        css: css`
+            display: inline-block;
+        `,
     },
     titleText: {
         variant: "h2",
@@ -61,7 +63,9 @@ export const headerStyles: BudgetManagementHeaderStyles = {
     },
     costCodesButton: {
         variant: "tertiary",
-        css: css` white-space: nowrap; `,
+        css: css`
+            white-space: nowrap;
+        `,
     },
     assignBudgetsButton: {
         variant: "tertiary",
@@ -81,7 +85,6 @@ export const headerStyles: BudgetManagementHeaderStyles = {
 const styles = headerStyles;
 
 const BudgetManagementHeader: React.FunctionComponent<Props> = props => {
-
     const clickCostCodesHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         props.setDisplayedWidgetName({ value: "CostCodes" });
@@ -99,8 +102,8 @@ const BudgetManagementHeader: React.FunctionComponent<Props> = props => {
 
     return (
         <>
-            {props.displayedWidgetName === "ReviewBudget"
-                && <GridContainer {...styles.gridContainer}>
+            {props.displayedWidgetName === "ReviewBudget" && (
+                <GridContainer {...styles.gridContainer}>
                     <GridItem {...styles.titleGridItem}>
                         <Typography {...styles.titleText}>{translate("Budget Management")}</Typography>
                     </GridItem>
@@ -109,13 +112,15 @@ const BudgetManagementHeader: React.FunctionComponent<Props> = props => {
                             <Button
                                 {...styles.costCodesButton}
                                 onClick={clickCostCodesHandler}
-                                data-test-selector="costCodesButton">
+                                data-test-selector="costCodesButton"
+                            >
                                 {translate("Cost Codes")}
                             </Button>
                             <Button
                                 {...styles.assignBudgetsButton}
                                 onClick={clickAssignBudgetsHandler}
-                                data-test-selector="assignBudgetsButton">
+                                data-test-selector="assignBudgetsButton"
+                            >
                                 {translate("Assign Budgets")}
                             </Button>
                         </Hidden>
@@ -123,24 +128,32 @@ const BudgetManagementHeader: React.FunctionComponent<Props> = props => {
                             <Button
                                 {...styles.configureBudgetsButton}
                                 onClick={clickConfigureBudgetsHandler}
-                                data-test-selector="configureBudgetsButton">
+                                data-test-selector="configureBudgetsButton"
+                            >
                                 {translate("Configure Budgets")}
                             </Button>
                         </Hidden>
                         <Hidden {...styles.actionButtonsHidden} above="md">
                             <OverflowMenu position="end" {...styles.overflowMenu}>
                                 <Hidden {...styles.overflowMenuConfigureItemHidden} above="sm">
-                                    <Clickable {...styles.overflowMenuClickables} onClick={clickConfigureBudgetsHandler}>
+                                    <Clickable
+                                        {...styles.overflowMenuClickables}
+                                        onClick={clickConfigureBudgetsHandler}
+                                    >
                                         {translate("Configure Budgets")}
                                     </Clickable>
                                 </Hidden>
-                                <Clickable {...styles.overflowMenuClickables} onClick={clickAssignBudgetsHandler}>{translate("Assign Budgets")}</Clickable>
-                                <Clickable {...styles.overflowMenuClickables} onClick={clickCostCodesHandler}>{translate("Cost Codes")}</Clickable>
+                                <Clickable {...styles.overflowMenuClickables} onClick={clickAssignBudgetsHandler}>
+                                    {translate("Assign Budgets")}
+                                </Clickable>
+                                <Clickable {...styles.overflowMenuClickables} onClick={clickCostCodesHandler}>
+                                    {translate("Cost Codes")}
+                                </Clickable>
                             </OverflowMenu>
                         </Hidden>
                     </GridItem>
                 </GridContainer>
-            }
+            )}
         </>
     );
 };

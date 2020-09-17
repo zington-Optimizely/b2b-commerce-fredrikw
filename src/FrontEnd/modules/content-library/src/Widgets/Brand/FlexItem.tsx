@@ -8,12 +8,16 @@ export type FlexItemProps = {
     /**
      * The columns that should span across the a row, or an array with column spans for each breakpoint defined in the theme.
      * If the column is set to `0`, the FlexItem css will be `display: none;` for that size.
-    */
+     */
     flexColumns?: number | number[];
 } & InjectableCss;
 
 const getWidthStyle = (x: number) => {
-    if (x === 0) return css` display: none; `;
+    if (x === 0) {
+        return css`
+            display: none;
+        `;
+    }
     return css`
         flex-basis: ${getColumnWidth(x)};
         max-width: ${getColumnWidth(x)};
@@ -21,11 +25,11 @@ const getWidthStyle = (x: number) => {
 };
 
 /**
-* Gives the width, in percent, of a column based on the FlexColumns passed in.
-* @param {*} flexColumns The expected columns the row will be split into.
-*/
+ * Gives the width, in percent, of a column based on the FlexColumns passed in.
+ * @param {*} flexColumns The expected columns the row will be split into.
+ */
 function getColumnWidth(flexColumns: number) {
-   return `${Math.round(1e8 / flexColumns) / 1e6}%`;
+    return `${Math.round(1e8 / flexColumns) / 1e6}%`;
 }
 
 /**

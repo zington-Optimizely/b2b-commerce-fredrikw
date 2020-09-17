@@ -24,9 +24,9 @@ const mapDispatchToProps = {
 const mapStateToProps = (state: ApplicationState) => {
     const parsedQuery = parseQueryString<{ cartId?: string }>(getLocation(state).search);
     const cartId = parsedQuery.cartId;
-    return ({
+    return {
         cartId,
-    });
+    };
 };
 
 type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;

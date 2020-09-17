@@ -16,17 +16,15 @@ const robots = async (request: Request, response: Response) => {
     }
 
     // look at the two widgets on the page to get the data we need to output
-    const contentWidget =  json.page.widgets.find((x: WidgetProps) => x.type === "RobotsTxt/RobotsTxtContent");
+    const contentWidget = json.page.widgets.find((x: WidgetProps) => x.type === "RobotsTxt/RobotsTxtContent");
 
     // if disallow flag is on, ignore the cms content and return the default disallow text
-    const sitemap =  contentWidget?.generalFields.sitemap === true;
+    const sitemap = contentWidget?.generalFields.sitemap === true;
     const disallow = contentWidget?.generalFields.disallow === true;
     const sitemapIndexText = sitemap ? `sitemap: https://${request.headers.host?.toLowerCase()}/sitemapindex.xml` : "";
     const upperText = disallow ? disallowText : contentWidget?.generalFields.contentField;
 
-    response
-        .contentType("text/plain")
-        .send(`${upperText}\n${sitemapIndexText}`);
+    response.contentType("text/plain").send(`${upperText}\n${sitemapIndexText}`);
 };
 
 export default robots;

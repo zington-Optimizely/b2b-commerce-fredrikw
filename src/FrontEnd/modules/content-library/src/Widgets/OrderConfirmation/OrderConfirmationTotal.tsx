@@ -2,7 +2,8 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import {
     getDiscountTotal,
-    getOrderPromotions, getPromotionsDataView,
+    getOrderPromotions,
+    getPromotionsDataView,
     getShippingPromotions,
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -23,13 +24,13 @@ const mapStateToProps = (state: ApplicationState) => {
         discountTotal = getDiscountTotal(promotionsDataView.value);
     }
 
-    return ({
+    return {
         cartState: getCartState(state, state.pages.orderConfirmation.cartId),
         orderPromotions,
         shippingPromotions,
         discountTotal,
         promotionsDataView,
-    });
+    };
 };
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
@@ -42,7 +43,7 @@ export const orderConfirmationTotalStyles: OrderConfirmationTotalStyles = {};
 
 const styles = orderConfirmationTotalStyles;
 
-const OrderConfirmationTotal: FC<Props> = (props) => {
+const OrderConfirmationTotal: FC<Props> = props => {
     if (!props.cartState.value || !props.promotionsDataView.value) {
         return null;
     }

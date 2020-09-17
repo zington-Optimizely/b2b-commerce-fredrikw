@@ -6,8 +6,7 @@ import Pagination, { PaginationPresentationProps } from "@insite/mobius/Paginati
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     shipTosDataView: getShipTosDataView(state, state.pages.addresses.getShipTosParameter),
@@ -27,10 +26,7 @@ export const addressBookPaginationStyles: AddressBookPaginationStyles = {};
 
 const styles = addressBookPaginationStyles;
 
-const AddressBookPagination: React.FunctionComponent<Props> = ({
-                                                                   shipTosDataView,
-                                                                   updateSearchFields,
-                                                               }: Props) => {
+const AddressBookPagination: React.FunctionComponent<Props> = ({ shipTosDataView, updateSearchFields }: Props) => {
     if (!shipTosDataView.value || !shipTosDataView.pagination) {
         return null;
     }
@@ -62,7 +58,8 @@ const AddressBookPagination: React.FunctionComponent<Props> = ({
             resultsPerPage={pageSize}
             resultsPerPageOptions={pageSizeOptions}
             onChangePage={changePage}
-            onChangeResultsPerPage={changeResultsPerPage}/>
+            onChangeResultsPerPage={changeResultsPerPage}
+        />
     );
 };
 

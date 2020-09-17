@@ -19,16 +19,23 @@ import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/O
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
-import CreditCardBillingAddressEntry, { CreditCardBillingAddressEntryStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardBillingAddressEntry";
-import CreditCardDetailsEntry, { CreditCardDetailsEntryStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardDetailsEntry";
+import CreditCardBillingAddressEntry, {
+    CreditCardBillingAddressEntryStyles,
+} from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardBillingAddressEntry";
+import CreditCardDetailsEntry, {
+    CreditCardDetailsEntryStyles,
+} from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardDetailsEntry";
 import PaymentProfileBillingAddress from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PaymentProfileBillingAddress";
-import SavedPaymentProfileEntry, { SavedPaymentProfileEntryStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/SavedPaymentProfileEntry";
+import SavedPaymentProfileEntry, {
+    SavedPaymentProfileEntryStyles,
+} from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/SavedPaymentProfileEntry";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import { generateTokenExFrameStyleConfig } from "@insite/mobius/TokenExFrame";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
@@ -42,7 +49,7 @@ import PayPalButton, { PayPalButtonStyles } from "./PayPalButton";
 const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutReviewAndSubmit;
     const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
-    return ({
+    return {
         cartState,
         billToState: getBillToState(state, cartState.value ? cartState.value.billToId : undefined),
         countries: getCurrentCountries(state),
@@ -56,7 +63,7 @@ const mapStateToProps = (state: ApplicationState) => {
         checkoutReviewAndSubmitPageLink: getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage"),
         payPalRedirectUri: state.pages.checkoutReviewAndSubmit.payPalRedirectUri,
         location: getLocation(state),
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -67,7 +74,11 @@ const mapDispatchToProps = {
     loadBillTo,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & ThemeProps<BaseTheme> & HasHistory;
+type Props = ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    ThemeProps<BaseTheme> &
+    HasHistory &
+    HasToasterContext;
 
 export interface CheckoutReviewAndSubmitPaymentDetailsStyles {
     form?: InjectableCss;
@@ -103,11 +114,15 @@ export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmi
     paymentDetailsHeading: { variant: "h5" },
     paymentMethodAndPONumberContainer: {
         gap: 10,
-        css: css` margin-bottom: 1rem; `,
+        css: css`
+            margin-bottom: 1rem;
+        `,
     },
     paymentMethodGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     paymentProfileExpiredErrorWrapper: {
         css: css`
@@ -116,12 +131,18 @@ export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmi
         `,
     },
     paymentProfileExpiredErrorText: { color: "danger" },
-    paymentProfileEditCardLink: { css: css` margin-left: 1rem; ` },
+    paymentProfileEditCardLink: {
+        css: css`
+            margin-left: 1rem;
+        `,
+    },
     poNumberGridItem: { width: 6 },
     creditCardDetailsGridItem: { width: [12, 12, 12, 6, 6] },
     creditCardAddressGridItem: {
         width: [12, 12, 12, 6, 6],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
 };
 
@@ -163,7 +184,7 @@ type TokenExCvvOnlyIframeConfig = TokenExIframeConfig & {
 };
 
 type IFrame = {
-    new(containerId: string, config: TokenExPCIIframeConfig | TokenExCvvOnlyIframeConfig): IFrame;
+    new (containerId: string, config: TokenExPCIIframeConfig | TokenExCvvOnlyIframeConfig): IFrame;
     load: () => void;
     on: (eventName: "validate" | "tokenize" | "error" | "cardTypeChange", callback: (data: any) => void) => void;
     remove: () => void;
@@ -186,7 +207,7 @@ const isMonthAndYearBeforeToday = (month: number, year: number) => {
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    return (year < currentYear) || (year === currentYear && month < currentMonth + 1);
+    return year < currentYear || (year === currentYear && month < currentMonth + 1);
 };
 
 const convertTokenExCardTypeToApiData = (cardType: string) => {
@@ -215,26 +236,27 @@ const StyledForm = getStyledWrapper("form");
 const StyledFieldSet = getStyledWrapper("fieldset");
 
 const CheckoutReviewAndSubmitPaymentDetails = ({
-                                                   loadBillTo,
-                                                   cartState,
-                                                   billToState,
-                                                   countries,
-                                                   websiteSettings,
-                                                   cartSettings,
-                                                   tokenExConfigs,
-                                                   placeOrder,
-                                                   orderConfirmationPageLink,
-                                                   savedPaymentsPageLink,
-                                                   history,
-                                                   checkoutWithPayPal,
-                                                   payPalRedirectUri,
-                                                   preloadOrderConfirmationData,
-                                                   loadTokenExConfig,
-                                                   theme,
-                                                   session,
-                                                   checkoutReviewAndSubmitPageLink,
-                                                   location,
-                                               }: Props) => {
+    loadBillTo,
+    cartState,
+    billToState,
+    countries,
+    websiteSettings,
+    cartSettings,
+    tokenExConfigs,
+    placeOrder,
+    orderConfirmationPageLink,
+    savedPaymentsPageLink,
+    history,
+    checkoutWithPayPal,
+    payPalRedirectUri,
+    preloadOrderConfirmationData,
+    loadTokenExConfig,
+    theme,
+    session,
+    checkoutReviewAndSubmitPageLink,
+    location,
+    toaster,
+}: Props) => {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [poNumber, setPONumber] = useState("");
     const [saveCard, setSaveCard] = useState(false);
@@ -276,7 +298,9 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const [runSubmitPayPal, setRunSubmitPayPal] = useState(false);
 
     // will exist after we are redirected back here from paypal
-    const { PayerID: payPalPayerId, token: payPalToken } = parseQueryString<{ PayerID?: string; token?: string; }>(location.search);
+    const { PayerID: payPalPayerId, token: payPalToken } = parseQueryString<{ PayerID?: string; token?: string }>(
+        location.search,
+    );
 
     const resetForm = () => {
         setCardHolderNameError("");
@@ -299,109 +323,91 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         }
     }, [billToState]);
 
-    useEffect(
-        () => {
-            const script = document.createElement("script");
-            script.src = "https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js";
-            script.async = true;
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js";
+        script.async = true;
 
-            document.body.appendChild(script);
+        document.body.appendChild(script);
 
-            return () => {
-                document.body.removeChild(script);
-            };
-        },
-        [],
-    );
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
 
     useEffect(() => resetForm(), [paymentMethod]);
 
-    useEffect(
-        () => {
-            if (isCardNumberTokenized) {
-                placeOrder({
-                    paymentMethod,
-                    poNumber,
-                    saveCard,
-                    cardHolderName,
-                    cardNumber,
-                    cardType,
-                    expirationMonth,
-                    expirationYear,
-                    securityCode,
-                    useBillingAddress,
-                    address1,
-                    countryId,
-                    stateId,
-                    city,
-                    postalCode,
-                    payPalToken,
-                    payPalPayerId,
-                    onSuccess: (cartId: string) => {
-                        if (!orderConfirmationPageLink) {
-                            return;
-                        }
+    useEffect(() => {
+        if (isCardNumberTokenized) {
+            placeOrder({
+                paymentMethod,
+                poNumber,
+                saveCard,
+                cardHolderName,
+                cardNumber,
+                cardType,
+                expirationMonth,
+                expirationYear,
+                securityCode,
+                useBillingAddress,
+                address1,
+                countryId,
+                stateId,
+                city,
+                postalCode,
+                payPalToken,
+                payPalPayerId,
+                onSuccess: (cartId: string) => {
+                    if (!orderConfirmationPageLink) {
+                        return;
+                    }
 
-                        history.push(`${orderConfirmationPageLink.url}?cartId=${cartId}`);
-                    },
-                });
-            }
-        },
-        [isCardNumberTokenized],
-    );
+                    history.push(`${orderConfirmationPageLink.url}?cartId=${cartId}`);
+                },
+            });
+        }
+    }, [isCardNumberTokenized]);
 
-    useEffect(
-        () => {
-            if (!cartState.isLoading && cartState.value && cartState.value.paymentMethod) {
-                setPaymentMethod(cartState.value.paymentMethod.name);
-            }
-        },
-        [cartState.isLoading],
-    );
+    useEffect(() => {
+        if (!cartState.isLoading && cartState.value && cartState.value.paymentMethod) {
+            setPaymentMethod(cartState.value.paymentMethod.name);
+        }
+    }, [cartState.isLoading]);
 
     // IsPayPal
     // Setup isPayPal from cart.paymentOptions and validates form when cartState changes and is loaded.
-    useEffect(
-        () => {
-            if (cartState.value) {
-                const tempIsPayPal = cartState.value.paymentOptions?.isPayPal || !!payPalToken;
-                setIsPayPal(tempIsPayPal);
-                if (tempIsPayPal) {
-                    validateForm();
-                }
+    useEffect(() => {
+        if (cartState.value) {
+            const tempIsPayPal = cartState.value.paymentOptions?.isPayPal || !!payPalToken;
+            setIsPayPal(tempIsPayPal);
+            if (tempIsPayPal) {
+                validateForm();
             }
-        },
-        [cartState],
-    );
+        }
+    }, [cartState]);
 
     // Submit PayPal
     // When isPayPal and runSubmitPayPal are true will validate form, and submitPayPal with the current page redirectUri and current cart.
-    useEffect(
-        () => {
-            if (isPayPal && runSubmitPayPal) {
-                if (!validateForm()) {
-                    setShowFormErrors(true);
-                    return;
-                }
-                if (!checkoutReviewAndSubmitPageLink) {
-                    return;
-                }
-                checkoutWithPayPal({ redirectUri: `${window.location.host}${checkoutReviewAndSubmitPageLink.url}` });
+    useEffect(() => {
+        if (isPayPal && runSubmitPayPal) {
+            if (!validateForm()) {
+                setShowFormErrors(true);
+                return;
             }
-        },
-        [runSubmitPayPal, isPayPal],
-    );
+            if (!checkoutReviewAndSubmitPageLink) {
+                return;
+            }
+            checkoutWithPayPal({ redirectUri: `${window.location.host}${checkoutReviewAndSubmitPageLink.url}` });
+        }
+    }, [runSubmitPayPal, isPayPal]);
 
     // Submit PayPal State Check
     // Handles the PayPal button click response, getting the payPal redirectUri from the server on cart update call.
-    useEffect(
-        () => {
-            if (payPalRedirectUri) {
-                window.location.href = payPalRedirectUri;
-            }
-        },
-        [payPalRedirectUri],
-    );
+    useEffect(() => {
+        if (payPalRedirectUri) {
+            window.location.href = payPalRedirectUri;
+        }
+    }, [payPalRedirectUri]);
 
     const { value: cart } = cartState;
 
@@ -412,33 +418,29 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
     const paymentMethodDto = paymentMethods?.find(method => method.name === paymentMethod);
     const selectedCountry = countries?.find(country => country.id === countryId);
-    const tokenName = paymentMethodDto?.isPaymentProfile ? paymentMethodDto.name
-        : useTokenExGateway && paymentMethodDto?.isCreditCard ? ""
-            : undefined;
+    const tokenName = paymentMethodDto?.isPaymentProfile
+        ? paymentMethodDto.name
+        : useTokenExGateway && paymentMethodDto?.isCreditCard
+        ? ""
+        : undefined;
 
-    useEffect(
-        () => {
-            if (typeof tokenName !== "undefined") {
-                loadTokenExConfig({ token: tokenName });
-            }
-        },
-        [paymentMethod],
-    );
+    useEffect(() => {
+        if (typeof tokenName !== "undefined") {
+            loadTokenExConfig({ token: tokenName });
+        }
+    }, [paymentMethod]);
 
     const tokenExConfig = typeof tokenName !== "undefined" ? tokenExConfigs[tokenName] : undefined;
 
-    useEffect(
-        () => {
-            if (tokenExConfig) {
-                if (paymentMethodDto?.isPaymentProfile) {
-                    setUpTokenExIFrameCvvOnly(tokenExConfig);
-                } else if (paymentMethodDto?.isCreditCard) {
-                    setUpTokenExIFrame(tokenExConfig);
-                }
+    useEffect(() => {
+        if (tokenExConfig) {
+            if (paymentMethodDto?.isPaymentProfile) {
+                setUpTokenExIFrameCvvOnly(tokenExConfig);
+            } else if (paymentMethodDto?.isCreditCard) {
+                setUpTokenExIFrame(tokenExConfig);
             }
-        },
-        [tokenExConfig],
-    );
+        }
+    }, [tokenExConfig]);
 
     const setUpTokenExIFrame = (config: TokenExConfig) => {
         if (tokenExIframe) {
@@ -493,7 +495,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 }
             }
         });
-        tokenExIframe.on("error", (data) => {
+        tokenExIframe.on("error", data => {
             logger.error(data);
             setUpTokenExIFrame(config);
         });
@@ -534,7 +536,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 }
             }
         });
-        tokenExIframe.on("error", (data) => {
+        tokenExIframe.on("error", data => {
             logger.error(data);
             setUpTokenExIFrameCvvOnly(config);
         });
@@ -581,7 +583,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         setSecurityCode(event.currentTarget.value);
         validateSecurityCode(event.currentTarget.value);
     };
-    const handleUseBillingAddressChange = (_: React.SyntheticEvent<Element, Event>, value: boolean) => setUseBillingAddress(value);
+    const handleUseBillingAddressChange = (_: React.SyntheticEvent<Element, Event>, value: boolean) =>
+        setUseBillingAddress(value);
     const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAddress1(event.currentTarget.value);
         validateAddress1(event.currentTarget.value);
@@ -650,13 +653,15 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     };
 
     const validateCardType = (cardType: string) => {
-        const cardTypeValid = !paymentMethodDto?.isCreditCard || useTokenExGateway || (!useTokenExGateway && isNonEmptyString(cardType));
+        const cardTypeValid =
+            !paymentMethodDto?.isCreditCard || useTokenExGateway || (!useTokenExGateway && isNonEmptyString(cardType));
         setCardTypeError(!cardTypeValid ? translate("Credit card type is required.") : "");
         return cardTypeValid;
     };
 
     const validateCardExpiration = (expirationMonth: number, expirationYear: number) => {
-        const cardExpired = paymentMethodDto?.isCreditCard && isMonthAndYearBeforeToday(expirationMonth, expirationYear);
+        const cardExpired =
+            paymentMethodDto?.isCreditCard && isMonthAndYearBeforeToday(expirationMonth, expirationYear);
         setExpirationError(cardExpired ? translate("Card is expired. Please enter a valid expiration date.") : "");
         return cardExpired;
     };
@@ -682,31 +687,38 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     };
 
     const validateAddress1 = (address1: string) => {
-        const address1Valid = !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(address1));
+        const address1Valid =
+            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(address1));
         setAddress1Error(!address1Valid ? translate("Address is required.") : "");
         return address1Valid;
     };
 
     const validateCountry = (countryId: string) => {
-        const countryValid = !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(countryId));
+        const countryValid =
+            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(countryId));
         setCountryError(!countryValid ? translate("Country is required.") : "");
         return countryValid;
     };
 
     const validateState = (stateId: string) => {
-        const stateValid = !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(stateId));
+        const stateValid =
+            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(stateId));
         setStateError(!stateValid ? translate("State is required.") : "");
         return stateValid;
     };
 
     const validateCity = (city: string) => {
-        const cityValid = !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(city));
+        const cityValid =
+            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(city));
         setCityError(!cityValid ? translate("City is required.") : "");
         return cityValid;
     };
 
     const validatePostalCode = (postalCode: string) => {
-        const postalCodeValid = !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(postalCode));
+        const postalCodeValid =
+            !paymentMethodDto?.isCreditCard ||
+            useBillingAddress ||
+            (!useBillingAddress && isNonEmptyString(postalCode));
         setPostalCodeError(!postalCodeValid ? translate("Postal Code is required.") : "");
         return postalCodeValid;
     };
@@ -733,20 +745,22 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         const cityValid = validateCity(city);
         const postalCodeValid = validatePostalCode(postalCode);
 
-        return paymentMethodValid
-            && poNumberValid
-            && cardHolderNameValid
-            && !cardNumberResult.cardNumberEmpty
-            && cardNumberResult.cardNumberValid
-            && cardTypeValid
-            && !cardExpired
-            && !securityCodeResult.securityCodeEmpty
-            && securityCodeResult.securityCodeValid
-            && address1Valid
-            && countryValid
-            && stateValid
-            && cityValid
-            && postalCodeValid;
+        return (
+            paymentMethodValid &&
+            poNumberValid &&
+            cardHolderNameValid &&
+            !cardNumberResult.cardNumberEmpty &&
+            cardNumberResult.cardNumberValid &&
+            cardTypeValid &&
+            !cardExpired &&
+            !securityCodeResult.securityCodeEmpty &&
+            securityCodeResult.securityCodeValid &&
+            address1Valid &&
+            countryValid &&
+            stateValid &&
+            cityValid &&
+            postalCodeValid
+        );
     };
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -757,7 +771,10 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             return false;
         }
 
-        if ((paymentMethodDto?.isPaymentProfile || (paymentMethodDto?.isCreditCard && useTokenExGateway)) && !isPayPal) {
+        if (
+            (paymentMethodDto?.isPaymentProfile || (paymentMethodDto?.isCreditCard && useTokenExGateway)) &&
+            !isPayPal
+        ) {
             tokenExIframe?.tokenize();
         } else {
             placeOrder({
@@ -782,6 +799,12 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                     preloadOrderConfirmationData({
                         cartId,
                         onSuccess: () => {
+                            if (cart?.isAwaitingApproval) {
+                                toaster.addToast({
+                                    body: siteMessage("OrderApproval_OrderPlaced"),
+                                    messageType: "success",
+                                });
+                            }
                             history.push(`${orderConfirmationPageLink!.url}?cartId=${cartId}`);
                         },
                     });
@@ -809,162 +832,177 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         tokenExFrameStyleConfig = generateTokenExFrameStyleConfig({ theme });
     }
 
-    if (!cart || !paymentOptions || !orderConfirmationPageLink) {
+    if (!cart || cart.requiresApproval || !paymentOptions || !orderConfirmationPageLink) {
         return null;
     }
 
     return (
-        <StyledForm {...styles.form} id="reviewAndSubmitPaymentForm" onSubmit={handleFormSubmit} noValidate={true} data-test-selector="reviewAndSubmitPaymentForm">
+        <StyledForm
+            {...styles.form}
+            id="reviewAndSubmitPaymentForm"
+            onSubmit={handleFormSubmit}
+            noValidate={true}
+            data-test-selector="reviewAndSubmitPaymentForm"
+        >
             <StyledFieldSet {...styles.fieldset}>
                 <Typography {...styles.paymentDetailsHeading} as="h2">
                     {translate("Payment Details")}
                 </Typography>
-                {isPayPal
-                && <Typography {...styles.paymentMethodPayPalText} as="span">
-                    {translate("Payment Method: PayPal")}
-                </Typography>}
-                {!isPayPal
-                && <GridContainer {...styles.paymentMethodAndPONumberContainer}>
-                    {paymentMethods && paymentMethods.length > 0
-                    && <GridItem {...styles.paymentMethodGridItem}>
-                        <Select
-                            {...styles.paymentMethodSelect}
-                            label={translate("Payment Method")}
-                            value={paymentMethod ?? paymentMethodDto?.name}
-                            onChange={handlePaymentMethodChange}
-                            required
-                            error={showFormErrors && paymentMethodError}
-                            data-test-selector="checkoutReviewAndSubmit_paymentMethod"
-                        >
-                            <option value="">{translate("Select Payment Method")}</option>
-                            {paymentMethods.map(method => (
-                                <option key={method.name} value={method.name}>{method.description}</option>
-                            ))}
-                        </Select>
-                        {showPayPal
-                        && <PayPalButton {...styles.payPalButton} submitPayPalRequest={submitPayPalRequest}
-                                         error={showFormErrors ? payPalError : undefined}></PayPalButton>}
-                        {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired
-                        && <PaymentProfileBillingAddress
-                            address={paymentMethodDto.billingAddress}
-                            extendedStyles={styles.paymentProfileBillingAddress}
-                        />
-                        }
-                        {paymentMethodDto?.isPaymentProfile && paymentMethodDto.isPaymentProfileExpired
-                        && <StyledWrapper {...styles.paymentProfileExpiredErrorWrapper}>
-                            <Typography {...styles.paymentProfileExpiredErrorText}>
-                                {siteMessage("Checkout_PaymentProfileExpired")}
-                            </Typography>
-                            {savedPaymentsPageLink
-                            && <Link
-                                {...styles.paymentProfileEditCardLink}
-                                onClick={handleEditCardClick}
-                            >
-                                {translate("Edit Card")}
-                            </Link>
-                            }
-                        </StyledWrapper>
-                        }
-                    </GridItem>
-                    }
-                    <GridItem {...styles.poNumberGridItem}>
-                        <TextField
-                            {...styles.poNumberText}
-                            label={
-                                <>
-                                    <span aria-hidden>{translate("PO Number")}</span>
-                                    <VisuallyHidden>{translate("Purchase Order Number")}</VisuallyHidden>
-                                </>
-                            }
-                            value={poNumber}
-                            onChange={handlePONumberChange}
-                            required={cart.requiresPoNumber}
-                            maxLength={50}
-                            error={showFormErrors && poNumberError}
-                            data-test-selector="checkoutReviewAndSubmit_poNumber"
-                        />
-                    </GridItem>
-                    {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired
-                    && <GridItem width={6}>
-                        <SavedPaymentProfileEntry
-                            useTokenExGateway={useTokenExGateway}
-                            securityCode={securityCode}
-                            onSecurityCodeChange={handleSecurityCodeChange}
-                            securityCodeError={showFormErrors ? securityCodeError : undefined}
-                            extendedStyles={styles.savedPaymentProfile}
-                        />
-                    </GridItem>
-                    }
-                    {cart.showCreditCard && paymentMethodDto?.isCreditCard
-                    && <>
-                        <GridItem {...styles.creditCardDetailsGridItem}>
-                            <CreditCardDetailsEntry
-                                canSaveCard={paymentOptions.canStorePaymentProfile}
-                                useTokenExGateway={useTokenExGateway}
-                                saveCard={saveCard}
-                                onSaveCardChange={handleSaveCardChange}
-                                cardHolderName={cardHolderName}
-                                onCardHolderNameChange={handleCardHolderNameChange}
-                                cardHolderNameError={showFormErrors ? cardHolderNameError : undefined}
-                                cardNumber={cardNumber}
-                                onCardNumberChange={handleCardNumberChange}
-                                cardNumberError={showFormErrors ? cardNumberError : undefined}
-                                cardType={cardType}
-                                possibleCardType={possibleCardType}
-                                onCardTypeChange={handleCardTypeChange}
-                                cardTypeError={showFormErrors ? cardTypeError : undefined}
-                                expirationMonth={expirationMonth}
-                                onExpirationMonthChange={handleExpirationMonthChange}
-                                expirationYear={expirationYear}
-                                onExpirationYearChange={handleExpirationYearChange}
-                                expirationError={showFormErrors ? expirationError : undefined}
-                                securityCode={securityCode}
-                                onSecurityCodeChange={handleSecurityCodeChange}
-                                securityCodeError={showFormErrors ? securityCodeError : undefined}
-                                availableCardTypes={paymentOptions.cardTypes ?? []}
-                                availableMonths={paymentOptions.expirationMonths ?? []}
-                                availableYears={paymentOptions.expirationYears ?? []}
-                                extendedStyles={styles.creditCardDetails}
+                {isPayPal && (
+                    <Typography {...styles.paymentMethodPayPalText} as="span">
+                        {translate("Payment Method: PayPal")}
+                    </Typography>
+                )}
+                {!isPayPal && (
+                    <GridContainer {...styles.paymentMethodAndPONumberContainer}>
+                        {paymentMethods && paymentMethods.length > 0 && (
+                            <GridItem {...styles.paymentMethodGridItem}>
+                                <Select
+                                    {...styles.paymentMethodSelect}
+                                    label={translate("Payment Method")}
+                                    value={paymentMethod ?? paymentMethodDto?.name}
+                                    onChange={handlePaymentMethodChange}
+                                    required
+                                    error={showFormErrors && paymentMethodError}
+                                    data-test-selector="checkoutReviewAndSubmit_paymentMethod"
+                                >
+                                    <option value="">{translate("Select Payment Method")}</option>
+                                    {paymentMethods.map(method => (
+                                        <option key={method.name} value={method.name}>
+                                            {method.description}
+                                        </option>
+                                    ))}
+                                </Select>
+                                {showPayPal && (
+                                    <PayPalButton
+                                        {...styles.payPalButton}
+                                        submitPayPalRequest={submitPayPalRequest}
+                                        error={showFormErrors ? payPalError : undefined}
+                                    ></PayPalButton>
+                                )}
+                                {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired && (
+                                    <PaymentProfileBillingAddress
+                                        address={paymentMethodDto.billingAddress}
+                                        extendedStyles={styles.paymentProfileBillingAddress}
+                                    />
+                                )}
+                                {paymentMethodDto?.isPaymentProfile && paymentMethodDto.isPaymentProfileExpired && (
+                                    <StyledWrapper {...styles.paymentProfileExpiredErrorWrapper}>
+                                        <Typography {...styles.paymentProfileExpiredErrorText}>
+                                            {siteMessage("Checkout_PaymentProfileExpired")}
+                                        </Typography>
+                                        {savedPaymentsPageLink && (
+                                            <Link {...styles.paymentProfileEditCardLink} onClick={handleEditCardClick}>
+                                                {translate("Edit Card")}
+                                            </Link>
+                                        )}
+                                    </StyledWrapper>
+                                )}
+                            </GridItem>
+                        )}
+                        <GridItem {...styles.poNumberGridItem}>
+                            <TextField
+                                {...styles.poNumberText}
+                                label={
+                                    <>
+                                        <span aria-hidden>{translate("PO Number")}</span>
+                                        <VisuallyHidden>{translate("Purchase Order Number")}</VisuallyHidden>
+                                    </>
+                                }
+                                value={poNumber}
+                                onChange={handlePONumberChange}
+                                required={cart.requiresPoNumber}
+                                maxLength={50}
+                                error={showFormErrors && poNumberError}
+                                data-test-selector="checkoutReviewAndSubmit_poNumber"
                             />
                         </GridItem>
-                        <GridItem {...styles.creditCardAddressGridItem}>
-                            <CreditCardBillingAddressEntry
-                                useBillTo={useBillingAddress}
-                                onUseBillToChange={handleUseBillingAddressChange}
-                                billTo={billToState.value}
-                                address1={address1}
-                                onAddress1Change={handleAddressChange}
-                                address1Error={showFormErrors ? address1Error : undefined}
-                                country={countryId}
-                                onCountryChange={handleCountryChange}
-                                countryError={showFormErrors ? countryError : undefined}
-                                state={stateId}
-                                onStateChange={handleStateChange}
-                                stateError={showFormErrors ? stateError : undefined}
-                                city={city}
-                                onCityChange={handleCityChange}
-                                cityError={showFormErrors ? cityError : undefined}
-                                postalCode={postalCode}
-                                onPostalCodeChange={handlePostalCodeChange}
-                                postalCodeError={showFormErrors ? postalCodeError : undefined}
-                                availableCountries={countries ?? []}
-                                availableStates={selectedCountry?.states}
-                                extendedStyles={styles.creditCardAddress}
-                            />
-                        </GridItem>
-                    </>
-                    }
-                </GridContainer>
-                }
+                        {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired && (
+                            <GridItem width={6}>
+                                <SavedPaymentProfileEntry
+                                    useTokenExGateway={useTokenExGateway}
+                                    securityCode={securityCode}
+                                    onSecurityCodeChange={handleSecurityCodeChange}
+                                    securityCodeError={showFormErrors ? securityCodeError : undefined}
+                                    extendedStyles={styles.savedPaymentProfile}
+                                />
+                            </GridItem>
+                        )}
+                        {cart.showCreditCard && paymentMethodDto?.isCreditCard && (
+                            <>
+                                <GridItem {...styles.creditCardDetailsGridItem}>
+                                    <CreditCardDetailsEntry
+                                        canSaveCard={paymentOptions.canStorePaymentProfile}
+                                        useTokenExGateway={useTokenExGateway}
+                                        saveCard={saveCard}
+                                        onSaveCardChange={handleSaveCardChange}
+                                        cardHolderName={cardHolderName}
+                                        onCardHolderNameChange={handleCardHolderNameChange}
+                                        cardHolderNameError={showFormErrors ? cardHolderNameError : undefined}
+                                        cardNumber={cardNumber}
+                                        onCardNumberChange={handleCardNumberChange}
+                                        cardNumberError={showFormErrors ? cardNumberError : undefined}
+                                        cardType={cardType}
+                                        possibleCardType={possibleCardType}
+                                        onCardTypeChange={handleCardTypeChange}
+                                        cardTypeError={showFormErrors ? cardTypeError : undefined}
+                                        expirationMonth={expirationMonth}
+                                        onExpirationMonthChange={handleExpirationMonthChange}
+                                        expirationYear={expirationYear}
+                                        onExpirationYearChange={handleExpirationYearChange}
+                                        expirationError={showFormErrors ? expirationError : undefined}
+                                        securityCode={securityCode}
+                                        onSecurityCodeChange={handleSecurityCodeChange}
+                                        securityCodeError={showFormErrors ? securityCodeError : undefined}
+                                        availableCardTypes={paymentOptions.cardTypes ?? []}
+                                        availableMonths={paymentOptions.expirationMonths ?? []}
+                                        availableYears={paymentOptions.expirationYears ?? []}
+                                        extendedStyles={styles.creditCardDetails}
+                                    />
+                                </GridItem>
+                                <GridItem {...styles.creditCardAddressGridItem}>
+                                    <CreditCardBillingAddressEntry
+                                        useBillTo={useBillingAddress}
+                                        onUseBillToChange={handleUseBillingAddressChange}
+                                        billTo={billToState.value}
+                                        address1={address1}
+                                        onAddress1Change={handleAddressChange}
+                                        address1Error={showFormErrors ? address1Error : undefined}
+                                        country={countryId}
+                                        onCountryChange={handleCountryChange}
+                                        countryError={showFormErrors ? countryError : undefined}
+                                        state={stateId}
+                                        onStateChange={handleStateChange}
+                                        stateError={showFormErrors ? stateError : undefined}
+                                        city={city}
+                                        onCityChange={handleCityChange}
+                                        cityError={showFormErrors ? cityError : undefined}
+                                        postalCode={postalCode}
+                                        onPostalCodeChange={handlePostalCodeChange}
+                                        postalCodeError={showFormErrors ? postalCodeError : undefined}
+                                        availableCountries={countries ?? []}
+                                        availableStates={selectedCountry?.states}
+                                        extendedStyles={styles.creditCardAddress}
+                                    />
+                                </GridItem>
+                            </>
+                        )}
+                    </GridContainer>
+                )}
             </StyledFieldSet>
             {/* This button should only be used to trigger the submit of the form, it is required for IE11 to function. */}
-            <button id="reviewAndSubmitPaymentForm-submit" type="submit" style={{ display: "none" }}>{translate("Place Order")}</button>
+            <button id="reviewAndSubmitPaymentForm-submit" type="submit" style={{ display: "none" }}>
+                {translate("Place Order")}
+            </button>
         </StyledForm>
     );
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(withTheme(CheckoutReviewAndSubmitPaymentDetails))),
+    component: connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(withToaster(withHistory(withTheme(CheckoutReviewAndSubmitPaymentDetails)))),
     definition: {
         group: "Checkout - Review & Submit",
         displayName: "Payment Details",

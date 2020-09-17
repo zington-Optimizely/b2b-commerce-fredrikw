@@ -47,19 +47,19 @@ const SliderFrame = styled.div<SliderFrameProps>`
     position: relative;
     display: inline-block;
     box-sizing: border-box;
-    &[aria-checked=true]:not([aria-disabled]) {
+    &[aria-checked="true"]:not([aria-disabled]) {
         background: ${({ _color, theme }) => resolveColor(_color, theme)};
         border: ${({ _color, theme }) => resolveColor(_color, theme)} 1px solid;
         color: ${({ _color, theme }) => getContrastColor(_color, theme)};
         fill: ${({ _color, theme }) => getContrastColor(_color, theme)};
     }
-    &[aria-checked=false]:not([aria-disabled]) {
+    &[aria-checked="false"]:not([aria-disabled]) {
         background: ${getColor("common.background")};
         border: ${getColor("text.accent")} solid 1px;
         color: ${getColor("text.accent")};
         fill: ${getColor("text.accent")};
     }
-    &[aria-checked=false] ${Slider} {
+    &[aria-checked="false"] ${Slider} {
         left: ${({ _sizeVariant }) => toggleSizes[_sizeVariant].uncheckedOffset}px;
     }
     &[aria-disabled] {
@@ -87,17 +87,26 @@ const ToggleInput: React.FC<Props> = ({ _sizeVariant = "default", ...otherProps 
                 src="Check"
                 size={toggleSizes[_sizeVariant].iconSize}
                 color="currentColor"
-                css={css` margin-left: -1px; `}/>
+                css={css`
+                    margin-left: -1px;
+                `}
+            />
             <IconMemo
                 src="FillCircle"
                 size={toggleSizes[_sizeVariant].circleSize}
                 color="currentColor"
-                css={css` margin: 0; `}/>
+                css={css`
+                    margin: 0;
+                `}
+            />
             <IconMemo
                 src="X"
                 size={toggleSizes[_sizeVariant].iconSize}
                 color="currentColor"
-                css={css` margin-left: 2px; `}/>
+                css={css`
+                    margin-left: 2px;
+                `}
+            />
         </Slider>
     </SliderFrame>
 );

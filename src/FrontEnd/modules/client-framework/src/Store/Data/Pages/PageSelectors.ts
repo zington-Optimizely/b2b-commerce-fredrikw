@@ -31,6 +31,6 @@ export function getPageStateByType(state: ApplicationState, type: string) {
 
 export function getReturnUrl(state: ApplicationState) {
     const { search } = getLocation(state);
-    const query = parseQueryString<{ returnUrl?: string; returnurl?: string; }>(search);
+    const query = parseQueryString<{ returnUrl?: string; returnurl?: string }>(search);
     return query.returnUrl || query.returnurl;
 }

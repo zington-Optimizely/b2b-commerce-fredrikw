@@ -7,13 +7,17 @@ import { getProductInfoFromList } from "@insite/client-framework/Store/Component
 import translate from "@insite/client-framework/Translate";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAddToListLink, {
+    ProductAddToListLinkStyles,
+} from "@insite/content-library/Components/ProductAddToListLink";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import ProductPrice from "@insite/content-library/Components/ProductPrice";
-import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import ProductQuantityBreakPricing, {
+    ProductQuantityBreakPricingStyles,
+} from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -76,7 +80,9 @@ export const productCarouselProductStyles: ProductCarouselProductStyles = {
     },
     productDescriptionStyles: {
         productDetailLink: {
-            css: css` margin-bottom: 6px; `,
+            css: css`
+                margin-bottom: 6px;
+            `,
         },
     },
     productPartNumbersStyles: {
@@ -97,46 +103,56 @@ export const productCarouselProductStyles: ProductCarouselProductStyles = {
     },
     productUnitOfMeasureSelectStyles: {
         cssOverrides: {
-            formField: css` margin-top: 6px; `,
+            formField: css`
+                margin-top: 6px;
+            `,
         },
     },
     addToCartContainer: {
         gap: 10,
         css: css`
-                flex-grow: 0;
-                margin-bottom: 6px;
-            `,
+            flex-grow: 0;
+            margin-bottom: 6px;
+        `,
     },
     qtyGridItem: { width: 3 },
     productQuantityOrderedStyles: {
         cssOverrides: {
-            formField: css` margin-top: 0; `,
+            formField: css`
+                margin-top: 0;
+            `,
         },
     },
     addToCartButtonGridItem: { width: 9 },
-    productAddToCartButtonStyles: { css: css` width: 100%; ` },
+    productAddToCartButtonStyles: {
+        css: css`
+            width: 100%;
+        `,
+    },
     productAddToListLinkStyles: {
         link: {
             typographyProps: { size: 13 },
-            css: css` margin-bottom: 12px; `,
+            css: css`
+                margin-bottom: 12px;
+            `,
         },
     },
 };
 
 const ProductCarouselProduct: React.FC<Props> = ({
-                                                     carouselId,
-                                                     product,
-                                                     showImage,
-                                                     showBrand,
-                                                     showTitle,
-                                                     showPartNumbers,
-                                                     showPrice,
-                                                     showAddToCart,
-                                                     showAddToList,
-                                                     updateProductInfo,
-                                                     extendedStyles,
-                                                     productInfo,
-                                                 }) => {
+    carouselId,
+    product,
+    showImage,
+    showBrand,
+    showTitle,
+    showPartNumbers,
+    showPrice,
+    showAddToCart,
+    showAddToList,
+    updateProductInfo,
+    extendedStyles,
+    productInfo,
+}) => {
     const [styles] = React.useState(() => mergeToNew(productCarouselProductStyles, extendedStyles));
 
     const updateQuantity = (qtyOrdered: number) => {
@@ -158,66 +174,73 @@ const ProductCarouselProduct: React.FC<Props> = ({
         onQtyOrderedChanged: updateQuantity,
     };
 
-    return <>
-        <ProductContext.Provider value={productContext}>
-            {showImage
-            && <ProductImage product={productContext} extendedStyles={styles.productImageStyles}/>
-            }
-            {showBrand && product.brand
-            && <StyledWrapper {...styles.productBrandWrapper}>
-                <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles}/>
-            </StyledWrapper>
-            }
-            {showTitle
-            && <ProductDescription product={productContext} extendedStyles={styles.productDescriptionStyles}/>
-            }
-            {showPartNumbers
-            && <ProductPartNumbers
-                productNumber={product.productNumber}
-                customerProductNumber={product.customerProductNumber}
-                manufacturerItem={product.manufacturerItem}
-                showCustomerName={false}
-                showManufacturerItem={false}
-                extendedStyles={styles.productPartNumbersStyles}/>
-            }
-            {showPrice
-            && <StyledWrapper {...styles.productPriceWrapper}>
-                <VisuallyHidden as="label" htmlFor={`${carouselId}-uom`} id={`${carouselId}-uom-label`}>
-                    {translate("U/M")}
-                </VisuallyHidden>
-                <ProductPrice showLabel={false} product={productContext}/>
-                {product.unitOfMeasures
-                && <ProductUnitOfMeasureSelect
-                    labelOverride=""
-                    extendedStyles={styles.productUnitOfMeasureSelectStyles}
-                    id={`${carouselId}-uom`}/>
-                }
-                <ProductQuantityBreakPricing extendedStyles={styles.productQuantityBreakPricingStyles}/>
-            </StyledWrapper>
-            }
-            {showAddToCart
-            && <GridContainer {...styles.addToCartContainer}>
-                <GridItem {...styles.qtyGridItem}>
-                    <VisuallyHidden as="label" htmlFor={`${carouselId}-qty`} id={`${carouselId}-qty-label`}>
-                        {translate("QTY_quantity")}
-                    </VisuallyHidden>
-                    <ProductQuantityOrdered
-                        labelOverride=""
-                        extendedStyles={styles.productQuantityOrderedStyles}
-                        id={`${carouselId}-qty`}/>
-                </GridItem>
-                <GridItem {...styles.addToCartButtonGridItem}>
-                    <ProductAddToCartButton
-                        data-test-selector="addToCartBtn"
-                        extendedStyles={styles.productAddToCartButtonStyles}/>
-                </GridItem>
-            </GridContainer>
-            }
-            {showAddToList
-            && <ProductAddToListLink data-test-selector="addToListLink" extendedStyles={styles.productAddToListLinkStyles}/>
-            }
-        </ProductContext.Provider>
-    </>;
+    return (
+        <>
+            <ProductContext.Provider value={productContext}>
+                {showImage && <ProductImage product={productContext} extendedStyles={styles.productImageStyles} />}
+                {showBrand && product.brand && (
+                    <StyledWrapper {...styles.productBrandWrapper}>
+                        <ProductBrand brand={product.brand} extendedStyles={styles.productBrandStyles} />
+                    </StyledWrapper>
+                )}
+                {showTitle && (
+                    <ProductDescription product={productContext} extendedStyles={styles.productDescriptionStyles} />
+                )}
+                {showPartNumbers && (
+                    <ProductPartNumbers
+                        productNumber={product.productNumber}
+                        customerProductNumber={product.customerProductNumber}
+                        manufacturerItem={product.manufacturerItem}
+                        showCustomerName={false}
+                        showManufacturerItem={false}
+                        extendedStyles={styles.productPartNumbersStyles}
+                    />
+                )}
+                {showPrice && (
+                    <StyledWrapper {...styles.productPriceWrapper}>
+                        <VisuallyHidden as="label" htmlFor={`${carouselId}-uom`} id={`${carouselId}-uom-label`}>
+                            {translate("U/M")}
+                        </VisuallyHidden>
+                        <ProductPrice showLabel={false} product={productContext} />
+                        {product.unitOfMeasures && (
+                            <ProductUnitOfMeasureSelect
+                                labelOverride=""
+                                extendedStyles={styles.productUnitOfMeasureSelectStyles}
+                                id={`${carouselId}-uom`}
+                            />
+                        )}
+                        <ProductQuantityBreakPricing extendedStyles={styles.productQuantityBreakPricingStyles} />
+                    </StyledWrapper>
+                )}
+                {showAddToCart && (
+                    <GridContainer {...styles.addToCartContainer}>
+                        <GridItem {...styles.qtyGridItem}>
+                            <VisuallyHidden as="label" htmlFor={`${carouselId}-qty`} id={`${carouselId}-qty-label`}>
+                                {translate("QTY_quantity")}
+                            </VisuallyHidden>
+                            <ProductQuantityOrdered
+                                labelOverride=""
+                                extendedStyles={styles.productQuantityOrderedStyles}
+                                id={`${carouselId}-qty`}
+                            />
+                        </GridItem>
+                        <GridItem {...styles.addToCartButtonGridItem}>
+                            <ProductAddToCartButton
+                                data-test-selector="addToCartBtn"
+                                extendedStyles={styles.productAddToCartButtonStyles}
+                            />
+                        </GridItem>
+                    </GridContainer>
+                )}
+                {showAddToList && (
+                    <ProductAddToListLink
+                        data-test-selector="addToListLink"
+                        extendedStyles={styles.productAddToListLinkStyles}
+                    />
+                )}
+            </ProductContext.Provider>
+        </>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductCarouselProduct);

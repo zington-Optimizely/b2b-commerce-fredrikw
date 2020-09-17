@@ -28,18 +28,21 @@ export interface TooltipPresentationProps {
     typographyProps?: TypographyPresentationProps;
 }
 
-export type TooltipComponentProps = MobiusStyledComponentProps<"span", {
-    /** Component to be used as the trigger to optionally replace the default trigger icon. */
-    triggerComponent?: React.ReactElement;
-    /** The text that will appear in the tooltip */
-    text: string;
-    /** Function called on tooltip open */
-    onOpen?: React.EventHandler<React.SyntheticEvent>;
-    /** Function called on tooltip close */
-    onClose?: React.EventHandler<React.SyntheticEvent>;
-    /** Text to be used to describe the tooltip trigger. Used for screenreaders. Defaults to "more info" */
-    triggerAltText?: string;
-}>;
+export type TooltipComponentProps = MobiusStyledComponentProps<
+    "span",
+    {
+        /** Component to be used as the trigger to optionally replace the default trigger icon. */
+        triggerComponent?: React.ReactElement;
+        /** The text that will appear in the tooltip */
+        text: string;
+        /** Function called on tooltip open */
+        onOpen?: React.EventHandler<React.SyntheticEvent>;
+        /** Function called on tooltip close */
+        onClose?: React.EventHandler<React.SyntheticEvent>;
+        /** Text to be used to describe the tooltip trigger. Used for screenreaders. Defaults to "more info" */
+        triggerAltText?: string;
+    }
+>;
 
 type TooltipProps = TooltipComponentProps & TooltipPresentationProps;
 
@@ -113,10 +116,9 @@ class Tooltip extends React.Component<TooltipProps> {
          * it will close and then re-open after a discrete interval. */
         if (this.state.visible) {
             this.closeTooltip(event);
-            setTimeout(
-                () => { this.setState({ visible: true }); },
-                100,
-            );
+            setTimeout(() => {
+                this.setState({ visible: true });
+            }, 100);
         } else {
             this.setState({ visible: true });
             // eslint-disable-next-line no-unused-expressions
@@ -152,10 +154,10 @@ class Tooltip extends React.Component<TooltipProps> {
     };
 
     render() {
-        const {
-            text, triggerComponent, triggerAltText, iconProps, ...otherProps
-        } = this.props;
-        if (!text || text.length === 0) return null;
+        const { text, triggerComponent, triggerAltText, iconProps, ...otherProps } = this.props;
+        if (!text || text.length === 0) {
+            return null;
+        }
         const { spreadProps } = applyPropBuilder(this.props, { component: "tooltip" });
         const cssOverrides = spreadProps("cssOverrides");
         let trigger;
@@ -169,13 +171,11 @@ class Tooltip extends React.Component<TooltipProps> {
         }
 
         const toolTipComponent = (
-            <TooltipContainer
-                data-id="tooltipContainer"
-                css={get(cssOverrides, "tooltipContainer")}
-                {...otherProps}
-            >
+            <TooltipContainer data-id="tooltipContainer" css={get(cssOverrides, "tooltipContainer")} {...otherProps}>
                 <TooltipBody data-id="tooltipBody" css={get(cssOverrides, "tooltipBody")}>
-                    <Typography as="p" {...spreadProps("typographyProps")}>{text}</Typography>
+                    <Typography as="p" {...spreadProps("typographyProps")}>
+                        {text}
+                    </Typography>
                 </TooltipBody>
             </TooltipContainer>
         );
@@ -186,13 +186,12 @@ class Tooltip extends React.Component<TooltipProps> {
                     css={get(cssOverrides, "tooltipClickable")}
                     onClick={this.openTooltip}
                     onKeyDown={this.handleKeyDown}
-                    onBlur={this.closeTooltip}>
+                    onBlur={this.closeTooltip}
+                >
                     {trigger}
                     <VisuallyHidden>{triggerAltText || this.props.theme!.translate("more info")}</VisuallyHidden>
                 </TooltipClickable>
-                <div aria-live="polite">
-                    {this.state.visible ? toolTipComponent : null}
-                </div>
+                <div aria-live="polite">{this.state.visible ? toolTipComponent : null}</div>
             </TooltipWrapper>
         );
     }

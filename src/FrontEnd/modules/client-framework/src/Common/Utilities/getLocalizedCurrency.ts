@@ -12,13 +12,11 @@ interface Props {
  */
 export const getLocalizedCurrency = ({ amount, language, currencySymbol }: Props) => {
     const locale = language.cultureCode || language.languageCode;
-    const currencyFormatter = new Intl.NumberFormat(
-        locale,
-        {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+    const currencyFormatter = new Intl.NumberFormat(locale, {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
     // format the same way as CurrencyFormatProvider in the .NET code
     const negativeSymbol = amount < 0 ? "-" : "";

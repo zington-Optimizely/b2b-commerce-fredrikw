@@ -10,5 +10,5 @@ export interface CategoriesState extends DataViewState<Category> {
 export interface HasCategoriesState {
     data: {
         categories: CategoriesState;
-    }
+    };
 }

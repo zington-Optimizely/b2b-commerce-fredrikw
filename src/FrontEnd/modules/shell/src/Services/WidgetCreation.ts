@@ -10,15 +10,16 @@ import { LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
 import { setDefaultFieldValues } from "@insite/shell/Services/PageCreation";
 import { LanguageModel } from "@insite/shell/Store/ShellContext/ShellContextState";
 
-export function setupWidgetModel(widgetDefinition: LoadedWidgetDefinition,
-                                 parentId: string,
-                                 zone: string,
-                                 language: LanguageModel,
-                                 defaultLanguageId: string,
-                                 deviceType: DeviceType,
-                                 personaId: string,
-                                 defaultPersonaId: string) {
-
+export function setupWidgetModel(
+    widgetDefinition: LoadedWidgetDefinition,
+    parentId: string,
+    zone: string,
+    language: LanguageModel,
+    defaultLanguageId: string,
+    deviceType: DeviceType,
+    personaId: string,
+    defaultPersonaId: string,
+) {
     const widget: WidgetProps = {
         parentId,
         zone,
@@ -33,9 +34,20 @@ export function setupWidgetModel(widgetDefinition: LoadedWidgetDefinition,
     const contextualDeviceType = language.hasDeviceSpecificContent ? deviceType : "Desktop";
     const contextualPersonaId = language.hasPersonaSpecificContent ? personaId : defaultPersonaId;
 
-    setDefaultFieldValues(widget, widgetDefinition.fieldDefinitions, language.id, getContextualId(language.id, contextualDeviceType, contextualPersonaId));
+    setDefaultFieldValues(
+        widget,
+        widgetDefinition.fieldDefinitions,
+        language.id,
+        getContextualId(language.id, contextualDeviceType, contextualPersonaId),
+    );
 
-    const contextualIds = createContextualIds(language.id, defaultLanguageId, deviceType, [personaId], defaultPersonaId);
+    const contextualIds = createContextualIds(
+        language.id,
+        defaultLanguageId,
+        deviceType,
+        [personaId],
+        defaultPersonaId,
+    );
 
     prepareFields(widget, language.id, defaultLanguageId, contextualIds);
 

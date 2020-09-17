@@ -11,7 +11,7 @@ const enum fields {
     columns = "columns",
     gap = "gap",
     alignment = "alignment",
-    reflow = "reflow"
+    reflow = "reflow",
 }
 
 interface Props extends WidgetProps {
@@ -23,7 +23,7 @@ interface Props extends WidgetProps {
     };
 }
 
-const mobileColumnsRef: { [key: number]: GridWidths | GridWidths[]; } = {
+const mobileColumnsRef: { [key: number]: GridWidths | GridWidths[] } = {
     1: [3, 3, 1, 1, 1],
     2: [4, 4, 2, 2, 2],
     3: [6, 6, 3, 3, 3],
@@ -43,7 +43,10 @@ const convertToResponsive = (column: GridWidths): GridWidths | GridWidths[] => {
 };
 
 const Row: React.FunctionComponent<Props> = (props: Props) => {
-    const { fields: { columns, gap, alignment, reflow }, id } = props;
+    const {
+        fields: { columns, gap, alignment, reflow },
+        id,
+    } = props;
 
     const columnElements: JSX.Element[] = [];
 
@@ -52,7 +55,8 @@ const Row: React.FunctionComponent<Props> = (props: Props) => {
         columnElements.push(
             <GridItem key={x} width={reflow ? convertToResponsive(columns[x]) : columns[x]} align={align}>
                 <Zone contentId={id} zoneName={`Content${x}`} />
-            </GridItem>);
+            </GridItem>,
+        );
     }
 
     return <GridContainer gap={gap || 0}>{columnElements}</GridContainer>;
@@ -76,7 +80,7 @@ const widgetModule: WidgetModule = {
                 defaultValue: [4, 4, 4],
                 fieldType: "General",
                 sortOrder: 1,
-                validate: value => value.length > 0 ? null : "Please enter a valid layout.",
+                validate: value => (value.length > 0 ? null : "Please enter a valid layout."),
             },
             {
                 name: fields.reflow,

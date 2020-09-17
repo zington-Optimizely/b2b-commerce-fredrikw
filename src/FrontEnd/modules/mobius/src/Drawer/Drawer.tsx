@@ -25,7 +25,7 @@ const isHorizontal = (position: Position) => position === "right" || position ==
 export interface DrawerPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable
-    */
+     */
     cssOverrides?: {
         scrim?: StyledProp<ScrimProps>;
         drawerContainer?: StyledProp<DrawerProps>;
@@ -67,10 +67,10 @@ interface DrawerOwnProps {
     draggable?: boolean;
 }
 
-export type DrawerProps = DrawerPresentationProps
-    & DrawerOwnProps
-    & Omit<OverlayComponentProps, "isCloseable" | "closeOnEsc" | "closeOnScrimClick" | "titleId" | "zIndexLevel">
-    & ThemeProps<BaseTheme>;
+export type DrawerProps = DrawerPresentationProps &
+    DrawerOwnProps &
+    Omit<OverlayComponentProps, "isCloseable" | "closeOnEsc" | "closeOnScrimClick" | "titleId" | "zIndexLevel"> &
+    ThemeProps<BaseTheme>;
 
 type DrawerState = {
     isOpen?: boolean;
@@ -105,19 +105,14 @@ const drawerContainerStyles = (cssOverrides: any) => css`
     justify-content: start;
     height: 100%;
     transition: ${({ isClosing }: { isClosing: boolean }) => css`
-        ${/* sc-block */isClosing
-            ? getProp("transition.overlayExitKeyframes") as any
-            : getProp("transition.overlayEntryKeyframes") as any} ${getProp("transition.length") as any}ms
+        ${/* sc-block */ isClosing
+            ? (getProp("transition.overlayExitKeyframes") as any)
+            : (getProp("transition.overlayEntryKeyframes") as any)} ${getProp("transition.length") as any}ms
     `};
     ${cssOverrides}
 `;
 
-const drawerBodyStyles = (
-    position: Position,
-    cssOverrides: any,
-    depth?: number,
-    initialTranslate?: string,
-) => {
+const drawerBodyStyles = (position: Position, cssOverrides: any, depth?: number, initialTranslate?: string) => {
     // default position is 'left' and these values reflect a left positioning.
     let width = `${depth}px`;
     let height = "100%";
@@ -185,9 +180,9 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
     startX?: number;
     startY?: number;
     swipeInstance: {
-        open?: boolean,
-        dragDepth: number,
-        isSwiping?: boolean,
+        open?: boolean;
+        dragDepth: number;
+        isSwiping?: boolean;
     } = {
         dragDepth: 0,
         isSwiping: undefined,
@@ -318,9 +313,10 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
         // if the start is a smaller distance from the edge than the threshold (set to 20), the touch is a possible drawer open swiping event
         const possibleOpenSwipeBegin = start < EDGE_THRESHOLD;
         // if the start is a within the threshold of the edge of the drawer, the touch is a possible drawer close swiping event
-        const possibleCloseSwipeBegin = this.swipeInstance.open
-            && (start > (this.props.size! - EDGE_THRESHOLD))
-            && (start < (this.props.size! + EDGE_THRESHOLD));
+        const possibleCloseSwipeBegin =
+            this.swipeInstance.open &&
+            start > this.props.size! - EDGE_THRESHOLD &&
+            start < this.props.size! + EDGE_THRESHOLD;
         if (possibleOpenSwipeBegin || possibleCloseSwipeBegin) {
             this.swipeInstance.dragDepth = currentDepth;
             // if opening, translation argument is negative current depth, if closing, translation argument is current depth
@@ -346,23 +342,23 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                 this.swipeInstance.isSwiping = isSwiping;
             } else {
                 // if it is not a swipe event, close the drawer.
-                this.closePersistedDrawer(event as unknown as React.SyntheticEvent);
+                this.closePersistedDrawer((event as unknown) as React.SyntheticEvent);
             }
         }
         if (this.swipeInstance.isSwiping) {
             // set the start position to currentY if it's a vertical drag, currentX if it's a horizontal drag
             const current = isHorizontal(position) ? currentX : currentY;
-            this.swipeInstance.dragDepth = (current < size!) ? current - size! : 0;
-            this.setPosition((current < size!) ? -(current - size!) : 0);
+            this.swipeInstance.dragDepth = current < size! ? current - size! : 0;
+            this.setPosition(current < size! ? -(current - size!) : 0);
         }
     };
 
     release = (event: TouchEvent) => {
         if (this.state.maybeSwiping && this.swipeInstance.isSwiping) {
             if (this.swipeInstance.dragDepth > -(this.props.size! * SNAP_OPEN_THRESHOLD)) {
-                this.openPersistedDrawer(event as unknown as React.SyntheticEvent, true);
+                this.openPersistedDrawer((event as unknown) as React.SyntheticEvent, true);
             } else {
-                this.closePersistedDrawer(event as unknown as React.SyntheticEvent);
+                this.closePersistedDrawer((event as unknown) as React.SyntheticEvent);
             }
         }
     };
@@ -371,15 +367,7 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
         if (typeof window === "undefined") {
             return null;
         }
-        const {
-            children,
-            draggable,
-            size,
-            headline,
-            position = "left",
-            theme,
-            ...otherProps
-        } = this.props;
+        const { children, draggable, size, headline, position = "left", theme, ...otherProps } = this.props;
 
         const { receivedIsOpen, isSwipedOpen, maybeSwiping } = this.state;
 
@@ -390,7 +378,11 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
         let headlineComponent: React.ReactElement = <div />;
         if (typeof headline === "string") {
             headlineComponent = (
-                <Typography variant="h4" {...spreadProps("headlineTypographyProps")} css={cssOverrides?.headlineTypography}>
+                <Typography
+                    variant="h4"
+                    {...spreadProps("headlineTypographyProps")}
+                    css={cssOverrides?.headlineTypography}
+                >
                     {headline}
                 </Typography>
             );
@@ -408,7 +400,9 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                 zIndexLevel="drawer"
                 cssOverrides={{
                     ...cssOverrides,
-                    scrim: css` ${cssOverrides.scrim} ${draggable && (isHorizontal(position) ? "width: 0;" : "height: 0;")} `,
+                    scrim: css`
+                        ${cssOverrides.scrim} ${draggable && (isHorizontal(position) ? "width: 0;" : "height: 0;")}
+                    `,
                     contentContainer: drawerContainerStyles(cssOverrides.drawerContainer),
                     contentBody: drawerBodyStyles(
                         position,
@@ -416,7 +410,8 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                         size,
                         draggable
                             ? `transform: ${this.buildInitialTransform()}; webkit-transform: ${this.buildInitialTransform()};`
-                            : undefined),
+                            : undefined,
+                    ),
                 }}
                 {...omitSingle(otherProps, "cssOverrides")}
                 handleOpen={draggable ? this.openPersistedDrawer : this.props.handleOpen}
@@ -426,23 +421,25 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                 setContentRef={this.setContentRef}
                 setScrimRef={this.setScrimRef}
             >
-                {draggable && !maybeSwiping && !isSwipedOpen && !receivedIsOpen ? null : <><DrawerTitle id="drawerTitle" css={cssOverrides?.drawerTitle}>
-                    {headlineComponent}
-                    <Button
-                        color="common.backgroundContrast"
-                        size={36}
-                        css={cssOverrides?.titleButton}
-                        {...spreadProps("closeButtonProps")}
-                        onClick={draggable ? this.closePersistedDrawer : this.props.handleClose}
-                        aria-labelledby="close-drawer"
-                    >
-                        <ButtonIcon {...spreadProps("closeButtonIconProps")} />
-                        <VisuallyHidden id="close-drawer">{theme.translate("Close Drawer")}</VisuallyHidden>
-                    </Button>
-                </DrawerTitle>
-                <DrawerContent css={cssOverrides?.drawerContent}>
-                    {children}
-                </DrawerContent></>}
+                {draggable && !maybeSwiping && !isSwipedOpen && !receivedIsOpen ? null : (
+                    <>
+                        <DrawerTitle id="drawerTitle" css={cssOverrides?.drawerTitle}>
+                            {headlineComponent}
+                            <Button
+                                color="common.backgroundContrast"
+                                size={36}
+                                css={cssOverrides?.titleButton}
+                                {...spreadProps("closeButtonProps")}
+                                onClick={draggable ? this.closePersistedDrawer : this.props.handleClose}
+                                aria-labelledby="close-drawer"
+                            >
+                                <ButtonIcon {...spreadProps("closeButtonIconProps")} />
+                                <VisuallyHidden id="close-drawer">{theme.translate("Close Drawer")}</VisuallyHidden>
+                            </Button>
+                        </DrawerTitle>
+                        <DrawerContent css={cssOverrides?.drawerContent}>{children}</DrawerContent>
+                    </>
+                )}
             </Overlay>
         );
     }

@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ wishListLineId: string, qtyOrdered: number }>;
+type HandlerType = Handler<{ wishListLineId: string; qtyOrdered: number }>;
 
 export const DispatchUpdateQuantity: HandlerType = props => {
     props.dispatch({
@@ -10,9 +10,7 @@ export const DispatchUpdateQuantity: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchUpdateQuantity,
-];
+export const chain = [DispatchUpdateQuantity];
 
 const updateQuantity = createHandlerChainRunner(chain, "UpdateQuantity");
 export default updateQuantity;

@@ -6,10 +6,12 @@ import Page from "@insite/mobius/Page";
 import React from "react";
 import { css } from "styled-components";
 
-const HomePage: React.FunctionComponent<PageProps> = ({
-    id,
-}) => (
-    <Page css={css` background: #e6f7ec; `}>
+const HomePage: React.FunctionComponent<PageProps> = ({ id }) => (
+    <Page
+        css={css`
+            background: #e6f7ec;
+        `}
+    >
         <Zone contentId={id} zoneName="Content" requireRows />
         <AddToListModal />
     </Page>

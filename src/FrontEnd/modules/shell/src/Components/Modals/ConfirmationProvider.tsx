@@ -42,23 +42,29 @@ class ConfirmationProvider extends React.Component<{}, State> {
     };
 
     render() {
-        return <ConfirmationContext.Provider value={{ display: this.display }}>
-            {this.props.children}
-            <Modal
-                headline={this.state.options?.title}
-                isOpen={!!this.state.display}
-                handleClose={this.cancel}
-                size={400}
-                closeOnEsc
-                data-test-selector="confirmationModal"
-            >
-                <MessageStyle>{this.state.options?.message}</MessageStyle>
-                <ButtonBar>
-                    <Button variant="tertiary" onClick={this.cancel}>Cancel</Button>
-                    <Button variant="primary" onClick={this.confirm} data-test-selector="confirmationModal_confirm">Delete</Button>
-                </ButtonBar>
-            </Modal>
-        </ConfirmationContext.Provider>;
+        return (
+            <ConfirmationContext.Provider value={{ display: this.display }}>
+                {this.props.children}
+                <Modal
+                    headline={this.state.options?.title}
+                    isOpen={!!this.state.display}
+                    handleClose={this.cancel}
+                    size={400}
+                    closeOnEsc
+                    data-test-selector="confirmationModal"
+                >
+                    <MessageStyle>{this.state.options?.message}</MessageStyle>
+                    <ButtonBar>
+                        <Button variant="tertiary" onClick={this.cancel}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={this.confirm} data-test-selector="confirmationModal_confirm">
+                            Delete
+                        </Button>
+                    </ButtonBar>
+                </Modal>
+            </ConfirmationContext.Provider>
+        );
     }
 }
 

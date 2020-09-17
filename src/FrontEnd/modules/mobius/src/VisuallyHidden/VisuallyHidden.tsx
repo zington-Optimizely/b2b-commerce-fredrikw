@@ -19,7 +19,9 @@ const VisuallyHiddenStyle = styled.span`
 `;
 
 const VisuallyHidden: React.FunctionComponent<MobiusStyledComponentProps<"span">> = props => {
-    if (!React.Children.count(props.children)) return null;
+    if (!React.Children.count(props.children)) {
+        return null;
+    }
     return <VisuallyHiddenStyle {...props} />;
 };
 

@@ -26,10 +26,7 @@ export const rfqMyQuotesPaginationStyles: RfqMyQuotesPaginationStyles = {};
 
 const styles = rfqMyQuotesPaginationStyles;
 
-const RfqMyQuotesPagination = ({
-    quotesDataView,
-    updateSearchFields,
-}: Props) => {
+const RfqMyQuotesPagination = ({ quotesDataView, updateSearchFields }: Props) => {
     const changePage = (newPageIndex: number) => {
         updateSearchFields({
             page: newPageIndex,
@@ -61,7 +58,8 @@ const RfqMyQuotesPagination = ({
             resultsPerPage={pagination.pageSize}
             resultsPerPageOptions={pagination.pageSizeOptions}
             onChangePage={changePage}
-            onChangeResultsPerPage={changeResultsPerPage} />
+            onChangeResultsPerPage={changeResultsPerPage}
+        />
     );
 };
 

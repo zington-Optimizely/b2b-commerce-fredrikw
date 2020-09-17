@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunnerOptionalParameter,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler;
 
@@ -11,9 +8,7 @@ export const DispatchCloseVariantModal: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchCloseVariantModal,
-];
+export const chain = [DispatchCloseVariantModal];
 
 const closeVariantModal = createHandlerChainRunnerOptionalParameter(chain, {}, "CloseVariantModal");
 export default closeVariantModal;

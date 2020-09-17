@@ -8,14 +8,17 @@ const initialState: AddToListModalState = {
 };
 
 const reducer = {
-    "Components/AddToListModal/CompleteSetIsOpen": (draft: Draft<AddToListModalState>, action: {
-        isOpen: boolean;
-        productInfos?: Omit<ProductInfo, "productDetailPath">[],
-    }) => {
+    "Components/AddToListModal/CompleteSetIsOpen": (
+        draft: Draft<AddToListModalState>,
+        action: {
+            isOpen: boolean;
+            productInfos?: Omit<ProductInfo, "productDetailPath">[];
+        },
+    ) => {
         draft.isOpen = action.isOpen;
         draft.productInfos = action.productInfos;
     },
-    "CurrentPage/LoadPageComplete": (draft: Draft<AddToListModalState>, action: { }) => {
+    "CurrentPage/LoadPageComplete": (draft: Draft<AddToListModalState>, action: {}) => {
         draft.isOpen = false;
     },
 };

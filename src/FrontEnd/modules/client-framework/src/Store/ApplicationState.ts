@@ -5,7 +5,7 @@ import LinksState from "@insite/client-framework/Store/Links/LinksState";
 import PagesState from "@insite/client-framework/Store/Pages/PagesState";
 
 export default interface ApplicationState {
-    readonly components: ComponentsState
+    readonly components: ComponentsState;
     readonly context: ContextState;
     readonly data: DataState;
     readonly links: LinksState;

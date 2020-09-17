@@ -12,13 +12,16 @@ class ManagedAccordionSection extends React.Component<AccordionSectionProps & { 
     state = { expanded: this.props.initialExpanded };
 
     toggle = () => {
-        this.setState(({ expanded }) => {
-            return { expanded: !expanded };
-        }, () => {
-            if (this.props.onTogglePanel) {
-                this.props.onTogglePanel(this.state.expanded ?? false);
-            }
-        });
+        this.setState(
+            ({ expanded }) => {
+                return { expanded: !expanded };
+            },
+            () => {
+                if (this.props.onTogglePanel) {
+                    this.props.onTogglePanel(this.state.expanded ?? false);
+                }
+            },
+        );
     };
 
     render() {

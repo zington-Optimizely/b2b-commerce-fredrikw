@@ -18,12 +18,13 @@ const LocationPagination: React.FC<Props> = ({
     setPage,
     ...otherProps
 }) => {
-
     const [showPagination, setShowPagination] = React.useState(false);
     React.useEffect(() => {
-        setShowPagination(locations.length > 0
-            && !!locationsPagination
-            && locationsPagination.totalItemCount > locationsPagination.pageSize);
+        setShowPagination(
+            locations.length > 0 &&
+                !!locationsPagination &&
+                locationsPagination.totalItemCount > locationsPagination.pageSize,
+        );
     }, [locations, locationsPagination]);
 
     const onChangePage = (page: number) => {
@@ -35,8 +36,8 @@ const LocationPagination: React.FC<Props> = ({
         setPageSize(Number(event.currentTarget.value));
     };
 
-    return (
-        showPagination ? <Pagination
+    return showPagination ? (
+        <Pagination
             currentPage={locationsPagination!.currentPage}
             resultsPerPage={locationsPagination!.pageSize}
             resultsCount={locationsPagination!.totalItemCount}
@@ -44,8 +45,8 @@ const LocationPagination: React.FC<Props> = ({
             onChangePage={onChangePage}
             onChangeResultsPerPage={onChangeResultsPerPage}
             {...otherProps}
-        /> : null
-    );
+        />
+    ) : null;
 };
 
 export default LocationPagination;

@@ -15,7 +15,7 @@ const mapDispatchToProps = {
     setContentMode,
 };
 
-type OwnProps = { targetContentMode: ContentMode, icon: React.FC, disabled?: boolean };
+type OwnProps = { targetContentMode: ContentMode; icon: React.FC; disabled?: boolean };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -33,7 +33,9 @@ class ContentModeClicker extends React.Component<Props> {
 
     render() {
         const { targetMatchesCurrentContentMode, icon, targetContentMode, disabled } = this.props;
-        const { colors: { common, primary, text } } = shellTheme;
+        const {
+            colors: { common, primary, text },
+        } = shellTheme;
         let iconColor: string;
 
         if (disabled) {
@@ -44,15 +46,17 @@ class ContentModeClicker extends React.Component<Props> {
             iconColor = text.accent;
         }
 
-        return <ClickerStyle
-            clickable
-            onClick={this.onClick}
-            data-test-selector={`contentModeClicker_${targetContentMode}`}
-            disabled={disabled}
-            title={contentModeLabel[targetContentMode]}
-        >
-            <Icon src={icon} color={iconColor} />
-        </ClickerStyle>;
+        return (
+            <ClickerStyle
+                clickable
+                onClick={this.onClick}
+                data-test-selector={`contentModeClicker_${targetContentMode}`}
+                disabled={disabled}
+                title={contentModeLabel[targetContentMode]}
+            >
+                <Icon src={icon} color={iconColor} />
+            </ClickerStyle>
+        );
     }
 }
 

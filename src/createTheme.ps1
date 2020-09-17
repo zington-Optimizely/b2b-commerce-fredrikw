@@ -30,22 +30,39 @@ function Get-ScriptDirectory
     }
 }
 
+function Get-Root
+{
+    $scriptDirectory = Get-ScriptDirectory
+    if ($scriptDirectory.EndsWith("PowerShellScripts")) {
+        return (get-item $scriptDirectory).Parent.Parent.FullName
+    }
+
+    return $scriptDirectory
+}
+
+$rootDirectory = Get-Root
+Write-Output $rootDirectory
+
 if ($themeName -eq "") {
     returnError "Please specify a -themeName"
 }
 
-$themePath = (Get-ScriptDirectory) + "\InsiteCommerce.Web\Themes\$themeName"
+$themePath = $rootDirectory + "\InsiteCommerce.Web\Themes\$themeName"
 
 if (Test-Path $themePath) {
     returnError "The theme $themeName already exists at $themePath"
 }
 
 if ($copyFromThemeName -eq "") {
-    $sourceThemePath = (Get-ScriptDirectory) + "\InsiteCommerce.Web\_systemResources\themes\responsive"
+    $sourceThemePath = $rootDirectory + "\InsiteCommerce.Web\_systemResources\themes\responsive"
+    if (-not (Test-Path $sourceThemePath)) {
+        $sourceThemePath = $rootDirectory + "\Insite.SystemResources\Themes\Responsive"
+    }
+
     $copyFromThemeName = "Responsive"
 }
 else {
-    $sourceThemePath = (Get-ScriptDirectory) + "\InsiteCommerce.Web\themes\$copyFromThemeName"
+    $sourceThemePath = $rootDirectory + "\InsiteCommerce.Web\themes\$copyFromThemeName"
 }
 
 if (-Not(Test-Path $sourceThemePath)) {
@@ -106,7 +123,7 @@ foreach($file in Get-ChildItem $themePath -Recurse) {
 
 $projectId = [guid]::NewGuid()
 
-$solutionFilePath = (Get-ScriptDirectory) + "\insitecommerce.sln"
+$solutionFilePath = $rootDirectory + "\insitecommerce.sln"
 
 $reader = [System.IO.File]::OpenText($solutionFilePath)
 $solutionFileContent = New-Object System.Text.StringBuilder

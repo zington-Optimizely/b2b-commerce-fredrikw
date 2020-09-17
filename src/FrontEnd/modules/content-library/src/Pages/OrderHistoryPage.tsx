@@ -35,36 +35,35 @@ const mapDispatchToProps = {
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 const OrderHistoryPage: React.FC<Props> = ({
-                                               settings,
-                                               loadOrders,
-                                               loadOrderStatusMappings,
-                                               updateSearchFields,
-                                               ordersDataView,
-                                               id,
-                                               shouldLoadOrderStatusMappings,
-                                               history,
-                                               location,
-                                               getOrdersParameter,
-                                           }) => {
+    settings,
+    loadOrders,
+    loadOrderStatusMappings,
+    updateSearchFields,
+    ordersDataView,
+    id,
+    shouldLoadOrderStatusMappings,
+    history,
+    location,
+    getOrdersParameter,
+}) => {
     let firstLoad = false;
-    React.useEffect(
-        () => {
-            firstLoad = true;
-            if (location.search) {
-                const getOrdersApiParameter = parseQueryString<GetOrdersApiParameter>(location.search);
-                updateSearchFields({ ...getOrdersApiParameter, type: "Replace" });
-            } else if (settings.orderSettings.lookBackDays > 0) {
-                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-                const fromDate = new Date(Date.now() - settings.orderSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset);
-                updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
-            }
+    React.useEffect(() => {
+        firstLoad = true;
+        if (location.search) {
+            const getOrdersApiParameter = parseQueryString<GetOrdersApiParameter>(location.search);
+            updateSearchFields({ ...getOrdersApiParameter, type: "Replace" });
+        } else if (settings.orderSettings.lookBackDays > 0) {
+            const tzOffset = new Date().getTimezoneOffset() * 60000;
+            const fromDate = new Date(
+                Date.now() - settings.orderSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset,
+            );
+            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
+        }
 
-            if (shouldLoadOrderStatusMappings) {
-                loadOrderStatusMappings();
-            }
-        },
-        [],
-    );
+        if (shouldLoadOrderStatusMappings) {
+            loadOrderStatusMappings();
+        }
+    }, []);
 
     useEffect(() => {
         if (!firstLoad) {
@@ -79,11 +78,13 @@ const OrderHistoryPage: React.FC<Props> = ({
         }
     });
 
-    return <Page data-test-selector="orderHistory">
-        <OrdersDataViewContext.Provider value={ordersDataView}>
-            <Zone contentId={id} zoneName="Content"/>
-        </OrdersDataViewContext.Provider>
-    </Page>;
+    return (
+        <Page data-test-selector="orderHistory">
+            <OrdersDataViewContext.Provider value={ordersDataView}>
+                <Zone contentId={id} zoneName="Content" />
+            </OrdersDataViewContext.Provider>
+        </Page>
+    );
 };
 
 const pageModule: PageModule = {

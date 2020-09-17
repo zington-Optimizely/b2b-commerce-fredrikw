@@ -8,7 +8,7 @@ export interface GlobalStyleProps {}
 
 const fontSize = () => ({ theme }: { theme: BaseTheme }) => {
     const size = get(theme, "typography.body.size", 15);
-    return (typeof size === "string") ? size : `${size}px`;
+    return typeof size === "string" ? size : `${size}px`;
 };
 
 /**

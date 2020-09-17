@@ -16,10 +16,20 @@ const reducer = {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Quotes/CompleteLoadQuotes": (draft: Draft<QuotesState>, action: { parameter: GetQuotesApiParameter, collection: QuoteCollectionModel }) => {
-        setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.quotes!, undefined, (dataView: Draft<QuotesDataView>) => {
-            dataView.salespersonList = action.collection.salespersonList;
-        });
+    "Data/Quotes/CompleteLoadQuotes": (
+        draft: Draft<QuotesState>,
+        action: { parameter: GetQuotesApiParameter; collection: QuoteCollectionModel },
+    ) => {
+        setDataViewLoaded(
+            draft,
+            action.parameter,
+            action.collection,
+            collection => collection.quotes!,
+            undefined,
+            (dataView: Draft<QuotesDataView>) => {
+                dataView.salespersonList = action.collection.salespersonList;
+            },
+        );
     },
     "Data/Quotes/BeginLoadQuote": (draft: Draft<QuotesState>, action: { quoteId: string }) => {
         draft.isLoading[action.quoteId] = true;

@@ -73,17 +73,17 @@ export const shippingInfoStyles: CheckoutReviewAndSubmitShippingInfoStyles = {
 const styles = shippingInfoStyles;
 
 const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
-                                                            shippingPageNavLink,
-                                                            shipToState,
-                                                            billToState,
-                                                            loadShipTo,
-                                                            cart,
-                                                            fulfillmentMethod,
-                                                            pickUpWarehouse,
-                                                            history,
-                                                            loadBillTo,
-                                                            cartId,
-                                                        }) => {
+    shippingPageNavLink,
+    shipToState,
+    billToState,
+    loadShipTo,
+    cart,
+    fulfillmentMethod,
+    pickUpWarehouse,
+    history,
+    loadBillTo,
+    cartId,
+}) => {
     useEffect(() => {
         if (!shipToState.value && !shipToState.isLoading && cart && cart.billToId && cart.shipToId) {
             loadShipTo({ billToId: cart.billToId, shipToId: cart.shipToId });
@@ -105,46 +105,41 @@ const CheckoutReviewAndSubmitShippingInfo: FC<Props> = ({
             return;
         }
 
-        const backUrl = cartId
-            ? `${shippingPageNavLink.url}?cartId=${cartId}`
-            : shippingPageNavLink.url;
+        const backUrl = cartId ? `${shippingPageNavLink.url}?cartId=${cartId}` : shippingPageNavLink.url;
         return history.push(backUrl);
     };
 
-    const sectionTitle = fulfillmentMethod === FulfillmentMethod.Ship ? "Billing & Shipping Information" : "Pick Up Location";
+    const sectionTitle =
+        fulfillmentMethod === FulfillmentMethod.Ship ? "Billing & Shipping Information" : "Pick Up Location";
     const { carrier, shipVia, requestedDeliveryDateDisplay, requestedPickupDateDisplay } = cart;
 
     return (
-        <Accordion
-            {...styles.accordion}
-            headingLevel={2}
-            data-test-selector="checkoutReviewAndSubmitShippingInfo"
-        >
+        <Accordion {...styles.accordion} headingLevel={2} data-test-selector="checkoutReviewAndSubmitShippingInfo">
             <AccordionSection
                 title={translate(sectionTitle)}
                 {...styles.shippingInfoAccordionSection}
                 data-test-selector="checkoutReviewAndSubmitShippingInfo_accordionSection"
             >
-                {fulfillmentMethod === FulfillmentMethod.Ship
-                && <BillingAndShippingInfo
-                    billTo={billToState.value}
-                    shipTo={shipToState.value}
-                    carrier={carrier!}
-                    shipVia={shipVia!}
-                    deliveryDate={requestedDeliveryDateDisplay}
-                    onEditBillTo={goBackToShipping}
-                    onEditShipTo={goBackToShipping}
-                />
-                }
-                {fulfillmentMethod === FulfillmentMethod.PickUp
-                && <PickUpLocation
-                    location={pickUpWarehouse!}
-                    billTo={billToState.value}
-                    pickUpDate={requestedPickupDateDisplay}
-                    onEditLocation={goBackToShipping}
-                    onEditBillTo={goBackToShipping}
-                />
-                }
+                {fulfillmentMethod === FulfillmentMethod.Ship && (
+                    <BillingAndShippingInfo
+                        billTo={billToState.value}
+                        shipTo={shipToState.value}
+                        carrier={carrier!}
+                        shipVia={shipVia!}
+                        deliveryDate={requestedDeliveryDateDisplay}
+                        onEditBillTo={goBackToShipping}
+                        onEditShipTo={goBackToShipping}
+                    />
+                )}
+                {fulfillmentMethod === FulfillmentMethod.PickUp && (
+                    <PickUpLocation
+                        location={pickUpWarehouse!}
+                        billTo={billToState.value}
+                        pickUpDate={requestedPickupDateDisplay}
+                        onEditLocation={goBackToShipping}
+                        onEditBillTo={goBackToShipping}
+                    />
+                )}
             </AccordionSection>
         </Accordion>
     );

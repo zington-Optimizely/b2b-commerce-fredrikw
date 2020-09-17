@@ -4,7 +4,12 @@ import { NextFunction } from "express";
 import * as http from "http";
 import { inspect } from "util";
 
-export default function errorHandler(error: unknown, request: IncomingMessage, response: http.ServerResponse, next: NextFunction) {
+export default function errorHandler(
+    error: unknown,
+    request: IncomingMessage,
+    response: http.ServerResponse,
+    next: NextFunction,
+) {
     const string = stringify(error);
     logger.error(string);
 
@@ -22,7 +27,5 @@ function stringify(value: any) {
 
     const string = String(value);
 
-    return string === toString.call(value)
-        ? inspect(value)
-        : string;
+    return string === toString.call(value) ? inspect(value) : string;
 }

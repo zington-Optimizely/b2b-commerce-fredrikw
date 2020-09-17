@@ -15,7 +15,10 @@ const reducer = {
             isLoading: true,
         };
     },
-    "Pages/Brands/CompleteLoadBrandAlphabet": (draft: Draft<BrandsState>, action: { result: BrandAlphabetLetterModel[]; }) => {
+    "Pages/Brands/CompleteLoadBrandAlphabet": (
+        draft: Draft<BrandsState>,
+        action: { result: BrandAlphabetLetterModel[] },
+    ) => {
         draft.brandAlphabetState = {
             isLoading: false,
             value: action.result,

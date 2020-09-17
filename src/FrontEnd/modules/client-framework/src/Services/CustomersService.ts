@@ -7,7 +7,12 @@ import {
     patch,
     post,
 } from "@insite/client-framework/Services/ApiService";
-import { BillToCollectionModel, BillToModel, ShipToCollectionModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    BillToCollectionModel,
+    BillToModel,
+    ShipToCollectionModel,
+    ShipToModel,
+} from "@insite/client-framework/Types/ApiModels";
 
 export interface GetBillToApiParameter extends ApiParameter {
     billToId: string;
@@ -22,7 +27,7 @@ export interface UpdateBillToApiParameter extends ApiParameter {
 export interface GetShipToApiParameter extends ApiParameter {
     billToId: string;
     shipToId: string;
-    expand?: ("validation")[];
+    expand?: "validation"[];
     additionalExpands?: string[];
 }
 
@@ -85,7 +90,7 @@ export async function updateEnforcementLevel(parameter: UpdateEnforcementLevelAp
     return billToModel;
 }
 
-function cleanBillToModel(billToModel: BillToModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
+function cleanBillToModel(billToModel: BillToModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     if (doesNotHaveExpand(parameter, "shipTos")) {
         delete billToModel.shipTos;
     }
@@ -115,7 +120,10 @@ export async function getShipTo(parameter: GetShipToApiParameter): Promise<ShipT
 }
 
 export async function updateShipTo(parameter: UpdateShipToApiParameter) {
-    const shipToModel = await patch<ShipToModel>(`${billTosUrl}/${parameter.billToId}/shiptos/${parameter.shipTo.id}`, parameter.shipTo);
+    const shipToModel = await patch<ShipToModel>(
+        `${billTosUrl}/${parameter.billToId}/shiptos/${parameter.shipTo.id}`,
+        parameter.shipTo,
+    );
     cleanShipToModel(shipToModel);
     return shipToModel;
 }
@@ -123,17 +131,20 @@ export async function updateShipTo(parameter: UpdateShipToApiParameter) {
 export async function getShipTos(parameter: GetShipTosApiParameter) {
     const billToId = parameter.billToId || API_URL_CURRENT_FRAGMENT;
     const shipTos = await get<ShipToCollectionModel>(`${billTosUrl}/${billToId}/shiptos`, parameter);
-    shipTos.shipTos?.forEach(o => cleanShipToModel(o,  parameter));
+    shipTos.shipTos?.forEach(o => cleanShipToModel(o, parameter));
     return shipTos;
 }
 
 export async function createShipTo(parameter: CreateShipToApiParameter) {
-    const shipTo = await post<ShipToModel>(`${billTosUrl}/${parameter.billToId ?? "current"}/shiptos`, parameter.shipTo);
+    const shipTo = await post<ShipToModel>(
+        `${billTosUrl}/${parameter.billToId ?? "current"}/shiptos`,
+        parameter.shipTo,
+    );
     cleanShipToModel(shipTo);
     return shipTo;
 }
 
-function cleanShipToModel(shipToModel: ShipToModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
+function cleanShipToModel(shipToModel: ShipToModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     if (doesNotHaveExpand(parameter, "validation")) {
         delete shipToModel.validation;
     }

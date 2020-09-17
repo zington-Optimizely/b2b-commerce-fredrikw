@@ -10,14 +10,17 @@ import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps"
 import safeColor from "../utilities/safeColor";
 import VisuallyHidden from "../VisuallyHidden";
 
-export type LoadingOverlayProps = MobiusStyledComponentProps<"div", {
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<LoadingOverlayProps>;
-    /** Show/hide status of the backdrop and spinner. */
-    loading?: boolean;
-    /** Props to be passed to the inner LoadingSpinner component. */
-    spinnerProps?: any;
-}>;
+export type LoadingOverlayProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<LoadingOverlayProps>;
+        /** Show/hide status of the backdrop and spinner. */
+        loading?: boolean;
+        /** Props to be passed to the inner LoadingSpinner component. */
+        spinnerProps?: any;
+    }
+>;
 
 const LoadingOverlayStyle = styled.div<Pick<LoadingOverlayProps, "css">>`
     display: inline-block;
@@ -30,12 +33,12 @@ const LoadingOverlayStyle = styled.div<Pick<LoadingOverlayProps, "css">>`
         will-change: opacity;
         opacity: 0;
         transition: opacity 0.2s ease-in-out;
-        &[data-loading=true] {
+        &[data-loading="true"] {
             opacity: 1;
             position: absolute;
             z-index: ${getProp("theme.zIndex.loadingOverlay")};
         }
-        &[data-loading=false] {
+        &[data-loading="false"] {
             position: fixed;
             display: none;
         }
@@ -56,16 +59,23 @@ const SpinnerWrapper = styled.div`
  * Adds a layer over the content to indicate that it is loading.
  */
 const LoadingOverlay: React.FC<LoadingOverlayProps & ThemeProps<BaseTheme>> = ({
-    children, css, loading, spinnerProps, theme, ...otherProps
+    children,
+    css,
+    loading,
+    spinnerProps,
+    theme,
+    ...otherProps
 }) => (
     <LoadingOverlayStyle css={css} {...otherProps}>
         <div data-loading={loading} data-test-selector="loadingOverlaySpinner" role="alert" aria-live="assertive">
-            <VisuallyHidden>{loading ? theme.translate("loading content") : theme.translate("content loaded")}</VisuallyHidden>
-            <SpinnerWrapper><LoadingSpinner {...spinnerProps} /></SpinnerWrapper>
+            <VisuallyHidden>
+                {loading ? theme.translate("loading content") : theme.translate("content loaded")}
+            </VisuallyHidden>
+            <SpinnerWrapper>
+                <LoadingSpinner {...spinnerProps} />
+            </SpinnerWrapper>
         </div>
-        <DisablerContext.Provider value={{ disable: loading }}>
-            {children}
-        </DisablerContext.Provider>
+        <DisablerContext.Provider value={{ disable: loading }}>{children}</DisablerContext.Provider>
     </LoadingOverlayStyle>
 );
 

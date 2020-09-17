@@ -43,13 +43,26 @@ export const headerStyles: HeaderStyles = {
                 align-items: center;
                 justify-content: center;
                 height: auto;
-                ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` max-width: 50px; `], "max")}
+                ${({ theme }: { theme: BaseTheme }) =>
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            null,
+                            css`
+                                max-width: 50px;
+                            `,
+                        ],
+                        "max",
+                    )}
             }
         `,
     },
     websiteName: {
         css: css`
-            @media print { display: block; }
+            @media print {
+                display: block;
+            }
             font-size: 12px;
             padding-left: 15px;
             display: none;
@@ -61,19 +74,25 @@ const styles = headerStyles;
 
 const Header: React.FC<Props> = ({ id, siteName }) => {
     const afterHeader = React.createRef<HTMLSpanElement>();
-    return <>
-        {siteName && <Typography {...styles.websiteName}>{siteName}</Typography>}
-        <Page as="header" fullWidth={[true, true, false, false, false]}>
-            <SkipNav extendedStyles={styles.skipToContent} text={translate("Skip to main content")} destination={afterHeader} />
-            <Zone contentId={id} zoneName="SecondaryNavigation" fixed />
-            <StyledWrapper {...styles.container}>
-                <Zone contentId={id} zoneName="MainNavigation" fixed />
-                <Zone contentId={id} zoneName="Cart" fixed />
-            </StyledWrapper>
-            <Zone contentId={id} zoneName="Breadcrumb" />
-            <span ref={afterHeader} tabIndex={-1}/>
-      </Page>
-  </>;
+    return (
+        <>
+            {siteName && <Typography {...styles.websiteName}>{siteName}</Typography>}
+            <Page as="header" fullWidth={[true, true, false, false, false]}>
+                <SkipNav
+                    extendedStyles={styles.skipToContent}
+                    text={translate("Skip to main content")}
+                    destination={afterHeader}
+                />
+                <Zone contentId={id} zoneName="SecondaryNavigation" fixed />
+                <StyledWrapper {...styles.container}>
+                    <Zone contentId={id} zoneName="MainNavigation" fixed />
+                    <Zone contentId={id} zoneName="Cart" fixed />
+                </StyledWrapper>
+                <Zone contentId={id} zoneName="Breadcrumb" />
+                <span ref={afterHeader} tabIndex={-1} />
+            </Page>
+        </>
+    );
 };
 
 const pageModule: PageModule = {

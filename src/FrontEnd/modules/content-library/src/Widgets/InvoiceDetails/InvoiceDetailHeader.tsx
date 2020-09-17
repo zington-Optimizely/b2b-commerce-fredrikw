@@ -31,7 +31,9 @@ export interface InvoiceDetailHeaderStyles {
 export const headerStyles: InvoiceDetailHeaderStyles = {
     shareEntityButtonStyles: {
         button: {
-            css: css` margin-left: 10px; `,
+            css: css`
+                margin-left: 10px;
+            `,
             buttonType: "outline",
             variant: "secondary",
         },
@@ -41,7 +43,9 @@ export const headerStyles: InvoiceDetailHeaderStyles = {
         variant: "secondary",
     },
     buttonGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [1, 1, 1, 6, 6],
     },
     titleGridItem: {
@@ -71,13 +75,18 @@ const InvoiceDetailHeader: FC = () => {
     return (
         <GridContainer {...styles.headerGridContainer}>
             <GridItem {...styles.titleGridItem}>
-                <Typography {...styles.title}>{`${translate("Invoice")} ${invoice.invoiceNumber}`}
-                </Typography>
+                <Typography {...styles.title}>{`${translate("Invoice")} ${invoice.invoiceNumber}`}</Typography>
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
                 <Hidden {...styles.menuHiddenContainer}>
                     <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
-                        <Clickable {...styles.printClickable} onClick={openPrintDialog} data-test-selector="invoiceDetails_print">{printLabel}</Clickable>
+                        <Clickable
+                            {...styles.printClickable}
+                            onClick={openPrintDialog}
+                            data-test-selector="invoiceDetails_print"
+                        >
+                            {printLabel}
+                        </Clickable>
                         <ShareEntityButton
                             entityId={invoice.invoiceNumber}
                             variant="clickable"
@@ -87,7 +96,9 @@ const InvoiceDetailHeader: FC = () => {
                     </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.buttonsHiddenContainer}>
-                    <Button {...styles.printButton} onClick={openPrintDialog} data-test-selector="invoiceDetails_print">{printLabel}</Button>
+                    <Button {...styles.printButton} onClick={openPrintDialog} data-test-selector="invoiceDetails_print">
+                        {printLabel}
+                    </Button>
                     <ShareEntityButton
                         entityId={invoice.invoiceNumber}
                         entityName="Invoice"

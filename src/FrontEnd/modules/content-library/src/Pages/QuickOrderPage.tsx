@@ -6,12 +6,13 @@ import ProductSelectorVariantModal from "@insite/content-library/Components/Prod
 import Page from "@insite/mobius/Page";
 import React from "react";
 
-const QuickOrderPage = ({ id }: PageProps) =>
+const QuickOrderPage = ({ id }: PageProps) => (
     <Page>
         <Zone contentId={id} zoneName="Content"></Zone>
         <AddToListModal />
         <ProductSelectorVariantModal />
-    </Page>;
+    </Page>
+);
 
 const pageModule: PageModule = {
     component: QuickOrderPage,

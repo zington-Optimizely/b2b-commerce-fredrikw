@@ -1,3 +1,4 @@
+import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Components/ContentItemStore";
 import translate from "@insite/client-framework/Translate";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
@@ -18,6 +19,12 @@ import { Provider } from "react-redux";
 import { css } from "styled-components";
 import "whatwg-fetch";
 import ShellState from "./Store/ShellState";
+
+const pages = require.context("../../client-framework/src/Internal/Pages", true, /\.tsx$/);
+const onHotPageReplace = addPagesFromContext(pages);
+
+const widgets = require.context("../../client-framework/src/Internal/Widgets", true, /\.tsx$/);
+const onHotWidgetReplace = addWidgetsFromContext(widgets);
 
 let layout = LayoutModule.default;
 let theme = shellTheme;
@@ -47,11 +54,13 @@ function renderApp(renderer: Renderer = render) {
         shell = <LoadingOverlay loading css={loadingCss} />;
     } else {
         trackUserEvents(store.dispatch);
-        shell = <Provider store={store}>
-            <ConfirmationProvider>
-                <ConnectedRouter history={history}>{layout}</ConnectedRouter>
-            </ConfirmationProvider>
-        </Provider>;
+        shell = (
+            <Provider store={store}>
+                <ConfirmationProvider>
+                    <ConnectedRouter history={history}>{layout}</ConnectedRouter>
+                </ConfirmationProvider>
+            </Provider>
+        );
     }
 
     setReduxDispatcher(store.dispatch);
@@ -67,11 +76,20 @@ function renderApp(renderer: Renderer = render) {
 renderApp(initialState ? hydrate : render);
 
 if (module.hot) {
+    module.hot.accept(pages.id, () =>
+        onHotPageReplace(require.context("../../client-framework/src/Internal/Pages", true, /\.tsx$/)),
+    );
+
+    module.hot.accept(widgets.id, () =>
+        onHotWidgetReplace(require.context("../../client-framework/src/Internal/Widgets", true, /\.tsx$/)),
+    );
+
     module.hot.accept("@insite/shell/Components/Layout", () => {
         // eslint-disable-next-line global-require
         layout = require<typeof LayoutModule>("@insite/shell/Components/Layout").default;
         renderApp();
     });
+
     module.hot.accept("@insite/shell/ShellTheme", () => {
         // eslint-disable-next-line global-require
         theme = require("@insite/shell/ShellTheme").shellTheme;

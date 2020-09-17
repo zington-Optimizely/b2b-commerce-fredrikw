@@ -6,8 +6,7 @@ import { CurrencyModel, FacetModel, PriceFacetModel } from "@insite/client-frame
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { ProductListPageContext } from "@insite/content-library/Pages/ProductListPage";
-import ProductListFiltersAccordionSection
-    from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
+import ProductListFiltersAccordionSection from "@insite/content-library/Widgets/ProductList/ProductListFilterAccordionSection";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
@@ -21,13 +20,18 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-export const formatPriceRangeFacet = (facet: PriceFacetModel | undefined, currency: CurrencyModel | null | undefined) => {
+export const formatPriceRangeFacet = (
+    facet: PriceFacetModel | undefined,
+    currency: CurrencyModel | null | undefined,
+) => {
     if (!facet) {
         return "";
     }
 
     const lowPrice = `${currency?.currencySymbol}${facet.minimumPrice}`;
-    const highPrice = `${currency?.currencySymbol}${facet.maximumPrice > 10 ? facet.maximumPrice - 1 : facet.maximumPrice - 0.01}`;
+    const highPrice = `${currency?.currencySymbol}${
+        facet.maximumPrice > 10 ? facet.maximumPrice - 1 : facet.maximumPrice - 0.01
+    }`;
     return `${lowPrice} - ${highPrice}`;
 };
 
@@ -43,12 +47,17 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-export interface ProductListPriceFiltersStyles {
-}
+export interface ProductListPriceFiltersStyles {}
 
 export const productListPriceFiltersStyles: ProductListPriceFiltersStyles = {};
 
-const ProductListPriceFilters: FC<Props> = ({ priceFacets, currency, addProductFilters, removeProductFilters, fields }) => {
+const ProductListPriceFilters: FC<Props> = ({
+    priceFacets,
+    currency,
+    addProductFilters,
+    removeProductFilters,
+    fields,
+}) => {
     // TODO ISC-11787 - make showMoreLimit configurable
     const showMoreLimit = 10;
 
@@ -83,7 +92,6 @@ const ProductListPriceFilters: FC<Props> = ({ priceFacets, currency, addProductF
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListPriceFilters),
     definition: {
         group: "Product List",

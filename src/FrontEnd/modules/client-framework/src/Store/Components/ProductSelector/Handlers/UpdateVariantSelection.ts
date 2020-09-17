@@ -3,7 +3,10 @@ import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
-import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    getProductState,
+    getVariantChildrenDataView,
+} from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import cloneDeep from "lodash/cloneDeep";
 
 interface Parameter {
@@ -35,7 +38,9 @@ export const SetVariantSelection: HandlerType = props => {
 
 export const SetVariantSelectionCompleted: HandlerType = props => {
     const selectedVariantTraitIds = Object.keys(props.variantSelection);
-    props.variantSelectionCompleted = selectedVariantTraitIds.length > 0 && selectedVariantTraitIds.every(traitValueId => props.variantSelection[traitValueId]);
+    props.variantSelectionCompleted =
+        selectedVariantTraitIds.length > 0 &&
+        selectedVariantTraitIds.every(traitValueId => props.variantSelection[traitValueId]);
 };
 
 export const SelectVariantProduct: HandlerType = props => {
@@ -76,22 +81,26 @@ export const SetProductInfo: HandlerType = async props => {
 
     const promise = new Promise(resolve => {
         const { productInfo } = props;
-        props.dispatch(loadRealTimePricing({
-            productPriceParameters: [productInfo!],
-            onSuccess: realTimePricing => {
-                const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productInfo!.productId);
-                if (pricing) {
-                    productInfo!.pricing = pricing;
-                } else {
+        props.dispatch(
+            loadRealTimePricing({
+                productPriceParameters: [productInfo!],
+                onSuccess: realTimePricing => {
+                    const pricing = realTimePricing.realTimePricingResults!.find(
+                        o => o.productId === productInfo!.productId,
+                    );
+                    if (pricing) {
+                        productInfo!.pricing = pricing;
+                    } else {
+                        productInfo!.failedToLoadPricing = true;
+                    }
+                    resolve();
+                },
+                onError: () => {
                     productInfo!.failedToLoadPricing = true;
-                }
-                resolve();
-            },
-            onError: () => {
-                productInfo!.failedToLoadPricing = true;
-                resolve();
-            },
-        }));
+                    resolve();
+                },
+            }),
+        );
     });
 
     await promise;
@@ -105,7 +114,6 @@ export const DispatchUpdateVariantSelection: HandlerType = props => {
         productInfo: props.productInfo,
     });
 };
-
 
 export const chain = [
     CopyCurrentValues,

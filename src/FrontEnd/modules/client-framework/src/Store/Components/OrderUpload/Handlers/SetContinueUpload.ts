@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ continueUpload: boolean }>;
 
@@ -12,9 +9,7 @@ export const DispatchSetContinueUpload: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetContinueUpload,
-];
+export const chain = [DispatchSetContinueUpload];
 
 const setContinueUpload = createHandlerChainRunner(chain, "SetContinueUpload");
 export default setContinueUpload;

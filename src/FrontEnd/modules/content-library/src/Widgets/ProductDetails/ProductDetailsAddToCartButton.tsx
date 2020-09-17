@@ -22,22 +22,20 @@ export interface ProductDetailsAddToCartButtonStyles {
 
 export const addToCartButtonStyles: ProductDetailsAddToCartButtonStyles = {
     button: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
 };
 
 const styles = addToCartButtonStyles;
 
-const ProductDetailsAddToCartButton: React.FC<Props> = ({
-                                                            canAddToCart,
-                                                        }) => {
+const ProductDetailsAddToCartButton: React.FC<Props> = ({ canAddToCart }) => {
     if (!canAddToCart) {
         return null;
     }
 
-    return <ProductAddToCartButton
-        extendedStyles={styles.button}
-        data-test-selector="addProductToCart"/>;
+    return <ProductAddToCartButton extendedStyles={styles.button} data-test-selector="addProductToCart" />;
 };
 
 const widgetModule: WidgetModule = {

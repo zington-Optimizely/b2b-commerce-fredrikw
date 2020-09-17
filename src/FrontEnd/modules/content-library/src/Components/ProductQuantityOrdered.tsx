@@ -18,11 +18,11 @@ interface OwnProps extends TextFieldProps {
 }
 
 const mapStateToProps = (state: ApplicationState, props: HasProductContext) => {
-    return ({
+    return {
         productSettings: getSettingsCollection(state).productSettings,
         canAddToCart: canAddToCart(state, props.productContext.product),
         hasEnoughInventory: hasEnoughInventory(state, props.productContext),
-    });
+    };
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasProductContext;
@@ -90,16 +90,19 @@ const ProductQuantityOrdered: React.FC<Props & { dispatch: any }> = ({
         }
     };
 
-    return <TextField
-        label={labelOverride ?? translate("QTY_quantity")}
-        value={productQty}
-        type="number"
-        min={0}
-        data-test-selector="product_qtyOrdered"
-        {...otherProps}
-        onKeyPress={keyPressHandler}
-        onChange={qtyChangeHandler}
-        {...styles} />;
+    return (
+        <TextField
+            label={labelOverride ?? translate("QTY_quantity")}
+            value={productQty}
+            type="number"
+            min={0}
+            data-test-selector="product_qtyOrdered"
+            {...otherProps}
+            onKeyPress={keyPressHandler}
+            onChange={qtyChangeHandler}
+            {...styles}
+        />
+    );
 };
 
 export default withProductContext(connect(mapStateToProps)(ProductQuantityOrdered));

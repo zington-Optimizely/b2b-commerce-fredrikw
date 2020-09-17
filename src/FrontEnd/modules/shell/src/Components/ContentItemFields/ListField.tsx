@@ -92,7 +92,7 @@ class ListField extends React.Component<Props, State> {
             }
 
             const childRect = actualElement.getBoundingClientRect();
-            if (childRect.top + (childRect.height / 2) > event.clientY) {
+            if (childRect.top + childRect.height / 2 > event.clientY) {
                 listContainerElement.insertBefore(this.placeholder!, childElement);
                 foundSpot = true;
             }
@@ -151,26 +151,34 @@ class ListField extends React.Component<Props, State> {
     };
 
     render() {
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-            <ChildListStyles ref={this.listContainer} onDragOver={this.dragOver} onDrop={this.drop}>
-                {this.props?.fieldValue.map((child, index) =>
-                    // eslint-disable-next-line react/no-array-index-key
-                    <ListFieldRow key={index}
-                        onChange={this.onChange}
-                        item={cloneDeep(child)}
-                        index={index}
-                        editingIndex={this.state.editingIndex}
-                        editRow={this.editRow}
-                        delete={this.delete}
-                        onDragEnd={this.onDragEnd}
-                        onDragStart={this.onDragStart}
-                        fieldDefinition={this.props.fieldDefinition} />,
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                <ChildListStyles ref={this.listContainer} onDragOver={this.dragOver} onDrop={this.drop}>
+                    {this.props?.fieldValue.map((child, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <ListFieldRow
+                            key={index}
+                            onChange={this.onChange}
+                            item={cloneDeep(child)}
+                            index={index}
+                            editingIndex={this.state.editingIndex}
+                            editRow={this.editRow}
+                            delete={this.delete}
+                            onDragEnd={this.onDragEnd}
+                            onDragStart={this.onDragStart}
+                            fieldDefinition={this.props.fieldDefinition}
+                        />
+                    ))}
+                </ChildListStyles>
+                {!this.props.fieldDefinition.hideAdd && (
+                    <AddStyle>
+                        <Button variant="secondary" onClick={this.addItem} disabled={this.state.editingIndex >= 0}>
+                            Add
+                        </Button>
+                    </AddStyle>
                 )}
-            </ChildListStyles>
-            {!this.props.fieldDefinition.hideAdd && <AddStyle>
-                <Button variant="secondary" onClick={this.addItem} disabled={this.state.editingIndex >= 0}>Add</Button>
-            </AddStyle>}
-        </StandardControl>;
+            </StandardControl>
+        );
     }
 }
 

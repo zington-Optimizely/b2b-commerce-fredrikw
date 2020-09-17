@@ -9,9 +9,7 @@ export const DispatchSetExpirationDate: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetExpirationDate,
-];
+export const chain = [DispatchSetExpirationDate];
 
 const setExpirationDate = createHandlerChainRunner(chain, "SetExpirationDate");
 export default setExpirationDate;

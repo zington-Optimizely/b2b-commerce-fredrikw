@@ -1,5 +1,9 @@
 import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
-import { clearModelSelection, searchCategories, selectCategory } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import {
+    clearModelSelection,
+    searchCategories,
+    selectCategory,
+} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";

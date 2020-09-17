@@ -1,9 +1,12 @@
 import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
-import { createHandlerChainRunner, executeAwaitableHandlerChain, Handler } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    executeAwaitableHandlerChain,
+    Handler,
+} from "@insite/client-framework/HandlerCreator";
 import {
     GetProductCollectionApiV2Parameter,
     GetRelatedProductCollectionApiV2Parameter,
-
 } from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
@@ -11,12 +14,11 @@ import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
-
 interface Parameter {
     id: string;
     getProductCollectionParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
     extraProductOptions?: {
-        getProductCollectionParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
+        getProductCollectionParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
         numberOfProductsToDisplay: number;
     };
 }
@@ -44,7 +46,9 @@ export const LoadProducts: HandlerType = async props => {
 };
 
 export const LoadExtraProducts: HandlerType = async props => {
-    const { parameter: { extraProductOptions } } = props;
+    const {
+        parameter: { extraProductOptions },
+    } = props;
     if (!extraProductOptions) {
         return;
     }
@@ -56,12 +60,18 @@ export const LoadExtraProducts: HandlerType = async props => {
     let extraProducts = getProductsDataView(props.getState(), extraProductOptions.getProductCollectionParameter).value;
 
     if (!extraProducts) {
-        extraProducts = await executeAwaitableHandlerChain(loadProducts, extraProductOptions.getProductCollectionParameter, props);
+        extraProducts = await executeAwaitableHandlerChain(
+            loadProducts,
+            extraProductOptions.getProductCollectionParameter,
+            props,
+        );
     }
 
     extraProducts?.forEach(extraProduct => {
-        if (props.products!.length < extraProductOptions.numberOfProductsToDisplay
-            && props.products!.every(existingProduct => existingProduct.id !== extraProduct.id)) {
+        if (
+            props.products!.length < extraProductOptions.numberOfProductsToDisplay &&
+            props.products!.every(existingProduct => existingProduct.id !== extraProduct.id)
+        ) {
             props.products!.push(extraProduct);
         }
     });
@@ -83,7 +93,6 @@ export const DispatchCompleteLoadPurchasedProducts: HandlerType = props => {
         type: "Components/ProductInfoLists/CompleteLoadProductInfoList",
         id: props.parameter.id,
         productInfos: props.productInfos ?? [],
-
     });
 };
 
@@ -92,22 +101,24 @@ export const LoadRealTimePrices: HandlerType = props => {
         return;
     }
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: props.productInfos,
-        onSuccess: (realTimePricing) => {
-            props.dispatch({
-                type: "Components/ProductInfoLists/CompleteLoadRealTimePricing",
-                id: props.parameter.id,
-                realTimePricing,
-            });
-        },
-        onError: () => {
-            props.dispatch({
-                type: "Components/ProductInfoLists/FailedLoadRealTimePricing",
-                id: props.parameter.id,
-            });
-        },
-    }));
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: props.productInfos,
+            onSuccess: realTimePricing => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/CompleteLoadRealTimePricing",
+                    id: props.parameter.id,
+                    realTimePricing,
+                });
+            },
+            onError: () => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/FailedLoadRealTimePricing",
+                    id: props.parameter.id,
+                });
+            },
+        }),
+    );
 };
 
 export const LoadRealTimeInventory: HandlerType = props => {
@@ -115,16 +126,18 @@ export const LoadRealTimeInventory: HandlerType = props => {
         return;
     }
 
-    props.dispatch(loadRealTimeInventory({
-        productIds: props.productInfos.map(o => o.productId),
-        onSuccess: realTimeInventory => {
-            props.dispatch({
-                type: "Components/ProductInfoLists/CompleteLoadRealTimeInventory",
-                id: props.parameter.id,
-                realTimeInventory,
-            });
-        },
-    }));
+    props.dispatch(
+        loadRealTimeInventory({
+            productIds: props.productInfos.map(o => o.productId),
+            onSuccess: realTimeInventory => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/CompleteLoadRealTimeInventory",
+                    id: props.parameter.id,
+                    realTimeInventory,
+                });
+            },
+        }),
+    );
 };
 
 export const chain = [

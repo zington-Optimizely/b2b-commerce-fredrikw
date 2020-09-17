@@ -2,6 +2,9 @@
     "use strict";
     import StateModel = Insite.Websites.WebApi.V1.ApiModels.StateModel;
     import TokenExDto = insite.core.TokenExDto;
+    import SettingsCollection = core.SettingsCollection;
+    import PaymetricDto = insite.core.PaymetricDto;
+    import CreditCardDto = Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
 
     export class AddSavedPaymentPopupController {
         savedPayments: AccountPaymentProfileModel[];
@@ -27,12 +30,28 @@
         isDefault: boolean;
         isDescriptionAlreadyExists: boolean;
 
+        useTokenExGateway: boolean;
         tokenExIframe: any;
         tokenExIframeIsLoaded: boolean;
         isInvalidCardNumber: boolean;
         isCardAlreadyExists: boolean;
 
-        static $inject = ["coreService", "$scope", "$rootScope", "websiteService", "accountService", "customerService", "addSavedPaymentPopupService", "spinnerService", "settingsService"];
+        usePaymetricGateway: boolean;
+        paymetricIframe: any;
+        paymetricDto: PaymetricDto;
+
+        static $inject = [
+            "coreService",
+            "$scope",
+            "$rootScope",
+            "websiteService",
+            "accountService",
+            "customerService",
+            "addSavedPaymentPopupService",
+            "spinnerService",
+            "settingsService",
+            "$http"
+        ];
 
         constructor(
             protected coreService: core.ICoreService,
@@ -43,7 +62,8 @@
             protected customerService: customers.ICustomerService,
             protected addSavedPaymentPopupService: IAddSavedPaymentPopupService,
             protected spinnerService: core.ISpinnerService,
-            protected settingsService: core.ISettingsService) {
+            protected settingsService: core.ISettingsService,
+            protected $http: ng.IHttpService) {
         }
 
         $onInit(): void {
@@ -57,9 +77,10 @@
                     this.fillData();
                 }
 
-                setTimeout(() => {
-                    this.setUpTokenExGateway();
-                }, 0, false);
+                this.settingsService.getSettings().then(
+                    (settings: SettingsCollection) => { this.getSettingsCompleted(settings); },
+                    (error: any) => { this.getSettingsFailed(error); }
+                );
 
                 this.coreService.displayModal("#popup-add-saved-payment");
             });
@@ -107,6 +128,22 @@
 
                 this.isDescriptionAlreadyExists = this.savedPayments.some(o => o.description === newValue);
             });
+        }
+
+        protected getSettingsCompleted(settings: SettingsCollection): void {
+            this.useTokenExGateway = settings.websiteSettings.useTokenExGateway;
+            this.usePaymetricGateway = settings.websiteSettings.usePaymetricGateway;
+
+            setTimeout(() => {
+                if (this.useTokenExGateway) {
+                    this.setUpTokenExGateway();
+                } else if (this.usePaymetricGateway) {
+                    this.setUpPaymetricGateway();
+                }
+            }, 0, false);
+        }
+
+        protected getSettingsFailed(error: any): void {
         }
 
         protected getBillToCompleted(billTo: BillToModel): void {
@@ -194,7 +231,11 @@
             }
 
             this.saving = true;
-            this.tokenExIframe.tokenize();
+            if (this.useTokenExGateway) {
+                this.tokenExIframe.tokenize();
+            } else if (this.usePaymetricGateway) {
+                this.submitPaymetric();
+            }
         }
 
         protected validate(): boolean {
@@ -336,6 +377,134 @@
                 return "AMERICAN EXPRESS";
             } else {
                 return cardType.toUpperCase();
+            }
+        }
+
+        setUpPaymetricGateway(): void {
+            // Reset the frame, Paymetric could init against an already existing iFrame.
+            $("#paymetricIframe").attr("src", "");
+
+            this.settingsService.getPaymetricConfig().then(
+                (paymetricDto: PaymetricDto) => {
+                    this.getPaymetricConfigCompleted(paymetricDto);
+                },
+                (error: any) => {
+                    this.getPaymetricConfigFailed(error);
+                });
+        }
+
+        protected getPaymetricConfigCompleted(paymetricDto: PaymetricDto) {
+            this.paymetricDto = paymetricDto;
+            this.setUpPaymetricIframe(paymetricDto);
+        }
+
+        protected setUpPaymetricIframe(paymetricDto: PaymetricDto) {
+            $("#paymetricIframe").attr("src", paymetricDto.message).on("load", () => {
+                // After the IFrame finishes loading, setup the Paymetric IFrame.
+                this.paymetricIframe = $XIFrame(this.getPaymetricIframeConfig(paymetricDto));
+                this.paymetricIframe.onload();
+            });
+        }
+
+        protected getPaymetricConfigFailed(_: any): void {
+        }
+
+        protected getPaymetricIframeConfig(paymetricDto: PaymetricDto): any {
+            return {
+                iFrameId: "paymetricIframe",
+                targetUrl: paymetricDto.message,
+                autosizewidth: false,
+                autosizeheight: true,
+            };
+        }
+
+        protected submitPaymetric() {
+            if (!this.paymetricIframe) {
+                return;
+            }
+
+            this.paymetricIframe.validate({
+                onValidate: (success) => {
+                    this.handlePaymetricValidateSuccess(success);
+                },
+                onError: () => {
+                    this.spinnerService.hide();
+                    this.saving = false;
+                },
+            });
+        }
+
+        protected handlePaymetricValidateSuccess(success: boolean) {
+            if (success) {
+                this.paymetricIframe.submit({
+                    onSuccess: (msg) => {
+                        var message = JSON.parse(msg);
+                        // The HasPassed is case sensitive, and not starndard json.
+                        if (message.data.HasPassed) {
+                            this.handleSuccessSubmitPaymetricIframe();
+                        }
+                    },
+                    onError: (msg) => {
+                        var message = JSON.parse(msg);
+                        // Code = 150 -> Already submitted
+                        if (message.data.Code === 150) {
+                            this.handleSuccessSubmitPaymetricIframe();
+                            return;
+                        }
+                        this.spinnerService.hide();
+                        this.saving = false;
+                    },
+                });
+            } else {
+                this.spinnerService.hide();
+                this.saving = false;
+            }
+        }
+
+        protected handleSuccessSubmitPaymetricIframe() {
+            this.$http({
+                method: "GET",
+                url: `api/v1/paymetric/responsepacket?accessToken=${this.paymetricDto.accessToken}`
+            }).then((result: ng.IHttpPromiseCallbackArg<{ success: boolean; message: string, creditCard: CreditCardDto }>) => {
+                if (!result.data.success) {
+                    this.spinnerService.hide();
+                    this.saving = false;
+                    return;
+                }
+
+                this.cardType = this.convertPaymetricCardType(result.data.creditCard.cardType);
+                this.cardIdentifier = result.data.creditCard.cardNumber;
+                this.expirationMonth = result.data.creditCard.expirationMonth.toString();
+                if (this.expirationMonth.length === 1) {
+                    this.expirationMonth = `0${this.expirationMonth}`;
+                }
+                this.expirationYear = this.expirationYears.find(o => o.value === result.data.creditCard.expirationYear.toString());
+                this.cardHolderName = result.data.creditCard.cardHolderName;
+                this.continueSave();
+            }, () => {
+                this.spinnerService.hide();
+                this.saving = false;
+            });
+        }
+
+        private convertPaymetricCardType(cardType: string): string {
+            switch (cardType.toLowerCase()) {
+                case "vi":
+                    return "Visa";
+                case "mc":
+                    return "MasterCard";
+                case "ax":
+                    return "American Express";
+                case "dc":
+                    return "Diner's";
+                case "di":
+                    return "Discover";
+                case "jc":
+                    return "JCB";
+                case "sw":
+                    return "Maestro";
+                default:
+                    return "unknown";
             }
         }
     }

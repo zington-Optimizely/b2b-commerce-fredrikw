@@ -17,7 +17,9 @@ export interface ProductDetailsDescriptionStyles {
 
 export const descriptionStyles: ProductDetailsDescriptionStyles = {
     wrapper: {
-        css: css` margin-bottom: 15px; `,
+        css: css`
+            margin-bottom: 15px;
+        `,
     },
 };
 
@@ -28,11 +30,13 @@ const ProductDetailsDescription: React.FC<Props> = ({ product }) => {
         return null;
     }
 
-    return <StyledWrapper {...styles.wrapper}>
-        <div data-test-selector="productDetails_htmlContent">
-            {parse(product.content.htmlContent, parserOptions)}
-        </div>
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <div data-test-selector="productDetails_htmlContent">
+                {parse(product.content.htmlContent, parserOptions)}
+            </div>
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

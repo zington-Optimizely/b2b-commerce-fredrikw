@@ -14,7 +14,9 @@ export interface CardContainerMultiColumnStyles {
 export const cardContainerMultiColumnStyles: CardContainerMultiColumnStyles = {
     gridItem: {
         width: [12, 12, 6, 4, 4],
-        css: css` padding: 10px 0; `,
+        css: css`
+            padding: 10px 0;
+        `,
     },
     cardDivider: {
         css: css`
@@ -28,16 +30,13 @@ export const cardContainerMultiColumnStyles: CardContainerMultiColumnStyles = {
 };
 
 const CardContainerMultiColumn: FC<{
-    extendedStyles?: CardContainerMultiColumnStyles,
+    extendedStyles?: CardContainerMultiColumnStyles;
 }> = ({ extendedStyles, children, ...otherProps }) => {
-
     const [styles] = React.useState(() => mergeToNew(cardContainerMultiColumnStyles, extendedStyles));
 
     return (
         <GridItem {...styles.gridItem} {...otherProps}>
-            <StyledWrapper {...styles.cardDivider}>
-                {children}
-            </StyledWrapper>
+            <StyledWrapper {...styles.cardDivider}>{children}</StyledWrapper>
         </GridItem>
     );
 };

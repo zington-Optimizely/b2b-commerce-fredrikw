@@ -9,11 +9,7 @@ type WarehouseHoursLinkProps = LinkPresentationProps & {
     onOpenWarehouseHours: (warehouse: WarehouseModel) => void;
 };
 
-const WarehouseHoursLink: React.FC<WarehouseHoursLinkProps> = ({
-    warehouse,
-    onOpenWarehouseHours,
-    ...otherProps
-}) => {
+const WarehouseHoursLink: React.FC<WarehouseHoursLinkProps> = ({ warehouse, onOpenWarehouseHours, ...otherProps }) => {
     if (!warehouse.hours) {
         return null;
     }
@@ -22,7 +18,9 @@ const WarehouseHoursLink: React.FC<WarehouseHoursLinkProps> = ({
         onOpenWarehouseHours(warehouse);
     };
     return (
-        <Link onClick={handleHoursClicked} {...otherProps}>{translate("Hours")}</Link>
+        <Link onClick={handleHoursClicked} {...otherProps}>
+            {translate("Hours")}
+        </Link>
     );
 };
 

@@ -20,7 +20,9 @@ export const notesStyles: OrderDetailsNotesStyles = {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },

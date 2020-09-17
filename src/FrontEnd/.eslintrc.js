@@ -3,12 +3,7 @@
 module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
-    plugins: [
-        "@typescript-eslint",
-        "react-hooks",
-        "ordered-imports",
-        "spire",
-    ],
+    plugins: ["@typescript-eslint", "react-hooks", "ordered-imports", "spire", "prettier"],
     extends: [
         "airbnb",
         "airbnb/hooks",
@@ -16,12 +11,13 @@ module.exports = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
+        "prettier",
     ],
     settings: {
         react: {
             pragma: "React",
-            version: "16.10"
-        }
+            version: "16.10",
+        },
     },
     rules: {
         // Note that most of the ones that are forced "off" but should be "error" are enabled with the rule sets list above.
@@ -37,30 +33,28 @@ module.exports = {
         "@typescript-eslint/no-unused-vars": "off", // Should be "error"; could potentially find bugs about forgotten parameters.
         "@typescript-eslint/no-unused-expressions": "off", // Should be "error", affected syntax is wasteful and maybe should use `?.`.
         "@typescript-eslint/no-use-before-define": "off", // Should be "error"; cosmetic but sensible for better conceptual flow.
-        "@typescript-eslint/semi": "error", // Should be "error"; replaces ESLint"s semi rule that doesn't work correctly with TypeScript.
+        "@typescript-eslint/semi": "off", // handled by prettier
         "@typescript-eslint/triple-slash-reference": "off", // Should be "error"; will be suppressed occasionally but discourages legacy syntax.
         "@typescript-eslint/type-annotation-spacing": "off", // Should be "error"; inconsistent code style.
         "arrow-body-style": "off", // Should be "error"; unnecessary complexity.
         "arrow-parens": "off", // Should be customized; we generally don't use unnecessary parentheses in our C# arrow functions.
         "consistent-return": "off", // Should be "off"; handled nicely by TypeScript.
+        curly: ["error", "all"],
         "default-case": "off", // Should be "off"; a switch with no default is well-understood and handled correctly by TypeScript.
         "dot-notation": "off", // Should be "error"; unnecessary complexity.
         "func-names": "off", // Should be configured for our needs.
-        "function-paren-newline": "off", // Should be "error"; bad formatting.
+        "function-paren-newline": "off", // handled by prettier
         "guard-for-in": "off", // Should be "error"; potential source of bugs.
-        "implicit-arrow-linebreak": "off", // Should be "error"; bad formatting.
+        "implicit-arrow-linebreak": "off", // handled by prettier
         "import/first": "off", // Should be "error"; keeps imports in the appropriate place.
-        "import/export": "off", // Should be "error"; getting tripped by multiple exports of duplicate ApiModels.ts DTO types.
+        "import/export": "off", // handled by ordered-imports
         "import/extensions": "off", // Requires special configuration or customization to be usable.
         "import/no-extraneous-dependencies": "off", // Should be "off"; the way this is built doesn't require it package.json to be perfect.
         "import/no-mutable-exports": "off", // Should be "error"; may be occasional exceptions but this can lead to erratic behavior by consumers.
         "import/no-unresolved": "off", // Should be "off"; dependency validation is handled by TypeScript and Webpack.
         "import/order": "off", // Should be "error"; inconsistent import ordering makes reading the list harder than necessary.
         "import/prefer-default-export": "off", // Should be "error"; not using a default export where appropriate makes things slightly harder to use.
-        "indent": [
-            "off", //Should be "error"; TSLint had the same rule but didn't enforce it as well as ESLint.
-            4
-        ],
+        indent: "off", // handled by prettier
         "jsx-a11y/accessible-emoji": "off", // Should be "error"; accessibility issue.
         "jsx-a11y/anchor-is-valid": "off", // Should be "error"; accessibility issue.
         "jsx-a11y/click-events-have-key-events": "off", // Should be "error"; accessibility issue.
@@ -71,16 +65,11 @@ module.exports = {
         "jsx-a11y/mouse-events-have-key-events": "off", // Should be "error"; accessibility issue.
         "jsx-a11y/no-noninteractive-element-interactions": "off", // Should be "error"; accessibility issue.
         "jsx-a11y/no-static-element-interactions": "off", // Should be "error"; accessibility issue.
-        "keyword-spacing": "off", // Should be "error"; formatting issue.
+        "keyword-spacing": "off", // handled by prettier
         "linebreak-style": "off", // Should be "off"; handled via .gitattributes `* text=auto`
         "lines-between-class-members": "off", // Debatable, may be usable if customizable for packed fields but spaced functions.
         "max-classes-per-file": "off", // Debatable.
-        "max-len": [
-            "off", // Should be "error"; some TSLint misses and generated files that should have internal suppressions.
-            {
-                code: 160,
-            }
-        ],
+        "max-len": "off", //handled by prettier
         "no-alert": "error", // Use a styled pop-up.
         "no-await-in-loop": "off", // Should be "off"; this isn't done unintentionally.
         "no-confusing-arrow": "off", // Debatable.
@@ -89,6 +78,7 @@ module.exports = {
         "no-loop-func": "off", // Should be "error; complicated code organization.
         "no-multi-assign": "off", // Debatable.
         "no-multi-spaces": "off", // Should be "error"; bad formatting.
+        "no-mixed-operators": "error",
         "no-nested-ternary": "off", // Should be "error"; code written this way is hard to read.
         "no-param-reassign": "off", // Should be "off" or customized (if feasible);  our reducer+immer pattern requires it.
         "no-plusplus": "off", // Arguably should be "off"; if semi-colons are required we"re not exposed to ++"s quirks.
@@ -100,7 +90,7 @@ module.exports = {
         "object-curly-newline": "off", // Should be "off" unless it can be customized to our preferences.
         "object-property-newline": "off", // Should be "error"; questionable formatting.
         "operator-assignment": "off", // Should be "error"; unnecessary syntax.  Might occasionally be suppressed in edge cases.
-        "operator-linebreak": ["error", "before"],
+        "operator-linebreak": "off", // should be ["error", "before"] but conflicts with prettier
         "ordered-imports/ordered-imports": [
             "error",
             {
@@ -110,7 +100,7 @@ module.exports = {
         ],
         "padded-blocks": "off", // Should be "error"; waste.
         "prefer-destructuring": "off", // Should be "error"; destructuring is break-even-or-better than direct access for minification.
-        "quotes": ["error", "double"],
+        "prettier/prettier": "error",
         "react/no-danger": "error",
         "react/button-has-type": "off", // Debatable, probably "off" is fine as it should be well-understood what happens with an implicit type.
         "react/destructuring-assignment": "off", // Should be "error";  destructuring is break-even-or-better than direct access for minification.
@@ -140,8 +130,8 @@ module.exports = {
         "react-hooks/exhaustive-deps": "off", // Should be "error"; indicates hooks aren't being used correctly.
         "require-atomic-updates": "off", // Ideally would be "error", but would get triggered frequently by our front-end handler chain design.
         "require-await": "error", // This isn't enabled by any rule sets so we force it on here to reduce waste in the JS bundle.
-        "semi": "off", // Should be "off"; conflicts with @typescript-eslint/semi.
+        semi: "off", // handled by prettier
         "spire/avoid-dynamic-translate": "error",
         "spire/export-styles": "error",
-    }
+    },
 };

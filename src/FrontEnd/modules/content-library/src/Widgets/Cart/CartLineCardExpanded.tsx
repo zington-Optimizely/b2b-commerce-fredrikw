@@ -10,10 +10,7 @@ import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handler
 import removeCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/RemoveCartLine";
 import updateCartLine from "@insite/client-framework/Store/Pages/Cart/Handlers/UpdateCartLine";
 import translate from "@insite/client-framework/Translate";
-import {
-    ProductSettingsModel,
-    PromotionModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { ProductSettingsModel, PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
@@ -59,7 +56,10 @@ const mapDispatchToProps = {
     addToWishList,
 };
 
-type Props = OwnProps & HasCartLineContext & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps &
+    HasCartLineContext &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CartLineCardExpandedStyles {
     container?: GridContainerProps;
@@ -109,10 +109,18 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
-                    css` font-size: 10px; `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
+                    css`
+                        font-size: 10px;
+                    `,
                     null,
                 ])}
         `,
@@ -122,7 +130,9 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     productInfoGridItem: { width: [12, 12, 12, 7, 7] },
     productInfoContainer: { gap: 12 },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productDescriptionGridItem: {
@@ -130,26 +140,43 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     },
     configurationGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productPartNumbersGridItem: { width: 12 },
     quantityAndExtendedUnitNetPriceGridItem: { width: 12 },
     quantityGridItem: { width: 6 },
-    extendedUnitNetPriceGridItem: { width: 6, css: css` align-items: flex-end; ` },
+    extendedUnitNetPriceGridItem: {
+        width: 6,
+        css: css`
+            align-items: flex-end;
+        `,
+    },
     extendedUnitNetPriceText: {
         weight: "bold",
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
     cartLineErrorMessageGridItem: { width: 12 },
     cartLineErrorMessageText: { color: "danger" },
     productPriceAndAvailabilityGridItem: {
         width: [12, 12, 12, 5, 5],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
-    addToListLink: { css: css` margin-top: 20px; ` },
+    addToListLink: {
+        css: css`
+            margin-top: 20px;
+        `,
+    },
     cartLineNotesGridItem: { width: 12 },
     removeCartLineGridItem: {
-        css: css` justify-content: center; `,
+        css: css`
+            justify-content: center;
+        `,
         width: [2, 2, 2, 1, 1],
     },
     removeCartLineIcon: { src: XCircle },
@@ -235,17 +262,19 @@ const CartLineCardExpanded: FC<Props> = ({
         setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
     };
 
-    const sumQtyPerUom = cart.cartLines!.reduce(
-        (sum, current) => {
-            return current.productId === cartLine.productId
-                ? sum + current.qtyPerBaseUnitOfMeasure * current.qtyOrdered!
-                : sum;
-        },
-        0);
+    const sumQtyPerUom = cart.cartLines!.reduce((sum, current) => {
+        return current.productId === cartLine.productId
+            ? sum + current.qtyPerBaseUnitOfMeasure * current.qtyOrdered!
+            : sum;
+    }, 0);
 
     const errorMessages: React.ReactNode[] = [];
     if (showInventoryAvailability && cartLine.hasInsufficientInventory && !isOutOfStock(cartLine)) {
-        const tooManyRequestedMessage = siteMessage("Cart_ToManyQtyRequested", cartLine.qtyOnHand.toLocaleString(), sumQtyPerUom.toLocaleString());
+        const tooManyRequestedMessage = siteMessage(
+            "Cart_ToManyQtyRequested",
+            cartLine.qtyOnHand.toLocaleString(),
+            sumQtyPerUom.toLocaleString(),
+        );
         errorMessages.push(tooManyRequestedMessage);
     }
 
@@ -260,7 +289,10 @@ const CartLineCardExpanded: FC<Props> = ({
     const [styles] = React.useState(() => mergeToNew(cartLineCardExpandedStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.container} data-test-selector={`cartline_expanded_${cartLine.productId}_${cartLine.unitOfMeasure}`}>
+        <GridContainer
+            {...styles.container}
+            data-test-selector={`cartline_expanded_${cartLine.productId}_${cartLine.unitOfMeasure}`}
+        >
             <GridItem {...styles.productImageGridItem}>
                 <ProductImage product={cartLine} extendedStyles={styles.productImage} />
             </GridItem>
@@ -269,20 +301,20 @@ const CartLineCardExpanded: FC<Props> = ({
                     <GridItem {...styles.productInfoGridItem}>
                         <GridContainer {...styles.productInfoContainer}>
                             <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                                {cartLine.brand
-                                    && <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
-                                }
+                                {cartLine.brand && (
+                                    <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
+                                )}
                                 <ProductDescription product={cartLine} extendedStyles={styles.productDescription} />
                             </GridItem>
-                            {!cartLine.isFixedConfiguration && cartLine.sectionOptions!.length > 0
-                                && <GridItem {...styles.configurationGridItem}>
+                            {!cartLine.isFixedConfiguration && cartLine.sectionOptions!.length > 0 && (
+                                <GridItem {...styles.configurationGridItem}>
                                     {cartLine.sectionOptions!.map(option => (
                                         <Typography {...styles.configurationOptionText} key={option.sectionOptionId}>
                                             {`${option.sectionName}:${option.optionName}`}
                                         </Typography>
                                     ))}
                                 </GridItem>
-                            }
+                            )}
                             <GridItem {...styles.productPartNumbersGridItem}>
                                 <ProductPartNumbers
                                     productNumber={cartLine.erpNumber}
@@ -301,67 +333,83 @@ const CartLineCardExpanded: FC<Props> = ({
                                             extendedStyles={styles.quantity}
                                         />
                                     </GridItem>
-                                    {!cartLine.quoteRequired && !cart.cartNotPriced
-                                        && <GridItem {...styles.extendedUnitNetPriceGridItem}>
-                                            <Typography {...styles.extendedUnitNetPriceText} data-test-selector="cartline_extendedUnitNetPrice">
+                                    {!cartLine.quoteRequired && !cart.cartNotPriced && (
+                                        <GridItem {...styles.extendedUnitNetPriceGridItem}>
+                                            <Typography
+                                                {...styles.extendedUnitNetPriceText}
+                                                data-test-selector="cartline_extendedUnitNetPrice"
+                                            >
                                                 {cartLine.pricing!.extendedUnitNetPriceDisplay}
                                             </Typography>
                                         </GridItem>
-                                    }
+                                    )}
                                 </GridContainer>
                             </GridItem>
-                            {errorMessages.length > 0
-                                && <GridItem {...styles.cartLineErrorMessageGridItem}>
+                            {errorMessages.length > 0 && (
+                                <GridItem {...styles.cartLineErrorMessageGridItem}>
                                     {errorMessages.map((message, index) => (
-                                        // eslint-disable-next-line react/no-array-index-key
-                                        <Typography {...styles.cartLineErrorMessageText} key={index} data-test-selector="cartline_errorMessage">{message}</Typography>
+                                        <Typography
+                                            {...styles.cartLineErrorMessageText}
+                                            // eslint-disable-next-line react/no-array-index-key
+                                            key={index}
+                                            data-test-selector="cartline_errorMessage"
+                                        >
+                                            {message}
+                                        </Typography>
                                     ))}
                                 </GridItem>
-                            }
+                            )}
                         </GridContainer>
                     </GridItem>
                     <GridItem {...styles.productPriceAndAvailabilityGridItem}>
-                        {!cart.cartNotPriced
-                            && <ProductPrice
+                        {!cart.cartNotPriced && (
+                            <ProductPrice
                                 product={cartLine}
                                 currencySymbol={cart.currencySymbol}
                                 showSavings={true}
                                 showSavingsAmount={productSettings.showSavingsAmount}
                                 showSavingsPercent={productSettings.showSavingsPercent}
-                                extendedStyles={styles.productPrice} />
-                        }
+                                extendedStyles={styles.productPrice}
+                            />
+                        )}
                         {promotions.map(promotion => (
-                            <Typography {...styles.promotionNameText} key={promotion.id}>{promotion.name}</Typography>
+                            <Typography {...styles.promotionNameText} key={promotion.id}>
+                                {promotion.name}
+                            </Typography>
                         ))}
-                        {showInventoryAvailability && !cartLine.quoteRequired
-                            && <ProductAvailability
+                        {showInventoryAvailability && !cartLine.quoteRequired && (
+                            <ProductAvailability
                                 productId={cartLine.productId!}
                                 availability={cartLine.availability!}
                                 unitOfMeasure={cartLine.unitOfMeasure}
                                 trackInventory={cartLine.trackInventory}
-                                extendedStyles={styles.productAvailability} />
-                        }
-                        {!hideAddToList
-                            && <Link {...styles.addToListLink} onClick={addToListClickHandler}>{translate("Add to List")}</Link>
-                        }
+                                extendedStyles={styles.productAvailability}
+                            />
+                        )}
+                        {!hideAddToList && (
+                            <Link {...styles.addToListLink} onClick={addToListClickHandler}>
+                                {translate("Add to List")}
+                            </Link>
+                        )}
                     </GridItem>
-                    {showLineNotes && cart.properties["isPunchout"] === undefined
-                        && <GridItem {...styles.cartLineNotesGridItem}>
+                    {showLineNotes && cart.properties["isPunchout"] === undefined && (
+                        <GridItem {...styles.cartLineNotesGridItem}>
                             <CartLineNotes
                                 cart={cart}
                                 editable={true}
                                 onNotesChange={notesChangeHandler}
-                                extendedStyles={styles.cartLineNotes} />
+                                extendedStyles={styles.cartLineNotes}
+                            />
                         </GridItem>
-                    }
+                    )}
                 </GridContainer>
             </GridItem>
             <GridItem {...styles.removeCartLineGridItem}>
-                {showRemoveAction
-                    && <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                {showRemoveAction && (
+                    <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
                         <IconMemo {...styles.removeCartLineIcon} />
                     </Clickable>
-                }
+                )}
             </GridItem>
         </GridContainer>
     );

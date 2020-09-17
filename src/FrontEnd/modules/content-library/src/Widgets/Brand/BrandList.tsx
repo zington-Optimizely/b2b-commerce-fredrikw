@@ -8,9 +8,13 @@ import { BrandAlphabetLetterModel, BrandModel } from "@insite/client-framework/T
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import VerticalColumnCell, { VerticalColumnCellProps } from "@insite/content-library/Components/VerticalColumnCell";
-import VerticalColumnContainer, { VerticalColumnContainerProps } from "@insite/content-library/Components/VerticalColumnContainer";
+import VerticalColumnContainer, {
+    VerticalColumnContainerProps,
+} from "@insite/content-library/Components/VerticalColumnContainer";
 import { BrandsPageContext } from "@insite/content-library/Pages/BrandsPage";
-import BrandAlphabetNavigation, { BrandAlphabetNavigationStyles } from "@insite/content-library/Widgets/Brand/BrandAlphabetNavigation";
+import BrandAlphabetNavigation, {
+    BrandAlphabetNavigationStyles,
+} from "@insite/content-library/Widgets/Brand/BrandAlphabetNavigation";
 import Accordion, { AccordionProps } from "@insite/mobius/Accordion";
 import AccordionSection, { AccordionSectionPresentationProps } from "@insite/mobius/AccordionSection";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -22,8 +26,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     allBrandsDataView: getAllBrandsDataView(state),
@@ -65,12 +68,16 @@ export const listStyles: BrandListStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     brandAccordionSection: {
         titleTypographyProps: {
             weight: "bold",
-            css: css` text-transform: uppercase; `,
+            css: css`
+                text-transform: uppercase;
+            `,
         },
     },
     backToTopButton: {
@@ -82,7 +89,9 @@ export const listStyles: BrandListStyles = {
         `,
     },
     brandLink: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     verticalColumnContainer: {
         columnCounts: [2, 4, 4, 4, 4],
@@ -95,10 +104,14 @@ export const listStyles: BrandListStyles = {
         `,
     },
     actionLinks: {
-        css: css` margin: 5px; `,
+        css: css`
+            margin: 5px;
+        `,
     },
     actionLinksDisabled: {
-        css: css` margin: 5px; `,
+        css: css`
+            margin: 5px;
+        `,
         color: "text.disabled",
     },
 };
@@ -108,7 +121,7 @@ const styles = listStyles;
 interface BrandListState {
     expanded: boolean | "mixed";
     brandLetterDetails: BrandAlphabetLetterModel[];
-    brandSections: BrandSection[]
+    brandSections: BrandSection[];
 }
 
 /**
@@ -167,7 +180,12 @@ const BrandList: FC<Props> = (props: Props) => {
         event.stopPropagation();
         if (state.expanded === "mixed" || state.expanded) {
             const { letters, brandLettersMap } = buildLettersAndMap(brandList);
-            const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, false);
+            const { brandLetterDetails, brandSections } = buildBrandSections(
+                letters,
+                brandLettersMap,
+                brandAlphabet,
+                false,
+            );
             setState({ ...state, brandLetterDetails, brandSections, expanded: false });
         }
     };
@@ -176,7 +194,12 @@ const BrandList: FC<Props> = (props: Props) => {
         event.stopPropagation();
         if (state.expanded === "mixed" || !state.expanded) {
             const { letters, brandLettersMap } = buildLettersAndMap(brandList);
-            const { brandLetterDetails, brandSections } = buildBrandSections(letters, brandLettersMap, brandAlphabet, true);
+            const { brandLetterDetails, brandSections } = buildBrandSections(
+                letters,
+                brandLettersMap,
+                brandAlphabet,
+                true,
+            );
             setState({ ...state, brandLetterDetails, brandSections, expanded: true });
         }
     };
@@ -197,23 +220,21 @@ const BrandList: FC<Props> = (props: Props) => {
                 extendedStyles={styles.brandAlphabetNavigation}
                 onBrandLetterClick={handleBrandLetterClick}
             />
-             <StyledWrapper {...styles.actions}>
-                {state.expanded === false
-                    ? <Typography {...styles.actionLinksDisabled}>
-                        {translate("Collapse All")}
-                    </Typography>
-                    : <Link onClick={onCollapse} {...styles.actionLinks} data-test-selector="brandListCollapseAllLink">
+            <StyledWrapper {...styles.actions}>
+                {state.expanded === false ? (
+                    <Typography {...styles.actionLinksDisabled}>{translate("Collapse All")}</Typography>
+                ) : (
+                    <Link onClick={onCollapse} {...styles.actionLinks} data-test-selector="brandListCollapseAllLink">
                         {translate("Collapse All")}
                     </Link>
-                }
-                {state.expanded === true
-                    ? <Typography {...styles.actionLinksDisabled}>
-                        {translate("Expand All")}
-                    </Typography>
-                    : <Link onClick={onExpand} {...styles.actionLinks} data-test-selector="brandListExpandAllLink">
+                )}
+                {state.expanded === true ? (
+                    <Typography {...styles.actionLinksDisabled}>{translate("Expand All")}</Typography>
+                ) : (
+                    <Link onClick={onExpand} {...styles.actionLinks} data-test-selector="brandListExpandAllLink">
                         {translate("Expand All")}
                     </Link>
-}
+                )}
             </StyledWrapper>
             <Accordion headingLevel={2}>
                 {state.brandSections.map(brandDetails => (
@@ -229,20 +250,18 @@ const BrandList: FC<Props> = (props: Props) => {
                             {...styles.verticalColumnContainer}
                             data-test-selector="brandSection"
                         >
-                            {brandDetails.brandMap.map(
-                                brand => (
-                                    <VerticalColumnCell key={brand.detailPagePath} {...styles.verticalColumnCell}>
-                                        <Link
-                                            {...styles.brandLink}
-                                            href={brand.detailPagePath}
-                                            typographyProps={{ ellipsis: true }}
-                                            data-test-selector="brandLink"
-                                        >
-                                            {brand.name}
-                                        </Link>
-                                    </VerticalColumnCell>
-                                ),
-                            )}
+                            {brandDetails.brandMap.map(brand => (
+                                <VerticalColumnCell key={brand.detailPagePath} {...styles.verticalColumnCell}>
+                                    <Link
+                                        {...styles.brandLink}
+                                        href={brand.detailPagePath}
+                                        typographyProps={{ ellipsis: true }}
+                                        data-test-selector="brandLink"
+                                    >
+                                        {brand.name}
+                                    </Link>
+                                </VerticalColumnCell>
+                            ))}
                         </VerticalColumnContainer>
                     </AccordionSection>
                 ))}
@@ -276,7 +295,7 @@ interface BrandSection {
  *
  * @param brandList The list of brands that should be sorted.
  */
-const buildLettersAndMap = (brandList: BrandModel[]): { letters: string[]; brandLettersMap: BrandLetterMap; } => {
+const buildLettersAndMap = (brandList: BrandModel[]): { letters: string[]; brandLettersMap: BrandLetterMap } => {
     let letters: string[] = [];
     let letter: string;
     let newLetters: string[] = letters;
@@ -291,10 +310,7 @@ const buildLettersAndMap = (brandList: BrandModel[]): { letters: string[]; brand
             brandLettersMap[letter] = [];
         }
         brandLettersMap[letter].push(brand);
-        newLetters = [
-            ...newLetters,
-            letter,
-        ];
+        newLetters = [...newLetters, letter];
     }
     letters = newLetters.filter((letter, index, array) => array.indexOf(letter) === index);
     if (brandLettersMap["#"]) {
@@ -312,20 +328,27 @@ const buildLettersAndMap = (brandList: BrandModel[]): { letters: string[]; brand
  * @param brandAlphabet Letter count list.
  * @param expanded The expanded value to use if not undefined.
  */
-const buildBrandSections = (letters: string[], brandLettersMap: BrandLetterMap, brandAlphabet: BrandAlphabetLetterModel[], expanded: boolean | undefined): {
+const buildBrandSections = (
+    letters: string[],
+    brandLettersMap: BrandLetterMap,
+    brandAlphabet: BrandAlphabetLetterModel[],
+    expanded: boolean | undefined,
+): {
     brandLetterDetails: {
         count: number;
         letter: string;
         linkable: boolean;
-    }[], brandSections: {
+    }[];
+    brandSections: {
         letter: string;
         brandMap: BrandModel[];
         expanded: boolean;
-    }[]
+    }[];
 } => {
-    const brandLetterDetails = brandAlphabet.map(
-        alphabetItem => ({ ...alphabetItem, linkable: alphabetItem.count > 0 }),
-    );
+    const brandLetterDetails = brandAlphabet.map(alphabetItem => ({
+        ...alphabetItem,
+        linkable: alphabetItem.count > 0,
+    }));
     const brandSections = letters.map(letter => ({
         letter,
         brandMap: brandLettersMap[letter],

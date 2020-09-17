@@ -18,14 +18,13 @@ const Rows: React.FunctionComponent<Props> = ({ fields: { rowCount, gap }, id }:
     const rows: JSX.Element[] = [];
     for (let row = 0; row < rowCount; row = row + 1) {
         rows.push(
-            <GridItem
-                key={`GridItem-${id}-${row}`}
-                width={[12, 12, 12, 12, 12]}>
-                <Zone contentId={id} zoneName={`Content${row}`}/>
-            </GridItem>);
+            <GridItem key={`GridItem-${id}-${row}`} width={[12, 12, 12, 12, 12]}>
+                <Zone contentId={id} zoneName={`Content${row}`} />
+            </GridItem>,
+        );
     }
 
-    return(<GridContainer gap={gap}>{rows}</GridContainer>);
+    return <GridContainer gap={gap}>{rows}</GridContainer>;
 };
 
 const widgetModule: WidgetModule = {

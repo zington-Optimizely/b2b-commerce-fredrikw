@@ -7,9 +7,9 @@ export interface AddressFieldsState {
 
 interface DataView {
     readonly fetchedDate: Date;
-    readonly isLoading: boolean,
+    readonly isLoading: boolean;
     value?: {
-        readonly billToAddressFields: Readonly<AddressFieldDisplayCollectionModel>,
-        readonly shipToAddressFields: Readonly<AddressFieldDisplayCollectionModel>,
+        readonly billToAddressFields: Readonly<AddressFieldDisplayCollectionModel>;
+        readonly shipToAddressFields: Readonly<AddressFieldDisplayCollectionModel>;
     };
 }

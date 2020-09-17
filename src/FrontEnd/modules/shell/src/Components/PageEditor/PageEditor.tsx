@@ -17,11 +17,10 @@ import { connect, ResolveThunks } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import styled from "styled-components";
 
-
-interface OwnProps extends RouteComponentProps<{
-    readonly id: string,
-}> {
-}
+interface OwnProps
+    extends RouteComponentProps<{
+        readonly id: string;
+    }> {}
 
 interface PageEditorState {
     id: string;
@@ -29,11 +28,11 @@ interface PageEditorState {
 
 const mapStateToProps = (state: ShellState) => {
     const page = getCurrentPageForShell(state);
-    return ({
+    return {
         pageDefinition: getPageDefinition(page.type),
         page,
         pageLinks: state.links.pageLinks,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -83,10 +82,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
     }
 
     render() {
-        const {
-            page,
-            pageDefinition,
-        } = this.props;
+        const { page, pageDefinition } = this.props;
 
         if (!this.state.id) {
             return null;
@@ -99,21 +95,23 @@ class PageEditor extends React.Component<Props, PageEditorState> {
         if (!pageDefinition && !switchingToPage) {
             // without this check we get a flash of this message while navigating between pages. NullPage doesn't have a definition.
             if (page.type !== nullPage.type) {
-                return <MissingComponent type={page.type} isWidget={false}/>;
+                return <MissingComponent type={page.type} isWidget={false} />;
             }
-            return  null;
+            return null;
         }
 
-        return <>
-            <PageTemplateModal />
-            <PageEditorContainer>
-                <StyledStage>
-                    <Header {...{ page, pageDefinition }} />
-                    <SiteFrame pageId={this.state.id}/>
-                </StyledStage>
-            </PageEditorContainer>
-            <ItemEditor />
-        </>;
+        return (
+            <>
+                <PageTemplateModal />
+                <Header {...{ page, pageDefinition }} />
+                <PageEditorContainer>
+                    <StyledStage>
+                        <SiteFrame pageId={this.state.id} />
+                    </StyledStage>
+                </PageEditorContainer>
+                <ItemEditor />
+            </>
+        );
     }
 }
 
@@ -126,9 +124,9 @@ const mapStageModeToProps = (state: ShellState) => ({
 const PageEditorContainer = connect(mapStageModeToProps)(styled.div<ReturnType<typeof mapStageModeToProps>>`
     display: flex;
     max-width: 100% !important;
-    height: calc(100% - ${({ theme }) => theme.headerHeight});
+    height: calc(100% - ${({ theme }) => theme.headerHeight} - 48px);
     align-items: flex-start;
-    ${({ overflowAuto }) => overflowAuto ? "overflow: auto;" : ""}
+    ${({ overflowAuto }) => (overflowAuto ? "overflow: auto;" : "")}
 `);
 
 const StyledStage = styled(Stage)`

@@ -14,9 +14,7 @@ import { themeTypographyStyleString } from "@insite/mobius/Typography/Typography
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import get from "@insite/mobius/utilities/get";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
-import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import ShellState from "@insite/shell/Store/ShellState";
-import { LoadStatus } from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
+import { createMergedTheme } from "@insite/shell/Components/Shell/StyleGuide/Types";
 import CodeMirror from "codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/xml/xml.js";
@@ -52,7 +50,6 @@ import flatten from "lodash/flatten";
 import uniq from "lodash/uniq";
 import * as React from "react";
 import FroalaEditor from "react-froala-wysiwyg";
-import { connect, DispatchProp } from "react-redux";
 import styled, { css, ThemeProps } from "styled-components";
 
 const expandArrows = `M15 4.2C14.6 4.2 14.3 4.5 14.3 5s0.3 0.8 0.8 0.8h2.2L12.8 10.1c-0.3 0.3-0.3 0.8 0 1.1 0.1 0.1 0.3
@@ -71,19 +68,6 @@ const modalScreenSize = css`
     margin: 0;
 `;
 
-const mapStateToProps = (state: ShellState) => {
-    const styleGuide = state.styleGuide;
-
-    if (styleGuide.loadStatus !== LoadStatus.Loaded) {
-        return styleGuide;
-    }
-
-    return {
-        loadStatus: styleGuide.loadStatus,
-        theme: styleGuide.theme,
-    };
-};
-
 interface OwnProps {
     extendedConfig?: object;
     collapsedToolbarButtons?: object;
@@ -95,18 +79,14 @@ interface OwnProps {
     name?: string;
 }
 
-type StateProps = {
-    theme?: BaseTheme;
-    loadStatus: LoadStatus;
-};
-
-type Props = OwnProps & StateProps & DispatchProp<AnyShellAction>;
+type Props = OwnProps;
 
 interface State {
     modalIsOpen: boolean;
     initControls?: any;
     imagePickerIsOpen?: true;
     editedImage?: string;
+    theme?: BaseTheme;
 }
 
 class RichTextEditor extends React.Component<Props, State> {
@@ -143,7 +123,8 @@ class RichTextEditor extends React.Component<Props, State> {
             undo: false,
             refreshAfterCallback: false,
             // eslint-disable-next-line object-shorthand
-            callback: function () { // Shorthand format doesn't work because Froala provides its own `this` parameter.
+            callback: function () {
+                // Shorthand format doesn't work because Froala provides its own `this` parameter.
                 editorThis.setState({ imagePickerIsOpen: true });
                 const hideOverlay = () => {
                     if (editorThis.state.editedImage) {
@@ -172,10 +153,14 @@ class RichTextEditor extends React.Component<Props, State> {
                         });
                         finder.on("command:after:SaveImage", (evt: any) => {
                             if (evt.data.response.currentFolder.url && editorThis.state.editedImage) {
-                                rawRequest(`${evt.data.response.currentFolder.url}${editorThis.state.editedImage}`, "GET", {
-                                    "Cache-Control": "no-cache",
-                                    Pragma: "no-cache",
-                                });
+                                rawRequest(
+                                    `${evt.data.response.currentFolder.url}${editorThis.state.editedImage}`,
+                                    "GET",
+                                    {
+                                        "Cache-Control": "no-cache",
+                                        Pragma: "no-cache",
+                                    },
+                                );
                             }
                         });
                         finder.on("command:before:SaveImage", (evt: any) => {
@@ -190,13 +175,11 @@ class RichTextEditor extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        getTheme()
-            .then(theme => {
-                this.props.dispatch({
-                    type: "StyleGuide/LoadCompleted",
-                    theme: { ...defaultTheme, ...theme },
-                });
+        getTheme().then(theme => {
+            this.setState({
+                theme: createMergedTheme(theme),
             });
+        });
     }
 
     openFullscreen = () => {
@@ -237,12 +220,13 @@ class RichTextEditor extends React.Component<Props, State> {
     };
 
     render() {
-        if (this.props.loadStatus !== LoadStatus.Loaded) {
+        if (!this.state.theme) {
             return <LoadingSpinner />;
         }
 
-        const theme = this.props.theme ? this.props.theme : {} as BaseTheme;
-        const themeColors = uniq(flatten(Object.values(theme.colors).map(colorObj => Object.values(colorObj))));
+        const themeColors = uniq(
+            flatten(Object.values(this.state.theme.colors).map(colorObj => Object.values(colorObj))),
+        );
         themeColors.push("REMOVE");
 
         const baseCollapsedToolbarButtons = {
@@ -283,14 +267,7 @@ class RichTextEditor extends React.Component<Props, State> {
                 buttonsVisible: 7,
             },
             moreMisc: {
-                buttons: [
-                    "insertLink",
-                    "insertImage",
-                    "insertHR",
-                    "specialCharacters",
-                    "insertVideo",
-                    "insertFile",
-                ],
+                buttons: ["insertLink", "insertImage", "insertHR", "specialCharacters", "insertVideo", "insertFile"],
                 buttonsVisible: 3,
             },
             code: {
@@ -308,7 +285,9 @@ class RichTextEditor extends React.Component<Props, State> {
             : baseExpandedToolbarButtons;
 
         const editor = (sidebar: boolean) => {
-            if (this.props.loadStatus !== LoadStatus.Loaded) { return; }
+            if (!this.state.theme) {
+                return;
+            }
             const baseConfig = {
                 key: "vYA6mB5B4E3E4C3C7dNSWXf1h1MDb1CF1PLPFf1C1EESFKVlA3C11A8B6D2B4F3G2C3F3",
                 theme: "dark",
@@ -324,32 +303,44 @@ class RichTextEditor extends React.Component<Props, State> {
                 height: 400,
                 colorsStep: 5,
                 videoInsertButtons: ["videoBack", "|", "videoByURL", "videoEmbed"],
-                htmlAllowedStyleProps: ["font-family", "font-size", "background", "color", "width", "text-align", "vertical-align", "background-color", "list-style-type"],
+                htmlAllowedStyleProps: [
+                    "font-family",
+                    "font-size",
+                    "background",
+                    "color",
+                    "width",
+                    "text-align",
+                    "vertical-align",
+                    "background-color",
+                    "list-style-type",
+                ],
             };
-            const config = this.props.extendedConfig ? this.extendConfig(baseConfig, this.props.extendedConfig) : baseConfig;
+            const config = this.props.extendedConfig
+                ? this.extendConfig(baseConfig, this.props.extendedConfig)
+                : baseConfig;
 
-            return <>
-                {this.state.imagePickerIsOpen && <Scrim zIndexLevel="modal" />}
-                <EditorStyles sidebar={sidebar} siteTheme={theme}>
-                    <FroalaEditor
-                        config={{
-                            ...config,
-                            toolbarButtons: sidebar
-                                ? collapsedToolbarButtons
-                                : expandedToolbarButtons,
-                            events: {
-                                // Needed it because onModelChange event is not fired in the codeView mode
-                                blur: () => {
-                                    this.onChangeInCodeViewMode();
+            return (
+                <>
+                    {this.state.imagePickerIsOpen && <Scrim zIndexLevel="modal" />}
+                    <EditorStyles sidebar={sidebar} siteTheme={this.state.theme}>
+                        <FroalaEditor
+                            config={{
+                                ...config,
+                                toolbarButtons: sidebar ? collapsedToolbarButtons : expandedToolbarButtons,
+                                events: {
+                                    // Needed it because onModelChange event is not fired in the codeView mode
+                                    blur: () => {
+                                        this.onChangeInCodeViewMode();
+                                    },
                                 },
-                            },
-                        }}
-                        onManualControllerReady={this.handleManualController}
-                        model={this.props.value}
-                        onModelChange={this.props.onChange}
-                    />
-                </EditorStyles>
-            </>;
+                            }}
+                            onManualControllerReady={this.handleManualController}
+                            model={this.props.value}
+                            onModelChange={this.props.onChange}
+                        />
+                    </EditorStyles>
+                </>
+            );
         };
         return (
             <>
@@ -359,16 +350,17 @@ class RichTextEditor extends React.Component<Props, State> {
                     cssOverrides={{
                         modalBody: css`
                             overflow: hidden;
-                            ${({ theme }: ThemeProps<BaseTheme>) => (breakpointMediaQueries(
-                            theme, [null, null, null, modalScreenSize, null], "min")
-                            )}
+                            ${({ theme }: ThemeProps<BaseTheme>) =>
+                                breakpointMediaQueries(theme, [null, null, null, modalScreenSize, null], "min")}
                         `,
                         modalContent: css`
                             padding: 0;
                             max-height: unset;
                             overflow: auto;
                         `,
-                        modalTitle: css` display: none; `,
+                        modalTitle: css`
+                            display: none;
+                        `,
                     }}
                     handleClose={this.closeFullscreen}
                     data-test-selector="richTextFullScreen"
@@ -380,8 +372,8 @@ class RichTextEditor extends React.Component<Props, State> {
     }
 }
 
-const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme: BaseTheme }>`
-    ${({ sidebar }) => sidebar ? "margin-top: 10px;" : ""}
+const EditorStyles = styled.div<{ sidebar: boolean; siteTheme: BaseTheme; theme: BaseTheme }>`
+    ${({ sidebar }) => (sidebar ? "margin-top: 10px;" : "")}
     ${({ siteTheme }) => siteTheme && themeTypographyStyleString({ theme: siteTheme })}
     ul, ol {
         padding: 0 0 0 40px;
@@ -401,16 +393,15 @@ const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme:
         ${({ siteTheme }) => siteTheme?.lists?.listItemProps?.css}
     }
     a {
-        color:
-            ${({ siteTheme }) => {
-        const linkColor = get(siteTheme, "link.defaultProps.color");
-        return linkColor && resolveColor(linkColor, siteTheme);
-    }};
+        color: ${({ siteTheme }) => {
+            const linkColor = get(siteTheme, "link.defaultProps.color");
+            return linkColor && resolveColor(linkColor, siteTheme);
+        }};
     }
     .fr-toolbar.dark-theme.fr-toolbar.fr-top {
         color: #fff;
         background: #4a4a4a;
-        border-radius: ${({ sidebar }) => sidebar ? "4px 4px 0 0" : "0"};
+        border-radius: ${({ sidebar }) => (sidebar ? "4px 4px 0 0" : "0")};
         border: none;
     }
     .dark-theme.fr-basic.fr-top {
@@ -466,15 +457,15 @@ const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme:
             border-radius: 0 0 4px 4px;
             overflow: hidden;
             ${({ sidebar }) => {
-        return sidebar ? "" : "height: calc(100vh - 33px) !important;";
-    }}
+                return sidebar ? "" : "height: calc(100vh - 33px) !important;";
+            }}
         }
         .fr-element.fr-view {
             border-top: none;
             border-radius: 0 0 4px 4px;
             ${({ sidebar }) => {
-        return sidebar ? "" : "height: calc(100vh - 33px) !important;";
-    }}
+                return sidebar ? "" : "height: calc(100vh - 33px) !important;";
+            }}
         }
         .second-toolbar {
             border: 0;
@@ -515,4 +506,4 @@ const EditorStyles = styled.div<{ sidebar: boolean, siteTheme: BaseTheme, theme:
     }
 `;
 
-export default connect(mapStateToProps)(RichTextEditor);
+export default RichTextEditor;

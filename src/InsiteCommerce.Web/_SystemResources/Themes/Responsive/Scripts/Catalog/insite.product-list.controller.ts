@@ -583,14 +583,6 @@ module insite.catalog {
                 } else {
                     result.attributeTypeFacets = this.products.attributeTypeFacets;
                 }
-
-                result.categoryFacets = this.products.categoryFacets;
-                result.priceRange = this.products.priceRange;
-            }
-
-            if (this.filterType === "price") {
-                result.categoryFacets = this.products.categoryFacets;
-                result.priceRange = this.products.priceRange;
             }
 
             if (!expand || !expand.some(e => e === "pricing")) {

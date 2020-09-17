@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunnerOptionalParameter,
-    HandlerWithResult,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
 import setFilterQuery from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetFilterQuery";
 import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import cloneDeep from "lodash/cloneDeep";
@@ -35,12 +32,7 @@ export const DispatchSetFilterQuery: HandlerType = props => {
     props.dispatch(setFilterQuery());
 };
 
-export const chain = [
-    GetCurrentFilters,
-    RemoveAllFilters,
-    DispatchSetProductFilters,
-    DispatchSetFilterQuery,
-];
+export const chain = [GetCurrentFilters, RemoveAllFilters, DispatchSetProductFilters, DispatchSetFilterQuery];
 
 const clearAllProductFilters = createHandlerChainRunnerOptionalParameter(chain, {}, "ClearAllProductFilters");
 export default clearAllProductFilters;

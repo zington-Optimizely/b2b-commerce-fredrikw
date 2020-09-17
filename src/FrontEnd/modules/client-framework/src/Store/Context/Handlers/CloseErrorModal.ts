@@ -9,9 +9,7 @@ export const DispatchSetErrorModalIsOpen: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetErrorModalIsOpen,
-];
+export const chain = [DispatchSetErrorModalIsOpen];
 
 const closeErrorModal = createHandlerChainRunnerOptionalParameter(chain, {}, "CloseErrorModal");
 export default closeErrorModal;

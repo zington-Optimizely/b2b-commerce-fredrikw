@@ -1,8 +1,11 @@
-import { ApiParameter, doesNotHaveExpand, get, HasPagingParameters, patch } from "@insite/client-framework/Services/ApiService";
 import {
-    InvoiceCollectionModel,
-    InvoiceModel,
-} from "@insite/client-framework/Types/ApiModels";
+    ApiParameter,
+    doesNotHaveExpand,
+    get,
+    HasPagingParameters,
+    patch,
+} from "@insite/client-framework/Services/ApiService";
+import { InvoiceCollectionModel, InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetInvoicesApiParameter extends ApiParameter, HasPagingParameters {
     invoiceNumber?: string;
@@ -18,7 +21,7 @@ export interface GetInvoicesApiParameter extends ApiParameter, HasPagingParamete
 
 export interface GetInvoiceApiParameter extends ApiParameter {
     invoiceNumber: string;
-    expand?: ("invoiceLines")[];
+    expand?: "invoiceLines"[];
     additionalExpands?: string[];
     sTEmail?: string;
     sTPostalCode?: string;
@@ -51,7 +54,7 @@ export function updateInvoice(parameter: UpdateInvoiceApiParameter) {
     return patch<InvoiceModel>(`${invoicesUrl}/${invoiceNumber}`, invoice);
 }
 
-function cleanInvoice(invoice: InvoiceModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
+function cleanInvoice(invoice: InvoiceModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     if (doesNotHaveExpand(parameter, "invoiceLines")) {
         delete invoice.invoiceLines;
     }

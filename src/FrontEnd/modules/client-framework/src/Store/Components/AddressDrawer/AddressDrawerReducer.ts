@@ -16,25 +16,40 @@ const initialState: AddressDrawerState = {
 };
 
 const reducer = {
-    "Components/AddressDrawer/SetIsOpen": (draft: Draft<AddressDrawerState>, action: { isOpen: boolean; }) => {
+    "Components/AddressDrawer/SetIsOpen": (draft: Draft<AddressDrawerState>, action: { isOpen: boolean }) => {
         draft.isOpen = action.isOpen;
     },
-    "Components/AddressDrawer/SetNavDrawerIsOpen": (draft: Draft<AddressDrawerState>, action: { navDrawerIsOpen?: boolean; }) => {
+    "Components/AddressDrawer/SetNavDrawerIsOpen": (
+        draft: Draft<AddressDrawerState>,
+        action: { navDrawerIsOpen?: boolean },
+    ) => {
         draft.navDrawerIsOpen = action.navDrawerIsOpen;
     },
-    "Components/AddressDrawer/ChangeFulfillmentMethod": (draft: Draft<AddressDrawerState>, action: { fulfillmentMethod: string; }) => {
+    "Components/AddressDrawer/ChangeFulfillmentMethod": (
+        draft: Draft<AddressDrawerState>,
+        action: { fulfillmentMethod: string },
+    ) => {
         draft.fulfillmentMethod = action.fulfillmentMethod;
     },
-    "Components/AddressDrawer/SelectBillTo": (draft: Draft<AddressDrawerState>, action: { billTo: BillToModel | undefined; }) => {
+    "Components/AddressDrawer/SelectBillTo": (
+        draft: Draft<AddressDrawerState>,
+        action: { billTo: BillToModel | undefined },
+    ) => {
         draft.selectedBillTo = action.billTo;
     },
-    "Components/AddressDrawer/SelectShipTo": (draft: Draft<AddressDrawerState>, action: { shipTo: ShipToModel | undefined; }) => {
+    "Components/AddressDrawer/SelectShipTo": (
+        draft: Draft<AddressDrawerState>,
+        action: { shipTo: ShipToModel | undefined },
+    ) => {
         draft.selectedShipTo = action.shipTo;
     },
-    "Components/AddressDrawer/SetAsDefault": (draft: Draft<AddressDrawerState>, action: { isDefault: boolean; }) => {
+    "Components/AddressDrawer/SetAsDefault": (draft: Draft<AddressDrawerState>, action: { isDefault: boolean }) => {
         draft.isDefault = action.isDefault;
     },
-    "Components/AddressDrawer/SetPickUpWarehouse": (draft: Draft<AddressDrawerState>, action: { pickUpWarehouse: WarehouseModel | null; }) => {
+    "Components/AddressDrawer/SetPickUpWarehouse": (
+        draft: Draft<AddressDrawerState>,
+        action: { pickUpWarehouse: WarehouseModel | null },
+    ) => {
         draft.pickUpWarehouse = action.pickUpWarehouse;
     },
     "Components/AddressDrawer/BeginApplyChanges": (draft: Draft<AddressDrawerState>) => {

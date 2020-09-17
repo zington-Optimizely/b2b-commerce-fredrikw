@@ -26,15 +26,15 @@ const OrderDetailsTitle: React.FC = () => {
     }
 
     return (
-        <Typography {...styles.titleText}>{order.erpOrderNumber
-            ? `${translate("Order #")}${order.erpOrderNumber}`
-            : `${translate("Web Order #")}${order.webOrderNumber}`}
+        <Typography {...styles.titleText}>
+            {order.erpOrderNumber
+                ? `${translate("Order #")}${order.erpOrderNumber}`
+                : `${translate("Web Order #")}${order.webOrderNumber}`}
         </Typography>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: OrderDetailsTitle,
     definition: {
         allowedContexts: [OrderDetailsPageContext],

@@ -1,6 +1,8 @@
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { RequestRmaPageContext } from "@insite/content-library/Pages/RequestRmaPage";
-import RequestRmaButtons, { RequestRmaButtonsStyles } from "@insite/content-library/Widgets/RequestRma/RequestRmaButtons";
+import RequestRmaButtons, {
+    RequestRmaButtonsStyles,
+} from "@insite/content-library/Widgets/RequestRma/RequestRmaButtons";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
@@ -14,7 +16,9 @@ export interface RequestRmaProductListButtonsStyles {
 
 export const productListButtonsStyles: RequestRmaProductListButtonsStyles = {
     buttonsGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [0, 0, 0, 12, 12],
     },
 };

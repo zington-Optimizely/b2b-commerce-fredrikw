@@ -17,7 +17,10 @@ const initialState: MyListDetailsState = {
 };
 
 const reducer = {
-    "Pages/MyListDetails/UpdateLoadWishListLinesParameter": (draft: Draft<MyListDetailsState>, action: { parameter: Partial<GetWishListLinesApiParameter>; }) => {
+    "Pages/MyListDetails/UpdateLoadWishListLinesParameter": (
+        draft: Draft<MyListDetailsState>,
+        action: { parameter: Partial<GetWishListLinesApiParameter> },
+    ) => {
         draft.loadWishListLinesParameter = { ...draft.loadWishListLinesParameter, ...action.parameter };
 
         for (const key in draft.loadWishListLinesParameter) {
@@ -31,7 +34,12 @@ const reducer = {
 
         for (const key in action.parameter) {
             // go back to page 1 if any other parameters changed
-            if (draft.loadWishListLinesParameter.page && draft.loadWishListLinesParameter.page > 1 && key !== "page" && key !== "wishListId") {
+            if (
+                draft.loadWishListLinesParameter.page &&
+                draft.loadWishListLinesParameter.page > 1 &&
+                key !== "page" &&
+                key !== "wishListId"
+            ) {
                 draft.loadWishListLinesParameter.page = 1;
             }
         }
@@ -40,27 +48,47 @@ const reducer = {
         draft.wishListId = action.wishListId;
         draft.productInfosByWishListLineId = {};
     },
-    "Pages/MyListDetails/SetWishListLineIsSelected": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string; isSelected: boolean }) => {
+    "Pages/MyListDetails/SetWishListLineIsSelected": (
+        draft: Draft<MyListDetailsState>,
+        action: { wishListLineId: string; isSelected: boolean },
+    ) => {
         if (action.isSelected) {
             draft.selectedWishListLineIds = draft.selectedWishListLineIds.concat([action.wishListLineId]);
         } else {
             draft.selectedWishListLineIds = draft.selectedWishListLineIds.filter(o => o !== action.wishListLineId);
         }
     },
-    "Pages/MyListDetails/SetAllWishListLinesIsSelected": (draft: Draft<MyListDetailsState>, action: SetAllWishListLinesIsSelectedParameter) => {
-        draft.selectedWishListLineIds = (action.isSelected && action.wishListLineIds) ? action.wishListLineIds : [];
+    "Pages/MyListDetails/SetAllWishListLinesIsSelected": (
+        draft: Draft<MyListDetailsState>,
+        action: SetAllWishListLinesIsSelectedParameter,
+    ) => {
+        draft.selectedWishListLineIds = action.isSelected && action.wishListLineIds ? action.wishListLineIds : [];
     },
-    "Pages/MyListDetails/SetEditingSortOrder": (draft: Draft<MyListDetailsState>, action: { editingSortOrder: boolean }) => {
+    "Pages/MyListDetails/SetEditingSortOrder": (
+        draft: Draft<MyListDetailsState>,
+        action: { editingSortOrder: boolean },
+    ) => {
         draft.editingSortOrder = action.editingSortOrder;
     },
-    "Pages/MyListDetails/CompleteUpdateWishListLineQuantities": (draft: Draft<MyListDetailsState>, action: { isQuantityAdjusted: boolean, wishListLinesWithUpdatedQuantity: SafeDictionary<number> }) => {
-        Object.keys(action.wishListLinesWithUpdatedQuantity).forEach(o => { draft.wishListLinesWithUpdatedQuantity[o] = true; });
+    "Pages/MyListDetails/CompleteUpdateWishListLineQuantities": (
+        draft: Draft<MyListDetailsState>,
+        action: { isQuantityAdjusted: boolean; wishListLinesWithUpdatedQuantity: SafeDictionary<number> },
+    ) => {
+        Object.keys(action.wishListLinesWithUpdatedQuantity).forEach(o => {
+            draft.wishListLinesWithUpdatedQuantity[o] = true;
+        });
         draft.quantityAdjustmentModalIsOpen = action.isQuantityAdjusted;
     },
-    "Pages/MyListDetails/SetQuantityAdjustmentModalIsOpen": (draft: Draft<MyListDetailsState>, action: { modalIsOpen: boolean }) => {
+    "Pages/MyListDetails/SetQuantityAdjustmentModalIsOpen": (
+        draft: Draft<MyListDetailsState>,
+        action: { modalIsOpen: boolean },
+    ) => {
         draft.quantityAdjustmentModalIsOpen = action.modalIsOpen;
     },
-    "Pages/MyListDetails/CompleteLoadProductInfos": (draft: Draft<MyListDetailsState>, action: { productInfosByWishListLineId: SafeDictionary<ProductInfo> }) => {
+    "Pages/MyListDetails/CompleteLoadProductInfos": (
+        draft: Draft<MyListDetailsState>,
+        action: { productInfosByWishListLineId: SafeDictionary<ProductInfo> },
+    ) => {
         for (const wishListLineId in action.productInfosByWishListLineId) {
             const productInfo = action.productInfosByWishListLineId[wishListLineId]!;
             const existingProductInfo = draft.productInfosByWishListLineId[wishListLineId];
@@ -73,7 +101,10 @@ const reducer = {
         }
     },
 
-    "Pages/MyListDetails/UpdateQuantity": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string, qtyOrdered: number }) => {
+    "Pages/MyListDetails/UpdateQuantity": (
+        draft: Draft<MyListDetailsState>,
+        action: { wishListLineId: string; qtyOrdered: number },
+    ) => {
         const productInfo = draft.productInfosByWishListLineId[action.wishListLineId];
         if (!productInfo) {
             return; // TODO ISC-133147 should this be an error?
@@ -83,7 +114,15 @@ const reducer = {
         productInfo.qtyOrdered = action.qtyOrdered;
     },
 
-    "Pages/MyListDetails/UpdateUnitOfMeasure": (draft: Draft<MyListDetailsState>, action: { wishListLineId: string, unitOfMeasure: string, pricing?: ProductPriceDto, inventory?: ProductInventoryDto }) => {
+    "Pages/MyListDetails/UpdateUnitOfMeasure": (
+        draft: Draft<MyListDetailsState>,
+        action: {
+            wishListLineId: string;
+            unitOfMeasure: string;
+            pricing?: ProductPriceDto;
+            inventory?: ProductInventoryDto;
+        },
+    ) => {
         const productInfo = draft.productInfosByWishListLineId[action.wishListLineId];
         if (!productInfo) {
             return; // TODO ISC-133147 should this be an error?

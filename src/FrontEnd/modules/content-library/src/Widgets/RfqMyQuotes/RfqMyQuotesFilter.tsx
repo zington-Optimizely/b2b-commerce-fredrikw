@@ -78,24 +78,56 @@ export interface RfqMyQuotesFilterStyles {
 }
 
 export const rfqMyQuotesFilterStyles: RfqMyQuotesFilterStyles = {
-    container: { css: css` padding-bottom: 15px; ` },
+    container: {
+        css: css`
+            padding-bottom: 15px;
+        `,
+    },
     headingItem: {
         width: 12,
-        css: css` padding-bottom: 0; `,
+        css: css`
+            padding-bottom: 0;
+        `,
     },
     heading: {
         variant: "h5",
         as: "h2",
-        css: css` margin: 0; `,
+        css: css`
+            margin: 0;
+        `,
     },
     fromGridItem: { width: [6, 6, 3, 3, 2] },
-    fromDate: { cssOverrides: { formField: css` width: 100%; ` } },
+    fromDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
     toGridItem: { width: [6, 6, 3, 3, 2] },
-    toDate: { cssOverrides: { formField: css` width: 100%; ` } },
+    toDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
     expireFromGridItem: { width: [6, 6, 3, 3, 2] },
-    expireFromDate: { cssOverrides: { formField: css` width: 100%; ` } },
+    expireFromDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
     expireToGridItem: { width: [6, 6, 3, 3, 2] },
-    expireToDate: { cssOverrides: { formField: css` width: 100%; ` } },
+    expireToDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
     customerGridItem: { width: [12, 12, 6, 6, 4] },
     quoteNumberGridItem: { width: [12, 12, 3, 3, 2] },
     statusGridItem: { width: [12, 12, 3, 3, 2] },
@@ -104,17 +136,21 @@ export const rfqMyQuotesFilterStyles: RfqMyQuotesFilterStyles = {
     appliedFiltersContainer: { css: horizontalStyles },
     buttonsItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     clearFiltersButton: {
         variant: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
 const styles = rfqMyQuotesFilterStyles;
 
-const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+const tzOffset = new Date().getTimezoneOffset() * 60000;
 
 class RfqMyQuotesFilter extends Component<Props, State> {
     updateTimeoutId: number | undefined;
@@ -142,9 +178,10 @@ class RfqMyQuotesFilter extends Component<Props, State> {
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState({
                 quoteNumber: this.props.getQuotesParameter.quoteNumber || "",
-                status: this.props.getQuotesParameter.statuses && this.props.getQuotesParameter.statuses.length > 0
-                    ? this.props.getQuotesParameter.statuses[0]
-                    : "",
+                status:
+                    this.props.getQuotesParameter.statuses && this.props.getQuotesParameter.statuses.length > 0
+                        ? this.props.getQuotesParameter.statuses[0]
+                        : "",
             });
         }
     }
@@ -166,7 +203,7 @@ class RfqMyQuotesFilter extends Component<Props, State> {
     };
 
     userChangeHandler = (userId: string) => {
-        this.props.updateSearchFields({ userProfileId: userId || "" });
+        this.props.updateSearchFields({ userId: userId || "" });
     };
 
     salesRepChangeHandler = (salesRepNumber: string) => {
@@ -260,53 +297,108 @@ class RfqMyQuotesFilter extends Component<Props, State> {
 
     render() {
         if (!this.props.filtersOpen) {
-            return <StyledWrapper {...styles.appliedFiltersContainer}>
-                {this.props.getQuotesParameter.fromDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.fromDateChangeHandler({}); }} data-test-selector="rfqMyQuotes_fromDateButton">
-                        {translate("Requested From: {0}", this.props.getQuotesParameter.fromDate)}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.toDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.toDateChangeHandler({}); }}>
-                        {translate("Requested To: {0}", this.props.getQuotesParameter.toDate)}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.expireFromDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.expireFromDateChangeHandler({}); }} data-test-selector="rfqMyQuotes_fromDateButton">
-                        {translate("Expires From: {0}", this.props.getQuotesParameter.expireFromDate)}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.expireToDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.expireToDateChangeHandler({}); }}>
-                        {translate("Expires To: {0}", this.props.getQuotesParameter.expireToDate)}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.customerId
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.customerChangeHandler(""); }}>
-                        {translate("Customer: {0}", this.getCustomerLabel(this.props.getQuotesParameter.customerId))}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.quoteNumber
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.quoteNumberChangeHandler(""); }}>
-                        {translate("Quote #: {0}", this.props.getQuotesParameter.quoteNumber)}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.statuses && this.props.getQuotesParameter.statuses.length > 0
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.statusChangeHandler(""); }}>
-                        {translate("Status: {0}", this.getStatusLabel(this.props.getQuotesParameter.statuses[0]))}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.userProfileId
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.userChangeHandler(""); }}>
-                        {translate("User: {0}", this.getUserLabel(this.props.getQuotesParameter.userProfileId))}
-                    </Tag>
-                }
-                {this.props.getQuotesParameter.salesRepNumber
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.salesRepChangeHandler(""); }}>
-                        {translate("Sales Rep: {0}", this.getSalesRepLabel(this.props.getQuotesParameter.salesRepNumber))}
-                    </Tag>
-                }
-            </StyledWrapper>;
+            return (
+                <StyledWrapper {...styles.appliedFiltersContainer}>
+                    {this.props.getQuotesParameter.fromDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.fromDateChangeHandler({});
+                            }}
+                            data-test-selector="rfqMyQuotes_fromDateButton"
+                        >
+                            {translate("Requested From: {0}", this.props.getQuotesParameter.fromDate)}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.toDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.toDateChangeHandler({});
+                            }}
+                        >
+                            {translate("Requested To: {0}", this.props.getQuotesParameter.toDate)}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.expireFromDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.expireFromDateChangeHandler({});
+                            }}
+                            data-test-selector="rfqMyQuotes_fromDateButton"
+                        >
+                            {translate("Expires From: {0}", this.props.getQuotesParameter.expireFromDate)}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.expireToDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.expireToDateChangeHandler({});
+                            }}
+                        >
+                            {translate("Expires To: {0}", this.props.getQuotesParameter.expireToDate)}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.customerId && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.customerChangeHandler("");
+                            }}
+                        >
+                            {translate(
+                                "Customer: {0}",
+                                this.getCustomerLabel(this.props.getQuotesParameter.customerId),
+                            )}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.quoteNumber && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.quoteNumberChangeHandler("");
+                            }}
+                        >
+                            {translate("Quote #: {0}", this.props.getQuotesParameter.quoteNumber)}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.statuses && this.props.getQuotesParameter.statuses.length > 0 && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.statusChangeHandler("");
+                            }}
+                        >
+                            {translate("Status: {0}", this.getStatusLabel(this.props.getQuotesParameter.statuses[0]))}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.userId && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.userChangeHandler("");
+                            }}
+                        >
+                            {translate("User: {0}", this.getUserLabel(this.props.getQuotesParameter.userId))}
+                        </Tag>
+                    )}
+                    {this.props.getQuotesParameter.salesRepNumber && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.salesRepChangeHandler("");
+                            }}
+                        >
+                            {translate(
+                                "Sales Rep: {0}",
+                                this.getSalesRepLabel(this.props.getQuotesParameter.salesRepNumber),
+                            )}
+                        </Tag>
+                    )}
+                </StyledWrapper>
+            );
         }
 
         const billToOptions = this.props.billTosDataView.value || [];
@@ -379,12 +471,14 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                         {...styles.customerSelect}
                         label={translate("Customer")}
                         value={this.props.getQuotesParameter.customerId || ""}
-                        onChange={(event) => this.customerChangeHandler(event.target.value)}
+                        onChange={event => this.customerChangeHandler(event.target.value)}
                     >
                         <option value="">{translate("Select")}</option>
-                        {billToOptions.map(billTo =>
-                            <option key={billTo.id} value={billTo.id}>{billTo.label}</option>,
-                        )}
+                        {billToOptions.map(billTo => (
+                            <option key={billTo.id} value={billTo.id}>
+                                {billTo.label}
+                            </option>
+                        ))}
                     </Select>
                 </GridItem>
                 <GridItem {...styles.quoteNumberGridItem}>
@@ -392,7 +486,7 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                         {...styles.quoteNumberText}
                         value={this.state.quoteNumber}
                         label={translate("Quote #")}
-                        onChange={(event) => this.quoteNumberChangeHandler(event.target.value)}
+                        onChange={event => this.quoteNumberChangeHandler(event.target.value)}
                         data-test-selector="rfqMyQuotes_quoteNumberFilter"
                     />
                 </GridItem>
@@ -401,7 +495,7 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                         {...styles.statusSelect}
                         label={translate("Status")}
                         value={this.state.status}
-                        onChange={(event) => this.statusChangeHandler(event.target.value)}
+                        onChange={event => this.statusChangeHandler(event.target.value)}
                     >
                         <option value="">{translate("Select")}</option>
                         <option value="QuoteCreated">{this.getStatusLabel("QuoteCreated")}</option>
@@ -410,41 +504,46 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                         <option value="QuoteProposed">{this.getStatusLabel("QuoteProposed")}</option>
                     </Select>
                 </GridItem>
-                {this.props.session.isSalesPerson
-                    && <>
+                {this.props.session.isSalesPerson && (
+                    <>
                         <GridItem {...styles.salesRepGridItem}>
                             <Select
                                 {...styles.salesRepSelect}
                                 label={translate("Sales Rep")}
                                 value={this.props.getQuotesParameter.salesRepNumber || ""}
-                                onChange={(event) => this.salesRepChangeHandler(event.target.value)}
+                                onChange={event => this.salesRepChangeHandler(event.target.value)}
                             >
                                 <option value="">{translate("Select")}</option>
-                                {salesRepOptions.map(salesRep =>
-                                    <option key={salesRep.salespersonNumber} value={salesRep.salespersonNumber}>{salesRep.name}</option>,
-                                )}
+                                {salesRepOptions.map(salesRep => (
+                                    <option key={salesRep.salespersonNumber} value={salesRep.salespersonNumber}>
+                                        {salesRep.name}
+                                    </option>
+                                ))}
                             </Select>
                         </GridItem>
                         <GridItem {...styles.userGridItem}>
                             <Select
                                 {...styles.userSelect}
                                 label={translate("User")}
-                                value={this.props.getQuotesParameter.userProfileId || ""}
-                                onChange={(event) => this.userChangeHandler(event.target.value)}
+                                value={this.props.getQuotesParameter.userId || ""}
+                                onChange={event => this.userChangeHandler(event.target.value)}
                             >
                                 <option value="">{translate("Select")}</option>
-                                {userOptions.map(user =>
-                                    <option key={user.id} value={user.id}>{user.userName}</option>,
-                                )}
+                                {userOptions.map(user => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.userName}
+                                    </option>
+                                ))}
                             </Select>
                         </GridItem>
                     </>
-                }
+                )}
                 <GridItem {...styles.buttonsItem}>
                     <Button
                         {...styles.clearFiltersButton}
                         onClick={this.clearFiltersClickHandler}
-                        data-test-selector="rfqMyQuotes_clearFiltersButton">
+                        data-test-selector="rfqMyQuotes_clearFiltersButton"
+                    >
                         {translate("Clear Filters")}
                     </Button>
                 </GridItem>

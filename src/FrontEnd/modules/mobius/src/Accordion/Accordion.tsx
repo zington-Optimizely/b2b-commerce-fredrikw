@@ -26,7 +26,11 @@ const AccordionStyle = styled.dl.attrs(() => ({
 `;
 
 const Accordion: React.FC<AccordionProps & ThemeProps<BaseTheme>> = ({
-    children, css, theme, headingLevel, ...otherProps
+    children,
+    css,
+    theme,
+    headingLevel,
+    ...otherProps
 }) => (
     <AccordionContext.Provider value={{ headingLevel }}>
         <AccordionStyle css={css || get(theme, "accordion.defaultProps.css")} {...otherProps}>

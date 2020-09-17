@@ -15,8 +15,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import getColor from "@insite/mobius/utilities/getColor";
 import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import EmblaCarousel from "embla-carousel";
-import EmblaCarouselReact from "embla-carousel-react";
+import { useEmblaCarousel } from "embla-carousel/react";
 import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -33,8 +32,17 @@ interface SlideModel {
         buttonLabel: string;
         buttonLink: LinkFieldValue;
         buttonVariant: "primary" | "secondary" | "tertiary";
-        focalPoint: "topLeft" | "topCenter" | "topRight" | "centerLeft" | "center" | "centerRight" | "bottomLeft" | "bottomCenter" | "bottomRight";
-    }
+        focalPoint:
+            | "topLeft"
+            | "topCenter"
+            | "topRight"
+            | "centerLeft"
+            | "center"
+            | "centerRight"
+            | "bottomLeft"
+            | "bottomCenter"
+            | "bottomRight";
+    };
 }
 
 const enum fields {
@@ -69,6 +77,7 @@ export interface SlideshowStyles {
     prevArrowWrapper?: InjectableCss;
     prevArrowButton?: ButtonPresentationProps;
     iconProps?: IconPresentationProps;
+    carouselContainer?: InjectableCss;
     slideContainerWrapper?: InjectableCss;
     slideContentWrapper?: InjectableCss;
     headingText?: TypographyPresentationProps;
@@ -111,8 +120,15 @@ export const slideshowStyles: SlideshowStyles = {
     iconProps: {
         size: 35,
     },
+    carouselContainer: {
+        css: css`
+            overflow: hidden;
+        `,
+    },
     slideContainerWrapper: {
-        css: css` display: flex; `,
+        css: css`
+            display: flex;
+        `,
     },
     slideContentWrapper: {
         css: css`
@@ -123,7 +139,9 @@ export const slideshowStyles: SlideshowStyles = {
         `,
     },
     slideButton: {
-        css: css` width: fit-content; `,
+        css: css`
+            width: fit-content;
+        `,
     },
     dotsContainerWrapper: {
         css: css`
@@ -142,7 +160,8 @@ export const slideshowStyles: SlideshowStyles = {
             margin: 0 4px;
             border: 0;
             background: ${getColor("common.border")};
-            &:hover, &:active {
+            &:hover,
+            &:active {
                 background: ${getColor("common.border")};
             }
             &:focus {
@@ -182,15 +201,14 @@ const onClick = (history: History, link: string | undefined) => {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
 
-const Slideshow: React.FC<Props> = ({
-    fields,
-    buttonLinks,
-    history,
-    extendedStyles,
-}) => {
+const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyles }) => {
     const [styles] = useState(() => mergeToNew(slideshowStyles, extendedStyles));
 
-    const [embla, setEmbla] = useState<EmblaCarousel | null>(null);
+    const [emblaRef, embla] = useEmblaCarousel({
+        align: "start",
+        loop: true,
+    });
+
     const [canScrollPrev, setCanScrollPrev] = useState(false);
     const [canScrollNext, setCanScrollNext] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -199,20 +217,17 @@ const Slideshow: React.FC<Props> = ({
         setCanScrollNext(!!embla && embla.canScrollNext());
     };
 
-    useEffect(
-        () => {
-            if (!embla) {
-                return;
-            }
+    useEffect(() => {
+        if (!embla) {
+            return;
+        }
 
-            embla.on("init", setCanScroll);
-            embla.on("select", () => {
-                setSelectedIndex(embla.selectedScrollSnap());
-                setCanScroll();
-            });
-        },
-        [embla],
-    );
+        embla.on("init", setCanScroll);
+        embla.on("select", () => {
+            setSelectedIndex(embla.selectedScrollSnap());
+            setCanScroll();
+        });
+    }, [embla]);
 
     useEffect(() => {
         if (!embla) {
@@ -243,77 +258,103 @@ const Slideshow: React.FC<Props> = ({
 
     const textAlignStyles = `text-align: ${fields.textAalignment};`;
 
-    return <StyledWrapper {...styles.slideshowWrapper}>
-        {fields.showArrows && fields.slides.length > 1
-            && <StyledWrapper {...styles.prevArrowWrapper}>
-                <Button {...styles.prevArrowButton} onClick={() => embla && embla.scrollPrev()} disabled={!canScrollPrev}>
-                    <ButtonIcon {...styles.iconProps} src={ChevronLeft} />
-                </Button>
+    return (
+        <StyledWrapper {...styles.slideshowWrapper}>
+            {fields.showArrows && fields.slides.length > 1 && (
+                <StyledWrapper {...styles.prevArrowWrapper}>
+                    <Button
+                        {...styles.prevArrowButton}
+                        onClick={() => embla && embla.scrollPrev()}
+                        disabled={!canScrollPrev}
+                    >
+                        <ButtonIcon {...styles.iconProps} src={ChevronLeft} />
+                    </Button>
+                </StyledWrapper>
+            )}
+            <StyledWrapper {...styles.carouselContainer} ref={emblaRef}>
+                <StyledWrapper {...styles.slideContainerWrapper}>
+                    {fields.slides?.map((slide, index) => {
+                        const buttonLink = buttonLinks[index];
+                        const backgroundStyles =
+                            slide.fields.background === "image"
+                                ? `background-image: url(${slide.fields.image});
+                                   background-size: cover;`
+                                : `background-color: ${slide.fields.backgroundColor};`;
+                        const focalPointStyles = getFocalPointStyles(slide.fields.focalPoint);
+                        const slideWrapperStyles = {
+                            css: css`
+                                ${styles.slideContentWrapper?.css || ""}
+                                ${heightStyles}
+                                ${textAlignStyles}
+                                ${backgroundStyles}
+                                ${focalPointStyles}
+                            `,
+                        };
+                        return (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <StyledWrapper key={index} {...slideWrapperStyles}>
+                                {slide.fields.heading && (
+                                    <Typography {...styles.headingText}>
+                                        {parse(slide.fields.heading, parserOptions)}
+                                    </Typography>
+                                )}
+                                {slide.fields.subheading && (
+                                    <Typography {...styles.subheadingText}>
+                                        {parse(slide.fields.subheading, parserOptions)}
+                                    </Typography>
+                                )}
+                                {(slide.fields.buttonLabel || slide.fields.buttonLink.value) && (
+                                    <Button
+                                        {...styles.slideButton}
+                                        variant={slide.fields.buttonVariant}
+                                        onClick={() => onClick(history, buttonLink?.url)}
+                                    >
+                                        {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
+                                    </Button>
+                                )}
+                            </StyledWrapper>
+                        );
+                    })}
+                </StyledWrapper>
             </StyledWrapper>
-        }
-        <EmblaCarouselReact emblaRef={setEmbla} options={{ align: "start", loop: true }}>
-            <StyledWrapper {...styles.slideContainerWrapper}>
-                {fields.slides?.map((slide, index) => {
-                    const buttonLink = buttonLinks[index];
-                    const backgroundStyles = slide.fields.background === "image"
-                        ? `background-image: url(${slide.fields.image});
-                           background-size: cover;`
-                        : `background-color: ${slide.fields.backgroundColor};`;
-                    const focalPointStyles = getFocalPointStyles(slide.fields.focalPoint);
-                    const slideWrapperStyles = {
-                        css: css`
-                            ${styles.slideContentWrapper?.css || ""}
-                            ${heightStyles}
-                            ${textAlignStyles}
-                            ${backgroundStyles}
-                            ${focalPointStyles}
-                        `,
-                    };
-                    return (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <StyledWrapper key={index} {...slideWrapperStyles}>
-                            {slide.fields.heading
-                                && <Typography {...styles.headingText}>{parse(slide.fields.heading, parserOptions)}</Typography>
-                            }
-                            {slide.fields.subheading
-                                && <Typography {...styles.subheadingText}>{parse(slide.fields.subheading, parserOptions)}</Typography>
-                            }
-                            {(slide.fields.buttonLabel || slide.fields.buttonLink.value)
-                                && <Button {...styles.slideButton} variant={slide.fields.buttonVariant} onClick={() => onClick(history, buttonLink?.url)}>
-                                    {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
-                                </Button>
-                            }
-                        </StyledWrapper>
-                    );
-                })}
-            </StyledWrapper>
-        </EmblaCarouselReact>
-        {fields.slideIndicator
-            && <StyledWrapper {...styles.dotsContainerWrapper}>
-                {fields.slides?.map((slide, snapIndex) => {
-                    const dotColorStyles = snapIndex === selectedIndex
-                        ? `background: white;
+            {fields.slideIndicator && (
+                <StyledWrapper {...styles.dotsContainerWrapper}>
+                    {fields.slides?.map((slide, snapIndex) => {
+                        const dotColorStyles =
+                            snapIndex === selectedIndex
+                                ? `background: white;
                            &:hover{ background: white; }`
-                        : "";
-                    const dotButtonStyles = {
-                        css: css`
-                            ${styles.dotButton?.css || ""}
-                            ${dotColorStyles}
-                        `,
-                    };
-                    // eslint-disable-next-line react/no-array-index-key
-                    return <Button {...dotButtonStyles} onClick={() => embla && embla.scrollTo(snapIndex)} key={snapIndex}></Button>;
-                })}
-            </StyledWrapper>
-        }
-        {fields.showArrows && fields.slides.length > 1
-            && <StyledWrapper {...styles.nextArrowWrapper}>
-                <Button {...styles.nextArrowButton} onClick={() => embla && embla.scrollNext()} disabled={!canScrollNext}>
-                    <ButtonIcon {...styles.iconProps} src={ChevronRight} />
-                </Button>
-            </StyledWrapper>
-        }
-    </StyledWrapper>;
+                                : "";
+                        const dotButtonStyles = {
+                            css: css`
+                                ${styles.dotButton?.css || ""}
+                                ${dotColorStyles}
+                            `,
+                        };
+                        // eslint-disable-next-line react/no-array-index-key
+                        return (
+                            <Button
+                                {...dotButtonStyles}
+                                onClick={() => embla && embla.scrollTo(snapIndex)}
+                                key={snapIndex}
+                            ></Button>
+                        );
+                    })}
+                </StyledWrapper>
+            )}
+            {fields.showArrows && fields.slides.length > 1 && (
+                <StyledWrapper {...styles.nextArrowWrapper}>
+                    <Button
+                        {...styles.nextArrowButton}
+                        onClick={() => embla && embla.scrollNext()}
+                        disabled={!canScrollNext}
+                    >
+                        <ButtonIcon {...styles.iconProps} src={ChevronRight} />
+                    </Button>
+                </StyledWrapper>
+            )}
+        </StyledWrapper>
+    );
 };
 
 const contentTab = {

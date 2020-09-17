@@ -36,44 +36,57 @@ export interface TypographyPresentationProps {
 
 type ValidTypographyProps = React.HTMLAttributes<HTMLElement> | React.LabelHTMLAttributes<HTMLLabelElement>;
 
-export type TypographyProps = MobiusStyledComponentProps<"span", TypographyPresentationProps & ValidTypographyProps & {
-    /** The DOM element to render. */
-    as?: keyof React.ReactHTML;
-}>;
+export type TypographyProps = MobiusStyledComponentProps<
+    "span",
+    TypographyPresentationProps &
+        ValidTypographyProps & {
+            /** The DOM element to render. */
+            as?: keyof React.ReactHTML;
+        }
+>;
 
 export interface TypographyComponentProps extends TypographyPresentationProps {
-    theme: BaseTheme,
-    _color?: TypographyPresentationProps["color"],
-    _size?: TypographyPresentationProps["size"],
-    variantCss?: TypographyPresentationProps["css"],
+    theme: BaseTheme;
+    _color?: TypographyPresentationProps["color"];
+    _size?: TypographyPresentationProps["size"];
+    variantCss?: TypographyPresentationProps["css"];
+}
+
+export interface TypographyComponentProps extends TypographyPresentationProps {
+    theme: BaseTheme;
+    _color?: TypographyPresentationProps["color"];
+    _size?: TypographyPresentationProps["size"];
+    variantCss?: TypographyPresentationProps["css"];
 }
 
 /**
  * The Typography component exists to ensure consistent text styling throughout the storefront.
  * Themable via variants only.
  */
-const Typography: React.FC<TypographyProps> = ({
-    color, ellipsis, size, theme, forwardAs, ...otherProps
-}) => {
-    return (<ThemeConsumer>
-        {(theme?: BaseTheme) => {
-            let newAs: keyof JSX.IntrinsicElements | undefined;
-            if (otherProps.variant?.startsWith("header")) newAs = "p";
-            const {
-                color: variantColor, size: variantSize, css: variantCss, ...variantProps
-            } =  otherProps.variant ? theme!.typography[otherProps.variant] : {} as TypographyProps;
-            const Component = ellipsis ? TypographyEllipsis : TypographyStyle;
-            const componentProps: Omit<TypographyComponentProps, "theme"> = {
-                _color: color || variantColor,
-                _size: size || variantSize,
-                as: newAs || forwardAs,
-                variantCss,
-                ...variantProps,
-                ...otherProps,
-            };
-            return (<Component {...componentProps} />);
-        }}
-    </ThemeConsumer>);
+const Typography: React.FC<TypographyProps> = ({ color, ellipsis, size, theme, forwardAs, ...otherProps }) => {
+    return (
+        <ThemeConsumer>
+            {(theme?: BaseTheme) => {
+                let newAs: keyof JSX.IntrinsicElements | undefined;
+                if (otherProps.variant?.startsWith("header")) {
+                    newAs = "p";
+                }
+                const { color: variantColor, size: variantSize, css: variantCss, ...variantProps } = otherProps.variant
+                    ? theme!.typography[otherProps.variant]
+                    : ({} as TypographyProps);
+                const Component = ellipsis ? TypographyEllipsis : TypographyStyle;
+                const componentProps: Omit<TypographyComponentProps, "theme"> = {
+                    _color: color || variantColor,
+                    _size: size || variantSize,
+                    as: newAs || forwardAs,
+                    variantCss,
+                    ...variantProps,
+                    ...otherProps,
+                };
+                return <Component {...componentProps} />;
+            }}
+        </ThemeConsumer>
+    );
 };
 
 /** @component */

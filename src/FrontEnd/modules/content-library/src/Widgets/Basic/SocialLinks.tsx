@@ -72,11 +72,11 @@ interface OwnProps extends WidgetProps {
 
 interface LinkModel {
     fields: {
-        title: string,
-        icon: string,
-        openInNewWindow: boolean,
-        destination: LinkFieldValue,
-        overriddenTitle: string,
+        title: string;
+        icon: string;
+        openInNewWindow: boolean;
+        destination: LinkFieldValue;
+        overriddenTitle: string;
     };
 }
 
@@ -97,7 +97,7 @@ export const linkListStyles: LinkListStyles = {
         `,
     },
     linkWrapper: {
-        css: css` 
+        css: css`
             padding: 1px 18px 0 0;
             margin-right: 5px;
             flex-shrink: 0;
@@ -141,7 +141,11 @@ const GetIcon = (icon: string) => {
     return "";
 };
 
-interface OptionalFieldReturn { title: string, icon: string, openInNewWindow: boolean }
+interface OptionalFieldReturn {
+    title: string;
+    icon: string;
+    openInNewWindow: boolean;
+}
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
     const links = mapLinks<LinkModel, OptionalFieldReturn>(state, ownProps.fields.links, (widgetLink, stateLink) => ({
@@ -156,10 +160,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
-const SocialLinks: FC<Props> = ({
-    fields,
-    links,
-}) => {
+const SocialLinks: FC<Props> = ({ fields, links }) => {
     const socialLinkListStyle = css`
         ${fields.direction === "horizontal" ? "flex-direction: row;" : "flex-direction: column;"}
         ${fields.backgroundColor && `background-color: ${fields.backgroundColor};`}
@@ -168,37 +169,43 @@ const SocialLinks: FC<Props> = ({
 
     const linkWrapperStyle = css`
         ${fields.direction === "horizontal" && `flex-basis: calc(${100 / fields.linksPerRow}% - 20px);`}
-        ${fields.direction === "horizontal" && (fields.linksPerRow > links.length) ? "flex-grow: 1;" : "flex-grow: 0;"}
+        ${fields.direction === "horizontal" && fields.linksPerRow > links.length ? "flex-grow: 1;" : "flex-grow: 0;"}
         ${styles.linkWrapper?.css}
     `;
 
     const showIcon = fields.visibilityState === visibilityState.both || fields.visibilityState === visibilityState.icon;
-    const showLabel = fields.visibilityState === visibilityState.both || fields.visibilityState === visibilityState.label;
+    const showLabel =
+        fields.visibilityState === visibilityState.both || fields.visibilityState === visibilityState.label;
 
-    return <StyledWrapper css={socialLinkListStyle}>
-        {links.map((link, index) =>
-            // eslint-disable-next-line react/no-array-index-key
-            <StyledWrapper css={linkWrapperStyle} key={index}>
-                {link?.url
-                    && <Link
-                        {...styles.link}
-                        href={link.url}
-                        target={link.openInNewWindow ? "_blank" : ""}
-                        icon={{
-                            iconProps: {
-                                size: fields.iconSize,
-                                color: fields.iconColor,
-                                css: css` margin: 5px; `,
-                                src: showIcon ? GetIcon(link.icon) : undefined,
-                            },
-                            position: fields.alignment,
-                        }}
-                    >
-                        {showLabel && link.title}
-                    </Link>}
-            </StyledWrapper>,
-        )}
-    </StyledWrapper>;
+    return (
+        <StyledWrapper css={socialLinkListStyle}>
+            {links.map((link, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <StyledWrapper css={linkWrapperStyle} key={index}>
+                    {link?.url && (
+                        <Link
+                            {...styles.link}
+                            href={link.url}
+                            target={link.openInNewWindow ? "_blank" : ""}
+                            icon={{
+                                iconProps: {
+                                    size: fields.iconSize,
+                                    color: fields.iconColor,
+                                    css: css`
+                                        margin: 5px;
+                                    `,
+                                    src: showIcon ? GetIcon(link.icon) : undefined,
+                                },
+                                position: fields.alignment,
+                            }}
+                        >
+                            {showLabel && link.title}
+                        </Link>
+                    )}
+                </StyledWrapper>
+            ))}
+        </StyledWrapper>
+    );
 };
 
 const contentTab = {
@@ -209,7 +216,6 @@ const settingsTab = {
     displayName: "Settings",
     sortOrder: 2,
 };
-
 
 const definition: WidgetDefinition = {
     group: "Basic",

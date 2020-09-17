@@ -3,12 +3,12 @@ import { LinkProps } from "@insite/mobius/Link";
 import { Draft } from "immer";
 import BreadcrumbsState from "./BreadcrumbsState";
 
-const initialState: BreadcrumbsState = {
-};
+const initialState: BreadcrumbsState = {};
 
 const reducer = {
     "Components/Breadcrumbs/SetLinks": (draft: Draft<BreadcrumbsState>, action: { links?: LinkProps[] }) => {
-        draft.links = action.links;
+        // typescript was confused by immer + LinkProps
+        (draft as BreadcrumbsState).links = action.links;
     },
 };
 

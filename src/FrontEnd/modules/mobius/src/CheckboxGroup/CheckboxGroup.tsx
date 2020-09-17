@@ -12,17 +12,21 @@ import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import CheckboxGroupContext from "./CheckboxGroupContext";
 
-export type CheckboxGroupComponentProps = MobiusStyledComponentProps<"fieldset", {
-    /** Error message to be displayed below the CheckboxGroup. */
-    error?: React.ReactNode;
-    /** Label to be displayed above the CheckboxGroup. */
-    label?: React.ReactNode;
-    /** Adds an asterisk to the label (if provided). */
-    required?: boolean;
-    uid?: string;
-}>;
+export type CheckboxGroupComponentProps = MobiusStyledComponentProps<
+    "fieldset",
+    {
+        /** Error message to be displayed below the CheckboxGroup. */
+        error?: React.ReactNode;
+        /** Label to be displayed above the CheckboxGroup. */
+        label?: React.ReactNode;
+        /** Adds an asterisk to the label (if provided). */
+        required?: boolean;
+        uid?: string;
+    }
+>;
 
-export type CheckboxGroupProps = FieldSetGroupPresentationProps<CheckboxGroupComponentProps> & CheckboxGroupComponentProps;
+export type CheckboxGroupProps = FieldSetGroupPresentationProps<CheckboxGroupComponentProps> &
+    CheckboxGroupComponentProps;
 
 const CheckboxGroupStyle = styled.fieldset`
     display: flex;
@@ -40,7 +44,7 @@ const CheckboxGroupStyle = styled.fieldset`
             margin-top: 10px;
         }
     }
-    ${/* sc-selector */CheckboxStyle} + ${/* sc-selector */CheckboxStyle} {
+    ${/* sc-selector */ CheckboxStyle} + ${/* sc-selector */ CheckboxStyle} {
         margin-top: 10px;
     }
     [data-checkbox-only] {
@@ -57,18 +61,18 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
     state = { uid: this.props.uid || uniqueId() };
 
     render() {
-        const {
-            children, error, label, required, ...otherProps
-        } = this.props;
+        const { children, error, label, required, ...otherProps } = this.props;
         const { applyProp, spreadProps } = applyPropBuilder(this.props, {
             component: "checkbox",
             category: "fieldSet",
             propKey: "groupDefaultProps",
         });
-        const sizeVariant = applyProp("sizeVariant", "default") as Required<Pick<CheckboxGroupProps, "sizeVariant">>["sizeVariant"];
+        const sizeVariant = applyProp("sizeVariant", "default") as Required<
+            Pick<CheckboxGroupProps, "sizeVariant">
+        >["sizeVariant"];
 
         let renderLabel;
-        const labelProps: { "aria-labelledby"?: string, as?: "div" } = {};
+        const labelProps: { "aria-labelledby"?: string; as?: "div" } = {};
         if (label === 0 || label) {
             renderLabel = (
                 <Typography
@@ -78,7 +82,8 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
                     id={this.state.uid}
                     {...spreadProps("labelProps" as any)}
                 >
-                    {label}{required && " *"}
+                    {label}
+                    {required && " *"}
                 </Typography>
             );
             labelProps["aria-labelledby"] = this.state.uid;
@@ -108,9 +113,11 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
                 {...omitMultiple(otherProps, ["uid", "sizeVariant"])}
             >
                 {renderLabel}
-                <CheckboxGroupContext.Provider value={{
-                    sizeVariant,
-                }}>
+                <CheckboxGroupContext.Provider
+                    value={{
+                        sizeVariant,
+                    }}
+                >
                     {children}
                 </CheckboxGroupContext.Provider>
                 {renderError}

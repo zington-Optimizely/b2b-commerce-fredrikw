@@ -43,10 +43,14 @@ export interface ChangePasswordActionsStyles {
 
 export const changePasswordActionsStyles: ChangePasswordActionsStyles = {
     saveButton: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     cancelButton: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     buttonGridContainer: {
         gap: 5,
@@ -68,7 +72,10 @@ const upperRegExp = /[A-Z]/;
 const specialRegExp = /\W/;
 
 const validatePassword = (password: string, settings: AccountSettingsModel) => {
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace("{0}", settings.passwordMinimumLength.toString());
+    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
+        "{0}",
+        settings.passwordMinimumLength.toString(),
+    );
     let passwordError = "";
 
     if (password.length > 0 && password.length < settings.passwordMinimumLength) {
@@ -125,7 +132,10 @@ const ChangePasswordActions: FC<Props> = ({
         history.push(accountSettingsPageLink!.url);
     };
 
-    const updatePasswordHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>, onApiResponse: (error?: string) => void) => {
+    const updatePasswordHandler = (
+        e: React.MouseEvent<HTMLElement, MouseEvent>,
+        onApiResponse: (error?: string) => void,
+    ) => {
         e.preventDefault();
         if (error) {
             setShowValidation(true);
@@ -158,15 +168,18 @@ const ChangePasswordActions: FC<Props> = ({
     return (
         <GridContainer {...styles.buttonGridContainer}>
             <GridItem {...styles.buttonGridItem}>
-                <Button {...styles.cancelButton}
-                    onClick={onCancelClick}>
+                <Button {...styles.cancelButton} onClick={onCancelClick}>
                     {translate("Cancel")}
                 </Button>
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
-                <Button {...styles.saveButton}
-                    onClick={(event) => { updatePasswordHandler(event, onSaveClick); }}
-                    disabled={disableSaveButton}>
+                <Button
+                    {...styles.saveButton}
+                    onClick={event => {
+                        updatePasswordHandler(event, onSaveClick);
+                    }}
+                    disabled={disableSaveButton}
+                >
                     {translate("Save")}
                 </Button>
             </GridItem>

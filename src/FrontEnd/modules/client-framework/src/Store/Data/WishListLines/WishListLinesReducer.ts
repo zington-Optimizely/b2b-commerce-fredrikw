@@ -12,19 +12,27 @@ const initialState: WishListLinesState = {
 };
 
 const reducer = {
-    "Data/WishListLines/BeginLoadWishListLines": (draft: Draft<WishListLinesState>, action: { parameter: GetWishListLinesApiParameter }) => {
+    "Data/WishListLines/BeginLoadWishListLines": (
+        draft: Draft<WishListLinesState>,
+        action: { parameter: GetWishListLinesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
-    "Data/WishListLines/CompleteLoadWishListLines": (draft: Draft<WishListLinesState>, action: { parameter: GetWishListLinesApiParameter, result: WishListLineCollectionModel }) => {
+    "Data/WishListLines/CompleteLoadWishListLines": (
+        draft: Draft<WishListLinesState>,
+        action: { parameter: GetWishListLinesApiParameter; result: WishListLineCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.result, collection => collection.wishListLines!);
     },
     "Data/WishListLines/Reset": () => {
         return initialState;
     },
-    "Data/WishListLines/UpdateWishListLine": (draft: Draft<WishListLinesState>, action: { model: WishListLineModel }) => {
+    "Data/WishListLines/UpdateWishListLine": (
+        draft: Draft<WishListLinesState>,
+        action: { model: WishListLineModel },
+    ) => {
         assignById(draft, action.model);
     },
 };
-
 
 export default createTypedReducerWithImmer(initialState, reducer);

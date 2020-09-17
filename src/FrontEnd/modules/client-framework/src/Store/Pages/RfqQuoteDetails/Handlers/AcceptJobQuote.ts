@@ -1,10 +1,20 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnError,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { updateQuote as updateQuoteApi, UpdateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{
-    quote: QuoteModel,
-} & HasOnSuccess & HasOnError<string>, UpdateQuoteApiParameter, QuoteModel>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {
+        quote: QuoteModel;
+    } & HasOnSuccess &
+        HasOnError<string>,
+    UpdateQuoteApiParameter,
+    QuoteModel
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
@@ -35,12 +45,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    SendDataToApi,
-    DispatchCompleteLoadQuote,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, SendDataToApi, DispatchCompleteLoadQuote, ExecuteOnSuccessCallback];
 
 const acceptJobQuote = createHandlerChainRunner(chain, "AcceptJobQuote");
 export default acceptJobQuote;

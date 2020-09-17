@@ -48,29 +48,35 @@ export const rfqRequestQuoteSpecificationsStyles: RfqRequestQuoteSpecificationsS
     quoteTypeRadioGroup: {
         // TODO ISC-12425 set these radio buttons to horizontal and remove the  "& > div" selector
         css: css`
-                display: inline-block;
-                padding-bottom: 20px;
-                width: 100%;
-                flex-direction: row;
-                & > div {
-                    margin-right: 20px;
-                    display: inline-flex;
-                }
-            `,
+            display: inline-block;
+            padding-bottom: 20px;
+            width: 100%;
+            flex-direction: row;
+            & > div {
+                margin-right: 20px;
+                display: inline-flex;
+            }
+        `,
     },
     jobNameTextField: {
         cssOverrides: {
-            formField: css` padding-bottom: 20px; `,
+            formField: css`
+                padding-bottom: 20px;
+            `,
         },
     },
     assignUserSelect: {
         cssOverrides: {
-            formField: css` padding-bottom: 20px; `,
+            formField: css`
+                padding-bottom: 20px;
+            `,
         },
     },
     notesTextArea: {
         cssOverrides: {
-            formField: css` margin-bottom: 20px; `,
+            formField: css`
+                margin-bottom: 20px;
+            `,
         },
     },
 };
@@ -86,7 +92,6 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
     rfqQuoteDetailsPageUrl,
     rfqQuoteConfirmationPageUrl,
 }) => {
-
     const [notes, setNotes] = useState(cart?.notes);
     const [jobName, setJobName] = useState("");
     const [jobNameError, setJobNameError] = useState<ReactNode>("");
@@ -151,7 +156,7 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
         }
 
         createOrRequestQuote({
-            onSuccess: (result) => {
+            onSuccess: result => {
                 if (isCreatingQuote && rfqQuoteDetailsPageUrl) {
                     history.push(`${rfqQuoteDetailsPageUrl}?quoteId=${result.id}`);
                 } else if (!isCreatingQuote && rfqQuoteConfirmationPageUrl) {
@@ -175,54 +180,67 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="requestQuoteTypeRadio"
             >
-                <Radio {...styles.quoteTypeRadioButton} value="quote">{translate("Sales Quote")}</Radio>
-                <Radio {...styles.quoteTypeRadioButton} value="job">{translate("Job Quote")}</Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="quote">
+                    {translate("Sales Quote")}
+                </Radio>
+                <Radio {...styles.quoteTypeRadioButton} value="job">
+                    {translate("Job Quote")}
+                </Radio>
             </RadioGroup>
-            {quoteType === "job" && <TextField
-                {...styles.jobNameTextField}
-                label={translate("Job Name")}
-                required={true}
-                error={jobNameError}
-                placeholder={translate("Job Name Goes Here")}
-                onChange={jobNameChangeHandler}
-                data-test-selector="requestQuoteJobName"
-            />}
-            {isCreatingQuote && <Select
-                label={translate("Assign User")}
-                required={true}
-                {...styles.assignUserSelect}
-                value={accountId}
-                error={accountIdError}
-                onChange={userChangeHandler}
-                data-test-selector="requestQuoteAssignUserSelect"
-            >
-                <option key="" value="">{translate("Select a User")}</option>
-                {accounts.map(o => {
-                    return (
-                        <option key={o.id} value={o.id}>{(o.firstName && o.lastName) ? `${o.firstName} ${o.lastName}` : o.userName}</option>
-                    );
-                })}
-            </Select>}
+            {quoteType === "job" && (
+                <TextField
+                    {...styles.jobNameTextField}
+                    label={translate("Job Name")}
+                    required={true}
+                    error={jobNameError}
+                    placeholder={translate("Job Name Goes Here")}
+                    onChange={jobNameChangeHandler}
+                    data-test-selector="requestQuoteJobName"
+                />
+            )}
+            {isCreatingQuote && (
+                <Select
+                    label={translate("Assign User")}
+                    required={true}
+                    {...styles.assignUserSelect}
+                    value={accountId}
+                    error={accountIdError}
+                    onChange={userChangeHandler}
+                    data-test-selector="requestQuoteAssignUserSelect"
+                >
+                    <option key="" value="">
+                        {translate("Select a User")}
+                    </option>
+                    {accounts.map(o => {
+                        return (
+                            <option key={o.id} value={o.id}>
+                                {o.firstName && o.lastName ? `${o.firstName} ${o.lastName}` : o.userName}
+                            </option>
+                        );
+                    })}
+                </Select>
+            )}
             <TextArea
                 {...styles.notesTextArea}
                 label={translate("Order Notes")}
                 placeholder={translate("You can start typing notes here")}
                 value={notes}
-                onChange={notesChangeHandler} />
-            {canSubmit && <Button
-                {...styles.submitButton}
-                onClick={submitButtonClickHandler}
-                data-test-selector="requestQuoteSubmitButton"
-            >
-                {translate(isCreatingQuote ? "Create Quote" : "Submit Quote")}
-            </Button>
-            }
+                onChange={notesChangeHandler}
+            />
+            {canSubmit && (
+                <Button
+                    {...styles.submitButton}
+                    onClick={submitButtonClickHandler}
+                    data-test-selector="requestQuoteSubmitButton"
+                >
+                    {translate(isCreatingQuote ? "Create Quote" : "Submit Quote")}
+                </Button>
+            )}
         </form>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(withHistory(RfqRequestQuoteSpecifications)),
     definition: {
         group: "RFQ Request Quote",

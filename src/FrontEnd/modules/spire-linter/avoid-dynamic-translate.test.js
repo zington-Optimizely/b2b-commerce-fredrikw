@@ -12,7 +12,9 @@ getRuleTester().run("avoid-dynamic-translate", rule, {
         getCode("var fields = {}; translate(fields.label)", [{ messageId: "avoid" }]),
         getCode("var fields = {}; var label = fields.label; translate(label)", [{ messageId: "avoid" }]),
         // we can't determine the type of an import, so this is considered an error
-        getCode("import { BudgetPeriodType } from 'BudgetManagementReducer'; translate(BudgetPeriodType.Monthly)", [{ messageId: "avoid" }]),
+        getCode("import { BudgetPeriodType } from 'BudgetManagementReducer'; translate(BudgetPeriodType.Monthly)", [
+            { messageId: "avoid" },
+        ]),
     ],
 });
 
@@ -21,5 +23,5 @@ function getCode(code, errors) {
         code,
         filename: "c:/modules/content-library/src/Widgets/tester.tsx",
         errors,
-    }
+    };
 }

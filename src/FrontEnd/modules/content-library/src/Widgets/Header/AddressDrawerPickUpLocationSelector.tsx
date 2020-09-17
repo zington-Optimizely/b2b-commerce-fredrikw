@@ -7,7 +7,9 @@ import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
-import WarehouseAddressInfoDisplay, { WarehouseAddressInfoDisplayStyles } from "@insite/content-library/Components/WarehouseAddressInfoDisplay";
+import WarehouseAddressInfoDisplay, {
+    WarehouseAddressInfoDisplayStyles,
+} from "@insite/content-library/Components/WarehouseAddressInfoDisplay";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -41,17 +43,15 @@ export const addressDrawerPickUpLocationSelectorStyles: AddressDrawerPickUpLocat
         weight: 600,
     },
     changeLink: {
-        css: css` margin-left: 15px; `,
+        css: css`
+            margin-left: 15px;
+        `,
     },
 };
 
 const styles = addressDrawerPickUpLocationSelectorStyles;
 
-const AddressDrawerPickUpLocationSelector = ({
-    fulfillmentMethod,
-    pickUpWarehouse,
-    changePickUpWarehouse,
-}: Props) => {
+const AddressDrawerPickUpLocationSelector = ({ fulfillmentMethod, pickUpWarehouse, changePickUpWarehouse }: Props) => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const handleChangeLocationClick = () => {
         setIsModalOpen(true);
@@ -71,8 +71,8 @@ const AddressDrawerPickUpLocationSelector = ({
                 data-test-selector="changeCustomer_pickUpLocation"
                 {...styles.wrapper}
             >
-                {fulfillmentMethod === FulfillmentMethod.PickUp
-                    ? <>
+                {fulfillmentMethod === FulfillmentMethod.PickUp ? (
+                    <>
                         <Typography {...styles.headerText}>{translate("Pick Up Address")}</Typography>
                         <Link
                             onClick={handleChangeLocationClick}
@@ -81,15 +81,16 @@ const AddressDrawerPickUpLocationSelector = ({
                         >
                             {translate("Find Location")}
                         </Link>
-                        {pickUpWarehouse
-                            && <WarehouseAddressInfoDisplay
+                        {pickUpWarehouse && (
+                            <WarehouseAddressInfoDisplay
                                 warehouse={pickUpWarehouse}
                                 extendedStyles={styles.warehouseAddress}
                             />
-                        }
+                        )}
                     </>
-                    : <></>
-                }
+                ) : (
+                    <></>
+                )}
             </StyledWrapper>
             <FindLocationModal
                 modalIsOpen={isModalOpen}

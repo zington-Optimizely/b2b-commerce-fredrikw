@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner, Handler,
-    HasOnSuccess,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
 import {
     GetProductCollectionRealTimePriceApiV2Parameter,
@@ -10,19 +7,18 @@ import {
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
 
-
-type Parameter = GetProductCollectionRealTimePriceApiV2Parameter & HasOnSuccess<RealTimePricingModel> &{
-    onError?: (error: unknown) => void;
-};
+type Parameter = GetProductCollectionRealTimePriceApiV2Parameter &
+    HasOnSuccess<RealTimePricingModel> & {
+        onError?: (error: unknown) => void;
+    };
 
 interface Props {
-    apiResult: RealTimePricingModel,
-    apiParameter: GetProductCollectionRealTimePriceApiV2Parameter,
-    error?: unknown,
+    apiResult: RealTimePricingModel;
+    apiParameter: GetProductCollectionRealTimePriceApiV2Parameter;
+    error?: unknown;
 }
 
 type HandlerType = Handler<Parameter, Props>;
-
 
 export const PopulateApiParameter: HandlerType = props => {
     const { onSuccess, onError, ...apiParameter } = props.parameter;
@@ -30,7 +26,6 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-
     if (!getSettingsCollection(props.getState()).productSettings.canSeePrices) {
         return false;
     }
@@ -55,12 +50,7 @@ export const ExecuteOnErrorCallback: HandlerType = props => {
     }
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    ExecuteOnSuccessCallback,
-    ExecuteOnErrorCallback,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, ExecuteOnSuccessCallback, ExecuteOnErrorCallback];
 
 const loadRealTimePricing = createHandlerChainRunner(chain, "LoadRealTimePricing");
 

@@ -20,7 +20,10 @@ const mapDispatchToProps = {
     loadAllBrands,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext & PageProps;
+type Props = ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasShellContext &
+    PageProps;
 
 class BrandsPage extends React.Component<Props> {
     UNSAFE_componentWillMount() {
@@ -28,7 +31,7 @@ class BrandsPage extends React.Component<Props> {
         if (shouldLoadBrandAlphabet) {
             loadBrandsAlphabet();
         }
-        if(shouldLoadAllBrandList) {
+        if (shouldLoadAllBrandList) {
             loadAllBrands({
                 sort: "name asc",
                 select: "id,detailPagePath,name",
@@ -37,9 +40,11 @@ class BrandsPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <Zone contentId={this.props.id} zoneName="Content" />
-        </Page>;
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+            </Page>
+        );
     }
 }
 

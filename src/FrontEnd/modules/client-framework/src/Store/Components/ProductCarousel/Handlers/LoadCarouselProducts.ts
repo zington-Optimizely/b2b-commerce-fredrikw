@@ -2,7 +2,8 @@ import { createHandlerChainRunner, Handler } from "@insite/client-framework/Hand
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { Category } from "@insite/client-framework/Services/CategoryService";
 import {
-    GetProductCollectionApiV2Parameter, GetRelatedProductCollectionApiV2Parameter,
+    GetProductCollectionApiV2Parameter,
+    GetRelatedProductCollectionApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import loadProductInfoList from "@insite/client-framework/Store/Components/ProductInfoList/Handlers/LoadProductInfoList";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -25,16 +26,17 @@ interface Parameter {
 }
 
 interface Props {
-    getProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
-    extraProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter,
+    getProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
+    extraProductCollectionParameter?: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
 }
 
 type HandlerType = Handler<Parameter, Props>;
 
 export const LoadRecentlyViewed: HandlerType = props => {
-    const { parameter: { carouselType, isProductDetailsPage, productId } } = props;
-    if (carouselType !== "recentlyViewed"
-        || (isProductDetailsPage && !productId)) {
+    const {
+        parameter: { carouselType, isProductDetailsPage, productId },
+    } = props;
+    if (carouselType !== "recentlyViewed" || (isProductDetailsPage && !productId)) {
         return;
     }
 
@@ -42,7 +44,9 @@ export const LoadRecentlyViewed: HandlerType = props => {
 };
 
 export const LoadCrossSells: HandlerType = props => {
-    const { parameter: { carouselType, numberOfProductsToDisplay } } = props;
+    const {
+        parameter: { carouselType, numberOfProductsToDisplay },
+    } = props;
     if (carouselType !== "crossSells") {
         return;
     }
@@ -51,7 +55,9 @@ export const LoadCrossSells: HandlerType = props => {
 };
 
 export const LoadRelatedProducts: HandlerType = props => {
-    const { parameter: { carouselType, relatedProductType, productId } } = props;
+    const {
+        parameter: { carouselType, relatedProductType, productId },
+    } = props;
     if (carouselType !== "relatedProducts" || !productId || !relatedProductType) {
         return;
     }
@@ -60,7 +66,16 @@ export const LoadRelatedProducts: HandlerType = props => {
 };
 
 export const LoadCustomersAlsoPurchased: HandlerType = props => {
-    const { parameter: { carouselType, numberOfProductsToDisplay, seedWithManuallyAssigned, isProductDetailsPage, productId }, getState } = props;
+    const {
+        parameter: {
+            carouselType,
+            numberOfProductsToDisplay,
+            seedWithManuallyAssigned,
+            isProductDetailsPage,
+            productId,
+        },
+        getState,
+    } = props;
 
     if (carouselType !== "customersAlsoPurchased") {
         return;
@@ -97,7 +112,19 @@ export const LoadCustomersAlsoPurchased: HandlerType = props => {
 };
 
 export const LoadTopSellers: HandlerType = props => {
-    const { parameter: { carouselType, numberOfProductsToDisplay, displayProductsFrom, selectedCategoryIds, isProductListPage, category, isBrandDetailsPage, brand }, getState } = props;
+    const {
+        parameter: {
+            carouselType,
+            numberOfProductsToDisplay,
+            displayProductsFrom,
+            selectedCategoryIds,
+            isProductListPage,
+            category,
+            isBrandDetailsPage,
+            brand,
+        },
+        getState,
+    } = props;
 
     if (carouselType !== "topSellers") {
         return;
@@ -113,9 +140,7 @@ export const LoadTopSellers: HandlerType = props => {
     let topSellersCategoryIds: string[] | undefined;
     let topSellersPersonaIds: string[] | undefined;
     if (displayProductsFrom === "allCategories") {
-        topSellersCategoryIds = isProductListPage && category
-            ? [category.id]
-            : undefined;
+        topSellersCategoryIds = isProductListPage && category ? [category.id] : undefined;
     } else if (displayProductsFrom === "selectedCategories") {
         topSellersCategoryIds = selectedCategoryIds || [];
     } else if (displayProductsFrom === "customerSegments") {
@@ -137,7 +162,9 @@ export const LoadTopSellers: HandlerType = props => {
 };
 
 export const LoadFeaturedCategory: HandlerType = props => {
-    const { parameter: { carouselType, isProductListPage, category } } = props;
+    const {
+        parameter: { carouselType, isProductListPage, category },
+    } = props;
 
     if (carouselType !== "featuredCategory") {
         return;
@@ -155,16 +182,20 @@ export const LoadProducts: HandlerType = props => {
         return;
     }
 
-    const extraProductOptions = props.extraProductCollectionParameter ? {
-        getProductCollectionParameter: props.extraProductCollectionParameter,
-        numberOfProductsToDisplay: props.parameter.numberOfProductsToDisplay,
-    } : undefined;
+    const extraProductOptions = props.extraProductCollectionParameter
+        ? {
+              getProductCollectionParameter: props.extraProductCollectionParameter,
+              numberOfProductsToDisplay: props.parameter.numberOfProductsToDisplay,
+          }
+        : undefined;
 
-    props.dispatch(loadProductInfoList({
-        id: props.parameter.carouselId,
-        getProductCollectionParameter: props.getProductCollectionParameter,
-        extraProductOptions,
-    }));
+    props.dispatch(
+        loadProductInfoList({
+            id: props.parameter.carouselId,
+            getProductCollectionParameter: props.getProductCollectionParameter,
+            extraProductOptions,
+        }),
+    );
 };
 
 export const chain = [

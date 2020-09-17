@@ -3,7 +3,7 @@ import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/c
 import { Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
 import { CurrencyModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ currencyId: string; }, UpdateSessionApiParameter, Session>;
+type HandlerType = ApiHandlerDiscreteParameter<{ currencyId: string }, UpdateSessionApiParameter, Session>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
@@ -27,12 +27,7 @@ export const ReloadPage: HandlerType = () => {
     window.location.reload();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    UpdateSession,
-    UpdateContext,
-    ReloadPage,
-];
+export const chain = [PopulateApiParameter, UpdateSession, UpdateContext, ReloadPage];
 
 const setCurrency = createHandlerChainRunner(chain, "SetCurrency");
 export default setCurrency;

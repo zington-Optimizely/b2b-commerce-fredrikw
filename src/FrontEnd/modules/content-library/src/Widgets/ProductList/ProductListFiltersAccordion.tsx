@@ -6,8 +6,7 @@ import Accordion, { AccordionPresentationProps } from "@insite/mobius/Accordion"
 import React, { FC } from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps;
 
@@ -16,7 +15,11 @@ export interface ProductListFiltersAccordionStyles {
 }
 
 export const filtersAccordionStyles: ProductListFiltersAccordionStyles = {
-    accordion: { css: css` padding-top: 20px; ` },
+    accordion: {
+        css: css`
+            padding-top: 20px;
+        `,
+    },
 };
 
 const styles = filtersAccordionStyles;
@@ -24,7 +27,7 @@ const styles = filtersAccordionStyles;
 const ProductListFiltersAccordion: FC<Props> = ({ id }) => {
     return (
         <Accordion headingLevel={2} {...styles.accordion}>
-            <Zone contentId={id} zoneName="Content"/>
+            <Zone contentId={id} zoneName="Content" />
         </Accordion>
     );
 };

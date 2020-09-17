@@ -31,11 +31,9 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-});
+const mapStateToProps = (state: ApplicationState) => ({});
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -62,21 +60,29 @@ export const categoriesStyles: BrandDetailsCategoriesStyles = {
         as: "h4",
         variant: "headerSecondary",
         transform: "inherit",
-        css: css` border-width: 20px; `,
+        css: css`
+            border-width: 20px;
+        `,
     },
     container: {
-        css: css` margin: 15px; `,
+        css: css`
+            margin: 15px;
+        `,
     },
     categoryContainer: {
         gap: 10,
     },
     innerCategoryContainer: {
         gap: 1,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     categoryItemColumn: {
         width: [6, 6, 12, 12, 12],
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     categoryItemRow: {
         width: [6, 6, 4, 3, 2],
@@ -92,7 +98,9 @@ export const categoriesStyles: BrandDetailsCategoriesStyles = {
     },
     categoryNameLinkItem: {
         width: 12,
-        css: css` padding-bottom: 5px; `,
+        css: css`
+            padding-bottom: 5px;
+        `,
     },
     categoryNameLink: {
         typographyProps: {
@@ -104,7 +112,9 @@ export const categoriesStyles: BrandDetailsCategoriesStyles = {
             `,
         },
         color: "text.main",
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     subCategoryItem: {
         width: 12,
@@ -121,11 +131,15 @@ export const categoriesStyles: BrandDetailsCategoriesStyles = {
                 word-wrap: break-word;
             `,
         },
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     viewMoreLinkItem: {
         width: 12,
-        css: css` padding-top: 5px; `,
+        css: css`
+            padding-top: 5px;
+        `,
     },
     viewMoreLink: {
         typographyProps: {
@@ -143,39 +157,41 @@ const BrandDetailsCategories: FC<Props> = ({ fields }) => {
         return null;
     }
     const { title, showImages, gridType, subCategoriesToShow } = fields;
-    const categoryItemStyles = (gridType === "row") ? styles.categoryItemRow : styles.categoryItemColumn;
+    const categoryItemStyles = gridType === "row" ? styles.categoryItemRow : styles.categoryItemColumn;
 
     const renderViewMoreLink = (category: BrandCategoryModel) => {
         if (subCategoriesToShow === 0 || (category.subCategories || []).length <= subCategoriesToShow) {
             return null;
         }
-        return (<GridItem {...styles.viewMoreLinkItem} >
-            <Link href={category.productListPagePath} {...styles.viewMoreLink} >
-                {translate("View More")}
-            </Link>
-        </GridItem>);
+        return (
+            <GridItem {...styles.viewMoreLinkItem}>
+                <Link href={category.productListPagePath} {...styles.viewMoreLink}>
+                    {translate("View More")}
+                </Link>
+            </GridItem>
+        );
     };
 
     return (
         <StyledWrapper {...styles.container} data-test-selector="brandCategories">
-            <Typography
-                {...styles.title}
-                data-test-selector="brandCategoriesTitle"
-            >
+            <Typography {...styles.title} data-test-selector="brandCategoriesTitle">
                 {title}
             </Typography>
             <GridContainer {...styles.categoryContainer}>
-                {brandCategories!.map(
-                    category => <GridItem key={category.categoryId} {...categoryItemStyles}>
+                {brandCategories!.map(category => (
+                    <GridItem key={category.categoryId} {...categoryItemStyles}>
                         <GridContainer {...styles.innerCategoryContainer}>
-                            {showImages && <GridItem {...styles.categoryImageItem}>
-                                <Link href={category.productListPagePath} {...styles.categoryImageLink}>
-                                    <LazyImage
-                                        src={category.featuredImagePath}
-                                        altText={category.featuredImageAltText}
-                                        {...styles.categoryImage} />
-                                </Link>
-                            </GridItem>}
+                            {showImages && (
+                                <GridItem {...styles.categoryImageItem}>
+                                    <Link href={category.productListPagePath} {...styles.categoryImageLink}>
+                                        <LazyImage
+                                            src={category.featuredImagePath}
+                                            altText={category.featuredImageAltText}
+                                            {...styles.categoryImage}
+                                        />
+                                    </Link>
+                                </GridItem>
+                            )}
                             <GridItem {...styles.categoryNameLinkItem}>
                                 <Link
                                     href={category.productListPagePath}
@@ -185,8 +201,8 @@ const BrandDetailsCategories: FC<Props> = ({ fields }) => {
                                     {category.categoryShortDescription}
                                 </Link>
                             </GridItem>
-                            {category.subCategories?.slice(0, subCategoriesToShow).map(
-                                subCategory => <GridItem key={subCategory.categoryId}  {...styles.subCategoryItem}>
+                            {category.subCategories?.slice(0, subCategoriesToShow).map(subCategory => (
+                                <GridItem key={subCategory.categoryId} {...styles.subCategoryItem}>
                                     <Link
                                         href={subCategory.productListPagePath}
                                         {...styles.subCategoryLink}
@@ -194,12 +210,12 @@ const BrandDetailsCategories: FC<Props> = ({ fields }) => {
                                     >
                                         {subCategory.categoryName}
                                     </Link>
-                                </GridItem>)
-                            }
+                                </GridItem>
+                            ))}
                             {renderViewMoreLink(category)}
                         </GridContainer>
-                    </GridItem>)
-                }
+                    </GridItem>
+                ))}
             </GridContainer>
         </StyledWrapper>
     );

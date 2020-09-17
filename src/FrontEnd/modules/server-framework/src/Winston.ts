@@ -10,9 +10,7 @@ const options = {
 };
 
 const logger = createLogger({
-    transports: [
-        new winston.transports.Console(options.console),
-    ],
+    transports: [new winston.transports.Console(options.console)],
     exitOnError: false, // do not exit on handled exceptions
 });
 
@@ -65,7 +63,7 @@ const winstonReceiver = (function createWinstonReceiver(): LogReceiver {
         info: createLoggerForLevel("info"),
         warn: createLoggerForLevel("warn"),
     };
-}());
+})();
 
 if (IS_PRODUCTION) {
     setLogger(winstonReceiver);

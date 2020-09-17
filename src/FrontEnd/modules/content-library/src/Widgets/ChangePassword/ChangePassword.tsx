@@ -23,7 +23,7 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps { }
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
@@ -48,18 +48,34 @@ export interface ChangePasswordStyles {
 
 export const changePasswordStyles: ChangePasswordStyles = {
     actions: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     passwordGridContainer: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, css` max-width: 300px; `, css` max-width: 300px; `, css` max-width: 300px; `])}
+                breakpointMediaQueries(theme, [
+                    null,
+                    null,
+                    css`
+                        max-width: 300px;
+                    `,
+                    css`
+                        max-width: 300px;
+                    `,
+                    css`
+                        max-width: 300px;
+                    `,
+                ])}
         `,
         gap: 10,
     },
     passwordRequirementsGridContainer: {
         gap: 2,
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
     passwordRequirementsGridItem: {
         width: 12,
@@ -71,14 +87,18 @@ export const changePasswordStyles: ChangePasswordStyles = {
         width: 12,
     },
     changePasswordLink: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     userInformationTitle: {
         variant: "h4",
         as: "h2",
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     centeringWrapper: {
         css: css`
@@ -96,7 +116,7 @@ const lowerCasePasswordLengthMessage = translate("Password must include at least
 const upperCasePasswordLengthMessage = translate("Password must include at least one uppercase character");
 const specialPasswordLengthMessage = translate("Password must include at least one non alphanumeric character");
 
-const ChangePasswordView: FC<Props> = (props) => {
+const ChangePasswordView: FC<Props> = props => {
     const [password, setPassword] = React.useState("");
     const [newPassword, setNewPassword] = React.useState("");
     const [confirmNewPassword, setConfirmNewPassword] = React.useState("");
@@ -104,11 +124,13 @@ const ChangePasswordView: FC<Props> = (props) => {
     const [error, setError] = React.useState(false);
     const [showPasswords, setShowPasswords] = React.useState(false);
 
-    const { passwordMinimumLength,
+    const {
+        passwordMinimumLength,
         passwordRequiresUppercase,
         passwordRequiresSpecialCharacter,
         passwordRequiresLowercase,
-        passwordRequiresDigit } = props.accountSettings;
+        passwordRequiresDigit,
+    } = props.accountSettings;
 
     const currentPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
         setPassword(event.currentTarget.value);
@@ -116,7 +138,9 @@ const ChangePasswordView: FC<Props> = (props) => {
 
     const newPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
         setNewPassword(event.currentTarget.value);
-        setError(!(confirmNewPassword && event.currentTarget.value && event.currentTarget.value === confirmNewPassword));
+        setError(
+            !(confirmNewPassword && event.currentTarget.value && event.currentTarget.value === confirmNewPassword),
+        );
     };
 
     const confirmNewPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
@@ -124,13 +148,17 @@ const ChangePasswordView: FC<Props> = (props) => {
         setError(!(newPassword && event.currentTarget.value && event.currentTarget.value === newPassword));
     };
 
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace("{0}", passwordMinimumLength.toString());
+    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
+        "{0}",
+        passwordMinimumLength.toString(),
+    );
     let confirmNewPasswordError: React.ReactNode = "";
 
     if (showValidation) {
-        confirmNewPasswordError = newPassword
-            && confirmNewPassword
-            && (newPassword !== confirmNewPassword) ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch") : "";
+        confirmNewPasswordError =
+            newPassword && confirmNewPassword && newPassword !== confirmNewPassword
+                ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch")
+                : "";
     }
 
     return (
@@ -142,20 +170,24 @@ const ChangePasswordView: FC<Props> = (props) => {
                 confirmNewPassword={confirmNewPassword}
                 error={error}
                 showValidation={showValidation}
-                setShowValidation={setShowValidation}>
-            </ChangePasswordHeader>
+                setShowValidation={setShowValidation}
+            ></ChangePasswordHeader>
             <Typography {...styles.userInformationTitle}>{translate("Password Requirements")}</Typography>
             <GridContainer {...styles.passwordRequirementsGridContainer}>
                 <GridItem {...styles.passwordRequirementsGridItem}>{minimumPasswordLengthMessage}</GridItem>
-                {passwordRequiresDigit
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>}
-                {passwordRequiresLowercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>}
-                {passwordRequiresUppercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>}
-                {passwordRequiresSpecialCharacter
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>}
-            </GridContainer >
+                {passwordRequiresDigit && (
+                    <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                )}
+                {passwordRequiresLowercase && (
+                    <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
+                )}
+                {passwordRequiresUppercase && (
+                    <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
+                )}
+                {passwordRequiresSpecialCharacter && (
+                    <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                )}
+            </GridContainer>
             <GridContainer {...styles.passwordGridContainer}>
                 <GridItem {...styles.userInformationGridItem}>
                     <TextField
@@ -184,7 +216,9 @@ const ChangePasswordView: FC<Props> = (props) => {
                 </GridItem>
                 <GridItem {...styles.showPasswordsGridItem}>
                     <Checkbox
-                        onChange={() => { setShowPasswords(!showPasswords); }}
+                        onChange={() => {
+                            setShowPasswords(!showPasswords);
+                        }}
                         checked={showPasswords}
                     >
                         {translate("Show Passwords")}
@@ -198,12 +232,13 @@ const ChangePasswordView: FC<Props> = (props) => {
                             confirmNewPassword={confirmNewPassword}
                             error={error}
                             showValidation={showValidation}
-                            setShowValidation={setShowValidation}>
-                        </ChangePasswordActions>
+                            setShowValidation={setShowValidation}
+                        ></ChangePasswordActions>
                     </Hidden>
                 </GridItem>
             </GridContainer>
-        </form>);
+        </form>
+    );
 };
 
 const widgetModule: WidgetModule = {

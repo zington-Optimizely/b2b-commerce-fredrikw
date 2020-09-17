@@ -11,8 +11,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -41,10 +40,13 @@ const sortChangeHandler = (event: React.FormEvent<HTMLSelectElement>, props: Pro
 };
 
 const MyListsSortControl: React.FunctionComponent<Props> = props => {
-    return(
+    return (
         <StyledWrapper {...styles.wrapper}>
-            <Select data-test-selector="myListsSort"
-                {...styles.select} onChange={(event: React.FormEvent<HTMLSelectElement>) => sortChangeHandler(event, props)}>
+            <Select
+                data-test-selector="myListsSort"
+                {...styles.select}
+                onChange={(event: React.FormEvent<HTMLSelectElement>) => sortChangeHandler(event, props)}
+            >
                 <option value="ModifiedOn DESC">{translate("Last Updated")}</option>
                 <option value="Name ASC">{translate("List Name: A-Z")}</option>
                 <option value="Name DESC">{translate("List Name: Z-A")}</option>
@@ -54,7 +56,6 @@ const MyListsSortControl: React.FunctionComponent<Props> = props => {
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(MyListsSortControl),
     definition: {
         group: "My Lists",

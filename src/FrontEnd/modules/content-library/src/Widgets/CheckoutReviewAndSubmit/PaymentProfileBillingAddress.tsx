@@ -25,16 +25,10 @@ const PaymentProfileBillingAddress = (props: OwnProps) => {
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography
-                {...styles.label}
-                id="paymentProfileBillingAddress"
-            >
+            <Typography {...styles.label} id="paymentProfileBillingAddress">
                 {translate("Billing Address")}:
             </Typography>
-            <Typography
-                {...styles.text}
-                aria-labelledby="paymentProfileBillingAddress"
-            >
+            <Typography {...styles.text} aria-labelledby="paymentProfileBillingAddress">
                 {props.address}
             </Typography>
         </StyledWrapper>

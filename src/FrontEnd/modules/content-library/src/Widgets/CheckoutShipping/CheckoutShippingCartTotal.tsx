@@ -51,7 +51,16 @@ export const cartTotalStyles: CheckoutShippingCartTotalStyles = {
     buttonsGridItem: {
         width: 12,
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` display: none; `], "max")}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            display: none;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
     continueButton: {
@@ -60,12 +69,19 @@ export const cartTotalStyles: CheckoutShippingCartTotalStyles = {
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
                     null,
-                    css` width: 100%; `,
-                    css` width: 100%; `,
-                    css` width: 100%; `,
-                    css` width: 100%; `,
-                ])
-            }
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        width: 100%;
+                    `,
+                ])}
         `,
     },
 };
@@ -82,7 +98,13 @@ const CheckoutShippingCartTotal: FC<Props> = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.cartTotalGridItem}>
-                <CartTotalDisplay extendedStyles={styles.cartTotal} cart={cart} orderPromotions={orderPromotions} shippingPromotions={shippingPromotions} discountTotal={discountTotal} />
+                <CartTotalDisplay
+                    extendedStyles={styles.cartTotal}
+                    cart={cart}
+                    orderPromotions={orderPromotions}
+                    shippingPromotions={shippingPromotions}
+                    discountTotal={discountTotal}
+                />
             </GridItem>
             <GridItem {...styles.buttonsGridItem}>
                 <Button

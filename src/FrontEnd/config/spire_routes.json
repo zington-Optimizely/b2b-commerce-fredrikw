@@ -1,0 +1,33 @@
+{
+  "comment1": "Do not put any comments in this file using // or any other format.",
+  "comment2": "Do not change commerce_routes variable name as it is required for deploy code as-is.",
+  "commerce_routes":
+  [
+    "admin",
+    "api",
+    "bundles",
+    "ckfinder",
+    "connect",
+    "elmah",
+    "email",
+    "excel",
+    "identity",
+    "importexport",
+    "quickping.aspx",
+    "robots.txt",
+    "secureelmah",
+    "sitemap",
+    "swagger",
+    "systemresources",
+    "userfiles",
+    "afterimpersonate"
+  ],
+  "spire_system_uris":
+  [
+    "contentadmin",
+    "creators",
+    "dist",
+    "redirectto",
+    ".spire"
+  ]
+}

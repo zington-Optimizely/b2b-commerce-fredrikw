@@ -7,7 +7,11 @@ import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSelectedProductPath } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getComputedVariantProduct, getProductState, getProductStateByPath } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    getComputedVariantProduct,
+    getProductState,
+    getProductStateByPath,
+} from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import changeQtyOrdered from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/ChangeQtyOrdered";
 import changeUnitOfMeasure from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/ChangeUnitOfMeasure";
 import displayProduct from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/DisplayProduct";
@@ -21,20 +25,25 @@ import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
-    const productPath = getSelectedProductPath(state) || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
+    const productPath =
+        getSelectedProductPath(state) ||
+        (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
     const productState = getProductStateByPath(state, productPath);
     const variantProductState = getProductState(state, state.pages.productDetails.selectedProductId);
     const computedVariantProduct = getComputedVariantProduct(productState, variantProductState);
-    return ({
+    return {
         productState: computedVariantProduct,
         parentProductState: productState,
-        productInfo: computedVariantProduct.value && state.pages.productDetails.productInfosById ? state.pages.productDetails.productInfosById[computedVariantProduct.value.id] : undefined,
+        productInfo:
+            computedVariantProduct.value && state.pages.productDetails.productInfosById
+                ? state.pages.productDetails.productInfosById[computedVariantProduct.value.id]
+                : undefined,
         productPath,
         lastProductPath: state.pages.productDetails.lastProductPath,
         websiteName: state.context.website.name,
         page: getCurrentPage(state),
         location,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -72,12 +81,23 @@ class ProductDetailsPage extends React.Component<Props, State> {
     }
 
     setMetadata() {
-        const { productState: { value: product }, websiteName, location } = this.props;
+        const {
+            productState: { value: product },
+            websiteName,
+            location,
+        } = this.props;
         if (!product || !product.content) {
             return;
         }
 
-        const { metaDescription, metaKeywords, openGraphImage, openGraphTitle, openGraphUrl, pageTitle } = product.content;
+        const {
+            metaDescription,
+            metaKeywords,
+            openGraphImage,
+            openGraphTitle,
+            openGraphUrl,
+            pageTitle,
+        } = product.content;
 
         setPageMetadata({
             metaDescription,
@@ -97,12 +117,20 @@ class ProductDetailsPage extends React.Component<Props, State> {
     }
 
     displayProductIfNeeded() {
-        const { location: { search }, productPath, lastProductPath } = this.props;
+        const {
+            location: { search },
+            productPath,
+            lastProductPath,
+        } = this.props;
         if (productPath.toLowerCase() === lastProductPath?.toLowerCase()) {
             return;
         }
-        const queryParams = parseQueryString<{ option?: string; criteria?: string; }>(search.replace("?", ""));
-        const styledOption = (queryParams.option?.toString() || queryParams.criteria?.toString() || "").toLocaleLowerCase();
+        const queryParams = parseQueryString<{ option?: string; criteria?: string }>(search.replace("?", ""));
+        const styledOption = (
+            queryParams.option?.toString() ||
+            queryParams.criteria?.toString() ||
+            ""
+        ).toLocaleLowerCase();
         this.props.displayProduct({ path: productPath, styledOption });
     }
 
@@ -130,16 +158,18 @@ class ProductDetailsPage extends React.Component<Props, State> {
             },
         };
 
-        return <Page data-test-selector={`productDetails_productId_${productId}`}>
-            <CurrentCategory>
-                <ProductContext.Provider value={productContext}>
-                    <ParentProductIdContext.Provider value={this.props.parentProductState?.value?.id}>
-                        <Zone contentId={this.props.id} zoneName="Content"/>
-                    </ParentProductIdContext.Provider>
-                </ProductContext.Provider>
-            </CurrentCategory>
-            <AddToListModal/>
-        </Page>;
+        return (
+            <Page data-test-selector={`productDetails_productId_${productId}`}>
+                <CurrentCategory>
+                    <ProductContext.Provider value={productContext}>
+                        <ParentProductIdContext.Provider value={this.props.parentProductState?.value?.id}>
+                            <Zone contentId={this.props.id} zoneName="Content" />
+                        </ParentProductIdContext.Provider>
+                    </ProductContext.Provider>
+                </CurrentCategory>
+                <AddToListModal />
+            </Page>
+        );
     }
 }
 

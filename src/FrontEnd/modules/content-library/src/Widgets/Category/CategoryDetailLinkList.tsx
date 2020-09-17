@@ -25,7 +25,9 @@ export const categoryDetailLinkListStyles: CategoryDetailLinkListStyles = {
     },
     subCategoryNameLinkItem: {
         width: 12,
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
 };
 
@@ -36,13 +38,15 @@ const CategoryDetailLinkList: React.FunctionComponent<OwnProps> = ({ category }:
         return null;
     }
 
-    return <GridContainer {...styles.container}>
-        {category.subCategoryIds.map((subCategoryId) => (
-            <GridItem key={subCategoryId.toString()} {...styles.subCategoryNameLinkItem}>
-                <SubCategoryLink subCategoryId={subCategoryId} />
-            </GridItem>
-        ))}
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.container}>
+            {category.subCategoryIds.map(subCategoryId => (
+                <GridItem key={subCategoryId.toString()} {...styles.subCategoryNameLinkItem}>
+                    <SubCategoryLink subCategoryId={subCategoryId} />
+                </GridItem>
+            ))}
+        </GridContainer>
+    );
 };
 
 const mapStateToProps = (state: ApplicationState, ownProps: { subCategoryId: string }) => {
@@ -56,12 +60,15 @@ const SubCategoryLinkView = ({ category }: ReturnType<typeof mapStateToProps>) =
         return null;
     }
 
-    return <Link
-        href={category.path}
-        {...styles.subCategoryNameLink}
-        data-test-selector={`categoryDetailsLinkListLink_${category.id}`}>
-        {category.shortDescription}
-    </Link>;
+    return (
+        <Link
+            href={category.path}
+            {...styles.subCategoryNameLink}
+            data-test-selector={`categoryDetailsLinkListLink_${category.id}`}
+        >
+            {category.shortDescription}
+        </Link>
+    );
 };
 
 const SubCategoryLink = connect(mapStateToProps)(SubCategoryLinkView);

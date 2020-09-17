@@ -1,6 +1,7 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
 import { Request, Response } from "express";
+import { commerce_routes as commerceRoutes } from "../../../config/spire_routes.json";
 
 interface ApiMethod {
     (request: Request, response: Response): Promise<void>;
@@ -18,10 +19,10 @@ function createRelay(prefix: string) {
         for (const prop in request.headers) {
             // Naively forwarding all headers can conflict with Node/Express behavior.
             switch (prop.toLowerCase()) {
-            case "host":
-            case "origin":
-            case "referer":
-                continue;
+                case "host":
+                case "origin":
+                case "referer":
+                    continue;
             }
 
             const value = request.headers[prop];
@@ -54,13 +55,13 @@ function createRelay(prefix: string) {
         result.headers.forEach((value: string, key: string) => {
             // Naively returning all headers can conflict with Node/Express behavior.
             switch (key.toLowerCase()) {
-            case "content-encoding":
-            case "content-length":
-            case "content-type": // Handled later
-            case "date":
-            case "server":
-            case "x-powered-by":
-                return;
+                case "content-encoding":
+                case "content-length":
+                case "content-type": // Handled later
+                case "date":
+                case "server":
+                case "x-powered-by":
+                    return;
             }
 
             if (typeof headersCollection[key] === "undefined") {
@@ -79,9 +80,7 @@ function createRelay(prefix: string) {
             return;
         }
 
-        response
-            .contentType(result.headers.get("Content-Type") || "application/octet-stream")
-            .send(body);
+        response.contentType(result.headers.get("Content-Type") || "application/octet-stream").send(body);
     };
 }
 
@@ -101,20 +100,11 @@ logger.log(`Server-side API URL is ${ISC_API_URL}.`);
 
 /** Web API logic intended to be accessed via a Node/Express server host. */
 const relayMethod = createRelay(ISC_API_URL);
+
 /** To support POST, items listed here also need to be in the development/production startup procedure with raw parsing. */
-const relay: Relay = {
-    api: relayMethod,
-    identity: relayMethod,
-    systemresources: relayMethod,
-    ckfinder: relayMethod,
-    admin: relayMethod,
-    bundles: relayMethod,
-    userfiles: relayMethod,
-    email: relayMethod,
-    excel: relayMethod,
-    sitemap: relayMethod,
-    afterimpersonate: relayMethod,
-    importexport: relayMethod,
-};
+const relay = commerceRoutes.reduce<Relay>((result, item) => {
+    result[item.toLowerCase()] = relayMethod;
+    return result;
+}, {});
 
 export default relay;

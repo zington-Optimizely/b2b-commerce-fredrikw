@@ -74,8 +74,12 @@ export const addToListModalStyles: ManageShareListModalStyles = {
     modal: {
         size: 600,
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     editingPermissionText: {
@@ -83,14 +87,14 @@ export const addToListModalStyles: ManageShareListModalStyles = {
     },
     editingPermissionRadioGroup: {
         css: css`
-                display: inline-block;
-                width: 100%;
-                flex-direction: row;
-                & > div {
-                    margin-right: 20px;
-                    display: inline-flex;
-                }
-            `,
+            display: inline-block;
+            width: 100%;
+            flex-direction: row;
+            & > div {
+                margin-right: 20px;
+                display: inline-flex;
+            }
+        `,
     },
     sharedWithAllText: {
         css: css`
@@ -113,7 +117,9 @@ export const addToListModalStyles: ManageShareListModalStyles = {
     },
     inviteButton: {
         variant: "secondary",
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     userCell: {
         css: css`
@@ -122,7 +128,9 @@ export const addToListModalStyles: ManageShareListModalStyles = {
         `,
     },
     userRemoveLink: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     buttonsWrapper: {
         css: css`
@@ -135,7 +143,9 @@ export const addToListModalStyles: ManageShareListModalStyles = {
         variant: "secondary",
     },
     closeButton: {
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
 };
 
@@ -203,66 +213,84 @@ const ManageShareListModal: React.FC<Props> = ({
         });
     };
 
-    return <Modal
-        {...styles.modal}
-        headline={translate("Manage Sharing")}
-        isOpen={modalIsOpen}
-        handleClose={modalCloseHandler}
-    >
-        <Typography
-            data-test-selector="productAddToListModal_requireSignIn"
-            {...styles.editingPermissionText}
+    return (
+        <Modal
+            {...styles.modal}
+            headline={translate("Manage Sharing")}
+            isOpen={modalIsOpen}
+            handleClose={modalCloseHandler}
         >
-            {translate("Editing Permission")}
-        </Typography>
-        <RadioGroup
-            value={allowEditing}
-            onChangeHandler={(event) => { handleEditingPermissionChanged(event); }}
-            {...styles.editingPermissionRadioGroup}>
-            <Radio value="true" {...styles.editingPermissionRadio}>{translate("Allow Editing")}</Radio>
-            <Radio value="false" {...styles.editingPermissionRadio}>{translate("View Only")}</Radio>
-        </RadioGroup>
-        {wishList.shareOption === ShareOptions.AllCustomerUsers
-            && <Typography {...styles.sharedWithAllText}>{translate("Shared with all users on billing account.")}</Typography>
-        }
-        {wishList.shareOption !== ShareOptions.AllCustomerUsers
-            && <StyledWrapper {...styles.usersTableWrapper}>
-                <Typography {...styles.usersTableText}>{translate("Users Shared With")}</Typography>
-                <Button {...styles.inviteButton} onClick={inviteClickHandler}>{translate("Invite User")}</Button>
-            </StyledWrapper>}
-        {wishList.shareOption !== ShareOptions.AllCustomerUsers
-            && <DataTable {...styles.userTable}>
-                <DataTableHead {...styles.userTableHead}>
-                    <DataTableHeader {...styles.userTableHeader} title={translate("User")} >
-                        <Typography {...styles.userTableHeaderText}>{translate("User")}</Typography>
-                    </DataTableHeader>
-                </DataTableHead>
-                <DataTableBody {...styles.userTableBody}>
-                    {wishList?.sharedUsers?.map(({ id, displayName }) => (
-                        <DataTableRow key={id}>
-                            <DataTableCell {...styles.userCell}>
-                                <Typography {...styles.userNameText}>{displayName || id}</Typography>
-                                <Link {...styles.userRemoveLink} onClick={() => userRemoveHandler(id)}>{translate("Remove")}</Link>
-                            </DataTableCell>
-                        </DataTableRow>
-                    ))}
-                </DataTableBody>
-            </DataTable>}
-        <StyledWrapper {...styles.buttonsWrapper}>
-            <Button {...styles.makePrivateButton} onClick={handleOpenMakeListPrivateClick}>{translate("Make List Private")}</Button>
-            <Button {...styles.closeButton} onClick={() => modalCloseHandler()}>{translate("Done")}</Button>
-            <TwoButtonModal
-                {...styles.makeListPrivateModal}
-                headlineText={translate("Make List Private")}
-                messageText={siteMessage("Lists_Shared_Users_Will_No_Longer_Have_Access")}
-                cancelButtonText={translate("Cancel")}
-                submitButtonText={translate("Make List Private")}
-                modalIsOpen={makeListPrivateModalVisible}
-                onCancel={() => setMakeListPrivateModalVisible(false)}
-                onSubmit={handleMakeListPrivateClick}
-            />
-        </StyledWrapper>
-    </Modal>;
+            <Typography data-test-selector="productAddToListModal_requireSignIn" {...styles.editingPermissionText}>
+                {translate("Editing Permission")}
+            </Typography>
+            <RadioGroup
+                value={allowEditing}
+                onChangeHandler={event => {
+                    handleEditingPermissionChanged(event);
+                }}
+                {...styles.editingPermissionRadioGroup}
+            >
+                <Radio value="true" {...styles.editingPermissionRadio}>
+                    {translate("Allow Editing")}
+                </Radio>
+                <Radio value="false" {...styles.editingPermissionRadio}>
+                    {translate("View Only")}
+                </Radio>
+            </RadioGroup>
+            {wishList.shareOption === ShareOptions.AllCustomerUsers && (
+                <Typography {...styles.sharedWithAllText}>
+                    {translate("Shared with all users on billing account.")}
+                </Typography>
+            )}
+            {wishList.shareOption !== ShareOptions.AllCustomerUsers && (
+                <StyledWrapper {...styles.usersTableWrapper}>
+                    <Typography {...styles.usersTableText}>{translate("Users Shared With")}</Typography>
+                    <Button {...styles.inviteButton} onClick={inviteClickHandler}>
+                        {translate("Invite User")}
+                    </Button>
+                </StyledWrapper>
+            )}
+            {wishList.shareOption !== ShareOptions.AllCustomerUsers && (
+                <DataTable {...styles.userTable}>
+                    <DataTableHead {...styles.userTableHead}>
+                        <DataTableHeader {...styles.userTableHeader} title={translate("User")}>
+                            <Typography {...styles.userTableHeaderText}>{translate("User")}</Typography>
+                        </DataTableHeader>
+                    </DataTableHead>
+                    <DataTableBody {...styles.userTableBody}>
+                        {wishList?.sharedUsers?.map(({ id, displayName }) => (
+                            <DataTableRow key={id}>
+                                <DataTableCell {...styles.userCell}>
+                                    <Typography {...styles.userNameText}>{displayName || id}</Typography>
+                                    <Link {...styles.userRemoveLink} onClick={() => userRemoveHandler(id)}>
+                                        {translate("Remove")}
+                                    </Link>
+                                </DataTableCell>
+                            </DataTableRow>
+                        ))}
+                    </DataTableBody>
+                </DataTable>
+            )}
+            <StyledWrapper {...styles.buttonsWrapper}>
+                <Button {...styles.makePrivateButton} onClick={handleOpenMakeListPrivateClick}>
+                    {translate("Make List Private")}
+                </Button>
+                <Button {...styles.closeButton} onClick={() => modalCloseHandler()}>
+                    {translate("Done")}
+                </Button>
+                <TwoButtonModal
+                    {...styles.makeListPrivateModal}
+                    headlineText={translate("Make List Private")}
+                    messageText={siteMessage("Lists_Shared_Users_Will_No_Longer_Have_Access")}
+                    cancelButtonText={translate("Cancel")}
+                    submitButtonText={translate("Make List Private")}
+                    modalIsOpen={makeListPrivateModalVisible}
+                    onCancel={() => setMakeListPrivateModalVisible(false)}
+                    onSubmit={handleMakeListPrivateClick}
+                />
+            </StyledWrapper>
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageShareListModal);

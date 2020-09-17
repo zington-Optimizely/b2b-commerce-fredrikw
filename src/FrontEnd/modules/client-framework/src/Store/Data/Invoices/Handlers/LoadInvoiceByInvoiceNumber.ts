@@ -2,7 +2,7 @@ import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/c
 import { getInvoice, GetInvoiceApiParameter } from "@insite/client-framework/Services/InvoiceService";
 import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ invoiceNumber: string; }, GetInvoiceApiParameter, InvoiceModel>;
+type HandlerType = ApiHandlerDiscreteParameter<{ invoiceNumber: string }, GetInvoiceApiParameter, InvoiceModel>;
 
 export const DispatchBeginLoadInvoice: HandlerType = props => {
     props.dispatch({
@@ -29,12 +29,7 @@ export const DispatchCompleteLoadInvoice: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadInvoice,
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadInvoice,
-];
+export const chain = [DispatchBeginLoadInvoice, PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadInvoice];
 
 const loadInvoiceByInvoiceNumber = createHandlerChainRunner(chain, "LoadInvoiceByInvoiceNumber");
 export default loadInvoiceByInvoiceNumber;

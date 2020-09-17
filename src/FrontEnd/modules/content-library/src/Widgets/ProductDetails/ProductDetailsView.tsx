@@ -22,40 +22,57 @@ export interface ProductDetailsViewStyles {
 }
 
 export const viewStyles: ProductDetailsViewStyles = {
-    leftColumnGridItem: { width: [12, 12, 8, 8, 8], css: css` overflow: hidden; ` },
+    leftColumnGridItem: {
+        width: [12, 12, 8, 8, 8],
+        css: css`
+            overflow: hidden;
+        `,
+    },
     topGridItem: { width: 12 },
     middleGridItem: { width: [12, 12, 0, 0, 0] },
-    middleGridItemHidden: { above: "sm", css: css` width: 100%; ` },
+    middleGridItemHidden: {
+        above: "sm",
+        css: css`
+            width: 100%;
+        `,
+    },
     bottomGridItem: { width: 12 },
     rightColumnGridItem: { width: [0, 0, 4, 4, 4] },
-    rightColumnGridItemHidden: { below: "md", css: css` width: 100%; ` },
+    rightColumnGridItemHidden: {
+        below: "md",
+        css: css`
+            width: 100%;
+        `,
+    },
 };
 
 const styles = viewStyles;
 
 const ProductDetailsView: React.FC<WidgetProps> = props => {
-    return <GridContainer {...styles.container}>
-        <GridItem  {...styles.leftColumnGridItem} data-test-selector="productDetails_leftColumn">
-            <GridContainer {...styles.leftColumnInnerContainer}>
-                <GridItem {...styles.topGridItem}>
-                    <Zone contentId={props.id} zoneName="Content0" />
-                </GridItem>
-                <GridItem {...styles.middleGridItem}>
-                    <Hidden  {...styles.middleGridItemHidden}>
-                        <Zone contentId={props.id} zoneName="Content1" />
-                    </Hidden>
-                </GridItem>
-                <GridItem {...styles.bottomGridItem}>
-                    <Zone contentId={props.id} zoneName="Content2" />
-                </GridItem>
-            </GridContainer>
-        </GridItem>
-        <GridItem {...styles.rightColumnGridItem} data-test-selector="productDetails_rightColumn">
-            <Hidden {...styles.rightColumnGridItemHidden}>
-                <Zone contentId={props.id} zoneName="Content3" />
-            </Hidden>
-        </GridItem>
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.container}>
+            <GridItem {...styles.leftColumnGridItem} data-test-selector="productDetails_leftColumn">
+                <GridContainer {...styles.leftColumnInnerContainer}>
+                    <GridItem {...styles.topGridItem}>
+                        <Zone contentId={props.id} zoneName="Content0" />
+                    </GridItem>
+                    <GridItem {...styles.middleGridItem}>
+                        <Hidden {...styles.middleGridItemHidden}>
+                            <Zone contentId={props.id} zoneName="Content1" />
+                        </Hidden>
+                    </GridItem>
+                    <GridItem {...styles.bottomGridItem}>
+                        <Zone contentId={props.id} zoneName="Content2" />
+                    </GridItem>
+                </GridContainer>
+            </GridItem>
+            <GridItem {...styles.rightColumnGridItem} data-test-selector="productDetails_rightColumn">
+                <Hidden {...styles.rightColumnGridItemHidden}>
+                    <Zone contentId={props.id} zoneName="Content3" />
+                </Hidden>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

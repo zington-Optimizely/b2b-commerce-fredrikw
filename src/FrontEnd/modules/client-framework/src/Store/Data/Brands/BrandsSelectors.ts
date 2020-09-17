@@ -1,4 +1,8 @@
-import { GetBrandCategoriesApiParameter, GetBrandProductLinesApiParameter, GetBrandsApiParameter } from "@insite/client-framework/Services/BrandService";
+import {
+    GetBrandCategoriesApiParameter,
+    GetBrandProductLinesApiParameter,
+    GetBrandsApiParameter,
+} from "@insite/client-framework/Services/BrandService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { dataViewNotFound, getById, getDataView, getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { createContext } from "react";
@@ -35,6 +39,16 @@ export function getBrandsDataView(state: ApplicationState, parameter: GetBrandsA
     return getDataView(state.data.brands, parameter);
 }
 
-export const BrandStateContext = createContext<ReturnType<typeof getBrandStateById>>({ value: undefined, isLoading: false, id: undefined });
-export const BrandCategoriesStateContext = createContext<ReturnType<typeof getBrandCategoriesDataView>>({ value: undefined, isLoading: false });
-export const BrandProductLinesStateContext = createContext<ReturnType<typeof getBrandProductLinesDataView>>({ value: undefined, isLoading: false });
+export const BrandStateContext = createContext<ReturnType<typeof getBrandStateById>>({
+    value: undefined,
+    isLoading: false,
+    id: undefined,
+});
+export const BrandCategoriesStateContext = createContext<ReturnType<typeof getBrandCategoriesDataView>>({
+    value: undefined,
+    isLoading: false,
+});
+export const BrandProductLinesStateContext = createContext<ReturnType<typeof getBrandProductLinesDataView>>({
+    value: undefined,
+    isLoading: false,
+});

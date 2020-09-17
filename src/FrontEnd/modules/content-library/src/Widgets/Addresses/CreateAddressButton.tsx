@@ -21,8 +21,7 @@ import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     customerSettings: getSettingsCollection(state).customerSettings,
@@ -49,7 +48,9 @@ export interface CreateAddressButtonStyles {
 export const createAddressButtonStyles: CreateAddressButtonStyles = {
     createNewAddressButtonGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     addressFormModal: { sizeVariant: "medium" },
 };
@@ -104,7 +105,9 @@ const CreateAddressButton: React.FunctionComponent<Props> = (props: Props) => {
                     </OverflowMenu>
                 </Hidden>
                 <Hidden below="md">
-                    <Button {...styles.createNewAddressButton} onClick={editClickHandler}>{translate("Create New Address")}</Button>
+                    <Button {...styles.createNewAddressButton} onClick={editClickHandler}>
+                        {translate("Create New Address")}
+                    </Button>
                 </Hidden>
                 <Modal
                     headline={translate("Create New Address")}
@@ -112,14 +115,15 @@ const CreateAddressButton: React.FunctionComponent<Props> = (props: Props) => {
                     isOpen={modalIsOpen}
                     handleClose={modalCloseHandler}
                 >
-                    {newShipTo && countries && billToAddressFields
-                        && <CustomerAddressForm
+                    {newShipTo && countries && billToAddressFields && (
+                        <CustomerAddressForm
                             address={newShipTo}
                             countries={countries}
                             addressFieldDisplayCollection={billToAddressFields}
                             onCancel={formCancelHandler}
-                            onSubmit={formSubmitHandler} />
-                    }
+                            onSubmit={formSubmitHandler}
+                        />
+                    )}
                 </Modal>
             </GridItem>
         </GridContainer>

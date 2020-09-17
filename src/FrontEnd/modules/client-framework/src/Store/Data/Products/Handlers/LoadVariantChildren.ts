@@ -1,4 +1,3 @@
-
 import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import {
     GetProductVariantChildrenApiV2Parameter,
@@ -8,8 +7,8 @@ import { ProductCollectionModel, ProductModel } from "@insite/client-framework/T
 
 type Parameter = { productId: string } & HasOnSuccess<ProductModel[]>;
 type Props = {
-    apiParameter: GetProductVariantChildrenApiV2Parameter,
-    apiResult: ProductCollectionModel,
+    apiParameter: GetProductVariantChildrenApiV2Parameter;
+    apiResult: ProductCollectionModel;
 };
 
 type HandlerType = Handler<Parameter, Props>;

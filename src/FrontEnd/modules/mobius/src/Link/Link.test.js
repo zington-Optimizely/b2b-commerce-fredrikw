@@ -1,11 +1,11 @@
-import 'babel-polyfill';
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import Link from './Link';
+import "babel-polyfill";
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import Link from "./Link";
 
-describe('Link', () => {
+describe("Link", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -13,7 +13,7 @@ describe('Link', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <Link {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -24,7 +24,7 @@ describe('Link', () => {
         mountedWrapper = undefined;
     });
 
-    test('renders a span by default', () => {
+    test("renders a span by default", () => {
         const root = wrapper().find(Link).getDOMNode();
         expect(root instanceof HTMLSpanElement).toBe(true);
     });

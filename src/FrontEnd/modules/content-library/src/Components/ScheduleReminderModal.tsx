@@ -34,8 +34,7 @@ interface OwnProps {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const mapStateToProps = (state: ApplicationState) => ({
-});
+const mapStateToProps = (state: ApplicationState) => ({});
 
 const mapDispatchToProps = {
     updateWishListSchedule,
@@ -88,7 +87,9 @@ export const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
                 align-items: flex-start;
                 padding: 15px 30px;
             `,
-            modalContent: css` padding: 20px 30px; `,
+            modalContent: css`
+                padding: 20px 30px;
+            `,
         },
     },
     headlineWraper: {
@@ -99,18 +100,28 @@ export const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
     },
     titleText: {
         variant: "h4",
-        css: css` margin-bottom: 0; `,
+        css: css`
+            margin-bottom: 0;
+        `,
     },
-    hintText: { css: css` margin-top: 5px; ` },
+    hintText: {
+        css: css`
+            margin-top: 5px;
+        `,
+    },
     contentContainer: { gap: 20 },
     cancelConfirmationGridItem: { width: 12 },
     cancelButtonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     dismissCancelButton: {
         variant: "secondary",
-        css: css` margin-right: 20px; `,
+        css: css`
+            margin-right: 20px;
+        `,
     },
     confirmCancelButton: { variant: "primary" },
     topRowGridItem: { width: 12 },
@@ -171,35 +182,82 @@ export const scheduleReminderModalStyles: ScheduleReminderModalStyles = {
             align-items: initial;
         `,
     },
-    hasEndDateCheckbox: { css: css` margin-top: 15px; ` },
+    hasEndDateCheckbox: {
+        css: css`
+            margin-top: 15px;
+        `,
+    },
     bottomRowGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     buttonsContainer: {
         gap: 20,
-        css: css` & ${GridOffset} { justify-content: flex-end; } `,
+        css: css`
+            & ${GridOffset} {
+                justify-content: flex-end;
+            }
+        `,
     },
     stopButtonGridItem: { width: [12, 6, 8, 8, 8] },
     stopButton: {
         variant: "secondary",
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 100%; `], "max")} `,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
+        `,
     },
     cancelButtonGridItem: {
         width: [12, 3, 2, 2, 2],
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         variant: "secondary",
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 100%; `], "max")} `,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
+        `,
     },
     scheduleButtonGridItem: {
         width: [12, 3, 2, 2, 2],
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     scheduleButton: {
         variant: "primary",
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 100%; `], "max")} `,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
+        `,
     },
 };
 
@@ -236,17 +294,30 @@ const ScheduleReminderModal: React.FC<Props> = ({
         }
     };
 
-    const [sendDayOfWeek, setSendDayOfWeek] = React.useState(sendDayOfWeekPossibleValues?.find(o => o.key === schedule?.sendDayOfWeek) || sendDayOfWeekPossibleValues?.[0]);
-    const [sendDayOfMonth, setsendDayOfMonth] = React.useState(sendDayOfMonthPossibleValues?.find(o => o.key === schedule?.sendDayOfMonth) || sendDayOfMonthPossibleValues?.[0]);
+    const [sendDayOfWeek, setSendDayOfWeek] = React.useState(
+        sendDayOfWeekPossibleValues?.find(o => o.key === schedule?.sendDayOfWeek) || sendDayOfWeekPossibleValues?.[0],
+    );
+    const [sendDayOfMonth, setsendDayOfMonth] = React.useState(
+        sendDayOfMonthPossibleValues?.find(o => o.key === schedule?.sendDayOfMonth) ||
+            sendDayOfMonthPossibleValues?.[0],
+    );
     const sendDayChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
         if (repeatPeriod === "Weekly") {
-            setSendDayOfWeek(sendDayOfWeekPossibleValues?.find(o => o.key === event.currentTarget.value) || sendDayOfWeekPossibleValues?.[0]);
+            setSendDayOfWeek(
+                sendDayOfWeekPossibleValues?.find(o => o.key === event.currentTarget.value) ||
+                    sendDayOfWeekPossibleValues?.[0],
+            );
         } else {
-            setsendDayOfMonth(sendDayOfMonthPossibleValues?.find(o => o.key.toString() === event.currentTarget.value) || sendDayOfMonthPossibleValues?.[0]);
+            setsendDayOfMonth(
+                sendDayOfMonthPossibleValues?.find(o => o.key.toString() === event.currentTarget.value) ||
+                    sendDayOfMonthPossibleValues?.[0],
+            );
         }
     };
 
-    const [startDate, setStartDate] = React.useState<Date | undefined>(schedule?.startDate ? new Date(schedule.startDate.toString().split("T")[0]) : new Date());
+    const [startDate, setStartDate] = React.useState<Date | undefined>(
+        schedule?.startDate ? new Date(schedule.startDate.toString().split("T")[0]) : new Date(),
+    );
     const startDateChangeHandler = ({ selectedDay }: DatePickerState) => {
         setStartDate(selectedDay || new Date());
         if (selectedDay && endDate && selectedDay > endDate) {
@@ -263,7 +334,9 @@ const ScheduleReminderModal: React.FC<Props> = ({
         }
     };
 
-    const [endDate, setEndDate] = React.useState(schedule?.endDate ? new Date(schedule.endDate.toString().split("T")[0]) : undefined);
+    const [endDate, setEndDate] = React.useState(
+        schedule?.endDate ? new Date(schedule.endDate.toString().split("T")[0]) : undefined,
+    );
     const endDateChangeHandler = ({ selectedDay }: DatePickerState) => {
         setEndDate(selectedDay);
         setHasEndDate(!!selectedDay);
@@ -279,7 +352,7 @@ const ScheduleReminderModal: React.FC<Props> = ({
     const scheduleClickHandler = () => {
         setInProgress(true);
 
-        const scheduleToUpdate = wishList.schedule ? { ...wishList.schedule } : {} as WishListEmailScheduleModel;
+        const scheduleToUpdate = wishList.schedule ? { ...wishList.schedule } : ({} as WishListEmailScheduleModel);
         scheduleToUpdate.repeatPeriod = repeatPeriod;
         scheduleToUpdate.repeatInterval = repeatInterval || 1;
         if (sendDayOfWeek) {
@@ -331,8 +404,14 @@ const ScheduleReminderModal: React.FC<Props> = ({
     const resetFields = () => {
         setRepeatPeriod(schedule?.repeatPeriod || "Weekly");
         setRepeatInterval(schedule?.repeatInterval || 1);
-        setSendDayOfWeek(sendDayOfWeekPossibleValues?.find(o => o.key === schedule?.sendDayOfWeek) || sendDayOfWeekPossibleValues?.[0]);
-        setsendDayOfMonth(sendDayOfMonthPossibleValues?.find(o => o.key === schedule?.sendDayOfMonth) || sendDayOfMonthPossibleValues?.[0]);
+        setSendDayOfWeek(
+            sendDayOfWeekPossibleValues?.find(o => o.key === schedule?.sendDayOfWeek) ||
+                sendDayOfWeekPossibleValues?.[0],
+        );
+        setsendDayOfMonth(
+            sendDayOfMonthPossibleValues?.find(o => o.key === schedule?.sendDayOfMonth) ||
+                sendDayOfMonthPossibleValues?.[0],
+        );
         setStartDate(schedule?.startDate ? new Date(schedule.startDate.toString().split("T")[0]) : new Date());
         setEndDate(schedule?.endDate ? new Date(schedule.endDate.toString().split("T")[0]) : undefined);
         setHasEndDate(!!schedule?.endDate);
@@ -349,126 +428,160 @@ const ScheduleReminderModal: React.FC<Props> = ({
         resetFields();
     }, [wishList.schedule]);
 
-    const headline = <StyledWrapper {...styles.headlineWraper}>
-        <Typography {...styles.titleText}>{cancelingReminder ? "Stop Email Reminder" : "Schedule Email Reminder"}</Typography>
-        {!cancelingReminder
-            && <Typography {...styles.hintText}>{siteMessage(schedule ? "Lists_Schedule_Edit_Or_Cancel" : "Lists_Send_Reminders")}</Typography>
-        }
-    </StyledWrapper>;
+    const headline = (
+        <StyledWrapper {...styles.headlineWraper}>
+            <Typography {...styles.titleText}>
+                {cancelingReminder ? "Stop Email Reminder" : "Schedule Email Reminder"}
+            </Typography>
+            {!cancelingReminder && (
+                <Typography {...styles.hintText}>
+                    {siteMessage(schedule ? "Lists_Schedule_Edit_Or_Cancel" : "Lists_Send_Reminders")}
+                </Typography>
+            )}
+        </StyledWrapper>
+    );
 
-    const options = repeatPeriod === "Weekly"
-        ? sendDayOfWeekPossibleValues?.map((pv: { key: string; value: string; }) => <option key={pv.key}>{pv.value}</option>)
-        : sendDayOfMonthPossibleValues?.map((pv: { key: number; value: string; }) => <option key={pv.key}>{pv.value}</option>);
+    const options =
+        repeatPeriod === "Weekly"
+            ? sendDayOfWeekPossibleValues?.map((pv: { key: string; value: string }) => (
+                  <option key={pv.key}>{pv.value}</option>
+              ))
+            : sendDayOfMonthPossibleValues?.map((pv: { key: number; value: string }) => (
+                  <option key={pv.key}>{pv.value}</option>
+              ));
 
-    return <Modal
-        {...styles.modal}
-        headline={headline}
-        isOpen={isOpen}
-        handleClose={handleClose}
-        onAfterClose={afterCloseHandler}
-    >
-        {cancelingReminder
-            ? <GridContainer {...styles.contentContainer}>
-                <GridItem {...styles.cancelConfirmationGridItem}>
-                    <Typography {...styles.cancelConfirmationText}>{siteMessage("Lists_Schedule_Cancel_Confirmation")}</Typography>
-                </GridItem>
-                <GridItem {...styles.cancelButtonsGridItem}>
-                    <Button {...styles.dismissCancelButton} onClick={dismissCancelClickHandler}>{translate("Cancel")}</Button>
-                    <Button {...styles.confirmCancelButton} onClick={confirmCancelClickHandler} disabled={inProgress}>{translate("Confirm")}</Button>
-                </GridItem>
-            </GridContainer>
-            : <GridContainer {...styles.contentContainer}>
-                <GridItem {...styles.topRowGridItem}>
-                    <RadioGroup
-                        {...styles.frequencyRadioGroup}
-                        label={translate("Frequency")}
-                        value={repeatPeriod}
-                        onChangeHandler={repeatPeriodChangeHandler}
-                    >
-                        <Radio {...styles.weeklyRadio} value="Weekly">{translate("Weekly")}</Radio>
-                        <Radio {...styles.monthlyRadio} value="Monthly">{translate("Monthly")}</Radio>
-                    </RadioGroup>
-                </GridItem>
-                <GridItem {...styles.middleRowGridItem}>
-                    <GridContainer {...styles.middleRowContainer}>
-                        <GridItem {...styles.middleRowLeftColumnGridItem}>
-                            <GridContainer {...styles.leftColumnContainer}>
-                                <GridItem {...styles.intervalGridItem}>
-                                    <TextField
-                                        {...styles.intervalTextField}
-                                        label={translate("Interval")}
-                                        type="number"
-                                        min="1"
-                                        value={repeatInterval}
-                                        onChange={repeatIntervalChangeHandler}
-                                        onBlur={repeatIntervalBlurHandler}
-                                    />
-                                </GridItem>
-                                <GridItem {...styles.dayGridItem}>
-                                    <Select
-                                        {...styles.daySelect}
-                                        label={translate("Day")}
-                                        value={(repeatPeriod === "Weekly" ? sendDayOfWeek : sendDayOfMonth)?.key}
-                                        onChange={sendDayChangeHandler}
-                                    >
-                                        {options}
-                                    </Select>
-                                </GridItem>
-                                <GridItem {...styles.startDateGridItem}>
-                                    <DatePicker
-                                        {...styles.startDatePicker}
-                                        label={translate("Start Date")}
-                                        selectedDay={startDate}
-                                        onDayChange={startDateChangeHandler}
-                                    />
-                                </GridItem>
-                                <GridItem {...styles.endDateGridItem}>
-                                    <DatePicker
-                                        {...styles.endDatePicker}
-                                        label={translate("End Date")}
-                                        selectedDay={endDate}
-                                        dateTimePickerProps={{ minDate: startDate }}
-                                        onDayChange={endDateChangeHandler}
-                                    />
-                                    <Checkbox
-                                        {...styles.hasEndDateCheckbox}
-                                        checked={!hasEndDate}
-                                        onChange={hasEndDateChangeHandler}
-                                    >
-                                        {translate("No end date")}
-                                    </Checkbox>
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                        <GridItem {...styles.middleRowRightColumnGridItem}>
-                            <TextArea
-                                {...styles.messageTextArea}
-                                label={translate("Message / Notes")}
-                                value={message}
-                                onChange={messageChangeHandler}
-                                hint={`${300 - message.length} ${translate("characters left")}`}
-                            />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                <GridItem {...styles.bottomRowGridItem}>
-                    <GridContainer {...styles.buttonsContainer}>
-                        {schedule
-                            && <GridItem {...styles.stopButtonGridItem}>
-                                <Button {...styles.stopButton} onClick={stopClickHandler}>{translate("Stop Reminder")}</Button>
+    return (
+        <Modal
+            {...styles.modal}
+            headline={headline}
+            isOpen={isOpen}
+            handleClose={handleClose}
+            onAfterClose={afterCloseHandler}
+        >
+            {cancelingReminder ? (
+                <GridContainer {...styles.contentContainer}>
+                    <GridItem {...styles.cancelConfirmationGridItem}>
+                        <Typography {...styles.cancelConfirmationText}>
+                            {siteMessage("Lists_Schedule_Cancel_Confirmation")}
+                        </Typography>
+                    </GridItem>
+                    <GridItem {...styles.cancelButtonsGridItem}>
+                        <Button {...styles.dismissCancelButton} onClick={dismissCancelClickHandler}>
+                            {translate("Cancel")}
+                        </Button>
+                        <Button
+                            {...styles.confirmCancelButton}
+                            onClick={confirmCancelClickHandler}
+                            disabled={inProgress}
+                        >
+                            {translate("Confirm")}
+                        </Button>
+                    </GridItem>
+                </GridContainer>
+            ) : (
+                <GridContainer {...styles.contentContainer}>
+                    <GridItem {...styles.topRowGridItem}>
+                        <RadioGroup
+                            {...styles.frequencyRadioGroup}
+                            label={translate("Frequency")}
+                            value={repeatPeriod}
+                            onChangeHandler={repeatPeriodChangeHandler}
+                        >
+                            <Radio {...styles.weeklyRadio} value="Weekly">
+                                {translate("Weekly")}
+                            </Radio>
+                            <Radio {...styles.monthlyRadio} value="Monthly">
+                                {translate("Monthly")}
+                            </Radio>
+                        </RadioGroup>
+                    </GridItem>
+                    <GridItem {...styles.middleRowGridItem}>
+                        <GridContainer {...styles.middleRowContainer}>
+                            <GridItem {...styles.middleRowLeftColumnGridItem}>
+                                <GridContainer {...styles.leftColumnContainer}>
+                                    <GridItem {...styles.intervalGridItem}>
+                                        <TextField
+                                            {...styles.intervalTextField}
+                                            label={translate("Interval")}
+                                            type="number"
+                                            min="1"
+                                            value={repeatInterval}
+                                            onChange={repeatIntervalChangeHandler}
+                                            onBlur={repeatIntervalBlurHandler}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.dayGridItem}>
+                                        <Select
+                                            {...styles.daySelect}
+                                            label={translate("Day")}
+                                            value={(repeatPeriod === "Weekly" ? sendDayOfWeek : sendDayOfMonth)?.key}
+                                            onChange={sendDayChangeHandler}
+                                        >
+                                            {options}
+                                        </Select>
+                                    </GridItem>
+                                    <GridItem {...styles.startDateGridItem}>
+                                        <DatePicker
+                                            {...styles.startDatePicker}
+                                            label={translate("Start Date")}
+                                            selectedDay={startDate}
+                                            onDayChange={startDateChangeHandler}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.endDateGridItem}>
+                                        <DatePicker
+                                            {...styles.endDatePicker}
+                                            label={translate("End Date")}
+                                            selectedDay={endDate}
+                                            dateTimePickerProps={{ minDate: startDate }}
+                                            onDayChange={endDateChangeHandler}
+                                        />
+                                        <Checkbox
+                                            {...styles.hasEndDateCheckbox}
+                                            checked={!hasEndDate}
+                                            onChange={hasEndDateChangeHandler}
+                                        >
+                                            {translate("No end date")}
+                                        </Checkbox>
+                                    </GridItem>
+                                </GridContainer>
                             </GridItem>
-                        }
-                        <GridItem {...styles.cancelButtonGridItem}>
-                            <Button {...styles.cancelButton} onClick={handleClose}>{translate("Cancel")}</Button>
-                        </GridItem>
-                        <GridItem {...styles.scheduleButtonGridItem}>
-                            <Button {...styles.scheduleButton} onClick={scheduleClickHandler} disabled={inProgress}>{translate("Schedule")}</Button>
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        }
-    </Modal>;
+                            <GridItem {...styles.middleRowRightColumnGridItem}>
+                                <TextArea
+                                    {...styles.messageTextArea}
+                                    label={translate("Message / Notes")}
+                                    value={message}
+                                    onChange={messageChangeHandler}
+                                    hint={`${300 - message.length} ${translate("characters left")}`}
+                                />
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                    <GridItem {...styles.bottomRowGridItem}>
+                        <GridContainer {...styles.buttonsContainer}>
+                            {schedule && (
+                                <GridItem {...styles.stopButtonGridItem}>
+                                    <Button {...styles.stopButton} onClick={stopClickHandler}>
+                                        {translate("Stop Reminder")}
+                                    </Button>
+                                </GridItem>
+                            )}
+                            <GridItem {...styles.cancelButtonGridItem}>
+                                <Button {...styles.cancelButton} onClick={handleClose}>
+                                    {translate("Cancel")}
+                                </Button>
+                            </GridItem>
+                            <GridItem {...styles.scheduleButtonGridItem}>
+                                <Button {...styles.scheduleButton} onClick={scheduleClickHandler} disabled={inProgress}>
+                                    {translate("Schedule")}
+                                </Button>
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                </GridContainer>
+            )}
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ScheduleReminderModal);

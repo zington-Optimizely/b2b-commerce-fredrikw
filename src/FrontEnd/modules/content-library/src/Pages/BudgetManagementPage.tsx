@@ -23,18 +23,17 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: ApplicationState) => {
     const billToState = getCurrentBillToState(state);
-    return ({
+    return {
         shouldLoadBudgetCalendars: !getBudgetCalendarsDataView(state).value,
         shouldLoadShipTos: !getCurrentShipTosDataView(state).value,
         shouldLoadAccounts: !getAccountsDataView(state).value,
         shouldLoadBillTo: !billToState.value || !billToState.value.costCodes,
-    });
+    };
 };
 
 type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<typeof mapStateToProps>;
 
 class BudgetManagementPage extends React.Component<Props> {
-
     componentDidMount(): void {
         if (this.props.shouldLoadAccounts) {
             this.props.loadAccounts();
@@ -51,9 +50,11 @@ class BudgetManagementPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <Zone contentId={this.props.id} zoneName="Content" />
-        </Page>;
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+            </Page>
+        );
     }
 }
 

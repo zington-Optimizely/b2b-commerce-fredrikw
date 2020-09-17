@@ -1,5 +1,7 @@
+import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
@@ -12,13 +14,17 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import ManageShareListModal from "@insite/content-library/Components/ManageShareListModal";
 import ShareListModal from "@insite/content-library/Components/ShareListModal";
 import Page from "@insite/mobius/Page";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import getColor from "@insite/mobius/utilities/getColor";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
-    const parsedQuery = parseQueryString<{ id?: string, invite?: string }>(location.search);
+    const parsedQuery = parseQueryString<{ id?: string; invite?: string }>(location.search);
     const id = parsedQuery.id;
     return {
         invite: parsedQuery.invite,
@@ -36,7 +42,37 @@ const mapDispatchToProps = {
 
 type Props = ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps> & PageProps & HasHistory;
 
-class MyListsDetailsPage extends React.Component<Props> {
+interface State {
+    inviteIsNotAvailable: boolean;
+}
+
+export interface MyListsDetailsPageStyles {
+    inviteIsNotAvailableWrapper?: InjectableCss;
+    inviteIsNotAvailableText?: TypographyPresentationProps;
+}
+
+export const myListsDetailsPageStyles: MyListsDetailsPageStyles = {
+    inviteIsNotAvailableWrapper: {
+        css: css`
+            display: flex;
+            height: 200px;
+            justify-content: center;
+            align-items: center;
+            background-color: ${getColor("common.accent")};
+        `,
+    },
+    inviteIsNotAvailableText: { weight: "bold" },
+};
+
+class MyListsDetailsPage extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            inviteIsNotAvailable: false,
+        };
+    }
+
     componentDidMount(): void {
         if (this.props.wishListId) {
             this.props.setAllWishListLinesIsSelected({ isSelected: false });
@@ -46,8 +82,11 @@ class MyListsDetailsPage extends React.Component<Props> {
         if (this.props.invite) {
             this.props.activateInvite({
                 invite: this.props.invite,
-                onSuccess: (wishList) => {
+                onSuccess: wishList => {
                     this.props.history.replace(`${this.props.location.pathname}?id=${wishList.id}`);
+                },
+                onError: () => {
+                    this.setState({ inviteIsNotAvailable: true });
                 },
             });
         }
@@ -60,12 +99,23 @@ class MyListsDetailsPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <Zone contentId={this.props.id} zoneName="Content" />
-            <AddToListModal />
-            <ShareListModal />
-            <ManageShareListModal />
-        </Page>;
+        const styles = myListsDetailsPageStyles;
+        return (
+            <Page>
+                {this.state.inviteIsNotAvailable ? (
+                    <StyledWrapper {...styles.inviteIsNotAvailableWrapper}>
+                        <Typography {...styles.inviteIsNotAvailableText}>
+                            {siteMessage("Lists_InviteIsNotAvailable")}
+                        </Typography>
+                    </StyledWrapper>
+                ) : (
+                    <Zone contentId={this.props.id} zoneName="Content" />
+                )}
+                <AddToListModal />
+                <ShareListModal />
+                <ManageShareListModal />
+            </Page>
+        );
     }
 }
 

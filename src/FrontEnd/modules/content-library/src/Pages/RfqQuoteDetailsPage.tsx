@@ -28,13 +28,7 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RfqQuoteDetailsPage: FC<Props> = ({
-    id,
-    quoteId,
-    quoteState,
-    loadQuoteIfNeeded,
-    setExpirationDate,
-}) => {
+const RfqQuoteDetailsPage: FC<Props> = ({ id, quoteId, quoteState, loadQuoteIfNeeded, setExpirationDate }) => {
     useEffect(() => {
         if (quoteId && !quoteState.isLoading) {
             loadQuoteIfNeeded({ quoteId });

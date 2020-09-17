@@ -42,29 +42,31 @@ const typographyStyleStringGenerator = ({
     ${_color ? `color: ${resolveColor(_color, theme)};` : ""}
     ${color ? `color: ${resolveColor(color, theme)};` : ""}
     ${italic ? "font-style: italic;" : ""}
-    ${(lineHeight !== undefined) ? `line-height: ${lineHeight};` : ""}
-    ${(_size !== undefined) ? `font-size: ${(typeof _size === "string") ? _size : `${_size}px`};` : ""}
-    ${(size !== undefined) ? `font-size: ${(typeof size === "string") ? size : `${size}px`};` : ""}
+    ${lineHeight !== undefined ? `line-height: ${lineHeight};` : ""}
+    ${_size !== undefined ? `font-size: ${typeof _size === "string" ? _size : `${_size}px`};` : ""}
+    ${size !== undefined ? `font-size: ${typeof size === "string" ? size : `${size}px`};` : ""}
     ${transform ? `text-transform: ${transform};` : ""}
     ${underline ? "text-decoration: underline;" : ""}
-    ${(weight !== undefined) ? `font-weight: ${weight};` : ""}
-    ${(fontFamily !== undefined) ? `font-family: ${fontFamily};` : ""}
+    ${weight !== undefined ? `font-weight: ${weight};` : ""}
+    ${fontFamily !== undefined ? `font-family: ${fontFamily};` : ""}
     ${hydrateCssTaggedTemplate(variantCss, theme) || ""}
     ${otherProps.css ? hydrateCssTaggedTemplate(otherProps.css, theme) : ""}
 `;
 
 export const themeTypographyStyleString = ({ theme }: ThemeProps<BaseTheme>) => {
     const variants = Object.keys(theme.typography) as (keyof BaseTheme["typography"])[];
-    return variants.map((v) => {
-        if (v === "fontFamilyImportUrl") {
-            return "";
-        }
-        return `
+    return variants
+        .map(v => {
+            if (v === "fontFamilyImportUrl") {
+                return "";
+            }
+            return `
             ${v} {
                 ${typographyStyleStringGenerator({ theme, ...theme.typography[v] })}
             }
         `;
-    }).join(" ");
+        })
+        .join(" ");
 };
 
 /**
@@ -86,19 +88,21 @@ const TypographyStyle = styled.span.attrs<any, { as: any }>((props: any) => ({
      * UH OH! Is this extremely repetitive code that should be refactored?
      * Nope! we need tagged template literals to be in full force here for variantCss and css to work as expected.
     */
-    ${({ _color, theme }: TypographyComponentProps) => _color ? `color: ${resolveColor(_color, theme)};` : ""}
+    ${({ _color, theme }: TypographyComponentProps) => (_color ? `color: ${resolveColor(_color, theme)};` : "")}
 
-    ${({ color, theme }: TypographyComponentProps) => color ? `color: ${resolveColor(color, theme)};` : ""}
-    ${({ italic }: TypographyComponentProps) => italic ? "font-style: italic;" : ""}
-    ${({ lineHeight }: TypographyComponentProps) => (lineHeight !== undefined) ? `line-height: ${lineHeight};` : ""}
-    ${({ _size }: TypographyComponentProps) => (_size !== undefined) ? `font-size: ${(typeof _size === "string") ? _size : `${_size}px`};` : ""}
-    ${({ size }: TypographyComponentProps) => (size !== undefined) ? `font-size: ${(typeof size === "string") ? size : `${size}px`};` : ""}
-    ${({ transform }: TypographyComponentProps) => transform ? `text-transform: ${transform};` : ""}
-    ${({ underline }: TypographyComponentProps) => underline ? "text-decoration: underline;" : ""}
-    ${({ weight }: TypographyComponentProps) => (weight !== undefined) ? `font-weight: ${weight};` : ""}
-    ${({ fontFamily }: TypographyComponentProps) => (fontFamily !== undefined) ? `font-family: ${fontFamily};` : ""}
+    ${({ color, theme }: TypographyComponentProps) => (color ? `color: ${resolveColor(color, theme)};` : "")}
+    ${({ italic }: TypographyComponentProps) => (italic ? "font-style: italic;" : "")}
+    ${({ lineHeight }: TypographyComponentProps) => (lineHeight !== undefined ? `line-height: ${lineHeight};` : "")}
+    ${({ _size }: TypographyComponentProps) =>
+        _size !== undefined ? `font-size: ${typeof _size === "string" ? _size : `${_size}px`};` : ""}
+    ${({ size }: TypographyComponentProps) =>
+        size !== undefined ? `font-size: ${typeof size === "string" ? size : `${size}px`};` : ""}
+    ${({ transform }: TypographyComponentProps) => (transform ? `text-transform: ${transform};` : "")}
+    ${({ underline }: TypographyComponentProps) => (underline ? "text-decoration: underline;" : "")}
+    ${({ weight }: TypographyComponentProps) => (weight !== undefined ? `font-weight: ${weight};` : "")}
+    ${({ fontFamily }: TypographyComponentProps) => (fontFamily !== undefined ? `font-family: ${fontFamily};` : "")}
     ${({ variantCss }: any) => variantCss || ""}
-    ${({ css }: any) => css ? css : ""}
+    ${({ css }: any) => (css ? css : "")}
 `;
 /* eslint-enable no-unneeded-ternary */
 

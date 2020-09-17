@@ -14,7 +14,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     isUpdatingCart: state.pages.checkoutShipping.isUpdatingCart,
 });
 
-interface OwnProps extends WidgetProps { }
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
@@ -22,6 +22,7 @@ export interface CheckoutShippingPageContainerStyles {
     loadingOverlay?: LoadingOverlayProps;
     container?: GridContainerProps;
     headerGridItem?: GridItemProps;
+    approverInfoGridItem?: GridItemProps;
     cartTotalGridItemNarrow?: GridItemProps;
     fulfillmentMethodAndAddressesGridItem?: GridItemProps;
     fulfillmentMethodAndAddressesContainer?: GridContainerProps;
@@ -43,6 +44,12 @@ export const containerStyles: CheckoutShippingPageContainerStyles = {
         `,
     },
     headerGridItem: { width: 12 },
+    approverInfoGridItem: {
+        width: 12,
+        css: css`
+            padding: 0 15px;
+        `,
+    },
     cartTotalGridItemNarrow: { width: [12, 12, 0, 0, 0] },
     fulfillmentMethodAndAddressesGridItem: { width: [12, 12, 6, 8, 8] },
     fulfillmentMethodAndNotesGridItem: { width: 12 },
@@ -56,10 +63,7 @@ export const containerStyles: CheckoutShippingPageContainerStyles = {
 
 const styles = containerStyles;
 
-const CheckoutShippingPageContainer = ({
-    id,
-    isUpdatingCart,
-}: Props) => {
+const CheckoutShippingPageContainer = ({ id, isUpdatingCart }: Props) => {
     return (
         <LoadingOverlay {...styles.loadingOverlay} loading={isUpdatingCart}>
             <GridContainer {...styles.container}>
@@ -68,6 +72,9 @@ const CheckoutShippingPageContainer = ({
                 </GridItem>
                 <GridItem {...styles.cartTotalGridItemNarrow}>
                     <Zone zoneName="Content3" contentId={id} />
+                </GridItem>
+                <GridItem {...styles.approverInfoGridItem}>
+                    <Zone zoneName="Content5" contentId={id} />
                 </GridItem>
                 <GridItem {...styles.fulfillmentMethodAndAddressesGridItem}>
                     <GridContainer {...styles.fulfillmentMethodAndAddressesContainer}>

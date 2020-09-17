@@ -16,17 +16,26 @@ const reducer = {
         draft.isLoading[action.id] = true;
     },
 
-    "Data/Accounts/CompleteLoadAccount": (draft: Draft<AccountsState>, action: { model: AccountModel, overriddenId?: string }) => {
+    "Data/Accounts/CompleteLoadAccount": (
+        draft: Draft<AccountsState>,
+        action: { model: AccountModel; overriddenId?: string },
+    ) => {
         const id = action.overriddenId || action.model.id;
         delete draft.isLoading[id];
         draft.byId[id] = action.model;
     },
 
-    "Data/Accounts/BeginLoadAccounts": (draft: Draft<AccountsState>, action: { parameter: GetAccountsApiParameter }) => {
+    "Data/Accounts/BeginLoadAccounts": (
+        draft: Draft<AccountsState>,
+        action: { parameter: GetAccountsApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Accounts/CompleteLoadAccounts": (draft: Draft<AccountsState>, action: { parameter: GetAccountsApiParameter, collection: AccountCollectionModel  }) => {
+    "Data/Accounts/CompleteLoadAccounts": (
+        draft: Draft<AccountsState>,
+        action: { parameter: GetAccountsApiParameter; collection: AccountCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.accounts!);
     },
 

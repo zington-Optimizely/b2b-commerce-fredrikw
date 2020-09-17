@@ -46,17 +46,23 @@ export const rfqConfirmationHeaderStyles: RfqConfirmationHeaderStyles = {
         gap: 10,
     },
     viewQuotesButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     continueButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     printButton: {
         buttonType: "outline",
         variant: "secondary",
     },
     buttonGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [2, 2, 2, 6, 6],
     },
     titleGridItem: {
@@ -65,7 +71,11 @@ export const rfqConfirmationHeaderStyles: RfqConfirmationHeaderStyles = {
     title: {
         variant: "h3",
         as: "h1",
-        css: css` @media print { font-size: 11px; } `,
+        css: css`
+            @media print {
+                font-size: 11px;
+            }
+        `,
     },
     buttonsHiddenContainer: {
         below: "lg",
@@ -77,11 +87,7 @@ export const rfqConfirmationHeaderStyles: RfqConfirmationHeaderStyles = {
 
 const styles = rfqConfirmationHeaderStyles;
 
-const RfqConfirmationHeader: FC<Props> = ({
-    quoteState,
-    history,
-    rfqMyQuotesPageUrl,
-}) => {
+const RfqConfirmationHeader: FC<Props> = ({ quoteState, history, rfqMyQuotesPageUrl }) => {
     if (!quoteState.value) {
         return null;
     }
@@ -113,16 +119,28 @@ const RfqConfirmationHeader: FC<Props> = ({
             </GridItem>
             <GridItem {...styles.buttonGridItem}>
                 <Hidden {...styles.menuHiddenContainer}>
-                    <OverflowMenu  {...styles.narrowOverflowMenu}>
-                        <Clickable {...styles.printClickable} onClick={openPrintDialog}>{printLabel}</Clickable>
-                        <Clickable {...styles.viewQuotesClickable} onClick={viewQuotesClickHandler}>{viewQuotesLabel}</Clickable>
-                        <Clickable {...styles.continueClickable} onClick={continueClickHandler}>{continueLabel}</Clickable>
+                    <OverflowMenu {...styles.narrowOverflowMenu}>
+                        <Clickable {...styles.printClickable} onClick={openPrintDialog}>
+                            {printLabel}
+                        </Clickable>
+                        <Clickable {...styles.viewQuotesClickable} onClick={viewQuotesClickHandler}>
+                            {viewQuotesLabel}
+                        </Clickable>
+                        <Clickable {...styles.continueClickable} onClick={continueClickHandler}>
+                            {continueLabel}
+                        </Clickable>
                     </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.buttonsHiddenContainer}>
-                    <Button {...styles.printButton} onClick={openPrintDialog}>{printLabel}</Button>
-                    <Button {...styles.viewQuotesButton} onClick={viewQuotesClickHandler}>{viewQuotesLabel}</Button>
-                    <Button {...styles.continueButton} onClick={continueClickHandler}>{continueLabel}</Button>
+                    <Button {...styles.printButton} onClick={openPrintDialog}>
+                        {printLabel}
+                    </Button>
+                    <Button {...styles.viewQuotesButton} onClick={viewQuotesClickHandler}>
+                        {viewQuotesLabel}
+                    </Button>
+                    <Button {...styles.continueButton} onClick={continueClickHandler}>
+                        {continueLabel}
+                    </Button>
                 </Hidden>
             </GridItem>
         </GridContainer>

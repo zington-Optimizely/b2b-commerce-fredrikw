@@ -6,7 +6,6 @@ import GridContainer from "@insite/mobius/GridContainer";
 import GridItem, { GridWidths } from "@insite/mobius/GridItem";
 import * as React from "react";
 
-
 const enum fields {
     extraLargeColumnCount = "extraLargeColumnCount",
     extraLargeRowCount = "extraLargeRowCount",
@@ -45,12 +44,24 @@ const Grid: React.FC<OwnProps> = ({ fields, id }) => {
             columns.push(
                 <GridItem
                     key={`GridItem-${id}-${column}-${row}`}
-                    width={[extraSmallColumnWidth, smallColumnWidth, mediumColumnWidth, largeColumnWidth, extraLargeColumnWidth]}>
-                    <Zone contentId={id} zoneName={`Content${column}${row}`}/>
-                </GridItem>);
+                    width={[
+                        extraSmallColumnWidth,
+                        smallColumnWidth,
+                        mediumColumnWidth,
+                        largeColumnWidth,
+                        extraLargeColumnWidth,
+                    ]}
+                >
+                    <Zone contentId={id} zoneName={`Content${column}${row}`} />
+                </GridItem>,
+            );
         }
 
-        rows.push(<GridContainer key={row} gap={0}>{columns}</GridContainer>);
+        rows.push(
+            <GridContainer key={row} gap={0}>
+                {columns}
+            </GridContainer>,
+        );
     }
 
     return <>{rows}</>;

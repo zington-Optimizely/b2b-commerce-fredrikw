@@ -18,13 +18,13 @@ export interface LocationModel {
     distance: number;
     hours?: string;
     name: string;
-    address1: string,
-    address2?: string,
-    city: string,
-    state: string,
-    postalCode: string,
+    address1: string;
+    address2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
     phone?: string;
-    htmlContent?: string
+    htmlContent?: string;
 }
 
 export interface GetLocationsApiParameter {
@@ -69,10 +69,15 @@ const useLocationFilterSearch = <M extends LocationModel, P extends GetLocations
 
     // Re-evaluate the Selected Location distance and show details.
     React.useEffect(() => {
-        if(!filter || !selectedLocation) {
+        if (!filter || !selectedLocation) {
             return;
         }
-        const distanceToSelectedLocation = getDistance(filter.latitude, filter.longitude, selectedLocation.latitude, selectedLocation.longitude);
+        const distanceToSelectedLocation = getDistance(
+            filter.latitude,
+            filter.longitude,
+            selectedLocation.latitude,
+            selectedLocation.longitude,
+        );
         const showSelectedLocation = distanceToSelectedLocation < defaultRadius;
         setShowSelectedLocation(showSelectedLocation);
         if (showSelectedLocation && distanceToSelectedLocation !== selectedLocation.distance) {
@@ -103,7 +108,11 @@ const useLocationFilterSearch = <M extends LocationModel, P extends GetLocations
 };
 
 const getDistance = (latitude1: number, longitude1: number, latitude2: number, longitude2: number) => {
-    let distance = Math.cos(getRadians(latitude1)) * Math.cos(getRadians(latitude2)) * Math.cos(getRadians(longitude2) - getRadians(longitude1)) + Math.sin(getRadians(latitude1)) * Math.sin(getRadians(latitude2));
+    let distance =
+        Math.cos(getRadians(latitude1)) *
+            Math.cos(getRadians(latitude2)) *
+            Math.cos(getRadians(longitude2) - getRadians(longitude1)) +
+        Math.sin(getRadians(latitude1)) * Math.sin(getRadians(latitude2));
     if (distance > 1) {
         distance = 1;
     }

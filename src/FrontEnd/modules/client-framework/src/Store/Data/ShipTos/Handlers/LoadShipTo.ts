@@ -1,11 +1,16 @@
 import {
     ApiHandlerDiscreteParameter,
-    createHandlerChainRunner, HasOnSuccess,
+    createHandlerChainRunner,
+    HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { getShipTo, GetShipToApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ shipToId: string, billToId: string } & HasOnSuccess, GetShipToApiParameter, ShipToModel>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    { shipToId: string; billToId: string } & HasOnSuccess,
+    GetShipToApiParameter,
+    ShipToModel
+>;
 
 export const DispatchBeginLoadOrder: HandlerType = props => {
     props.dispatch({

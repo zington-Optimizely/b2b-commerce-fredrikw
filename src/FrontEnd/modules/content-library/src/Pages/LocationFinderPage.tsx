@@ -5,13 +5,14 @@ import Page from "@insite/mobius/Page";
 import * as React from "react";
 
 class LocationFinderPage extends React.Component<PageProps> {
-    UNSAFE_componentWillMount() {
-    }
+    UNSAFE_componentWillMount() {}
 
     render() {
-        return <Page>
-            <Zone contentId={this.props.id} zoneName="Content" />
-        </Page>;
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+            </Page>
+        );
     }
 }
 

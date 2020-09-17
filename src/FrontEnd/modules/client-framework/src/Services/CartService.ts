@@ -6,7 +6,8 @@ import {
     doesNotHaveExpand,
     get,
     patch,
-    post, ServiceResult,
+    post,
+    ServiceResult,
 } from "@insite/client-framework/Services/ApiService";
 import {
     BillToModel,
@@ -22,7 +23,18 @@ export interface GetCartApiParameter extends ApiParameter {
     cartId: string;
     forceRecalculation?: boolean;
     allowInvalidAddress?: boolean;
-    expand?: ("tax" | "shipping" | "creditCardBillingAddress" | "paymentOptions" | "carriers" | "shipTos" | "validation" | "cartLines" | "alsoPurchased" | "restrictions")[];
+    expand?: (
+        | "tax"
+        | "shipping"
+        | "creditCardBillingAddress"
+        | "paymentOptions"
+        | "carriers"
+        | "shipTos"
+        | "validation"
+        | "cartLines"
+        | "alsoPurchased"
+        | "restrictions"
+    )[];
     additionalExpands?: string[];
     alsoPurchasedMaxResults?: number;
 }
@@ -72,13 +84,13 @@ export interface AddCartPromotionApiParameter extends ApiParameter {
 
 const cartsUrl = "api/v1/carts";
 
-export type Cart = Omit<CartModel, "billTo"|"shipTo"> & {
+export type Cart = Omit<CartModel, "billTo" | "shipTo"> & {
     billToId?: string;
     shipToId?: string;
 };
 
 export type CartResult = {
-    cart: Cart,
+    cart: Cart;
     billTo?: BillToModel;
     shipTo?: ShipToModel;
 };
@@ -96,8 +108,8 @@ export async function updateCart(parameter: UpdateCartApiParameter) {
     const { billToId, shipToId } = cart;
     const patchModel: CartModel = {
         ...cart,
-        billTo: billToId ? { id: billToId } as BillToModel : null,
-        shipTo: shipToId ? { id: shipToId } as ShipToModel : null,
+        billTo: billToId ? ({ id: billToId } as BillToModel) : null,
+        shipTo: shipToId ? ({ id: shipToId } as ShipToModel) : null,
     };
 
     const cartModel = await patch<CartModel>(`${cartsUrl}/${patchModel.id}`, patchModel);
@@ -110,8 +122,8 @@ export async function updateCartWithResult(parameter: UpdateCartApiParameter): P
     const { billToId, shipToId } = cart;
     const patchModel: CartModel = {
         ...cart,
-        billTo: billToId ? { id: billToId } as BillToModel : null,
-        shipTo: shipToId ? { id: shipToId } as ShipToModel : null,
+        billTo: billToId ? ({ id: billToId } as BillToModel) : null,
+        shipTo: shipToId ? ({ id: shipToId } as ShipToModel) : null,
     };
     try {
         const cartModel = await patch<CartModel>(`${cartsUrl}/${patchModel.id}`, patchModel);
@@ -131,10 +143,12 @@ export async function updateCartWithResult(parameter: UpdateCartApiParameter): P
     }
 }
 
-function cleanCart(cartModel: CartModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
+function cleanCart(cartModel: CartModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     cartModel.orderDate = cartModel.orderDate! && new Date(cartModel.orderDate!);
-    cartModel.requestedPickupDateDisplay = cartModel.requestedPickupDateDisplay! && new Date(cartModel.requestedPickupDateDisplay!);
-    cartModel.requestedDeliveryDateDisplay = cartModel.requestedDeliveryDateDisplay! && new Date(cartModel.requestedDeliveryDateDisplay!);
+    cartModel.requestedPickupDateDisplay =
+        cartModel.requestedPickupDateDisplay! && new Date(cartModel.requestedPickupDateDisplay!);
+    cartModel.requestedDeliveryDateDisplay =
+        cartModel.requestedDeliveryDateDisplay! && new Date(cartModel.requestedDeliveryDateDisplay!);
 
     if (doesNotHaveExpand(parameter, "cartLines")) {
         delete cartModel.cartLines;
@@ -197,7 +211,10 @@ export async function addProductWithResult(parameter: AddProductApiParameter): P
     };
 
     try {
-        const cartLineModel = await post<AddProductApiParameter, CartLineModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
+        const cartLineModel = await post<AddProductApiParameter, CartLineModel>(
+            `${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`,
+            cartLine,
+        );
         return {
             successful: true,
             result: cartLineModel,
@@ -215,7 +232,10 @@ export async function addProductWithResult(parameter: AddProductApiParameter): P
 
 export function addWishListToCart(parameter: AddWishListToCartApiParameter) {
     const { wishListId, ...data } = { ...parameter };
-    return post<CartLineCollectionModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines/wishlist/${wishListId}`, data as any);
+    return post<CartLineCollectionModel>(
+        `${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines/wishlist/${wishListId}`,
+        data as any,
+    );
 }
 
 export function clearCart(parameter: ClearCartApiParameter) {
@@ -230,9 +250,13 @@ export function removeCartLine(parameter: RemoveCartLineApiParameter) {
     return del(`${cartsUrl}/${parameter.cartId}/cartlines/${parameter.cartLineId}`);
 }
 
-export async function addCartPromotion(parameter: AddCartPromotionApiParameter): Promise<ServiceResult<PromotionModel>> {
+export async function addCartPromotion(
+    parameter: AddCartPromotionApiParameter,
+): Promise<ServiceResult<PromotionModel>> {
     try {
-        const promotionModel = await post<PromotionModel>(`${cartsUrl}/${parameter.cartId}/promotions`, { promotionCode: parameter.promotionCode } as PromotionModel);
+        const promotionModel = await post<PromotionModel>(`${cartsUrl}/${parameter.cartId}/promotions`, {
+            promotionCode: parameter.promotionCode,
+        } as PromotionModel);
         return {
             successful: true,
             result: promotionModel,

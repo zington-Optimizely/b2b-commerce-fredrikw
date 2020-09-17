@@ -1,5 +1,13 @@
-import { createHandlerChainRunnerOptionalParameter, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { CategoryCollection, getCategories, GetCategoriesApiParameter } from "@insite/client-framework/Services/CategoryService";
+import {
+    createHandlerChainRunnerOptionalParameter,
+    Handler,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    CategoryCollection,
+    getCategories,
+    GetCategoriesApiParameter,
+} from "@insite/client-framework/Services/CategoryService";
 
 type Parameter = GetCategoriesApiParameter & HasOnSuccess<CategoryCollection>;
 

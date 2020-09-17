@@ -11,7 +11,7 @@ export function withCategory<P extends HasCategoryContext>(Component: React.Comp
     return function CategoryComponent(props: Omit<P, keyof HasCategoryContext>) {
         return (
             <CategoryContext.Consumer>
-                {(value) => <Component {...props as P} category={value} />}
+                {value => <Component {...(props as P)} category={value} />}
             </CategoryContext.Consumer>
         );
     };

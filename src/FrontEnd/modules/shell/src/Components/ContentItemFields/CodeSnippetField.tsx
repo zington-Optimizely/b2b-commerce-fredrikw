@@ -7,7 +7,6 @@ import * as React from "react";
 type Props = ContentItemFieldProps<string, CodeSnippetFieldDefinition>;
 
 export default class CodeSnippetField extends React.Component<Props> {
-
     onChange = (model: string) => {
         this.props.updateField(this.props.fieldDefinition.name, model);
     };
@@ -21,7 +20,11 @@ export default class CodeSnippetField extends React.Component<Props> {
                     extendedConfig={{
                         paragraphMultipleStyles: false,
                         pastePlain: true,
-                        codeViewKeepActiveButtons: [`popin${this.props.fieldDefinition.name}`, `popout${this.props.fieldDefinition.name}`, "html"],
+                        codeViewKeepActiveButtons: [
+                            `popin${this.props.fieldDefinition.name}`,
+                            `popout${this.props.fieldDefinition.name}`,
+                            "html",
+                        ],
                         codeMirrorOptions: {
                             lineNumbers: false,
                         },

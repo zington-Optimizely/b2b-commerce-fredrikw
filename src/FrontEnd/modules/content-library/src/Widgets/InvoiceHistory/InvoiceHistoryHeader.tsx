@@ -32,7 +32,12 @@ export interface InvoiceHistoryHeaderStyles {
 }
 
 export const headerStyles: InvoiceHistoryHeaderStyles = {
-    container: { gap: 8, css: css` padding-bottom: 10px; ` },
+    container: {
+        gap: 8,
+        css: css`
+            padding-bottom: 10px;
+        `,
+    },
     heading: { variant: "h2", as: "h1" },
     invoiceCountGridItem: {
         width: 11,
@@ -49,22 +54,25 @@ const styles = headerStyles;
 
 const InvoiceHistoryHeader = (props: Props) => {
     const invoicesDataView = useContext(InvoicesDataViewContext);
-    const invoicesCount = invoicesDataView.value && invoicesDataView.pagination ? invoicesDataView.pagination.totalItemCount : 0;
+    const invoicesCount =
+        invoicesDataView.value && invoicesDataView.pagination ? invoicesDataView.pagination.totalItemCount : 0;
 
-    return <>
-        <Typography {...styles.heading}>{translate("Invoice History")}</Typography>
-        <Zone contentId={props.id} zoneName="Content00"/>
-        <GridContainer {...styles.container}>
-            <GridItem {...styles.invoiceCountGridItem}>
-                {invoicesCount} {translate("Invoices")}
-            </GridItem>
-            <GridItem {...styles.toggleFilterGridItem}>
-                <Clickable onClick={props.toggleFiltersOpen} data-test-selector="invoiceHistory_toggleFilter">
-                    <Icon src={Filter} {...styles.toggleFilterIcon} />
-                </Clickable>
-            </GridItem>
-        </GridContainer>
-    </>;
+    return (
+        <>
+            <Typography {...styles.heading}>{translate("Invoice History")}</Typography>
+            <Zone contentId={props.id} zoneName="Content00" />
+            <GridContainer {...styles.container}>
+                <GridItem {...styles.invoiceCountGridItem}>
+                    {invoicesCount} {translate("Invoices")}
+                </GridItem>
+                <GridItem {...styles.toggleFilterGridItem}>
+                    <Clickable onClick={props.toggleFiltersOpen} data-test-selector="invoiceHistory_toggleFilter">
+                        <Icon src={Filter} {...styles.toggleFilterIcon} />
+                    </Clickable>
+                </GridItem>
+            </GridContainer>
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

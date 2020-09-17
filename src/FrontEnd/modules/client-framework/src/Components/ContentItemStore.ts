@@ -35,7 +35,10 @@ function loadWidgets(foundItems: RequireContext) {
 }
 
 function loadItems<T extends FoundModule<PageModule | WidgetModule>>(
-    foundItems: RequireContext, itemType: string, action: (component: T, type: string) => void) {
+    foundItems: RequireContext,
+    itemType: string,
+    action: (component: T, type: string) => void,
+) {
     for (const foundItemKey of foundItems.keys()) {
         const type = foundItemKey.replace("./", "").replace(".tsx", "");
         const component = foundItems<T>(foundItemKey);
@@ -45,12 +48,16 @@ function loadItems<T extends FoundModule<PageModule | WidgetModule>>(
         }
 
         if (!component.default.component && component.default.definition) {
-            logger.error(`The ${itemType} at '${foundItemKey}' did not properly export a ${itemType}Module. It is missing a component property.`);
+            logger.error(
+                `The ${itemType} at '${foundItemKey}' did not properly export a ${itemType}Module. It is missing a component property.`,
+            );
             continue;
         }
 
         if (component.default.component && !component.default.definition) {
-            logger.error(`The ${itemType} at '${foundItemKey}' did not properly export a ${itemType}Module. It is missing a definition property.`);
+            logger.error(
+                `The ${itemType} at '${foundItemKey}' did not properly export a ${itemType}Module. It is missing a definition property.`,
+            );
             continue;
         }
 
@@ -121,8 +128,12 @@ const pages = require.context("../../../content-library/src/Pages", true, /\.tsx
 const onHotPageReplace = addPagesFromContext(pages);
 
 if (module.hot) {
-    module.hot.accept(widgets.id, () => onHotWidgetReplace(require.context("../../../content-library/src/Widgets", true, /\.tsx$/)));
-    module.hot.accept(pages.id, () => onHotPageReplace(require.context("../../../content-library/src/Pages", true, /\.tsx$/)));
+    module.hot.accept(widgets.id, () =>
+        onHotWidgetReplace(require.context("../../../content-library/src/Widgets", true, /\.tsx$/)),
+    );
+    module.hot.accept(pages.id, () =>
+        onHotPageReplace(require.context("../../../content-library/src/Pages", true, /\.tsx$/)),
+    );
 }
 
 export function createPageElement(type: string, props: HasFields) {

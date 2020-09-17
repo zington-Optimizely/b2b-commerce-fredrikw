@@ -4,10 +4,14 @@ import { createHandlerChainRunnerOptionalParameter, HandlerWithResult } from "@i
 import { getBrandAlphabet } from "@insite/client-framework/Services/BrandService";
 import { BrandAlphabetLetterModel, BrandAlphabetModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = HandlerWithResult<{}, {
-    apiResult: BrandAlphabetModel,
-    brandAlphabetLetters?: BrandAlphabetLetterModel[],
-}, {}>;
+type HandlerType = HandlerWithResult<
+    {},
+    {
+        apiResult: BrandAlphabetModel;
+        brandAlphabetLetters?: BrandAlphabetLetterModel[];
+    },
+    {}
+>;
 
 export const DispatchBeginLoadBrandAlphabet: HandlerType = props => {
     props.dispatch({

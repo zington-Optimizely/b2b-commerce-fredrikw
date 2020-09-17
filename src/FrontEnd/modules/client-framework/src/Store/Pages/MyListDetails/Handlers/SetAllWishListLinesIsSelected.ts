@@ -15,9 +15,7 @@ export const DispatchSetAllWishListLinesIsSelected: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetAllWishListLinesIsSelected,
-];
+export const chain = [DispatchSetAllWishListLinesIsSelected];
 
 const setAllWishListLinesIsSelected = createHandlerChainRunner(chain, "SetAllWishListLinesIsSelected");
 export default setAllWishListLinesIsSelected;

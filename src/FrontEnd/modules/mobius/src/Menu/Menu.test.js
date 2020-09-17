@@ -1,11 +1,11 @@
-import { mount } from 'enzyme';
-import 'jest-styled-components';
-import React from 'react';
-import Button from '../Button';
-import Icon from '../Icon';
-import Menu, { MenuItemText } from './Menu';
-import menuItems, { conciseNames, conciseMenuItems } from './menuData';
-import ThemeProvider from '../ThemeProvider';
+import { mount } from "enzyme";
+import "jest-styled-components";
+import React from "react";
+import Button from "../Button";
+import Icon from "../Icon";
+import Menu, { MenuItemText } from "./Menu";
+import menuItems, { conciseNames, conciseMenuItems } from "./menuData";
+import ThemeProvider from "../ThemeProvider";
 
 const buttonText = "hi there I'm a button";
 
@@ -15,7 +15,7 @@ const createProps = moreProps => ({
     ...moreProps,
 });
 
-describe('Menu', () => {
+describe("Menu", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -23,7 +23,7 @@ describe('Menu', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <Menu {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -34,35 +34,35 @@ describe('Menu', () => {
         mountedWrapper = undefined;
     });
 
-    test('`nav` rendered by default', () => {
+    test("`nav` rendered by default", () => {
         props = createProps();
-        const root = wrapper().find('nav');
+        const root = wrapper().find("nav");
         expect(root).toHaveLength(1);
     });
-    test('menuTrigger is rendered', () => {
+    test("menuTrigger is rendered", () => {
         props = createProps();
         const root = wrapper().find(Button);
         expect(root).toHaveLength(1);
         expect(root.text()).toContain(buttonText);
     });
-    describe('renders all children up to maxDepth', () => {
-        test('Renders all menu items when max depth is less than maxDepth', () => {
+    describe("renders all children up to maxDepth", () => {
+        test("Renders all menu items when max depth is less than maxDepth", () => {
             props = createProps({ maxDepth: 4, menuItems: conciseMenuItems });
             const root = wrapper().find(Menu);
             const presentValues = {};
-            root.find(MenuItemText).forEach((option) => {
+            root.find(MenuItemText).forEach(option => {
                 const value = option.getDOMNode().innerHTML;
                 presentValues[value] = true;
             });
-            conciseNames.forEach((c) => {
+            conciseNames.forEach(c => {
                 expect(presentValues[c]).toBe(true);
             });
         });
-        test('Does not render menu items outside of maxDepth', () => {
+        test("Does not render menu items outside of maxDepth", () => {
             props = createProps({ maxDepth: 2, menuItems: conciseMenuItems });
             const root = wrapper().find(Menu);
             const presentValues = {};
-            root.find(MenuItemText).forEach((option) => {
+            root.find(MenuItemText).forEach(option => {
                 const value = option.getDOMNode().innerHTML;
                 presentValues[value] = true;
             });
@@ -72,7 +72,7 @@ describe('Menu', () => {
             expect(presentValues[conciseNames[3]]).toBe(undefined);
         });
     });
-    test('items with children have chevron icon', () => {
+    test("items with children have chevron icon", () => {
         props = createProps({ maxDepth: 2 });
         const root = wrapper();
         expect(root.find(Icon)).toHaveLength(1);

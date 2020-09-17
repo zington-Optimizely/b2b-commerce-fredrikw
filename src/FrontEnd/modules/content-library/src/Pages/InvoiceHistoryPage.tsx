@@ -5,7 +5,10 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
-import { getInvoicesDataView, InvoicesDataViewContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
+import {
+    getInvoicesDataView,
+    InvoicesDataViewContext,
+} from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import updateSearchFields from "@insite/client-framework/Store/Pages/InvoiceHistory/Handlers/UpdateSearchFields";
 import PageModule from "@insite/client-framework/Types/PageModule";
@@ -31,30 +34,29 @@ const mapDispatchToProps = {
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 const InvoiceHistoryPage: FC<Props> = ({
-                                           settings,
-                                           updateSearchFields,
-                                           loadInvoices,
-                                           id,
-                                           invoicesDataView,
-                                           history,
-                                           location,
-                                           getInvoicesParameter,
-                                       }) => {
+    settings,
+    updateSearchFields,
+    loadInvoices,
+    id,
+    invoicesDataView,
+    history,
+    location,
+    getInvoicesParameter,
+}) => {
     let firstLoad = false;
-    useEffect(
-        () => {
-            firstLoad = true;
-            if (location.search) {
-                const getInvoicesApiParameter = parseQueryString<GetInvoicesApiParameter>(location.search);
-                updateSearchFields({ ...getInvoicesApiParameter, type: "Replace" });
-            } else if (settings.invoiceSettings.lookBackDays > 0) {
-                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-                const fromDate = new Date(Date.now() - settings.invoiceSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset);
-                updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
-            }
-        },
-        [],
-    );
+    useEffect(() => {
+        firstLoad = true;
+        if (location.search) {
+            const getInvoicesApiParameter = parseQueryString<GetInvoicesApiParameter>(location.search);
+            updateSearchFields({ ...getInvoicesApiParameter, type: "Replace" });
+        } else if (settings.invoiceSettings.lookBackDays > 0) {
+            const tzOffset = new Date().getTimezoneOffset() * 60000;
+            const fromDate = new Date(
+                Date.now() - settings.invoiceSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset,
+            );
+            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
+        }
+    }, []);
 
     useEffect(() => {
         if (!firstLoad) {
@@ -72,7 +74,7 @@ const InvoiceHistoryPage: FC<Props> = ({
     return (
         <Page>
             <InvoicesDataViewContext.Provider value={invoicesDataView}>
-                <Zone contentId={id} zoneName="Content"/>
+                <Zone contentId={id} zoneName="Content" />
             </InvoicesDataViewContext.Provider>
         </Page>
     );

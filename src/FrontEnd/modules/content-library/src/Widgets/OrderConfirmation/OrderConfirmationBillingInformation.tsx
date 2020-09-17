@@ -48,26 +48,34 @@ export const orderConfirmationBillingInformationStyles: OrderConfirmationBilling
     billingInformationBillingAddressGridItem: {
         width: [12, 12, 4, 4, 4],
         printWidth: 4,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     billingAddressTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
     billingInformationCreditCardAddressGridItem: {
         width: [6, 6, 4, 4, 4],
         printWidth: 4,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     billingCreditCardAddressTitle: {
         variant: "h6",
         as: "h3",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -97,17 +105,24 @@ const OrderConfirmationBillingInformation: FC<Props> = ({ cart, extendedStyles, 
                     extendedStyles={styles.billingAddress}
                 />
             </GridItem>
-            {cart.creditCardBillingAddress && <GridItem {...styles.billingInformationCreditCardAddressGridItem} data-test-selector="creditCardBillingAddress">
-                <Typography {...styles.billingCreditCardAddressTitle}>{translate("Credit Card Address")}</Typography>
-                <AddressInfoDisplay
-                    address1={cart.creditCardBillingAddress.address1}
-                    address2={cart.creditCardBillingAddress.address2}
-                    city={cart.creditCardBillingAddress.city}
-                    postalCode={cart.creditCardBillingAddress.postalCode}
-                    state={cart.creditCardBillingAddress.stateAbbreviation}
-                    extendedStyles={styles.creditCardBillingAddress}
-                />
-            </GridItem>}
+            {cart.creditCardBillingAddress && (
+                <GridItem
+                    {...styles.billingInformationCreditCardAddressGridItem}
+                    data-test-selector="creditCardBillingAddress"
+                >
+                    <Typography {...styles.billingCreditCardAddressTitle}>
+                        {translate("Credit Card Address")}
+                    </Typography>
+                    <AddressInfoDisplay
+                        address1={cart.creditCardBillingAddress.address1}
+                        address2={cart.creditCardBillingAddress.address2}
+                        city={cart.creditCardBillingAddress.city}
+                        postalCode={cart.creditCardBillingAddress.postalCode}
+                        state={cart.creditCardBillingAddress.stateAbbreviation}
+                        extendedStyles={styles.creditCardBillingAddress}
+                    />
+                </GridItem>
+            )}
         </GridContainer>
     );
 };

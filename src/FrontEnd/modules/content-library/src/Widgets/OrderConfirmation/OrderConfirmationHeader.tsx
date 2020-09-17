@@ -42,14 +42,18 @@ export interface OrderConfirmationHeaderStyles {
 
 export const headerStyles: OrderConfirmationHeaderStyles = {
     continueButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     printButton: {
         buttonType: "outline",
         variant: "secondary",
     },
     buttonGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [2, 2, 2, 6, 6],
     },
     titleGridItem: {
@@ -58,7 +62,11 @@ export const headerStyles: OrderConfirmationHeaderStyles = {
     title: {
         variant: "h2",
         as: "p",
-        css: css` @media print { font-size: 11px; } `,
+        css: css`
+            @media print {
+                font-size: 11px;
+            }
+        `,
     },
     buttonsHiddenContainer: {
         below: "lg",
@@ -98,13 +106,21 @@ const OrderConfirmationHeader: FC<Props> = props => {
             <GridItem {...styles.buttonGridItem}>
                 <Hidden {...styles.menuHiddenContainer}>
                     <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
-                        <Clickable {...styles.printClickable} onClick={printOrOpenPrintAllModal}>{printLabel}</Clickable>
-                        <Clickable {...styles.continueClickable} onClick={continueClickHandler}>{continueLabel}</Clickable>
+                        <Clickable {...styles.printClickable} onClick={printOrOpenPrintAllModal}>
+                            {printLabel}
+                        </Clickable>
+                        <Clickable {...styles.continueClickable} onClick={continueClickHandler}>
+                            {continueLabel}
+                        </Clickable>
                     </OverflowMenu>
                 </Hidden>
                 <Hidden {...styles.buttonsHiddenContainer}>
-                    <Button {...styles.printButton} onClick={printOrOpenPrintAllModal}>{printLabel}</Button>
-                    <Button {...styles.continueButton} onClick={continueClickHandler}>{continueLabel}</Button>
+                    <Button {...styles.printButton} onClick={printOrOpenPrintAllModal}>
+                        {printLabel}
+                    </Button>
+                    <Button {...styles.continueButton} onClick={continueClickHandler}>
+                        {continueLabel}
+                    </Button>
                 </Hidden>
             </GridItem>
         </GridContainer>

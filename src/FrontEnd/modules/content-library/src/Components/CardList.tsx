@@ -15,7 +15,6 @@ export const cardListStyles: CardListStyles = {
 const CardList: FC<{
     extendedStyles?: CardListStyles;
 }> = ({ extendedStyles, children, ...otherProps }) => {
-
     const [styles] = useState(() => mergeToNew(cardListStyles, extendedStyles));
 
     return (

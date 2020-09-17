@@ -52,40 +52,41 @@ export const rfqRequestQuotePageContainerStyles: RfqRequestQuotePageContainerSty
             margin: -1.5rem;
             overflow: hidden;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(
-                theme,
-                [
-                    css`
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
                             grid-template-columns: minmax(0, 1fr);
                             -ms-grid-columns: minmax(0, 1fr);
                         `,
-                    null,
-                    css`
+                        null,
+                        css`
                             grid-template-columns: repeat(2, minmax(0, 1fr));
                             -ms-grid-columns: minmax(0, 1fr) minmax(0, 1fr);
                             grid-template-rows: repeat(5, auto);
                             -ms-grid-rows: auto auto auto auto auto;
                         `,
-                    css`
+                        css`
                             grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
                             -ms-grid-columns: minmax(0, 2fr) minmax(0, 1fr);
                         `,
-                ],
-                "min")}
+                    ],
+                    "min",
+                )}
         `,
     },
     cartLinesContainer: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(
-                theme,
-                [
-                    css`
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
                             border: 0 solid transparent;
                             border-width: 0 1.5rem 1.5rem 0;
                         `,
-                    null,
-                    css`
+                        null,
+                        css`
                             grid-column-start: 1;
                             -ms-grid-column: 1;
                             grid-row-start: 1;
@@ -93,29 +94,31 @@ export const rfqRequestQuotePageContainerStyles: RfqRequestQuotePageContainerSty
                             grid-row-end: 6;
                             -ms-grid-row-span: 6;
                         `,
-                ],
-                "min")}
+                    ],
+                    "min",
+                )}
         `,
     },
     specificationsContainer: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(
-                theme,
-                [
-                    css`
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
                             border: 0 solid transparent;
                             border-width: 0 1.5rem 1.5rem 0;
                         `,
-                    null,
-                    css`
+                        null,
+                        css`
                             grid-column-start: 2;
                             -ms-grid-column: 2;
                             grid-row-start: 1;
                             -ms-grid-row: 1;
                         `,
-                ],
-                "min")}
+                    ],
+                    "min",
+                )}
         `,
     },
 };

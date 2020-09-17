@@ -27,9 +27,11 @@ export function getSelectedBrandPath(state: ApplicationState) {
     return state.context.selectedBrandPath;
 }
 
-export const getDefaultPageSize = (state: ApplicationState) => state.context.settings.settingsCollection.websiteSettings.defaultPageSize ?? -1;
+export const getDefaultPageSize = (state: ApplicationState) =>
+    state.context.settings.settingsCollection.websiteSettings.defaultPageSize ?? -1;
 
-export const getCurrentUserIsGuest = (state: ApplicationState) => state.context.session.isAuthenticated && state.context.session.isGuest;
+export const getCurrentUserIsGuest = (state: ApplicationState) =>
+    state.context.session.isAuthenticated && state.context.session.isGuest;
 
 export const getSession = (state: ApplicationState) => state.context.session;
 
@@ -38,10 +40,13 @@ export const getFulfillmentLabel = (state: ApplicationState) => {
     const shipToState = getShipToState(state, shipToId);
     const { value: shipTo } = shipToState;
     let addressLabel = translate("Ship");
-    if (fulfillmentMethod === FulfillmentMethod.Ship && ((isAuthenticated || rememberMe) && !isGuest) && shipTo) {
+    if (fulfillmentMethod === FulfillmentMethod.Ship && (isAuthenticated || rememberMe) && !isGuest && shipTo) {
         addressLabel = translate("Ship to {0}", `${shipTo.companyName}, ${shipTo.fullAddress}`);
     } else if (fulfillmentMethod === FulfillmentMethod.PickUp) {
-        addressLabel = translate("Pick up {0}", pickUpWarehouse ? `at ${pickUpWarehouse.description || pickUpWarehouse.name}` : "");
+        addressLabel = translate(
+            "Pick up {0}",
+            pickUpWarehouse ? `at ${pickUpWarehouse.description || pickUpWarehouse.name}` : "",
+        );
     }
 
     return addressLabel;

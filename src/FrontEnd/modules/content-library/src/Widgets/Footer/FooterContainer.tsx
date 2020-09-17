@@ -32,11 +32,13 @@ export const footerContainerStyles: FooterContainerStyles = {
     logoGridItem: {
         width: 12,
         css: css`
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                img { height: 78px; }
-            `,
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            img {
+                height: 78px;
+            }
+        `,
     },
     linkList1GridItem: {
         width: [6, 6, 4, 2, 2],

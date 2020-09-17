@@ -8,7 +8,9 @@ const initialState: SavedPaymentsState = {
 };
 
 const reducer = {
-    "Pages/SavedPayments/UpdateEditModal": (draft: Draft<SavedPaymentsState>, action: { paymentProfile?: AccountPaymentProfileModel, modalIsOpen: boolean },
+    "Pages/SavedPayments/UpdateEditModal": (
+        draft: Draft<SavedPaymentsState>,
+        action: { paymentProfile?: AccountPaymentProfileModel; modalIsOpen: boolean },
     ) => {
         draft.editModalIsOpen = action.modalIsOpen;
         draft.editingPaymentProfile = action.paymentProfile;

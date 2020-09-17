@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ errorsModalIsOpen: boolean }>;
 
@@ -12,9 +9,7 @@ export const DispatchSetErrorsModalIsOpen: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetErrorsModalIsOpen,
-];
+export const chain = [DispatchSetErrorsModalIsOpen];
 
 const setErrorsModalIsOpen = createHandlerChainRunner(chain, "SetErrorsModalIsOpen");
 export default setErrorsModalIsOpen;

@@ -1,6 +1,4 @@
-import {
-    ApiHandler, createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { getPaymentProfiles, GetPaymentProfilesApiParameter } from "@insite/client-framework/Services/AccountService";
 import { AccountPaymentProfileCollectionModel } from "@insite/client-framework/Types/ApiModels";
 

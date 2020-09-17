@@ -1,5 +1,14 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { getSession, Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    getSession,
+    Session,
+    updateSession,
+    UpdateSessionApiParameter,
+} from "@insite/client-framework/Services/SessionService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -39,13 +48,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-const chain = [
-    PopulateApiParameter,
-    UpdateSession,
-    DispatchCompleteLoadSession,
-    LoadCart,
-    ExecuteOnSuccessCallback,
-];
+const chain = [PopulateApiParameter, UpdateSession, DispatchCompleteLoadSession, LoadCart, ExecuteOnSuccessCallback];
 
 const updatePickUpWarehouse = createHandlerChainRunner(chain, "UpdatePickUpWarehouse");
 export default updatePickUpWarehouse;

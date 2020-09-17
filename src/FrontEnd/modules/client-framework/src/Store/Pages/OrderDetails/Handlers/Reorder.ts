@@ -1,4 +1,8 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { addLineCollection } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
@@ -21,16 +25,22 @@ export const PopulateApiParameter: HandlerType = props => {
     }
 
     props.apiParameter = {
-        cartLines: order.value.orderLines!.map((line: OrderLineModel) => ({
-            productId: line.productId,
-            qtyOrdered: line.qtyOrdered,
-            unitOfMeasure: line.unitOfMeasure,
-        } as CartLineModel)),
+        cartLines: order.value.orderLines!.map(
+            (line: OrderLineModel) =>
+                ({
+                    productId: line.productId,
+                    qtyOrdered: line.qtyOrdered,
+                    unitOfMeasure: line.unitOfMeasure,
+                } as CartLineModel),
+        ),
     } as CartLineCollectionModel;
 };
 
 export const SendDataToApi: HandlerType = async props => {
-    props.apiResult = await addLineCollection({ cartId: API_URL_CURRENT_FRAGMENT, cartLineCollection: props.apiParameter });
+    props.apiResult = await addLineCollection({
+        cartId: API_URL_CURRENT_FRAGMENT,
+        cartLineCollection: props.apiParameter,
+    });
 };
 
 export const DispatchCompleteReorder: HandlerType = props => {

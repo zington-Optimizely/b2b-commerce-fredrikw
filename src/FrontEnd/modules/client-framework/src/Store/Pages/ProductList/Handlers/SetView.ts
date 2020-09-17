@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { ProductListViewType } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 
 type HandlerType = Handler<{ view: ProductListViewType }>;
@@ -13,9 +10,7 @@ export const DispatchSetView: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetView,
-];
+export const chain = [DispatchSetView];
 
 const setView = createHandlerChainRunner(chain, "SetView");
 

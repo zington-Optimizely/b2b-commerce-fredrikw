@@ -1,12 +1,10 @@
-import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Configuration";
-import { setPostStyleGuideTheme, setPreStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
-import "./Store/Reducers";
+import "@example/Store/Reducers";
+import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Configuration"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
+import { setPostStyleGuideTheme, setPreStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
 
 // load all widgets. Without this they won't be included in the bundle
 const widgets = require.context("./Widgets", true, /\.tsx$/);
 const onHotWidgetReplace = addWidgetsFromContext(widgets);
-
-// ensure HMR works for custom widgets
 if (module.hot) {
     module.hot.accept(widgets.id, () => onHotWidgetReplace(require.context("./Widgets", true, /\.tsx$/)));
 }
@@ -14,20 +12,19 @@ if (module.hot) {
 // load all pages. Without this they won't be included in the bundle
 const pages = require.context("./Pages", true, /\.tsx$/);
 const onHotPageReplace = addPagesFromContext(pages);
-
-// ensure HMR works for custom pages
 if (module.hot) {
-    module.hot.accept(widgets.id, () => onHotPageReplace(require.context("./Pages", true, /\.tsx$/)));
+    module.hot.accept(pages.id, () => onHotPageReplace(require.context("./Pages", true, /\.tsx$/)));
 }
 
 // load all handlers. They could be loaded individually instead.
-const handlers = require.context("./Handlers", true); // Recursively get all handler modifications
-handlers.keys().forEach(key => handlers(key)); // Load the handler modifications.
+const handlers = require.context("./Handlers", true);
+handlers.keys().forEach(key => handlers(key));
 
 // load all widget extensions. They could be loaded individually instead
 const widgetExtensions = require.context("./WidgetExtensions", true);
 widgetExtensions.keys().forEach(key => widgetExtensions(key));
 
+// add some pre styleguide customizations. These can be overridden by the style guid.
 setPreStyleGuideTheme({
     colors: {
         secondary: {
@@ -42,6 +39,7 @@ setPreStyleGuideTheme({
     },
 });
 
+// add some post styleguide customizations. These cannot be overridden by the style guid.
 setPostStyleGuideTheme({
     colors: {
         primary: {
@@ -65,8 +63,10 @@ setPostStyleGuideTheme({
             sizeVariant: "medium",
         },
     },
-    formField: { defaultProps: {
-        border: "underline",
-        backgroundColor: "common.accent",
-    } },
+    formField: {
+        defaultProps: {
+            border: "underline",
+            backgroundColor: "common.accent",
+        },
+    },
 });

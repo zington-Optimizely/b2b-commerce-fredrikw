@@ -18,11 +18,12 @@ const reducer = {
     "Pages/CheckoutShipping/SetInitialValues": (
         draft: Draft<CheckoutShippingState>,
         action: {
-            cart: Cart,
-            shipTo: ShipToModel,
-            billTo: BillToModel,
-            country: CountryModel | undefined,
-        }) => {
+            cart: Cart;
+            shipTo: ShipToModel;
+            billTo: BillToModel;
+            country: CountryModel | undefined;
+        },
+    ) => {
         const { cart } = action;
         draft.useBillingAddress = cart.billToId === cart.shipToId;
         draft.useOneTimeAddress = action.shipTo.oneTimeAddress;
@@ -42,7 +43,10 @@ const reducer = {
             formErrors: {},
         };
     },
-    "Pages/CheckoutShipping/SetLastSelectedShipTo": (draft: Draft<CheckoutShippingState>, action: { shipTo: ShipToModel }) => {
+    "Pages/CheckoutShipping/SetLastSelectedShipTo": (
+        draft: Draft<CheckoutShippingState>,
+        action: { shipTo: ShipToModel },
+    ) => {
         draft.lastSelectedShippingAddress = action.shipTo;
     },
     "Pages/CheckoutShipping/SetNotes": (draft: Draft<CheckoutShippingState>, action: { notes: string }) => {
@@ -54,14 +58,20 @@ const reducer = {
     "Pages/CheckoutShipping/CompleteUpdateCart": (draft: Draft<CheckoutShippingState>) => {
         draft.isUpdatingCart = false;
     },
-    "Pages/CheckoutShipping/CompleteUpdateShipTo": (draft: Draft<CheckoutShippingState>, action: { shipTo: ShipToModel }) => {
+    "Pages/CheckoutShipping/CompleteUpdateShipTo": (
+        draft: Draft<CheckoutShippingState>,
+        action: { shipTo: ShipToModel },
+    ) => {
         draft.shippingAddressFormState = {
             address: action.shipTo,
             formErrors: {},
         };
         draft.useOneTimeAddress = false;
     },
-    "Pages/CheckoutShipping/CompleteUpdateBillTo": (draft: Draft<CheckoutShippingState>, action: { billTo: BillToModel }) => {
+    "Pages/CheckoutShipping/CompleteUpdateBillTo": (
+        draft: Draft<CheckoutShippingState>,
+        action: { billTo: BillToModel },
+    ) => {
         draft.billingAddressFormState = {
             address: action.billTo,
             formErrors: {},
@@ -70,52 +80,76 @@ const reducer = {
     "Pages/CheckoutShipping/SetCartId": (draft: Draft<CheckoutShippingState>, action: { cartId?: string }) => {
         draft.cartId = action.cartId;
     },
-    "Pages/CheckoutShipping/SetIsPreloadingData": (draft: Draft<CheckoutShippingState>, action: { isPreloadingData: boolean }) => {
+    "Pages/CheckoutShipping/SetIsPreloadingData": (
+        draft: Draft<CheckoutShippingState>,
+        action: { isPreloadingData: boolean },
+    ) => {
         draft.isPreloadingData = action.isPreloadingData;
     },
-    "Pages/CheckoutShipping/SetOneTimeShippingAddress": (draft: Draft<CheckoutShippingState>, action: { address: ShipToModel }) => {
+    "Pages/CheckoutShipping/SetOneTimeShippingAddress": (
+        draft: Draft<CheckoutShippingState>,
+        action: { address: ShipToModel },
+    ) => {
         if (!draft.oneTimeAddressState) {
             return;
         }
 
         draft.oneTimeAddressState.address = action.address;
     },
-    "Pages/CheckoutShipping/SetOneTimeShippingAddressFormErrors": (draft: Draft<CheckoutShippingState>, action: { formErrors: { [key: string]: React.ReactNode } }) => {
+    "Pages/CheckoutShipping/SetOneTimeShippingAddressFormErrors": (
+        draft: Draft<CheckoutShippingState>,
+        action: { formErrors: { [key: string]: React.ReactNode } },
+    ) => {
         if (!draft.oneTimeAddressState) {
             return;
         }
 
         draft.oneTimeAddressState.formErrors = action.formErrors;
     },
-    "Pages/CheckoutShipping/SetBillingAddress": (draft: Draft<CheckoutShippingState>, action: { address: BillToModel }) => {
+    "Pages/CheckoutShipping/SetBillingAddress": (
+        draft: Draft<CheckoutShippingState>,
+        action: { address: BillToModel },
+    ) => {
         if (!draft.billingAddressFormState) {
             return;
         }
 
         draft.billingAddressFormState.address = action.address;
     },
-    "Pages/CheckoutShipping/SetBillingAddressFormErrors": (draft: Draft<CheckoutShippingState>, action: { formErrors: { [key: string]: React.ReactNode } }) => {
+    "Pages/CheckoutShipping/SetBillingAddressFormErrors": (
+        draft: Draft<CheckoutShippingState>,
+        action: { formErrors: { [key: string]: React.ReactNode } },
+    ) => {
         if (!draft.billingAddressFormState) {
             return;
         }
 
         draft.billingAddressFormState.formErrors = action.formErrors;
     },
-    "Pages/CheckoutShipping/SetShippingAddress": (draft: Draft<CheckoutShippingState>, action: { address: ShipToModel }) => {
+    "Pages/CheckoutShipping/SetShippingAddress": (
+        draft: Draft<CheckoutShippingState>,
+        action: { address: ShipToModel },
+    ) => {
         if (!draft.shippingAddressFormState) {
             return;
         }
 
         draft.shippingAddressFormState.address = action.address;
     },
-    "Pages/CheckoutShipping/SetShippingAddressFormErrors": (draft: Draft<CheckoutShippingState>, action: { formErrors: { [key: string]: React.ReactNode } }) => {
+    "Pages/CheckoutShipping/SetShippingAddressFormErrors": (
+        draft: Draft<CheckoutShippingState>,
+        action: { formErrors: { [key: string]: React.ReactNode } },
+    ) => {
         if (!draft.shippingAddressFormState) {
             return;
         }
 
         draft.shippingAddressFormState.formErrors = action.formErrors;
     },
-    "Pages/CheckoutShipping/SetUseBillingAddress": (draft: Draft<CheckoutShippingState>, { useBillingAddress, shipTo }: { useBillingAddress: boolean, shipTo: ShipToModel }) => {
+    "Pages/CheckoutShipping/SetUseBillingAddress": (
+        draft: Draft<CheckoutShippingState>,
+        { useBillingAddress, shipTo }: { useBillingAddress: boolean; shipTo: ShipToModel },
+    ) => {
         draft.useBillingAddress = useBillingAddress;
         draft.useOneTimeAddress = false;
         draft.shippingAddressFormState = {
@@ -123,7 +157,10 @@ const reducer = {
             formErrors: {},
         };
     },
-    "Pages/CheckoutShipping/SetUseOneTimeAddress": (draft: Draft<CheckoutShippingState>, { useOneTimeAddress, shipTo }: { useOneTimeAddress: boolean, shipTo: ShipToModel | undefined }) => {
+    "Pages/CheckoutShipping/SetUseOneTimeAddress": (
+        draft: Draft<CheckoutShippingState>,
+        { useOneTimeAddress, shipTo }: { useOneTimeAddress: boolean; shipTo: ShipToModel | undefined },
+    ) => {
         draft.useOneTimeAddress = useOneTimeAddress;
         draft.useBillingAddress = false;
 
@@ -136,10 +173,16 @@ const reducer = {
             formErrors: {},
         };
     },
-    "Pages/CheckoutShipping/SetIsBillingAddressUpdateRequired": (draft: Draft<CheckoutShippingState>, action: { isBillingAddressUpdateRequired: boolean }) => {
+    "Pages/CheckoutShipping/SetIsBillingAddressUpdateRequired": (
+        draft: Draft<CheckoutShippingState>,
+        action: { isBillingAddressUpdateRequired: boolean },
+    ) => {
         draft.isBillingAddressUpdateRequired = action.isBillingAddressUpdateRequired;
     },
-    "Pages/CheckoutShipping/SetIsShippingAddressUpdateRequired": (draft: Draft<CheckoutShippingState>, action: { isShippingAddressUpdateRequired: boolean }) => {
+    "Pages/CheckoutShipping/SetIsShippingAddressUpdateRequired": (
+        draft: Draft<CheckoutShippingState>,
+        action: { isShippingAddressUpdateRequired: boolean },
+    ) => {
         draft.isShippingAddressUpdateRequired = action.isShippingAddressUpdateRequired;
     },
 };

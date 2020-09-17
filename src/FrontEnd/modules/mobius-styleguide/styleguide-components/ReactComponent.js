@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Examples from 'react-styleguidist/lib/client/rsg-components/Examples';
-import SectionHeading from 'react-styleguidist/lib/client/rsg-components/SectionHeading';
-import JsDoc from 'react-styleguidist/lib/client/rsg-components/JsDoc';
-import Markdown from 'react-styleguidist/lib/client/rsg-components/Markdown';
-import Slot from 'react-styleguidist/lib/client/rsg-components/Slot';
-import { DOCS_TAB_USAGE } from 'react-styleguidist/lib/client/rsg-components/slots';
-import { DisplayModes, UsageModes } from 'react-styleguidist/lib/client/consts';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Examples from "react-styleguidist/lib/client/rsg-components/Examples";
+import SectionHeading from "react-styleguidist/lib/client/rsg-components/SectionHeading";
+import JsDoc from "react-styleguidist/lib/client/rsg-components/JsDoc";
+import Markdown from "react-styleguidist/lib/client/rsg-components/Markdown";
+import Slot from "react-styleguidist/lib/client/rsg-components/Slot";
+import { DOCS_TAB_USAGE } from "react-styleguidist/lib/client/rsg-components/slots";
+import { DisplayModes, UsageModes } from "react-styleguidist/lib/client/consts";
 
-import RsgExamplePlaceholder from 'react-styleguidist/lib/client/rsg-components/ExamplePlaceholder';
-import ReactComponentRenderer from './ReactComponentRenderer'; // eslint-disable-line import/no-named-as-default
+import RsgExamplePlaceholder from "react-styleguidist/lib/client/rsg-components/ExamplePlaceholder";
+import ReactComponentRenderer from "./ReactComponentRenderer"; // eslint-disable-line import/no-named-as-default
 
-const ExamplePlaceholder = (props) => {
-    if (process.env.STYLEGUIDIST_ENV === 'production') {
-        return <div/>;
+const ExamplePlaceholder = props => {
+    if (process.env.STYLEGUIDIST_ENV === "production") {
+        return <div />;
     }
     return <RsgExamplePlaceholder {...props} />;
 };
@@ -51,11 +51,11 @@ export default class ReactComponent extends Component {
 
     static getDerivedStateFromError(error) {
         return { hasError: true };
-      }
+    }
 
-      componentDidCatch(error, errorInfo) {
+    componentDidCatch(error, errorInfo) {
         console.error(errorInfo);
-      }
+    }
 
     render() {
         if (this.state.hasError) {
@@ -63,14 +63,13 @@ export default class ReactComponent extends Component {
         }
 
         const { activeTab } = this.state;
+        const { displayMode } = this.context;
+        const { component, depth, usageMode, exampleMode } = this.props;
         const {
-            displayMode,
-        } = this.context;
-        const {
-            component, depth, usageMode, exampleMode,
-        } = this.props;
-        const {
-            name, visibleName, slug, filepath, // , pathLine
+            name,
+            visibleName,
+            slug,
+            filepath, // , pathLine
         } = component;
         const { description, examples = [], tags = {} } = component.props;
         if (!name) {

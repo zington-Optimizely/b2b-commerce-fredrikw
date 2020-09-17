@@ -4,5 +4,5 @@
  */
 export default function gridWidth(width: number) {
     // eslint-disable-next-line no-mixed-operators
-    return `${Math.round(width * 1e8 / 12) / 1e6}%`;
+    return `${Math.round((width * 1e8) / 12) / 1e6}%`;
 }

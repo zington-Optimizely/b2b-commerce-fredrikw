@@ -3,7 +3,7 @@ import styled, { ThemeProps, withTheme } from "styled-components";
 import Clickable from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
 import Icon, { IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps }  from "../Typography";
+import Typography, { TypographyPresentationProps } from "../Typography";
 import TypographyStyle from "../Typography/TypographyStyle";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import combineTypographyProps from "../utilities/combineTypographyProps";
@@ -86,32 +86,40 @@ export interface FormFieldPresentationProps<T> extends FormFieldPresentationProp
     };
 }
 
-export type FormFieldProps = FormFieldPresentationProps<FormFieldComponentProps> & FormFieldComponentProps & ThemeProps<BaseTheme>;
+export type FormFieldProps = FormFieldPresentationProps<FormFieldComponentProps> &
+    FormFieldComponentProps &
+    ThemeProps<BaseTheme>;
 
 // below "as any" necessary to prevent deep type instantiation errors on `formStyles`
-export const FormFieldIcon = styled(Icon)<IconPresentationProps>` ${injectCss} ` as any;
-export const FormFieldClickable = styled(Clickable)<any>` ${injectCss} `;
+export const FormFieldIcon = styled(Icon)<IconPresentationProps>`
+    ${injectCss}
+` as any;
+export const FormFieldClickable = styled(Clickable)<any>`
+    ${injectCss}
+`;
 
 /* eslint-disable indent */
-const DescriptionWrapper = styled.div<InjectableCss<any> & { _sizeVariant: keyof typeof sizeVariantValues, id: string | number }>`
+const DescriptionWrapper = styled.div<
+    InjectableCss<any> & { _sizeVariant: keyof typeof sizeVariantValues; id: string | number }
+>`
     display: flex;
     flex-direction: column;
-    ${/* sc-selector */TypographyStyle as any} + ${/* sc-selector */TypographyStyle as any} {
+    ${/* sc-selector */ TypographyStyle as any} + ${/* sc-selector */ TypographyStyle as any} {
         margin-top: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].descriptionLineSpacing}px;
     }
     ${injectCss}
 `;
 
 type FormInputWrapperProps = {
-    labelPosition?: LabelPosition,
-    _sizeVariant: keyof typeof sizeVariantValues,
-    _backgroundColor?: string,
+    labelPosition?: LabelPosition;
+    _sizeVariant: keyof typeof sizeVariantValues;
+    _backgroundColor?: string;
 };
 
 const FormInputWrapper = styled.div<Partial<InjectableCss<any>> & FormInputWrapperProps>`
     width: ${({ labelPosition }) => (labelPosition === "left" ? "calc(100% - 140px)" : "100%")};
     position: relative;
-    ${/* sc-selector */FormFieldIcon},
+    ${/* sc-selector */ FormFieldIcon},
     ${FormFieldClickable as any} {
         position: absolute;
         box-sizing: border-box;
@@ -144,16 +152,20 @@ type FormFieldLabelProps = InjectableCss<any> & {
 const FormFieldLabel = styled(Typography as any)<any /* FormFieldLabelProps */>`
     min-height: 22px;
     display: inline-block;
-    ${({ labelPosition, labelSize }: FormFieldLabelProps) => (labelPosition === "left"
-        ? `
+    ${({ labelPosition, labelSize }: FormFieldLabelProps) =>
+        labelPosition === "left"
+            ? `
             width: 140px;
             text-align: right;
             padding: ${sizeVariantValues[labelSize].leftLabelPadding}px 15px 0 0;`
-        : "width: 100%;")}
+            : "width: 100%;"}
     ${injectCss}
 `;
 
-interface FormFieldStyleProps extends InjectableCss<any>, ThemeProps<BaseTheme>, Required<Pick<FormFieldPresentationPropsCommon, "border">> {
+interface FormFieldStyleProps
+    extends InjectableCss<any>,
+        ThemeProps<BaseTheme>,
+        Required<Pick<FormFieldPresentationPropsCommon, "border">> {
     _sizeVariant: FormFieldSizeVariant;
     labelPosition?: LabelPosition;
     error?: React.ReactNode;
@@ -169,9 +181,10 @@ export const FormFieldStyle = styled.div<FormFieldStyleProps>`
     flex-direction: column;
     flex-direction: ${({ labelPosition }) => (labelPosition === "left" ? "row" : "column")};
     width: 100%;
-    ${/* sc-selector */FormFieldLabel} + ${/* sc-selector */FormInputWrapper},
-    ${/* sc-selector */FormInputWrapper} > ${DescriptionWrapper} {
-        margin-top: ${({ labelPosition, _sizeVariant }) => (labelPosition === "left" ? 0 : sizeVariantValues[_sizeVariant].descriptionLineSpacing)}px;
+    ${/* sc-selector */ FormFieldLabel} + ${/* sc-selector */ FormInputWrapper},
+    ${/* sc-selector */ FormInputWrapper} > ${DescriptionWrapper} {
+        margin-top: ${({ labelPosition, _sizeVariant }) =>
+            labelPosition === "left" ? 0 : sizeVariantValues[_sizeVariant].descriptionLineSpacing}px;
     }
 
     /* Styling for the form element itself */
@@ -197,7 +210,7 @@ export const FormFieldStyle = styled.div<FormFieldStyleProps>`
             ${props => disabledByType(props)};
             cursor: not-allowed;
         }
-        ${(props) => {
+        ${props => {
             if (props.error) {
                 return `
                     &:not(:disabled) {
@@ -283,7 +296,8 @@ const FormField: React.ComponentType<FormFieldProps> = ({
                 id={labelId || null}
                 disabled
             >
-                {label}{required && !disabled && " *"}
+                {label}
+                {required && !disabled && " *"}
             </FormFieldLabel>
         );
     } else if (labelPosition === "left") {
@@ -331,7 +345,11 @@ const FormField: React.ComponentType<FormFieldProps> = ({
     let description;
     if (renderError || renderHint) {
         description = (
-            <DescriptionWrapper id={descriptionId as any} _sizeVariant={sizeVariant} css={cssOverrides?.descriptionWrapper}>
+            <DescriptionWrapper
+                id={descriptionId as any}
+                _sizeVariant={sizeVariant}
+                css={cssOverrides?.descriptionWrapper}
+            >
                 {renderError}
                 {renderHint}
             </DescriptionWrapper>
@@ -345,7 +363,10 @@ const FormField: React.ComponentType<FormFieldProps> = ({
             css={cssOverrides?.formField}
             inputSelectCss={cssOverrides?.inputSelect}
             {...{
-                disabled, error, _sizeVariant: sizeVariant, labelPosition,
+                disabled,
+                error,
+                _sizeVariant: sizeVariant,
+                labelPosition,
             }}
         >
             {renderLabel}

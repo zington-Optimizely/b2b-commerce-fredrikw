@@ -9,9 +9,7 @@ export const DispatchSetEditingSortOrder: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetEditingSortOrder,
-];
+export const chain = [DispatchSetEditingSortOrder];
 
 const setEditingSortOrder = createHandlerChainRunner(chain, "SetEditingSortOrder");
 export default setEditingSortOrder;

@@ -50,7 +50,9 @@ export const processSiteMessages = (messages: SiteMessageModel[] | null, languag
 
 let resolver: (messageName: string) => string | undefined = () => undefined;
 
-export const setResolver = (newResolver: typeof resolver) => { resolver = newResolver; };
+export const setResolver = (newResolver: typeof resolver) => {
+    resolver = newResolver;
+};
 
 /**
  * Provides the natural language message associated with a message name.
@@ -63,7 +65,11 @@ const siteMessage = (messageName: string, ...replacementValues: string[]) => {
     return parse(replacer(message, replacementValues), parserOptions);
 };
 
-export const siteMessageWithCustomParserOptions = (messageName: string, customParserOptions: HTMLReactParserOptions, ...replacementValues: string[]) => {
+export const siteMessageWithCustomParserOptions = (
+    messageName: string,
+    customParserOptions: HTMLReactParserOptions,
+    ...replacementValues: string[]
+) => {
     const message = resolver(messageName) ?? messageName;
     return parse(replacer(message, replacementValues), customParserOptions);
 };
@@ -73,6 +79,5 @@ const replacer = (message: string, replacementValues: string[]) => {
         return accumulator.replace(`{${replacementIndex}}`, replacementValue);
     }, message);
 };
-
 
 export default siteMessage;

@@ -6,9 +6,7 @@ export const ClearSearch: Handler = props => {
     });
 };
 
-export const chain = [
-    ClearSearch,
-];
+export const chain = [ClearSearch];
 
 const clearSearch = createHandlerChainRunnerOptionalParameter(chain, {}, "ClearSearch");
 export default clearSearch;

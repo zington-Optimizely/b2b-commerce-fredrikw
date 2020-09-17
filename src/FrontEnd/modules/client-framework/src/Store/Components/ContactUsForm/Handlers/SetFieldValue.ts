@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{
     key: string;
@@ -16,9 +13,7 @@ export const DispatchSetFieldValue: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetFieldValue,
-];
+export const chain = [DispatchSetFieldValue];
 
 const setFieldValue = createHandlerChainRunner(chain, "SetFieldValue");
 export default setFieldValue;

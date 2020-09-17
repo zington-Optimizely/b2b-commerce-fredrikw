@@ -3,7 +3,9 @@ import { HasProduct, withProduct } from "@insite/client-framework/Components/Pro
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAddToListLink, {
+    ProductAddToListLinkStyles,
+} from "@insite/content-library/Components/ProductAddToListLink";
 import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
@@ -32,19 +34,16 @@ export const addToListLinkStyles: ProductDetailsAddToListLinkStyles = {
 
 const styles = addToListLinkStyles;
 
-const ProductDetailsAddToListLink: React.FC<OwnProps> = ({
-    product,
-    variantSelectionCompleted,
-}) => {
+const ProductDetailsAddToListLink: React.FC<OwnProps> = ({ product, variantSelectionCompleted }) => {
     if (!product.canAddToWishlist && !variantSelectionCompleted) {
         return null;
     }
 
-    return <StyledWrapper {...styles.wrapper}>
-        <ProductAddToListLink
-            data-test-selector="productDetails_addToList"
-            extendedStyles={styles.link} />
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <ProductAddToListLink data-test-selector="productDetails_addToList" extendedStyles={styles.link} />
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

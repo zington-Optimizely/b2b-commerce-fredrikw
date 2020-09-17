@@ -1,13 +1,13 @@
-import { mount } from 'enzyme';
-import 'jest-styled-components';
-import Button from '../Button';
-import Modal from './Modal';
-import ThemeProvider from '../ThemeProvider';
-import Typography from '../Typography';
+import { mount } from "enzyme";
+import "jest-styled-components";
+import Button from "../Button";
+import Modal from "./Modal";
+import ThemeProvider from "../ThemeProvider";
+import Typography from "../Typography";
 
-const React = require('react');
+const React = require("react");
 
-describe('Modal', () => {
+describe("Modal", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -15,7 +15,7 @@ describe('Modal', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <Modal {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -26,45 +26,45 @@ describe('Modal', () => {
         mountedWrapper = undefined;
     });
 
-    test('calls the close handler when close button is clicked', () => {
+    test("calls the close handler when close button is clicked", () => {
         const fn = jest.fn();
         props = {
             isOpen: true,
-            children: 'children',
+            children: "children",
             handleClose: fn,
             isCloseable: true,
         };
-        wrapper().find(Button).simulate('click');
+        wrapper().find(Button).simulate("click");
         expect(fn).toHaveBeenCalled();
     });
 
-    describe('renders children and props as expected', () => {
-        describe('headline', () => {
-            test('string', () => {
-                const headlineText = 'moose';
+    describe("renders children and props as expected", () => {
+        describe("headline", () => {
+            test("string", () => {
+                const headlineText = "moose";
                 props = {
                     isOpen: true,
                     headline: headlineText,
-                    contentLabel: 'mooseId',
+                    contentLabel: "mooseId",
                 };
                 const typography = wrapper().find('[id="modalTitle"]').find(Typography);
                 expect(typography).toHaveLength(1);
                 expect(typography.text()).toContain(headlineText);
             });
-            test('node', () => {
-                const headlineChild = 'hat';
+            test("node", () => {
+                const headlineChild = "hat";
                 props = {
                     isOpen: true,
                     headline: <div data-id="child-headline">{headlineChild}</div>,
-                    contentLabel: 'mooseId',
+                    contentLabel: "mooseId",
                 };
                 const headline = wrapper().find('[data-id="child-headline"]');
                 expect(headline).toHaveLength(1);
                 expect(headline.text()).toContain(headlineChild);
             });
         });
-        test('children', () => {
-            const childrenString = 'hello there everyone';
+        test("children", () => {
+            const childrenString = "hello there everyone";
             props = {
                 isOpen: true,
                 children: <div data-id="child-drawer">{childrenString}</div>,

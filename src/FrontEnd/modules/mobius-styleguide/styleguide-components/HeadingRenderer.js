@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import cx from 'clsx';
-import Styled from 'react-styleguidist/lib/client/rsg-components/Styled';
+import React from "react";
+import PropTypes from "prop-types";
+import cx from "clsx";
+import Styled from "react-styleguidist/lib/client/rsg-components/Styled";
 
 const styles = ({ color, fontFamily, fontSize }) => ({
     heading: {
@@ -24,17 +24,15 @@ const styles = ({ color, fontFamily, fontSize }) => ({
     },
     heading5: {
         fontSize: fontSize.h5,
-        fontWeight: 'bold',
+        fontWeight: "bold",
     },
     heading6: {
         fontSize: fontSize.h6,
-        fontStyle: 'italic',
+        fontStyle: "italic",
     },
 });
 
-function HeadingRenderer({
-    classes, level, children, ...props
-}) {
+function HeadingRenderer({ classes, level, children, ...props }) {
     const Tag = `h${level}`;
     const headingClasses = cx(classes.heading, classes[`heading${level}`]);
 

@@ -21,9 +21,11 @@ interface Props extends WidgetProps {
 }
 
 const CustomFieldTemplateWidget: React.FC<Props> = props => {
-    return <Typography variant="h4" as="p">
-        {props.fields.textField}
-    </Typography>;
+    return (
+        <Typography variant="h4" as="p">
+            {props.fields.textField}
+        </Typography>
+    );
 };
 
 // we need to pass our CustomFieldDefinition so that we can use the CustomTemplate template below

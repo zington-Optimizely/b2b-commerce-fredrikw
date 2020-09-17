@@ -49,23 +49,38 @@ class PageTemplateModal extends React.Component<Props, PageEditorState> {
             return null;
         }
 
-        const pathToSave = BLUEPRINT_NAME === "content-library" ? `wwwroot/AppData/PageTemplates/BuiltIn/${this.props.getStorablePage().type}/Standard.json`
-            : `modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates/${this.props.getStorablePage().type}/Standard.json`;
+        const pathToSave =
+            BLUEPRINT_NAME === "content-library"
+                ? `wwwroot/AppData/PageTemplates/BuiltIn/${this.props.getStorablePage().type}/Standard.json`
+                : `modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates/${
+                      this.props.getStorablePage().type
+                  }/Standard.json`;
 
-        return <Modal
-            isOpen={this.props.show}
-            headline="Code for Page Template"
-            handleClose={this.props.toggleShowGeneratedPageTemplate}
-            closeOnEsc
-            closeOnScrimClick
-        >
-            <p>Save this to {pathToSave}</p>
-            <TextAreaStyle ref={textarea => { this.textarea = textarea; }} value={this.generatePageCreator()} />
-            <ButtonBar>
-                <Button variant="secondary" onClick={this.props.toggleShowGeneratedPageTemplate}>Close</Button>
-                <Button variant="primary" onClick={this.copyGeneratedPage}>Copy</Button>
-            </ButtonBar>
-        </Modal>;
+        return (
+            <Modal
+                isOpen={this.props.show}
+                headline="Code for Page Template"
+                handleClose={this.props.toggleShowGeneratedPageTemplate}
+                closeOnEsc
+                closeOnScrimClick
+            >
+                <p>Save this to {pathToSave}</p>
+                <TextAreaStyle
+                    ref={textarea => {
+                        this.textarea = textarea;
+                    }}
+                    value={this.generatePageCreator()}
+                />
+                <ButtonBar>
+                    <Button variant="secondary" onClick={this.props.toggleShowGeneratedPageTemplate}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={this.copyGeneratedPage}>
+                        Copy
+                    </Button>
+                </ButtonBar>
+            </Modal>
+        );
     }
 }
 

@@ -15,16 +15,19 @@ export interface TokenExFramePresentationProps extends FormFieldPresentationProp
     iconProps?: IconPresentationProps;
 }
 
-type TokenExFrameComponentProps = MobiusStyledComponentProps<"div", & React.InputHTMLAttributes<HTMLInputElement> & {
-    /** Error message to be displayed below the input. */
-    error?: React.ReactNode;
-    /** Hint text to be displayed below the input. */
-    hint?: React.ReactNode;
-    /** Label to be displayed above the input. */
-    label?: React.ReactNode;
-    /** The node which contains the iFrame to be rendered as a formfield. Styles must be provided to the frame via config object. */
-    tokenExIFrameContainer: React.ReactNode;
-} & Partial<FormFieldComponentProps>>;
+type TokenExFrameComponentProps = MobiusStyledComponentProps<
+    "div",
+    React.InputHTMLAttributes<HTMLInputElement> & {
+        /** Error message to be displayed below the input. */
+        error?: React.ReactNode;
+        /** Hint text to be displayed below the input. */
+        hint?: React.ReactNode;
+        /** Label to be displayed above the input. */
+        label?: React.ReactNode;
+        /** The node which contains the iFrame to be rendered as a formfield. Styles must be provided to the frame via config object. */
+        tokenExIFrameContainer: React.ReactNode;
+    } & Partial<FormFieldComponentProps>
+>;
 
 export type TokenExFrameProps = TokenExFramePresentationProps & TokenExFrameComponentProps;
 
@@ -39,7 +42,7 @@ export interface FrameStyleConfig {
     };
 }
 
-const TokenExFrameWrapper = styled.div<{_sizeVariant: keyof typeof sizeVariantValues}>`
+const TokenExFrameWrapper = styled.div<{ _sizeVariant: keyof typeof sizeVariantValues }>`
     height: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].height}px;
     ${injectCss}
 `;
@@ -49,11 +52,15 @@ const TokenExFrameWrapper = styled.div<{_sizeVariant: keyof typeof sizeVariantVa
  * NOTE: accessibility on this component is poor due to limitations on passing values to the framed input.
  */
 const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
-    disable, disabled, id, tokenExIFrameContainer, ...otherProps
+    disable,
+    disabled,
+    id,
+    tokenExIFrameContainer,
+    ...otherProps
 }) => {
     // Because disabled html attribute doesn't accept undefined
     // eslint-disable-next-line no-unneeded-ternary
-    const isDisabled = (disable || disabled) ? true : false;
+    const isDisabled = disable || disabled ? true : false;
     const inputId = id || uniqueId();
     const descriptionId = `${inputId}-description`;
     const hasDescription = !!otherProps.error || !!otherProps.hint;
@@ -86,14 +93,16 @@ const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
         </TokenExFrameWrapper>
     );
 
-    return <FormField
-        descriptionId={descriptionId}
-        formInput={frameComponent}
-        inputId={inputId}
-        labelId={labelId}
-        disabled={isDisabled}
-        {...otherProps as any}
-    />;
+    return (
+        <FormField
+            descriptionId={descriptionId}
+            formInput={frameComponent}
+            inputId={inputId}
+            labelId={labelId}
+            disabled={isDisabled}
+            {...(otherProps as any)}
+        />
+    );
 };
 
 /** @component */

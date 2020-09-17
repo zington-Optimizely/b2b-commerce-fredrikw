@@ -11,25 +11,23 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 type Props = ReturnType<typeof mapStateToProps>;
 
-export interface RfqQuoteDetailsCustomerProductListStyles {
-}
+export interface RfqQuoteDetailsCustomerProductListStyles {}
 
-export const rfqQuoteDetailsCustomerProductListStyles: RfqQuoteDetailsCustomerProductListStyles = {
-};
+export const rfqQuoteDetailsCustomerProductListStyles: RfqQuoteDetailsCustomerProductListStyles = {};
 
 const styles = rfqQuoteDetailsCustomerProductListStyles;
 
-const RfqQuoteDetailsCustomerProductList = ({
-    quoteState,
-}: Props) => {
+const RfqQuoteDetailsCustomerProductList = ({ quoteState }: Props) => {
     const quote = quoteState.value;
     if (!quote) {
         return null;
     }
 
-    return quote.status === "QuoteProposed" || quote.status === "AwaitingApproval"
-        ? <RfqQuoteDetailsProposedDetailsGrid />
-        : <RfqQuoteDetailsRequestedDetailsGrid />;
+    return quote.status === "QuoteProposed" || quote.status === "AwaitingApproval" ? (
+        <RfqQuoteDetailsProposedDetailsGrid />
+    ) : (
+        <RfqQuoteDetailsRequestedDetailsGrid />
+    );
 };
 
 export default connect(mapStateToProps)(RfqQuoteDetailsCustomerProductList);

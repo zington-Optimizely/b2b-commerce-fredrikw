@@ -8,7 +8,7 @@ export const orderTotalStyles: SearchTextFieldStyles = {};
 const styles = orderTotalStyles;
 
 const OrderHistorySearchFieldOrderTotal: React.FunctionComponent<WidgetProps> = () => {
-    return(
+    return (
         <SearchTextField
             testSelector="orderHistory_filterOrderTotal"
             styles={styles}
@@ -21,7 +21,6 @@ const OrderHistorySearchFieldOrderTotal: React.FunctionComponent<WidgetProps> = 
 };
 
 const widgetModule: WidgetModule = {
-
     component: OrderHistorySearchFieldOrderTotal,
     definition: {
         group: "Order History",

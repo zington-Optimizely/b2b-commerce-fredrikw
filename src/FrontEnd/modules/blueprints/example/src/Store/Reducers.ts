@@ -4,7 +4,7 @@ import { AnyAction, reducers } from "@insite/client-framework/Store/Reducers";
 import { Draft } from "immer";
 
 type CounterState = Readonly<{
-    total: number,
+    total: number;
 }>;
 
 const initialCounterState: CounterState = { total: 0 };
@@ -26,13 +26,13 @@ const customReducerTraditional = createTypedReducer(initialCounterState, {
 (reducers as any).customReducerTraditional = customReducerTraditional;
 
 export type CustomState = {
-    customReducerUsingImmer: CounterState,
-    customReducerTraditional: CounterState,
+    customReducerUsingImmer: CounterState;
+    customReducerTraditional: CounterState;
 } & ApplicationState;
 
 type Reducers = {
-    customReducerUsingImmer: typeof customReducerUsingImmer,
-    customReducerTraditional: typeof customReducerTraditional,
+    customReducerUsingImmer: typeof customReducerUsingImmer;
+    customReducerTraditional: typeof customReducerTraditional;
 };
 
 export type CustomActions = Parameters<Reducers[keyof Reducers]>[1] | AnyAction;

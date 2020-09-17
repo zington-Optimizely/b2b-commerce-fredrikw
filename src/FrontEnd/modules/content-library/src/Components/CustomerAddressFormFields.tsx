@@ -1,6 +1,12 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import translate from "@insite/client-framework/Translate";
-import { AddressFieldDisplayCollectionModel, BaseAddressModel, CountryModel, CustomerValidationDto, StateModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    AddressFieldDisplayCollectionModel,
+    BaseAddressModel,
+    CountryModel,
+    CustomerValidationDto,
+    StateModel,
+} from "@insite/client-framework/Types/ApiModels";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -127,7 +133,9 @@ export const customerAddressFormFieldStyles: CustomerAddressFormFieldStyles = {
     },
     cancelButton: {
         color: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
@@ -201,21 +209,21 @@ const CustomerAddressFormFields = ({
         setStates(selectedCountry?.states || []);
     }, [selectedCountry]);
 
-    const handleCountryChange: SelectProps["onChange"] = (event) => {
+    const handleCountryChange: SelectProps["onChange"] = event => {
         const country = countries.find(c => c.id === event.target.value);
         setSelectedCountry(country);
         onChangeCountry(event, country || null);
     };
 
-    const handleStateChange: SelectProps["onChange"] = (event) => {
+    const handleStateChange: SelectProps["onChange"] = event => {
         const state = selectedCountry?.states?.find(s => s.id === event.target.value);
         onChangeState(event, state || null);
     };
 
     return (
         <GridContainer {...styles.container} data-test-selector="customerAddressFormFields">
-            {fieldDisplay.firstName!.isVisible
-                && <GridItem {...styles.firstNameGridItem}>
+            {fieldDisplay.firstName!.isVisible && (
+                <GridItem {...styles.firstNameGridItem}>
                     <TextField
                         {...styles.firstNameText}
                         name="firstName"
@@ -226,11 +234,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.firstName!.maxLength || undefined}
                         onChange={onChangeFirstName}
                         error={firstNameError}
-                        data-test-selector="customerAddressForm_firstName" />
+                        data-test-selector="customerAddressForm_firstName"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.lastName!.isVisible
-                && <GridItem {...styles.lastNameGridItem}>
+            )}
+            {fieldDisplay.lastName!.isVisible && (
+                <GridItem {...styles.lastNameGridItem}>
                     <TextField
                         {...styles.lastNameText}
                         name="lastName"
@@ -241,11 +250,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.lastName!.maxLength || undefined}
                         onChange={onChangeLastName}
                         error={lastNameError}
-                        data-test-selector="customerAddressForm_lastName" />
+                        data-test-selector="customerAddressForm_lastName"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.companyName!.isVisible
-                && <GridItem {...styles.companyNameGridItem}>
+            )}
+            {fieldDisplay.companyName!.isVisible && (
+                <GridItem {...styles.companyNameGridItem}>
                     <TextField
                         {...styles.companyNameText}
                         name="companyName"
@@ -256,11 +266,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.companyName!.maxLength || undefined}
                         onChange={onChangeCompanyName}
                         error={companyNameError}
-                        data-test-selector="customerAddressForm_companyName" />
+                        data-test-selector="customerAddressForm_companyName"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.attention!.isVisible
-                && <GridItem {...styles.attentionGridItem}>
+            )}
+            {fieldDisplay.attention!.isVisible && (
+                <GridItem {...styles.attentionGridItem}>
                     <TextField
                         {...styles.attentionText}
                         name="attention"
@@ -271,11 +282,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.attention!.maxLength || undefined}
                         onChange={onChangeAttention}
                         error={attentionError}
-                        data-test-selector="customerAddressForm_attention" />
+                        data-test-selector="customerAddressForm_attention"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.address1!.isVisible
-                && <GridItem {...styles.address1GridItem}>
+            )}
+            {fieldDisplay.address1!.isVisible && (
+                <GridItem {...styles.address1GridItem}>
                     <TextField
                         {...styles.address1Text}
                         name="address1"
@@ -286,11 +298,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.address1!.maxLength || undefined}
                         onChange={onChangeAddress1}
                         error={address1Error}
-                        data-test-selector="customerAddressForm_address1" />
+                        data-test-selector="customerAddressForm_address1"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.address2!.isVisible
-                && <GridItem {...styles.address2GridItem}>
+            )}
+            {fieldDisplay.address2!.isVisible && (
+                <GridItem {...styles.address2GridItem}>
                     <TextField
                         {...styles.address2Text}
                         name="address2"
@@ -301,11 +314,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.address2!.maxLength || undefined}
                         onChange={onChangeAddress2}
                         error={address2Error}
-                        data-test-selector="customerAddressForm_address2" />
+                        data-test-selector="customerAddressForm_address2"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.address3!.isVisible
-                && <GridItem {...styles.address3GridItem}>
+            )}
+            {fieldDisplay.address3!.isVisible && (
+                <GridItem {...styles.address3GridItem}>
                     <TextField
                         {...styles.address3Text}
                         name="address3"
@@ -316,11 +330,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.address3!.maxLength || undefined}
                         onChange={onChangeAddress3}
                         error={address3Error}
-                        data-test-selector="customerAddressForm_address3" />
+                        data-test-selector="customerAddressForm_address3"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.address4!.isVisible
-                && <GridItem {...styles.address4GridItem}>
+            )}
+            {fieldDisplay.address4!.isVisible && (
+                <GridItem {...styles.address4GridItem}>
                     <TextField
                         {...styles.address4Text}
                         name="address4"
@@ -331,11 +346,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.address4!.maxLength || undefined}
                         onChange={onChangeAddress4}
                         error={address4Error}
-                        data-test-selector="customerAddressForm_address4" />
+                        data-test-selector="customerAddressForm_address4"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.country!.isVisible && countries.length > 1
-                && <GridItem {...styles.countryGridItem}>
+            )}
+            {fieldDisplay.country!.isVisible && countries.length > 1 && (
+                <GridItem {...styles.countryGridItem}>
                     <Select
                         {...styles.countrySelect}
                         label={fieldDisplay.country!.displayName}
@@ -348,13 +364,15 @@ const CustomerAddressFormFields = ({
                     >
                         <option value="">{translate("Select Country")}</option>
                         {countries.map(co => (
-                            <option key={co.id} value={co.id}>{co.name}</option>
+                            <option key={co.id} value={co.id}>
+                                {co.name}
+                            </option>
                         ))}
                     </Select>
                 </GridItem>
-            }
-            {fieldDisplay.city!.isVisible
-                && <GridItem {...styles.cityGridItem}>
+            )}
+            {fieldDisplay.city!.isVisible && (
+                <GridItem {...styles.cityGridItem}>
                     <TextField
                         {...styles.cityText}
                         name="city"
@@ -365,11 +383,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.city!.maxLength || undefined}
                         onChange={onChangeCity}
                         error={cityError}
-                        data-test-selector="customerAddressForm_city" />
+                        data-test-selector="customerAddressForm_city"
+                    />
                 </GridItem>
-            }
-            {states.length > 0
-                && <GridItem {...styles.stateGridItem}>
+            )}
+            {states.length > 0 && (
+                <GridItem {...styles.stateGridItem}>
                     <Select
                         {...styles.stateSelect}
                         label={fieldDisplay.state!.displayName}
@@ -382,13 +401,15 @@ const CustomerAddressFormFields = ({
                     >
                         <option value="">{translate("Select State")}</option>
                         {states.map(st => (
-                            <option key={st.id} value={st.id}>{st.name}</option>
+                            <option key={st.id} value={st.id}>
+                                {st.name}
+                            </option>
                         ))}
                     </Select>
                 </GridItem>
-            }
-            {fieldDisplay.postalCode!.isVisible
-                && <GridItem {...styles.postalCodeGridItem}>
+            )}
+            {fieldDisplay.postalCode!.isVisible && (
+                <GridItem {...styles.postalCodeGridItem}>
                     <TextField
                         {...styles.postalCodeText}
                         name="postalCode"
@@ -399,11 +420,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.postalCode!.maxLength || undefined}
                         onChange={onChangePostalCode}
                         error={postalCodeError}
-                        data-test-selector="customerAddressForm_postalCode" />
+                        data-test-selector="customerAddressForm_postalCode"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.phone!.isVisible
-                && <GridItem {...styles.phoneGridItem}>
+            )}
+            {fieldDisplay.phone!.isVisible && (
+                <GridItem {...styles.phoneGridItem}>
                     <TextField
                         {...styles.phoneText}
                         name="phone"
@@ -414,11 +436,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.phone!.maxLength || undefined}
                         onChange={onChangePhone}
                         error={phoneError}
-                        data-test-selector="customerAddressForm_phone" />
+                        data-test-selector="customerAddressForm_phone"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.fax!.isVisible
-                && <GridItem {...styles.faxGridItem}>
+            )}
+            {fieldDisplay.fax!.isVisible && (
+                <GridItem {...styles.faxGridItem}>
                     <TextField
                         {...styles.faxText}
                         name="fax"
@@ -429,11 +452,12 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.fax!.maxLength || undefined}
                         onChange={onChangeFax}
                         error={faxError}
-                        data-test-selector="customerAddressForm_fax" />
+                        data-test-selector="customerAddressForm_fax"
+                    />
                 </GridItem>
-            }
-            {fieldDisplay.email!.isVisible
-                && <GridItem {...styles.emailGridItem}>
+            )}
+            {fieldDisplay.email!.isVisible && (
+                <GridItem {...styles.emailGridItem}>
                     <TextField
                         {...styles.emailText}
                         name="email"
@@ -444,9 +468,10 @@ const CustomerAddressFormFields = ({
                         maxLength={validation.email!.maxLength || undefined}
                         onChange={onChangeEmail}
                         error={emailError}
-                        data-test-selector="customerAddressForm_email" />
+                        data-test-selector="customerAddressForm_email"
+                    />
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };

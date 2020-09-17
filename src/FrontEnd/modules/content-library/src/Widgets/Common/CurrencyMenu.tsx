@@ -35,12 +35,16 @@ export interface CurrencyMenuStyles {
 
 export const currencyMenuStyles: CurrencyMenuStyles = {
     currencyWrapper: {
-        css: css` display: flex; `,
+        css: css`
+            display: flex;
+        `,
     },
     currencySelect: {
         backgroundColor: "common.accent",
         cssOverrides: {
-            formInputWrapper: css` width: 100px; `,
+            formInputWrapper: css`
+                width: 100px;
+            `,
             inputSelect: css`
                 border: none;
                 text-transform: uppercase;
@@ -49,7 +53,9 @@ export const currencyMenuStyles: CurrencyMenuStyles = {
     },
     currencySymbol: {
         size: 22,
-        css: css` margin-top: 3px; `,
+        css: css`
+            margin-top: 3px;
+        `,
     },
 };
 
@@ -71,10 +77,7 @@ const CurrencyMenu: FC<Props> = ({ currencies, currentCurrencyId, currentCurrenc
 
     return (
         <StyledWrapper {...styles.currencyWrapper}>
-            {fields.showIcon
-                ? <Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography>
-                : null
-            }
+            {fields.showIcon ? <Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography> : null}
             <VisuallyHidden as="label" id={`${menuId}-label`} htmlFor={menuId}>
                 {translate("Currency")}
             </VisuallyHidden>
@@ -82,9 +85,12 @@ const CurrencyMenu: FC<Props> = ({ currencies, currentCurrencyId, currentCurrenc
                 {...styles.currencySelect}
                 uid={menuId}
                 onChange={event => setCurrency({ currencyId: event.currentTarget.value })}
-                value={currentCurrencyId}>
+                value={currentCurrencyId}
+            >
                 {currencies.map(c => (
-                    <option value={c.id} key={c.id}>{c.currencyCode}</option>
+                    <option value={c.id} key={c.id}>
+                        {c.currencyCode}
+                    </option>
                 ))}
             </Select>
         </StyledWrapper>

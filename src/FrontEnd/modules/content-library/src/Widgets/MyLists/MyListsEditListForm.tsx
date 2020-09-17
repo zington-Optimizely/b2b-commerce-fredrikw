@@ -52,11 +52,15 @@ export const myListsEditListFormStyles: MyListsEditListFormStyles = {
     },
     buttonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         color: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
@@ -106,7 +110,10 @@ class MyListsEditListForm extends React.Component<Props, State> {
     };
 
     onSubmitSuccess = () => {
-        this.context.addToast({ body: translate(`List ${this.props.wishList ? "Updated" : "Created"}`), messageType: "success" });
+        this.context.addToast({
+            body: translate(`List ${this.props.wishList ? "Updated" : "Created"}`),
+            messageType: "success",
+        });
         this.props.onSubmit();
     };
 
@@ -141,8 +148,8 @@ class MyListsEditListForm extends React.Component<Props, State> {
                         error={nameError}
                         required
                         defaultValue={name}
-                        onChange={this.nameChangeHandler}>
-                    </TextField>
+                        onChange={this.nameChangeHandler}
+                    ></TextField>
                 </GridItem>
                 <GridItem {...styles.descriptionGridItem}>
                     <TextField
@@ -152,20 +159,19 @@ class MyListsEditListForm extends React.Component<Props, State> {
                         name="description"
                         error={descriptionError}
                         defaultValue={description}
-                        onChange={this.descriptionChangeHandler}>
-                    </TextField>
+                        onChange={this.descriptionChangeHandler}
+                    ></TextField>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
-                    <Button
-                        {...styles.cancelButton}
-                        onClick={this.props.onCancel}>
+                    <Button {...styles.cancelButton} onClick={this.props.onCancel}>
                         {translate("Cancel")}
                     </Button>
                     <Button
                         {...styles.createButton}
                         onClick={this.submitHandler}
                         disabled={name.length > 100 || description.length > 300}
-                        data-test-selector="myListsEditListFormSubmit">
+                        data-test-selector="myListsEditListFormSubmit"
+                    >
                         {translate(this.props.wishList ? "Save" : "Create List")}
                     </Button>
                 </GridItem>

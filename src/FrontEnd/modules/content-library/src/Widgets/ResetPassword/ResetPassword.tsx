@@ -80,19 +80,41 @@ export const resetPasswordStyles: ResetPasswordStyles = {
     passwordGridItem: {
         width: [12, 12, 6, 6, 6],
         css: css`
-                flex-direction: column;
-                ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, null, css` padding-left: 100px; `], "min")}
-            `,
+            flex-direction: column;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            padding-left: 100px;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
     },
     passwordGridContainer: {
         css: css`
-                ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, null, css` max-width: 300px; `], "min")}
-            `,
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            max-width: 300px;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
     },
     instructionsText: {
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
     newPasswordGridItem: {
         width: 12,
@@ -102,15 +124,27 @@ export const resetPasswordStyles: ResetPasswordStyles = {
     },
     submitGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     requirementsGridItem: {
         width: [12, 12, 6, 6, 6],
         css: css`
-                flex-direction: column;
-                ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, null, css` padding-left: 50px; `], "min")}
-            `,
+            flex-direction: column;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            padding-left: 50px;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
     },
     passwordRequirementsGridContainer: {
         gap: 5,
@@ -127,13 +161,13 @@ export const resetPasswordStyles: ResetPasswordStyles = {
 const styles = resetPasswordStyles;
 
 const ResetPassword: FC<Props> = ({
-                                      accountSettings,
-                                      signInPageLink,
-                                      location,
-                                      history,
-                                      resetPassword,
-                                      validatePassword,
-                                  }) => {
+    accountSettings,
+    signInPageLink,
+    location,
+    history,
+    resetPassword,
+    validatePassword,
+}) => {
     const [userName, setUserName] = React.useState<string | undefined>("");
     const [isResettingPassword, setIsResettingPassword] = React.useState(true);
     const [resetToken, setResetToken] = React.useState<string | undefined>("");
@@ -154,16 +188,20 @@ const ResetPassword: FC<Props> = ({
         passwordRequiresDigit,
     } = accountSettings;
 
-    React.useEffect(
-        () => {
-            const parsedQuery = parseQueryString<{ userName?: string, resetToken?: string, reset?: string }>(location.search);
-            setUserName(parsedQuery.userName);
-            setResetToken(parsedQuery.resetToken);
-            setIsResettingPassword((parsedQuery.reset)?.toLowerCase() === "true");
-        }, []);
+    React.useEffect(() => {
+        const parsedQuery = parseQueryString<{ userName?: string; resetToken?: string; reset?: string }>(
+            location.search,
+        );
+        setUserName(parsedQuery.userName);
+        setResetToken(parsedQuery.resetToken);
+        setIsResettingPassword(parsedQuery.reset?.toLowerCase() === "true");
+    }, []);
 
     const validateConfirmPassword = (newPassword: string, newConfirmPassword: string) => {
-        const errorMessage = newPassword !== newConfirmPassword ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch") as string : "";
+        const errorMessage =
+            newPassword !== newConfirmPassword
+                ? (siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch") as string)
+                : "";
         setConfirmPasswordErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -175,7 +213,8 @@ const ResetPassword: FC<Props> = ({
     const passwordChangeHandler = (newPassword: string) => {
         validateConfirmPassword(newPassword, confirmPassword);
         validatePassword({
-            password: newPassword, onComplete: errorMessage => {
+            password: newPassword,
+            onComplete: errorMessage => {
                 setPasswordErrorMessage(errorMessage);
             },
         });
@@ -197,12 +236,17 @@ const ResetPassword: FC<Props> = ({
         }
 
         await resetPassword({
-            userName, newPassword: password, resetToken, onError: error => {
+            userName,
+            newPassword: password,
+            resetToken,
+            onError: error => {
                 toasterContext.addToast({ body: error, messageType: "danger" });
             },
         });
         toasterContext.addToast({
-            body: siteMessage(isResettingPassword ? "ResetPassword_SuccessMessage" : "AccountActivation_SuccessMessage"),
+            body: siteMessage(
+                isResettingPassword ? "ResetPassword_SuccessMessage" : "AccountActivation_SuccessMessage",
+            ),
             messageType: "success",
         });
         signInPageLink && history.push(signInPageLink.url);
@@ -214,7 +258,11 @@ const ResetPassword: FC<Props> = ({
         <GridContainer {...styles.mainGridContainer}>
             <GridItem {...styles.passwordGridItem}>
                 <Typography {...styles.instructionsText}>
-                    {siteMessage(isResettingPassword ? "ResetPassword_EnterPasswordInstructions" : "AccountActivation_EnterPasswordInstructions")}
+                    {siteMessage(
+                        isResettingPassword
+                            ? "ResetPassword_EnterPasswordInstructions"
+                            : "AccountActivation_EnterPasswordInstructions",
+                    )}
                 </Typography>
                 <GridContainer {...styles.passwordGridContainer}>
                     <GridItem {...styles.newPasswordGridItem}>
@@ -224,7 +272,7 @@ const ResetPassword: FC<Props> = ({
                             {...styles.newPasswordTextField}
                             label={translate("New Password")}
                             value={password}
-                            onChange={(e) => passwordChangeHandler(e.currentTarget.value)}
+                            onChange={e => passwordChangeHandler(e.currentTarget.value)}
                             error={isSubmitted && passwordErrorMessage}
                             iconProps={{ ...styles.newPasswordIcon, src: showPassword ? EyeOff : Eye }}
                             iconClickableProps={{
@@ -243,7 +291,7 @@ const ResetPassword: FC<Props> = ({
                             type={showConfirmPassword ? "password" : "text"}
                             label={translate("Confirm New Password")}
                             value={confirmPassword}
-                            onChange={(e) => confirmPasswordChangeHandler(e.currentTarget.value)}
+                            onChange={e => confirmPasswordChangeHandler(e.currentTarget.value)}
                             error={isSubmitted && confirmPasswordErrorMessage}
                             iconProps={{ ...styles.confirmNewPasswordIcon, src: showConfirmPassword ? EyeOff : Eye }}
                             iconClickableProps={{
@@ -256,8 +304,13 @@ const ResetPassword: FC<Props> = ({
                         />
                     </GridItem>
                     <GridItem {...styles.submitGridItem}>
-                        <Button {...styles.submitButton} onClick={submitHandler}
-                                disabled={isSubmitted && !isSubmitEnabled}>{translate("Reset Password")}</Button>
+                        <Button
+                            {...styles.submitButton}
+                            onClick={submitHandler}
+                            disabled={isSubmitted && !isSubmitEnabled}
+                        >
+                            {translate("Reset Password")}
+                        </Button>
                     </GridItem>
                 </GridContainer>
             </GridItem>
@@ -265,19 +318,27 @@ const ResetPassword: FC<Props> = ({
                 <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
                 <GridContainer {...styles.passwordRequirementsGridContainer}>
                     <GridItem {...styles.passwordRequirementsGridItem}>
-                        {translate("Password must be at least {0} characters long").replace("{0}", passwordMinimumLength.toString())}
+                        {translate("Password must be at least {0} characters long").replace(
+                            "{0}",
+                            passwordMinimumLength.toString(),
+                        )}
                     </GridItem>
-                    {passwordRequiresDigit
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>}
-                    {passwordRequiresLowercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>}
-                    {passwordRequiresUppercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>}
-                    {passwordRequiresSpecialCharacter
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>}
+                    {passwordRequiresDigit && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresLowercase && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresUppercase && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresSpecialCharacter && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
-        </GridContainer>);
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

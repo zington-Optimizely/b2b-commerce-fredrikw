@@ -13,9 +13,7 @@ export interface LayoutGroupProps {
  * LayoutTable equivalent to a `<tr>` in an HTML table, but LayoutGroups can also be arranged as columns.
  */
 const LayoutGroup: React.FC<LayoutGroupProps> = ({ children, index }) => (
-    <LayoutGroupContext.Provider value={{ groupIndex: index }}>
-        {children}
-    </LayoutGroupContext.Provider>
+    <LayoutGroupContext.Provider value={{ groupIndex: index }}>{children}</LayoutGroupContext.Provider>
 );
 
 /** @component */

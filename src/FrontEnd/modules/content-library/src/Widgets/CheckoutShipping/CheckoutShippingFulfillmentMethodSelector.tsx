@@ -16,8 +16,7 @@ import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     fulfillmentMethod: state.context.session.fulfillmentMethod,
@@ -79,7 +78,9 @@ const CheckoutShippingFulfillmentMethodSelector = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.gridItem}>
-                <Typography {...styles.headingText} as="h2">{translate("Fulfillment Method")}</Typography>
+                <Typography {...styles.headingText} as="h2">
+                    {translate("Fulfillment Method")}
+                </Typography>
                 <RadioGroup
                     {...styles.radioGroup}
                     value={fulfillmentMethod}

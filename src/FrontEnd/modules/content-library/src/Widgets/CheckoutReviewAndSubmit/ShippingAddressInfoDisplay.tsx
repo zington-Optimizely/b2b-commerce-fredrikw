@@ -29,16 +29,14 @@ export const shippingAddressInfoDisplayStyles: ShippingAddressInfoDisplayStyles 
     headingGridItem: { width: 12 },
     heading: {
         weight: 600,
-        css: css` margin: 0 1rem 0 0; `,
+        css: css`
+            margin: 0 1rem 0 0;
+        `,
     },
     addressGridItem: { width: 12 },
 };
 
-const ShippingAddressInfoDisplay = ({
-    shipTo,
-    onEdit,
-    extendedStyles,
-}: OwnProps) => {
+const ShippingAddressInfoDisplay = ({ shipTo, onEdit, extendedStyles }: OwnProps) => {
     const styles = mergeToNew(shippingAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container} data-test-selector="shippingAddressInfoDisplay_container">
@@ -53,7 +51,8 @@ const ShippingAddressInfoDisplay = ({
                     {...shipTo}
                     state={shipTo.state ? shipTo.state.abbreviation : undefined}
                     country={shipTo.country ? shipTo.country.abbreviation : undefined}
-                    extendedStyles={styles.address} />
+                    extendedStyles={styles.address}
+                />
             </GridItem>
         </GridContainer>
     );

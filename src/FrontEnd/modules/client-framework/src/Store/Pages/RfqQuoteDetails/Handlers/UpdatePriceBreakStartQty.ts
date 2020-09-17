@@ -1,9 +1,13 @@
-import { createHandlerChainRunner, HandlerWithResult, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import validatePriceBreaks from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/ValidatePriceBreaks";
 import { getPriceBreaksForCurrentQuoteLine } from "@insite/client-framework/Store/Pages/RfqQuoteDetails/RfqQuoteDetailsSelectors";
 import { BreakPriceRfqModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = HandlerWithResult<{ index: number, startQty: number }, { updatedPriceBreaks: BreakPriceRfqModel[] }>;
+type HandlerType = HandlerWithResult<{ index: number; startQty: number }, { updatedPriceBreaks: BreakPriceRfqModel[] }>;
 
 export const UpdateStartQty: HandlerType = props => {
     const priceBreaks = getPriceBreaksForCurrentQuoteLine(props.getState());
@@ -16,13 +20,13 @@ export const UpdateStartQty: HandlerType = props => {
 
     if (index > 0 && startQty > 0) {
         updatedPriceBreaks[index - 1] = {
-            ...(updatedPriceBreaks[index - 1]),
+            ...updatedPriceBreaks[index - 1],
             endQty: startQty - 1,
         };
     }
 
     updatedPriceBreaks[index] = {
-        ...(updatedPriceBreaks[index]),
+        ...updatedPriceBreaks[index],
         startQty,
     };
 
@@ -43,11 +47,7 @@ export const ValidatePriceBreaks: HandlerType = async ({ dispatch, getState }) =
     }
 };
 
-export const chain = [
-    UpdateStartQty,
-    DispatchUpdatePriceBreaks,
-    ValidatePriceBreaks,
-];
+export const chain = [UpdateStartQty, DispatchUpdatePriceBreaks, ValidatePriceBreaks];
 
 const updateStartQty = createHandlerChainRunner(chain, "UpdateStartQty");
 export default updateStartQty;

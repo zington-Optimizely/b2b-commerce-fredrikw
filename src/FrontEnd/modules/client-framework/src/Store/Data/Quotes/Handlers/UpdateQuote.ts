@@ -1,11 +1,17 @@
-import { createHandlerChainRunner, HandlerWithResult, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    HasOnError,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { updateQuote as updateQuoteApi, UpdateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = HandlerWithResult<
     {
         apiParameter: UpdateQuoteApiParameter;
-    } & HasOnSuccess & HasOnError<string>,
+    } & HasOnSuccess &
+        HasOnError<string>,
     {
         quote?: QuoteModel;
         errorMessage?: string;
@@ -41,12 +47,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    SendDataToApi,
-    ResetQuotesData,
-    DispatchCompleteLoadQuote,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [SendDataToApi, ResetQuotesData, DispatchCompleteLoadQuote, ExecuteOnSuccessCallback];
 
 const updateQuote = createHandlerChainRunner(chain, "UpdateQuote");
 export default updateQuote;

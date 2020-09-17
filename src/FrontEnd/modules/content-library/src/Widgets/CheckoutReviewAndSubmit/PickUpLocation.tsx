@@ -2,7 +2,9 @@ import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import translate from "@insite/client-framework/Translate";
 import { BillToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
-import BillingAddressInfoDisplay, { BillingAddressInfoDisplayStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
+import BillingAddressInfoDisplay, {
+    BillingAddressInfoDisplayStyles,
+} from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/BillingAddressInfoDisplay";
 import PickUpLocationAddressInfoDisplay from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PickUpLocationAddressInfoDisplay";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -33,7 +35,9 @@ export const pickUpLocationInfoDisplayStyles: PickUpLocationInfoDisplayStyles = 
     container: { gap: 20 },
     pickUpDateGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     pickUpDateHeadingText: { weight: 600 },
     locationAddressGridItem: {
@@ -55,22 +59,16 @@ const PickUpLocation = ({
     const styles = mergeToNew(pickUpLocationInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container}>
-            {pickUpDate
-                && <GridItem {...styles.pickUpDateGridItem}>
+            {pickUpDate && (
+                <GridItem {...styles.pickUpDateGridItem}>
                     <Typography {...styles.pickUpDateHeadingText}>{translate("Requested Pick Up Date")}</Typography>
-                    <Typography
-                        {...styles.pickUpDateText}
-                        data-test-selector="requestedPickUpDateValue"
-                    >
+                    <Typography {...styles.pickUpDateText} data-test-selector="requestedPickUpDateValue">
                         <LocalizedDateTime dateTime={pickUpDate} />
                     </Typography>
                 </GridItem>
-            }
+            )}
             <GridItem {...styles.locationAddressGridItem}>
-                <PickUpLocationAddressInfoDisplay
-                    {...otherProps}
-                    onEdit={onEditLocation}
-                />
+                <PickUpLocationAddressInfoDisplay {...otherProps} onEdit={onEditLocation} />
             </GridItem>
             <GridItem {...styles.billingAddressGridItem}>
                 <BillingAddressInfoDisplay

@@ -1,7 +1,7 @@
 const fse = require("fs-extra");
 const path = require("path");
 
-const [,, blueprintName] = process.argv;
+const [, , blueprintName] = process.argv;
 
 if (!blueprintName) {
     console.log(`
@@ -21,24 +21,14 @@ fse.writeJsonSync(
     path.resolve(`./modules/blueprints/${blueprintName}/fence.json`),
     {
         tags: [`${blueprintName}`],
-        imports: [
-            "mobius",
-            "client-framework",
-            "content-library",
-            "server-framework",
-            "shell",
-        ],
+        imports: ["mobius", "client-framework", "content-library", "server-framework"],
     },
     { spaces: 2 },
 );
 
 // Writing a new package.json file instead of copying from the example blueprint. The example blueprint may include npm packages
 // that partners do not want in their custom theme.
-fse.writeJsonSync(
-    path.resolve(`./modules/blueprints/${blueprintName}/package.json`),
-    { private: true },
-    { spaces: 2 },
-);
+fse.writeJsonSync(path.resolve(`./modules/blueprints/${blueprintName}/package.json`), { private: true }, { spaces: 2 });
 
 fse.copySync(
     path.resolve("./modules/blueprints/example/tsconfig.json"),

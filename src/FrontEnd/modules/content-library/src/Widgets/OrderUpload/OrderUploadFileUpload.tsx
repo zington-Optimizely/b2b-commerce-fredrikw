@@ -7,7 +7,9 @@ import { ProductDto } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import OrderUpload, { OrderUploadStyles } from "@insite/content-library/Components/OrderUpload";
-import OrderUploadErrorsModal, { OrderUploadErrorsModalStyles } from "@insite/content-library/Components/OrderUploadErrorsModal";
+import OrderUploadErrorsModal, {
+    OrderUploadErrorsModalStyles,
+} from "@insite/content-library/Components/OrderUploadErrorsModal";
 import { OrderUploadPageContext } from "@insite/content-library/Pages/OrderUploadPage";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -23,14 +25,11 @@ export interface OrderUploadFileUploadStyles {
     orderUploadErrorsModalStyles?: OrderUploadErrorsModalStyles;
 }
 
-export const orderUploadFileUploadStyles: OrderUploadFileUploadStyles = {
-};
+export const orderUploadFileUploadStyles: OrderUploadFileUploadStyles = {};
 
 const styles = orderUploadFileUploadStyles;
 
-const OrderUploadFileUpload: FC<Props> = ({
-    addCartLineCollectionFromProducts,
-}) => {
+const OrderUploadFileUpload: FC<Props> = ({ addCartLineCollectionFromProducts }) => {
     const uploadProductsHandler = async (products: ProductDto[]) => {
         await addCartLineCollectionFromProducts({ products });
     };

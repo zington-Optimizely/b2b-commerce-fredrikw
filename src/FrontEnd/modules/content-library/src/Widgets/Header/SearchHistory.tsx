@@ -59,7 +59,9 @@ export const searchHistoryStyles: SearchHistoryStyles = {
     },
     icon: {
         src: Clock,
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
     link: {
         typographyProps: {
@@ -128,21 +130,27 @@ class SearchHistory extends React.Component<Props> {
         }
 
         const styles = this.styles;
-        return <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.headerText}>{translate("Search History")}</Typography>
-            {searchHistory.map(searchHistoryItem => (
-                <StyledWrapper {...styles.itemWrapper} key={searchHistoryItem.query}>
-                    <IconMemo {...styles.icon} />
-                    <Link
-                        {...(this.props.focusedQuery === searchHistoryItem.query ? styles.focusedLink : styles.link)}
-                        onClick={() => this.props.goToUrl(`/Search?query=${searchHistoryItem.query}`)}
-                    >
-                        {searchHistoryItem.query}
-                    </Link>
-                </StyledWrapper>
-            ))}
-            <Link {...styles.clearLink} onClick={this.clearLinkClickHandler}>{translate("Clear Search History")}</Link>
-        </StyledWrapper>;
+        return (
+            <StyledWrapper {...styles.wrapper}>
+                <Typography {...styles.headerText}>{translate("Search History")}</Typography>
+                {searchHistory.map(searchHistoryItem => (
+                    <StyledWrapper {...styles.itemWrapper} key={searchHistoryItem.query}>
+                        <IconMemo {...styles.icon} />
+                        <Link
+                            {...(this.props.focusedQuery === searchHistoryItem.query
+                                ? styles.focusedLink
+                                : styles.link)}
+                            onClick={() => this.props.goToUrl(`/Search?query=${searchHistoryItem.query}`)}
+                        >
+                            {searchHistoryItem.query}
+                        </Link>
+                    </StyledWrapper>
+                ))}
+                <Link {...styles.clearLink} onClick={this.clearLinkClickHandler}>
+                    {translate("Clear Search History")}
+                </Link>
+            </StyledWrapper>
+        );
     }
 }
 

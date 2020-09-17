@@ -10,9 +10,9 @@ import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
     const categoriesDataView = getCategoriesDataView(state);
-    return ({
+    return {
         shouldLoadCategories: !categoriesDataView.value && !categoriesDataView.isLoading,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -30,9 +30,11 @@ class CategoryListPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-                <Zone contentId={this.props.id} zoneName="Content"/>
-            </Page>;
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+            </Page>
+        );
     }
 }
 

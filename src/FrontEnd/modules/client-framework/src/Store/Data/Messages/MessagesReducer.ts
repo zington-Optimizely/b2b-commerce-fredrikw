@@ -12,11 +12,17 @@ const initialState: MessagesState = {
 };
 
 const reducer = {
-    "Data/Messages/BeginLoadMessages": (draft: Draft<MessagesState>, action: { parameter: GetMessagesApiParameter }) => {
+    "Data/Messages/BeginLoadMessages": (
+        draft: Draft<MessagesState>,
+        action: { parameter: GetMessagesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Messages/CompleteLoadMessages": (draft: Draft<MessagesState>, action: { parameter: GetMessagesApiParameter, collection: MessageCollectionModel }) => {
+    "Data/Messages/CompleteLoadMessages": (
+        draft: Draft<MessagesState>,
+        action: { parameter: GetMessagesApiParameter; collection: MessageCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.messages!);
     },
 

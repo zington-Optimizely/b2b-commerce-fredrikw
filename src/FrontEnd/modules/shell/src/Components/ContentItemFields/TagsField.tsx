@@ -13,7 +13,6 @@ interface State {
 }
 
 export default class TagsField extends React.Component<ContentItemFieldProps<string[], TextFieldDefinition>, State> {
-
     constructor(props: ContentItemFieldProps<string[], TextFieldDefinition>) {
         super(props);
 
@@ -63,27 +62,35 @@ export default class TagsField extends React.Component<ContentItemFieldProps<str
     };
 
     render() {
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-            <FakeTextFieldStyle isFocused={this.state.isFocused}>
-                {this.props.fieldValue && this.props.fieldValue.map((tag) =>
-                    <span key={tag} onClick={() => this.removeTag(tag)}>{tag}<X color1={shellTheme.colors.text.main} size={10}/></span>,
-                )}
-                <input id={this.props.fieldDefinition.name}
-                       type="text"
-                       value={this.state.value}
-                       placeholder={this.props.fieldDefinition.placeholder}
-                       onChange={this.onChange}
-                       onKeyPress={this.onKeyPress}
-                       onFocus={this.onFocus}
-                       onBlur={this.onBlur}
-                       pattern="[0-9a-zA-Z_\-]"
-                       maxLength={20}/>
-            </FakeTextFieldStyle>
-        </StandardControl>;
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                <FakeTextFieldStyle isFocused={this.state.isFocused}>
+                    {this.props.fieldValue &&
+                        this.props.fieldValue.map(tag => (
+                            <span key={tag} onClick={() => this.removeTag(tag)}>
+                                {tag}
+                                <X color1={shellTheme.colors.text.main} size={10} />
+                            </span>
+                        ))}
+                    <input
+                        id={this.props.fieldDefinition.name}
+                        type="text"
+                        value={this.state.value}
+                        placeholder={this.props.fieldDefinition.placeholder}
+                        onChange={this.onChange}
+                        onKeyPress={this.onKeyPress}
+                        onFocus={this.onFocus}
+                        onBlur={this.onBlur}
+                        pattern="[0-9a-zA-Z_\-]"
+                        maxLength={20}
+                    />
+                </FakeTextFieldStyle>
+            </StandardControl>
+        );
     }
 }
 
-const FakeTextFieldStyle = styled.div<{isFocused: boolean}>`
+const FakeTextFieldStyle = styled.div<{ isFocused: boolean }>`
     ${({ theme }) => theme.formField?.defaultProps?.cssOverrides?.inputSelect}
     background: ${({ theme }) => resolveColor(theme.formField?.defaultProps?.backgroundColor, theme)};
     padding: 8px 8px 2px;
@@ -91,14 +98,15 @@ const FakeTextFieldStyle = styled.div<{isFocused: boolean}>`
     display: flex;
     flex-wrap: wrap;
     box-sizing: border-box;
-    ${props => props.isFocused
-        ? css`
-            border-color: ${props => props.theme.focus.color};
-            border-style: ${props => props.theme.focus.style};
-            border-width: ${props => props.theme.focus.width};
-            padding: 6px 6px 0;
-        `
-        : ""}
+    ${props =>
+        props.isFocused
+            ? css`
+                  border-color: ${props => props.theme.focus.color};
+                  border-style: ${props => props.theme.focus.style};
+                  border-width: ${props => props.theme.focus.width};
+                  padding: 6px 6px 0;
+              `
+            : ""}
 
     span {
         display: flex;

@@ -32,21 +32,15 @@ const mapDispatchToProps = {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-
 export interface MessageStyles {
     messageTextArea?: TextAreaProps;
 }
 
-export const messageStyles: MessageStyles = {
-};
+export const messageStyles: MessageStyles = {};
 
 const styles = messageStyles;
 
-const Message: React.FC<Props> = ({
-    fields,
-    message,
-    setFieldValue,
-}) => {
+const Message: React.FC<Props> = ({ fields, message, setFieldValue }) => {
     const { label, hintText, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [messageErrorMessage, setMessageErrorMessage] = React.useState("");
@@ -63,9 +57,7 @@ const Message: React.FC<Props> = ({
     }, [isRequired]);
 
     const validateMessage = () => {
-        const errorMessage = isRequired && !message
-            ? siteMessage("Field_Required", label) as string
-            : "";
+        const errorMessage = isRequired && !message ? (siteMessage("Field_Required", label) as string) : "";
         setMessageErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -74,15 +66,17 @@ const Message: React.FC<Props> = ({
         setFieldValue({ key: "message", value: event.target.value });
     };
 
-    return <TextArea
-        {...styles.messageTextArea}
-        label={label}
-        required={isRequired}
-        placeholder={hintText}
-        value={message || ""}
-        error={messageErrorMessage}
-        onChange={messageChangeHandler}
-    />;
+    return (
+        <TextArea
+            {...styles.messageTextArea}
+            label={label}
+            required={isRequired}
+            placeholder={hintText}
+            value={message || ""}
+            error={messageErrorMessage}
+            onChange={messageChangeHandler}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

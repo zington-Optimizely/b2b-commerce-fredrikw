@@ -7,7 +7,9 @@ import ProductDescription, { ProductDescriptionStyles } from "@insite/content-li
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import RfqQuoteDetailsQuotedPricing, { RfqQuoteDetailsQuotedPricingStyles } from "@insite/content-library/Widgets/RfqQuoteDetails/RfqQuoteDetailsQuotedPricing";
+import RfqQuoteDetailsQuotedPricing, {
+    RfqQuoteDetailsQuotedPricingStyles,
+} from "@insite/content-library/Widgets/RfqQuoteDetails/RfqQuoteDetailsQuotedPricing";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
@@ -91,17 +93,23 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
         gap: 20,
     },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productPrice: {
         wrapper: {
-            css: css` margin-top: 10px; `,
+            css: css`
+                margin-top: 10px;
+            `,
         },
     },
     quotedPricingGridItem: {
         width: [12, 12, 12, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     quotedPricingText: {
         weight: "bold",
@@ -130,27 +138,31 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
     },
     notesGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     toggleNotesLink: {
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
     costCodeGridItem: {
         width: 6,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     costCodeLabelText: {
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
 };
 
 const styles = rfqQuoteDetailsProposedDetailsGridItemStyles;
 
-const RfqQuoteDetailsProposedDetailsGridItem = ({
-    quote,
-    quoteLine,
-    updateQuoteLine,
-}: Props) => {
+const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteLine }: Props) => {
     const toasterContext = useContext(ToasterContext);
 
     const qtyOrderedSubmitHandler = (value: string) => {
@@ -206,104 +218,119 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({
 
     const toggleNotesHeading = showNotes
         ? translate("Hide Line Notes")
-        : (quoteLine.notes.length === 0)
-            ? translate("Add Line Notes")
-            : translate("Show Line Notes");
+        : quoteLine.notes.length === 0
+        ? translate("Add Line Notes")
+        : translate("Show Line Notes");
 
-    return <GridContainer {...styles.container} data-test-selector={`quoteLine_${quoteLine.productId}_${quoteLine.unitOfMeasure}`}>
-        <GridItem {...styles.productImageGridItem}>
-            <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
-        </GridItem>
-        <GridItem {...styles.quoteLineInfoGridItem}>
-            <GridContainer {...styles.quoteLineInfoContainer}>
-                <GridItem {...styles.infoLeftColumn}>
-                    <GridContainer {...styles.infoLeftColumnContainer}>
-                        <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                            {quoteLine.brand
-                                && <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />
-                            }
-                            <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
-                            <ProductPartNumbers
-                                productNumber={quoteLine.erpNumber}
-                                customerProductNumber={quoteLine.customerName}
-                                manufacturerItem={quoteLine.manufacturerItem}
-                                extendedStyles={styles.productPartNumbers}
-                            />
-                            <ProductPrice
-                                product={quoteLine}
-                                currencySymbol={quote.currencySymbol}
-                                showLabel={false}
-                                extendedStyles={styles.productPrice} />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                <GridItem {...styles.quotedPricingGridItem}>
-                    <Typography {...styles.quotedPricingText}>{translate("Quoted Pricing")}</Typography>
-                    <RfqQuoteDetailsQuotedPricing quote={quote} quoteLine={quoteLine} extendedStyles={styles.quotedPricingStyles} />
-                </GridItem>
-                <GridItem {...styles.quantityAndSubtotalGridItem}>
-                    <GridContainer {...styles.quantityAndSubtotalContainer}>
-                        <GridItem {...styles.quantityGridItem}>
-                            <TextField
-                                {...styles.quantityTextField}
-                                type="number"
-                                min={1}
-                                label={translate("QTY_quantity")}
-                                value={qtyOrdered}
-                                disabled={quoteLine.isPromotionItem || quote.isJobQuote}
-                                onChange={qtyOrderedChangeHandler}
-                                onKeyDown={qtyOrderedKeyDownHandler}
-                                onBlur={qtyOrderedBlurHandler}
-                            />
-                        </GridItem>
-                        <GridItem {...styles.subtotalGridItem}>
-                            {quoteLine.pricing
-                                && <>
-                                    <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
-                                    <Typography {...styles.subtotalText} >{quoteLine.pricing.extendedUnitNetPriceDisplay}</Typography>
-                                </>
-                            }
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                {quote.showLineNotes && !quoteLine.isPromotionItem
-                    && <GridItem {...styles.notesAndCostCodeGridItem}>
-                        <GridContainer {...styles.notesAndCostCodesContainer}>
-                            <GridItem {...styles.notesGridItem}>
-                                <Link {...styles.toggleNotesLink} onClick={toggleNotesClickHandler}>
-                                    {toggleNotesHeading}
-                                </Link>
-                                {showNotes
-                                    && <TextArea
-                                        {...styles.notesTextArea}
-                                        value={notes}
-                                        disabled={!quote.canModifyOrder}
-                                        onChange={notesChangeHandler}
-                                        onBlur={notesBlurHandler}
-                                    />
-                                }
-                            </GridItem>
-                            <GridItem {...styles.costCodeGridItem}>
-                                {quote.showCostCode
-                                    && <>
-                                        <Typography {...styles.costCodeLabelText}>{quote.costCodeLabel}</Typography>
-                                        {quote.canEditCostCode
-                                            ? <Select {...styles.costCodeSelect}>
-                                                {quote.costCodes?.map(costCode => (
-                                                    <option key={costCode.costCode} value={costCode.costCode}>{costCode.description}</option>
-                                                ))}
-                                            </Select>
-                                            : <Typography {...styles.costCodeText}>{quoteLine.costCode}</Typography>
-                                        }
-                                    </>
-                                }
+    return (
+        <GridContainer
+            {...styles.container}
+            data-test-selector={`quoteLine_${quoteLine.productId}_${quoteLine.unitOfMeasure}`}
+        >
+            <GridItem {...styles.productImageGridItem}>
+                <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
+            </GridItem>
+            <GridItem {...styles.quoteLineInfoGridItem}>
+                <GridContainer {...styles.quoteLineInfoContainer}>
+                    <GridItem {...styles.infoLeftColumn}>
+                        <GridContainer {...styles.infoLeftColumnContainer}>
+                            <GridItem {...styles.productBrandAndDescriptionGridItem}>
+                                {quoteLine.brand && (
+                                    <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />
+                                )}
+                                <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
+                                <ProductPartNumbers
+                                    productNumber={quoteLine.erpNumber}
+                                    customerProductNumber={quoteLine.customerName}
+                                    manufacturerItem={quoteLine.manufacturerItem}
+                                    extendedStyles={styles.productPartNumbers}
+                                />
+                                <ProductPrice
+                                    product={quoteLine}
+                                    currencySymbol={quote.currencySymbol}
+                                    showLabel={false}
+                                    extendedStyles={styles.productPrice}
+                                />
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-                }
-            </GridContainer>
-        </GridItem>
-    </GridContainer>;
+                    <GridItem {...styles.quotedPricingGridItem}>
+                        <Typography {...styles.quotedPricingText}>{translate("Quoted Pricing")}</Typography>
+                        <RfqQuoteDetailsQuotedPricing
+                            quote={quote}
+                            quoteLine={quoteLine}
+                            extendedStyles={styles.quotedPricingStyles}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.quantityAndSubtotalGridItem}>
+                        <GridContainer {...styles.quantityAndSubtotalContainer}>
+                            <GridItem {...styles.quantityGridItem}>
+                                <TextField
+                                    {...styles.quantityTextField}
+                                    type="number"
+                                    min={1}
+                                    label={translate("QTY_quantity")}
+                                    value={qtyOrdered}
+                                    disabled={quoteLine.isPromotionItem || quote.isJobQuote}
+                                    onChange={qtyOrderedChangeHandler}
+                                    onKeyDown={qtyOrderedKeyDownHandler}
+                                    onBlur={qtyOrderedBlurHandler}
+                                />
+                            </GridItem>
+                            <GridItem {...styles.subtotalGridItem}>
+                                {quoteLine.pricing && (
+                                    <>
+                                        <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
+                                        <Typography {...styles.subtotalText}>
+                                            {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                        </Typography>
+                                    </>
+                                )}
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                    {quote.showLineNotes && !quoteLine.isPromotionItem && (
+                        <GridItem {...styles.notesAndCostCodeGridItem}>
+                            <GridContainer {...styles.notesAndCostCodesContainer}>
+                                <GridItem {...styles.notesGridItem}>
+                                    <Link {...styles.toggleNotesLink} onClick={toggleNotesClickHandler}>
+                                        {toggleNotesHeading}
+                                    </Link>
+                                    {showNotes && (
+                                        <TextArea
+                                            {...styles.notesTextArea}
+                                            value={notes}
+                                            disabled={!quote.canModifyOrder}
+                                            onChange={notesChangeHandler}
+                                            onBlur={notesBlurHandler}
+                                        />
+                                    )}
+                                </GridItem>
+                                <GridItem {...styles.costCodeGridItem}>
+                                    {quote.showCostCode && (
+                                        <>
+                                            <Typography {...styles.costCodeLabelText}>{quote.costCodeLabel}</Typography>
+                                            {quote.canEditCostCode ? (
+                                                <Select {...styles.costCodeSelect}>
+                                                    {quote.costCodes?.map(costCode => (
+                                                        <option key={costCode.costCode} value={costCode.costCode}>
+                                                            {costCode.description}
+                                                        </option>
+                                                    ))}
+                                                </Select>
+                                            ) : (
+                                                <Typography {...styles.costCodeText}>{quoteLine.costCode}</Typography>
+                                            )}
+                                        </>
+                                    )}
+                                </GridItem>
+                            </GridContainer>
+                        </GridItem>
+                    )}
+                </GridContainer>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 export default connect(null, mapDispatchToProps)(RfqQuoteDetailsProposedDetailsGridItem);

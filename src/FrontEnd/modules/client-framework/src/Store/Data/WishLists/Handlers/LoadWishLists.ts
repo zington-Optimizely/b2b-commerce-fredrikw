@@ -1,7 +1,4 @@
-import {
-    ApiHandler,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { getWishLists, GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
 import { WishListCollectionModel } from "@insite/client-framework/Types/ApiModels";
 

@@ -22,7 +22,9 @@ const GoogleMapsDirectionLink: React.FC<Props> = ({
 }) => {
     const linkAddress = `http://maps.google.com/maps?daddr=${address1} ${address2}, ${city}, ${state} ${postalCode}`;
     return (
-        <Link href={linkAddress} target={target} {...otherProps}>{translate("Directions")}</Link>
+        <Link href={linkAddress} target={target} {...otherProps}>
+            {translate("Directions")}
+        </Link>
     );
 };
 

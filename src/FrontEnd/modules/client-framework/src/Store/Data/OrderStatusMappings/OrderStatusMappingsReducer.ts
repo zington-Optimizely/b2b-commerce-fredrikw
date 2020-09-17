@@ -12,11 +12,17 @@ const initialState: OrderStatusMappingsState = {
 };
 
 const reducer = {
-    "Data/OrderStatusMappings/BeginLoadOrderStatusMappings": (draft: Draft<OrderStatusMappingsState>, action: { parameter: GetOrderStatusMappingsApiParameter }) => {
+    "Data/OrderStatusMappings/BeginLoadOrderStatusMappings": (
+        draft: Draft<OrderStatusMappingsState>,
+        action: { parameter: GetOrderStatusMappingsApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/OrderStatusMappings/CompleteLoadOrderStatusMappings": (draft: Draft<OrderStatusMappingsState>, action: { parameter: GetOrderStatusMappingsApiParameter, collection: OrderStatusMappingCollectionModel }) => {
+    "Data/OrderStatusMappings/CompleteLoadOrderStatusMappings": (
+        draft: Draft<OrderStatusMappingsState>,
+        action: { parameter: GetOrderStatusMappingsApiParameter; collection: OrderStatusMappingCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.orderStatusMappings!);
     },
 

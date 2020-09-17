@@ -103,11 +103,15 @@ export const productPriceStyles: ProductPriceStyles = {
             `,
         },
         unitOfMeasureText: {
-            css: css` white-space: nowrap; `,
+            css: css`
+                white-space: nowrap;
+            `,
         },
     },
     packWrapper: {
-        css: css` margin-bottom: 8px; `,
+        css: css`
+            margin-bottom: 8px;
+        `,
     },
     packLabelText: {
         weight: "bold",
@@ -124,24 +128,36 @@ export const productPriceStyles: ProductPriceStyles = {
 const SectionWrapper = getStyledWrapper("section");
 
 const ProductPrice: FC<Props> = ({
-                                     product: pricingData,
-                                     currencySymbol,
-                                     canSeePrices,
-                                     showLabel = true,
-                                     showSavings = false,
-                                     showSavingsAmount = false,
-                                     showSavingsPercent = false,
-                                     extendedStyles,
-                                 }) => {
+    product: pricingData,
+    currencySymbol,
+    canSeePrices,
+    showLabel = true,
+    showSavings = false,
+    showSavingsAmount = false,
+    showSavingsPercent = false,
+    extendedStyles,
+}) => {
     const [styles] = React.useState(() => mergeToNew(productPriceStyles, extendedStyles));
 
     const productContextModel = pricingData as ProductContextModel;
     const cartLineModel = pricingData as CartLineModel;
 
-    const unitOfMeasureDescription = "product" in pricingData ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)?.description : pricingData.unitOfMeasureDescription;
-    const unitOfMeasureDisplay = "product" in pricingData ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)?.unitOfMeasureDisplay : pricingData.unitOfMeasureDisplay;
-    const quoteRequired = productContextModel.product ? productContextModel.product.quoteRequired : cartLineModel.quoteRequired;
-    const qtyOrdered = productContextModel.product ? productContextModel.productInfo.qtyOrdered : cartLineModel.qtyOrdered;
+    const unitOfMeasureDescription =
+        "product" in pricingData
+            ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)
+                  ?.description
+            : pricingData.unitOfMeasureDescription;
+    const unitOfMeasureDisplay =
+        "product" in pricingData
+            ? pricingData.product.unitOfMeasures?.find(o => o.unitOfMeasure === pricingData.productInfo.unitOfMeasure)
+                  ?.unitOfMeasureDisplay
+            : pricingData.unitOfMeasureDisplay;
+    const quoteRequired = productContextModel.product
+        ? productContextModel.product.quoteRequired
+        : cartLineModel.quoteRequired;
+    const qtyOrdered = productContextModel.product
+        ? productContextModel.productInfo.qtyOrdered
+        : cartLineModel.qtyOrdered;
 
     let pricing;
     if ("product" in pricingData) {
@@ -151,8 +167,10 @@ const ProductPrice: FC<Props> = ({
     }
 
     const unitOfMeasure = unitOfMeasureDescription || unitOfMeasureDisplay;
-    const showQtyPerBaseUnitOfMeasure = "baseUnitOfMeasure" in pricingData
-        && pricingData.unitOfMeasure !== pricingData.baseUnitOfMeasure && pricingData.qtyPerBaseUnitOfMeasure > 0;
+    const showQtyPerBaseUnitOfMeasure =
+        "baseUnitOfMeasure" in pricingData &&
+        pricingData.unitOfMeasure !== pricingData.baseUnitOfMeasure &&
+        pricingData.qtyPerBaseUnitOfMeasure > 0;
     const packDescription = "product" in pricingData ? pricingData.product.packDescription : undefined;
 
     const quoteStyles = styles.quoteMessage || {};
@@ -166,7 +184,7 @@ const ProductPrice: FC<Props> = ({
         );
     }
 
-    if (("product" in pricingData) && pricingData.productInfo.failedToLoadPricing) {
+    if ("product" in pricingData && pricingData.productInfo.failedToLoadPricing) {
         return (
             <SectionWrapper {...styles.wrapper}>
                 <Typography {...priceStyles.errorText}>{siteMessage("RealTimePricing_PriceLoadFailed")}</Typography>
@@ -176,62 +194,59 @@ const ProductPrice: FC<Props> = ({
 
     return (
         <SectionWrapper {...styles.wrapper}>
-            {showLabel
-            && <Typography {...styles.priceLabelText}>{translate("Price")}</Typography>
-            }
-            {quoteRequired
-            && <StyledWrapper {...styles.quoteMessageWrapper}>
-                <Typography {...quoteStyles.text} data-test-selector="quoteRequiredText">{translate("Requires Quote")}</Typography>
-                <Tooltip {...quoteStyles.tooltip} text={siteMessage("Rfq_TooltipMessage").toString()}/>
-            </StyledWrapper>
-            }
-            {!quoteRequired
-            && <>
-                <StyledWrapper {...styles.priceWrapper}>
-                    {pricing
-                        ? <Typography
-                            {...priceStyles.priceText}
-                            data-test-selector="productPrice_unitNetPrice"
-                        >
-                            {getUnitNetPrice(pricing, qtyOrdered || 1).priceDisplay}
-                        </Typography>
-                        : <Typography
-                            {...priceStyles.realTimeText}
-                            data-test-selector="productPrice_unitNetPrice"
-                        >{currencySymbol}
-                        </Typography>
-                    }
-                    {unitOfMeasure
-                    && <Typography
-                        {...priceStyles.unitOfMeasureText}
-                        data-test-selector="productPrice_unitOfMeasureLabel"
-                    >
-                        &nbsp;/&nbsp;{unitOfMeasure}
+            {showLabel && <Typography {...styles.priceLabelText}>{translate("Price")}</Typography>}
+            {quoteRequired && (
+                <StyledWrapper {...styles.quoteMessageWrapper}>
+                    <Typography {...quoteStyles.text} data-test-selector="quoteRequiredText">
+                        {translate("Requires Quote")}
                     </Typography>
-                    }
+                    <Tooltip {...quoteStyles.tooltip} text={siteMessage("Rfq_TooltipMessage").toString()} />
                 </StyledWrapper>
-                {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in pricingData
-                && <Typography {...priceStyles.qtyPerBaseUnitOfMeasureText}>
-                    {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
-                </Typography>
-                }
-                {packDescription
-                && <StyledWrapper {...styles.packWrapper}>
-                    <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
-                    <Typography {...styles.packDescriptionText}>{packDescription}</Typography>
-                </StyledWrapper>
-                }
-                {pricing && showSavings
-                && <ProductPriceSavingsMessage
-                    pricing={pricing}
-                    qtyOrdered={qtyOrdered || 1}
-                    showSavingsAmount={showSavingsAmount}
-                    showSavingsPercent={showSavingsPercent}
-                    currencySymbol={currencySymbol}
-                    {...styles.savingsMessageText} />
-                }
-            </>
-            }
+            )}
+            {!quoteRequired && (
+                <>
+                    <StyledWrapper {...styles.priceWrapper}>
+                        {pricing ? (
+                            <Typography {...priceStyles.priceText} data-test-selector="productPrice_unitNetPrice">
+                                {getUnitNetPrice(pricing, qtyOrdered || 1).priceDisplay}
+                            </Typography>
+                        ) : (
+                            <Typography {...priceStyles.realTimeText} data-test-selector="productPrice_unitNetPrice">
+                                {currencySymbol}
+                            </Typography>
+                        )}
+                        {unitOfMeasure && (
+                            <Typography
+                                {...priceStyles.unitOfMeasureText}
+                                data-test-selector="productPrice_unitOfMeasureLabel"
+                            >
+                                &nbsp;/&nbsp;{unitOfMeasure}
+                            </Typography>
+                        )}
+                    </StyledWrapper>
+                    {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in pricingData && (
+                        <Typography {...priceStyles.qtyPerBaseUnitOfMeasureText}>
+                            {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
+                        </Typography>
+                    )}
+                    {packDescription && (
+                        <StyledWrapper {...styles.packWrapper}>
+                            <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
+                            <Typography {...styles.packDescriptionText}>{packDescription}</Typography>
+                        </StyledWrapper>
+                    )}
+                    {pricing && showSavings && (
+                        <ProductPriceSavingsMessage
+                            pricing={pricing}
+                            qtyOrdered={qtyOrdered || 1}
+                            showSavingsAmount={showSavingsAmount}
+                            showSavingsPercent={showSavingsPercent}
+                            currencySymbol={currencySymbol}
+                            {...styles.savingsMessageText}
+                        />
+                    )}
+                </>
+            )}
         </SectionWrapper>
     );
 };

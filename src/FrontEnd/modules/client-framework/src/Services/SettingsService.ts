@@ -8,7 +8,8 @@ import {
     OrderSettingsModel,
     ProductSettingsModel,
     QuoteSettingsModel,
-    WebsiteSettingsModel, WishListSettingsModel,
+    WebsiteSettingsModel,
+    WishListSettingsModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetTokenExConfigApiParameter extends ApiParameter {
@@ -16,8 +17,7 @@ export interface GetTokenExConfigApiParameter extends ApiParameter {
     origin?: string;
 }
 
-export interface GetSettingsApiParameter extends ApiParameter {
-}
+export interface GetSettingsApiParameter extends ApiParameter {}
 
 export interface TokenExConfig {
     tokenExId: string;

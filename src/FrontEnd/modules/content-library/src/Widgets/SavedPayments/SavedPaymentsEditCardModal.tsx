@@ -100,7 +100,9 @@ export interface SavedPaymentsEditCardModalStyles {
 export const editCardModalStyles: SavedPaymentsEditCardModalStyles = {
     leftColumn: {
         width: [12, 6, 6, 6, 6],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     cardInfoContainer: { gap: 20 },
     makeDefaultCardGridItem: { width: 12 },
@@ -110,11 +112,15 @@ export const editCardModalStyles: SavedPaymentsEditCardModalStyles = {
     expirationMonthGridItem: { width: [8, 7, 8, 8, 8] },
     expirationYearGridItem: {
         width: [4, 5, 4, 4, 4],
-        css: css` align-items: flex-end; `,
+        css: css`
+            align-items: flex-end;
+        `,
     },
     rightColumn: {
         width: [12, 6, 6, 6, 6],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     addressContainer: { gap: 20 },
     useBillToAddressGridItem: { width: 12 },
@@ -147,19 +153,40 @@ export const editCardModalStyles: SavedPaymentsEditCardModalStyles = {
         variant: "secondary",
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` width: 100%; `,
-                css` width: 100%; `,
-                css` margin-right: 20px; `,
-                css` margin-right: 20px; `,
-                css` margin-right: 20px; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        margin-right: 20px;
+                    `,
+                    css`
+                        margin-right: 20px;
+                    `,
+                    css`
+                        margin-right: 20px;
+                    `,
+                ])}
         `,
     },
     saveGridItem: { width: [6, 6, 2, 2, 2] },
     saveButton: {
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [css` width: 100%; `, css` width: 100%; `, null, null, null])}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
+                        width: 100%;
+                    `,
+                    css`
+                        width: 100%;
+                    `,
+                    null,
+                    null,
+                    null,
+                ])}
         `,
     },
 };
@@ -180,19 +207,19 @@ const convertTokenExCardType = (cardType: string) => {
 };
 
 const SavedPaymentsEditCardModal: React.FC<Props> = ({
-                                                         theme,
-                                                         editingPaymentProfile,
-                                                         modalIsOpen,
-                                                         websiteSettings,
-                                                         countries,
-                                                         billToState,
-                                                         updateEditModal,
-                                                         updatePaymentProfile,
-                                                         addPaymentProfile,
-                                                         tokenExConfig,
-                                                         loadTokenExConfig,
-                                                         loadBillTo,
-                                                     }) => {
+    theme,
+    editingPaymentProfile,
+    modalIsOpen,
+    websiteSettings,
+    countries,
+    billToState,
+    updateEditModal,
+    updatePaymentProfile,
+    addPaymentProfile,
+    tokenExConfig,
+    loadTokenExConfig,
+    loadBillTo,
+}) => {
     const paymentProfilesDataView = useContext(PaymentProfilesContext);
 
     if (!websiteSettings.useTokenExGateway || !countries || !paymentProfilesDataView.value) {
@@ -267,8 +294,14 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         tokenExIframe.on("validate", (data: any) => {
             const isCardNumberRequired = !data.isValid && data.validator && data.validator === "required";
             const isInvalidCardNumber = !data.isValid && data.validator && data.validator !== "required";
-            const isCardAlreadyExists = data.isValid && paymentProfilesDataView.value && paymentProfilesDataView.value.some(o => o.maskedCardNumber.substring(o.maskedCardNumber.length - 4) === data.lastFour
-                && o.cardType === convertTokenExCardType(data.cardType));
+            const isCardAlreadyExists =
+                data.isValid &&
+                paymentProfilesDataView.value &&
+                paymentProfilesDataView.value.some(
+                    o =>
+                        o.maskedCardNumber.substring(o.maskedCardNumber.length - 4) === data.lastFour &&
+                        o.cardType === convertTokenExCardType(data.cardType),
+                );
 
             if (isCardNumberRequired || isInvalidCardNumber) {
                 setCardNumberError(translate("Credit card number is invalid."));
@@ -322,7 +355,12 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
     const [cardNicknameError, setCardNicknameError] = React.useState("");
     const cardNicknameChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCardNickname(event.target.value);
-        setCardNicknameError(paymentProfilesDataView.value && paymentProfilesDataView.value.some(o => o.description === event.target.value) ? translate("This nickname already exists.") : "");
+        setCardNicknameError(
+            paymentProfilesDataView.value &&
+                paymentProfilesDataView.value.some(o => o.description === event.target.value)
+                ? translate("This nickname already exists.")
+                : "",
+        );
     };
 
     const [cardNumber, setCardNumber] = React.useState("");
@@ -348,17 +386,14 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         setExpirationYear(Number(event.target.value));
     };
 
-    React.useEffect(
-        () => {
-            const newMinMonth = expirationYear === new Date().getFullYear() ? new Date().getMonth() + 1 : 1;
-            setMinMonth(newMinMonth);
+    React.useEffect(() => {
+        const newMinMonth = expirationYear === new Date().getFullYear() ? new Date().getMonth() + 1 : 1;
+        setMinMonth(newMinMonth);
 
-            if (expirationMonth < newMinMonth) {
-                setExpirationMonth(newMinMonth);
-            }
-        },
-        [expirationYear, expirationMonth],
-    );
+        if (expirationMonth < newMinMonth) {
+            setExpirationMonth(newMinMonth);
+        }
+    }, [expirationYear, expirationMonth]);
 
     const [address1, setAddress1] = React.useState("");
     const [address1Error, setAddress1Error] = React.useState("");
@@ -424,8 +459,12 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         setCardType(paymentProfile?.cardType || "");
         setNameOnCard(paymentProfile?.cardHolderName || "");
         setNameOnCardError("");
-        setExpirationYear(paymentProfile ? Number(paymentProfile.expirationDate.split("/")[1]) + 2000 : expirationYears[0]);
-        setExpirationMonth(paymentProfile ? Number(paymentProfile.expirationDate?.split("/")[0]) : new Date().getMonth() + 1);
+        setExpirationYear(
+            paymentProfile ? Number(paymentProfile.expirationDate.split("/")[1]) + 2000 : expirationYears[0],
+        );
+        setExpirationMonth(
+            paymentProfile ? Number(paymentProfile.expirationDate?.split("/")[0]) : new Date().getMonth() + 1,
+        );
         setUseBillToAddress(false);
         setAddress1(paymentProfile?.address1 || "");
         setAddress1Error("");
@@ -434,9 +473,10 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         setAddress4(paymentProfile?.address4 || "");
         const country = countries.find(o => o.abbreviation === paymentProfile?.country) || countries[0];
         setCountry(country);
-        const state = country.states && country.states.length > 0
-            ? country.states.find(o => o.abbreviation === paymentProfile?.state) || country.states[0]
-            : undefined;
+        const state =
+            country.states && country.states.length > 0
+                ? country.states.find(o => o.abbreviation === paymentProfile?.state) || country.states[0]
+                : undefined;
         setState(state);
         setCity(paymentProfile?.city || "");
         setCityError("");
@@ -513,7 +553,10 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         const onSuccessSave = () => {
             setSaving(false);
             updateEditModal({ modalIsOpen: false });
-            toasterContext.addToast({ body: translate(`Card ${!editingPaymentProfile ? "Saved" : "Updated"}`), messageType: "success" });
+            toasterContext.addToast({
+                body: translate(`Card ${!editingPaymentProfile ? "Saved" : "Updated"}`),
+                messageType: "success",
+            });
         };
 
         if (editingPaymentProfile) {
@@ -528,260 +571,277 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         updateEditModal({ modalIsOpen: false });
     };
 
-    const cancelBtn = <Button
-        onClick={cancelClickHandler}
-        data-test-selector="editCardModal_cancelButton"
-        {...styles.cancelButton}>
-        {translate("Cancel")}
-    </Button>;
-    const saveBtn = <Button
-        type="submit"
-        form="editCardForm"
-        disabled={saving}
-        onClick={saveClickHandler}
-        data-test-selector="editCardModal_saveButton"
-        {...styles.saveButton}>
-        {translate("Save")}
-    </Button>;
+    const cancelBtn = (
+        <Button onClick={cancelClickHandler} data-test-selector="editCardModal_cancelButton" {...styles.cancelButton}>
+            {translate("Cancel")}
+        </Button>
+    );
+    const saveBtn = (
+        <Button
+            type="submit"
+            form="editCardForm"
+            disabled={saving}
+            onClick={saveClickHandler}
+            data-test-selector="editCardModal_saveButton"
+            {...styles.saveButton}
+        >
+            {translate("Save")}
+        </Button>
+    );
 
-    return <Modal
-        headline={translate(editingPaymentProfile ? "Edit Card" : "Add a Card")}
-        {...styles.editCardModal}
-        isOpen={modalIsOpen}
-        handleClose={modalCloseHandler}
-        onAfterOpen={modalOnAfterOpenHandler}
-        onAfterClose={modalOnAfterCloseHandler}
-    >
-        <StyledForm {...styles.form} id="editCardForm" data-test-selector="editCardModal">
-            <GridContainer {...styles.container}>
-                <GridItem {...styles.leftColumn}>
-                    <GridContainer {...styles.cardInfoContainer}>
-                        <GridItem {...styles.makeDefaultCardGridItem}>
-                            <Checkbox
-                                checked={makeDefaultCard}
-                                onChange={makeDefaultCardChangeHandler}
-                                {...styles.makeDefaultCardCheckbox}
-                                data-test-selector="isDefault"
-                            >
-                                {translate("Make default")}
-                            </Checkbox>
-                        </GridItem>
-                        <GridItem {...styles.cardNicknameGridItem}>
-                            <TextField
-                                label={translate("Card nickname")}
-                                {...styles.cardNicknameTextField}
-                                value={cardNickname}
-                                maxLength={100}
-                                error={cardNicknameError}
-                                onChange={cardNicknameChangeHandler}
-                                data-test-selector="cardNickname"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.cardNumberGridItem}>
-                            {!editingPaymentProfile
-                                ? <TokenExFrame
-                                    label={translate("Card number")}
-                                    tokenExIFrameContainer={
-                                        <>
-                                            <input disabled style={{ display: isTokenExIframeLoaded ? "none" : "block" }}/>
-                                            <div id="tokenExCardNumber" style={{ display: !isTokenExIframeLoaded ? "none" : "block" }}></div>
-                                        </>
-                                    }
+    return (
+        <Modal
+            headline={translate(editingPaymentProfile ? "Edit Card" : "Add a Card")}
+            {...styles.editCardModal}
+            isOpen={modalIsOpen}
+            handleClose={modalCloseHandler}
+            onAfterOpen={modalOnAfterOpenHandler}
+            onAfterClose={modalOnAfterCloseHandler}
+        >
+            <StyledForm {...styles.form} id="editCardForm" data-test-selector="editCardModal">
+                <GridContainer {...styles.container}>
+                    <GridItem {...styles.leftColumn}>
+                        <GridContainer {...styles.cardInfoContainer}>
+                            <GridItem {...styles.makeDefaultCardGridItem}>
+                                <Checkbox
+                                    checked={makeDefaultCard}
+                                    onChange={makeDefaultCardChangeHandler}
+                                    {...styles.makeDefaultCardCheckbox}
+                                    data-test-selector="isDefault"
+                                >
+                                    {translate("Make default")}
+                                </Checkbox>
+                            </GridItem>
+                            <GridItem {...styles.cardNicknameGridItem}>
+                                <TextField
+                                    label={translate("Card nickname")}
+                                    {...styles.cardNicknameTextField}
+                                    value={cardNickname}
+                                    maxLength={100}
+                                    error={cardNicknameError}
+                                    onChange={cardNicknameChangeHandler}
+                                    data-test-selector="cardNickname"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.cardNumberGridItem}>
+                                {!editingPaymentProfile ? (
+                                    <TokenExFrame
+                                        label={translate("Card number")}
+                                        tokenExIFrameContainer={
+                                            <>
+                                                <input
+                                                    disabled
+                                                    style={{ display: isTokenExIframeLoaded ? "none" : "block" }}
+                                                />
+                                                <div
+                                                    id="tokenExCardNumber"
+                                                    style={{ display: !isTokenExIframeLoaded ? "none" : "block" }}
+                                                ></div>
+                                            </>
+                                        }
+                                        required
+                                        error={cardNumberError}
+                                        data-test-selector="cardNumber"
+                                    />
+                                ) : (
+                                    <TextField
+                                        label={translate("Card number")}
+                                        {...styles.cardNumberTextField}
+                                        disabled
+                                        value={editingPaymentProfile?.maskedCardNumber || ""}
+                                    />
+                                )}
+                            </GridItem>
+                            <GridItem {...styles.nameOnCardGridItem}>
+                                <TextField
+                                    label={translate("Name on card")}
+                                    {...styles.nameOnCardTextField}
                                     required
-                                    error={cardNumberError}
-                                    data-test-selector="cardNumber"
+                                    maxLength={50}
+                                    value={nameOnCard}
+                                    error={nameOnCardError}
+                                    onChange={nameOnCardChangeHandler}
+                                    data-test-selector="nameOnCard"
                                 />
-                                : <TextField
-                                    label={translate("Card number")}
-                                    {...styles.cardNumberTextField}
-                                    disabled
-                                    value={editingPaymentProfile?.maskedCardNumber || ""}
-                                />
-                            }
-                        </GridItem>
-                        <GridItem {...styles.nameOnCardGridItem}>
-                            <TextField
-                                label={translate("Name on card")}
-                                {...styles.nameOnCardTextField}
-                                required
-                                maxLength={50}
-                                value={nameOnCard}
-                                error={nameOnCardError}
-                                onChange={nameOnCardChangeHandler}
-                                data-test-selector="nameOnCard"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.expirationMonthGridItem}>
-                            <Select
-                                label={translate("Expiration")}
-                                {...styles.expirationMonthSelect}
-                                required
-                                value={expirationMonth}
-                                onChange={expirationMonthChangeHandler}
-                                data-test-selector="expirationMonth"
-                            >
-                                {minMonth === 1 && <option value="1">{translate("January")}</option>}
-                                {minMonth <= 2 && <option value="2">{translate("February")}</option>}
-                                {minMonth <= 3 && <option value="3">{translate("March")}</option>}
-                                {minMonth <= 4 && <option value="4">{translate("April")}</option>}
-                                {minMonth <= 5 && <option value="5">{translate("May")}</option>}
-                                {minMonth <= 6 && <option value="6">{translate("June")}</option>}
-                                {minMonth <= 7 && <option value="7">{translate("July")}</option>}
-                                {minMonth <= 8 && <option value="8">{translate("August")}</option>}
-                                {minMonth <= 9 && <option value="9">{translate("September")}</option>}
-                                {minMonth <= 10 && <option value="10">{translate("October")}</option>}
-                                {minMonth <= 11 && <option value="11">{translate("November")}</option>}
-                                {minMonth <= 12 && <option value="12">{translate("December")}</option>}
-                            </Select>
-                        </GridItem>
-                        <GridItem {...styles.expirationYearGridItem}>
-                            <Select
-                                {...styles.expirationYearSelect}
-                                required
-                                value={expirationYear}
-                                onChange={expirationYearChangeHandler}
-                                data-test-selector="expirationYear"
-                            >
-                                {expirationYears.map(year =>
-                                    <option key={year} value={year}>{year}</option>)
-                                }
-                            </Select>
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                <GridItem {...styles.rightColumn}>
-                    <GridContainer {...styles.addressContainer}>
-                        <GridItem {...styles.useBillToAddressGridItem}>
-                            <Checkbox
-                                checked={useBillToAddress}
-                                onChange={useBillToAddressChangeHandler}
-                                {...styles.useBillToAddressCheckbox}
-                                data-test-selector="copyBillToAddress"
-                            >
-                                {translate("Copy address from Bill To")}
-                            </Checkbox>
-                        </GridItem>
-                        <GridItem {...styles.address1TextFieldGridItem}>
-                            <TextField
-                                label={translate("Address Line 1")}
-                                {...styles.address1TextField}
-                                required
-                                maxLength={100}
-                                value={address1}
-                                error={address1Error}
-                                disabled={useBillToAddress}
-                                onChange={address1ChangeHandler}
-                                data-test-selector="addressLine1"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.address2TextFieldGridItem}>
-                            <TextField
-                                label={translate("Address Line 2")}
-                                {...styles.address2TextField}
-                                value={address2}
-                                maxLength={100}
-                                disabled={useBillToAddress}
-                                onChange={address2ChangeHandler}
-                                data-test-selector="addressLine2"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.address3TextFieldGridItem}>
-                            <TextField
-                                label={translate("Address Line 3")}
-                                {...styles.address3TextField}
-                                value={address3}
-                                maxLength={100}
-                                disabled={useBillToAddress}
-                                onChange={address3ChangeHandler}
-                                data-test-selector="addressLine3"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.address4TextFieldGridItem}>
-                            <TextField
-                                label={translate("Address Line 4")}
-                                {...styles.address4TextField}
-                                value={address4}
-                                maxLength={100}
-                                disabled={useBillToAddress}
-                                onChange={address4ChangeHandler}
-                                data-test-selector="addressLine4"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.countryGridItem}>
-                            <Select
-                                label={translate("Country")}
-                                {...styles.countrySelect}
-                                required
-                                value={country.abbreviation}
-                                disabled={useBillToAddress}
-                                onChange={countryChangeHandler}
-                                data-test-selector="country"
-                            >
-                                {countries.map(o =>
-                                    <option key={o.abbreviation} value={o.abbreviation}>{o.name}</option>)
-                                }
-                            </Select>
-                        </GridItem>
-                        <GridItem {...styles.stateGridItem}>
-                            {country.states && country.states.length > 0
-                            && <Select
-                                label={translate("State")}
-                                {...styles.stateSelect}
-                                required
-                                value={state?.abbreviation}
-                                disabled={useBillToAddress}
-                                onChange={stateChangeHandler}
-                                data-test-selector="state"
-                            >
-                                {country.states.map(o =>
-                                    <option key={o.abbreviation} value={o.abbreviation}>{o.abbreviation}</option>)
-                                }
-                            </Select>
-                            }
-                        </GridItem>
-                        <GridItem {...styles.cityGridItem}>
-                            <TextField
-                                label={translate("City")}
-                                {...styles.cityTextField}
-                                required
-                                maxLength={50}
-                                value={city}
-                                error={cityError}
-                                disabled={useBillToAddress}
-                                onChange={cityChangeHandler}
-                                data-test-selector="city"
-                            />
-                        </GridItem>
-                        <GridItem {...styles.postalCodeGridItem}>
-                            <TextField
-                                label={translate("Postal Code")}
-                                {...styles.postalCodeTextField}
-                                required
-                                maxLength={50}
-                                value={postalCode}
-                                error={postalCodeError}
-                                disabled={useBillToAddress}
-                                onChange={postalCodeChangeHandler}
-                                data-test-selector="postalCode"
-                            />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                <GridItem {...styles.bottomGridItem}>
-                    <Hidden above="sm" {...styles.buttonsHidden}>
-                        <GridContainer {...styles.buttonsContainer}>
-                            <GridItem {...styles.cancelGridItem}>{cancelBtn}</GridItem>
-                            <GridItem {...styles.saveGridItem}>{saveBtn}</GridItem>
+                            </GridItem>
+                            <GridItem {...styles.expirationMonthGridItem}>
+                                <Select
+                                    label={translate("Expiration")}
+                                    {...styles.expirationMonthSelect}
+                                    required
+                                    value={expirationMonth}
+                                    onChange={expirationMonthChangeHandler}
+                                    data-test-selector="expirationMonth"
+                                >
+                                    {minMonth === 1 && <option value="1">{translate("January")}</option>}
+                                    {minMonth <= 2 && <option value="2">{translate("February")}</option>}
+                                    {minMonth <= 3 && <option value="3">{translate("March")}</option>}
+                                    {minMonth <= 4 && <option value="4">{translate("April")}</option>}
+                                    {minMonth <= 5 && <option value="5">{translate("May")}</option>}
+                                    {minMonth <= 6 && <option value="6">{translate("June")}</option>}
+                                    {minMonth <= 7 && <option value="7">{translate("July")}</option>}
+                                    {minMonth <= 8 && <option value="8">{translate("August")}</option>}
+                                    {minMonth <= 9 && <option value="9">{translate("September")}</option>}
+                                    {minMonth <= 10 && <option value="10">{translate("October")}</option>}
+                                    {minMonth <= 11 && <option value="11">{translate("November")}</option>}
+                                    {minMonth <= 12 && <option value="12">{translate("December")}</option>}
+                                </Select>
+                            </GridItem>
+                            <GridItem {...styles.expirationYearGridItem}>
+                                <Select
+                                    {...styles.expirationYearSelect}
+                                    required
+                                    value={expirationYear}
+                                    onChange={expirationYearChangeHandler}
+                                    data-test-selector="expirationYear"
+                                >
+                                    {expirationYears.map(year => (
+                                        <option key={year} value={year}>
+                                            {year}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </GridItem>
                         </GridContainer>
-                    </Hidden>
-                    <Hidden below="md" {...styles.buttonsHidden} data-test-selector="forDesktop">
-                        {cancelBtn}
-                        {saveBtn}
-                    </Hidden>
-                </GridItem>
-            </GridContainer>
-        </StyledForm>
-    </Modal>;
+                    </GridItem>
+                    <GridItem {...styles.rightColumn}>
+                        <GridContainer {...styles.addressContainer}>
+                            <GridItem {...styles.useBillToAddressGridItem}>
+                                <Checkbox
+                                    checked={useBillToAddress}
+                                    onChange={useBillToAddressChangeHandler}
+                                    {...styles.useBillToAddressCheckbox}
+                                    data-test-selector="copyBillToAddress"
+                                >
+                                    {translate("Copy address from Bill To")}
+                                </Checkbox>
+                            </GridItem>
+                            <GridItem {...styles.address1TextFieldGridItem}>
+                                <TextField
+                                    label={translate("Address Line 1")}
+                                    {...styles.address1TextField}
+                                    required
+                                    maxLength={100}
+                                    value={address1}
+                                    error={address1Error}
+                                    disabled={useBillToAddress}
+                                    onChange={address1ChangeHandler}
+                                    data-test-selector="addressLine1"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.address2TextFieldGridItem}>
+                                <TextField
+                                    label={translate("Address Line 2")}
+                                    {...styles.address2TextField}
+                                    value={address2}
+                                    maxLength={100}
+                                    disabled={useBillToAddress}
+                                    onChange={address2ChangeHandler}
+                                    data-test-selector="addressLine2"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.address3TextFieldGridItem}>
+                                <TextField
+                                    label={translate("Address Line 3")}
+                                    {...styles.address3TextField}
+                                    value={address3}
+                                    maxLength={100}
+                                    disabled={useBillToAddress}
+                                    onChange={address3ChangeHandler}
+                                    data-test-selector="addressLine3"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.address4TextFieldGridItem}>
+                                <TextField
+                                    label={translate("Address Line 4")}
+                                    {...styles.address4TextField}
+                                    value={address4}
+                                    maxLength={100}
+                                    disabled={useBillToAddress}
+                                    onChange={address4ChangeHandler}
+                                    data-test-selector="addressLine4"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.countryGridItem}>
+                                <Select
+                                    label={translate("Country")}
+                                    {...styles.countrySelect}
+                                    required
+                                    value={country.abbreviation}
+                                    disabled={useBillToAddress}
+                                    onChange={countryChangeHandler}
+                                    data-test-selector="country"
+                                >
+                                    {countries.map(o => (
+                                        <option key={o.abbreviation} value={o.abbreviation}>
+                                            {o.name}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </GridItem>
+                            <GridItem {...styles.stateGridItem}>
+                                {country.states && country.states.length > 0 && (
+                                    <Select
+                                        label={translate("State")}
+                                        {...styles.stateSelect}
+                                        required
+                                        value={state?.abbreviation}
+                                        disabled={useBillToAddress}
+                                        onChange={stateChangeHandler}
+                                        data-test-selector="state"
+                                    >
+                                        {country.states.map(o => (
+                                            <option key={o.abbreviation} value={o.abbreviation}>
+                                                {o.abbreviation}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                )}
+                            </GridItem>
+                            <GridItem {...styles.cityGridItem}>
+                                <TextField
+                                    label={translate("City")}
+                                    {...styles.cityTextField}
+                                    required
+                                    maxLength={50}
+                                    value={city}
+                                    error={cityError}
+                                    disabled={useBillToAddress}
+                                    onChange={cityChangeHandler}
+                                    data-test-selector="city"
+                                />
+                            </GridItem>
+                            <GridItem {...styles.postalCodeGridItem}>
+                                <TextField
+                                    label={translate("Postal Code")}
+                                    {...styles.postalCodeTextField}
+                                    required
+                                    maxLength={50}
+                                    value={postalCode}
+                                    error={postalCodeError}
+                                    disabled={useBillToAddress}
+                                    onChange={postalCodeChangeHandler}
+                                    data-test-selector="postalCode"
+                                />
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                    <GridItem {...styles.bottomGridItem}>
+                        <Hidden above="sm" {...styles.buttonsHidden}>
+                            <GridContainer {...styles.buttonsContainer}>
+                                <GridItem {...styles.cancelGridItem}>{cancelBtn}</GridItem>
+                                <GridItem {...styles.saveGridItem}>{saveBtn}</GridItem>
+                            </GridContainer>
+                        </Hidden>
+                        <Hidden below="md" {...styles.buttonsHidden} data-test-selector="forDesktop">
+                            {cancelBtn}
+                            {saveBtn}
+                        </Hidden>
+                    </GridItem>
+                </GridContainer>
+            </StyledForm>
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SavedPaymentsEditCardModal));

@@ -1,27 +1,41 @@
 const menuItems = [
     {
-        title: "Power Tools", url: "/accessories", children: [
+        title: "Power Tools",
+        url: "/accessories",
+        children: [
             { title: "Grinders", url: "/test" },
-            { title: "Saws", url: "/test", children: [
-                { title: "Bandsaws", url: "/test" },
-                { title: "Chop Saws", url: "/test" },
-                { title: "Circular Saws", url: "/test" },
-                { title: "JigSawsAreTheKindYouMakePuzzlesWith", url: "/test" },
-                { title: "Miter Saws", url: "/test" },
-                { title: "Radial Arm Saws", url: "/test" },
-                { title: "Table Saws", url: "/test" },
-                { title: "Small saws", url: "/test", children: [
+            {
+                title: "Saws",
+                url: "/test",
+                children: [
+                    { title: "Bandsaws", url: "/test" },
                     { title: "Chop Saws", url: "/test" },
-                    { title: "Jigsaws", url: "/test" },
-                ] },
-                { title: "BigSawsWithNoWordBreakInText", url: "/test", children: [
+                    { title: "Circular Saws", url: "/test" },
+                    { title: "JigSawsAreTheKindYouMakePuzzlesWith", url: "/test" },
+                    { title: "Miter Saws", url: "/test" },
                     { title: "Radial Arm Saws", url: "/test" },
                     { title: "Table Saws", url: "/test" },
-                    { title: "Miter Saws", url: "/test" },
-                    { title: "Bandsaws", url: "/test" },
-                    { title: "Circular Saws", url: "/test" },
-                ] },
-            ] },
+                    {
+                        title: "Small saws",
+                        url: "/test",
+                        children: [
+                            { title: "Chop Saws", url: "/test" },
+                            { title: "Jigsaws", url: "/test" },
+                        ],
+                    },
+                    {
+                        title: "BigSawsWithNoWordBreakInText",
+                        url: "/test",
+                        children: [
+                            { title: "Radial Arm Saws", url: "/test" },
+                            { title: "Table Saws", url: "/test" },
+                            { title: "Miter Saws", url: "/test" },
+                            { title: "Bandsaws", url: "/test" },
+                            { title: "Circular Saws", url: "/test" },
+                        ],
+                    },
+                ],
+            },
             { title: "Impact Driver", url: "/test" },
             { title: "Rotary Hammer", url: "/test" },
             { title: "Computer Aided Drafting Routers", url: "/test" },
@@ -57,26 +71,38 @@ const menuItems = [
             { title: "Table Saws", url: "/test" },
             { title: "Wall Chasers", url: "/test" },
         ],
-    }, {
-        title: "Accessories", url: "/test",
-    }, {
-        title: "Manual Tools", url: "/test",
-    }, {
-        title: "Jobsite Organization", url: "/test",
-    }, {
-        title: "Safety and Personal Protection Equipment", url: "/test",
+    },
+    {
+        title: "Accessories",
+        url: "/test",
+    },
+    {
+        title: "Manual Tools",
+        url: "/test",
+    },
+    {
+        title: "Jobsite Organization",
+        url: "/test",
+    },
+    {
+        title: "Safety and Personal Protection Equipment",
+        url: "/test",
     },
 ];
 
 export const conciseNames = ["Power Tools", "Machiners", "Saws", "Radial Arm"];
 export const conciseMenuItems = [
     {
-        title: conciseNames[0], url: "/accessories", children: [
-            { title: conciseNames[1], url: "/test", children: [
-                { title: conciseNames[2], url: "/test", children: [
-                    { title: conciseNames[3], url: "/test" },
-                ] },
-            ] },
+        title: conciseNames[0],
+        url: "/accessories",
+        children: [
+            {
+                title: conciseNames[1],
+                url: "/test",
+                children: [
+                    { title: conciseNames[2], url: "/test", children: [{ title: conciseNames[3], url: "/test" }] },
+                ],
+            },
         ],
     },
 ];

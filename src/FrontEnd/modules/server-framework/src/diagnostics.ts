@@ -7,7 +7,10 @@ const diagnostics = async (request: Request, response: Response) => {
         return;
     }
 
-    const authenticationResponse = await fetch(`${process.env.ISC_API_URL}/api/internal/contentadmin/CheckAuthentication`, { headers: { authorization } });
+    const authenticationResponse = await fetch(
+        `${process.env.ISC_API_URL}/api/internal/contentadmin/CheckAuthentication`,
+        { headers: { authorization } },
+    );
     const text = await authenticationResponse.text();
 
     const { status } = authenticationResponse;

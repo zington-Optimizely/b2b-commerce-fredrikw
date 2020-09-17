@@ -12,7 +12,10 @@ const initialState: InvoiceHistoryState = {
 };
 
 const reducer = {
-    "Pages/InvoiceHistory/UpdateSearchFields": (draft: Draft<InvoiceHistoryState>, action: { parameter: GetInvoicesApiParameter & UpdateSearchFieldsType }) => {
+    "Pages/InvoiceHistory/UpdateSearchFields": (
+        draft: Draft<InvoiceHistoryState>,
+        action: { parameter: GetInvoicesApiParameter & UpdateSearchFieldsType },
+    ) => {
         const { type } = action.parameter;
         delete action.parameter.type;
         if (type === "Replace") {
@@ -33,14 +36,22 @@ const reducer = {
 
             for (const key in action.parameter) {
                 // go back to page 1 if any other parameters changed
-                if (draft.getInvoicesParameter.page && draft.getInvoicesParameter.page > 1 && key !== "page" && key !== "pageSize") {
+                if (
+                    draft.getInvoicesParameter.page &&
+                    draft.getInvoicesParameter.page > 1 &&
+                    key !== "page" &&
+                    key !== "pageSize"
+                ) {
                     draft.getInvoicesParameter.page = 1;
                 }
             }
         }
     },
     "Pages/InvoiceHistory/ClearParameter": (draft: Draft<InvoiceHistoryState>) => {
-        draft.getInvoicesParameter = { ...initialState.getInvoicesParameter, pageSize: draft.getInvoicesParameter.pageSize };
+        draft.getInvoicesParameter = {
+            ...initialState.getInvoicesParameter,
+            pageSize: draft.getInvoicesParameter.pageSize,
+        };
     },
     "Pages/InvoiceHistory/ToggleFiltersOpen": (draft: Draft<InvoiceHistoryState>) => {
         draft.filtersOpen = !draft.filtersOpen;

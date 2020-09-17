@@ -9,7 +9,7 @@ const ProductImage: React.FC<HasProduct> = ({ product }) => {
         return null;
     }
 
-    return <img src={product.mediumImagePath} alt={product.imageAltText}/>;
+    return <img src={product.mediumImagePath} alt={product.imageAltText} />;
 };
 
 const widgetModule: WidgetModule = {

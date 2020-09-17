@@ -32,9 +32,7 @@ const mapDispatchToProps = {
     setLocation,
 };
 
-type Props = ReturnType<typeof mapStateToProps>
-    & ResolveThunks<typeof mapDispatchToProps>
-    & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 class SessionLoader extends React.Component<Props> {
     UNSAFE_componentWillMount() {

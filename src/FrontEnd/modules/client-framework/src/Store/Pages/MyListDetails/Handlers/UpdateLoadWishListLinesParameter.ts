@@ -10,9 +10,7 @@ export const DispatchUpdateLoadWishListLinesParameter: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchUpdateLoadWishListLinesParameter,
-];
+export const chain = [DispatchUpdateLoadWishListLinesParameter];
 
 const updateLoadWishListLinesParameter = createHandlerChainRunner(chain, "UpdateLoadWishListLinesParameter");
 export default updateLoadWishListLinesParameter;

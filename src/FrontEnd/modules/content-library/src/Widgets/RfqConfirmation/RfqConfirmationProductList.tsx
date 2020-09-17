@@ -54,16 +54,15 @@ export const rfqConfirmationProductListStyles: RfqConfirmationProductListStyles 
     },
     backToTopButton: {
         variant: "secondary",
-        css: css` margin: 16px 0; `,
+        css: css`
+            margin: 16px 0;
+        `,
     },
 };
 
 const styles = rfqConfirmationProductListStyles;
 
-const RfqConfirmationProductList: FC<Props> = ({
-    quoteState,
-    settingsCollection,
-}) => {
+const RfqConfirmationProductList: FC<Props> = ({ quoteState, settingsCollection }) => {
     const backToTopClickHandler = () => {
         window.scrollTo(0, 0);
     };
@@ -78,21 +77,25 @@ const RfqConfirmationProductList: FC<Props> = ({
 
     const { productSettings } = settingsCollection;
 
-    return <>
-        <CartLinesList
-            cart={quoteState.value}
-            promotions={[]}
-            isCondensed={false}
-            hideCondensedSelector={true}
-            editable={false}
-            showSavingsAmount={productSettings.showSavingsAmount}
-            showSavingsPercent={productSettings.showSavingsPercent}
-            extendedStyles={styles.cartLinesList}
-        />
-        <StyledWrapper {...styles.footerWrapper}>
-            <Button onClick={backToTopClickHandler} {...styles.backToTopButton}>{translate("Back to Top")}</Button>
-        </StyledWrapper>
-    </>;
+    return (
+        <>
+            <CartLinesList
+                cart={quoteState.value}
+                promotions={[]}
+                isCondensed={false}
+                hideCondensedSelector={true}
+                editable={false}
+                showSavingsAmount={productSettings.showSavingsAmount}
+                showSavingsPercent={productSettings.showSavingsPercent}
+                extendedStyles={styles.cartLinesList}
+            />
+            <StyledWrapper {...styles.footerWrapper}>
+                <Button onClick={backToTopClickHandler} {...styles.backToTopButton}>
+                    {translate("Back to Top")}
+                </Button>
+            </StyledWrapper>
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

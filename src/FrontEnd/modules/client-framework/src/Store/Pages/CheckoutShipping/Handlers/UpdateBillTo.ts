@@ -11,12 +11,15 @@ import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/Lo
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = Handler<{
-    billTo: BillToModel;
-}, {
-    shipTos: ShipToModel[];
-    defaultShipTo: ShipToModel;
-}>;
+type HandlerType = Handler<
+    {
+        billTo: BillToModel;
+    },
+    {
+        shipTos: ShipToModel[];
+        defaultShipTo: ShipToModel;
+    }
+>;
 
 export const UpdateBillTo: HandlerType = async props => {
     const awaitableUpdateBillTo = makeHandlerChainAwaitable(updateBillToChain);
@@ -67,7 +70,6 @@ export const GetDefaultShipTo: HandlerType = props => {
 
     props.defaultShipTo = defaultShipTo;
 };
-
 
 export const UpdateContext: HandlerType = props => {
     updateContext({

@@ -11,7 +11,9 @@ import ProductDescription, { ProductDescriptionStyles } from "@insite/content-li
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
-import RfqQuoteDetailsQuotedPricing, { RfqQuoteDetailsQuotedPricingStyles } from "@insite/content-library/Widgets/RfqQuoteDetails/RfqQuoteDetailsQuotedPricing";
+import RfqQuoteDetailsQuotedPricing, {
+    RfqQuoteDetailsQuotedPricingStyles,
+} from "@insite/content-library/Widgets/RfqQuoteDetails/RfqQuoteDetailsQuotedPricing";
 import RfqQuoteDetailsQuoteLineCalculator from "@insite/content-library/Widgets/RfqQuoteDetails/RfqQuoteDetailsQuoteLineCalculator";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -101,16 +103,22 @@ export const rfqQuoteDetailsSalesRepProductListStyles: RfqQuoteDetailsSalesRepPr
     headerContainer: { gap: 20 },
     countGridItem: {
         width: 6,
-        css: css` align-items: center; `,
+        css: css`
+            align-items: center;
+        `,
     },
     countLabelText: {
         weight: 600,
-        css: css` margin-left: 5px; `,
+        css: css`
+            margin-left: 5px;
+        `,
     },
     countValueText: { weight: 600 },
     quoteAllGridItem: {
         width: 6,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     itemContainer: {
         gap: 20,
@@ -125,7 +133,9 @@ export const rfqQuoteDetailsSalesRepProductListStyles: RfqQuoteDetailsSalesRepPr
     infoLeftColumn: { width: [12, 12, 12, 12, 5] },
     infoLeftColumnContainer: { gap: 20 },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productBrand: {
@@ -152,15 +162,32 @@ export const rfqQuoteDetailsSalesRepProductListStyles: RfqQuoteDetailsSalesRepPr
     },
     quotedPricingGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     quotedPricingText: { weight: "bold" },
     infoRightColumn: {
         width: [12, 12, 12, 6, 3],
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     quoteLineButton: {
-        css: css` ${({ theme }) => (breakpointMediaQueries(theme, [null, null, css` width: 100%; `], "max"))} `,
+        css: css`
+            ${({ theme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
+        `,
     },
     quoteCalculationModal: { sizeVariant: "small" },
     quoteCalculationContainer: { gap: 20 },
@@ -168,7 +195,9 @@ export const rfqQuoteDetailsSalesRepProductListStyles: RfqQuoteDetailsSalesRepPr
     quoteCalculationMethodGridItem: { width: [7, 9, 9, 8, 8] },
     quoteCalculationPercentIcon: {
         src: Percent,
-        css: css` margin: 8px 4px; `,
+        css: css`
+            margin: 8px 4px;
+        `,
     },
     quoteCalculationPercentGridItem: {
         width: [5, 3, 3, 4, 4],
@@ -179,11 +208,15 @@ export const rfqQuoteDetailsSalesRepProductListStyles: RfqQuoteDetailsSalesRepPr
     quoteCalculationCancelGridItem: { width: 6 },
     quoteCalculationCancelButton: {
         variant: "secondary",
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     quoteCalculationApplyAllGridItem: { width: 6 },
     quoteCalculationApplyAllButton: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     quoteLineCalculationModal: { sizeVariant: "large" },
 };
@@ -247,7 +280,7 @@ const RfqQuoteDetailsSalesRepProductList = ({
             onSuccess: () => {
                 setQuoteCalculationModalIsOpen(false);
             },
-            onError: (error) => {
+            onError: error => {
                 setQuoteCalculationError(error);
             },
         });
@@ -262,146 +295,183 @@ const RfqQuoteDetailsSalesRepProductList = ({
         setQuoteLineCalculationModalIsOpen(false);
     };
 
-    return <StyledWrapper {...styles.mainWrapper}>
-        <StyledWrapper {...styles.headerWrapper}>
-            <GridContainer {...styles.headerContainer}>
-                <GridItem {...styles.countGridItem}>
-                    <Typography {...styles.countValueText}>{quote.quoteLineCollection.length}</Typography>
-                    <Typography {...styles.countLabelText}>{quote.quoteLineCollection.length > 1 ? translate("Products") : translate("Product")}</Typography>
-                </GridItem>
-                <GridItem {...styles.quoteAllGridItem}>
-                    <Button {...styles.quoteAllButton} onClick={quoteAllClickHandler}>{translate("Quote All")}</Button>
-                </GridItem>
-            </GridContainer>
-        </StyledWrapper>
-        {quote.quoteLineCollection.map(quoteLine => (
-            <GridContainer
-                key={`${quoteLine.productId}_${quoteLine.unitOfMeasure}`}
-                {...styles.itemContainer}
-                data-test-selector={`quoteLine_${quoteLine.productId}_${quoteLine.unitOfMeasure}`}
-            >
-                <GridItem {...styles.productImageGridItem}>
-                    <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
-                </GridItem>
-                <GridItem {...styles.quoteLineInfoGridItem}>
-                    <GridContainer {...styles.quoteLineInfoContainer}>
-                        <GridItem {...styles.infoLeftColumn}>
-                            <GridContainer {...styles.infoLeftColumnContainer}>
-                                <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                                    {quoteLine.brand
-                                        && <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />
-                                    }
-                                    <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
-                                    <ProductPartNumbers
-                                        productNumber={quoteLine.erpNumber}
-                                        customerProductNumber={quoteLine.customerName}
-                                        manufacturerItem={quoteLine.manufacturerItem}
-                                        extendedStyles={styles.productPartNumbers}
-                                    />
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                        <GridItem {...styles.infoCenterColumn}>
-                            <GridContainer {...styles.infoContainer}>
-                                <GridItem {...styles.quantityGridItem}>
-                                    <VisuallyHidden>{translate("Quantity Requested")}</VisuallyHidden>
-                                    <SmallHeadingAndText
-                                        heading={translate("QTY Req.")}
-                                        text={quoteLine.qtyOrdered || 1}
-                                        extendedStyles={styles.quantityHeadingAndText}
-                                    />
-                                </GridItem>
-                                <GridItem {...styles.uomGridItem}>
-                                    {quoteLine.unitOfMeasure
-                                        && <>
-                                            <VisuallyHidden>{translate("Unit of Measure")}</VisuallyHidden>
-                                            <SmallHeadingAndText
-                                                heading={translate("U/M")}
-                                                text={quoteLine.unitOfMeasure}
-                                                extendedStyles={styles.uomHeadingAndText}
-                                            />
-                                        </>
-                                    }
-                                </GridItem>
-                                <GridItem {...styles.quotedPricingGridItem}>
-                                    <Typography {...styles.quotedPricingText}>{translate("Quoted Pricing")}</Typography>
-                                    <RfqQuoteDetailsQuotedPricing quote={quote} quoteLine={quoteLine} extendedStyles={styles.quotedPricingStyles} />
-                                </GridItem>
-                            </GridContainer>
-                        </GridItem>
-                        <GridItem {...styles.infoRightColumn}>
-                            <Button {...styles.quoteLineButton} onClick={() => quoteLineClickHandler(quoteLine)}>
-                                {translate("Quote")}
-                            </Button>
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        ))}
-        <Modal
-            {...styles.quoteCalculationModal}
-            headline={translate("Quote All")}
-            isOpen={quoteCalculationModalIsOpen}
-            handleClose={quoteCalculationModalCloseHandler}
-            onAfterClose={quoteCalculationModalAfterCloseHandler}
-        >
-            <GridContainer {...styles.quoteCalculationContainer}>
-                <GridItem {...styles.quoteCalculationHeaderGridItem}>
-                    <Typography {...styles.quoteCalculationHeaderText}>{siteMessage("Rfq_QuoteOrderHeader")}</Typography>
-                </GridItem>
-                <GridItem {...styles.quoteCalculationMethodGridItem}>
-                    <Select
-                        {...styles.quoteCalculationMethodSelect}
-                        label={translate("Discount By")}
-                        value={calculationMethod?.name}
-                        onChange={calculationMethodChangeHandler}
-                    >
-                        {quote.calculationMethods?.map(cm => (
-                            <option key={cm.name} value={cm.name}>{cm.displayName}</option>
-                        ))}
-                    </Select>
-                </GridItem>
-                <GridItem {...styles.quoteCalculationPercentGridItem}>
-                    <TextField
-                        {...styles.quoteCalculationPercentTextField}
-                        type="number"
-                        min={calculationMethod?.minimumMargin}
-                        max={calculationMethod && parseFloat(calculationMethod.maximumDiscount) > 0 ? parseFloat(calculationMethod.maximumDiscount) : undefined}
-                        value={percent}
-                        onChange={percentChangeHandler}
-                        onBlur={percentBlurHandler}
-                    />
-                    <Icon {...styles.quoteCalculationPercentIcon} />
-                </GridItem>
-                {quoteCalculationError
-                    && <GridItem {...styles.quoteCalculationErrorGridItem}>
-                        <Typography {...styles.quoteCalculationErrorText}>{quoteCalculationError}</Typography>
+    return (
+        <StyledWrapper {...styles.mainWrapper}>
+            <StyledWrapper {...styles.headerWrapper}>
+                <GridContainer {...styles.headerContainer}>
+                    <GridItem {...styles.countGridItem}>
+                        <Typography {...styles.countValueText}>{quote.quoteLineCollection.length}</Typography>
+                        <Typography {...styles.countLabelText}>
+                            {quote.quoteLineCollection.length > 1 ? translate("Products") : translate("Product")}
+                        </Typography>
                     </GridItem>
-                }
-                <GridItem {...styles.quoteCalculationCancelGridItem}>
-                    <Button {...styles.quoteCalculationCancelButton} onClick={cancelClickHandler}>{translate("Cancel")}</Button>
-                </GridItem>
-                <GridItem {...styles.quoteCalculationApplyAllGridItem}>
-                    <Button {...styles.quoteCalculationApplyAllButton} onClick={applyAllClickHandler}>{translate("Apply Quote")}</Button>
-                </GridItem>
-            </GridContainer>
-        </Modal>
-        <Modal
-            {...styles.quoteLineCalculationModal}
-            headline={translate("Quote")}
-            isOpen={quoteLineCalculationModalIsOpen}
-            handleClose={quoteLineCalculationModalCloseHandler}
-        >
-            {quoteLineForCalculation
-                && <RfqQuoteDetailsQuoteLineCalculator
-                    quote={quote}
-                    quoteLine={quoteLineForCalculation}
-                    onCancel={quoteLineCalculationModalCloseHandler}
-                    onApply={quoteLineCalculationModalCloseHandler}
-                />
-            }
-        </Modal>
-    </StyledWrapper>;
+                    <GridItem {...styles.quoteAllGridItem}>
+                        {quote.isEditable && (
+                            <Button {...styles.quoteAllButton} onClick={quoteAllClickHandler}>
+                                {translate("Quote All")}
+                            </Button>
+                        )}
+                    </GridItem>
+                </GridContainer>
+            </StyledWrapper>
+            {quote.quoteLineCollection.map(quoteLine => (
+                <GridContainer
+                    key={`${quoteLine.productId}_${quoteLine.unitOfMeasure}`}
+                    {...styles.itemContainer}
+                    data-test-selector={`quoteLine_${quoteLine.productId}_${quoteLine.unitOfMeasure}`}
+                >
+                    <GridItem {...styles.productImageGridItem}>
+                        <ProductImage product={quoteLine} extendedStyles={styles.productImage} />
+                    </GridItem>
+                    <GridItem {...styles.quoteLineInfoGridItem}>
+                        <GridContainer {...styles.quoteLineInfoContainer}>
+                            <GridItem {...styles.infoLeftColumn}>
+                                <GridContainer {...styles.infoLeftColumnContainer}>
+                                    <GridItem {...styles.productBrandAndDescriptionGridItem}>
+                                        {quoteLine.brand && (
+                                            <ProductBrand
+                                                brand={quoteLine.brand}
+                                                extendedStyles={styles.productBrand}
+                                            />
+                                        )}
+                                        <ProductDescription
+                                            product={quoteLine}
+                                            extendedStyles={styles.productDescription}
+                                        />
+                                        <ProductPartNumbers
+                                            productNumber={quoteLine.erpNumber}
+                                            customerProductNumber={quoteLine.customerName}
+                                            manufacturerItem={quoteLine.manufacturerItem}
+                                            extendedStyles={styles.productPartNumbers}
+                                        />
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                            <GridItem {...styles.infoCenterColumn}>
+                                <GridContainer {...styles.infoContainer}>
+                                    <GridItem {...styles.quantityGridItem}>
+                                        <VisuallyHidden>{translate("Quantity Requested")}</VisuallyHidden>
+                                        <SmallHeadingAndText
+                                            heading={translate("QTY Req.")}
+                                            text={quoteLine.qtyOrdered || 1}
+                                            extendedStyles={styles.quantityHeadingAndText}
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.uomGridItem}>
+                                        {quoteLine.unitOfMeasure && (
+                                            <>
+                                                <VisuallyHidden>{translate("Unit of Measure")}</VisuallyHidden>
+                                                <SmallHeadingAndText
+                                                    heading={translate("U/M")}
+                                                    text={quoteLine.unitOfMeasure}
+                                                    extendedStyles={styles.uomHeadingAndText}
+                                                />
+                                            </>
+                                        )}
+                                    </GridItem>
+                                    <GridItem {...styles.quotedPricingGridItem}>
+                                        <Typography {...styles.quotedPricingText}>
+                                            {translate("Quoted Pricing")}
+                                        </Typography>
+                                        <RfqQuoteDetailsQuotedPricing
+                                            quote={quote}
+                                            quoteLine={quoteLine}
+                                            extendedStyles={styles.quotedPricingStyles}
+                                        />
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                            <GridItem {...styles.infoRightColumn}>
+                                {quote.isEditable && (
+                                    <Button
+                                        {...styles.quoteLineButton}
+                                        onClick={() => quoteLineClickHandler(quoteLine)}
+                                    >
+                                        {translate("Quote")}
+                                    </Button>
+                                )}
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                </GridContainer>
+            ))}
+            <Modal
+                {...styles.quoteCalculationModal}
+                headline={translate("Quote All")}
+                isOpen={quoteCalculationModalIsOpen}
+                handleClose={quoteCalculationModalCloseHandler}
+                onAfterClose={quoteCalculationModalAfterCloseHandler}
+            >
+                <GridContainer {...styles.quoteCalculationContainer}>
+                    <GridItem {...styles.quoteCalculationHeaderGridItem}>
+                        <Typography {...styles.quoteCalculationHeaderText}>
+                            {siteMessage("Rfq_QuoteOrderHeader")}
+                        </Typography>
+                    </GridItem>
+                    <GridItem {...styles.quoteCalculationMethodGridItem}>
+                        <Select
+                            {...styles.quoteCalculationMethodSelect}
+                            label={translate("Discount By")}
+                            value={calculationMethod?.name}
+                            onChange={calculationMethodChangeHandler}
+                        >
+                            {quote.calculationMethods?.map(cm => (
+                                <option key={cm.name} value={cm.name}>
+                                    {cm.displayName}
+                                </option>
+                            ))}
+                        </Select>
+                    </GridItem>
+                    <GridItem {...styles.quoteCalculationPercentGridItem}>
+                        <TextField
+                            {...styles.quoteCalculationPercentTextField}
+                            type="number"
+                            min={calculationMethod?.minimumMargin}
+                            max={
+                                calculationMethod && parseFloat(calculationMethod.maximumDiscount) > 0
+                                    ? parseFloat(calculationMethod.maximumDiscount)
+                                    : undefined
+                            }
+                            value={percent}
+                            onChange={percentChangeHandler}
+                            onBlur={percentBlurHandler}
+                        />
+                        <Icon {...styles.quoteCalculationPercentIcon} />
+                    </GridItem>
+                    {quoteCalculationError && (
+                        <GridItem {...styles.quoteCalculationErrorGridItem}>
+                            <Typography {...styles.quoteCalculationErrorText}>{quoteCalculationError}</Typography>
+                        </GridItem>
+                    )}
+                    <GridItem {...styles.quoteCalculationCancelGridItem}>
+                        <Button {...styles.quoteCalculationCancelButton} onClick={cancelClickHandler}>
+                            {translate("Cancel")}
+                        </Button>
+                    </GridItem>
+                    <GridItem {...styles.quoteCalculationApplyAllGridItem}>
+                        <Button {...styles.quoteCalculationApplyAllButton} onClick={applyAllClickHandler}>
+                            {translate("Apply Quote")}
+                        </Button>
+                    </GridItem>
+                </GridContainer>
+            </Modal>
+            <Modal
+                {...styles.quoteLineCalculationModal}
+                headline={translate("Quote")}
+                isOpen={quoteLineCalculationModalIsOpen}
+                handleClose={quoteLineCalculationModalCloseHandler}
+            >
+                {quoteLineForCalculation && (
+                    <RfqQuoteDetailsQuoteLineCalculator
+                        quote={quote}
+                        quoteLine={quoteLineForCalculation}
+                        onCancel={quoteLineCalculationModalCloseHandler}
+                        onApply={quoteLineCalculationModalCloseHandler}
+                    />
+                )}
+            </Modal>
+        </StyledWrapper>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RfqQuoteDetailsSalesRepProductList);

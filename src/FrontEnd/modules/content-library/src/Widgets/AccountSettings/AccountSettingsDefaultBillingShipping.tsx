@@ -12,6 +12,7 @@ import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
+import FindLocationModal, { FindLocationModalStyles } from "@insite/content-library/Components/FindLocationModal";
 import { AccountSettingsPageContext } from "@insite/content-library/Pages/AccountSettingsPage";
 import DefaultBillingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultBillingAddress";
 import DefaultShippingAddress from "@insite/content-library/Widgets/AccountSettings/DefaultShippingAddress";
@@ -27,7 +28,7 @@ import React, { ChangeEvent, FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps { }
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
@@ -72,6 +73,7 @@ interface PickUpLocationStyles {
     headerText?: TypographyProps;
     changeLink?: LinkPresentationProps;
     warehouseAddress?: WarehouseAddressInfoDisplayStyles;
+    findLocationModal?: FindLocationModalStyles;
 }
 
 interface WarehouseAddressInfoDisplayStyles {
@@ -104,7 +106,9 @@ export const accountSettingsDefaultBillingShippingStyles: AccountSettingsDefault
     },
     defaultFulfillmentMethodRadioGridItem: {
         width: 12,
-        css: css` display: block; `,
+        css: css`
+            display: block;
+        `,
     },
     customerSelectorGridItem: {
         width: 12,
@@ -114,32 +118,34 @@ export const accountSettingsDefaultBillingShippingStyles: AccountSettingsDefault
     },
     defaultShippingRadioGroup: {
         css: css`
-                display: inline-block;
-                width: 100%;
-                flex-direction: row;
-                & > div {
-                    margin-right: 20px;
-                    display: inline-flex;
-                }
-            `,
+            display: inline-block;
+            width: 100%;
+            flex-direction: row;
+            & > div {
+                margin-right: 20px;
+                display: inline-flex;
+            }
+        `,
     },
     defaultFulfillmentMethodRadioGroup: {
         css: css`
-                display: inline-block;
-                width: 100%;
-                flex-direction: row;
-                & > div {
-                    margin-right: 20px;
-                    display: inline-flex;
-                }
-            `,
+            display: inline-block;
+            width: 100%;
+            flex-direction: row;
+            & > div {
+                margin-right: 20px;
+                display: inline-flex;
+            }
+        `,
     },
     pickUpLocation: {
         gridContainer: { gap: 5 },
         headingGridItem: { width: 12 },
         headerText: {
             variant: "h5",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
         changeLink: {
             css: css`
@@ -160,7 +166,6 @@ export const accountSettingsDefaultBillingShippingStyles: AccountSettingsDefault
 
 const styles = accountSettingsDefaultBillingShippingStyles;
 let warehouseAddressWrapperStyle: GridItemProps | undefined;
-let shipToTitle: string;
 
 const defaultShippingChangeHandler = (event: ChangeEvent<HTMLInputElement>, props: Props) => {
     props.updateAccountSettings({ useDefaultCustomer: event.currentTarget.value.toLowerCase() === "true" });
@@ -170,8 +175,23 @@ const defaultFulfillmentChangeHandler = (event: ChangeEvent<HTMLInputElement>, p
     props.updateAccountSettings({ fulfillmentMethod: event.currentTarget.value });
 };
 
+const defaultWarehouseChangeHandler = (warehouse: WarehouseModel, props: Props) => {
+    props.updateAccountSettings({ defaultWarehouse: warehouse });
+};
+
 const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
-    const { account, shipToState, billToState, session, enableWarehousePickup, requireSelectCustomerOnSignIn, loadBillTo, loadShipTo, selectedBillToId, selectedShipToId } = props;
+    const {
+        account,
+        shipToState,
+        billToState,
+        session,
+        enableWarehousePickup,
+        requireSelectCustomerOnSignIn,
+        loadBillTo,
+        loadShipTo,
+        selectedBillToId,
+        selectedShipToId,
+    } = props;
     if (!billToState.value && !billToState.isLoading && selectedBillToId) {
         loadBillTo({ billToId: selectedBillToId });
     }
@@ -198,10 +218,8 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
             setIsFirstRender(false);
         }
         warehouseAddressWrapperStyle = styles.warehouseAddressWrapper;
-        shipToTitle = "Recipient Address";
     } else {
         warehouseAddressWrapperStyle = styles.customerSelectorGridItem;
-        shipToTitle = "Default Shipping Address";
     }
 
     return (
@@ -212,62 +230,110 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                 <GridItem {...styles.defaultShippingRadioGridItem}>
                     <RadioGroup
                         value={useDefaultCustomer.toString()}
-                        onChangeHandler={(event) => { defaultShippingChangeHandler(event, props); }}
-                        {...styles.defaultShippingRadioGroup}>
-                        <Radio {...styles.defaultShippingRadio} value="false" data-test-selector="accountSettings_doNotUseDefaultCustomer">{translate("Do Not Use Defaults")}</Radio>
-                        <Radio {...styles.defaultShippingRadio} value="true" data-test-selector="accountSettings_useDefaultCustomer">{translate("Use Default Addresses")}</Radio>
+                        onChangeHandler={event => {
+                            defaultShippingChangeHandler(event, props);
+                        }}
+                        {...styles.defaultShippingRadioGroup}
+                    >
+                        <Radio
+                            {...styles.defaultShippingRadio}
+                            value="false"
+                            data-test-selector="accountSettings_doNotUseDefaultCustomer"
+                        >
+                            {translate("Do Not Use Defaults")}
+                        </Radio>
+                        <Radio
+                            {...styles.defaultShippingRadio}
+                            value="true"
+                            data-test-selector="accountSettings_useDefaultCustomer"
+                        >
+                            {translate("Use Default Addresses")}
+                        </Radio>
                     </RadioGroup>
                 </GridItem>
-                {useDefaultCustomer && <GridContainer {...styles.customerSelectorGridContainer}>
-                    <GridItem {...styles.customerSelectorGridItem}>
-                        <DefaultBillingAddress currentBillTo={billTo} />
-                    </GridItem>
-                    {enableWarehousePickup
-                        && <GridItem {...styles.defaultFulfillmentMethodRadioGridItem}>
-                            <Typography {...styles.headingText}>{translate("Fulfillment Method")}</Typography>
-                            <RadioGroup
-                                value={account.defaultFulfillmentMethod || session.fulfillmentMethod}
-                                onChangeHandler={(event) => { defaultFulfillmentChangeHandler(event, props); }}
-                                {...styles.defaultFulfillmentMethodRadioGroup}>
-                                <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>{translate("Ship")}</Radio>
-                                <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>{translate("Pick Up")}</Radio>
-                            </RadioGroup>
+                {useDefaultCustomer && (
+                    <GridContainer {...styles.customerSelectorGridContainer}>
+                        <GridItem {...styles.customerSelectorGridItem}>
+                            <DefaultBillingAddress currentBillTo={billTo} />
                         </GridItem>
-                    }
-                    {account.defaultFulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse
-                        && <GridItem {...warehouseAddressWrapperStyle}>
-                            <PickUpLocation warehouse={pickUpWarehouse} />
+                        {enableWarehousePickup && (
+                            <GridItem {...styles.defaultFulfillmentMethodRadioGridItem}>
+                                <Typography {...styles.headingText}>{translate("Fulfillment Method")}</Typography>
+                                <RadioGroup
+                                    value={account.defaultFulfillmentMethod || session.fulfillmentMethod}
+                                    onChangeHandler={event => {
+                                        defaultFulfillmentChangeHandler(event, props);
+                                    }}
+                                    {...styles.defaultFulfillmentMethodRadioGroup}
+                                >
+                                    <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>
+                                        {translate("Ship")}
+                                    </Radio>
+                                    <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>
+                                        {translate("Pick Up")}
+                                    </Radio>
+                                </RadioGroup>
+                            </GridItem>
+                        )}
+                        {account.defaultFulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse && (
+                            <GridItem {...warehouseAddressWrapperStyle}>
+                                <PickUpLocation
+                                    warehouse={pickUpWarehouse}
+                                    onChange={warehouse => defaultWarehouseChangeHandler(warehouse, props)}
+                                />
+                            </GridItem>
+                        )}
+                        <GridItem {...warehouseAddressWrapperStyle}>
+                            <DefaultShippingAddress
+                                currentShipTo={shipTo}
+                                currentBillTo={billTo}
+                                isPickUp={account.defaultFulfillmentMethod === FulfillmentMethod.PickUp}
+                            />
                         </GridItem>
-                    }
-                    <GridItem {...warehouseAddressWrapperStyle}>
-                        <DefaultShippingAddress
-                            currentShipTo={shipTo}
-                            currentBillTo={billTo}
-                            isPickUp={account.defaultFulfillmentMethod === FulfillmentMethod.PickUp}
-                        />
-                    </GridItem>
-                </GridContainer>
-                }
+                    </GridContainer>
+                )}
             </GridContainer>
-        </>);
+        </>
+    );
 };
 
 interface PickUpLocationProps {
     warehouse: WarehouseModel;
+    onChange: (address: WarehouseModel) => void;
 }
 
-const PickUpLocation: FC<PickUpLocationProps> = ({ warehouse }) => {
+const PickUpLocation: FC<PickUpLocationProps> = ({ warehouse, onChange }) => {
     const componentStyles = styles.pickUpLocation || {};
+    const [isFindLocationOpen, setIsFindLocationOpen] = React.useState(false);
+    const handleOpenFindLocation = () => {
+        setIsFindLocationOpen(true);
+    };
+    const handleFindLocationModalClose = () => setIsFindLocationOpen(false);
+    const handleWarehouseSelected = (warehouse: WarehouseModel) => {
+        onChange(warehouse);
+        setIsFindLocationOpen(false);
+    };
+
     return (
-        <GridContainer {...componentStyles.gridContainer}>
-            <GridItem {...componentStyles.headingGridItem}>
-                <Typography {...componentStyles.headerText}>{translate("Pick Up Location")}</Typography>
-                <Link onClick={() => { }} {...componentStyles.changeLink}>{translate("Change")}</Link>
-            </GridItem>
-            <GridItem {...componentStyles.warehouseGridItem}>
-                <WarehouseAddressInfoDisplay warehouse={warehouse} />
-            </GridItem>
-        </GridContainer>
+        <>
+            <GridContainer {...componentStyles.gridContainer}>
+                <GridItem {...componentStyles.headingGridItem}>
+                    <Typography {...componentStyles.headerText}>{translate("Pick Up Location")}</Typography>
+                    <Link onClick={handleOpenFindLocation} {...componentStyles.changeLink}>
+                        {translate("Change")}
+                    </Link>
+                </GridItem>
+                <GridItem {...componentStyles.warehouseGridItem}>
+                    <WarehouseAddressInfoDisplay warehouse={warehouse} />
+                </GridItem>
+            </GridContainer>
+            <FindLocationModal
+                modalIsOpen={isFindLocationOpen}
+                onWarehouseSelected={handleWarehouseSelected}
+                onModalClose={handleFindLocationModalClose}
+                extendedStyles={componentStyles.findLocationModal}
+            />
+        </>
     );
 };
 
@@ -276,7 +342,8 @@ interface WarehouseAddressInfoDisplayProps {
 }
 
 const WarehouseAddressInfoDisplay: FC<WarehouseAddressInfoDisplayProps> = ({ warehouse }) => {
-    const componentStyles = styles.pickUpLocation && styles.pickUpLocation.warehouseAddress ? styles.pickUpLocation.warehouseAddress : {};
+    const componentStyles =
+        styles.pickUpLocation && styles.pickUpLocation.warehouseAddress ? styles.pickUpLocation.warehouseAddress : {};
 
     return (
         <>
@@ -287,7 +354,8 @@ const WarehouseAddressInfoDisplay: FC<WarehouseAddressInfoDisplayProps> = ({ war
                 city={warehouse.city}
                 state={warehouse.state}
                 postalCode={warehouse.postalCode}
-                extendedStyles={componentStyles.address} />
+                extendedStyles={componentStyles.address}
+            />
         </>
     );
 };

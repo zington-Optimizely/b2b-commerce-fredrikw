@@ -40,7 +40,7 @@ const PanelRowStyle = styled(Clickable)<any>`
     margin-bottom: 0;
     margin-top: 0;
     display: flex;
-    padding: ${({ header }) => header ? "5px 0" : "10px 10px 10px 20px"};
+    padding: ${({ header }) => (header ? "5px 0" : "10px 10px 10px 20px")};
     justify-content: space-between;
     background: ${({ theme, color }) => resolveColor(color, theme)};
     color: ${({ theme, color }) => getContrastColor(color, theme)};
@@ -51,7 +51,9 @@ const PanelRowStyle = styled(Clickable)<any>`
         ${({ hasChildren }) => hasChildren && "width: calc(100% - 24px);"}
     }
     ${injectCss}
-    ${({ isCurrent, isCurrentCss, theme }) => isCurrent && `
+    ${({ isCurrent, isCurrentCss, theme }) =>
+        isCurrent &&
+        `
         background: ${resolveColor("primary.main", theme)};
         color: ${resolveColor("primary.contrast", theme)};
         margin: 0;
@@ -59,27 +61,29 @@ const PanelRowStyle = styled(Clickable)<any>`
     `}
 `;
 
-
 /**
  * A building block for the `PanelMenu` and surrounding UIs.
  */
-const PanelRow: React.FC<PanelRowProps> = ({
-    children,
-    theme,
-    ...otherProps
-}) => (<ThemeConsumer>
-    {(theme?: BaseTheme) => {
-        const { spreadProps } = applyPropBuilder({ panelRowProps: { ...otherProps }, theme }, { component: "panelMenu" });
-        const panelRowThemeProps = spreadProps("panelRowProps");
-        const appliedColor = panelRowThemeProps.color ?? "common.accent";
-        return (
-            <PanelRowStyle {...panelRowThemeProps} {...otherProps} color={appliedColor}>
-                {children}
-                {otherProps.hasChildren && <IconMemo {...panelRowThemeProps.moreIconProps} color={getContrastColor(appliedColor, theme)} />}
-            </PanelRowStyle>
-        );
-    }}
-</ThemeConsumer>);
+const PanelRow: React.FC<PanelRowProps> = ({ children, theme, ...otherProps }) => (
+    <ThemeConsumer>
+        {(theme?: BaseTheme) => {
+            const { spreadProps } = applyPropBuilder(
+                { panelRowProps: { ...otherProps }, theme },
+                { component: "panelMenu" },
+            );
+            const panelRowThemeProps = spreadProps("panelRowProps");
+            const appliedColor = panelRowThemeProps.color ?? "common.accent";
+            return (
+                <PanelRowStyle {...panelRowThemeProps} {...otherProps} color={appliedColor}>
+                    {children}
+                    {otherProps.hasChildren && (
+                        <IconMemo {...panelRowThemeProps.moreIconProps} color={getContrastColor(appliedColor, theme)} />
+                    )}
+                </PanelRowStyle>
+            );
+        }}
+    </ThemeConsumer>
+);
 
 /** @ignore */
 export default PanelRow;

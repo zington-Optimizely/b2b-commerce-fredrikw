@@ -38,9 +38,11 @@ const useWarehouseGoogleMarkers = ({
     selectedWarehouse,
     showSelectedWarehouse,
 }: Props) => {
-    const [mapMarkersElements, setMapMarkersElements] =  React.useState<WarehouseGoogleMapsMarker[]>([]);
-    const [warehouseInfoWindow, setWarehouseInfoWindow] =  React.useState<WarehouseInfoWindow | undefined>(undefined);
-    const [currentLocationInfoWindow, setCurrentLocationInfoWindow] =  React.useState<CurrentLocationInfoWindow |  undefined>(undefined);
+    const [mapMarkersElements, setMapMarkersElements] = React.useState<WarehouseGoogleMapsMarker[]>([]);
+    const [warehouseInfoWindow, setWarehouseInfoWindow] = React.useState<WarehouseInfoWindow | undefined>(undefined);
+    const [currentLocationInfoWindow, setCurrentLocationInfoWindow] = React.useState<
+        CurrentLocationInfoWindow | undefined
+    >(undefined);
 
     const createMarkerClickHandler = (warehouse: WarehouseModel) => {
         return () => {
@@ -62,7 +64,7 @@ const useWarehouseGoogleMarkers = ({
     const getWarehouseNumber = (index: number): number => {
         const pageSize = warehousesPagination!.pageSize;
         const page = warehousesPagination!.page;
-        return index + 1 + ((pageSize) * (page - 1));
+        return index + 1 + pageSize * (page - 1);
     };
 
     const clearWarehouseGoogleMarkers = () => {
@@ -82,7 +84,9 @@ const useWarehouseGoogleMarkers = ({
             warehouseId: warehouse.id,
             position: new google.maps.LatLng(warehouse.latitude, warehouse.longitude),
             type: "WAREHOUSE",
-            icon: `https://mt.google.com/vt/icon/text=${getWarehouseNumber(index)}&psize=16&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1`,
+            icon: `https://mt.google.com/vt/icon/text=${getWarehouseNumber(
+                index,
+            )}&psize=16&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1`,
             onClick: createMarkerClickHandler(warehouse),
         }));
         // Add Selected Warehouse Marker
@@ -106,7 +110,14 @@ const useWarehouseGoogleMarkers = ({
             });
         }
         setMapMarkersElements(markers);
-    }, [warehouses, currentLocation, warehouseSearchFilter, warehousesPagination, selectedWarehouse, showSelectedWarehouse]);
+    }, [
+        warehouses,
+        currentLocation,
+        warehouseSearchFilter,
+        warehousesPagination,
+        selectedWarehouse,
+        showSelectedWarehouse,
+    ]);
 
     return {
         mapMarkersElements,

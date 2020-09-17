@@ -37,23 +37,25 @@ export const addCardButtonStyles: SavedPaymentsAddCardButtonStyles = {
 
 const styles = addCardButtonStyles;
 
-const SavedPaymentsAddCardButton: React.FC<Props> = ({
-                                                         updateEditModal,
-                                                     }) => {
+const SavedPaymentsAddCardButton: React.FC<Props> = ({ updateEditModal }) => {
     const addCardClickHandler = () => {
         updateEditModal({ modalIsOpen: true });
     };
 
-    return <StyledWrapper {...styles.wrapper}>
-        <Hidden above="sm">
-            <OverflowMenu position="end">
-                <Clickable onClick={addCardClickHandler}>{translate("Add a Card")}</Clickable>
-            </OverflowMenu>
-        </Hidden>
-        <Hidden below="md">
-            <Button {...styles.addCardButton} onClick={addCardClickHandler} data-test-selector="addCardBtn">{translate("Add a Card")}</Button>
-        </Hidden>
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <Hidden above="sm">
+                <OverflowMenu position="end">
+                    <Clickable onClick={addCardClickHandler}>{translate("Add a Card")}</Clickable>
+                </OverflowMenu>
+            </Hidden>
+            <Hidden below="md">
+                <Button {...styles.addCardButton} onClick={addCardClickHandler} data-test-selector="addCardBtn">
+                    {translate("Add a Card")}
+                </Button>
+            </Hidden>
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

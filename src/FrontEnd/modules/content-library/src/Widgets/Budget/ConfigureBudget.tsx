@@ -2,22 +2,24 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import { getBudgetCalendarsDataView } from "@insite/client-framework/Store/Data/BudgetCalendars/BudgetCalendarsSelectors";
-import { BudgetEnforcementLevel, BudgetPeriodType } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
+import {
+    BudgetEnforcementLevel,
+    BudgetPeriodType,
+} from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
 import saveBudgetConfiguration from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SaveBudgetConfiguration";
 import setBudgetCalendar from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetBudgetCalendar";
 import setBudgetPeriodType from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetBudgetPeriodType";
 import setCustomBudgetPeriodNumber from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetCustomBudgetPeriodNumber";
 import setDisplayedWidgetName from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/SetDisplayedWidgetName";
 import translate from "@insite/client-framework/Translate";
-import {
-    BillToModel,
-    BudgetCalendarModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { BillToModel, BudgetCalendarModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import TwoButtonModal, { TwoButtonModalStyles } from "@insite/content-library/Components/TwoButtonModal";
 import { BudgetManagementPageContext } from "@insite/content-library/Pages/BudgetManagementPage";
-import BudgetYearSelector, { BudgetYearSelectorStyles } from "@insite/content-library/Widgets/Budget/BudgetYearSelector";
+import BudgetYearSelector, {
+    BudgetYearSelectorStyles,
+} from "@insite/content-library/Widgets/Budget/BudgetYearSelector";
 import Button, { ButtonProps } from "@insite/mobius/Button";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
 import DataTableBody from "@insite/mobius/DataTable/DataTableBody";
@@ -51,8 +53,12 @@ const mapStateToProps = (state: ApplicationState) => ({
     budgetCalendarsDataView: getBudgetCalendarsDataView(state),
     budgetCalendar: state.pages.budgetManagement.budgetCalendar,
     budgetEndPeriods: state.pages.budgetManagement.budgetEndPeriods,
-    budgetYear: state.pages.budgetManagement.budgetCalendar ? state.pages.budgetManagement.budgetCalendar.fiscalYear : new Date().getFullYear(),
-    fiscalYearEndDate: state.pages.budgetManagement.budgetCalendar ? state.pages.budgetManagement.budgetCalendar.fiscalYearEndDate : undefined,
+    budgetYear: state.pages.budgetManagement.budgetCalendar
+        ? state.pages.budgetManagement.budgetCalendar.fiscalYear
+        : new Date().getFullYear(),
+    fiscalYearEndDate: state.pages.budgetManagement.budgetCalendar
+        ? state.pages.budgetManagement.budgetCalendar.fiscalYearEndDate
+        : undefined,
     displayedWidgetName: state.pages.budgetManagement.displayedWidgetName,
     budgetPeriodType: state.pages.budgetManagement.budgetPeriodType,
     customBudgetPeriodNumber: state.pages.budgetManagement.customBudgetPeriodNumber,
@@ -106,7 +112,9 @@ export interface ConfigureBudgetStyles {
 export const configureBudgetStyles: ConfigureBudgetStyles = {
     titleText: {
         variant: "h4",
-        css: css` margin: 0; `,
+        css: css`
+            margin: 0;
+        `,
     },
     titleGridItems: {
         width: [12, 12, 8, 8, 8],
@@ -115,27 +123,38 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
         width: [12, 12, 4, 4, 4],
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(
-                    theme,
-                    [
-                        css` justify-content: flex-start; `,
-                        css` justify-content: flex-start; `,
-                        css` justify-content: flex-end; `,
-                        css` justify-content: flex-end; `,
-                        css` justify-content: flex-end; `,
-                    ],
-                )}
+                breakpointMediaQueries(theme, [
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-start;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                    `,
+                ])}
         `,
     },
     enforcementLevelGridItems: {
         width: 12,
-        css: css` display: block; `,
+        css: css`
+            display: block;
+        `,
     },
     cancelButton: {
         variant: "tertiary",
     },
     saveButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     enforcementLevelLabel: {
         variant: "h5",
@@ -147,16 +166,43 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
     enforcementLevelRadioGroup: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(
-                    theme,
-                    [
-                        css` display: inline-block; & > ${RadioStyle} { display: block; margin-top: 10px; } `,
-                        css` display: inline-block; & > ${RadioStyle} { display: block; margin-top: 10px; } `,
-                        css` display: inline-block; & > ${RadioStyle} { display: inline-block; margin-right: 20px; } `,
-                        css` display: inline-block; & > ${RadioStyle} { display: inline-block; margin-right: 20px; } `,
-                        css` display: inline-block; & > ${RadioStyle} { display: inline-block; margin-right: 20px; } `,
-                    ],
-                )}
+                breakpointMediaQueries(theme, [
+                    css`
+                        display: inline-block;
+                        & > ${RadioStyle} {
+                            display: block;
+                            margin-top: 10px;
+                        }
+                    `,
+                    css`
+                        display: inline-block;
+                        & > ${RadioStyle} {
+                            display: block;
+                            margin-top: 10px;
+                        }
+                    `,
+                    css`
+                        display: inline-block;
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
+                    `,
+                    css`
+                        display: inline-block;
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
+                    `,
+                    css`
+                        display: inline-block;
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
+                    `,
+                ])}
         `,
     },
     budgetPeriodTitle: {
@@ -168,13 +214,31 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
     },
     budgetYearGridItem: {
         width: 12,
-        css: css` padding-bottom: 0; `,
+        css: css`
+            padding-bottom: 0;
+        `,
     },
     budgetYearEndGridItem: {
         width: 12,
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [css` display: block; `, css` display: block; `, css` display: flex; `, css` display: flex; `, css` display: flex; `])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        display: block;
+                    `,
+                    css`
+                        display: block;
+                    `,
+                    css`
+                        display: flex;
+                    `,
+                    css`
+                        display: flex;
+                    `,
+                    css`
+                        display: flex;
+                    `,
+                ])}
         `,
     },
     budgetYearEndDatePicker: {
@@ -182,16 +246,35 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
             formField: css`
                 ${({ theme }: { theme: BaseTheme }) =>
                     breakpointMediaQueries(theme, [
-                        css`width: auto; margin-right: 35px; margin-top: 15px;`,
-                        css`width: auto; margin-right: 35px; margin-top: 15px;`,
-                        css`width: auto; margin-right: 35px;`,
-                        css`width: auto; margin-right: 35px;`,
-                        css`width: auto; margin-right: 35px;`,
+                        css`
+                            width: auto;
+                            margin-right: 35px;
+                            margin-top: 15px;
+                        `,
+                        css`
+                            width: auto;
+                            margin-right: 35px;
+                            margin-top: 15px;
+                        `,
+                        css`
+                            width: auto;
+                            margin-right: 35px;
+                        `,
+                        css`
+                            width: auto;
+                            margin-right: 35px;
+                        `,
+                        css`
+                            width: auto;
+                            margin-right: 35px;
+                        `,
                     ])}
             `,
         },
         labelProps: {
-            css: css` margin-bottom: 3px; `,
+            css: css`
+                margin-bottom: 3px;
+            `,
         },
     },
     budgetPeriodTypeRadioGroup: {
@@ -200,25 +283,44 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
                 breakpointMediaQueries(theme, [
                     css`
                         display: block;
-                        & > ${RadioStyle} { display: block; }
-                        & > ${RadioStyle}:nth-last-child(2) { display: inline-block; margin-right: 20px; }
+                        & > ${RadioStyle} {
+                            display: block;
+                        }
+                        & > ${RadioStyle}:nth-last-child(2) {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
                     `,
                     css`
                         display: block;
-                        & > ${RadioStyle} { display: block; }
-                        & > ${RadioStyle}:nth-last-child(2) { display: inline-block; margin-right: 20px; }
+                        & > ${RadioStyle} {
+                            display: block;
+                        }
+                        & > ${RadioStyle}:nth-last-child(2) {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
                     `,
                     css`
                         display: inline-block;
-                        & > ${RadioStyle} { display: inline-block; margin-right: 20px; }
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
                     `,
                     css`
                         display: inline-block;
-                        & > ${RadioStyle} { display: inline-block; margin-right: 20px; }
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
                     `,
                     css`
                         display: inline-block;
-                        & > ${RadioStyle} { display: inline-block; margin-right: 20px; }
+                        & > ${RadioStyle} {
+                            display: inline-block;
+                            margin-right: 20px;
+                        }
                     `,
                 ])}
         `,
@@ -257,7 +359,7 @@ export const configureBudgetStyles: ConfigureBudgetStyles = {
 };
 
 const styles = configureBudgetStyles;
-const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+const tzOffset = new Date().getTimezoneOffset() * 60000;
 const ConfigureBudget: React.FC<Props> = ({
     billToState,
     budgetCalendarsDataView,
@@ -331,7 +433,10 @@ const ConfigureBudget: React.FC<Props> = ({
     const handleSaveModalButtonClick = () => {
         setSaveConfigurationModalIsOpen(false);
         if (budgetCalendar) {
-            const dates = budgetCalendar.budgetPeriods?.map(date => date ? new Date(new Date(date).getTime() - tzOffset) : null) || null;
+            const dates =
+                budgetCalendar.budgetPeriods?.map(date =>
+                    date ? new Date(new Date(date).getTime() - tzOffset) : null,
+                ) || null;
             setDisplayedWidgetName({ value: "ReviewBudget" });
             saveBudgetConfiguration({
                 updateEnforcementLevelApiParameter: {
@@ -352,10 +457,11 @@ const ConfigureBudget: React.FC<Props> = ({
     };
 
     const handleBudgetYearChange = (budgetYear: number) => {
-        const calendar = !budgetCalendarsDataView.isLoading && budgetCalendarsDataView.value
-            ? (budgetCalendarsDataView.value!.find(o => o.fiscalYear === budgetYear)
-                || { fiscalYear: budgetYear, budgetPeriods: [] as Date[] } as BudgetCalendarModel)
-            : undefined;
+        const calendar =
+            !budgetCalendarsDataView.isLoading && budgetCalendarsDataView.value
+                ? budgetCalendarsDataView.value!.find(o => o.fiscalYear === budgetYear) ||
+                  ({ fiscalYear: budgetYear, budgetPeriods: [] as Date[] } as BudgetCalendarModel)
+                : undefined;
         setBudgetCalendar({ value: calendar });
         setBudgetPeriodType({ budgetPeriodType: undefined });
     };
@@ -405,7 +511,7 @@ const ConfigureBudget: React.FC<Props> = ({
 
     const handleStartDateChange = (index: number, selectedDay?: Date) => {
         if (selectedDay && budgetCalendar) {
-            const updatedBudgetCalendar = immer(budgetCalendar, (draft) => {
+            const updatedBudgetCalendar = immer(budgetCalendar, draft => {
                 draft.budgetPeriods![index] = selectedDay;
             });
             setBudgetCalendar({ value: updatedBudgetCalendar });
@@ -417,7 +523,7 @@ const ConfigureBudget: React.FC<Props> = ({
             return;
         }
 
-        const calendar = immer(budgetCalendar, (draft) => {
+        const calendar = immer(budgetCalendar, draft => {
             draft.budgetPeriods!.splice(index, 1);
         });
         setBudgetCalendar({ value: calendar });
@@ -429,20 +535,24 @@ const ConfigureBudget: React.FC<Props> = ({
     };
 
     const yearEndDate = fiscalYearEndDate ? new Date(fiscalYearEndDate.toString()) : undefined;
-    const rows = budgetCalendar ? budgetCalendar.budgetPeriods!.map((period, index) => {
-        const endDate = budgetEndPeriods ? budgetEndPeriods[index] : "";
-        return {
-            period: index + 1,
-            startDate: new Date(period!),
-            endDate: endDate ? `${endDate.getMonth() + 1}/${endDate.getDate()}/${endDate.getFullYear()}` : "",
-        };
-    }) : [];
+    const rows = budgetCalendar
+        ? budgetCalendar.budgetPeriods!.map((period, index) => {
+              const endDate = budgetEndPeriods ? budgetEndPeriods[index] : "";
+              return {
+                  period: index + 1,
+                  startDate: new Date(period!),
+                  endDate: endDate ? `${endDate.getMonth() + 1}/${endDate.getDate()}/${endDate.getFullYear()}` : "",
+              };
+          })
+        : [];
 
     return (
         <>
             <GridContainer {...styles.gridContainer}>
                 <GridItem {...styles.titleGridItems}>
-                    <Typography as="h2" {...styles.titleText}>{translate("Configure Budgets")}</Typography>
+                    <Typography as="h2" {...styles.titleText}>
+                        {translate("Configure Budgets")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.buttonsGridItem}>
                     <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
@@ -454,22 +564,35 @@ const ConfigureBudget: React.FC<Props> = ({
                 </GridItem>
                 <GridItem {...styles.enforcementLevelGridItems}>
                     <div>
-                        <Typography as="h3" {...styles.enforcementLevelLabel}>{translate("Enforcement Level")}</Typography>
+                        <Typography as="h3" {...styles.enforcementLevelLabel}>
+                            {translate("Enforcement Level")}
+                        </Typography>
                         <Tooltip text={siteMessage("Budget_EnforcementLevelInstructions").toString()} />
                     </div>
                     <RadioGroup
                         onChangeHandler={handleEnforcementLevelChange}
                         value={enforcementLevel}
                         data-test-selector="enforcementLevelRadio"
-                        {...styles.enforcementLevelRadioGroup}>
-                        <Radio value={BudgetEnforcementLevel.None} {...styles.enforcementLevelRadio}>{translate("No Enforcement")}</Radio>
-                        <Radio value={BudgetEnforcementLevel.ShipTo} {...styles.enforcementLevelRadio}>{translate("Customer Ship To Level")}</Radio>
-                        <Radio value={BudgetEnforcementLevel.Customer} {...styles.enforcementLevelRadio}>{translate("Customer Level")}</Radio>
-                        <Radio value={BudgetEnforcementLevel.User} {...styles.enforcementLevelRadio}>{translate("User Level")}</Radio>
+                        {...styles.enforcementLevelRadioGroup}
+                    >
+                        <Radio value={BudgetEnforcementLevel.None} {...styles.enforcementLevelRadio}>
+                            {translate("No Enforcement")}
+                        </Radio>
+                        <Radio value={BudgetEnforcementLevel.ShipTo} {...styles.enforcementLevelRadio}>
+                            {translate("Customer Ship To Level")}
+                        </Radio>
+                        <Radio value={BudgetEnforcementLevel.Customer} {...styles.enforcementLevelRadio}>
+                            {translate("Customer Level")}
+                        </Radio>
+                        <Radio value={BudgetEnforcementLevel.User} {...styles.enforcementLevelRadio}>
+                            {translate("User Level")}
+                        </Radio>
                     </RadioGroup>
                 </GridItem>
                 <GridItem width={12} {...styles.gridItems}>
-                    <Typography {...styles.budgetPeriodTitle}>{translate("Configure Budget Period by Year")}</Typography>
+                    <Typography {...styles.budgetPeriodTitle}>
+                        {translate("Configure Budget Period by Year")}
+                    </Typography>
                     <Tooltip text={siteMessage("Budget_PeriodInstruction").toString()} />
                 </GridItem>
                 <GridItem {...styles.budgetYearGridItem}>
@@ -477,7 +600,8 @@ const ConfigureBudget: React.FC<Props> = ({
                         budgetYear={budgetYear}
                         extendedStyles={styles.budgetYearSelectorStyles}
                         dataTestSelector="configureBudgetYearSelector"
-                        onBudgetYearChange={handleBudgetYearChange}></BudgetYearSelector>
+                        onBudgetYearChange={handleBudgetYearChange}
+                    ></BudgetYearSelector>
                 </GridItem>
                 <GridItem {...styles.budgetYearEndGridItem}>
                     <RadioGroup
@@ -485,16 +609,29 @@ const ConfigureBudget: React.FC<Props> = ({
                         onChangeHandler={handleBudgetPeriodChange}
                         value={budgetPeriodType || ""}
                         data-test-selector="budgetPeriodTypeRadio"
-                        {...styles.budgetPeriodTypeRadioGroup}>
-                        <Radio value={BudgetPeriodType.Monthly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                        {...styles.budgetPeriodTypeRadioGroup}
+                    >
+                        <Radio
+                            value={BudgetPeriodType.Monthly}
+                            {...styles.budgetPeriodTypeRadio}
+                            disabled={!!fiscalYearEndDate}
+                        >
                             {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Monthly)}
                         </Radio>
-                        <Radio value={BudgetPeriodType.Quarterly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                        <Radio
+                            value={BudgetPeriodType.Quarterly}
+                            {...styles.budgetPeriodTypeRadio}
+                            disabled={!!fiscalYearEndDate}
+                        >
                             {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Quarterly)}
                         </Radio>
-                        <Radio value={BudgetPeriodType.Yearly} {...styles.budgetPeriodTypeRadio} disabled={!!fiscalYearEndDate}>
+                        <Radio
+                            value={BudgetPeriodType.Yearly}
+                            {...styles.budgetPeriodTypeRadio}
+                            disabled={!!fiscalYearEndDate}
+                        >
                             {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Yearly)}
                         </Radio>
@@ -502,16 +639,17 @@ const ConfigureBudget: React.FC<Props> = ({
                             {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
                             {translate(BudgetPeriodType.Custom)}
                         </Radio>
-                        {budgetPeriodType === BudgetPeriodType.Custom
-                            && <TextField
+                        {budgetPeriodType === BudgetPeriodType.Custom && (
+                            <TextField
                                 value={customBudgetPeriodNumber || ""}
                                 {...styles.customBudgetPeriodInput}
                                 data-test-selector="customBudgetPeriodNumber"
-                                onChange={handleCustomBudgetPeriodNumberChange} />
-                        }
+                                onChange={handleCustomBudgetPeriodNumberChange}
+                            />
+                        )}
                     </RadioGroup>
-                    {budgetPeriodType === BudgetPeriodType.Custom
-                        && <DatePicker
+                    {budgetPeriodType === BudgetPeriodType.Custom && (
+                        <DatePicker
                             label="Budget Year End"
                             selectedDay={yearEndDate}
                             {...styles.budgetYearEndDatePicker}
@@ -521,8 +659,9 @@ const ConfigureBudget: React.FC<Props> = ({
                                 clearIcon: null,
                                 ...styles.budgetYearEndDatePicker?.dateTimePickerProps,
                             }}
-                            onDayChange={handleYearEndChange} />
-                    }
+                            onDayChange={handleYearEndChange}
+                        />
+                    )}
                 </GridItem>
                 <GridItem width={[12, 12, 6, 6, 6]} {...styles.gridItems}>
                     <DataTable {...styles.dataTable}>
@@ -536,7 +675,10 @@ const ConfigureBudget: React.FC<Props> = ({
                             {rows.map(({ period, startDate, endDate }, index) => (
                                 <DataTableRow key={period} data-test-selector="budgetPeriodRow">
                                     <DataTableCell {...styles.periodCells}>{period}</DataTableCell>
-                                    <DataTableCell {...styles.startDateCells} data-test-selector={`budgetStartDate_${index}`}>
+                                    <DataTableCell
+                                        {...styles.startDateCells}
+                                        data-test-selector={`budgetStartDate_${index}`}
+                                    >
                                         <DatePicker
                                             selectedDay={startDate}
                                             {...styles.startDatePicker}
@@ -546,9 +688,15 @@ const ConfigureBudget: React.FC<Props> = ({
                                                 clearIcon: null,
                                                 ...styles.startDatePicker?.dateTimePickerProps,
                                             }}
-                                            onDayChange={({ selectedDay }) => handleStartDateChange(index, selectedDay)} />
+                                            onDayChange={({ selectedDay }) => handleStartDateChange(index, selectedDay)}
+                                        />
                                     </DataTableCell>
-                                    <DataTableCell {...styles.endDateCells} data-test-selector={`budgetEndDate_${index}`}>{endDate}</DataTableCell>
+                                    <DataTableCell
+                                        {...styles.endDateCells}
+                                        data-test-selector={`budgetEndDate_${index}`}
+                                    >
+                                        {endDate}
+                                    </DataTableCell>
                                     <DataTableCell {...styles.removeCells}>
                                         {/* TODO ISC-12606 needs clickable */}
                                         <Icon {...styles.removeIcon} onClick={() => handleRemoveIconClick(index)} />
@@ -563,7 +711,11 @@ const ConfigureBudget: React.FC<Props> = ({
                         <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
                             {translate("Cancel")}
                         </Button>
-                        <Button {...styles.saveButton} onClick={handleSaveButtonClick} data-test-selector="saveConfigurationButton">
+                        <Button
+                            {...styles.saveButton}
+                            onClick={handleSaveButtonClick}
+                            data-test-selector="saveConfigurationButton"
+                        >
                             {translate("Save")}
                         </Button>
                     </Hidden>
@@ -578,8 +730,8 @@ const ConfigureBudget: React.FC<Props> = ({
                 submitTestSelector="saveAndContinueButton"
                 extendedStyles={styles.twoButtonModalStyles}
                 onCancel={handleCancelModalButtonClick}
-                onSubmit={handleSaveModalButtonClick}>
-            </TwoButtonModal>
+                onSubmit={handleSaveModalButtonClick}
+            ></TwoButtonModal>
         </>
     );
 };

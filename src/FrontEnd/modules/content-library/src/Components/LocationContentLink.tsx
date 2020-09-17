@@ -22,7 +22,9 @@ const LocationContentLink: React.FC<LocationContentLinkProps> = ({
         onOpenLocationContent(location);
     };
     return (
-        <Link onClick={handleContentClicked} {...otherProps}>{translate("Hours")}</Link>
+        <Link onClick={handleContentClicked} {...otherProps}>
+            {translate("Hours")}
+        </Link>
     );
 };
 

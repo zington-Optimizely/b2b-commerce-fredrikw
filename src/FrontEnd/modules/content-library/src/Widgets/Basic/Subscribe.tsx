@@ -66,20 +66,24 @@ export const subscribeStyles: SubscribeStyles = {
     },
     titleLabel: {
         variant: "h4",
-        css: css` margin-bottom: -5px; `,
+        css: css`
+            margin-bottom: -5px;
+        `,
     },
     descriptionGridItem: {
         width: 12,
     },
     descriptionText: {
-        css: css` margin-bottom: -1rem; `,
+        css: css`
+            margin-bottom: -1rem;
+        `,
     },
     emailGridItem: {
         width: 12,
     },
     emailTextField: {
         cssOverrides: {
-            formField: css` 
+            formField: css`
                 max-width: 300px;
                 margin-right: 10px;
             `,
@@ -89,21 +93,19 @@ export const subscribeStyles: SubscribeStyles = {
         width: 12,
     },
     disclaimerText: {
-        css: css` font-size: 12px; `,
+        css: css`
+            font-size: 12px;
+        `,
     },
 };
 
 const styles = subscribeStyles;
 
-const emailRegexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 const emailRequiredFieldMessage = siteMessage("EmailSubscription_EmailIsRequiredErrorMessage");
 const emailFieldMessage = siteMessage("EmailSubscription_EmailIsInvalidErrorMessage");
 
-const CmsSubscribe: React.FunctionComponent<Props> = ({
-    fields,
-    subscribe,
-    id,
-}: Props) => {
+const CmsSubscribe: React.FunctionComponent<Props> = ({ fields, subscribe, id }: Props) => {
     const [email, setEmail] = React.useState("");
     const [emailError, setEmailError] = React.useState(emailRequiredFieldMessage);
     const [isSubmitted, setIsSubmitted] = React.useState(false);
@@ -121,7 +123,6 @@ const CmsSubscribe: React.FunctionComponent<Props> = ({
                 toasterContext.addToast({ body: siteMessage("Email_Subscribe_Success"), messageType: "success" });
             },
         });
-
     };
 
     const emailChangeHandler = (email: string) => {
@@ -130,42 +131,44 @@ const CmsSubscribe: React.FunctionComponent<Props> = ({
     };
 
     const validateEmail = (email: string) => {
-        const errorMessage = !email ? emailRequiredFieldMessage : (emailRegexp.test(email) ? "" : emailFieldMessage);
+        const errorMessage = !email ? emailRequiredFieldMessage : emailRegexp.test(email) ? "" : emailFieldMessage;
         setEmailError(errorMessage);
         return !errorMessage;
     };
 
     const gridItemCss = (gridItemProps?: GridItemProps) => {
         return css`
-    justify-content: ${fields.alignment ? fields.alignment : "center"};
-    ${gridItemProps?.css}
-`;
+            justify-content: ${fields.alignment ? fields.alignment : "center"};
+            ${gridItemProps?.css}
+        `;
     };
 
-    return <GridContainer {...styles.mainGridContainer}>
-        <GridItem {...styles.titleGridItem} css={gridItemCss(styles.titleGridItem)}>
-            <Typography {...styles.titleLabel}>{fields.title}</Typography>
-        </GridItem>
-        <GridItem {...styles.descriptionGridItem} css={gridItemCss(styles.descriptionGridItem)}>
-            <Typography {...styles.descriptionText}>{parse(fields.description, parserOptions)}</Typography>
-        </GridItem>
-        <GridItem {...styles.emailGridItem} css={gridItemCss(styles.emailGridItem)}>
-            <TextField
-                {...styles.emailTextField}
-                id={id}
-                placeholder={fields.placeholder}
-                value={email}
-                onChange={(e) => emailChangeHandler(e.currentTarget.value)}
-                error={isSubmitted && emailError}
-            />
-            <Button  {...styles.emailButton} onClick={onSubscribeClick} disabled={isSubmitted && !!emailError}>
-                {fields.label}
-            </Button>
-        </GridItem>
-        <GridItem {...styles.disclaimerGridItem} css={gridItemCss(styles.disclaimerGridItem)}>
-            <Typography {...styles.disclaimerText}>{parse(fields.disclaimer, parserOptions)}</Typography>
-        </GridItem>
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.mainGridContainer}>
+            <GridItem {...styles.titleGridItem} css={gridItemCss(styles.titleGridItem)}>
+                <Typography {...styles.titleLabel}>{fields.title}</Typography>
+            </GridItem>
+            <GridItem {...styles.descriptionGridItem} css={gridItemCss(styles.descriptionGridItem)}>
+                <Typography {...styles.descriptionText}>{parse(fields.description, parserOptions)}</Typography>
+            </GridItem>
+            <GridItem {...styles.emailGridItem} css={gridItemCss(styles.emailGridItem)}>
+                <TextField
+                    {...styles.emailTextField}
+                    id={id}
+                    placeholder={fields.placeholder}
+                    value={email}
+                    onChange={e => emailChangeHandler(e.currentTarget.value)}
+                    error={isSubmitted && emailError}
+                />
+                <Button {...styles.emailButton} onClick={onSubscribeClick} disabled={isSubmitted && !!emailError}>
+                    {fields.label}
+                </Button>
+            </GridItem>
+            <GridItem {...styles.disclaimerGridItem} css={gridItemCss(styles.disclaimerGridItem)}>
+                <Typography {...styles.disclaimerText}>{parse(fields.disclaimer, parserOptions)}</Typography>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

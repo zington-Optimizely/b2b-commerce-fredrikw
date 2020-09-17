@@ -1,6 +1,12 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
-import { updateBudgetCalendar, UpdateBudgetCalendarApiParameter } from "@insite/client-framework/Services/BudgetCalendarService";
-import { updateEnforcementLevel, UpdateEnforcementLevelApiParameter } from "@insite/client-framework/Services/CustomersService";
+import {
+    updateBudgetCalendar,
+    UpdateBudgetCalendarApiParameter,
+} from "@insite/client-framework/Services/BudgetCalendarService";
+import {
+    updateEnforcementLevel,
+    UpdateEnforcementLevelApiParameter,
+} from "@insite/client-framework/Services/CustomersService";
 import { BillToModel, BudgetCalendarModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = Handler<
@@ -17,13 +23,17 @@ type HandlerType = Handler<
 >;
 
 export const CallUpdateEnforcementLevelApi: HandlerType = async props => {
-    props.updateEnforcementLevelApiResult = await updateEnforcementLevel(props.parameter.updateEnforcementLevelApiParameter);
+    props.updateEnforcementLevelApiResult = await updateEnforcementLevel(
+        props.parameter.updateEnforcementLevelApiParameter,
+    );
     props.hadError = !props.updateEnforcementLevelApiResult;
 };
 
 export const CallUpdateBudgetCalendarApi: HandlerType = async props => {
     if (!props.hadError) {
-        props.updateBudgetCalendarApiResult = await updateBudgetCalendar(props.parameter.updateBudgetCalendarApiParameter);
+        props.updateBudgetCalendarApiResult = await updateBudgetCalendar(
+            props.parameter.updateBudgetCalendarApiParameter,
+        );
         props.hadError = !props.updateBudgetCalendarApiResult;
     }
 };

@@ -10,22 +10,25 @@ export const GetCurrentFilters: HandlerType = props => {
 };
 
 export const ResetPage: HandlerType = props => {
-    if (props.parameter.pageSize
-        || props.parameter.sort
-        || props.parameter.pageCategoryId
-        || props.parameter.categoryId
-        || props.parameter.searchWithinQueries?.length
-        || props.parameter.brandIds?.length
-        || props.parameter.productLineIds?.length
-        || props.parameter.priceFilters?.length
-        || props.parameter.attributeValueIds?.length) {
+    if (
+        props.parameter.pageSize ||
+        props.parameter.sort ||
+        props.parameter.pageCategoryId ||
+        props.parameter.categoryId ||
+        props.parameter.searchWithinQueries?.length ||
+        props.parameter.brandIds?.length ||
+        props.parameter.productLineIds?.length ||
+        props.parameter.priceFilters?.length ||
+        props.parameter.attributeValueIds?.length
+    ) {
         props.result.page = undefined;
     }
 };
 
 export const RemoveSearchWithin: HandlerType = props => {
-    props.result.searchWithinQueries
-        = props.result.searchWithinQueries?.filter(x => !props.parameter.searchWithinQueries?.includes(x));
+    props.result.searchWithinQueries = props.result.searchWithinQueries?.filter(
+        x => !props.parameter.searchWithinQueries?.includes(x),
+    );
     if (props.result.searchWithinQueries?.length === 0) {
         props.result.searchWithinQueries = undefined;
     }
@@ -39,21 +42,27 @@ export const RemoveBrands: HandlerType = props => {
 };
 
 export const RemoveProductLines: HandlerType = props => {
-    props.result.productLineIds = props.result.productLineIds?.filter(x => !props.parameter.productLineIds?.find(y => y === x));
+    props.result.productLineIds = props.result.productLineIds?.filter(
+        x => !props.parameter.productLineIds?.find(y => y === x),
+    );
     if (props.result.productLineIds?.length === 0) {
         props.result.productLineIds = undefined;
     }
 };
 
 export const RemovePriceFilters: HandlerType = props => {
-    props.result.priceFilters = props.result.priceFilters?.filter(x => !props.parameter.priceFilters?.find(y => y === x));
+    props.result.priceFilters = props.result.priceFilters?.filter(
+        x => !props.parameter.priceFilters?.find(y => y === x),
+    );
     if (props.result.priceFilters?.length === 0) {
         props.result.priceFilters = undefined;
     }
 };
 
 export const RemoveAttributeValueFilters: HandlerType = props => {
-    props.result.attributeValueIds = props.result.attributeValueIds?.filter(x => !props.parameter.attributeValueIds?.find(y => y === x));
+    props.result.attributeValueIds = props.result.attributeValueIds?.filter(
+        x => !props.parameter.attributeValueIds?.find(y => y === x),
+    );
     if (props.result.attributeValueIds?.length === 0) {
         props.result.attributeValueIds = undefined;
     }

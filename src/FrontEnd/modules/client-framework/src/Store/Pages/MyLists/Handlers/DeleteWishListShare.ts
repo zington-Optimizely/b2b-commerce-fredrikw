@@ -1,9 +1,19 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { deleteWishListShare as deleteWishListShareApi, DeleteWishListShareApiParameter } from "@insite/client-framework/Services/WishListService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    deleteWishListShare as deleteWishListShareApi,
+    DeleteWishListShareApiParameter,
+} from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ wishList: WishListModel } & HasOnSuccess, DeleteWishListShareApiParameter>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    { wishList: WishListModel } & HasOnSuccess,
+    DeleteWishListShareApiParameter
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {

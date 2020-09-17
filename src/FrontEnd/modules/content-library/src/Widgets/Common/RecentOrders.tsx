@@ -80,19 +80,23 @@ class RecentOrders extends React.Component<Props> {
         return (
             <CardList extendedStyles={styles.cardList}>
                 <CardListHeading heading={translate("Recent Orders")} viewAllUrl={orderHistoryUrl} />
-                {ordersDataView.value.length === 0
-                    && <GridItem {...styles.noOrdersFoundGridItem}>
+                {ordersDataView.value.length === 0 && (
+                    <GridItem {...styles.noOrdersFoundGridItem}>
                         <Typography {...styles.noOrdersFoundText}>{translate("No orders found")}</Typography>
                     </GridItem>
-                }
-                {ordersDataView.value.map(order => order !== null && (
-                    <CardContainer key={order.id} extendedStyles={styles.cardContainer}>
-                        <OrderSummaryCard
-                            order={order}
-                            orderSettings={settingsCollection.orderSettings}
-                            extendedStyles={styles.orderSummaryCard} />
-                    </CardContainer>
-                ))}
+                )}
+                {ordersDataView.value.map(
+                    order =>
+                        order !== null && (
+                            <CardContainer key={order.id} extendedStyles={styles.cardContainer}>
+                                <OrderSummaryCard
+                                    order={order}
+                                    orderSettings={settingsCollection.orderSettings}
+                                    extendedStyles={styles.orderSummaryCard}
+                                />
+                            </CardContainer>
+                        ),
+                )}
             </CardList>
         );
     }

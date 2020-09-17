@@ -16,7 +16,7 @@ describe("Clickable", () => {
                     <DisablerContext.Provider value={disablerValue}>
                         <Clickable {...props} />
                     </DisablerContext.Provider>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -33,7 +33,7 @@ describe("Clickable", () => {
     });
 
     test("renders a styled span if no href or onClick are provided", () => {
-        props = { children: <canvas/> };
+        props = { children: <canvas /> };
         const root = wrapper().find(Clickable).getDOMNode();
         expect(root).toBeInstanceOf(HTMLSpanElement);
     });
@@ -50,7 +50,9 @@ describe("Clickable", () => {
 
     test("renders a button when an onClick is provided, but no href", () => {
         props.children = "children";
-        props.onClick = () => {return null;};
+        props.onClick = () => {
+            return null;
+        };
         const root = wrapper().find(Clickable).getDOMNode();
         expect(root).toBeInstanceOf(HTMLButtonElement);
     });
@@ -90,6 +92,6 @@ describe("Clickable", () => {
                 disablerValue = { disable: false };
                 expect(wrapper().find("button").prop("disabled")).toBe(false);
             });
-        })
+        });
     });
 });

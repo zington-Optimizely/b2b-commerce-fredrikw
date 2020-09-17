@@ -1,4 +1,8 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { addRma as addRmaApi, AddRmaApiParameter } from "@insite/client-framework/Services/OrderService";
 import { RmaLineDto, RmaModel } from "@insite/client-framework/Types/ApiModels";
@@ -24,18 +28,19 @@ export const PopulateApiParameter: HandlerType = props => {
     }
 
     props.apiParameter = {
-        rmaModel:
-            {
-                orderNumber: props.parameter.orderNumber,
-                notes: state.pages.requestRma.returnNotes || "",
-                rmaLines: orderLines.map(orderLine => {
+        rmaModel: {
+            orderNumber: props.parameter.orderNumber,
+            notes: state.pages.requestRma.returnNotes || "",
+            rmaLines: orderLines
+                .map(orderLine => {
                     return {
                         line: orderLine.lineNumber,
                         rmaQtyRequested: orderLine.rmaQtyRequested,
                         rmaReasonCode: orderLine.returnReason,
                     } as RmaLineDto;
-                }).filter(x => x.rmaQtyRequested > 0),
-            } as RmaModel,
+                })
+                .filter(x => x.rmaQtyRequested > 0),
+        } as RmaModel,
     };
 };
 

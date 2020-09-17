@@ -11,18 +11,21 @@ import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 import RadioGroupContext from "./RadioGroupContext";
 
-export type RadioGroupComponentProps = MobiusStyledComponentProps<"fieldset", {
-    /** Indicates an error by changing the color of the radiogroup label. */
-    error?: React.ReactNode;
-    /** Label to be displayed above the radio group. */
-    label?: React.ReactNode;
-    /** Handler for the change event shared by the radio inputs within this radio group. */
-    onChangeHandler?: React.ChangeEventHandler<HTMLInputElement>;
-    /** Sets the value of the RadioGroup. */
-    value?: string;
-    required?: boolean;
-    name?: string;
-}>;
+export type RadioGroupComponentProps = MobiusStyledComponentProps<
+    "fieldset",
+    {
+        /** Indicates an error by changing the color of the radiogroup label. */
+        error?: React.ReactNode;
+        /** Label to be displayed above the radio group. */
+        label?: React.ReactNode;
+        /** Handler for the change event shared by the radio inputs within this radio group. */
+        onChangeHandler?: React.ChangeEventHandler<HTMLInputElement>;
+        /** Sets the value of the RadioGroup. */
+        value?: string;
+        required?: boolean;
+        name?: string;
+    }
+>;
 
 export type RadioGroupProps = FieldSetGroupPresentationProps<RadioGroupComponentProps> & RadioGroupComponentProps;
 
@@ -53,7 +56,9 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
         const nextState: State = {
             name: nextProps.name || (prevState && prevState.name) || uniqueId(),
         };
-        if (nextProps.value !== prevState.value) nextState.value = nextProps.value;
+        if (nextProps.value !== prevState.value) {
+            nextState.value = nextProps.value;
+        }
         return nextState;
     }
 
@@ -63,9 +68,7 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
     };
 
     render() {
-        const {
-            children, error, label, required, ...otherProps
-        } = this.props;
+        const { children, error, label, required, ...otherProps } = this.props;
         const { applyProp, spreadProps } = applyPropBuilder(this.props, {
             component: "radio",
             category: "fieldSet",
@@ -82,7 +85,8 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
                     size={checkboxSizes[sizeVariant].fontSize}
                     {...spreadProps("labelProps" as any)}
                 >
-                    {label}{required && " *"}
+                    {label}
+                    {required && " *"}
                 </Typography>
             );
         }
@@ -111,12 +115,14 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
                 {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
             >
                 {renderLabel}
-                <RadioGroupContext.Provider value={{
-                    name: this.state.name,
-                    value: this.state.value,
-                    sizeVariant,
-                    onChange: this.handleChange,
-                }}>
+                <RadioGroupContext.Provider
+                    value={{
+                        name: this.state.name,
+                        value: this.state.value,
+                        sizeVariant,
+                        onChange: this.handleChange,
+                    }}
+                >
                     {children}
                 </RadioGroupContext.Provider>
                 {renderError}

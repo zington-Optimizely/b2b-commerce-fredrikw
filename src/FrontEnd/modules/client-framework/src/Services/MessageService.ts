@@ -1,9 +1,15 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { ApiParameter, get, HasPagingParameters, patch, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
+import {
+    ApiParameter,
+    get,
+    HasPagingParameters,
+    patch,
+    post,
+    ServiceResult,
+} from "@insite/client-framework/Services/ApiService";
 import { MessageCollectionModel, MessageModel } from "@insite/client-framework/Types/ApiModels";
 
-export interface GetMessagesApiParameter extends ApiParameter, HasPagingParameters{
-}
+export interface GetMessagesApiParameter extends ApiParameter, HasPagingParameters {}
 
 export interface UpdateMessageApiParameter {
     message: MessageModel;

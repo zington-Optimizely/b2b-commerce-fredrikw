@@ -7,6 +7,10 @@ export function getCurrentAccountState(state: ApplicationState) {
     return getById(state.data.accounts, API_URL_CURRENT_FRAGMENT);
 }
 
+export function getAccountState(state: ApplicationState, accountId: string | undefined) {
+    return getById(state.data.accounts, accountId);
+}
+
 export function getAccountsDataView(state: ApplicationState, parameter?: GetAccountsApiParameter) {
     return getDataView(state.data.accounts, parameter);
 }

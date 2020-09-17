@@ -32,16 +32,16 @@ export const shareLinkStyles: ProductDetailsShareLinkStyles = {
 
 const styles = shareLinkStyles;
 
-const ProductDetailsShareLink: React.FC<Props> = ({
-    product,
-}) => {
+const ProductDetailsShareLink: React.FC<Props> = ({ product }) => {
     if (!product) {
         return null;
     }
 
-    return <StyledWrapper {...styles.wrapper}>
-        <ProductShareLink extendedStyles={styles.link} />
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <ProductShareLink extendedStyles={styles.link} />
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

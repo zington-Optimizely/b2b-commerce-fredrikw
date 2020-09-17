@@ -33,41 +33,45 @@ const Navigation = styled.div`
 const NavItem = styled.span<InjectableCss>`
     display: inline-flex;
 
-    > span, > a {
+    > span,
+    > a {
         margin-left: 10px;
     }
     ${injectCss}
 `;
 
-const SecondaryNavigation: FC<Props> = ({
-    id,
-    enableWarehousePickup,
-}) => {
+const SecondaryNavigation: FC<Props> = ({ id, enableWarehousePickup }) => {
     return (
         <Hidden below="lg">
             <Navigation>
                 <NavItem>
                     <Zone zoneName="Currency" contentId={id} fixed />
                 </NavItem>
-                <NavItem css={css`
-                    flex: 0 0 auto;
-                    margin-left: 30px;
-                `}>
+                <NavItem
+                    css={css`
+                        flex: 0 0 auto;
+                        margin-left: 30px;
+                    `}
+                >
                     <Zone zoneName="Language" contentId={id} fixed />
                 </NavItem>
-                {enableWarehousePickup
-                    && <NavItem css={css`
-                        flex: 0 1 auto;
-                        margin-left: 30px;
-                        min-width: 0;
-                    `}>
+                {enableWarehousePickup && (
+                    <NavItem
+                        css={css`
+                            flex: 0 1 auto;
+                            margin-left: 30px;
+                            min-width: 0;
+                        `}
+                    >
                         <Zone zoneName="ShipToAddress" contentId={id} fixed />
                     </NavItem>
-                }
-                <NavItem css={css`
-                    flex: 0 0 auto;
-                    margin-left: 30px;
-                `}>
+                )}
+                <NavItem
+                    css={css`
+                        flex: 0 0 auto;
+                        margin-left: 30px;
+                    `}
+                >
                     <Zone zoneName="SignIn" contentId={id} fixed />
                 </NavItem>
             </Navigation>

@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ notes: string; }>;
+type HandlerType = Handler<{ notes: string }>;
 
 export const DispatchSetNotes: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetNotes: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetNotes,
-];
+export const chain = [DispatchSetNotes];
 
 const setNotes = createHandlerChainRunner(chain, "SetNotes");
 export default setNotes;

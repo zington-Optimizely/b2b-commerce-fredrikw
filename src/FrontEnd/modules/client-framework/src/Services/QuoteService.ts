@@ -1,5 +1,14 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { ApiParameter, del, doesNotHaveExpand, get, HasPagingParameters, patch, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
+import {
+    ApiParameter,
+    del,
+    doesNotHaveExpand,
+    get,
+    HasPagingParameters,
+    patch,
+    post,
+    ServiceResult,
+} from "@insite/client-framework/Services/ApiService";
 import { QuoteCollectionModel, QuoteLineModel, QuoteModel } from "@insite/client-framework/Types/ApiModels";
 
 const quotesUrl = "/api/v1/quotes";
@@ -7,7 +16,11 @@ const quotesUrl = "/api/v1/quotes";
 export type QuoteType = "quote" | "job";
 
 export interface GetQuotesApiParameter extends ApiParameter, HasPagingParameters {
+    /**
+     * @deprecated Use userId instead
+     */
     userProfileId?: string;
+    userId?: string;
     salesRepNumber?: string;
     customerId?: string;
     statuses?: string[];
@@ -17,7 +30,7 @@ export interface GetQuotesApiParameter extends ApiParameter, HasPagingParameters
     expireFromDate?: string;
     expireToDate?: string;
     types?: QuoteType;
-    expand?: ("salesList")[];
+    expand?: "salesList"[];
 }
 
 export interface GetQuoteApiParameter extends ApiParameter {
@@ -142,7 +155,10 @@ export interface UpdateQuoteLineApiParameter extends ApiParameter {
 
 export async function updateQuoteLine(parameter: UpdateQuoteLineApiParameter): Promise<ServiceResult<QuoteLineModel>> {
     try {
-        const quoteLine = await patch<QuoteLineModel>(`${quotesUrl}/${parameter.quoteId}/quotelines/${parameter.quoteLineId}`, parameter.quoteLine);
+        const quoteLine = await patch<QuoteLineModel>(
+            `${quotesUrl}/${parameter.quoteId}/quotelines/${parameter.quoteLineId}`,
+            parameter.quoteLine,
+        );
         return {
             successful: true,
             result: quoteLine,

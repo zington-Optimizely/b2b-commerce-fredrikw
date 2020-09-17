@@ -34,7 +34,10 @@ const mapDispatchToProps = {
     addToCart: makeHandlerChainAwaitable(addToCart),
 };
 
-type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasToasterContext;
+type Props = WidgetProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasToasterContext;
 
 export interface QuickOrderStyles {
     container?: GridContainerProps;
@@ -53,23 +56,42 @@ export const quickOrderStyles: QuickOrderStyles = {
     titleGridItem: { width: [12, 5, 5, 5, 5] },
     titleText: {
         variant: "h3",
-        css: css` margin-bottom: 0; `,
+        css: css`
+            margin-bottom: 0;
+        `,
     },
     linksGridItem: {
         width: [12, 7, 7, 7, 7],
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` padding-bottom: 20px; padding-top: 0; `,
-                    css` justify-content: flex-end; padding-top: 20px; `,
-                    css` justify-content: flex-end; padding-top: 20px; `,
-                    css` justify-content: flex-end; padding-top: 20px; `,
-                    css` justify-content: flex-end; padding-top: 20px; `,
+                    css`
+                        padding-bottom: 20px;
+                        padding-top: 0;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                        padding-top: 20px;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                        padding-top: 20px;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                        padding-top: 20px;
+                    `,
+                    css`
+                        justify-content: flex-end;
+                        padding-top: 20px;
+                    `,
                 ])}
         `,
     },
     orderMultipleItemsLink: {
-        css: css` margin-left: 20px; `,
+        css: css`
+            margin-left: 20px;
+        `,
     },
     productSelector: {
         container: { gap: 30 },
@@ -113,31 +135,39 @@ const QuickOrder: FC<Props> = ({
         }
     };
 
-    return <>
-        <GridContainer {...styles.container}>
-            <GridItem {...styles.titleGridItem}>
-                <Typography {...styles.titleText}>{translate("Quick Order")}</Typography>
-            </GridItem>
-            <GridItem {...styles.linksGridItem}>
-                {canOrderUpload
-                    && <Link {...styles.orderUploadLink} href={orderUploadPageNavLink ? orderUploadPageNavLink.url : undefined}>
-                        {translate("Upload an Order")}
+    return (
+        <>
+            <GridContainer {...styles.container}>
+                <GridItem {...styles.titleGridItem}>
+                    <Typography {...styles.titleText}>{translate("Quick Order")}</Typography>
+                </GridItem>
+                <GridItem {...styles.linksGridItem}>
+                    {canOrderUpload && (
+                        <Link
+                            {...styles.orderUploadLink}
+                            href={orderUploadPageNavLink ? orderUploadPageNavLink.url : undefined}
+                        >
+                            {translate("Upload an Order")}
+                        </Link>
+                    )}
+                    <Link
+                        {...styles.orderMultipleItemsLink}
+                        href={quickOrderPageNavLink ? quickOrderPageNavLink.url : undefined}
+                    >
+                        {translate("Order Multiple Items")}
                     </Link>
-                }
-                <Link {...styles.orderMultipleItemsLink} href={quickOrderPageNavLink ? quickOrderPageNavLink.url : undefined}>
-                    {translate("Order Multiple Items")}
-                </Link>
-            </GridItem>
-        </GridContainer>
-        <ProductSelector
-            selectButtonTitle={translate("Add to Cart")}
-            onSelectProduct={addProductToCart}
-            productIsConfigurableMessage={siteMessage("QuickOrder_CannotOrderConfigurable")}
-            productIsUnavailableMessage={siteMessage("QuickOrder_ProductIsUnavailable")}
-            customErrorMessage={errorMessage}
-            extendedStyles={styles.productSelector}
-        />
-    </>;
+                </GridItem>
+            </GridContainer>
+            <ProductSelector
+                selectButtonTitle={translate("Add to Cart")}
+                onSelectProduct={addProductToCart}
+                productIsConfigurableMessage={siteMessage("QuickOrder_CannotOrderConfigurable")}
+                productIsUnavailableMessage={siteMessage("QuickOrder_ProductIsUnavailable")}
+                customErrorMessage={errorMessage}
+                extendedStyles={styles.productSelector}
+            />
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

@@ -12,11 +12,17 @@ const initialState: PromotionsState = {
 };
 
 const reducer = {
-    "Data/Promotions/BeginLoadPromotions": (draft: Draft<PromotionsState>, action: { parameter: GetCartPromotionsApiParameter }) => {
+    "Data/Promotions/BeginLoadPromotions": (
+        draft: Draft<PromotionsState>,
+        action: { parameter: GetCartPromotionsApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Promotions/CompleteLoadPromotions": (draft: Draft<PromotionsState>, action: { parameter: GetCartPromotionsApiParameter, collection: PromotionCollectionModel }) => {
+    "Data/Promotions/CompleteLoadPromotions": (
+        draft: Draft<PromotionsState>,
+        action: { parameter: GetCartPromotionsApiParameter; collection: PromotionCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.promotions!);
     },
 

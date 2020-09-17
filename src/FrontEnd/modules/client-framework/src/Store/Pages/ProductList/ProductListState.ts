@@ -27,7 +27,7 @@ export default interface ProductListState {
     isLoading: boolean;
     parameter?: GetProductCollectionApiV2Parameter;
     lastParameter?: GetProductCollectionApiV2Parameter;
-    productInfosByProductId: SafeDictionary<ProductInfo>
+    productInfosByProductId: SafeDictionary<ProductInfo>;
     unfilteredApiParameter?: GetProductCollectionApiV2Parameter;
     productFilters: ProductFilters;
     filterQuery?: string;

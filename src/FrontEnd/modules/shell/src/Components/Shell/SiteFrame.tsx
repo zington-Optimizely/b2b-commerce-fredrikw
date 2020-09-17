@@ -51,7 +51,11 @@ const mapDispatchToProps = {
     changeContext,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps & RouteComponentProps & HasConfirmationContext;
+type Props = ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    OwnProps &
+    RouteComponentProps &
+    HasConfirmationContext;
 
 interface State {
     lastPageId: string;
@@ -72,9 +76,11 @@ class SiteFrame extends React.Component<Props, State> {
             });
         }
 
-        if (this.props.currentLanguageId !== prevProps.currentLanguageId
-            || this.props.currentPersonaId !== prevProps.currentPersonaId
-            || this.props.currentDeviceType !== prevProps.currentDeviceType) {
+        if (
+            this.props.currentLanguageId !== prevProps.currentLanguageId ||
+            this.props.currentPersonaId !== prevProps.currentPersonaId ||
+            this.props.currentDeviceType !== prevProps.currentDeviceType
+        ) {
             sendToSite({
                 type: "ChangeLanguage",
                 languageId: this.props.currentLanguageId,
@@ -104,9 +110,17 @@ class SiteFrame extends React.Component<Props, State> {
     }
 
     render() {
-        const { pageId, stageMode, isEditMode, history: { location: { search } }, permissions } = this.props;
+        const {
+            pageId,
+            stageMode,
+            isEditMode,
+            history: {
+                location: { search },
+            },
+            permissions,
+        } = this.props;
 
-        const url = pageId.startsWith("SwitchTo") ? (pageId.replace("SwitchTo", "") + search) : `/Content/Page/${pageId}`;
+        const url = pageId.startsWith("SwitchTo") ? pageId.replace("SwitchTo", "") + search : `/Content/Page/${pageId}`;
 
         if (this.framePageId !== pageId) {
             sendToSite({
@@ -115,14 +129,16 @@ class SiteFrame extends React.Component<Props, State> {
             });
         }
 
-        return <SiteFrameStyle stageMode={stageMode}>
-            {isEditMode && permissions?.canAddWidget
-                && <>
-                <AddWidgetModal/>
-                </>
-            }
-            <ActualFrame url={url || "/"} onLoad={this.onLoad} />
-        </SiteFrameStyle>;
+        return (
+            <SiteFrameStyle stageMode={stageMode}>
+                {isEditMode && permissions?.canAddWidget && (
+                    <>
+                        <AddWidgetModal />
+                    </>
+                )}
+                <ActualFrame url={url || "/"} onLoad={this.onLoad} />
+            </SiteFrameStyle>
+        );
     }
 
     onLoad = (event: React.MouseEvent<HTMLIFrameElement>) => {
@@ -148,7 +164,7 @@ class SiteFrame extends React.Component<Props, State> {
         bubbleEvent("mousedown");
 
         setSiteFrame(iframe, {
-            LoadPageComplete: (data: { pageId: string; parentId: string; }) => {
+            LoadPageComplete: (data: { pageId: string; parentId: string }) => {
                 const url = `/ContentAdmin/Page/${data.pageId}`;
                 this.framePageId = data.pageId;
                 this.props.history.push(url);
@@ -161,25 +177,35 @@ class SiteFrame extends React.Component<Props, State> {
                     pageDefinitionsByType[definition.type] = { pageType: definition.pageType };
                 });
 
-                const pageState = getPageState(data.pageId, this.props.nodesByParentId[data.parentId], this.props.headerNodesByParentId[data.parentId],
-                    this.props.footerNodesByParentId[data.parentId]);
+                const pageState = getPageState(
+                    data.pageId,
+                    this.props.nodesByParentId[data.parentId],
+                    this.props.headerNodesByParentId[data.parentId],
+                    this.props.footerNodesByParentId[data.parentId],
+                );
 
                 const interval = setInterval(() => {
-                    if ((sendToSite({
-                        type: "CMSPermissions",
-                        permissions: this.props.permissions,
-                        canChangePage: (!pageState?.futurePublishOn || pageState.futurePublishOn <= new Date()),
-                    }) && sendToSite({
-                        type: "PageDefinitions",
-                        pageDefinitionsByType,
-                    })) || !attempts--) clearInterval(interval);
+                    if (
+                        (sendToSite({
+                            type: "CMSPermissions",
+                            permissions: this.props.permissions,
+                            canChangePage: !pageState?.futurePublishOn || pageState.futurePublishOn <= new Date(),
+                        }) &&
+                            sendToSite({
+                                type: "PageDefinitions",
+                                pageDefinitionsByType,
+                            })) ||
+                        !attempts--
+                    ) {
+                        clearInterval(interval);
+                    }
                 }, 200);
             },
-            MoveWidgetTo: (data: { id: string, parentId: string, zoneName: string, index: number}) => {
+            MoveWidgetTo: (data: { id: string; parentId: string; zoneName: string; index: number }) => {
                 this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index);
                 this.props.savePage();
             },
-            AddWidget: (data: { widget: WidgetProps, index: number, pageId: string }) => {
+            AddWidget: (data: { widget: WidgetProps; index: number; pageId: string }) => {
                 this.props.addWidget(data.widget, data.index, data.pageId);
                 this.props.editWidget(data.widget.id, true);
             },
@@ -192,7 +218,7 @@ class SiteFrame extends React.Component<Props, State> {
             EditWidget: (data: { id: string }) => {
                 this.props.editWidget(data.id);
             },
-            ConfirmWidgetDeletion: (data: { id: string, widgetType: string }) => {
+            ConfirmWidgetDeletion: (data: { id: string; widgetType: string }) => {
                 this.props.confirmation.display({
                     message: "Are you sure you want to delete this widget?",
                     title: `Delete ${data.widgetType}`,
@@ -210,8 +236,14 @@ class SiteFrame extends React.Component<Props, State> {
                 this.props.changeContext(data.languageId, this.props.currentPersonaId, this.props.currentDeviceType);
             },
             FrontEndSessionLoaded: (data: { personas: PersonaModel[] }) => {
-                if (!data.personas.length) return;
-                this.props.changeContext(this.props.currentLanguageId, data.personas[0].id, this.props.currentDeviceType);
+                if (!data.personas.length) {
+                    return;
+                }
+                this.props.changeContext(
+                    this.props.currentLanguageId,
+                    data.personas[0].id,
+                    this.props.currentDeviceType,
+                );
             },
         });
     };
@@ -225,24 +257,29 @@ const SiteFrameStyle = styled.div<Pick<ShellState["shellContext"], "stageMode">>
     height: 100%;
     iframe {
         width: 100%;
-        height:
-            ${/* sc-value */({ stageMode }) => {
-                switch (stageMode) {
-                case "Desktop": return "calc(100% - 31px)";
-                case "Tablet": return "976px";
-                case "Phone": return "765px";
-                }
-            }};
+        height: ${/* sc-value */ ({ stageMode }) => {
+            switch (stageMode) {
+                case "Desktop":
+                    return "calc(100%)";
+                case "Tablet":
+                    return "1024px";
+                case "Phone":
+                    return "813px";
+            }
+        }};
         border: none;
     }
 `;
 
-class ActualFrame extends React.Component<{ url: string, onLoad: (event: React.MouseEvent<HTMLIFrameElement>) => void }> {
+class ActualFrame extends React.Component<{
+    url: string;
+    onLoad: (event: React.MouseEvent<HTMLIFrameElement>) => void;
+}> {
     shouldComponentUpdate() {
         return false;
     }
 
     render() {
-        return <iframe id="siteIFrame" src={this.props.url} onLoad={this.props.onLoad}/>;
+        return <iframe id="siteIFrame" src={this.props.url} onLoad={this.props.onLoad} />;
     }
 }

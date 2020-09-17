@@ -54,13 +54,24 @@ export interface RfqQuoteDetailsInformationStyles {
 }
 
 export const rfqQuoteDetailsInformationStyles: RfqQuoteDetailsInformationStyles = {
-    detailsGridContainer: { gap: 20, css: css` margin-bottom: 20px; ` },
+    detailsGridContainer: {
+        gap: 20,
+        css: css`
+            margin-bottom: 20px;
+        `,
+    },
     expirationDateGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     expirationDateDatePicker: {
-        cssOverrides: { datePicker: css` width: 200px; ` },
+        cssOverrides: {
+            datePicker: css`
+                width: 200px;
+            `,
+        },
     },
     expirationDateLabelText: { weight: "bold", size: 14 },
     jobNameGridItem: { width: [6, 6, 4, 4, 4] },
@@ -81,7 +92,9 @@ export const rfqQuoteDetailsInformationStyles: RfqQuoteDetailsInformationStyles 
     },
     dateGridItem: {
         width: [6, 6, 4, 4, 4],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     dateLabelText: { weight: "bold", size: 14 },
     customerGridItem: { width: 12 },
@@ -121,8 +134,8 @@ const RfqQuoteDetailsInformation = ({
 
     return (
         <GridContainer {...styles.detailsGridContainer} data-test-selector="rfqQuoteDetails_info">
-            {quote.isEditable
-                && <GridItem {...styles.expirationDateGridItem} data-test-selector="rfqQuoteDetails_expirationDate">
+            {quote.isEditable && (
+                <GridItem {...styles.expirationDateGridItem} data-test-selector="rfqQuoteDetails_expirationDate">
                     <DatePicker
                         {...styles.expirationDateDatePicker}
                         label={expirationDateLabel}
@@ -136,46 +149,81 @@ const RfqQuoteDetailsInformation = ({
                         onDayChange={expirationDateChangeHandler}
                     />
                 </GridItem>
-            }
-            {!quote.isEditable && quote.expirationDate
-                && <GridItem {...styles.expirationDateGridItem}>
+            )}
+            {!quote.isEditable && quote.expirationDate && (
+                <GridItem {...styles.expirationDateGridItem}>
                     <Typography {...styles.expirationDateLabelText}>{expirationDateLabel}</Typography>
-                    <LocalizedDateTime dateTime={quote.expirationDate} options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                    <LocalizedDateTime
+                        dateTime={quote.expirationDate}
+                        options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                    />
                 </GridItem>
-            }
-            {quote.isJobQuote
-                && <GridItem {...styles.jobNameGridItem}>
-                    <SmallHeadingAndText heading={translate("Job Name")} text={quote.jobName} extendedStyles={styles.jobNameHeadingAndText} />
+            )}
+            {quote.isJobQuote && (
+                <GridItem {...styles.jobNameGridItem}>
+                    <SmallHeadingAndText
+                        heading={translate("Job Name")}
+                        text={quote.jobName}
+                        extendedStyles={styles.jobNameHeadingAndText}
+                    />
                 </GridItem>
-            }
+            )}
             <GridItem {...styles.salesRepGridItem}>
-                <SmallHeadingAndText heading={translate("Sales Rep")} text={quote.salespersonName} extendedStyles={styles.salesRepHeadingAndText} />
+                <SmallHeadingAndText
+                    heading={translate("Sales Rep")}
+                    text={quote.salespersonName}
+                    extendedStyles={styles.salesRepHeadingAndText}
+                />
             </GridItem>
             <GridItem {...styles.userGridItem}>
-                <SmallHeadingAndText heading={translate("User")} text={quote.userName} extendedStyles={styles.userHeadingAndText} data-test-selector="user"/>
+                <SmallHeadingAndText
+                    heading={translate("User")}
+                    text={quote.userName}
+                    extendedStyles={styles.userHeadingAndText}
+                    data-test-selector="user"
+                />
             </GridItem>
             <GridItem {...styles.statusGridItem}>
-                <SmallHeadingAndText heading={translate("Status")} text={quote.statusDisplay} extendedStyles={styles.statusHeadingAndText} />
+                <SmallHeadingAndText
+                    heading={translate("Status")}
+                    text={quote.statusDisplay}
+                    extendedStyles={styles.statusHeadingAndText}
+                />
             </GridItem>
-            {quote.orderDate
-                && <GridItem {...styles.dateGridItem}>
+            {quote.orderDate && (
+                <GridItem {...styles.dateGridItem}>
                     <Typography {...styles.dateLabelText}>{translate("Date Submitted")}</Typography>
-                    <LocalizedDateTime dateTime={quote.orderDate} options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                    <LocalizedDateTime
+                        dateTime={quote.orderDate}
+                        options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                    />
                 </GridItem>
-            }
-            {quote.billTo
-                && <GridItem {...styles.customerGridItem}>
-                    <SmallHeadingAndText heading={translate("Customer")} text={quote.customerName} extendedStyles={styles.customerHeadingAndText} />
+            )}
+            {quote.billTo && (
+                <GridItem {...styles.customerGridItem}>
+                    <SmallHeadingAndText
+                        heading={translate("Customer")}
+                        text={quote.customerName}
+                        extendedStyles={styles.customerHeadingAndText}
+                    />
                 </GridItem>
-            }
+            )}
             <GridItem {...styles.shipToGridItem}>
-                <SmallHeadingAndText heading={translate(quote.fulfillmentMethod === "PickUp" ? "Pick Up" : "Ship To")} text={quote.shipToFullAddress} extendedStyles={styles.shipToHeadingAndText} />
+                <SmallHeadingAndText
+                    heading={translate(quote.fulfillmentMethod === "PickUp" ? "Pick Up" : "Ship To")}
+                    text={quote.shipToFullAddress}
+                    extendedStyles={styles.shipToHeadingAndText}
+                />
             </GridItem>
-            {quote.notes.trim().length > 0
-                && <GridItem {...styles.notesGridItem}>
-                    <SmallHeadingAndText heading={translate("Notes")} text={quote.notes} extendedStyles={styles.notesHeadingAndText} />
+            {quote.notes.trim().length > 0 && (
+                <GridItem {...styles.notesGridItem}>
+                    <SmallHeadingAndText
+                        heading={translate("Notes")}
+                        text={quote.notes}
+                        extendedStyles={styles.notesHeadingAndText}
+                    />
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };

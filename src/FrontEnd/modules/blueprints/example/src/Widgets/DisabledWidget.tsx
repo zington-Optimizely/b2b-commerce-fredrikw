@@ -23,20 +23,30 @@ interface Props extends WidgetProps {
     };
 }
 
-const DisabledWidget: React.FC<Props> = ({ fields: {
-    checkboxFieldValue, textFieldValue, integerFieldValue, multilineTextFieldValue, radioButtonsFieldValue, dropDownFieldValue,
-} }) => <>
-    <div>Checkbox value:
-        {checkboxFieldValue.toString()}
-        {checkboxFieldValue && <span>Is True</span>}
-        {!checkboxFieldValue && <span>Is False</span>}
-    </div>
-    <div>Text value: {textFieldValue}</div>
-    <div>Integer value: {integerFieldValue}</div>
-    <div style={{ whiteSpace: "pre" }}>MultilineText value: {multilineTextFieldValue}</div>
-    <div>RadioButtons value: {radioButtonsFieldValue}</div>
-    <div>DropDown value: {dropDownFieldValue}</div>
-</>;
+const DisabledWidget: React.FC<Props> = ({
+    fields: {
+        checkboxFieldValue,
+        textFieldValue,
+        integerFieldValue,
+        multilineTextFieldValue,
+        radioButtonsFieldValue,
+        dropDownFieldValue,
+    },
+}) => (
+    <>
+        <div>
+            Checkbox value:
+            {checkboxFieldValue.toString()}
+            {checkboxFieldValue && <span>Is True</span>}
+            {!checkboxFieldValue && <span>Is False</span>}
+        </div>
+        <div>Text value: {textFieldValue}</div>
+        <div>Integer value: {integerFieldValue}</div>
+        <div style={{ whiteSpace: "pre" }}>MultilineText value: {multilineTextFieldValue}</div>
+        <div>RadioButtons value: {radioButtonsFieldValue}</div>
+        <div>DropDown value: {dropDownFieldValue}</div>
+    </>
+);
 
 const definition: WidgetDefinition = {
     group: "Testing",
@@ -112,7 +122,6 @@ const definition: WidgetDefinition = {
             defaultValue: "",
             fieldType: "General",
             isEnabled: item => false,
-
         },
     ],
 };

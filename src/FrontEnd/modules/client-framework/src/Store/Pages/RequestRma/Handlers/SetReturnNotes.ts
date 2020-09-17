@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ returnNotes: string; }>;
+type HandlerType = Handler<{ returnNotes: string }>;
 
 export const DispatchSetReturnNotes: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetReturnNotes: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetReturnNotes,
-];
+export const chain = [DispatchSetReturnNotes];
 
 const setReturnNotes = createHandlerChainRunner(chain, "SetReturnNotes");
 export default setReturnNotes;

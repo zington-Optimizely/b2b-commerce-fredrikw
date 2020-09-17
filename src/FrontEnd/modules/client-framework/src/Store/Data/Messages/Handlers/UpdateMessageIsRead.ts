@@ -3,7 +3,11 @@ import { updateMessage, UpdateMessageApiParameter } from "@insite/client-framewo
 import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { MessageModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ message: MessageModel; isRead: boolean; }, UpdateMessageApiParameter, MessageModel>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    { message: MessageModel; isRead: boolean },
+    UpdateMessageApiParameter,
+    MessageModel
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
@@ -32,11 +36,7 @@ export const DispatchCompleteLoadMessage: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    UpdateMessage,
-    DispatchCompleteLoadMessage,
-];
+export const chain = [PopulateApiParameter, UpdateMessage, DispatchCompleteLoadMessage];
 
 const updateMessageIsRead = createHandlerChainRunner(chain, "UpdateMessageIsRead");
 export default updateMessageIsRead;

@@ -92,17 +92,29 @@ export default class ColumnsField extends React.Component<Props, State> {
     };
 
     gridItem(columns: GridWidths[], currentColumnsString: string) {
-        return <GridItem width={3}>
-            <ColumnSelector columns={columns} selected={columns.join("") === currentColumnsString} onClick={this.clickGridItem}/>
-        </GridItem>;
+        return (
+            <GridItem width={3}>
+                <ColumnSelector
+                    columns={columns}
+                    selected={columns.join("") === currentColumnsString}
+                    onClick={this.clickGridItem}
+                />
+            </GridItem>
+        );
     }
 
     render() {
         const { fieldValue } = this.state;
         const currentColumnsString = fieldValue.replace(/\+/g, "");
 
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-                <GridContainer gap={16} css={css` margin-top: 4px; `}>
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                <GridContainer
+                    gap={16}
+                    css={css`
+                        margin-top: 4px;
+                    `}
+                >
                     {this.gridItem([12], currentColumnsString)}
                     {this.gridItem([6, 6], currentColumnsString)}
                     {this.gridItem([4, 4, 4], currentColumnsString)}
@@ -118,12 +130,14 @@ export default class ColumnsField extends React.Component<Props, State> {
                     id={this.props.fieldDefinition.name}
                     type="text"
                     value={this.state.fieldValue}
-                    onChange={this.onChange}/>
-            </StandardControl>;
+                    onChange={this.onChange}
+                />
+            </StandardControl>
+        );
     }
 }
 
-type columnSelectorProps = { columns: GridWidths[], selected?: boolean, onClick: (columns: GridWidths[]) => void };
+type columnSelectorProps = { columns: GridWidths[]; selected?: boolean; onClick: (columns: GridWidths[]) => void };
 
 class ColumnSelector extends React.Component<columnSelectorProps> {
     onClick = () => {
@@ -139,17 +153,16 @@ class ColumnSelector extends React.Component<columnSelectorProps> {
         for (let x = 0; x < columns.length; x += 1) {
             columnElements.push(
                 <GridItem key={x} width={columns[x]} onClick={this.onClick}>
-                    <FillStyle selected={selected}/>
-                </GridItem>);
+                    <FillStyle selected={selected} />
+                </GridItem>,
+            );
         }
 
-        return <GridContainerStyle gap={3}>
-            {columnElements}
-        </GridContainerStyle>;
+        return <GridContainerStyle gap={3}>{columnElements}</GridContainerStyle>;
     }
 }
 
- // TODO ISC-12170 remove the !important when the mobius bug is fixed
+// TODO ISC-12170 remove the !important when the mobius bug is fixed
 const GridContainerStyle = styled(GridContainer)`
     cursor: pointer;
     > div {
@@ -157,8 +170,8 @@ const GridContainerStyle = styled(GridContainer)`
     }
 `;
 
-const FillStyle = styled.div<{selected?: boolean}>`
-    background-color: ${props => props.selected ? props.theme.colors.primary.main : props.theme.colors.text.main};
+const FillStyle = styled.div<{ selected?: boolean }>`
+    background-color: ${props => (props.selected ? props.theme.colors.primary.main : props.theme.colors.text.main)};
     height: 32px;
     width: 100%;
 `;

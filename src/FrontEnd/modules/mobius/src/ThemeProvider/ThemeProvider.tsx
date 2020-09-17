@@ -18,22 +18,29 @@ export interface ThemeProviderProps {
     translate: (text: string) => string;
 }
 
-type ThemeProviderPropsCompleted = Omit<ThemeProviderProps, "translate"> & Required<Pick<ThemeProviderProps, "translate">>;
+type ThemeProviderPropsCompleted = Omit<ThemeProviderProps, "translate"> &
+    Required<Pick<ThemeProviderProps, "translate">>;
 
 /**
  * Exposes a theme object to its child components, and creates global CSS rules based on the theme.
  */
 const ThemeProvider: React.FC<ThemeProviderPropsCompleted> = ({
-    children, theme, createChildGlobals, createGlobalStyle, translate = (text: string) => text,
+    children,
+    theme,
+    createChildGlobals,
+    createGlobalStyle,
+    translate = (text: string) => text,
 }) => {
     theme!.translate = translate;
-    return <SCThemeProvider theme={theme}>
-        <>
-            {createGlobalStyle && <GlobalStyle />}
-            {createChildGlobals && <ChildGlobals data-id="childGlobals">{children}</ChildGlobals>}
-            {!createChildGlobals && children}
-        </>
-    </SCThemeProvider>;
+    return (
+        <SCThemeProvider theme={theme}>
+            <>
+                {createGlobalStyle && <GlobalStyle />}
+                {createChildGlobals && <ChildGlobals data-id="childGlobals">{children}</ChildGlobals>}
+                {!createChildGlobals && children}
+            </>
+        </SCThemeProvider>
+    );
 };
 
 ThemeProvider.defaultProps = {

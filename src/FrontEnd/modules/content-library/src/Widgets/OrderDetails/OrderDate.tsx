@@ -17,13 +17,17 @@ export interface OrderDateStyles {
 
 export const orderDateStyles: OrderDateStyles = {
     wrapper: {
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
     titleText: {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -39,10 +43,14 @@ const OrderDate: FC = () => {
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.titleText} id="orderDate">{translate("Order Date")}</Typography>
+            <Typography {...styles.titleText} id="orderDate">
+                {translate("Order Date")}
+            </Typography>
             <Typography {...styles.orderDate} aria-labelledby="orderDate">
-                <LocalizedDateTime dateTime={order.orderDate}
-                    options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                <LocalizedDateTime
+                    dateTime={order.orderDate}
+                    options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                />
             </Typography>
         </StyledWrapper>
     );

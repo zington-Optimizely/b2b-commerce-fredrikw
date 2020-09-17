@@ -2,7 +2,10 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getDefaultPageSize, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getCurrentPromotionsDataView, getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import {
+    getCurrentPromotionsDataView,
+    getPromotionsDataView,
+} from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CartLinesList, { CartLinesListStyles } from "@insite/content-library/Components/CartLinesList";
@@ -26,8 +29,7 @@ const mapStateToProps = (state: ApplicationState) => {
     };
 };
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -49,11 +51,7 @@ export const productListStyles: CheckoutReviewAndSubmitProductListStyles = {
 
 const styles = productListStyles;
 
-const CheckoutReviewAndSubmitProductList: FC<Props> = ({
-    cartState,
-    promotionsDataView,
-    settingsCollection,
-}) => {
+const CheckoutReviewAndSubmitProductList: FC<Props> = ({ cartState, promotionsDataView, settingsCollection }) => {
     const [isCondensed, setIsCondensed] = useState(false);
 
     if (!cartState.value || !cartState.value.cartLines || !promotionsDataView.value) {

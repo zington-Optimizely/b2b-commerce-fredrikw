@@ -2,8 +2,7 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import RfqConfirmationState from "@insite/client-framework/Store/Pages/RfqConfirmation/RfqConfirmationState";
 import { Draft } from "immer";
 
-const initialState: RfqConfirmationState = {
-};
+const initialState: RfqConfirmationState = {};
 
 const reducer = {
     "Pages/RfqConfirmation/SetQuoteId": (draft: Draft<RfqConfirmationState>, action: { quoteId: string }) => {

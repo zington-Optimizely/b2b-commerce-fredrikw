@@ -75,8 +75,8 @@ const CustomerSelector: FC<OwnProps> = ({
                     />
                 );
             })}
-            {customers.length > 0 && pagination
-                && <Pagination
+            {customers.length > 0 && pagination && (
+                <Pagination
                     {...styles.pagination}
                     currentPage={pagination.currentPage}
                     resultsPerPage={pagination.pageSize}
@@ -85,7 +85,7 @@ const CustomerSelector: FC<OwnProps> = ({
                     onChangePage={onChangePage}
                     onChangeResultsPerPage={onChangeResultsPerPage}
                 />
-            }
+            )}
         </>
     );
 };

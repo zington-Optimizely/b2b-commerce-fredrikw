@@ -160,32 +160,43 @@ class ListFieldRow extends React.Component<Props, State> {
         const isBeingEdited = this.props.editingIndex === this.props.index;
         const somethingIsBeingEdited = this.props.editingIndex >= 0;
 
-        return <ChildStyle ref={this.row} onDragStart={this.dragStart} onDragEnd={this.dragEnd} onDrag={this.drag}>
-            <ChildWrapper>
-                <OverflowStyle onMouseDown={this.dragHandleMouseDown} disabled={somethingIsBeingEdited}>
-                    <Drag color1={somethingIsBeingEdited ? "#ddd" : "#4a4a4a"} />
-                </OverflowStyle>
-                <Content>{displayName}</Content>
-                {!this.props.fieldDefinition.hideEdit
-                    && <Button variant={isBeingEdited ? "primary" : "secondary"}
-                        sizeVariant="small"
-                        css={buttonStyles}
-                        disabled={(somethingIsBeingEdited && !isBeingEdited)}
-                        onClick={this.onClick}>{isBeingEdited ? "Done" : "Edit"}</Button>}
-                {!this.props.fieldDefinition.hideDelete && <TrashStyle disabled={somethingIsBeingEdited} onClick={this.delete}>
-                    <Trash height={18} color1={somethingIsBeingEdited ? "#ddd" : "#4a4a4a"} />
-                </TrashStyle>}
-            </ChildWrapper>
-            {isBeingEdited
-                && <FieldsEditorStyle>
-                    <FieldsEditor fieldDefinitions={fieldDefinition.fieldDefinitions}
-                        item={item}
-                        updateField={this.updateField}
-                        registerHasValidationErrors={this.registerHasValidationErrors}
-                        updateHasValidationErrors={this.updateHasValidationErrors} />
-                </FieldsEditorStyle>
-            }
-        </ChildStyle>;
+        return (
+            <ChildStyle ref={this.row} onDragStart={this.dragStart} onDragEnd={this.dragEnd} onDrag={this.drag}>
+                <ChildWrapper>
+                    <OverflowStyle onMouseDown={this.dragHandleMouseDown} disabled={somethingIsBeingEdited}>
+                        <Drag color1={somethingIsBeingEdited ? "#ddd" : "#4a4a4a"} />
+                    </OverflowStyle>
+                    <Content>{displayName}</Content>
+                    {!this.props.fieldDefinition.hideEdit && (
+                        <Button
+                            variant={isBeingEdited ? "primary" : "secondary"}
+                            sizeVariant="small"
+                            css={buttonStyles}
+                            disabled={somethingIsBeingEdited && !isBeingEdited}
+                            onClick={this.onClick}
+                        >
+                            {isBeingEdited ? "Done" : "Edit"}
+                        </Button>
+                    )}
+                    {!this.props.fieldDefinition.hideDelete && (
+                        <TrashStyle disabled={somethingIsBeingEdited} onClick={this.delete}>
+                            <Trash height={18} color1={somethingIsBeingEdited ? "#ddd" : "#4a4a4a"} />
+                        </TrashStyle>
+                    )}
+                </ChildWrapper>
+                {isBeingEdited && (
+                    <FieldsEditorStyle>
+                        <FieldsEditor
+                            fieldDefinitions={fieldDefinition.fieldDefinitions}
+                            item={item}
+                            updateField={this.updateField}
+                            registerHasValidationErrors={this.registerHasValidationErrors}
+                            updateHasValidationErrors={this.updateHasValidationErrors}
+                        />
+                    </FieldsEditorStyle>
+                )}
+            </ChildStyle>
+        );
     }
 }
 
@@ -225,13 +236,13 @@ const OverflowStyle = styled.div<{ disabled: boolean }>`
     display: flex;
     width: 20px;
     height: 54px;
-    cursor: ${props => props.disabled ? "default" : "drag"};
+    cursor: ${props => (props.disabled ? "default" : "drag")};
     margin: -15px -10px -15px 0;
     align-items: center;
 `;
 
 const TrashStyle = styled.div<{ disabled: boolean }>`
-    cursor: ${props => props.disabled ? "default" : "pointer"};
+    cursor: ${props => (props.disabled ? "default" : "pointer")};
     display: flex;
     align-items: center;
 `;

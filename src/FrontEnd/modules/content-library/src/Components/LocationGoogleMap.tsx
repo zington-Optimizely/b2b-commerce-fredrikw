@@ -1,9 +1,16 @@
 import { LocationModel } from "@insite/client-framework/Common/Hooks/useLocationFilterSearch";
-import { CurrentLocationInfoWindow, LocationGoogleMapMarkerType, LocationGoogleMapsMarker, LocationInfoWindow } from "@insite/client-framework/Common/Hooks/useLocationGoogleMarkers";
+import {
+    CurrentLocationInfoWindow,
+    LocationGoogleMapMarkerType,
+    LocationGoogleMapsMarker,
+    LocationInfoWindow,
+} from "@insite/client-framework/Common/Hooks/useLocationGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
 import translate from "@insite/client-framework/Translate";
-import AddressInfoCondensedDisplay, { AddressInfoCondensedDisplayStyles } from "@insite/content-library/Components/AddressInfoCondensedDisplay";
+import AddressInfoCondensedDisplay, {
+    AddressInfoCondensedDisplayStyles,
+} from "@insite/content-library/Components/AddressInfoCondensedDisplay";
 import DistanceDisplay, { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import GoogleMapsDirectionLink from "@insite/content-library/Components/GoogleMapsDirectionLink";
 import LocationContentLink from "@insite/content-library/Components/LocationContentLink";
@@ -62,13 +69,13 @@ export const locationGoogleMapStyles: LocationGoogleMapStyles = {
     },
     infoWindowLeftGridItem: {
         width: 8,
-        css: css` 
+        css: css`
             flex-direction: column;
         `,
     },
     infoWindowRightGridItem: {
         width: 4,
-        css: css` 
+        css: css`
             flex-direction: column;
         `,
     },
@@ -114,48 +121,79 @@ const LocationGoogleMap: React.FC<Props> = ({
     };
 
     const getMarkerStyles = (markerType: LocationGoogleMapMarkerType) => {
-        if(markerType === "CURRENT_LOCATION") {
+        if (markerType === "CURRENT_LOCATION") {
             return styles.currentLocationMarker;
-        } if(markerType === "SELECTED") {
+        }
+        if (markerType === "SELECTED") {
             return styles.selectedMarker;
         }
         return styles.locationMarker;
     };
 
-    return <GoogleMap
-        {...styles.googleMap}
-        center={currentLocation}
-        onLoad={handleLoad}
-        onUnmount={handleUnmount}
-    >
-        {mapMarkerElements.map(marker => <Marker key={marker.key}
-            {...marker}
-            {...getMarkerStyles(marker.type)}
-        />)}
-        {locationInfoWindow && <InfoWindow {...styles.locationInfoWindow} key={newGuid()} position={locationInfoWindow?.position}>
-            {locationInfoWindow && <GridContainer {...styles.infoWindowGridContainer}>
-                <GridItem {...styles.infoWindowLeftGridItem}>
-                    <Typography {...styles.selectedLocationName}>{locationInfoWindow.location.name}</Typography>
-                    <AddressInfoCondensedDisplay {...locationInfoWindow.location} extendedStyles={styles.selectedLocationAddressDisplay} />
-                </GridItem>
-                <GridItem {...styles.infoWindowRightGridItem}>
-                    {locationInfoWindow.location.htmlContent && <LocationContentLink {...styles.infoWindowLocationContentLink} location={locationInfoWindow.location} onOpenLocationContent={handleOpenLocationContent} />}
-                    <GoogleMapsDirectionLink {...styles.infoWindowGoogleMapsDirectionLink} {...locationInfoWindow.location} />
-                    {locationInfoWindow.location.distance > 0.01 && <DistanceDisplay {...styles.infoWindowDistanceDisplay} distance={locationInfoWindow.location.distance} unitOfMeasure={distanceUnitOfMeasure} />}
-                </GridItem>
-            </GridContainer>}
-        </InfoWindow>}
-        {currentLocationInfoWindow && <InfoWindow {...styles.currentLocationInfoWindow} key={newGuid()} position={currentLocationInfoWindow.position}>
-            <GridContainer {...styles.currentLocationInfoWindowGridContainer}>
-                <GridItem {...styles.currentLocationInfoWindowHeaderGridItem} >
-                    <Typography {...styles.currentLocationInfoWindowHeaderText}>{translate("Current Location")}</Typography>
-                </GridItem>
-                <GridItem {...styles.currentLocationInfoWindowSearchFilterGridItem} >
-                    <Typography {...styles.currentLocationInfoWindowSearchFilterText}>{locationSearchFilter}</Typography>
-                </GridItem>
-            </GridContainer>
-        </InfoWindow>}
-    </GoogleMap>;
+    return (
+        <GoogleMap {...styles.googleMap} center={currentLocation} onLoad={handleLoad} onUnmount={handleUnmount}>
+            {mapMarkerElements.map(marker => (
+                <Marker key={marker.key} {...marker} {...getMarkerStyles(marker.type)} />
+            ))}
+            {locationInfoWindow && (
+                <InfoWindow {...styles.locationInfoWindow} key={newGuid()} position={locationInfoWindow?.position}>
+                    {locationInfoWindow && (
+                        <GridContainer {...styles.infoWindowGridContainer}>
+                            <GridItem {...styles.infoWindowLeftGridItem}>
+                                <Typography {...styles.selectedLocationName}>
+                                    {locationInfoWindow.location.name}
+                                </Typography>
+                                <AddressInfoCondensedDisplay
+                                    {...locationInfoWindow.location}
+                                    extendedStyles={styles.selectedLocationAddressDisplay}
+                                />
+                            </GridItem>
+                            <GridItem {...styles.infoWindowRightGridItem}>
+                                {locationInfoWindow.location.htmlContent && (
+                                    <LocationContentLink
+                                        {...styles.infoWindowLocationContentLink}
+                                        location={locationInfoWindow.location}
+                                        onOpenLocationContent={handleOpenLocationContent}
+                                    />
+                                )}
+                                <GoogleMapsDirectionLink
+                                    {...styles.infoWindowGoogleMapsDirectionLink}
+                                    {...locationInfoWindow.location}
+                                />
+                                {locationInfoWindow.location.distance > 0.01 && (
+                                    <DistanceDisplay
+                                        {...styles.infoWindowDistanceDisplay}
+                                        distance={locationInfoWindow.location.distance}
+                                        unitOfMeasure={distanceUnitOfMeasure}
+                                    />
+                                )}
+                            </GridItem>
+                        </GridContainer>
+                    )}
+                </InfoWindow>
+            )}
+            {currentLocationInfoWindow && (
+                <InfoWindow
+                    {...styles.currentLocationInfoWindow}
+                    key={newGuid()}
+                    position={currentLocationInfoWindow.position}
+                >
+                    <GridContainer {...styles.currentLocationInfoWindowGridContainer}>
+                        <GridItem {...styles.currentLocationInfoWindowHeaderGridItem}>
+                            <Typography {...styles.currentLocationInfoWindowHeaderText}>
+                                {translate("Current Location")}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.currentLocationInfoWindowSearchFilterGridItem}>
+                            <Typography {...styles.currentLocationInfoWindowSearchFilterText}>
+                                {locationSearchFilter}
+                            </Typography>
+                        </GridItem>
+                    </GridContainer>
+                </InfoWindow>
+            )}
+        </GoogleMap>
+    );
 };
 
 export default LocationGoogleMap;

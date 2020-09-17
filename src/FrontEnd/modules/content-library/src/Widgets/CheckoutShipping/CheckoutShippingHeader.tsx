@@ -42,37 +42,46 @@ export const pageHeaderStyles: CheckoutShippingHeaderStyles = {
     heading: { variant: "h2" },
     buttonsWrapper: {
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
                         position: fixed;
                         left: 0px;
                         bottom: 0px;
                         width: 100%;
                         z-index: 1;
                     `,
-                css` margin-left: auto; `,
-                css` margin-left: auto; `,
-                css` margin-left: auto; `,
-                css` margin-left: auto; `,
-            ])
-        }
+                    css`
+                        margin-left: auto;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                    css`
+                        margin-left: auto;
+                    `,
+                ])}
         `,
     },
-    continueButton: { css: css` width: 100%; ` },
+    continueButton: {
+        css: css`
+            width: 100%;
+        `,
+    },
 };
 
 const styles = pageHeaderStyles;
 
-const CheckoutShippingHeader: FC<Props> = ({
-    pageTitle,
-    isContinueButtonDisabled,
-}) => {
+const CheckoutShippingHeader: FC<Props> = ({ pageTitle, isContinueButtonDisabled }) => {
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.gridItem}>
-                <Typography {...styles.heading} as="h1">{pageTitle}</Typography>
+                <Typography {...styles.heading} as="h1">
+                    {pageTitle}
+                </Typography>
                 <StyledWrapper {...styles.buttonsWrapper}>
                     <Button
                         type="submit"

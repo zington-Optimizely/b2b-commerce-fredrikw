@@ -2,7 +2,10 @@ import useFilteredVariantTraits from "@insite/client-framework/Common/Hooks/useF
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasParentProductId, withParentProductId } from "@insite/client-framework/Components/ParentProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    getProductState,
+    getVariantChildrenDataView,
+} from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import updateVariantSelection from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/UpdateVariantSelection";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -14,7 +17,10 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasParentProductId;
+type Props = WidgetProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasParentProductId;
 
 const mapStateToProps = (state: ApplicationState, ownProps: HasParentProductId) => ({
     variantTraits: getProductState(state, ownProps.parentProductId).value?.variantTraits,
@@ -33,10 +39,16 @@ export interface ProductDetailsVariantOptionsStyles {
 
 export const variantOptionsStyles: ProductDetailsVariantOptionsStyles = {
     wrapper: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     select: {
-        cssOverrides: { formField: css` margin-top: 10px; ` },
+        cssOverrides: {
+            formField: css`
+                margin-top: 10px;
+            `,
+        },
     },
 };
 
@@ -59,23 +71,36 @@ const ProductDetailsVariantOptions: React.FC<Props> = ({
 
     const filteredVariantTraits = useFilteredVariantTraits(variantTraits, variantChildren, variantSelection);
 
-    return <StyledWrapper {...styles.wrapper}>
-        {filteredVariantTraits.map(variantTrait =>
-            <Select
-                {...styles.select}
-                key={variantTrait.id}
-                label={variantTrait.nameDisplay}
-                value={variantSelection[variantTrait.id]}
-                onChange={(event) => { variantChangeHandler(event.currentTarget.value, variantTrait.id); }}
-                data-test-selector={`styleSelect_${variantTrait.name}`}
-            >
-                <option value="">{variantTrait.unselectedValue ? variantTrait.unselectedValue : `${translate("Select")} ${variantTrait.nameDisplay}`}</option>
-                {variantTrait.traitValues?.map(traitValue =>
-                    <option value={`${traitValue.id}`} key={`${traitValue.id}`}>{traitValue.valueDisplay}</option>)
-                }
-            </Select>)
-        }
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            {filteredVariantTraits.map(
+                variantTrait =>
+                    !!variantTrait.traitValues?.length && (
+                        <Select
+                            {...styles.select}
+                            key={variantTrait.id}
+                            label={variantTrait.nameDisplay}
+                            value={variantSelection[variantTrait.id]}
+                            onChange={event => {
+                                variantChangeHandler(event.currentTarget.value, variantTrait.id);
+                            }}
+                            data-test-selector={`styleSelect_${variantTrait.name}`}
+                        >
+                            <option value="">
+                                {variantTrait.unselectedValue
+                                    ? variantTrait.unselectedValue
+                                    : `${translate("Select")} ${variantTrait.nameDisplay}`}
+                            </option>
+                            {variantTrait.traitValues?.map(traitValue => (
+                                <option value={`${traitValue.id}`} key={`${traitValue.id}`}>
+                                    {traitValue.valueDisplay}
+                                </option>
+                            ))}
+                        </Select>
+                    ),
+            )}
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

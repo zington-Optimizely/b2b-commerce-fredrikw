@@ -6,7 +6,7 @@ import * as React from "react";
 
 const RobotsTxtPage = ({ id }: PageProps) => (
     <Page>
-        <Zone contentId={id} zoneName="Content" fixed/>
+        <Zone contentId={id} zoneName="Content" fixed />
     </Page>
 );
 

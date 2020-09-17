@@ -8,10 +8,12 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderConfirmationPageContext } from "@insite/content-library/Pages/OrderConfirmationPage";
-import OrderConfirmationBillingInformation, { OrderConfirmationBillingInformationStyles }
-    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationBillingInformation";
-import OrderConfirmationShippingInformation, { OrderConfirmationShippingInformationStyles }
-    from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationShippingInformation";
+import OrderConfirmationBillingInformation, {
+    OrderConfirmationBillingInformationStyles,
+} from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationBillingInformation";
+import OrderConfirmationShippingInformation, {
+    OrderConfirmationShippingInformationStyles,
+} from "@insite/content-library/Widgets/OrderConfirmation/OrderConfirmationShippingInformation";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
@@ -21,12 +23,12 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const cart = getCartState(state, state.pages.orderConfirmation.cartId).value;
-    return ({
+    return {
         cart,
         billTo: getBillToState(state, cart?.billToId).value,
         shipTo: getShipToState(state, cart?.shipToId).value,
         pickUpWarehouse: state.context.session.pickUpWarehouse,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -58,7 +60,9 @@ export const orderInformationStyles: OrderConfirmationOrderInformationStyles = {
     orderNumberHeading: {
         variant: "h2",
         as: "h1",
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
     shippingInformationGridItem: {
         width: 12,
@@ -68,12 +72,16 @@ export const orderInformationStyles: OrderConfirmationOrderInformationStyles = {
     },
     notesGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     notesTitle: {
         variant: "h6",
         as: "h2",
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
 };
 
@@ -103,10 +111,7 @@ const OrderConfirmationOrderInformation: FC<Props> = props => {
             <GridItem {...styles.orderNumberGridItem}>
                 <Typography {...styles.orderNumberHeading}>
                     {`${translate("Order")} #`}
-                    <Typography
-                        {...styles.orderNumberText}
-                        data-test-selector="orderConfirmation_orderNumber"
-                    >
+                    <Typography {...styles.orderNumberText} data-test-selector="orderConfirmation_orderNumber">
                         {props.cart.orderNumber}
                     </Typography>
                 </Typography>
@@ -123,12 +128,15 @@ const OrderConfirmationOrderInformation: FC<Props> = props => {
                 <OrderConfirmationBillingInformation
                     cart={props.cart}
                     billTo={props.billTo}
-                    extendedStyles={styles.orderConfirmationBillingInformation} />
+                    extendedStyles={styles.orderConfirmationBillingInformation}
+                />
             </GridItem>
-            {props.cart.notes && <GridItem {...styles.notesGridItem}>
-                <Typography {...styles.notesTitle}>{translate("Notes")}</Typography>
-                <Typography {...styles.notesDescription}>{props.cart.notes}</Typography>
-            </GridItem>}
+            {props.cart.notes && (
+                <GridItem {...styles.notesGridItem}>
+                    <Typography {...styles.notesTitle}>{translate("Notes")}</Typography>
+                    <Typography {...styles.notesDescription}>{props.cart.notes}</Typography>
+                </GridItem>
+            )}
         </GridContainer>
     );
 };

@@ -12,7 +12,9 @@ export default class SystemListDropDownField extends React.Component<Props> {
         super(props);
 
         if (!this.props.fieldDefinition.systemListName) {
-            logger.error(`There was no systemListName defined in the properties for the fieldDefinition ${this.props.fieldDefinition.name}`);
+            logger.error(
+                `There was no systemListName defined in the properties for the fieldDefinition ${this.props.fieldDefinition.name}`,
+            );
         }
     }
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 const HorizontalRule: React.FC<ContentItemFieldProps<string, TextFieldDefinition>> = props => {
-    return <HR/>;
+    return <HR />;
 };
 
 export default HorizontalRule;

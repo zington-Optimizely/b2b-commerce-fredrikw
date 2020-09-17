@@ -1,7 +1,11 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { Category, CategoryCollection, GetCategoriesApiParameter } from "@insite/client-framework/Services/CategoryService";
+import {
+    Category,
+    CategoryCollection,
+    GetCategoriesApiParameter,
+} from "@insite/client-framework/Services/CategoryService";
 import { CategoriesState } from "@insite/client-framework/Store/Data/Categories/CategoriesState";
 import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { Draft } from "immer";
@@ -15,11 +19,17 @@ const initialState: CategoriesState = {
 };
 
 const reducer = {
-    "Data/Categories/BeginLoadCategories": (draft: Draft<CategoriesState>, action: { parameter: GetCategoriesApiParameter }) => {
+    "Data/Categories/BeginLoadCategories": (
+        draft: Draft<CategoriesState>,
+        action: { parameter: GetCategoriesApiParameter },
+    ) => {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/Categories/CompleteLoadCategories": (draft: Draft<CategoriesState>, action: { parameter: GetCategoriesApiParameter, collection: CategoryCollection }) => {
+    "Data/Categories/CompleteLoadCategories": (
+        draft: Draft<CategoriesState>,
+        action: { parameter: GetCategoriesApiParameter; collection: CategoryCollection },
+    ) => {
         const { parameter, collection } = action;
         const { parentCategoryIdToChildrenIds, categoryDepthLoaded } = draft;
         const { maxDepth, startCategoryId } = parameter;
@@ -49,10 +59,15 @@ const reducer = {
             }
         }
 
-        setDataViewLoaded(draft, parameter, collection, collection => Object.keys(collection.categoriesById).map(o => collection.categoriesById[o]!));
+        setDataViewLoaded(draft, parameter, collection, collection =>
+            Object.keys(collection.categoriesById).map(o => collection.categoriesById[o]!),
+        );
     },
 
-    "Data/Categories/CompleteLoadCategoriesById": (draft: Draft<CategoriesState>, action: { categoriesById: SafeDictionary<Category> }) => {
+    "Data/Categories/CompleteLoadCategoriesById": (
+        draft: Draft<CategoriesState>,
+        action: { categoriesById: SafeDictionary<Category> },
+    ) => {
         for (const categoryId in action.categoriesById) {
             assignById(draft, action.categoriesById[categoryId]!);
         }

@@ -25,7 +25,7 @@ const useGoogleMaps = ({ googleMapsApiKey, isShown }: Props) => {
     };
 
     // Take in points and set the Google Map to that bounding area.
-    const setBounds = (points: { lat: number, lng: number }[]) => {
+    const setBounds = (points: { lat: number; lng: number }[]) => {
         if (!googleMap) {
             return;
         }
@@ -36,8 +36,14 @@ const useGoogleMaps = ({ googleMapsApiKey, isShown }: Props) => {
 
         // Extends the bounds when we have only one marker to prevent zooming in too far.
         if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-            const extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.03, bounds.getNorthEast().lng() + 0.03);
-            const extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.03, bounds.getNorthEast().lng() - 0.03);
+            const extendPoint1 = new google.maps.LatLng(
+                bounds.getNorthEast().lat() + 0.03,
+                bounds.getNorthEast().lng() + 0.03,
+            );
+            const extendPoint2 = new google.maps.LatLng(
+                bounds.getNorthEast().lat() - 0.03,
+                bounds.getNorthEast().lng() - 0.03,
+            );
             bounds.extend(extendPoint1);
             bounds.extend(extendPoint2);
         }
@@ -55,7 +61,7 @@ const useGoogleMaps = ({ googleMapsApiKey, isShown }: Props) => {
         if (!isShown || !isLoaded) {
             return;
         }
-        getGeoLocation(new google.maps.LatLng(0, 0)).then((result) => {
+        getGeoLocation(new google.maps.LatLng(0, 0)).then(result => {
             setCurrentLocation(result);
         });
     }, [isShown, isLoaded]);

@@ -52,6 +52,7 @@ export interface PageEditorState {
     /** only has a value if we are editing a widget/page */
     editingId?: string;
     isEditingNewPage?: boolean;
+    isEditingVariant?: boolean;
     itemBeforeEditing?: ItemProps;
     removeItemIfCanceled?: boolean;
     selectedProductPath?: string;

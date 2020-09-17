@@ -3,14 +3,15 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     clearSearch,
@@ -26,7 +27,9 @@ export interface OrderHistorySearchClearButtonStyles {
 export const clearButtonStyles: OrderHistorySearchClearButtonStyles = {
     clearButton: {
         variant: "secondary",
-        css: css` float: right; `,
+        css: css`
+            float: right;
+        `,
     },
 };
 
@@ -38,9 +41,13 @@ class OrderHistorySearchClearButton extends React.Component<Props> {
     };
 
     render() {
-        return(
+        return (
             <SearchFieldWrapper extendedStyles={styles.wrapper}>
-                <Button  {...styles.clearButton} data-test-selector="orderHistory_clearFilters" onClick={this.clearSearch}>
+                <Button
+                    {...styles.clearButton}
+                    data-test-selector="orderHistory_clearFilters"
+                    onClick={this.clearSearch}
+                >
                     {translate("Clear Filters")}
                 </Button>
             </SearchFieldWrapper>
@@ -49,7 +56,6 @@ class OrderHistorySearchClearButton extends React.Component<Props> {
 }
 
 const widgetModule: WidgetModule = {
-
     component: connect(null, mapDispatchToProps)(OrderHistorySearchClearButton),
     definition: {
         group: "Order History",

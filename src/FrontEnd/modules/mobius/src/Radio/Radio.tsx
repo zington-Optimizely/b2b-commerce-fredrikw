@@ -15,16 +15,19 @@ import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps"
 import omitMultiple from "../utilities/omitMultiple";
 import resolveColor from "../utilities/resolveColor";
 
-export type RadioComponentProps = MobiusStyledComponentProps<"div", {
-    /** Disables the radio button. */
-    disabled?: boolean;
-    /** Sets the value, if different from the radio button's `children`. */
-    value?: string;
-}>;
+export type RadioComponentProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** Disables the radio button. */
+        disabled?: boolean;
+        /** Sets the value, if different from the radio button's `children`. */
+        value?: string;
+    }
+>;
 
 export type RadioProps = RadioComponentProps & FieldSetPresentationProps<RadioComponentProps>;
 
-const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color: string } & InjectableCss>`
+const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes; _color: string } & InjectableCss>`
     display: block;
     & + & {
         margin-top: 10px;
@@ -37,7 +40,7 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color
             display: inline-flex;
             align-items: center;
             &::before {
-                content: '';
+                content: "";
                 box-sizing: border-box;
                 display: inline-block;
                 height: ${({ _sizeVariant }) => (_sizeVariant === "small" ? 12 : 16)}px;
@@ -58,7 +61,7 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color
             background: ${({ _color, theme }) => resolveColor(_color, theme)};
         }
         &:checked + label::after {
-            content: '';
+            content: "";
             display: block;
             height: ${({ _sizeVariant }) => (_sizeVariant === "small" ? 4 : 6)}px;
             width: ${({ _sizeVariant }) => (_sizeVariant === "small" ? 4 : 6)}px;
@@ -75,20 +78,19 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes, _color
     ${injectCss}
 `;
 
-const Radio: React.FC<RadioProps & HasDisablerContext> = (props) => {
-    const {
-        children, disable, disabled, value, ...otherProps
-    } = props;
+const Radio: React.FC<RadioProps & HasDisablerContext> = props => {
+    const { children, disable, disabled, value, ...otherProps } = props;
 
     return (
         <RadioGroupContext.Consumer>
-            {({
-                name, onChange, sizeVariant: sizeVariantFromContext, value: radioGroupValue,
-            }) => {
-                const { applyProp, spreadProps } = applyPropBuilder({ sizeVariant: sizeVariantFromContext, ...props }, { component: "radio", category: "fieldSet" });
+            {({ name, onChange, sizeVariant: sizeVariantFromContext, value: radioGroupValue }) => {
+                const { applyProp, spreadProps } = applyPropBuilder(
+                    { sizeVariant: sizeVariantFromContext, ...props },
+                    { component: "radio", category: "fieldSet" },
+                );
                 // Because disabled html attribute doesn't accept undefined
                 // eslint-disable-next-line no-unneeded-ternary
-                const isDisabled = (disable || disabled) ? true : false;
+                const isDisabled = disable || disabled ? true : false;
                 const sizeVariant = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
                 const typographyProps = combineTypographyProps({
                     theme: otherProps.theme!,
@@ -98,10 +100,14 @@ const Radio: React.FC<RadioProps & HasDisablerContext> = (props) => {
                     },
                 });
 
-                const radioValue = (value || children as string) ?? "";
+                const radioValue = (value || (children as string)) ?? "";
                 const id = `${name}-${radioValue.replace(/\W/g, "-")}`;
                 return (
-                    <RadioStyle _color={applyProp("color", "primary")} _sizeVariant={sizeVariant} css={applyProp("css")}>
+                    <RadioStyle
+                        _color={applyProp("color", "primary")}
+                        _sizeVariant={sizeVariant}
+                        css={applyProp("css")}
+                    >
                         <input
                             type="radio"
                             id={id}

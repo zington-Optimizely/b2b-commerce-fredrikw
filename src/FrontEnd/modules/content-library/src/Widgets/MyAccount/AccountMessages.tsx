@@ -79,34 +79,50 @@ export const accountMessagesStyles: AccountMessagesStyles = {
             height: 300px;
         `,
     },
-    messagesSection: { css: css` width: 100%; ` },
-    messagesAccordion: { css: css` width: 100%; ` },
+    messagesSection: {
+        css: css`
+            width: 100%;
+        `,
+    },
+    messagesAccordion: {
+        css: css`
+            width: 100%;
+        `,
+    },
     messagesGridContainer: { gap: 15 },
     messageFilterGridItem: { width: 12 },
     messageFilter: {
         radioGroup: {
             css: css`
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        `,
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            `,
         },
         radioButton: {
-            css: css` margin-top: 10px; `,
+            css: css`
+                margin-top: 10px;
+            `,
         },
     },
     messageCardGridItem: { width: 12 },
     messageCard: {
         gridContainer: { gap: 5 },
-        article: { css: css` width: 100%; ` },
+        article: {
+            css: css`
+                width: 100%;
+            `,
+        },
         dateTimeGridItem: { width: 12 },
         dateTimeText: { weight: "bold" },
         subjectGridItem: { width: 12 },
         bodyGridItem: { width: 12 },
         actionButtonGridItem: {
             width: 12,
-            css: css` justify-content: flex-end; `,
+            css: css`
+                justify-content: flex-end;
+            `,
         },
         actionButton: {
             variant: "secondary",
@@ -123,7 +139,7 @@ export const accountMessagesStyles: AccountMessagesStyles = {
 };
 
 function filterMessagesBasedOnFilterType(messages: MessageModel[], messagesFilterType: string): MessageModel[] {
-    return messages.filter((message) => {
+    return messages.filter(message => {
         if (messagesFilterType === "All") {
             return true;
         }
@@ -141,8 +157,8 @@ const StyledSection = getStyledWrapper("section");
 const StyledArticle = getStyledWrapper("article");
 
 interface State {
-    messagesFilterType: string,
-    isMessagesPreview: boolean,
+    messagesFilterType: string;
+    isMessagesPreview: boolean;
 }
 
 class AccountMessages extends React.Component<Props, State> {
@@ -180,39 +196,53 @@ class AccountMessages extends React.Component<Props, State> {
 
         return (
             <StyledSection {...styles.messagesSection} data-test-selector="myAccountMessagesSection">
-                <Accordion
-                    {...styles.messagesAccordion}
-                    headingLevel={2}
-                >
+                <Accordion {...styles.messagesAccordion} headingLevel={2}>
                     <ManagedAccordionSection
                         title={title}
-                        onTogglePanel={() => { this.setState({ isMessagesPreview: false }); }}
+                        onTogglePanel={() => {
+                            this.setState({ isMessagesPreview: false });
+                        }}
                         {...styles.messagesAccordionSection}
                         initialExpanded
                     >
                         <GridContainer {...styles.messagesGridContainer}>
                             <GridItem {...styles.messageFilterGridItem}>
-                                {messagesDataView.value && <RadioGroup
-                                    {...componentStyles.radioGroup}
-                                    value={messagesFilterType}
-                                    onChangeHandler={(event: any) => this.setState({ messagesFilterType: event.target.value })}
-                                >
-                                    <Radio {...componentStyles.radioButton} key="All">{translate("All")}</Radio>
-                                    <Radio {...componentStyles.radioButton} key="Unread">{translate("Unread")}</Radio>
-                                    <Radio {...componentStyles.radioButton} key="Read">{translate("Read")}</Radio>
-                                </RadioGroup>}
+                                {messagesDataView.value && (
+                                    <RadioGroup
+                                        {...componentStyles.radioGroup}
+                                        value={messagesFilterType}
+                                        onChangeHandler={(event: any) =>
+                                            this.setState({ messagesFilterType: event.target.value })
+                                        }
+                                    >
+                                        <Radio {...componentStyles.radioButton} key="All">
+                                            {translate("All")}
+                                        </Radio>
+                                        <Radio {...componentStyles.radioButton} key="Unread">
+                                            {translate("Unread")}
+                                        </Radio>
+                                        <Radio {...componentStyles.radioButton} key="Read">
+                                            {translate("Read")}
+                                        </Radio>
+                                    </RadioGroup>
+                                )}
                             </GridItem>
-                            {filteredMessages && filteredMessages.map(message => (
-                                <GridItem {...styles.messageCardGridItem} key={`${message.id}`}>
-                                    <MessageCard message={message} updateMessageIsRead={updateMessageIsRead} language={language} />
-                                </GridItem>
-                            ))}
+                            {filteredMessages &&
+                                filteredMessages.map(message => (
+                                    <GridItem {...styles.messageCardGridItem} key={`${message.id}`}>
+                                        <MessageCard
+                                            message={message}
+                                            updateMessageIsRead={updateMessageIsRead}
+                                            language={language}
+                                        />
+                                    </GridItem>
+                                ))}
                         </GridContainer>
-                        {messagesDataView.isLoading
-                        && <StyledWrapper {...styles.centeringWrapper}>
-                            <LoadingSpinner />
-                        </StyledWrapper>
-                        }
+                        {messagesDataView.isLoading && (
+                            <StyledWrapper {...styles.centeringWrapper}>
+                                <LoadingSpinner />
+                            </StyledWrapper>
+                        )}
                     </ManagedAccordionSection>
                 </Accordion>
             </StyledSection>
@@ -227,23 +257,27 @@ type MessageCardProps = {
 const MessageCard: React.FunctionComponent<MessageCardProps> = (props: MessageCardProps) => {
     const { message, language } = props;
 
-    const handleClickMessageReadStatus = () => props.updateMessageIsRead({
-        message,
-        isRead: !message.isRead,
-    });
+    const handleClickMessageReadStatus = () =>
+        props.updateMessageIsRead({
+            message,
+            isRead: !message.isRead,
+        });
 
     const dateDisplay = getLocalizedDateTime({
         dateTime: message.dateToDisplay,
         language,
         options: {
-            year: "numeric", month: "numeric", day: "numeric",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
         },
     });
     const timeDisplay = getLocalizedDateTime({
         dateTime: message.dateToDisplay,
         language,
         options: {
-            hour: "numeric", minute: "numeric",
+            hour: "numeric",
+            minute: "numeric",
         },
     });
     const componentStyles: MessageCardStyles = styles.messageCard || {};
@@ -251,12 +285,13 @@ const MessageCard: React.FunctionComponent<MessageCardProps> = (props: MessageCa
     return (
         <StyledArticle {...styles.messageCard?.article}>
             <GridContainer {...componentStyles.gridContainer}>
-                {message.dateToDisplay
-                && <GridItem {...componentStyles.dateTimeGridItem}>
-                    <Typography {...componentStyles.dateTimeText}>
-                        {dateDisplay}&nbsp;{timeDisplay}
-                    </Typography>
-                </GridItem>}
+                {message.dateToDisplay && (
+                    <GridItem {...componentStyles.dateTimeGridItem}>
+                        <Typography {...componentStyles.dateTimeText}>
+                            {dateDisplay}&nbsp;{timeDisplay}
+                        </Typography>
+                    </GridItem>
+                )}
                 <GridItem {...componentStyles.subjectGridItem}>
                     <Typography {...componentStyles.subjectText}>{message.subject}</Typography>
                 </GridItem>

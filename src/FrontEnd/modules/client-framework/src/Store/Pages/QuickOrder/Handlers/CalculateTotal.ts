@@ -5,7 +5,7 @@ type HandlerType = HandlerWithResult<{}, number>;
 export const CalculateTotal: HandlerType = props => {
     let total = 0;
     props.getState().pages.quickOrder.productInfos.forEach(o => {
-        total += (o.pricing?.extendedUnitNetPrice || 0);
+        total += o.pricing?.extendedUnitNetPrice || 0;
     });
     props.result = total;
 };
@@ -17,10 +17,7 @@ export const DispatchCalculateTotal: HandlerType = props => {
     });
 };
 
-export const chain = [
-    CalculateTotal,
-    DispatchCalculateTotal,
-];
+export const chain = [CalculateTotal, DispatchCalculateTotal];
 
 const calculateTotal = createHandlerChainRunnerOptionalParameter(chain, {}, "CalculateTotal");
 export default calculateTotal;

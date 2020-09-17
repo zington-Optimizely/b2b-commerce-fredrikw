@@ -80,7 +80,7 @@ declare module "react-datetime-picker/dist/entry.nostyle" {
         maxDetail?: Detail;
         minDate?: Date;
         minDetail?: Detail;
-        navigationLabel?: (props: { date: Date, view: Detail, label: string }) => string | JSX.Element | null;
+        navigationLabel?: (props: { date: Date; view: Detail; label: string }) => string | JSX.Element | null;
         next2AriaLabel?: string;
         next2Label?: string | JSX.Element | null;
         nextAriaLabel?: string;
@@ -107,7 +107,7 @@ declare module "react-datetime-picker/dist/entry.nostyle" {
         showWeekNumbers?: boolean;
         tileClassName?: string | string[] | ((props: CalendarTileProperties) => string | string[] | null);
         tileContent?: JSX.Element | ((props: CalendarTileProperties) => JSX.Element | null);
-        tileDisabled?: (props: CalendarTileProperties & {activeStartDate: Date}) => boolean;
+        tileDisabled?: (props: CalendarTileProperties & { activeStartDate: Date }) => boolean;
         value?: Date | Date[];
         view?: Detail;
     }

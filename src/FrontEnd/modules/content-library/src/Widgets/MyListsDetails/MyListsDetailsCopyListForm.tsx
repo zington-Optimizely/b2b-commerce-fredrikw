@@ -1,7 +1,10 @@
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import { getWishListsDataView, getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import {
+    getWishListsDataView,
+    getWishListState,
+} from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
 import addWishListLines from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishListLines";
 import translate from "@insite/client-framework/Translate";
@@ -70,18 +73,21 @@ export const copyListFormStyles: MyListsDetailsCopyListFormStyles = {
     },
     buttonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         color: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
 const styles = copyListFormStyles;
 
 class MyListsDetailsCopyListForm extends React.Component<Props, State> {
-
     static contextType = ToasterContext;
     context!: React.ContextType<typeof ToasterContext>;
 
@@ -174,15 +180,17 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
         let options: OptionObject[] = [{ optionText: translate("Create New List"), optionValue: this.CREATE_ID }];
         if (this.props.wishLists) {
             const filteredWishLists = this.props.wishLists.filter(o => o.id !== this.props.wishList?.id);
-            options = options.concat(filteredWishLists.map(wishList => (
-                { optionText: wishList.name, optionValue: wishList.id }
-            )));
+            options = options.concat(
+                filteredWishLists.map(wishList => ({ optionText: wishList.name, optionValue: wishList.id })),
+            );
         }
 
         return (
             <GridContainer {...styles.container} data-test-selector="copyListForm">
                 <GridItem {...styles.descriptionGridItem}>
-                    <Typography {...styles.descriptionText}>{translate("Copy items to a new or existing list.")}</Typography>
+                    <Typography {...styles.descriptionText}>
+                        {translate("Copy items to a new or existing list.")}
+                    </Typography>
                 </GridItem>
                 <GridItem {...styles.wishListGridItem}>
                     <DynamicDropdown
@@ -194,8 +202,8 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                         data-test-selector="selectList"
                     />
                 </GridItem>
-                {this.state.wishListId === this.CREATE_ID
-                    && <GridItem {...styles.nameGridItem}>
+                {this.state.wishListId === this.CREATE_ID && (
+                    <GridItem {...styles.nameGridItem}>
                         <TextField
                             label={translate("List Name")}
                             {...styles.nameTextField}
@@ -203,17 +211,19 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                             error={this.state.nameError}
                             required
                             defaultValue={this.state.name}
-                            onChange={this.nameChangeHandler}>
-                        </TextField>
+                            onChange={this.nameChangeHandler}
+                        ></TextField>
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.buttonsGridItem}>
-                    <Button
-                        {...styles.cancelButton}
-                        onClick={this.props.onCancel}>
+                    <Button {...styles.cancelButton} onClick={this.props.onCancel}>
                         {translate("Cancel")}
                     </Button>
-                    <Button {...styles.createButton} onClick={this.submitHandler} data-test-selector="submitCopyListButton">
+                    <Button
+                        {...styles.createButton}
+                        onClick={this.submitHandler}
+                        data-test-selector="submitCopyListButton"
+                    >
                         {translate("Copy to List")}
                     </Button>
                 </GridItem>

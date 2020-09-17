@@ -8,20 +8,26 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-const mapStateToProps = ({ pages: { signIn: { isSigningInAsGuest } } }: ApplicationState) => ({
+const mapStateToProps = ({
+    pages: {
+        signIn: { isSigningInAsGuest },
+    },
+}: ApplicationState) => ({
     // This means the loading overlay shows until the browser redirects
     showLoadingOverlay: isSigningInAsGuest,
 });
 
 type Props = PageProps & ReturnType<typeof mapStateToProps>;
 
-const SignInPage = ({
-    id,
-    showLoadingOverlay,
-}: Props) => (
-    <LoadingOverlay loading={showLoadingOverlay} css={css` width: 100%; `}>
+const SignInPage = ({ id, showLoadingOverlay }: Props) => (
+    <LoadingOverlay
+        loading={showLoadingOverlay}
+        css={css`
+            width: 100%;
+        `}
+    >
         <Page data-test-selector="signIn">
-            <Zone contentId={id} zoneName="Content"/>
+            <Zone contentId={id} zoneName="Content" />
         </Page>
     </LoadingOverlay>
 );

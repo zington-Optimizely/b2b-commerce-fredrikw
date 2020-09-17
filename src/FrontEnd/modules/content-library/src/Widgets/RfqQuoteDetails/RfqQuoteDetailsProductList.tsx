@@ -14,25 +14,19 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 
-export interface RfqQuoteDetailsProductListStyles {
-}
+export interface RfqQuoteDetailsProductListStyles {}
 
-export const rfqQuoteDetailsProductListStyles: RfqQuoteDetailsProductListStyles = {
-};
+export const rfqQuoteDetailsProductListStyles: RfqQuoteDetailsProductListStyles = {};
 
 const styles = rfqQuoteDetailsProductListStyles;
 
-const RfqQuoteDetailsProductList = ({
-    quoteState,
-}: Props) => {
+const RfqQuoteDetailsProductList = ({ quoteState }: Props) => {
     const quote = quoteState.value;
     if (!quote) {
         return null;
     }
 
-    return quote.isSalesperson
-        ? <RfqQuoteDetailsSalesRepProductList />
-        : <RfqQuoteDetailsCustomerProductList />;
+    return quote.isSalesperson ? <RfqQuoteDetailsSalesRepProductList /> : <RfqQuoteDetailsCustomerProductList />;
 };
 
 const widgetModule: WidgetModule = {

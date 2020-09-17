@@ -1,7 +1,4 @@
-import {
-    ApiHandlerDiscreteParameter,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { GetOrderApiParameter } from "@insite/client-framework/Services/OrderService";
 import loadOrderByOrderNumber from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrderByOrderNumber";
 import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
@@ -23,10 +20,7 @@ export const DispatchLoadOrderIfNeeded: HandlerType = props => {
     }
 };
 
-export const chain = [
-    DispatchSetOrderNumber,
-    DispatchLoadOrderIfNeeded,
-];
+export const chain = [DispatchSetOrderNumber, DispatchLoadOrderIfNeeded];
 
 const displayOrder = createHandlerChainRunner(chain, "DisplayOrder");
 export default displayOrder;

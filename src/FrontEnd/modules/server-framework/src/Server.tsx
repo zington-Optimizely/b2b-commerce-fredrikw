@@ -19,7 +19,8 @@ import {
     setPromiseAddedCallback,
     setServerSiteMessages,
     setServerTranslations,
-    setSessionCookies, setUrl,
+    setSessionCookies,
+    setUrl,
 } from "@insite/client-framework/ServerSideRendering";
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import { getPageUrlByType, getTheme, RetrievePageResult } from "@insite/client-framework/Services/ContentService";
@@ -32,7 +33,7 @@ import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framewor
 import translate, { processTranslationDictionaries, setTranslationResolver } from "@insite/client-framework/Translate";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
 import diagnostics from "@insite/server-framework/diagnostics";
-import getTemplate from "@insite/server-framework/getTemplate";
+import getTemplate, { getTemplatePaths } from "@insite/server-framework/getTemplate";
 import healthCheck from "@insite/server-framework/healthCheck";
 import Relay from "@insite/server-framework/Relay";
 import robots from "@insite/server-framework/Robots";
@@ -61,7 +62,7 @@ const redirectTo = async ({ originalUrl, path }: Request, response: Response) =>
     if (classicToSpirePageMapping[pageType]) {
         pageType = classicToSpirePageMapping[pageType];
     }
-    const destination = await getPageUrlByType(pageType) || "/";
+    const destination = (await getPageUrlByType(pageType)) || "/";
     response.redirect(destination + originalUrl.substring(path.length));
 };
 
@@ -75,6 +76,10 @@ export default function server(request: Request, response: Response, domain: Par
             return diagnostics(request, response);
         case "/robots.txt":
             return robots(request, response);
+    }
+
+    if (request.path.toLowerCase().startsWith("/.spire/content/getTemplatePaths".toLowerCase())) {
+        return getTemplatePaths(request, response);
     }
 
     if (request.path.toLowerCase().startsWith("/.spire/content/getTemplate".toLowerCase())) {
@@ -101,16 +106,21 @@ function setupSSR(request: Request, domain: Parameters<typeof setDomain>[0]) {
     setDomain(domain);
 
     const { headers } = request;
-    const ip = (headers["x-forwarded-for"] || "").toString().split(",").pop()?.trim()
-        || request.connection.remoteAddress
-        || request.socket.remoteAddress;
+    const ip =
+        (headers["x-forwarded-for"] || "").toString().split(",").pop()?.trim() ||
+        request.connection.remoteAddress ||
+        request.socket.remoteAddress;
     headers["x-forwarded-for"] = ip;
     setHeaders(headers);
     setUrl(`${request.protocol}://${request.get("host")}${request.originalUrl}`);
 }
 
 async function pageRenderer(request: Request, response: Response) {
-    if (!checkedForSiteGeneration || !IS_PRODUCTION || request.url.toLowerCase().indexOf("generateIfNeeded=true".toLowerCase()) >= 0) {
+    if (
+        !checkedForSiteGeneration ||
+        !IS_PRODUCTION ||
+        request.url.toLowerCase().indexOf("generateIfNeeded=true".toLowerCase()) >= 0
+    ) {
         try {
             await generateSiteIfNeeded();
         } catch (e) {
@@ -123,8 +133,10 @@ async function pageRenderer(request: Request, response: Response) {
     let store: ReturnType<typeof shellConfigureStore> | ReturnType<typeof publicConfigureStore>;
 
     const isShellRequest = request.path.toLowerCase().startsWith("/contentadmin");
-    const isSiteInShell = !isShellRequest && ((request.headers.referer && request.headers.referer.toLowerCase().indexOf("/contentadmin") > 0)
-        || (request.cookies && request.cookies[isSiteInShellCookieName] === "true"));
+    const isSiteInShell =
+        !isShellRequest &&
+        ((request.headers.referer && request.headers.referer.toLowerCase().indexOf("/contentadmin") > 0) ||
+            (request.cookies && request.cookies[isSiteInShellCookieName] === "true"));
 
     let isEditing = false;
 
@@ -141,9 +153,11 @@ async function pageRenderer(request: Request, response: Response) {
     const languageCode = request.cookies.SetContextLanguageCode;
 
     // Not awaiting right away so it can run concurrently with other API calls.
-    const getSiteMessagesPromise = !isShellRequest && getSiteMessages({
-        languageCode: languageCode ? `${languageCode},null` : undefined,
-    });
+    const getSiteMessagesPromise =
+        !isShellRequest &&
+        getSiteMessages({
+            languageCode: languageCode ? `${languageCode},null` : undefined,
+        });
 
     const getTranslationDictionariesPromise = getTranslationDictionaries({
         languageCode: languageCode ? `${languageCode}` : undefined,
@@ -179,35 +193,48 @@ async function pageRenderer(request: Request, response: Response) {
     }
 
     // in the case of a first page load with no request cookies, we get the default language code from the first response
-    const responseLanguageCode = responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value;
-    const siteMessages = getSiteMessagesPromise && processSiteMessages((await getSiteMessagesPromise).siteMessages, languageCode ?? responseLanguageCode);
+    const responseLanguageCode =
+        responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value;
+    const siteMessages =
+        getSiteMessagesPromise &&
+        processSiteMessages((await getSiteMessagesPromise).siteMessages, languageCode ?? responseLanguageCode);
 
     if (siteMessages) {
         setServerSiteMessages(siteMessages);
     }
 
-    const translationDictionaries = getTranslationDictionariesPromise && processTranslationDictionaries((await getTranslationDictionariesPromise).translationDictionaries,
-        languageCode ?? responseLanguageCode);
+    const translationDictionaries =
+        getTranslationDictionariesPromise &&
+        processTranslationDictionaries(
+            (await getTranslationDictionariesPromise).translationDictionaries,
+            languageCode ?? responseLanguageCode,
+        );
 
     if (translationDictionaries) {
         setServerTranslations(translationDictionaries);
     }
 
-    const renderStorefrontServerSide = Object.keys(request.query).filter(param => param.toLowerCase() === "disablessr").length === 0 && !isShellRequest;
+    const renderStorefrontServerSide =
+        Object.keys(request.query).filter(param => param.toLowerCase() === "disablessr").length === 0 &&
+        !isShellRequest;
     if (renderStorefrontServerSide) {
         const renderRawAndStyles = () => {
             sheet = new ServerStyleSheet();
 
             const value = { isEditing, isCurrentPage: true, isInShell: isSiteInShell };
 
-
             // Changes here must be mirrored to the storefront ClientApp.tsx so the render output matches.
             const rawStorefront = (
                 <Provider store={store}>
                     <ShellContext.Provider value={value}>
-                        <ThemeProvider theme={theme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
+                        <ThemeProvider
+                            theme={theme}
+                            createGlobalStyle={true}
+                            createChildGlobals={false}
+                            translate={translate}
+                        >
                             <SessionLoader location={convertToLocation(request.url)}>
-                                <SpireRouter/>
+                                <SpireRouter />
                             </SessionLoader>
                         </ThemeProvider>
                     </ShellContext.Provider>
@@ -224,10 +251,15 @@ async function pageRenderer(request: Request, response: Response) {
         let redirect = getRedirectTo();
         while (trackedPromises.length !== 0 && promiseLoops < 10 && !redirect) {
             promiseLoops += 1;
-            if (promiseLoops > 5) { // Suspicious
+            if (promiseLoops > 5) {
+                // Suspicious
                 if (promiseLoops === 6) {
-                    logger.warn("New promises are still being created after 5 cycles, possible state management issue.");
-                    setPromiseAddedCallback(stack => logger.warn(`${request.url}: New promise added on loop ${promiseLoops}: ${stack}`));
+                    logger.warn(
+                        "New promises are still being created after 5 cycles, possible state management issue.",
+                    );
+                    setPromiseAddedCallback(stack =>
+                        logger.warn(`${request.url}: New promise added on loop ${promiseLoops}: ${stack}`),
+                    );
                 }
                 logger.warn(`${request.url}: tracked promises: ${trackedPromises.length}; loop ${promiseLoops}.`);
             }
@@ -235,7 +267,7 @@ async function pageRenderer(request: Request, response: Response) {
             const awaitedPromises: typeof trackedPromises = [];
             let awaitedPromise: Promise<any> | undefined;
             // eslint-disable-next-line no-cond-assign
-            while (awaitedPromise = trackedPromises.shift()) {
+            while ((awaitedPromise = trackedPromises.shift())) {
                 awaitedPromises.push(awaitedPromise);
             }
 
@@ -268,10 +300,15 @@ async function pageRenderer(request: Request, response: Response) {
     if (isShellRequest) {
         // Roboto Condensed is used by the CMS
         // Open Sans is used by the default Mobius theme and may be seen in the Style Guide.
-        shellFont = <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet"/>;
+        shellFont = (
+            <link
+                href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap"
+                rel="stylesheet"
+            />
+        );
     }
 
-    const storefrontFont = <link href={theme.typography.fontFamilyImportUrl} rel="stylesheet"/>;
+    const storefrontFont = <link href={theme.typography.fontFamilyImportUrl} rel="stylesheet" />;
 
     const metadata = getPageMetadata();
     const state = store.getState() as ApplicationState;
@@ -280,44 +317,59 @@ async function pageRenderer(request: Request, response: Response) {
 
     const app = (rawHtml: string) => (
         <html lang={languageCode}>
-        <head>
-            {/* eslint-disable react/no-danger */}
-            {headTrackingScript && <script dangerouslySetInnerHTML={{ __html: headTrackingScript }}></script>}
-            <meta charSet="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
-            <title>{isShellRequest ? "Content Administration" : metadata?.title}</title>
-            <meta id="ogTitle" property="og:title" content={metadata?.openGraphTitle}/>
-            <meta id="ogImage" property="og:image" content={metadata?.openGraphImage}/>
-            <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl}/>
-            <meta name="keywords" content={metadata?.metaKeywords}/>
-            <meta name="description" content={metadata?.metaDescription}/>
-            <link rel="canonical" href={metadata?.canonicalUrl}/>
-            <base href="/"/>
-            {shellFont}
-            {storefrontFont}
-            {sheet?.getStyleElement()}
-            <script>{`if (window.parent !== window) {
+            <head>
+                {/* eslint-disable react/no-danger */}
+                {headTrackingScript && <script dangerouslySetInnerHTML={{ __html: headTrackingScript }}></script>}
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+                <title>{isShellRequest ? "Content Administration" : metadata?.title}</title>
+                <meta id="ogTitle" property="og:title" content={metadata?.openGraphTitle} />
+                <meta id="ogImage" property="og:image" content={metadata?.openGraphImage} />
+                <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl} />
+                <meta name="keywords" content={metadata?.metaKeywords} />
+                <meta name="description" content={metadata?.metaDescription} />
+                <link rel="canonical" href={metadata?.canonicalUrl} />
+                <base href="/" />
+                {shellFont}
+                {storefrontFont}
+                {sheet?.getStyleElement()}
+                <script>{`if (window.parent !== window) {
     window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = window.parent.__REACT_DEVTOOLS_GLOBAL_HOOK__;
 }`}</script>
-        </head>
-        <body>
-        {noscriptTrackingScript && <noscript dangerouslySetInnerHTML={{ __html: noscriptTrackingScript }}></noscript>}
-        {/* eslint-disable react/no-danger */}
-        <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
-        {(!isShellRequest && <script dangerouslySetInnerHTML={{
-            __html: `
+            </head>
+            <body>
+                {noscriptTrackingScript && (
+                    <noscript dangerouslySetInnerHTML={{ __html: noscriptTrackingScript }}></noscript>
+                )}
+                {/* eslint-disable react/no-danger */}
+                <div id="react-app" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
+                {!isShellRequest && (
+                    <script
+                        dangerouslySetInnerHTML={{
+                            __html: `
                 var siteMessages = ${JSON.stringify(siteMessages)};
                 var translationDictionaries = ${JSON.stringify(translationDictionaries)};`,
-        }}></script>)}
-        {(renderStorefrontServerSide
-            && <script dangerouslySetInnerHTML={{ __html: `var initialReduxState = ${JSON.stringify(state).replace(new RegExp("</", "g"), "<\\/")}` }}></script>
-        )}
-        <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
-        {/* eslint-enable react/no-danger */}
-        <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js?v=${BUILD_DATE}`}/>
-        <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
-        {isShellRequest && <script src="/SystemResources/Scripts/Libraries/ckfinder/3.4.1/ckfinder.js"></script>}
-        </body>
+                        }}
+                    ></script>
+                )}
+                {renderStorefrontServerSide && (
+                    <script
+                        dangerouslySetInnerHTML={{
+                            __html: `var initialReduxState = ${JSON.stringify(state).replace(
+                                new RegExp("</", "g"),
+                                "<\\/",
+                            )}`,
+                        }}
+                    ></script>
+                )}
+                <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
+                {/* eslint-enable react/no-danger */}
+                <script async defer src={`/dist/${isShellRequest ? "shell" : "public"}.js?v=${BUILD_DATE}`} />
+                <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
+                {isShellRequest && (
+                    <script src="/SystemResources/Scripts/Libraries/ckfinder/3.4.1/ckfinder.js"></script>
+                )}
+            </body>
         </html>
     );
 
@@ -332,9 +384,12 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
     let pageByUrlResponse;
     try {
         const bypassFilters = request.url.startsWith("/Content/Page/");
-        const endpoint = `/api/v2/content/pageByUrl?url=${encodeURIComponent(request.url)}${bypassFilters ? "&bypassfilters=true" : ""}`;
+        const endpoint = `/api/v2/content/pageByUrl?url=${encodeURIComponent(request.url)}${
+            bypassFilters ? "&bypassfilters=true" : ""
+        }`;
         pageByUrlResponse = await rawRequest(endpoint, "GET", {}, undefined);
-    } catch (ex) { // if this fails just log and continue, the regular way to retrieve the page will deal with sending the user to the unhandled error page.
+    } catch (ex) {
+        // if this fails just log and continue, the regular way to retrieve the page will deal with sending the user to the unhandled error page.
         logger.error(ex);
     }
 

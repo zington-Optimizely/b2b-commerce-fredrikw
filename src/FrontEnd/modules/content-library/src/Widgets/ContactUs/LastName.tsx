@@ -32,21 +32,15 @@ const mapDispatchToProps = {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-
 export interface LastNameStyles {
     lastNameTextField?: TextFieldPresentationProps;
 }
 
-export const lastNameStyles: LastNameStyles = {
-};
+export const lastNameStyles: LastNameStyles = {};
 
 const styles = lastNameStyles;
 
-const LastName: React.FC<Props> = ({
-    fields,
-    lastName,
-    setFieldValue,
-}) => {
+const LastName: React.FC<Props> = ({ fields, lastName, setFieldValue }) => {
     const { label, hintText, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [lastNameErrorMessage, setLastNameErrorMessage] = React.useState("");
@@ -63,9 +57,7 @@ const LastName: React.FC<Props> = ({
     }, [isRequired]);
 
     const validateLastName = () => {
-        const errorMessage = isRequired && !lastName
-            ? siteMessage("Field_Required", label) as string
-            : "";
+        const errorMessage = isRequired && !lastName ? (siteMessage("Field_Required", label) as string) : "";
         setLastNameErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -74,15 +66,17 @@ const LastName: React.FC<Props> = ({
         setFieldValue({ key: "lastName", value: event.target.value });
     };
 
-    return <TextField
-        {...styles.lastNameTextField}
-        label={label}
-        required={isRequired}
-        placeholder={hintText}
-        value={lastName || ""}
-        error={lastNameErrorMessage}
-        onChange={lastNameChangeHandler}
-    />;
+    return (
+        <TextField
+            {...styles.lastNameTextField}
+            label={label}
+            required={isRequired}
+            placeholder={hintText}
+            value={lastName || ""}
+            error={lastNameErrorMessage}
+            onChange={lastNameChangeHandler}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

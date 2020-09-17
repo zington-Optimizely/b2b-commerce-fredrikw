@@ -6,8 +6,8 @@ import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handl
 import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 
 type HandlerType = Handler<{
-    cartId: string,
-    onSuccess: () => void,
+    cartId: string;
+    onSuccess: () => void;
 }>;
 
 export const DispatchBeginPreloadingData: HandlerType = props => {
@@ -18,6 +18,13 @@ export const DispatchBeginPreloadingData: HandlerType = props => {
     props.dispatch({
         type: "Pages/OrderConfirmation/SetIsPreloadingData",
         isPreloadingData: true,
+    });
+};
+
+export const DispatchBeginLoadCart: HandlerType = props => {
+    props.dispatch({
+        type: "Pages/OrderConfirmation/BeginLoadCart",
+        cartId: props.parameter.cartId,
     });
 };
 
@@ -55,6 +62,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 export const chain = [
     DispatchBeginPreloadingData,
+    DispatchBeginLoadCart,
     PreloadData,
     WaitForData,
     ExecuteOnSuccessCallback,

@@ -10,11 +10,7 @@ type Props = TypographyPresentationProps & {
 
 export type DistanceUnitOfMeasure = "Imperial" | "Metric";
 
-const DistanceDisplay: React.FC<Props> = ({
-    unitOfMeasure,
-    distance,
-    ...otherProps
-}) => {
+const DistanceDisplay: React.FC<Props> = ({ unitOfMeasure, distance, ...otherProps }) => {
     const unit = unitOfMeasure === "Imperial" ? translate("mi") : translate("km");
 
     if (unitOfMeasure === "Metric") {
@@ -25,9 +21,7 @@ const DistanceDisplay: React.FC<Props> = ({
         .replace("{0}", `${distance.toFixed(2)}`)
         .replace("{1}", unit);
 
-    return (
-        <Typography {...otherProps}>{value}</Typography>
-    );
+    return <Typography {...otherProps}>{value}</Typography>;
 };
 
 export default DistanceDisplay;

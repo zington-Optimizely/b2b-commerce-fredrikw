@@ -12,7 +12,10 @@ export function getProductListDataView(state: ApplicationState) {
     return productsDataView;
 }
 
-export function getProductListDataViewProperty<K extends keyof Omit<ProductsDataView, "ids">>(state: ApplicationState, key: K) {
+export function getProductListDataViewProperty<K extends keyof Omit<ProductsDataView, "ids">>(
+    state: ApplicationState,
+    key: K,
+) {
     const productsDataView = getProductListDataView(state);
     return productsDataView.value ? productsDataView[key] : undefined;
 }

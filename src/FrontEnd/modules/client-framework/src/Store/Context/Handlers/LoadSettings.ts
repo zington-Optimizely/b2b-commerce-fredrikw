@@ -1,4 +1,7 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { getSettings, GetSettingsApiParameter, SettingsModel } from "@insite/client-framework/Services/SettingsService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetSettingsApiParameter, SettingsModel>;
@@ -18,10 +21,7 @@ export const DispatchCompleteLoadSettings: HandlerType = props => {
     });
 };
 
-export const chain = [
-    RequestDataFromApi,
-    DispatchCompleteLoadSettings,
-];
+export const chain = [RequestDataFromApi, DispatchCompleteLoadSettings];
 
 const loadSettings = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadSettings");
 export default loadSettings;

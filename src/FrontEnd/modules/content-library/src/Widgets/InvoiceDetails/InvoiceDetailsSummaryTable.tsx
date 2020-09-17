@@ -3,7 +3,9 @@ import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoice
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
-import InvoiceDetailsLineCard, { InvoiceDetailsLineCardStyles } from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsLineCard";
+import InvoiceDetailsLineCard, {
+    InvoiceDetailsLineCardStyles,
+} from "@insite/content-library/Widgets/InvoiceDetails/InvoiceDetailsLineCard";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
@@ -35,18 +37,24 @@ export const summaryTableStyles: InvoiceDetailsSummaryTableStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     titleItem: {
         width: 12,
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
     title: {
         weight: "bold",
         size: "18px",
         as: "h2",
         css: css`
-            @media print { font-size: 15px; }
+            @media print {
+                font-size: 15px;
+            }
             width: 100%;
             padding: 15px 0;
             border-bottom: 1px solid ${getColor("common.border")};
@@ -92,9 +100,13 @@ const InvoiceDetailsSummaryTable = () => {
             </GridItem>
             <GridItem {...styles.linesItem}>
                 <GridContainer {...styles.linesInnerContainer}>
-                    {invoice.invoiceLines.map((invoiceLine) => (
-                        <GridItem key={invoiceLine.id} {...styles.lineItem} data-test-selector={`invoiceDetails_invoiceLine_${invoiceLine.id}`}>
-                            <InvoiceDetailsLineCard invoiceLine={invoiceLine} extendedStyles={styles.lineStyles}/>
+                    {invoice.invoiceLines.map(invoiceLine => (
+                        <GridItem
+                            key={invoiceLine.id}
+                            {...styles.lineItem}
+                            data-test-selector={`invoiceDetails_invoiceLine_${invoiceLine.id}`}
+                        >
+                            <InvoiceDetailsLineCard invoiceLine={invoiceLine} extendedStyles={styles.lineStyles} />
                         </GridItem>
                     ))}
                 </GridContainer>

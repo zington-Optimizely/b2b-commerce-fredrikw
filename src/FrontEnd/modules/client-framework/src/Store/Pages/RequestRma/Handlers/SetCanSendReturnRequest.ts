@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ value: boolean; }>;
+type HandlerType = Handler<{ value: boolean }>;
 
 export const DispatchSetCanSendReturnRequest: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetCanSendReturnRequest: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetCanSendReturnRequest,
-];
+export const chain = [DispatchSetCanSendReturnRequest];
 
 const setCanSendReturnRequest = createHandlerChainRunner(chain, "SetCanSendReturnRequest");
 export default setCanSendReturnRequest;

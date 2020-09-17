@@ -9,12 +9,20 @@ import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import AccordionSectionPanel from "./AccordionSectionPanel";
 
-export type AccordionSectionHeaderProps = MobiusStyledComponentProps<"dt", {
-    /** Sets the initial expanded state of the section. */
-    expanded?: boolean;
-} & InjectableCss & AccordionContextData, "headingLevel">;
+export type AccordionSectionHeaderProps = MobiusStyledComponentProps<
+    "dt",
+    {
+        /** Sets the initial expanded state of the section. */
+        expanded?: boolean;
+    } & InjectableCss &
+        AccordionContextData,
+    "headingLevel"
+>;
 
-const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderProps) => ({ role: "heading", ariaLevel: props.headingLevel }))`
+const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderProps) => ({
+    role: "heading",
+    ariaLevel: props.headingLevel,
+}))`
     background: ${getColor("common.background")};
     button {
         border: 1px solid ${getColor("common.border")};
@@ -38,7 +46,7 @@ const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderPro
             padding-left: 14px;
         }
     }
-    ${/* sc-selector */AccordionSectionPanel} + & button {
+    ${/* sc-selector */ AccordionSectionPanel} + & button {
         border-top: 0;
         &:focus {
             border-color: ${getProp("theme.focus.color", "#09f")};
@@ -47,8 +55,13 @@ const AccordionSectionHeader = styled.dt.attrs((props: AccordionSectionHeaderPro
             padding-top: 7px;
         }
     }
-    ${/* sc-selector */IconWrapper}.toggle {
-        ${({ expanded }: AccordionSectionHeaderProps) => expanded ? css` transform: rotate(180deg); ` : null}
+    ${/* sc-selector */ IconWrapper}.toggle {
+        ${({ expanded }: AccordionSectionHeaderProps) =>
+            expanded
+                ? css`
+                      transform: rotate(180deg);
+                  `
+                : null}
     }
     ${injectCss}
 `;

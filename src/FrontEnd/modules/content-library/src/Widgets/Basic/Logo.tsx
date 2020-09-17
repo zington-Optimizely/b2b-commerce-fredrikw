@@ -39,21 +39,22 @@ export const logoStyles: LogoStyles = {
         `,
     },
     image: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
 };
 
-const Logo: React.FunctionComponent<Props> = ({
-    fields,
-    extendedStyles,
-}: Props) => {
+const Logo: React.FunctionComponent<Props> = ({ fields, extendedStyles }: Props) => {
     const [styles] = React.useState(() => mergeToNew(logoStyles, extendedStyles));
 
-    return <StyledWrapper {...styles.wrapper}>
-        <Link href="/">
-            <LazyImage src={fields.logoImage} altText={translate("home")} {...styles.image} />
-        </Link>
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <Link href="/">
+                <LazyImage src={fields.logoImage} altText={translate("home")} {...styles.image} />
+            </Link>
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

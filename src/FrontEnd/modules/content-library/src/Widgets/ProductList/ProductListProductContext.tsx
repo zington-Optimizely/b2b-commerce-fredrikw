@@ -22,7 +22,13 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-const ProductListProductContext: FC<Props> = ({ product, productInfo, children, changeUnitOfMeasure, changeQtyOrdered }) => {
+const ProductListProductContext: FC<Props> = ({
+    product,
+    productInfo,
+    children,
+    changeUnitOfMeasure,
+    changeQtyOrdered,
+}) => {
     if (!productInfo) {
         return null;
     }
@@ -34,9 +40,7 @@ const ProductListProductContext: FC<Props> = ({ product, productInfo, children, 
         onUnitOfMeasureChanged: unitOfMeasure => changeUnitOfMeasure({ productId: product.id, unitOfMeasure }),
     };
 
-    return <ProductContext.Provider value={productContext}>
-        {children}
-    </ProductContext.Provider>;
+    return <ProductContext.Provider value={productContext}>{children}</ProductContext.Provider>;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductListProductContext);

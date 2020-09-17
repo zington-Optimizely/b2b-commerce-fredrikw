@@ -1,10 +1,19 @@
 import { updateContext } from "@insite/client-framework/Context";
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { getSession, Session, updateSession, UpdateSessionApiParameter } from "@insite/client-framework/Services/SessionService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    getSession,
+    Session,
+    updateSession,
+    UpdateSessionApiParameter,
+} from "@insite/client-framework/Services/SessionService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTo";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ shipToId: string; } & HasOnSuccess, UpdateSessionApiParameter, Session>;
+type HandlerType = ApiHandlerDiscreteParameter<{ shipToId: string } & HasOnSuccess, UpdateSessionApiParameter, Session>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {

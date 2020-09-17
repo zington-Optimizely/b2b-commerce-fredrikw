@@ -10,16 +10,14 @@ interface OwnProps {
 type Props = OwnProps;
 
 const MyListsDetailsPageTypeLink: React.FunctionComponent<Props> = ({ title, wishListId, testSelector }) => {
-    return createWidgetElement(
-        "Basic/PageTypeLink",
-        {
-            fields: {
-                testSelector,
-                pageType: "MyListsDetailsPage",
-                overrideTitle: title,
-                queryString: `id=${wishListId}`,
-            },
-        });
+    return createWidgetElement("Basic/PageTypeLink", {
+        fields: {
+            testSelector,
+            pageType: "MyListsDetailsPage",
+            overrideTitle: title,
+            queryString: `id=${wishListId}`,
+        },
+    });
 };
 
 export default MyListsDetailsPageTypeLink;

@@ -40,23 +40,28 @@ export interface ImageStyles {
 
 export const imageStyles: ImageStyles = {
     image: {
-        css: css` max-width: 100%; `,
+        css: css`
+            max-width: 100%;
+        `,
     },
 };
 
 const styles = imageStyles;
 
-const Image: React.FunctionComponent<Props> = ({
-    fields,
-    pageUrl,
-}: Props) => {
+const Image: React.FunctionComponent<Props> = ({ fields, pageUrl }: Props) => {
     const image = <LazyImage src={fields.imageUrl} altText={fields.altText} {...styles.image} />;
 
-    return <StyledWrapper {...styles.wrapper}>
-        {pageUrl
-            ? <Link href={pageUrl} {...styles.imageLink}>{image}</Link>
-            : image}
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            {pageUrl ? (
+                <Link href={pageUrl} {...styles.imageLink}>
+                    {image}
+                </Link>
+            ) : (
+                image
+            )}
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

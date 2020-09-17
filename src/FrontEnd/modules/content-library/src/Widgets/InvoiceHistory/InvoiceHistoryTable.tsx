@@ -69,7 +69,9 @@ export interface InvoiceHistoryTableStyles {
 
 export const tableStyles: InvoiceHistoryTableStyles = {
     container: {
-        css: css` overflow: auto; `,
+        css: css`
+            overflow: auto;
+        `,
     },
     centeringWrapper: {
         css: css`
@@ -79,7 +81,9 @@ export const tableStyles: InvoiceHistoryTableStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     noResultsContainer: {
         css: css`
@@ -150,19 +154,23 @@ const InvoiceHistoryTable = (props: Props) => {
         );
     }
 
-    const rows = invoicesDataView.value.map((invoice) => {
+    const rows = invoicesDataView.value.map(invoice => {
         return {
             id: invoice.id,
             invoiceNumber: invoice.invoiceNumber,
-            date: invoice.invoiceDate ? getLocalizedDateTime({
-                dateTime: new Date(invoice.invoiceDate),
-                language: props.language,
-            }) : "",
+            date: invoice.invoiceDate
+                ? getLocalizedDateTime({
+                      dateTime: new Date(invoice.invoiceDate),
+                      language: props.language,
+                  })
+                : "",
             terms: invoice.terms,
-            dueDate: invoice.dueDate ? getLocalizedDateTime({
-                dateTime: new Date(invoice.dueDate),
-                language: props.language,
-            }) : "",
+            dueDate: invoice.dueDate
+                ? getLocalizedDateTime({
+                      dateTime: new Date(invoice.dueDate),
+                      language: props.language,
+                  })
+                : "",
             shipTo: `${invoice.stCompanyName} ${invoice.btAddress1} ${invoice.btAddress2} ${invoice.shipToCity} ${invoice.shipToState}`,
             status: invoice.status,
             total: invoice.invoiceTotalDisplay,
@@ -250,7 +258,12 @@ const InvoiceHistoryTable = (props: Props) => {
                                     {invoiceNumber}
                                 </Link>
                             </DataTableCell>
-                            <DataTableCell {...styles.invoiceDateCell} data-test-selector="invoiceHistory_invoiceLine_date">{date}</DataTableCell>
+                            <DataTableCell
+                                {...styles.invoiceDateCell}
+                                data-test-selector="invoiceHistory_invoiceLine_date"
+                            >
+                                {date}
+                            </DataTableCell>
                             <DataTableCell {...styles.termsCell}>{terms}</DataTableCell>
                             <DataTableCell {...styles.dueDateCell}>{dueDate}</DataTableCell>
                             <DataTableCell {...styles.shipToCell}>{shipTo}</DataTableCell>

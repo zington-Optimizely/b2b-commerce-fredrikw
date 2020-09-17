@@ -9,9 +9,7 @@ export const DispatchSetSelectedImageIndex: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetSelectedImageIndex,
-];
+export const chain = [DispatchSetSelectedImageIndex];
 
 const setSelectedImageIndex = createHandlerChainRunner(chain, "SetSelectedImageIndex");
 export default setSelectedImageIndex;

@@ -58,7 +58,7 @@ const consoleReceiver = (function createConsoleLogReceiver(): LogReceiver {
         info: createLoggerForLevel("info"),
         warn: createLoggerForLevel("warn"),
     };
-}());
+})();
 
 const logger = { ...consoleReceiver };
 

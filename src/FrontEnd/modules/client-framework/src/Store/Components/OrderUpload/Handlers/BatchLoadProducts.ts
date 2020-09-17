@@ -1,13 +1,14 @@
 import {
-    createHandlerChainRunner, executeAwaitableHandlerChain,
+    createHandlerChainRunner,
+    executeAwaitableHandlerChain,
     HandlerWithResult,
 } from "@insite/client-framework/HandlerCreator";
-import {
-    batchGetProducts,
-    BatchGetProductsApiParameter,
-} from "@insite/client-framework/Services/ProductService";
+import { batchGetProducts, BatchGetProductsApiParameter } from "@insite/client-framework/Services/ProductService";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
-import { OrderUploadRowError, UploadedItem } from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
+import {
+    OrderUploadRowError,
+    UploadedItem,
+} from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
 import { ProductDto, RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
 
 export const enum UploadError {
@@ -18,7 +19,7 @@ export const enum UploadError {
     Unavailable,
     InvalidUnit,
     NotFound,
-    OutOfStock
+    OutOfStock,
 }
 
 export interface BatchLoadProductsParameter extends BatchGetProductsApiParameter {
@@ -64,22 +65,43 @@ export const LoadRealTimeInventory: HandlerType = async ({ result: { apiResult }
         return;
     }
 
-    const realTimeInventory = await executeAwaitableHandlerChain<Parameters<typeof loadRealTimeInventory>[0], RealTimeInventoryModel>(loadRealTimeInventory, {
-        productIds: products.map(o => o.id),
-    }, { dispatch, getState });
+    const realTimeInventory = await executeAwaitableHandlerChain<
+        Parameters<typeof loadRealTimeInventory>[0],
+        RealTimeInventoryModel
+    >(
+        loadRealTimeInventory,
+        {
+            productIds: products.map(o => o.id),
+        },
+        { dispatch, getState },
+    );
 
     realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
-        products.filter(p => p.id === inventory.productId).forEach(product => {
-            product.qtyOnHand = inventory.qtyOnHand;
+        products
+            .filter(p => p.id === inventory.productId)
+            .forEach(product => {
+                product.qtyOnHand = inventory.qtyOnHand;
 
-            const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure === product.unitOfMeasure);
-            product.availability = inventoryAvailability?.availability || { messageType: 0, message: "", requiresRealTimeInventory: false };
+                const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(
+                    o => o.unitOfMeasure === product.unitOfMeasure,
+                );
+                product.availability = inventoryAvailability?.availability || {
+                    messageType: 0,
+                    message: "",
+                    requiresRealTimeInventory: false,
+                };
 
-            product.productUnitOfMeasures?.forEach(productUoM => {
-                const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure === productUoM.unitOfMeasure);
-                productUoM.availability = inventoryAvailability?.availability || { messageType: 0, message: "", requiresRealTimeInventory: false };
+                product.productUnitOfMeasures?.forEach(productUoM => {
+                    const inventoryAvailability = inventory.inventoryAvailabilityDtos?.find(
+                        o => o.unitOfMeasure === productUoM.unitOfMeasure,
+                    );
+                    productUoM.availability = inventoryAvailability?.availability || {
+                        messageType: 0,
+                        message: "",
+                        requiresRealTimeInventory: false,
+                    };
+                });
             });
-        });
     });
 };
 
@@ -107,7 +129,11 @@ export const ProcessProducts: HandlerType = props => {
             }
         } else {
             props.result.rowErrors.push(
-                mapRowError(index, UploadError.NotFound, item.name, { qtyOrdered: item.qtyOrdered, unitOfMeasureDisplay: item.unitOfMeasure } as ProductDto));
+                mapRowError(index, UploadError.NotFound, item.name, {
+                    qtyOrdered: item.qtyOrdered,
+                    unitOfMeasureDisplay: item.unitOfMeasure,
+                } as ProductDto),
+            );
         }
     }
 };
@@ -132,7 +158,12 @@ const validateProduct = (product: ProductDto, checkInventory: boolean) => {
     return UploadError.None;
 };
 
-const setProductUnitOfMeasure = (product: ProductDto, item: UploadedItem, index: number, rowErrors: OrderUploadRowError[]) => {
+const setProductUnitOfMeasure = (
+    product: ProductDto,
+    item: UploadedItem,
+    index: number,
+    rowErrors: OrderUploadRowError[],
+) => {
     const uoms = getProductUnitOfMeasures(product, item);
     if (uoms.length > 0) {
         const um = uoms[0];
@@ -155,11 +186,25 @@ const setProductUnitOfMeasure = (product: ProductDto, item: UploadedItem, index:
     return false;
 };
 
-const addProductToList = (product: ProductDto, item: UploadedItem, index: number, result: BatchLoadProductsResult, checkInventory: boolean) => {
+const addProductToList = (
+    product: ProductDto,
+    item: UploadedItem,
+    index: number,
+    result: BatchLoadProductsResult,
+    checkInventory: boolean,
+) => {
     const baseUnitOfMeasure = getBaseUnitOfMeasure(product);
     const currentUnitOfMeasure = getCurrentUnitOfMeasure(product);
-    if (checkInventory && product.trackInventory && !product.canBackOrder && !product.quoteRequired && baseUnitOfMeasure && currentUnitOfMeasure
-        && product.qtyOrdered * baseUnitOfMeasure.qtyPerBaseUnitOfMeasure > product.qtyOnHand * currentUnitOfMeasure.qtyPerBaseUnitOfMeasure) {
+    if (
+        checkInventory &&
+        product.trackInventory &&
+        !product.canBackOrder &&
+        !product.quoteRequired &&
+        baseUnitOfMeasure &&
+        currentUnitOfMeasure &&
+        product.qtyOrdered * baseUnitOfMeasure.qtyPerBaseUnitOfMeasure >
+            product.qtyOnHand * currentUnitOfMeasure.qtyPerBaseUnitOfMeasure
+    ) {
         const rowError = mapRowError(index, UploadError.NotEnough, item.name, product);
         result.rowErrors.push(rowError);
     }
@@ -214,9 +259,14 @@ const mapRowError = (index: number, error: UploadError, name: string, product: P
 const getProductUnitOfMeasures = (product: ProductDto, item: UploadedItem) => {
     const lowerCaseItemUm = item.unitOfMeasure ? item.unitOfMeasure.toLowerCase() : "";
 
-    return lowerCaseItemUm && product.productUnitOfMeasures ? product.productUnitOfMeasures.filter(u => u.unitOfMeasure.toLowerCase() === lowerCaseItemUm
-        || u.unitOfMeasureDisplay.toLowerCase() === lowerCaseItemUm
-        || u.description.toLowerCase() === lowerCaseItemUm) : [];
+    return lowerCaseItemUm && product.productUnitOfMeasures
+        ? product.productUnitOfMeasures.filter(
+              u =>
+                  u.unitOfMeasure.toLowerCase() === lowerCaseItemUm ||
+                  u.unitOfMeasureDisplay.toLowerCase() === lowerCaseItemUm ||
+                  u.description.toLowerCase() === lowerCaseItemUm,
+          )
+        : [];
 };
 
 export const DispatchCompleteBatchLoadProducts: HandlerType = props => {

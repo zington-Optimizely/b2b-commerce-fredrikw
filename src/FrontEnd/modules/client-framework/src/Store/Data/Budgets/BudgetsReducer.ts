@@ -4,7 +4,6 @@ import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { BudgetModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
-
 const initialState: BudgetsState = {
     dataViews: {},
 };
@@ -16,7 +15,10 @@ const reducer = {
             fetchedDate: new Date(),
         };
     },
-    "Data/Budget/CompleteLoadBudget": (draft: Draft<BudgetsState>, action: { parameter: object, model: BudgetModel }) => {
+    "Data/Budget/CompleteLoadBudget": (
+        draft: Draft<BudgetsState>,
+        action: { parameter: object; model: BudgetModel },
+    ) => {
         const dataView = {
             isLoading: false,
             value: action.model,

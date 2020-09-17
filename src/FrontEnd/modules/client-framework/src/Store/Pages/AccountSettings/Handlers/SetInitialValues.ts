@@ -3,13 +3,16 @@ import { getBillTos, getShipTos } from "@insite/client-framework/Services/Custom
 import { getCurrentAccountState } from "@insite/client-framework/Store/Data/Accounts/AccountsSelector";
 import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = Handler<{}, {
-    defaultBillTo?: BillToModel,
-    defaultShipTo?: ShipToModel,
-    showSelectDefaultCustomer: boolean;
-    useDefaultCustomer: boolean;
-    hasMultipleBillTos: boolean;
-}>;
+type HandlerType = Handler<
+    {},
+    {
+        defaultBillTo?: BillToModel;
+        defaultShipTo?: ShipToModel;
+        showSelectDefaultCustomer: boolean;
+        useDefaultCustomer: boolean;
+        hasMultipleBillTos: boolean;
+    }
+>;
 
 export const FindDefaultBillTo: HandlerType = async props => {
     const billToCollection = await getBillTos({});
@@ -61,7 +64,9 @@ export const DetermineValues: HandlerType = props => {
 export const DispatchSetInitialValues: HandlerType = props => {
     const account = getCurrentAccountState(props.getState()).value;
     if (!account) {
-        throw new Error("There was no current account and we were trying to set initial values for the account settings page.");
+        throw new Error(
+            "There was no current account and we were trying to set initial values for the account settings page.",
+        );
     }
 
     props.dispatch({
@@ -74,13 +79,7 @@ export const DispatchSetInitialValues: HandlerType = props => {
     });
 };
 
-
-export const chain = [
-    FindDefaultBillTo,
-    FindDefaultShipTo,
-    DetermineValues,
-    DispatchSetInitialValues,
-];
+export const chain = [FindDefaultBillTo, FindDefaultShipTo, DetermineValues, DispatchSetInitialValues];
 
 const setInitialValues = createHandlerChainRunnerOptionalParameter(chain, {}, "SetInitialValues");
 export default setInitialValues;

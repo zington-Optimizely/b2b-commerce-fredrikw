@@ -36,7 +36,9 @@ export const productPartNumbersStyles: ProductPartNumbersStyles = {
     container: { gap: 5 },
     erpNumberLabelText: {
         weight: "bold",
-        css: css` flex: 0 0 auto; `,
+        css: css`
+            flex: 0 0 auto;
+        `,
     },
     erpNumberValueText: {
         css: css`
@@ -47,7 +49,9 @@ export const productPartNumbersStyles: ProductPartNumbersStyles = {
     },
     customerNameLabelText: {
         weight: "bold",
-        css: css` flex: 0 0 auto; `,
+        css: css`
+            flex: 0 0 auto;
+        `,
     },
     customerNameValueText: {
         css: css`
@@ -58,7 +62,9 @@ export const productPartNumbersStyles: ProductPartNumbersStyles = {
     },
     manufacturerItemLabelText: {
         weight: "bold",
-        css: css` flex: 0 0 auto; `,
+        css: css`
+            flex: 0 0 auto;
+        `,
     },
     manufacturerItemValueText: {
         css: css`
@@ -93,18 +99,18 @@ const ProductPartNumbers: FC<Props> = ({
                 <Typography {...styles.erpNumberLabelText}>{translate("Part #")}</Typography>
                 <Typography {...styles.erpNumberValueText}>{productNumber}</Typography>
             </GridItem>
-            {displayCustomerNumber
-                && <GridItem width={gridItemWidth as GridWidths} {...styles.customerNameGridItem}>
+            {displayCustomerNumber && (
+                <GridItem width={gridItemWidth as GridWidths} {...styles.customerNameGridItem}>
                     <Typography {...styles.customerNameLabelText}>{translate("My Part #")}</Typography>
                     <Typography {...styles.customerNameValueText}>{customerProductNumber}</Typography>
                 </GridItem>
-            }
-            {displayManufacturerNumber
-                && <GridItem width={gridItemWidth as GridWidths} {...styles.manufacturerItemGridItem}>
+            )}
+            {displayManufacturerNumber && (
+                <GridItem width={gridItemWidth as GridWidths} {...styles.manufacturerItemGridItem}>
                     <Typography {...styles.manufacturerItemLabelText}>{translate("MFG #")} </Typography>
                     <Typography {...styles.manufacturerItemValueText}>{manufacturerItem}</Typography>
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };

@@ -11,6 +11,8 @@ const WidgetGroups = [
     "Catalog",
     "Products",
     "Product Details",
+    "Order Approval List",
+    "Order Approval Details",
     "Order History",
     "Order Details",
     "Return Request (RMA)",
@@ -45,6 +47,9 @@ const WidgetGroups = [
     "Robots Txt",
     "Change Customer",
     "Location Finder",
+    "Mobile",
+    "User List",
+    "User Setup",
 ] as const;
 
 export default WidgetGroups;

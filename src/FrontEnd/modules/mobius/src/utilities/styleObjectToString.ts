@@ -11,16 +11,16 @@ const numericProperties = ["line-height", "font-weight"];
  */
 export default function styleObjectToString(styleObject?: React.CSSProperties) {
     const styleEntries = !styleObject ? [] : Object.entries(styleObject);
-    return styleEntries.reduce(
-    (styleString, [propName, propValue]) => {
+    return styleEntries.reduce((styleString, [propName, propValue]) => {
         const name = propName.replace(/([A-Z])/g, matches => `-${matches[0].toLowerCase()}`);
         let value = propValue;
         if (typeof propValue === "number") {
-            if (!numericProperties.includes(name)) value = `${propValue}px`;
+            if (!numericProperties.includes(name)) {
+                value = `${propValue}px`;
+            }
         } else if (Array.isArray(propValue)) {
-            value = propValue.reduce((result, x) => `${result} ${(typeof x === "number") ? `${x}px` : x}`, "");
+            value = propValue.reduce((result, x) => `${result} ${typeof x === "number" ? `${x}px` : x}`, "");
         }
         return `${styleString}${name}:${value};`;
-    },
-    "");
+    }, "");
 }

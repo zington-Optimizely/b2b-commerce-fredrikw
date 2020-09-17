@@ -8,20 +8,26 @@ import { PageModel } from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
 
-export function setupPageModel(pageModel: PageModel,
-                               name: string,
-                               urlSegment: string,
-                               parentNodeId: string,
-                               sortOrder: number,
-                               language: BasicLanguageModel,
-                               personaId: string,
-                               defaultPersonaId: string,
-                               websiteId: string) {
-
+export function setupPageModel(
+    pageModel: PageModel,
+    name: string,
+    urlSegment: string,
+    parentNodeId: string,
+    sortOrder: number,
+    language: BasicLanguageModel,
+    personaId: string,
+    defaultPersonaId: string,
+    websiteId: string,
+    isVariant: boolean,
+) {
     if (!pageModel.fields) {
         pageModel.fields = {};
     }
-    pageModel.name = name;
+    if (isVariant) {
+        pageModel.variantName = name;
+    } else {
+        pageModel.name = name;
+    }
     pageModel.sortOrder = sortOrder;
     pageModel.websiteId = websiteId;
     pageModel.parentId = parentNodeId;
@@ -38,9 +44,15 @@ export function setupPageModel(pageModel: PageModel,
     }
 
     pageModel.id = guidMap[pageModel.id];
-    pageModel.nodeId = newGuid();
+    if (!isVariant) {
+        pageModel.nodeId = newGuid();
+    }
 
-    const contextualId = getContextualId(language.id, "Desktop", language.hasPersonaSpecificContent ? personaId : defaultPersonaId);
+    const contextualId = getContextualId(
+        language.id,
+        "Desktop",
+        language.hasPersonaSpecificContent ? personaId : defaultPersonaId,
+    );
 
     setFieldsToExistingValuesWithProperContext(pageModel, language.id, contextualId);
     const pageDefinition = getPageDefinition(pageModel.type);
@@ -63,6 +75,10 @@ export function setupPageModel(pageModel: PageModel,
             }
         }
         setDefaultFieldValues(widget, widgetDefinition.fieldDefinitions, language.id, contextualId);
+    }
+
+    if (isVariant) {
+        return;
     }
 
     // I believe this is here because generic content pages all use a creator that has a generic title, and when someone creates a page the title should get auto set to match the name they enter
@@ -89,7 +105,11 @@ export function initializeFields(item: WidgetProps | PageModel) {
     }
 }
 
-function setFieldsToExistingValuesWithProperContext(item: WidgetProps | PageModel, currentLanguageId: string, contextualId: string) {
+function setFieldsToExistingValuesWithProperContext(
+    item: WidgetProps | PageModel,
+    currentLanguageId: string,
+    contextualId: string,
+) {
     initializeFields(item);
 
     const { translatableFields, contextualFields } = item;
@@ -108,7 +128,12 @@ function setFieldsToExistingValuesWithProperContext(item: WidgetProps | PageMode
     doWork(contextualFields, contextualId);
 }
 
-export function setDefaultFieldValues(item: WidgetProps | PageModel, fieldDefinitions: FieldDefinition[] | undefined, currentLanguageId: string, contextualId: string) {
+export function setDefaultFieldValues(
+    item: WidgetProps | PageModel,
+    fieldDefinitions: FieldDefinition[] | undefined,
+    currentLanguageId: string,
+    contextualId: string,
+) {
     initializeFields(item);
     const { fields, translatableFields, contextualFields, generalFields } = item;
 

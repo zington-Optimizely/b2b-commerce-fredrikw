@@ -3,7 +3,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import styled from "styled-components";
 
-export type FlexWrapContainerProps = { } & InjectableCss;
+export type FlexWrapContainerProps = {} & InjectableCss;
 
 /**
  * FlexWrapContainer can be used to create a flexible display, that can be used to wrap FlexItem's and consistently control the wrapping of the items.

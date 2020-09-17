@@ -27,12 +27,7 @@ export const DispatchCompleteLoadQuotes: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadQuotes,
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadQuotes,
-];
+export const chain = [DispatchBeginLoadQuotes, PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadQuotes];
 
 const loadQuotes = createHandlerChainRunner(chain, "LoadQuotes");
 export default loadQuotes;

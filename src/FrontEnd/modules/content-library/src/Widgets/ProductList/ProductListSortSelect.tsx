@@ -10,8 +10,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     pagination: getProductListDataViewProperty(state, "pagination"),
@@ -30,10 +29,14 @@ export interface ProductListSortSelectStyles {
 export const sortSelectStyles: ProductListSortSelectStyles = {
     select: {
         labelProps: {
-            css: css` width: unset; `,
+            css: css`
+                width: unset;
+            `,
         },
         cssOverrides: {
-            formField: css` width: 325px; `,
+            formField: css`
+                width: 325px;
+            `,
         },
     },
 };
@@ -59,16 +62,17 @@ const ProductListSortSelect: FC<Props> = ({ addProductFilters, pagination }) => 
             labelPosition="left"
             onChange={onChangeSortHandler}
             data-test-selector="productListSortSelect"
-            >
+        >
             {sortOptions.map(sortOption => (
-                <option key={sortOption.sortType} value={sortOption.sortType}>{sortOption.displayName}</option>
+                <option key={sortOption.sortType} value={sortOption.sortType}>
+                    {sortOption.displayName}
+                </option>
             ))}
         </Select>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListSortSelect),
     definition: {
         group: "Product List",

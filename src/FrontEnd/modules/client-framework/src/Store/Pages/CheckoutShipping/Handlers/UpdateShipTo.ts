@@ -1,5 +1,9 @@
 import { updateContext } from "@insite/client-framework/Context";
-import { ApiHandlerNoApiParameter, createHandlerChainRunner, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerNoApiParameter,
+    createHandlerChainRunner,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { createShipTo, updateShipTo as updateShipToApi } from "@insite/client-framework/Services/CustomersService";
 import { updateSession } from "@insite/client-framework/Services/SessionService";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
@@ -8,10 +12,13 @@ import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/Loa
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerNoApiParameter<{
-    billToId: string;
-    shipTo: ShipToModel;
-}, ShipToModel>;
+type HandlerType = ApiHandlerNoApiParameter<
+    {
+        billToId: string;
+        shipTo: ShipToModel;
+    },
+    ShipToModel
+>;
 
 export const AddOrUpdateShipTo: HandlerType = async props => {
     if (props.parameter.shipTo.isNew) {
@@ -74,7 +81,11 @@ export const DispatchCompleteUpdateShipTo: HandlerType = props => {
 
 export const DispatchSetLastSelectedShipTo: HandlerType = props => {
     const state = props.getState();
-    const { pages: { checkoutShipping: { useOneTimeAddress } } } = state;
+    const {
+        pages: {
+            checkoutShipping: { useOneTimeAddress },
+        },
+    } = state;
     if (useOneTimeAddress) {
         return;
     }

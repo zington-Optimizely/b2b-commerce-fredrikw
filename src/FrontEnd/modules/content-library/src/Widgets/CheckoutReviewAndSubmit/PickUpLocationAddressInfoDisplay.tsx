@@ -30,19 +30,19 @@ export const pickUpLocationAddressInfoDisplayStyles: PickUpLocationAddressInfoDi
     headingGridItem: { width: 12 },
     headingText: {
         weight: 600,
-        css: css` margin: 0 1rem 0 0; `,
+        css: css`
+            margin: 0 1rem 0 0;
+        `,
     },
     addressGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
 };
 
-const PickUpLocationAddressInfoDisplay = ({
-    location,
-    onEdit,
-    extendedStyles,
-}: OwnProps) => {
+const PickUpLocationAddressInfoDisplay = ({ location, onEdit, extendedStyles }: OwnProps) => {
     const styles = mergeToNew(pickUpLocationAddressInfoDisplayStyles, extendedStyles);
     return (
         <GridContainer {...styles.container} data-test-selector="pickUpLocationAddressInfoDisplay_container">
@@ -53,12 +53,8 @@ const PickUpLocationAddressInfoDisplay = ({
                 </Link>
             </GridItem>
             <GridItem {...styles.addressGridItem}>
-                <Typography {...styles.locationNameText}>
-                    {location.description || location.name}
-                </Typography>
-                <AddressInfoDisplay
-                    {...location}
-                    extendedStyles={styles.address} />
+                <Typography {...styles.locationNameText}>{location.description || location.name}</Typography>
+                <AddressInfoDisplay {...location} extendedStyles={styles.address} />
             </GridItem>
         </GridContainer>
     );

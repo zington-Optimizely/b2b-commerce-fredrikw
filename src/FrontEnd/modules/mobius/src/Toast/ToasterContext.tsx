@@ -14,14 +14,16 @@ const ToasterContext = React.createContext<ToastContextData>({
 });
 
 export interface HasToasterContext {
-    toaster: ToastContextData,
+    toaster: ToastContextData;
 }
 
 export function withToaster<P extends HasToasterContext>(Component: React.ComponentType<P>) {
     return function ToasterComponent(props: Omit<P, keyof HasToasterContext>) {
-        return <ToasterContext.Consumer>
-                {toasterContextData => <Component {...props as P} toaster={toasterContextData} />}
-        </ToasterContext.Consumer>;
+        return (
+            <ToasterContext.Consumer>
+                {toasterContextData => <Component {...(props as P)} toaster={toasterContextData} />}
+            </ToasterContext.Consumer>
+        );
     };
 }
 

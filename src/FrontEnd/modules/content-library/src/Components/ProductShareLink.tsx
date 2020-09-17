@@ -56,33 +56,47 @@ export const productShareLinkStyles: ProductShareLinkStyles = {
     modal: {
         size: 600,
         cssOverrides: {
-            modalTitle: css` padding: 10px 30px; `,
-            modalContent: css` padding: 20px 30px; `,
+            modalTitle: css`
+                padding: 10px 30px;
+            `,
+            modalContent: css`
+                padding: 20px 30px;
+            `,
         },
     },
     container: { gap: 10 },
     recipientNameGridItem: {
         width: 6,
-        css: css` padding-right: 10px; `,
+        css: css`
+            padding-right: 10px;
+        `,
     },
     recipientEmailGridItem: {
         width: 6,
-        css: css` padding-left: 10px; `,
+        css: css`
+            padding-left: 10px;
+        `,
     },
     yourNameGridItem: {
         width: 6,
-        css: css` padding-right: 10px; `,
+        css: css`
+            padding-right: 10px;
+        `,
     },
     yourEmailGridItem: {
         width: 6,
-        css: css` padding-left: 10px; `,
+        css: css`
+            padding-left: 10px;
+        `,
     },
     yourMessageGridItem: {
         width: 12,
     },
     yourMessageTextArea: {
         cssOverrides: {
-            inputSelect: css` resize: none; `,
+            inputSelect: css`
+                resize: none;
+            `,
         },
     },
     buttonsWrapper: {
@@ -95,18 +109,13 @@ export const productShareLinkStyles: ProductShareLinkStyles = {
         variant: "secondary",
     },
     shareButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
 };
 
-const ProductShareLink: React.FC<Props> = ({
-                                               product,
-                                               productInfo,
-                                               text,
-                                               session,
-                                               shareProduct,
-                                               extendedStyles,
-                                           }) => {
+const ProductShareLink: React.FC<Props> = ({ product, productInfo, text, session, shareProduct, extendedStyles }) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productShareLinkStyles, extendedStyles));
     const isAuthenticated = (session.isAuthenticated || session.rememberMe) && !session.isGuest;
@@ -115,7 +124,9 @@ const ProductShareLink: React.FC<Props> = ({
     const [recipientNameError, setRecipientNameError] = React.useState("");
     const [recipientEmail, setRecipientEmail] = React.useState("");
     const [recipientEmailError, setRecipientEmailError] = React.useState("");
-    const initialYourName = isAuthenticated ? `${session!.firstName} ${session!.lastName}`.trim() || session!.userName || "" : "";
+    const initialYourName = isAuthenticated
+        ? `${session!.firstName} ${session!.lastName}`.trim() || session!.userName || ""
+        : "";
     const [yourName, setYourName] = React.useState(initialYourName);
     const [yourNameError, setYourNameError] = React.useState("");
     const initialYourEmail = isAuthenticated ? session.email || "" : "";
@@ -136,20 +147,30 @@ const ProductShareLink: React.FC<Props> = ({
     const requiredFieldMessage = translate("This is a required field");
     const emailFieldMessage = translate("Enter a valid email address");
     const checkForErrors = () => {
-        const regexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+        const regexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 
         const localRecipientNameError = !recipientName ? requiredFieldMessage : "";
         setRecipientNameError(localRecipientNameError);
-        const localRecipientEmailError = !recipientEmail ? requiredFieldMessage : (regexp.test(recipientEmail) ? "" : emailFieldMessage);
+        const localRecipientEmailError = !recipientEmail
+            ? requiredFieldMessage
+            : regexp.test(recipientEmail)
+            ? ""
+            : emailFieldMessage;
         setRecipientEmailError(localRecipientEmailError);
         const localYourNameError = !yourName ? requiredFieldMessage : "";
         setYourNameError(localYourNameError);
-        const localYourEmailError = !yourEmail ? requiredFieldMessage : (regexp.test(yourEmail) ? "" : emailFieldMessage);
+        const localYourEmailError = !yourEmail ? requiredFieldMessage : regexp.test(yourEmail) ? "" : emailFieldMessage;
         setYourEmailError(localYourEmailError);
         const localYourMessageError = !yourMessage ? requiredFieldMessage : "";
         setYourMessageError(localYourMessageError);
 
-        return !!(localRecipientNameError || localRecipientEmailError || localYourNameError || localYourEmailError || localYourMessageError);
+        return !!(
+            localRecipientNameError ||
+            localRecipientEmailError ||
+            localYourNameError ||
+            localYourEmailError ||
+            localYourMessageError
+        );
     };
 
     const resetFields = () => {
@@ -206,67 +227,88 @@ const ProductShareLink: React.FC<Props> = ({
         });
     };
 
-    return <>
-        <Link {...styles.link} onClick={shareLinkClickHandler} data-test-selector="productShareLink">{text || translate("Share")}</Link>
-        <Modal
-            {...styles.modal}
-            headline={translate("Share Product")}
-            isOpen={modalIsOpen}
-            handleClose={modalCloseHandler}
-        >
-            <GridContainer {...styles.container} data-test-selector="productShareModal">
-                <GridItem {...styles.recipientNameGridItem}>
-                    <TextField
-                        label={translate("Recipient Name*")}
-                        value={recipientName}
-                        error={recipientNameError}
-                        onChange={recipientNameChangeHandler}
-                        data-test-selector="productShareRecipientName"
-                        {...styles.recipientNameTextField} />
-                </GridItem>
-                <GridItem {...styles.recipientEmailGridItem}>
-                    <TextField
-                        label={translate("Recipient Email*")}
-                        value={recipientEmail}
-                        error={recipientEmailError}
-                        onChange={recipientEmailChangeHandler}
-                        data-test-selector="productShareRecipientEmail"
-                        {...styles.recipientEmailTextField} />
-                </GridItem>
-                <GridItem {...styles.yourNameGridItem}>
-                    <TextField
-                        label={translate("Your Name*")}
-                        value={yourName}
-                        error={yourNameError}
-                        onChange={yourNameChangeHandler}
-                        data-test-selector="productShareYourName"
-                        {...styles.yourNameTextField} />
-                </GridItem>
-                <GridItem {...styles.yourEmailGridItem}>
-                    <TextField
-                        label={translate("Your Email*")}
-                        value={yourEmail}
-                        error={yourEmailError}
-                        onChange={yourEmailChangeHandler}
-                        data-test-selector="productShareYourEmail"
-                        {...styles.yourEmailTextField} />
-                </GridItem>
-                <GridItem {...styles.yourMessageGridItem}>
-                    <TextArea
-                        label={translate("Your Message*")}
-                        value={yourMessage}
-                        error={yourMessageError}
-                        onChange={yourMessageChangeHandler}
-                        data-test-selector="productShareYourMessage"
-                        {...styles.yourMessageTextArea} />
-                </GridItem>
-            </GridContainer>
-            <StyledWrapper {...styles.buttonsWrapper}>
-                <Button {...styles.cancelButton} onClick={modalCloseHandler} data-test-selector="productShareCancel">{translate("Cancel")}</Button>
-                <Button {...styles.shareButton} onClick={shareButtonClickHandler} data-test-selector="productShareSubmit">{translate("Share")}</Button>
-            </StyledWrapper>
-        </Modal>
-    </>;
+    return (
+        <>
+            <Link {...styles.link} onClick={shareLinkClickHandler} data-test-selector="productShareLink">
+                {text || translate("Share")}
+            </Link>
+            <Modal
+                {...styles.modal}
+                headline={translate("Share Product")}
+                isOpen={modalIsOpen}
+                handleClose={modalCloseHandler}
+            >
+                <GridContainer {...styles.container} data-test-selector="productShareModal">
+                    <GridItem {...styles.recipientNameGridItem}>
+                        <TextField
+                            label={translate("Recipient Name*")}
+                            value={recipientName}
+                            error={recipientNameError}
+                            onChange={recipientNameChangeHandler}
+                            data-test-selector="productShareRecipientName"
+                            {...styles.recipientNameTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.recipientEmailGridItem}>
+                        <TextField
+                            label={translate("Recipient Email*")}
+                            value={recipientEmail}
+                            error={recipientEmailError}
+                            onChange={recipientEmailChangeHandler}
+                            data-test-selector="productShareRecipientEmail"
+                            {...styles.recipientEmailTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.yourNameGridItem}>
+                        <TextField
+                            label={translate("Your Name*")}
+                            value={yourName}
+                            error={yourNameError}
+                            onChange={yourNameChangeHandler}
+                            data-test-selector="productShareYourName"
+                            {...styles.yourNameTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.yourEmailGridItem}>
+                        <TextField
+                            label={translate("Your Email*")}
+                            value={yourEmail}
+                            error={yourEmailError}
+                            onChange={yourEmailChangeHandler}
+                            data-test-selector="productShareYourEmail"
+                            {...styles.yourEmailTextField}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.yourMessageGridItem}>
+                        <TextArea
+                            label={translate("Your Message*")}
+                            value={yourMessage}
+                            error={yourMessageError}
+                            onChange={yourMessageChangeHandler}
+                            data-test-selector="productShareYourMessage"
+                            {...styles.yourMessageTextArea}
+                        />
+                    </GridItem>
+                </GridContainer>
+                <StyledWrapper {...styles.buttonsWrapper}>
+                    <Button
+                        {...styles.cancelButton}
+                        onClick={modalCloseHandler}
+                        data-test-selector="productShareCancel"
+                    >
+                        {translate("Cancel")}
+                    </Button>
+                    <Button
+                        {...styles.shareButton}
+                        onClick={shareButtonClickHandler}
+                        data-test-selector="productShareSubmit"
+                    >
+                        {translate("Share")}
+                    </Button>
+                </StyledWrapper>
+            </Modal>
+        </>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withProduct(ProductShareLink));

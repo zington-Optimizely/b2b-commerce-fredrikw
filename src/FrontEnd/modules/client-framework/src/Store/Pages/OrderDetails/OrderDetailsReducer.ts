@@ -9,13 +9,16 @@ const initialState: OrderDetailsState = {
 };
 
 const reducer = {
-    "Pages/OrderDetails/SetOrderNumber": (draft: Draft<OrderDetailsState>, action: { orderNumber: string; }) => {
+    "Pages/OrderDetails/SetOrderNumber": (draft: Draft<OrderDetailsState>, action: { orderNumber: string }) => {
         draft.orderNumber = action.orderNumber;
     },
     "Pages/OrderDetails/BeginReorder": (draft: Draft<OrderDetailsState>) => {
         draft.isReordering = true;
     },
-    "Pages/OrderDetails/CompleteReorder": (draft: Draft<OrderDetailsState>, action: { cartLineCollection: CartLineCollectionModel; }) => {
+    "Pages/OrderDetails/CompleteReorder": (
+        draft: Draft<OrderDetailsState>,
+        action: { cartLineCollection: CartLineCollectionModel },
+    ) => {
         draft.isReordering = false;
     },
     "Pages/OrderDetails/BeginCancelOrder": (draft: Draft<OrderDetailsState>) => {

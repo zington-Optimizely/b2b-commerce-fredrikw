@@ -1,2 +1,1 @@
-export default interface OrderUploadState {
-}
+export default interface OrderUploadState {}

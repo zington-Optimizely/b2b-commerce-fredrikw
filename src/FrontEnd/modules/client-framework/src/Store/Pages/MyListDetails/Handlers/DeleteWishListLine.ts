@@ -3,17 +3,18 @@ import { deleteWishListLine as deleteWishListLineApi } from "@insite/client-fram
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
 
-type HandlerType = Handler<
-    {
-        wishListId: string;
-        wishListLineId: string;
-        reloadWishListLines?: boolean;
-        onSuccess?: () => void;
-    }
->;
+type HandlerType = Handler<{
+    wishListId: string;
+    wishListLineId: string;
+    reloadWishListLines?: boolean;
+    onSuccess?: () => void;
+}>;
 
 export const RequestRemoveWishListLine: HandlerType = async props => {
-    await deleteWishListLineApi({ wishListId: props.parameter.wishListId, wishListLineId: props.parameter.wishListLineId });
+    await deleteWishListLineApi({
+        wishListId: props.parameter.wishListId,
+        wishListLineId: props.parameter.wishListLineId,
+    });
 };
 
 export const ResetWishListData: HandlerType = props => {

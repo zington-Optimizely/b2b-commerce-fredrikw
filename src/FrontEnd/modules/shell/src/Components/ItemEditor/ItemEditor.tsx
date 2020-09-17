@@ -1,3 +1,4 @@
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { removeWidget, replaceItem, updateField } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
 import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
@@ -6,10 +7,17 @@ import Scrim from "@insite/mobius/Overlay/Scrim";
 import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { getPageDefinition, getWidgetDefinition, LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import {
+    getPageDefinition,
+    getWidgetDefinition,
+    LoadedPageDefinition,
+    LoadedWidgetDefinition,
+} from "@insite/shell/DefinitionLoader";
+import { getPageState } from "@insite/shell/Services/ContentAdminService";
 import { cancelEditingItem, doneEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled from "styled-components";
@@ -23,7 +31,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
         const currentPage = getCurrentPageForShell(state);
         if (state.pageEditor.editingId === currentPage.id) {
             item = currentPage;
-            definition = getPageDefinition(currentPage.type);
+            definition = cloneDeep(getPageDefinition(currentPage.type));
         } else {
             item = state.data.pages.widgetsById[state.pageEditor.editingId];
             definition = getWidgetDefinition(item.type);
@@ -40,6 +48,10 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
         defaultPersonaId: state.shellContext.defaultPersonaId,
         deviceType: state.shellContext.currentDeviceType,
         removeItemIfCanceled: state.pageEditor.removeItemIfCanceled,
+        isVariant: !!state.pageEditor.isEditingVariant,
+        treeNodesByParentId: state.pageTree.treeNodesByParentId,
+        headerTreeNodesByParentId: state.pageTree.headerTreeNodesByParentId,
+        footerTreeNodesByParentId: state.pageTree.footerTreeNodesByParentId,
     };
 };
 
@@ -51,10 +63,7 @@ const mapDispatchToProps = {
     removeWidget,
 };
 
-type Props =
-    ReturnType<typeof mapStateToProps>
-    & ResolveThunks<typeof mapDispatchToProps>
-    & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 interface State {
     hasValidationErrors: boolean;
@@ -133,7 +142,14 @@ class ItemEditor extends React.Component<Props, State> {
     };
 
     render() {
-        const { item, definition } = this.props;
+        const {
+            item,
+            definition,
+            isVariant,
+            treeNodesByParentId,
+            headerTreeNodesByParentId,
+            footerTreeNodesByParentId,
+        } = this.props;
 
         if (!item || !definition) {
             return null;
@@ -141,17 +157,104 @@ class ItemEditor extends React.Component<Props, State> {
 
         const fieldDefinitions = definition.fieldDefinitions ?? [];
 
+        if (item.type === "VariantRootPage") {
+            const currentPageState = getPageState(
+                item.id,
+                treeNodesByParentId[item.parentId],
+                headerTreeNodesByParentId[item.parentId],
+                footerTreeNodesByParentId[item.parentId],
+            );
+
+            if (currentPageState) {
+                const childList =
+                    treeNodesByParentId[currentPageState.nodeId] ||
+                    headerTreeNodesByParentId[currentPageState.nodeId] ||
+                    footerTreeNodesByParentId[currentPageState.nodeId];
+
+                let variantDefinition: LoadedPageDefinition | undefined;
+                for (const child of childList) {
+                    if (!child.isVariant) {
+                        continue;
+                    }
+                    variantDefinition = getPageDefinition(child.type);
+                    break;
+                }
+
+                if (variantDefinition) {
+                    const variantFieldDefinitions: SafeDictionary<FieldDefinition> = {};
+
+                    (variantDefinition.fieldDefinitions ?? []).forEach(o => {
+                        variantFieldDefinitions[o.name] = o;
+                    });
+
+                    const rootFieldDefinitions: SafeDictionary<FieldDefinition> = {};
+
+                    fieldDefinitions.forEach(o => {
+                        rootFieldDefinitions[o.name] = o;
+                    });
+
+                    for (let i = fieldDefinitions.length - 1; i >= 0; i--) {
+                        if (!variantFieldDefinitions[fieldDefinitions[i].name]) {
+                            fieldDefinitions.splice(i, 1);
+                        }
+                    }
+
+                    if (variantFieldDefinitions["urlSegment"] && !rootFieldDefinitions["urlSegment"]) {
+                        fieldDefinitions.unshift(variantFieldDefinitions["urlSegment"]);
+                    }
+
+                    if (variantFieldDefinitions["title"] && !rootFieldDefinitions["title"]) {
+                        fieldDefinitions.unshift(variantFieldDefinitions["title"]);
+                    }
+                }
+            }
+        } else if (isVariant) {
+            const rootFields = [
+                "title",
+                "urlSegment",
+                "metaKeywords",
+                "metaDescription",
+                "hideFromSearchEngines",
+                "hideFromSiteSearch",
+                "excludeFromNavigation",
+                "excludeFromSignInRequired",
+            ];
+            for (let i = fieldDefinitions.length - 1; i >= 0; --i) {
+                for (let j = 0; j < rootFields.length; ++j) {
+                    if (fieldDefinitions[i].name === rootFields[j]) {
+                        fieldDefinitions.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!isVariant) {
+            for (let i = 0; i < fieldDefinitions.length; ++i) {
+                if (fieldDefinitions[i].name === "variantName") {
+                    fieldDefinitions.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
         return (
             <>
                 <Scrim zIndexLevel="modal" />
-                <SideBarForm title={`Edit ${definition.displayName}`} save={this.doneEditingItem} name="EditItem"
-                             cancel={this.cancelEditingItem}
-                             disableSave={this.state.hasValidationErrors}>
-                    <FieldsEditor fieldDefinitions={fieldDefinitions}
-                                  item={item}
-                                  updateField={this.updateField}
-                                  registerHasValidationErrors={this.registerHasValidationErrors}
-                                  updateHasValidationErrors={this.updateHasValidationErrors} />
+                <SideBarForm
+                    title={`Edit ${definition.displayName}`}
+                    save={this.doneEditingItem}
+                    name="EditItem"
+                    cancel={this.cancelEditingItem}
+                    disableSave={this.state.hasValidationErrors}
+                >
+                    <FieldsEditor
+                        fieldDefinitions={fieldDefinitions}
+                        item={item}
+                        updateField={this.updateField}
+                        registerHasValidationErrors={this.registerHasValidationErrors}
+                        updateHasValidationErrors={this.updateHasValidationErrors}
+                    />
                 </SideBarForm>
             </>
         );

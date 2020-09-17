@@ -23,22 +23,21 @@ export interface ProductDetailsQuantityOrderedStyles {
 export const quantityOrderedStyles: ProductDetailsQuantityOrderedStyles = {
     quantityOrdered: {
         cssOverrides: {
-            formField: css` margin-top: 10px; `,
+            formField: css`
+                margin-top: 10px;
+            `,
         },
     },
 };
 
 const styles = quantityOrderedStyles;
 
-const ProductDetailsQuantityOrdered: React.FC<Props> = ({
-                                                            canAddToCart,
-                                                        }) => {
+const ProductDetailsQuantityOrdered: React.FC<Props> = ({ canAddToCart }) => {
     if (!canAddToCart) {
         return null;
     }
 
-    return <ProductQuantityOrdered
-        extendedStyles={styles.quantityOrdered}/>;
+    return <ProductQuantityOrdered extendedStyles={styles.quantityOrdered} />;
 };
 
 const widgetModule: WidgetModule = {

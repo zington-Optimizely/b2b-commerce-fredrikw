@@ -4,7 +4,7 @@ import loadInvoiceByInvoiceNumber from "@insite/client-framework/Store/Data/Invo
 import { getInvoiceState } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import { InvoiceModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ invoiceNumber: string; }, GetInvoiceApiParameter, InvoiceModel>;
+type HandlerType = ApiHandlerDiscreteParameter<{ invoiceNumber: string }, GetInvoiceApiParameter, InvoiceModel>;
 
 export const DispatchSetInvoiceNumber: HandlerType = props => {
     props.dispatch({
@@ -20,10 +20,7 @@ export const DispatchLoadInvoiceIfNeeded: HandlerType = props => {
     }
 };
 
-export const chain = [
-    DispatchSetInvoiceNumber,
-    DispatchLoadInvoiceIfNeeded,
-];
+export const chain = [DispatchSetInvoiceNumber, DispatchLoadInvoiceIfNeeded];
 
 const displayInvoice = createHandlerChainRunner(chain, "DisplayInvoice");
 export default displayInvoice;

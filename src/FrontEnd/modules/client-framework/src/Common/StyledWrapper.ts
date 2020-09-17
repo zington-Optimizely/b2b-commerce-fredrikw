@@ -5,7 +5,9 @@ import styled, { StyledComponent } from "styled-components";
 
 // This should work but doesn't in TypeScript 3.7.1-rc
 // <T extends keyof JSX.IntrinsicElements>(element: T) => styled[element]<InjectableCss>` ${injectCss} `;
-const createStyledWrapper = <T extends keyof JSX.IntrinsicElements>(element: T): StyledComponent<T, any, InjectableCss, never> => (styled as any)[element]<InjectableCss>` ${injectCss} `;
+const createStyledWrapper = <T extends keyof JSX.IntrinsicElements>(
+    element: T,
+): StyledComponent<T, any, InjectableCss, never> => (styled as any)[element]<InjectableCss>` ${injectCss} `;
 
 /** A styled `div` element that allows for render-time style customization. */
 const StyledWrapper = createStyledWrapper("div");
@@ -21,7 +23,7 @@ const wrapperCache: SafeDictionary<StyledComponent<any, any, InjectableCss, neve
 export const getStyledWrapper = <T extends keyof JSX.IntrinsicElements>(element: T) => {
     const cached = wrapperCache[element];
     if (!cached) {
-        const created = wrapperCache[element] = createStyledWrapper(element);
+        const created = (wrapperCache[element] = createStyledWrapper(element));
         return created;
     }
 

@@ -29,8 +29,7 @@ export interface OrderDetailsShipmentPackagesStyles {
     trackingNumberCell?: DataTableCellProps;
 }
 
-export const shipmentPackagesStyles: OrderDetailsShipmentPackagesStyles = {
-};
+export const shipmentPackagesStyles: OrderDetailsShipmentPackagesStyles = {};
 
 const styles = shipmentPackagesStyles;
 
@@ -56,13 +55,18 @@ const OrderDetailsShipmentPackages: React.FC = () => {
                 {order.shipmentPackages.map(shipmentPackage => (
                     <DataTableRow {...styles.dataTableRow} key={shipmentPackage.id}>
                         <DataTableCell {...styles.shipmentDateCell}>
-                            <LocalizedDateTime dateTime={new Date(shipmentPackage.shipmentDate)} options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                            <LocalizedDateTime
+                                dateTime={new Date(shipmentPackage.shipmentDate)}
+                                options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                            />
                         </DataTableCell>
                         <DataTableCell {...styles.carrierCell}>{shipmentPackage.carrier}</DataTableCell>
                         <DataTableCell {...styles.shipViaCell}>{shipmentPackage.shipVia}</DataTableCell>
-                        <DataTableCell {...styles.trackingNumberCell}>{parse(shipmentPackage.trackingUrl, parserOptions)}</DataTableCell>
-                    </DataTableRow>))
-                }
+                        <DataTableCell {...styles.trackingNumberCell}>
+                            {parse(shipmentPackage.trackingUrl, parserOptions)}
+                        </DataTableCell>
+                    </DataTableRow>
+                ))}
             </DataTableBody>
         </DataTable>
     );

@@ -1,12 +1,14 @@
 import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
-import { clearModelSelection, searchBrands, selectBrand } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import {
+    clearModelSelection,
+    searchBrands,
+    selectBrand,
+} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps {
-
-}
+interface OwnProps {}
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     selectedBrandPath: state.pageEditor.selectedBrandPath,

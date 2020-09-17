@@ -8,7 +8,8 @@ import translate from "@insite/client-framework/Translate";
 import {
     AvailabilityDto,
     AvailabilityMessageType,
-    ProductSettingsModel, WarehouseDto,
+    ProductSettingsModel,
+    WarehouseDto,
 } from "@insite/client-framework/Types/ApiModels";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
@@ -76,15 +77,21 @@ export interface ProductAvailabilityStyles {
 export const productAvailabilityStyles: ProductAvailabilityStyles = {
     container: {
         gap: 0,
-        css: css` flex-grow: 0; `,
+        css: css`
+            flex-grow: 0;
+        `,
     },
     messageGridItem: { width: 12 },
     availabilityByWarehouseLinkGridItem: { width: 12 },
     availabilityByWarehouseModal: {
         size: 400,
         cssOverrides: {
-            modalContent: css` padding: 0; `,
-            modalTitle: css` padding: 10px 10px 10px 20px; `,
+            modalContent: css`
+                padding: 0;
+            `,
+            modalTitle: css`
+                padding: 10px 10px 10px 20px;
+            `,
             headlineTypography: css`
                 font-size: 20px;
                 margin-bottom: 0;
@@ -99,7 +106,11 @@ export const productAvailabilityStyles: ProductAvailabilityStyles = {
             align-items: center;
         `,
     },
-    spinner: { css: css` margin: 0 auto; ` },
+    spinner: {
+        css: css`
+            margin: 0 auto;
+        `,
+    },
     messageText: {
         css: css`
             width: 100%;
@@ -109,25 +120,25 @@ export const productAvailabilityStyles: ProductAvailabilityStyles = {
     realTimeText: {
         weight: "bold",
         css: css`
+            display: inline-block;
+            text-align: left;
+            min-width: 25px;
+
+            &::after {
+                overflow: hidden;
                 display: inline-block;
-                text-align: left;
-                min-width: 25px;
+                vertical-align: bottom;
+                animation: ellipsis steps(4, end) 900ms infinite 1s;
+                content: "\\2026";
+                width: 0;
+            }
 
-                &::after {
-                    overflow: hidden;
-                    display: inline-block;
-                    vertical-align: bottom;
-                    animation: ellipsis steps(4, end) 900ms infinite 1s;
-                    content: "\\2026";
-                    width: 0;
+            @keyframes ellipsis {
+                to {
+                    width: 1.25em;
                 }
-
-                @keyframes ellipsis {
-                    to {
-                        width: 1.25em;
-                    }
-                }
-            `,
+            }
+        `,
     },
     errorText: {
         css: css`
@@ -137,7 +148,7 @@ export const productAvailabilityStyles: ProductAvailabilityStyles = {
     },
 };
 
-const InventoryMessage = styled.div<{ color: string; }>`
+const InventoryMessage = styled.div<{ color: string }>`
     display: flex;
     align-items: center;
     padding: 5px;
@@ -178,8 +189,16 @@ const getAvailabilityIcon = (availability?: AvailabilityDto) => {
     return iconSrc;
 };
 
-const showLink = (trackInventory: boolean, productSettings: ProductSettingsModel, isProductDetailsPage?: boolean): boolean => {
-    if (!trackInventory || !productSettings.showInventoryAvailability || !productSettings.displayInventoryPerWarehouse) {
+const showLink = (
+    trackInventory: boolean,
+    productSettings: ProductSettingsModel,
+    isProductDetailsPage?: boolean,
+): boolean => {
+    if (
+        !trackInventory ||
+        !productSettings.showInventoryAvailability ||
+        !productSettings.displayInventoryPerWarehouse
+    ) {
         return false;
     }
 
@@ -191,15 +210,15 @@ const showLink = (trackInventory: boolean, productSettings: ProductSettingsModel
 };
 
 const ProductAvailability: FC<Props> = ({
-                                            productId,
-                                            availability,
-                                            unitOfMeasure,
-                                            trackInventory,
-                                            productSettings,
-                                            isProductDetailsPage,
-                                            getRealTimeWarehouseInventory,
-                                            extendedStyles,
-                                        }) => {
+    productId,
+    availability,
+    unitOfMeasure,
+    trackInventory,
+    productSettings,
+    isProductDetailsPage,
+    getRealTimeWarehouseInventory,
+    extendedStyles,
+}) => {
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
     const [warehouses, setWarehouses] = React.useState<WarehouseDto[] | undefined>(undefined);
     const [errorMessage, setErrorMessage] = React.useState("");
@@ -211,13 +230,15 @@ const ProductAvailability: FC<Props> = ({
         setIsLoading(true);
         setModalIsOpen(true);
         getRealTimeWarehouseInventory({
-            productId, unitOfMeasure, expand: ["warehouses"], onComplete: (result) => {
+            productId,
+            unitOfMeasure,
+            expand: ["warehouses"],
+            onComplete: result => {
                 setWarehouses(result.warehouses);
                 setErrorMessage(result.errorMessage);
                 setIsLoading(false);
             },
         });
-
     };
 
     const color = getAvailabilityColor(availability);
@@ -225,67 +246,84 @@ const ProductAvailability: FC<Props> = ({
 
     const [styles] = React.useState(() => mergeToNew(productAvailabilityStyles, extendedStyles));
 
-    let inventoryTextComponent = <Typography {...styles.realTimeText}/>;
+    let inventoryTextComponent = <Typography {...styles.realTimeText} />;
     if (availability && availability.message) {
-        inventoryTextComponent = <InventoryMessage color={color} {...styles.inventoryMessage}>
-            <Icon color={color} src={iconSrc}/>
-            <Typography {...styles.messageText} data-test-selector="availabilityMessage">
-                {availability.message}
-            </Typography>
-        </InventoryMessage>;
+        inventoryTextComponent = (
+            <InventoryMessage color={color} {...styles.inventoryMessage}>
+                <Icon color={color} src={iconSrc} />
+                <Typography {...styles.messageText} data-test-selector="availabilityMessage">
+                    {availability.message}
+                </Typography>
+            </InventoryMessage>
+        );
     } else if (availability) {
         inventoryTextComponent = <></>;
     }
 
-    return (<GridContainer {...styles.container}>
-        <GridItem  {...styles.messageGridItem}>
-            {inventoryTextComponent}
-        </GridItem>
-        {showLink(trackInventory, productSettings, isProductDetailsPage)
-        && <GridItem {...styles.availabilityByWarehouseLinkGridItem}>
-            <Link
-                {...styles.availabilityByWarehouseLink}
-                onClick={viewAvailabilityByWarehouseClickHandler}
-                data-test-selector="availabilityByWarehouseLink"
-            >
-                {translate("View Availability by Warehouse")}
-            </Link>
-            <Modal
-                {...styles.availabilityByWarehouseModal}
-                headline={translate("Warehouse Inventory")}
-                isOpen={modalIsOpen}
-                handleClose={modalCloseHandler}
-            >
-                {isLoading
-                && <StyledWrapper {...styles.centeringWrapper}>
-                    <LoadingSpinner {...styles.spinner} />
-                </StyledWrapper>
-                }
-                {!isLoading
-                && <>
-                    {errorMessage
-                        ? <div>{errorMessage}</div>
-                        : <DataTable {...styles.availabilityByWarehouseTable} data-test-selector="availabilityByWarehouseModal">
-                            <DataTableHead {...styles.availabilityByWarehouseTableHead}>
-                                <DataTableHeader {...styles.availabilityByWarehouseTableHeader}>{translate("Warehouse")}</DataTableHeader>
-                                <DataTableHeader {...styles.availabilityByWarehouseTableHeader}>{translate("Qty")}</DataTableHeader>
-                            </DataTableHead>
-                            <DataTableBody {...styles.availabilityByWarehouseTableBody}>
-                                {warehouses?.map(warehouse =>
-                                    <DataTableRow {...styles.availabilityByWarehouseTableRow} key={warehouse.name}>
-                                        <DataTableCell {...styles.availabilityByWarehouseTableCell}>{warehouse.description || warehouse.name}</DataTableCell>
-                                        <DataTableCell {...styles.availabilityByWarehouseTableCell}>{warehouse.qty}</DataTableCell>
-                                    </DataTableRow>)
-                                }
-                            </DataTableBody>
-                        </DataTable>
-                    }
-                </>
-                }
-            </Modal>
-        </GridItem>
-        }
-    </GridContainer>);
+    return (
+        <GridContainer {...styles.container}>
+            <GridItem {...styles.messageGridItem}>{inventoryTextComponent}</GridItem>
+            {showLink(trackInventory, productSettings, isProductDetailsPage) && (
+                <GridItem {...styles.availabilityByWarehouseLinkGridItem}>
+                    <Link
+                        {...styles.availabilityByWarehouseLink}
+                        onClick={viewAvailabilityByWarehouseClickHandler}
+                        data-test-selector="availabilityByWarehouseLink"
+                    >
+                        {translate("View Availability by Warehouse")}
+                    </Link>
+                    <Modal
+                        {...styles.availabilityByWarehouseModal}
+                        headline={translate("Warehouse Inventory")}
+                        isOpen={modalIsOpen}
+                        handleClose={modalCloseHandler}
+                    >
+                        {isLoading && (
+                            <StyledWrapper {...styles.centeringWrapper}>
+                                <LoadingSpinner {...styles.spinner} />
+                            </StyledWrapper>
+                        )}
+                        {!isLoading && (
+                            <>
+                                {errorMessage ? (
+                                    <div>{errorMessage}</div>
+                                ) : (
+                                    <DataTable
+                                        {...styles.availabilityByWarehouseTable}
+                                        data-test-selector="availabilityByWarehouseModal"
+                                    >
+                                        <DataTableHead {...styles.availabilityByWarehouseTableHead}>
+                                            <DataTableHeader {...styles.availabilityByWarehouseTableHeader}>
+                                                {translate("Warehouse")}
+                                            </DataTableHeader>
+                                            <DataTableHeader {...styles.availabilityByWarehouseTableHeader}>
+                                                {translate("Qty")}
+                                            </DataTableHeader>
+                                        </DataTableHead>
+                                        <DataTableBody {...styles.availabilityByWarehouseTableBody}>
+                                            {warehouses?.map(warehouse => (
+                                                <DataTableRow
+                                                    {...styles.availabilityByWarehouseTableRow}
+                                                    key={warehouse.name}
+                                                >
+                                                    <DataTableCell {...styles.availabilityByWarehouseTableCell}>
+                                                        {warehouse.description || warehouse.name}
+                                                    </DataTableCell>
+                                                    <DataTableCell {...styles.availabilityByWarehouseTableCell}>
+                                                        {warehouse.qty}
+                                                    </DataTableCell>
+                                                </DataTableRow>
+                                            ))}
+                                        </DataTableBody>
+                                    </DataTable>
+                                )}
+                            </>
+                        )}
+                    </Modal>
+                </GridItem>
+            )}
+        </GridContainer>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAvailability);

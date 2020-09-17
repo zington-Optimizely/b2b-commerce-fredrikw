@@ -82,28 +82,33 @@ export type ButtonProps = ButtonComponentProps & ButtonPresentationProps;
 
 const ButtonIcon = styled(Icon)``;
 
-type BWT = Pick<ButtonProps, "shadow"> & InjectableCss & {
-    _sizeVariant: ButtonProps["sizeVariant"];
-    _size: ButtonProps["size"] | null;
-    _color: ButtonProps["color"];
-    _shape: ButtonProps["shape"];
-};
+type BWT = Pick<ButtonProps, "shadow"> &
+    InjectableCss & {
+        _sizeVariant: ButtonProps["sizeVariant"];
+        _size: ButtonProps["size"] | null;
+        _color: ButtonProps["color"];
+        _shape: ButtonProps["shape"];
+        // this is needed because styled-components is confused
+        disabled: boolean;
+    };
 
-// TODO ISC-13955 figure outer why we need any on these
-const ButtonWrapper = styled.button<BWT>`
+// this should be BWT but typescript is not happy with "Type instantiation is excessively deep and possibly infinite." and nothing else was working
+const ButtonWrapper = styled.button<any>`
     cursor: pointer;
     font-family: inherit;
-    height: ${({ _sizeVariant, _size }) => (_size || get(buttonSizeVariants, [_sizeVariant, "height"]))}px;
+    height: ${({ _sizeVariant, _size }) => _size || get(buttonSizeVariants, [_sizeVariant, "height"])}px;
     line-height: 1;
     backface-visibility: hidden;
     transition: all ${getProp("theme.transition.duration.regular")}ms ease-in-out;
-    ${({ shadow, theme }) => shadow && `
+    ${({ shadow, theme }) =>
+        shadow &&
+        `
         box-shadow: ${get(theme, "shadows.1")};
     `}
     padding: ${({ _sizeVariant }) => get(buttonSizeVariants, [_sizeVariant, "padding"]) || "0 1em"};
-    ${applyStyleModifiers(buttonShapes, "_shape") as any}
-    ${applyStyleModifiers(buttonTypes, "buttonType") as any}
-    ${applyStyleModifiers(hoverAnimations, "hoverAnimation") as any}
+    ${applyStyleModifiers(buttonShapes, "_shape")}
+    ${applyStyleModifiers(buttonTypes, "buttonType")}
+    ${applyStyleModifiers(hoverAnimations, "hoverAnimation")}
     &:disabled {
         cursor: not-allowed;
     }
@@ -163,17 +168,20 @@ const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
             _size={size}
             // Because disabled doesn't accept undefined
             // eslint-disable-next-line no-unneeded-ternary
-            disabled={(disable || disabled) ? true : false}
+            disabled={disable || disabled ? true : false}
             {...omitMultiple(otherProps, omitKeys)}
         >
-            {position === "left"
-                ? <ButtonIcon
-                    src={src} size={buttonSizeVariants[sizeVariant].icon}
-                    css={css` margin-right: ${buttonSizeVariants[sizeVariant].iconPadding}px; `}
+            {position === "left" ? (
+                <ButtonIcon
+                    src={src}
+                    size={buttonSizeVariants[sizeVariant].icon}
+                    css={css`
+                        margin-right: ${buttonSizeVariants[sizeVariant].iconPadding}px;
+                    `}
                 />
-                : null}
-            {typeof children === "string"
-                ? <Typography
+            ) : null}
+            {typeof children === "string" ? (
+                <Typography
                     size={get(buttonSizeVariants, [sizeVariant, "fontSize"]) || buttonSizeVariants.medium.fontSize}
                     {...spreadProps("typographyProps")}
                 >
@@ -181,15 +189,18 @@ const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
                     if passed as a `ButtonIcon` */}
                     {children}
                 </Typography>
-                : children
-            }
-            {position === "right"
-                ? <ButtonIcon
+            ) : (
+                children
+            )}
+            {position === "right" ? (
+                <ButtonIcon
                     src={src}
                     size={buttonSizeVariants[sizeVariant].icon}
-                    css={css` margin-left: ${buttonSizeVariants[sizeVariant].iconPadding}px; `}
+                    css={css`
+                        margin-left: ${buttonSizeVariants[sizeVariant].iconPadding}px;
+                    `}
                 />
-                : null}
+            ) : null}
         </ButtonWrapper>
     );
 };

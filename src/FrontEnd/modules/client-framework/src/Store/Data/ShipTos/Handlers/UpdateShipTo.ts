@@ -1,5 +1,8 @@
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { updateShipTo as updateShipToApi, UpdateShipToApiParameter } from "@insite/client-framework/Services/CustomersService";
+import {
+    updateShipTo as updateShipToApi,
+    UpdateShipToApiParameter,
+} from "@insite/client-framework/Services/CustomersService";
 import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<UpdateShipToApiParameter, ShipToModel>;
@@ -19,11 +22,7 @@ export const DispatchCompleteLoadShipTo: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    SendDataToApi,
-    DispatchCompleteLoadShipTo,
-];
+export const chain = [PopulateApiParameter, SendDataToApi, DispatchCompleteLoadShipTo];
 
 const updateShipTo = createHandlerChainRunner(chain, "UpdateShipTo");
 export default updateShipTo;

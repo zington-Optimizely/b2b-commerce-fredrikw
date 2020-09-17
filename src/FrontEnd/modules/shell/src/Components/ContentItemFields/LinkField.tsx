@@ -2,10 +2,7 @@ import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
-import {
-    LinkFieldDefinition,
-    LinkFieldValue,
-} from "@insite/client-framework/Types/FieldDefinition";
+import { LinkFieldDefinition, LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import Button from "@insite/mobius/Button";
 import Icon from "@insite/mobius/Icon";
 import Tab, { TabProps } from "@insite/mobius/Tab";
@@ -35,33 +32,32 @@ interface State {
 type OwnProps = ContentItemFieldProps<LinkFieldValue, LinkFieldDefinition>;
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
-
     const categories = state.pageEditor.categories;
 
     const fieldValue = ownProps.fieldValue;
     let displayValue = "";
     if (fieldValue) {
         switch (fieldValue.type) {
-        case "Page":
-            displayValue = getPageLinkByNodeId(state, fieldValue.value)?.title ?? "";
-            break;
-        case "Category":
-            if (fieldValue.value === emptyGuid) {
-                displayValue = "Products";
-            } else if (!categories) {
-                displayValue = "Loading...";
-            } else {
-                const matchingCategories = categories.filter(o => o.id === fieldValue.value);
-                if (matchingCategories.length === 0) {
-                    displayValue = "Unknown";
+            case "Page":
+                displayValue = getPageLinkByNodeId(state, fieldValue.value)?.title ?? "";
+                break;
+            case "Category":
+                if (fieldValue.value === emptyGuid) {
+                    displayValue = "Products";
+                } else if (!categories) {
+                    displayValue = "Loading...";
                 } else {
-                    displayValue = matchingCategories[0].shortDescription;
+                    const matchingCategories = categories.filter(o => o.id === fieldValue.value);
+                    if (matchingCategories.length === 0) {
+                        displayValue = "Unknown";
+                    } else {
+                        displayValue = matchingCategories[0].shortDescription;
+                    }
                 }
-            }
-            break;
-        case "Url":
-            displayValue = fieldValue.value;
-            break;
+                break;
+            case "Url":
+                displayValue = fieldValue.value;
+                break;
         }
     }
 
@@ -79,7 +75,7 @@ const mapDispatchToProps = {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const StandardIconPropsSource: React.FC = () => <Link color1={shellTheme.colors.text.main}/>;
+const StandardIconPropsSource: React.FC = () => <Link color1={shellTheme.colors.text.main} />;
 const ClearIconPropsSource: React.FC = () => <Icon src="X" />;
 
 class LinkField extends ClickOutside<Props, State> {
@@ -153,24 +149,27 @@ class LinkField extends ClickOutside<Props, State> {
     };
 
     renderTreeChunk(links: readonly PageLinkModel[]) {
-        return <ul>
-            {links.map(page => {
-                const isExpanded = this.state.expandedKeys.indexOf(page.id) >= 0;
-                const hasChildren = !!page.children;
-                return <TreeItemStyle key={page.id}>
-                    <TitleStyle data-id={page.id}>
-                        {hasChildren
-                        && <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
-                            {isExpanded
-                                ? <ArrowDown height={6}/>
-                                : <ArrowRight width={6}/>}
-                        </ArrowContainer>}
-                        <span onClick={this.clickPage}>{page.title}</span>
-                    </TitleStyle>
-                    {isExpanded && hasChildren && this.renderTreeChunk(page.children!)}
-                </TreeItemStyle>;
-            })}
-        </ul>;
+        return (
+            <ul>
+                {links.map(page => {
+                    const isExpanded = this.state.expandedKeys.indexOf(page.id) >= 0;
+                    const hasChildren = !!page.children;
+                    return (
+                        <TreeItemStyle key={page.id}>
+                            <TitleStyle data-id={page.id}>
+                                {hasChildren && (
+                                    <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
+                                        {isExpanded ? <ArrowDown height={6} /> : <ArrowRight width={6} />}
+                                    </ArrowContainer>
+                                )}
+                                <span onClick={this.clickPage}>{page.title}</span>
+                            </TitleStyle>
+                            {isExpanded && hasChildren && this.renderTreeChunk(page.children!)}
+                        </TreeItemStyle>
+                    );
+                })}
+            </ul>
+        );
     }
 
     renderCategoryChunk(parentId: string) {
@@ -179,25 +178,28 @@ class LinkField extends ClickOutside<Props, State> {
             return null;
         }
 
-        return <ul>
-            {categoryIndexByParentId[parentId].map(categoryIndex => {
-                const category = categories[categoryIndex];
-                const isExpanded = this.state.expandedKeys.indexOf(category.id) >= 0;
-                const hasChildren = !!categoryIndexByParentId[category.id];
-                return <TreeItemStyle key={category.id}>
-                    <TitleStyle data-id={category.id}>
-                        {hasChildren
-                        && <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
-                            {isExpanded
-                                ? <ArrowDown height={6}/>
-                                : <ArrowRight width={6}/>}
-                        </ArrowContainer>}
-                        <span onClick={this.clickCategory}>{category.shortDescription}</span>
-                    </TitleStyle>
-                    {isExpanded && hasChildren && this.renderCategoryChunk(category.id)}
-                </TreeItemStyle>;
-            })}
-        </ul>;
+        return (
+            <ul>
+                {categoryIndexByParentId[parentId].map(categoryIndex => {
+                    const category = categories[categoryIndex];
+                    const isExpanded = this.state.expandedKeys.indexOf(category.id) >= 0;
+                    const hasChildren = !!categoryIndexByParentId[category.id];
+                    return (
+                        <TreeItemStyle key={category.id}>
+                            <TitleStyle data-id={category.id}>
+                                {hasChildren && (
+                                    <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
+                                        {isExpanded ? <ArrowDown height={6} /> : <ArrowRight width={6} />}
+                                    </ArrowContainer>
+                                )}
+                                <span onClick={this.clickCategory}>{category.shortDescription}</span>
+                            </TitleStyle>
+                            {isExpanded && hasChildren && this.renderCategoryChunk(category.id)}
+                        </TreeItemStyle>
+                    );
+                })}
+            </ul>
+        );
     }
 
     changeExternalUrl = (event: React.FormEvent<HTMLInputElement>) => {
@@ -261,75 +263,101 @@ class LinkField extends ClickOutside<Props, State> {
         setTimeout(() => {
             this.positionLinkSelector();
         });
-        const { fieldValue: { type, value }, fieldDefinition } = this.props;
+        const {
+            fieldValue: { type, value },
+            fieldDefinition,
+        } = this.props;
         const allowUrls = !fieldDefinition.allowUrls || fieldDefinition.allowUrls(this.props.item);
         const allowCategories = !fieldDefinition.allowCategories || fieldDefinition.allowCategories(this.props.item);
         const currentTab = (type === "Url" && !allowUrls) || (type === "Category" && !allowCategories) ? "Page" : type;
 
-        const tabs = [<Tab data-test-selector="tab_Pages" headline="Pages" key="Page" tabKey="Page" css={tabCss}>
-            {this.renderTreeChunk(this.props.pageLinks)}
-        </Tab>];
+        const tabs = [
+            <Tab data-test-selector="tab_Pages" headline="Pages" key="Page" tabKey="Page" css={tabCss}>
+                {this.renderTreeChunk(this.props.pageLinks)}
+            </Tab>,
+        ];
 
         if (allowCategories) {
-            tabs.push(<Tab data-test-selector="tab_Categories" headline="Categories" key="Category" tabKey="Category" css={tabCss}>
-                {this.props.categories && this.props.categoryIndexByParentId
-                    ? <ul>
-                        <TreeItemStyle key={emptyGuid}>
-                            <TitleStyle data-id={emptyGuid}>
-                                <span onClick={this.clickCategory}>Root</span>
-                            </TitleStyle>
-                            {this.renderCategoryChunk(emptyGuid)}
-                        </TreeItemStyle>
-                    </ul>
-                    : <span>Loading</span>
-                }
-            </Tab>);
+            tabs.push(
+                <Tab
+                    data-test-selector="tab_Categories"
+                    headline="Categories"
+                    key="Category"
+                    tabKey="Category"
+                    css={tabCss}
+                >
+                    {this.props.categories && this.props.categoryIndexByParentId ? (
+                        <ul>
+                            <TreeItemStyle key={emptyGuid}>
+                                <TitleStyle data-id={emptyGuid}>
+                                    <span onClick={this.clickCategory}>Root</span>
+                                </TitleStyle>
+                                {this.renderCategoryChunk(emptyGuid)}
+                            </TreeItemStyle>
+                        </ul>
+                    ) : (
+                        <span>Loading</span>
+                    )}
+                </Tab>,
+            );
         }
 
         if (allowUrls) {
-            tabs.push(<Tab data-test-selector="tab_Url" headline="Url" key="Url" tabKey="Url" css={tabCss}>
-                <ExternalStyle>
-                    <TextField label="Url"
-                               value={this.state.url}
-                               error={this.state.isValidUrl ? "" : "Please enter a valid URL"}
-                               onChange={this.changeExternalUrl}
-                               onKeyPress={this.externalUrlKeyPress}/>
-                    <Button variant="secondary" onClick={this.clickSaveExternalUrl}>Save</Button>
-                </ExternalStyle>
-            </Tab>);
+            tabs.push(
+                <Tab data-test-selector="tab_Url" headline="Url" key="Url" tabKey="Url" css={tabCss}>
+                    <ExternalStyle>
+                        <TextField
+                            label="Url"
+                            value={this.state.url}
+                            error={this.state.isValidUrl ? "" : "Please enter a valid URL"}
+                            onChange={this.changeExternalUrl}
+                            onKeyPress={this.externalUrlKeyPress}
+                        />
+                        <Button variant="secondary" onClick={this.clickSaveExternalUrl}>
+                            Save
+                        </Button>
+                    </ExternalStyle>
+                </Tab>,
+            );
         }
 
-        return <StandardControl fieldDefinition={fieldDefinition}>
-            <TextField
-                readOnly={true}
-                onClick={this.clickLinkField}
-                id={fieldDefinition.name}
-                type="text"
-                value={this.props.displayValue}
-                iconProps={{ src: value ? ClearIconPropsSource : StandardIconPropsSource }}
-                iconClickableProps={value ? { onClick: this.clearFieldValue } : undefined}
-                clickableText={value ? translate("clear link field") : undefined} />
-            {this.state.linkSelectorIsOpen
-            && <LinkSelectorStyle ref={this.setWrapperRef}>
-                <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }} current={currentTab}>
-                    {tabs}
-                </TabGroup>
-            </LinkSelectorStyle>}
-        </StandardControl>;
+        return (
+            <StandardControl fieldDefinition={fieldDefinition}>
+                <TextField
+                    readOnly={true}
+                    onClick={this.clickLinkField}
+                    id={fieldDefinition.name}
+                    type="text"
+                    value={this.props.displayValue}
+                    iconProps={{ src: value ? ClearIconPropsSource : StandardIconPropsSource }}
+                    iconClickableProps={value ? { onClick: this.clearFieldValue } : undefined}
+                    clickableText={value ? translate("clear link field") : undefined}
+                />
+                {this.state.linkSelectorIsOpen && (
+                    <LinkSelectorStyle ref={this.setWrapperRef}>
+                        <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }} current={currentTab}>
+                            {tabs}
+                        </TabGroup>
+                    </LinkSelectorStyle>
+                )}
+            </StandardControl>
+        );
     }
 }
 
 function isValidUrl(value: string) {
-    const fullUrl = "^(https?:\\/\\/)" // protocol
-        + "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" // domain name
-        + "((\\d{1,3}\\.){3}\\d{1,3}))" // OR ip (v4) address
-        + "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" // port and path
-        + "(\\?[;&a-z\\d%_.~+=-]*)?" // query string
-        + "(\\#[-a-z\\d_]*)?$";
+    const fullUrl =
+        "^(https?:\\/\\/)" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$";
     const fullUrlRegex = new RegExp(fullUrl, "i");
-    const pathUrl = "^(\\/[-a-z\\d%_.~+]*)+" // path
-        + "(\\?[;&a-z\\d%_.~+=-]*)?" // query string
-        + "(\\#[-a-z\\d_]*)?$";
+    const pathUrl =
+        "^(\\/[-a-z\\d%_.~+]*)+" + // path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$";
     const pathRegex = new RegExp(pathUrl, "i");
     return !!fullUrlRegex.test(value) || !!pathRegex.test(value);
 }
@@ -339,9 +367,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(LinkField);
 const tabCss: FlattenSimpleInterpolation = css`
     padding: 6px;
     &:hover {
-        cursor: ${(props: TabProps) => props.selected ? "default" : "pointer"};
+        cursor: ${(props: TabProps) => (props.selected ? "default" : "pointer")};
     }
-    font-weight: ${(props: TabProps) => props.selected ? "bold" : "inherit"};
+    font-weight: ${(props: TabProps) => (props.selected ? "bold" : "inherit")};
 ` as FlattenSimpleInterpolation;
 
 const tabContent = css`
@@ -381,8 +409,8 @@ const TitleStyle = styled.h3`
 `;
 
 const ArrowContainer = styled.div<{ isExpanded: boolean }>`
-    padding: ${props => props.isExpanded ? "0 6px" : "0 3px 0 4px"};
-    margin-left: ${props => props.isExpanded ? "-5px" : "-1px"};
+    padding: ${props => (props.isExpanded ? "0 6px" : "0 3px 0 4px")};
+    margin-left: ${props => (props.isExpanded ? "-5px" : "-1px")};
     display: inline-block;
     cursor: pointer;
 
@@ -394,7 +422,8 @@ const ArrowContainer = styled.div<{ isExpanded: boolean }>`
 const TreeItemStyle = styled.li`
     ul {
         padding-left: 10px;
-        h3, ul {
+        h3,
+        ul {
             margin-left: 12px;
         }
         li {

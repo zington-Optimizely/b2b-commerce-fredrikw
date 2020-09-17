@@ -5,7 +5,10 @@ import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillT
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import loadCurrentShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTos";
 import updateShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/UpdateShipTo";
-import { getCurrentShipTosDataView, getCurrentShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import {
+    getCurrentShipTosDataView,
+    getCurrentShipToState,
+} from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import translate from "@insite/client-framework/Translate";
 import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -68,7 +71,9 @@ export const currentShippingAddressStyles: CurrentShippingAddressStyles = {
     useBillingAddress: {
         button: {
             color: "secondary",
-            css: css` margin-top: 20px; `,
+            css: css`
+                margin-top: 20px;
+            `,
         },
     },
 };
@@ -134,11 +139,13 @@ const CurrentShippingAddress: React.FunctionComponent<Props> = (props: Props) =>
                 <Typography {...styles.headingText}>{translate("Shipping Information")}</Typography>
             </GridItem>
             <GridItem {...styles.editLinkGridItem}>
-                {countries
-                    && <Link {...styles.editLink} onClick={editClickHandler}>{translate("Edit")}</Link>
-                }
-                {countries && shipToAddressFields
-                    && <Modal
+                {countries && (
+                    <Link {...styles.editLink} onClick={editClickHandler}>
+                        {translate("Edit")}
+                    </Link>
+                )}
+                {countries && shipToAddressFields && (
+                    <Modal
                         headline={translate("Edit Shipping Information")}
                         {...styles.addressFormModal}
                         isOpen={modalIsOpen}
@@ -149,9 +156,10 @@ const CurrentShippingAddress: React.FunctionComponent<Props> = (props: Props) =>
                             countries={countries}
                             addressFieldDisplayCollection={shipToAddressFields}
                             onCancel={formCancelHandler}
-                            onSubmit={formSubmitHandler} />
+                            onSubmit={formSubmitHandler}
+                        />
                     </Modal>
-                }
+                )}
             </GridItem>
             <GridItem {...styles.addressInfoDisplayGridItem}>
                 <AddressInfoDisplay
@@ -169,13 +177,14 @@ const CurrentShippingAddress: React.FunctionComponent<Props> = (props: Props) =>
                     country={currentShipTo.country ? currentShipTo.country.abbreviation : undefined}
                     phone={currentShipTo.phone}
                     fax={currentShipTo.fax}
-                    email={currentShipTo.email} />
+                    email={currentShipTo.email}
+                />
             </GridItem>
-            {(billToAsShipTo && currentShipTo.id !== billToAsShipTo.id)
-                && <GridItem {...styles.useBillingAddressButtonGridItem}>
+            {billToAsShipTo && currentShipTo.id !== billToAsShipTo.id && (
+                <GridItem {...styles.useBillingAddressButtonGridItem}>
                     <UseBillingAddressButton onClick={useBillingAddressHandler} />
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };
@@ -184,14 +193,13 @@ interface UseBillingAddressButtonProps {
     onClick: () => void;
 }
 
-const UseBillingAddressButton: React.FunctionComponent<UseBillingAddressButtonProps> = (props: UseBillingAddressButtonProps) => {
+const UseBillingAddressButton: React.FunctionComponent<UseBillingAddressButtonProps> = (
+    props: UseBillingAddressButtonProps,
+) => {
     const componentStyles: UseBillingAddressStyles = styles.useBillingAddress || {};
 
     return (
-        <Button
-            {...componentStyles.button}
-            onClick={props.onClick}
-        >
+        <Button {...componentStyles.button} onClick={props.onClick}>
             {translate("Use Billing Address")}
         </Button>
     );

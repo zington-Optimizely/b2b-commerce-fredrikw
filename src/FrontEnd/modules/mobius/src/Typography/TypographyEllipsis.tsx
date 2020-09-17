@@ -36,12 +36,7 @@ class TypographyEllipsis extends React.Component<any> {
     };
 
     render() {
-        return (
-            <TypographyEllipsisStyle
-                ref={this.element}
-                {...this.props}
-            />
-        );
+        return <TypographyEllipsisStyle ref={this.element} {...this.props} />;
     }
 }
 

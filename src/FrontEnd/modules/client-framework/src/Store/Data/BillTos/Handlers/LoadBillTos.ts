@@ -27,12 +27,7 @@ export const DispatchCompleteLoadBillTos: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadBillTos,
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadBillTos,
-];
+export const chain = [DispatchBeginLoadBillTos, PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadBillTos];
 
 const loadBillTos = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadBillTos");
 export default loadBillTos;

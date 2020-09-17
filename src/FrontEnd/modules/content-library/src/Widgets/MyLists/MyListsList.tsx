@@ -23,8 +23,7 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 interface State {
     wishListToAction?: WishListModel;
     deleteListModalIsOpen: boolean;
@@ -49,7 +48,7 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 export interface MyListsListStyles {
     cardList?: CardListStyles;
     cardContainer?: CardContainerStyles;
-    deleteListModal?:ModalPresentationProps;
+    deleteListModal?: ModalPresentationProps;
     centeringWrapper?: InjectableCss;
     spinner?: LoadingSpinnerProps;
     messageText?: TypographyProps;
@@ -67,7 +66,9 @@ export const listStyles: MyListsListStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     messageText: {
         variant: "h4",
@@ -81,7 +82,6 @@ export const listStyles: MyListsListStyles = {
 const styles = listStyles;
 
 class MyListsList extends React.Component<Props, State> {
-
     static contextType = ToasterContext;
     context!: React.ContextType<typeof ToasterContext>;
 
@@ -139,23 +139,29 @@ class MyListsList extends React.Component<Props, State> {
 
     render() {
         if (!this.props.wishLists.value || this.props.wishLists.isLoading) {
-            return <StyledWrapper {...styles.centeringWrapper}>
-                        <LoadingSpinner {...styles.spinner} data-test-selector="myListsListSpinner"></LoadingSpinner>
-                </StyledWrapper>;
+            return (
+                <StyledWrapper {...styles.centeringWrapper}>
+                    <LoadingSpinner {...styles.spinner} data-test-selector="myListsListSpinner"></LoadingSpinner>
+                </StyledWrapper>
+            );
         }
 
         if (this.props.wishLists.value.length === 0) {
-            return <StyledWrapper {...styles.centeringWrapper}>
-                <Typography {...styles.messageText}>
-                    {this.props.getWishListsParameter.query ? siteMessage("Lists_NoResultsMessage") : siteMessage("Lists_NoListsFound")}
-                </Typography>
-            </StyledWrapper>;
+            return (
+                <StyledWrapper {...styles.centeringWrapper}>
+                    <Typography {...styles.messageText}>
+                        {this.props.getWishListsParameter.query
+                            ? siteMessage("Lists_NoResultsMessage")
+                            : siteMessage("Lists_NoListsFound")}
+                    </Typography>
+                </StyledWrapper>
+            );
         }
 
-        return(
+        return (
             <>
                 <CardList extendedStyles={styles.cardList}>
-                    {this.props.wishLists.value.map((wishList) =>  (
+                    {this.props.wishLists.value.map(wishList => (
                         <CardContainer key={wishList.id} extendedStyles={styles.cardContainer}>
                             <WishListCard
                                 wishList={wishList}
@@ -169,30 +175,33 @@ class MyListsList extends React.Component<Props, State> {
                 <TwoButtonModal
                     modalIsOpen={this.state.deleteListModalIsOpen}
                     headlineText={translate("Delete List")}
-                    messageText={`${translate("Are you sure you want to delete")} ${this.state.wishListToAction ? this.state.wishListToAction.name : ""}?`}
+                    messageText={`${translate("Are you sure you want to delete")} ${
+                        this.state.wishListToAction ? this.state.wishListToAction.name : ""
+                    }?`}
                     cancelButtonText={translate("Cancel")}
                     submitButtonText={translate("Delete")}
                     onCancel={this.deleteCancelHandler}
                     onSubmit={this.deleteSubmitHandler}
-                    submitTestSelector="myListsListSubmitDelete">
-                </TwoButtonModal>
+                    submitTestSelector="myListsListSubmitDelete"
+                ></TwoButtonModal>
                 <TwoButtonModal
                     modalIsOpen={this.state.leaveListModalIsOpen}
                     headlineText={translate("Leave List")}
-                    messageText={`${translate("Are you sure you want to leave")} ${this.state.wishListToAction ? this.state.wishListToAction.name : ""}?`}
+                    messageText={`${translate("Are you sure you want to leave")} ${
+                        this.state.wishListToAction ? this.state.wishListToAction.name : ""
+                    }?`}
                     cancelButtonText={translate("Cancel")}
                     submitButtonText={translate("Leave")}
                     onCancel={this.leaveCancelHandler}
                     onSubmit={this.leaveSubmitHandler}
-                    submitTestSelector="myListsListSubmitLeave">
-                </TwoButtonModal>
+                    submitTestSelector="myListsListSubmitLeave"
+                ></TwoButtonModal>
             </>
         );
     }
 }
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(MyListsList),
     definition: {
         group: "My Lists",

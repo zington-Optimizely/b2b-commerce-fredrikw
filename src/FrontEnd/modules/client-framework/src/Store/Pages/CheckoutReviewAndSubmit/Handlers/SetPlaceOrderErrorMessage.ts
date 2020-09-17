@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ errorMessage?: string; }>;
+type HandlerType = Handler<{ errorMessage?: string }>;
 
 export const DispatchSetPlaceOrderErrorMessage: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetPlaceOrderErrorMessage: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetPlaceOrderErrorMessage,
-];
+export const chain = [DispatchSetPlaceOrderErrorMessage];
 
 const setPlaceOrderErrorMessage = createHandlerChainRunner(chain, "SetPlaceOrderErrorMessage");
 export default setPlaceOrderErrorMessage;

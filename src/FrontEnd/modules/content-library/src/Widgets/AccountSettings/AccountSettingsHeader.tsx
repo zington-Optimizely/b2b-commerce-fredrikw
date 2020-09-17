@@ -18,8 +18,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     account: state.pages.accountSettings.editingAccount,
@@ -52,7 +51,9 @@ export interface AccountSettingsHeaderStyles {
 
 export const headerStyles: AccountSettingsHeaderStyles = {
     saveButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     buttonSetHidden: {
         below: "md",
@@ -61,7 +62,9 @@ export const headerStyles: AccountSettingsHeaderStyles = {
         above: "sm",
     },
     buttonSet: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [1, 1, 4, 3, 3],
     },
     titleWrapper: {
@@ -86,9 +89,7 @@ const AccountSettingsHeader: FC<Props> = props => {
     }
 
     const invalidCustomerState = useDefaultCustomer && !account.defaultCustomerId;
-    const enableSaveButton = hasChanges
-        && isEmailValid
-        && !invalidCustomerState;
+    const enableSaveButton = hasChanges && isEmailValid && !invalidCustomerState;
 
     return (
         <GridContainer>
@@ -97,15 +98,16 @@ const AccountSettingsHeader: FC<Props> = props => {
             </GridItem>
             <GridItem {...styles.buttonSet}>
                 <Hidden {...styles.buttonSetHidden}>
-                    {hasChanges
-                        && <Button
-                            {...styles.cancelButton}
-                            onClick={props.setInitialValues}
-                        >
+                    {hasChanges && (
+                        <Button {...styles.cancelButton} onClick={props.setInitialValues}>
                             {translate("Cancel")}
-                        </Button>}
-                    <Button {...styles.saveButton}
-                        onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => updateSettingsHandler(event, props)}
+                        </Button>
+                    )}
+                    <Button
+                        {...styles.saveButton}
+                        onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+                            updateSettingsHandler(event, props)
+                        }
                         disabled={!enableSaveButton}
                         data-test-selector="accountSettings_save"
                     >
@@ -114,16 +116,14 @@ const AccountSettingsHeader: FC<Props> = props => {
                 </Hidden>
                 <Hidden {...styles.menuHidden}>
                     <OverflowMenu position="end" {...styles.overflowMenu}>
-                        <Clickable
-                            {...styles.cancelClickable}
-                            onClick={props.setInitialValues}
-                            disabled={!hasChanges}
-                        >
+                        <Clickable {...styles.cancelClickable} onClick={props.setInitialValues} disabled={!hasChanges}>
                             {translate("Cancel")}
                         </Clickable>
                         <Clickable
                             {...styles.saveClickable}
-                            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => updateSettingsHandler(event, props)}
+                            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+                                updateSettingsHandler(event, props)
+                            }
                             disabled={!enableSaveButton}
                         >
                             {translate("Save")}

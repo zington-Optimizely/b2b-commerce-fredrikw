@@ -11,8 +11,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
 
-interface Props extends WidgetProps {
-}
+interface Props extends WidgetProps {}
 
 export interface BrandDetailsImageStyles {
     container?: GridContainerProps;
@@ -30,7 +29,9 @@ export interface BrandDetailsImageStyles {
 export const imageStyles: BrandDetailsImageStyles = {
     container: {
         gap: 5,
-        css: css` margin: 15px; `,
+        css: css`
+            margin: 15px;
+        `,
     },
     imageItem: {
         width: 12,
@@ -40,7 +41,9 @@ export const imageStyles: BrandDetailsImageStyles = {
     },
     linksContainer: {
         gap: 20,
-        css: css` padding-top: 15px; `,
+        css: css`
+            padding-top: 15px;
+        `,
     },
     image: {
         css: css`
@@ -84,19 +87,41 @@ const BrandDetailsImage: FC<Props> = () => {
     return (
         <GridContainer data-test-selector="brandImage" {...styles.container}>
             <GridItem {...styles.imageItem}>
-                {brand.featuredImagePath
-                    ? <LazyImage data-test-selector="brandFeaturedImage" altText={brand.featuredImageAltText} src={brand.featuredImagePath} {...styles.image} />
-                    : <Typography data-test-selector="brandFeaturedImageMissingText" {...styles.imageMissingText}>{brand.name}</Typography>
-                }
+                {brand.featuredImagePath ? (
+                    <LazyImage
+                        data-test-selector="brandFeaturedImage"
+                        altText={brand.featuredImageAltText}
+                        src={brand.featuredImagePath}
+                        {...styles.image}
+                    />
+                ) : (
+                    <Typography data-test-selector="brandFeaturedImageMissingText" {...styles.imageMissingText}>
+                        {brand.name}
+                    </Typography>
+                )}
             </GridItem>
             <GridItem {...styles.linksItem}>
                 <GridContainer {...styles.linksContainer}>
                     <GridItem {...styles.productLinkItem}>
-                        <Link data-test-selector="brandToProductPageLink" href={brand.productListPagePath} {...styles.productLink}>{translate("Shop All {0} Products").replace("{0}", brand.name)}</Link>
+                        <Link
+                            data-test-selector="brandToProductPageLink"
+                            href={brand.productListPagePath}
+                            {...styles.productLink}
+                        >
+                            {translate("Shop All {0} Products").replace("{0}", brand.name)}
+                        </Link>
                     </GridItem>
-                    {brand.externalUrl && <GridItem {...styles.externalLinkItem}>
-                        <Link data-test-selector="brandExternalUrlLink" href={brand.externalUrl} {...styles.externalLink}>{translate("Visit {0} Website").replace("{0}", brand.name)}</Link>
-                    </GridItem>}
+                    {brand.externalUrl && (
+                        <GridItem {...styles.externalLinkItem}>
+                            <Link
+                                data-test-selector="brandExternalUrlLink"
+                                href={brand.externalUrl}
+                                {...styles.externalLink}
+                            >
+                                {translate("Visit {0} Website").replace("{0}", brand.name)}
+                            </Link>
+                        </GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
         </GridContainer>
@@ -113,9 +138,13 @@ const BrandLink: FC<BrandDetailsLinkProps> = ({ path, gridItemStyles, linkStyles
     if (!path) {
         return null;
     }
-    return (<GridItem {...gridItemStyles}>
-        <Link data-test-selector="brandToProductPageLink" href={path} {...linkStyles}>{children}</Link>
-    </GridItem>);
+    return (
+        <GridItem {...gridItemStyles}>
+            <Link data-test-selector="brandToProductPageLink" href={path} {...linkStyles}>
+                {children}
+            </Link>
+        </GridItem>
+    );
 };
 
 const widgetModule: WidgetModule = {

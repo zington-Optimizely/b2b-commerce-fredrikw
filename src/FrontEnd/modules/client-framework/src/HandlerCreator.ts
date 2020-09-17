@@ -6,8 +6,10 @@ import { AnyAction } from "@insite/client-framework/Store/Reducers";
 /**
  * Redux's typings include a `Dispatch` helper type, but it doesn't alert if the dispatched action has extra properties.
  * This solution isn't perfect because it doesn't return the provided action type, but its stricter input checking is more important.
-*/
-type StrictInputDispatch = (action: AnyAction | ((dispatch: StrictInputDispatch, getState: () => ApplicationState) => void)) => AnyAction;
+ */
+type StrictInputDispatch = (
+    action: AnyAction | ((dispatch: StrictInputDispatch, getState: () => ApplicationState) => void),
+) => AnyAction;
 
 export type HandlerProps<Parameter, Props> = Props & {
     readonly parameter: Readonly<Parameter>;
@@ -16,44 +18,63 @@ export type HandlerProps<Parameter, Props> = Props & {
 };
 
 /** The a basic step in a handler chain.  If the boolean value `false` is returned, the chain stops on that step. */
-export type Handler<Parameter = {}, Props = {}> = (props: HandlerProps<Parameter, Props>) => false | void | Promise<false | void>;
+export type Handler<Parameter = {}, Props = {}> = (
+    props: HandlerProps<Parameter, Props>,
+) => false | void | Promise<false | void>;
 
 /** An extension of Handler that adds a `result` property. */
-export type HandlerWithResult<Parameter, Result, Props = {}> = Handler<Parameter, Props & {
-    result: Result;
-}>;
+export type HandlerWithResult<Parameter, Result, Props = {}> = Handler<
+    Parameter,
+    Props & {
+        result: Result;
+    }
+>;
 
 /** An extension of Handler that adds an `apiParameter` and `apiResult` property, where `apiParameter` is also the input parameter. */
-export type ApiHandler<Parameter, Model = never, Props = {}> = Handler<Parameter, Props & {
-    apiParameter: Parameter;
-    apiResult: Model;
-}>;
+export type ApiHandler<Parameter, Model = never, Props = {}> = Handler<
+    Parameter,
+    Props & {
+        apiParameter: Parameter;
+        apiResult: Model;
+    }
+>;
 
 /** An extension of Handler that adds an `apiParameter` and `apiResult` property, where `apiParameter` is separate from the input parameter. */
-export type ApiHandlerDiscreteParameter<Parameter, ApiParameter, Model = never, Props = {}> = Handler<Parameter, Props & {
-    apiParameter: ApiParameter;
-    apiResult: Model;
-}>;
+export type ApiHandlerDiscreteParameter<Parameter, ApiParameter, Model = never, Props = {}> = Handler<
+    Parameter,
+    Props & {
+        apiParameter: ApiParameter;
+        apiResult: Model;
+    }
+>;
 
 /** An extension of Handler that adds an `apiResult` property. */
-export type ApiHandlerNoApiParameter<Parameter, Model = never, Props = {}> = Handler<Parameter, Props & {
-    apiResult: Model;
-}>;
+export type ApiHandlerNoApiParameter<Parameter, Model = never, Props = {}> = Handler<
+    Parameter,
+    Props & {
+        apiResult: Model;
+    }
+>;
 
 /**
  * An extension of Handler that adds an `apiResult` property and (currently).
  * To be forward-compatible with parameters in the future, the result of creating the chain still has a parameter object with no properties.
-*/
-export type ApiHandlerNoParameter<Model = never, Props = {}> = Handler<{}, Props & {
-    apiResult: Model;
-}>;
+ */
+export type ApiHandlerNoParameter<Model = never, Props = {}> = Handler<
+    {},
+    Props & {
+        apiResult: Model;
+    }
+>;
 
 /** An extension of Handler that adds an unknown-typed `error` property and optionally any additional properties. */
 export type ErrorHandler<MoreProps extends {} = {}> = Handler<HasError & MoreProps>;
 type HasError = { error: unknown };
 
-const devTools = !IS_PRODUCTION && typeof window !== "undefined" && (window as any).__REDUX_DEVTOOLS_EXTENSION__
-    ? (window as any).__REDUX_DEVTOOLS_EXTENSION__.connect({ name: "Typed Handlers" }) : null;
+const devTools =
+    !IS_PRODUCTION && typeof window !== "undefined" && (window as any).__REDUX_DEVTOOLS_EXTENSION__
+        ? (window as any).__REDUX_DEVTOOLS_EXTENSION__.connect({ name: "Typed Handlers" })
+        : null;
 
 /** Check for the same function appearing in a handler chain multiple times.  It probably won't work. */
 const checkChainForDuplicates = (chain: Function[]) => {
@@ -61,7 +82,7 @@ const checkChainForDuplicates = (chain: Function[]) => {
         return;
     }
 
-    const duplicated = chain.filter(((value, index, self) => self.indexOf(value) !== index));
+    const duplicated = chain.filter((value, index, self) => self.indexOf(value) !== index);
     if (duplicated.length !== 0) {
         logger.warn(`Handler chain functions duplicated: ${duplicated.map(func => func.name).join(", ")}`);
     }
@@ -78,7 +99,9 @@ This usually happens if onClick is bound directly to the handler chain. IE onCli
     }
 };
 
-let errorHandler: (parameter: { error: unknown }) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => void;
+let errorHandler: (parameter: {
+    error: unknown;
+}) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => void;
 
 // we can't import handleError directly or we end up with circular imports
 export function setErrorHandler(value: typeof errorHandler) {
@@ -137,11 +160,8 @@ const runChain = async <Parameter, Props = {}>(
 /**
  * Creates a redux-mapDispatchToProps-compatible executor for an array of handler chain steps.
  * The source array is not copied, so changes to it will affect the operation.
-*/
-export const createHandlerChainRunner = <Parameter, Props = {}>(
-    chain: Handler<Parameter, Props>[],
-    name: string,
-) => {
+ */
+export const createHandlerChainRunner = <Parameter, Props = {}>(chain: Handler<Parameter, Props>[], name: string) => {
     checkChainForDuplicates(chain);
 
     return (parameter: Parameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
@@ -154,15 +174,18 @@ export const createHandlerChainRunner = <Parameter, Props = {}>(
  * Creates a redux-mapDispatchToProps-compatible executor for an array of handler chain steps.
  * The default parameter value provided here is used to make the parameter optional in the resulting function.
  * The source array is not copied, so changes to it will affect the operation.
-*/
+ */
 export const createHandlerChainRunnerOptionalParameter = <Parameter, Props = {}>(
     chain: Handler<Parameter, Props>[],
     defaultParameter: Parameter,
     name: string,
-    ) => {
+) => {
     checkChainForDuplicates(chain);
 
-    return (parameter: Parameter = defaultParameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
+    return (parameter: Parameter = defaultParameter) => (
+        dispatch: StrictInputDispatch,
+        getState: () => ApplicationState,
+    ) => {
         checkForSyntheticEvent(parameter, name);
         addTask(runChain(parameter, dispatch, getState, chain, name));
     };
@@ -180,31 +203,44 @@ export type HasOnError<Result = void> = {
     onError?: (result: Result) => void;
 };
 
-type Thunk<Result> =  (dispatch: StrictInputDispatch, getState: () => ApplicationState) => Result;
+type Thunk<Result> = (dispatch: StrictInputDispatch, getState: () => ApplicationState) => Result;
 
 /**  Converts a handler chain that has an `onSuccess` method to return a `Promise` that can be used in conjunction with `await`. */
-export const makeHandlerChainAwaitable = <Parameter extends HasOnSuccess<Result>, Result>(handlerChain: (parameter: Parameter) => Thunk<void>) =>
-    (parameter: Omit<Parameter, "onSuccess">): Thunk<Promise<Result>> =>
-    (dispatch) => new Promise<Result>(resolve => {
-    dispatch(handlerChain({
-        ...parameter as Parameter,
-        onSuccess: resolve,
-    }));
-});
+export const makeHandlerChainAwaitable = <Parameter extends HasOnSuccess<Result>, Result>(
+    handlerChain: (parameter: Parameter) => Thunk<void>,
+) => (parameter: Omit<Parameter, "onSuccess">): Thunk<Promise<Result>> => dispatch =>
+    new Promise<Result>(resolve => {
+        dispatch(
+            handlerChain({
+                ...(parameter as Parameter),
+                onSuccess: resolve,
+            }),
+        );
+    });
 
-export const executeAwaitableHandlerChain = <Parameter extends HasOnSuccess<Result>, Result>(handlerChain: (parameter: Parameter) => Thunk<void>, parameter: Parameter, props: {
-    dispatch: StrictInputDispatch;
-    getState: () => ApplicationState;
-}): Promise<Result> => {
+export const executeAwaitableHandlerChain = <Parameter extends HasOnSuccess<Result>, Result>(
+    handlerChain: (parameter: Parameter) => Thunk<void>,
+    parameter: Parameter,
+    props: {
+        dispatch: StrictInputDispatch;
+        getState: () => ApplicationState;
+    },
+): Promise<Result> => {
     const awaitable = makeHandlerChainAwaitable<Parameter, Result>(handlerChain);
     return awaitable(parameter)(props.dispatch, props.getState);
 };
 
-export function addToStartOfChain<Parameter, Props>(chain: Handler<Parameter, Props>[], handler: Handler<Parameter, Props>) {
+export function addToStartOfChain<Parameter, Props>(
+    chain: Handler<Parameter, Props>[],
+    handler: Handler<Parameter, Props>,
+) {
     chain.unshift(handler);
 }
 
-export function addToEndOfChain<Parameter, Props>(chain: Handler<Parameter, Props>[], handler: Handler<Parameter, Props>) {
+export function addToEndOfChain<Parameter, Props>(
+    chain: Handler<Parameter, Props>[],
+    handler: Handler<Parameter, Props>,
+) {
     chain.push(handler);
 }
 

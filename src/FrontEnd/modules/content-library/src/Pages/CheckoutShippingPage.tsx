@@ -37,7 +37,7 @@ type State = {
     formSubmitAttempted: boolean;
     validators: {
         [key: string]: Validator | undefined;
-    },
+    };
     isRedirecting: boolean;
 };
 

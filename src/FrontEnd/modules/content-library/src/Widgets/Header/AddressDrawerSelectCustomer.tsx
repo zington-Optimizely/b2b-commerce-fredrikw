@@ -17,10 +17,7 @@ const mapStateToProps = (state: ApplicationState) => {
 
 type Props = ReturnType<typeof mapStateToProps>;
 
-const AddressDrawerSelectCustomer = ({
-    showAddressesSelector,
-    billToId,
-}: Props) => {
+const AddressDrawerSelectCustomer = ({ showAddressesSelector, billToId }: Props) => {
     const [billTosParameter, setBillTosParameter] = React.useState<GetBillTosApiParameter>({
         page: 1,
         pageSize: 20,

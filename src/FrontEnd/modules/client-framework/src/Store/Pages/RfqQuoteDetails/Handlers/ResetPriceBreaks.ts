@@ -1,4 +1,8 @@
-import { createHandlerChainRunnerOptionalParameter, HandlerWithResult, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunnerOptionalParameter,
+    HandlerWithResult,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { getQuoteState } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import validatePriceBreaks from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/ValidatePriceBreaks";
 import { BreakPriceRfqModel } from "@insite/client-framework/Types/ApiModels";
@@ -17,7 +21,8 @@ export const CopyInitialPriceBreaks: HandlerType = props => {
         return false;
     }
 
-    const priceBreaks = initialQuote.quoteLineCollection?.find(o => o.id === quoteLine.id)?.pricingRfq?.priceBreaks?.slice() || [];
+    const priceBreaks =
+        initialQuote.quoteLineCollection?.find(o => o.id === quoteLine.id)?.pricingRfq?.priceBreaks?.slice() || [];
     props.result = { updatedPriceBreaks: priceBreaks };
 };
 
@@ -35,11 +40,7 @@ export const ValidatePriceBreaks: HandlerType = async ({ dispatch, getState }) =
     }
 };
 
-export const chain = [
-    CopyInitialPriceBreaks,
-    DispatchUpdatePriceBreaks,
-    ValidatePriceBreaks,
-];
+export const chain = [CopyInitialPriceBreaks, DispatchUpdatePriceBreaks, ValidatePriceBreaks];
 
 const resetPriceBreaks = createHandlerChainRunnerOptionalParameter(chain, {}, "ResetPriceBreaks");
 export default resetPriceBreaks;

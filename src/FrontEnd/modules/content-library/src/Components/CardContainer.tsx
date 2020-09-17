@@ -29,14 +29,11 @@ export const cardContainerStyles: CardContainerStyles = {
 const CardContainer: FC<{
     extendedStyles?: CardContainerStyles;
 }> = ({ extendedStyles, children }) => {
-
     const [styles] = React.useState(() => mergeToNew(cardContainerStyles, extendedStyles));
 
     return (
         <StyledWrapper {...styles.cardDivider}>
-            <GridItem {...styles.gridItem}>
-                {children}
-            </GridItem>
+            <GridItem {...styles.gridItem}>{children}</GridItem>
         </StyledWrapper>
     );
 };

@@ -7,7 +7,8 @@ import { SavePageResponseModel } from "@insite/shell/Services/ContentAdminServic
 import {
     BrandSearchModel,
     CategorySearchModel,
-    PageEditorState, ProductSearchModel,
+    PageEditorState,
+    ProductSearchModel,
     SelectBrandModel,
     SelectCategoryModel,
 } from "@insite/shell/Store/PageEditor/PageEditorState";
@@ -18,7 +19,10 @@ const initialState: PageEditorState = {
 };
 
 const reducer = {
-    "PageEditor/CompleteSavePage": (draft: Draft<PageEditorState>, { savePageResponse }: { savePageResponse: SavePageResponseModel }) => {
+    "PageEditor/CompleteSavePage": (
+        draft: Draft<PageEditorState>,
+        { savePageResponse }: { savePageResponse: SavePageResponseModel },
+    ) => {
         draft.savePageResponse = savePageResponse;
     },
 
@@ -26,72 +30,94 @@ const reducer = {
         draft.showGeneratedPageTemplate = !draft.showGeneratedPageTemplate;
     },
 
-    "PageEditor/EditItem": (draft: Draft<PageEditorState>, action: {
-        item: PageProps | WidgetProps;
-        id: string;
-        removeIfCanceled?: boolean
-        isNewPage?: boolean;
-    }) => {
+    "PageEditor/EditItem": (
+        draft: Draft<PageEditorState>,
+        action: {
+            item: PageProps | WidgetProps;
+            id: string;
+            removeIfCanceled?: boolean;
+            isNewPage?: boolean;
+            isVariant?: boolean;
+        },
+    ) => {
         draft.itemBeforeEditing = action.item;
         draft.editingId = action.id;
         draft.isEditingNewPage = action.isNewPage;
+        draft.isEditingVariant = action.isVariant;
         draft.removeItemIfCanceled = action.removeIfCanceled;
     },
 
     "PageEditor/DoneEditingItem": (draft: Draft<PageEditorState>) => {
         delete draft.editingId;
         delete draft.isEditingNewPage;
+        delete draft.isEditingVariant;
     },
 
     "PageEditor/CancelEditingItem": (draft: Draft<PageEditorState>) => {
         delete draft.editingId;
         delete draft.itemBeforeEditing;
         delete draft.isEditingNewPage;
+        delete draft.isEditingVariant;
     },
 
-    "PageEditor/SelectProduct": (draft: Draft<PageEditorState>, action: { productPath: string; }) => {
+    "PageEditor/SelectProduct": (draft: Draft<PageEditorState>, action: { productPath: string }) => {
         draft.selectedProductPath = action.productPath;
     },
 
-    "PageEditor/SelectCategory": (draft: Draft<PageEditorState>, action: { categoryPath: string; }) => {
+    "PageEditor/SelectCategory": (draft: Draft<PageEditorState>, action: { categoryPath: string }) => {
         draft.selectedCategoryPath = action.categoryPath;
     },
 
-    "PageEditor/SelectBrand": (draft: Draft<PageEditorState>, action: { brandPath: string; }) => {
+    "PageEditor/SelectBrand": (draft: Draft<PageEditorState>, action: { brandPath: string }) => {
         draft.selectedBrandPath = action.brandPath;
     },
 
-    "PageEditor/CompleteProductSearch": (draft: Draft<PageEditorState>, action: { productSearchResults: ProductSearchModel[]; }) => {
+    "PageEditor/CompleteProductSearch": (
+        draft: Draft<PageEditorState>,
+        action: { productSearchResults: ProductSearchModel[] },
+    ) => {
         draft.productSearchResults = action.productSearchResults;
     },
 
-    "PageEditor/CompleteLoadBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[]; }) => {
+    "PageEditor/CompleteLoadBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[] }) => {
         draft.brands = action.brands;
     },
 
-    "PageEditor/CompleteBrandSearch": (draft: Draft<PageEditorState>, action: { brandSearchResults: BrandSearchModel[]; }) => {
+    "PageEditor/CompleteBrandSearch": (
+        draft: Draft<PageEditorState>,
+        action: { brandSearchResults: BrandSearchModel[] },
+    ) => {
         draft.brandSearchResults = action.brandSearchResults;
     },
 
-    "PageEditor/CompleteLoadSelectBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[]; }) => {
+    "PageEditor/CompleteLoadSelectBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[] }) => {
         draft.selectBrandsState = {
             ...draft.selectBrandsState,
             selectBrands: action.brands,
         };
     },
 
-    "PageEditor/CompleteLoadSelectedBrands": (draft: Draft<PageEditorState>, action: { brands: SelectBrandModel[]; }) => {
+    "PageEditor/CompleteLoadSelectedBrands": (
+        draft: Draft<PageEditorState>,
+        action: { brands: SelectBrandModel[] },
+    ) => {
         draft.selectBrandsState = {
             ...draft.selectBrandsState,
             selectedBrands: action.brands,
         };
     },
 
-    "PageEditor/CompleteCategorySearch": (draft: Draft<PageEditorState>, action: { categorySearchResults: CategorySearchModel[]; }) => {
+    "PageEditor/CompleteCategorySearch": (
+        draft: Draft<PageEditorState>,
+        action: { categorySearchResults: CategorySearchModel[] },
+    ) => {
         draft.categorySearchResults = action.categorySearchResults;
     },
 
-    "PageEditor/CompleteLoadCategories": (draft: Draft<PageEditorState>, action: { categories: SelectCategoryModel[]; }) => {
+    "PageEditor/CompleteLoadCategories": (
+        draft: Draft<PageEditorState>,
+        action: { categories: SelectCategoryModel[] },
+    ) => {
         draft.categories = action.categories;
         draft.categoryIndexByParentId = {};
         draft.categoryIndexById = {};
@@ -109,7 +135,7 @@ const reducer = {
             const category = draft.categories[x];
             let parentId = category.parentId;
             let displayName = category.shortDescription;
-            while(parentId) {
+            while (parentId) {
                 const parent = draft.categories[draft.categoryIndexById[parentId]];
                 displayName = `${parent.shortDescription} - ${displayName}`;
                 parentId = parent.parentId;

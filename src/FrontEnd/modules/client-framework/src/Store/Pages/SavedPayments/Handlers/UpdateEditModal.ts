@@ -11,9 +11,7 @@ export const DispatchUpdateModal: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchUpdateModal,
-];
+export const chain = [DispatchUpdateModal];
 
 const updateEditModal = createHandlerChainRunner(chain, "UpdateEditModal");
 export default updateEditModal;

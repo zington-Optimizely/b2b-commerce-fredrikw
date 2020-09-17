@@ -9,25 +9,25 @@ import * as React from "react";
 import { ColorChangeHandler, SketchPicker } from "react-color";
 import styled, { css, ThemeProps } from "styled-components";
 
-const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & {firstInput?: boolean, disabled?: boolean}>`
+const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & { firstInput?: boolean; disabled?: boolean }>`
     height: 29px;
     display: flex;
     justify-content: space-between;
     &:hover {
         .label {
-            color: ${({ theme, disabled }) => disabled ? "inherit" : theme.colors.primary.main};
+            color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.main)};
         }
     }
     > span {
         margin: 0;
     }
-    margin-top: ${({ firstInput }) => firstInput ? 10 : 7}px;
-    cursor: ${({ disabled }) => disabled ? "not-allowed" : "pointer"};
+    margin-top: ${({ firstInput }) => (firstInput ? 10 : 7)}px;
+    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
-const ColorButton = styled.button<{color: string}>`
-    background:
-        ${props => props.color.toLowerCase() === "unset"
+const ColorButton = styled.button<{ color: string }>`
+    background: ${props =>
+        props.color.toLowerCase() === "unset"
             ? css`
             repeating-linear-gradient(
                 45deg,
@@ -54,16 +54,16 @@ const ColorButton = styled.button<{color: string}>`
 `;
 
 type ColorPickerProps = {
-    id: string,
-    label?: React.ReactNode,
-    color: string | undefined,
-    disabled?: boolean,
-    onChange: ColorChangeHandler,
-    presetColors?: string[],
-    firstInput?: boolean,
-    isInPopover?: boolean,
-    popoverProps?: PopoverPresentationProps,
-    preventColorReset?: boolean,
+    id: string;
+    label?: React.ReactNode;
+    color: string | undefined;
+    disabled?: boolean;
+    onChange: ColorChangeHandler;
+    presetColors?: string[];
+    firstInput?: boolean;
+    isInPopover?: boolean;
+    popoverProps?: PopoverPresentationProps;
+    preventColorReset?: boolean;
 };
 
 class ColorPicker extends React.Component<ColorPickerProps> {
@@ -81,17 +81,24 @@ class ColorPicker extends React.Component<ColorPickerProps> {
             isInPopover,
             popoverProps,
             preventColorReset,
-         } = this.props;
+        } = this.props;
         const labelId = `${id}-label`;
         return (
             <LabelWithInputAtEnd htmlFor={id} firstInput={firstInput} disabled={disabled}>
-                {label && <Typography variant="h3" as="span" className="label">{label}</Typography>}
-                {disabled
-                    ? <DisabledInCodeTooltip
-                        triggerComponent={<ColorButton color={color || "unset"} id={id} aria-labelledby={labelId} as="span"/>}
+                {label && (
+                    <Typography variant="h3" as="span" className="label">
+                        {label}
+                    </Typography>
+                )}
+                {disabled ? (
+                    <DisabledInCodeTooltip
+                        triggerComponent={
+                            <ColorButton color={color || "unset"} id={id} aria-labelledby={labelId} as="span" />
+                        }
                         tooltipPosition="left"
                     />
-                    : <Popover
+                ) : (
+                    <Popover
                         toggle={false}
                         wrapperProps={{ _width: "auto" }}
                         insideRefs={[this.element]}
@@ -118,29 +125,37 @@ class ColorPicker extends React.Component<ColorPickerProps> {
                             onChangeComplete={onChange}
                             presetColors={presetColors || []}
                             // terrible formatting because definitely-typed erroneously excludes the below prop
-                            {...{ styles: { controls: { width: preventColorReset ? "100%" : "85%", display: "flex" } } } as any}
+                            {...({
+                                styles: { controls: { width: preventColorReset ? "100%" : "85%", display: "flex" } },
+                            } as any)}
                         />
-                        {!preventColorReset && <Button
-                            onClick={() => onChange({
-                                rgb: { r: 0, g: 0, b: 0, a: 100 },
-                                hex: "unset",
-                                hsl: { a: 0, h: 0, l: 0, s: 0 },
-                            })}
-                            buttonType="solid"
-                            color="common.accent"
-                            sizeVariant="small"
-                            css={css`
-                                position: absolute;
-                                top: 162px;
-                                right: 10px;
-                                padding: 0;
-                                &:hover {
-                                    color: black;
+                        {!preventColorReset && (
+                            <Button
+                                onClick={() =>
+                                    onChange({
+                                        rgb: { r: 0, g: 0, b: 0, a: 100 },
+                                        hex: "unset",
+                                        hsl: { a: 0, h: 0, l: 0, s: 0 },
+                                    })
                                 }
-                            `}
-                        ><ButtonIcon src={X}/></Button>
-                    }
-                </Popover>}
+                                buttonType="solid"
+                                color="common.accent"
+                                sizeVariant="small"
+                                css={css`
+                                    position: absolute;
+                                    top: 162px;
+                                    right: 10px;
+                                    padding: 0;
+                                    &:hover {
+                                        color: black;
+                                    }
+                                `}
+                            >
+                                <ButtonIcon src={X} />
+                            </Button>
+                        )}
+                    </Popover>
+                )}
             </LabelWithInputAtEnd>
         );
     }

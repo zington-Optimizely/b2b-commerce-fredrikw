@@ -249,14 +249,14 @@
                                 </div>
                                 <label for="expirationMonth" class="error"></label>
                             </div>
+                        </div>
+                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard">
                             <div ng-show="vm.cart.paymentOptions.canStorePaymentProfile">
                                 <label>
                                     <input id="tst_reviewAndPayPage_saveCard" type="checkbox" ng-model="vm.cart.paymentOptions.storePaymentProfile" />
                                     [% translate 'Save card information' %]
                                 </label>
                             </div>
-                        </div>
-                        <div ng-show="vm.cart.showCreditCard && vm.cart.paymentMethod.isCreditCard">
                             <div class="use-billing-address">
                                 <h4>[% translate 'Credit Card Address' %]</h4>
                                 <label>

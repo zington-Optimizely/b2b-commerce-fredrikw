@@ -33,7 +33,8 @@ export interface OverflowMenuPresentationProps {
     transitionDuration?: keyof ThemeTransitionDuration;
 }
 
-export type OverflowMenuComponentProps = MobiusStyledComponentProps<"ul",
+export type OverflowMenuComponentProps = MobiusStyledComponentProps<
+    "ul",
     Pick<PopoverProps, "isOpen" | "onClose" | "onOpen"> & {
         /** Where the menu origin is located in relation to the trigger button. */
         position?: "start" | "middle" | "end";
@@ -44,6 +45,8 @@ export type OverflowMenuComponentProps = MobiusStyledComponentProps<"ul",
          * If not provided, a random id is assigned (an id is required for accessibility purposes).
          */
         uid?: string;
+        /** Used for targeting with an automated test. */
+        "data-test-selector"?: string;
     }
 >;
 
@@ -51,7 +54,7 @@ export type OverflowMenuProps = OverflowMenuComponentProps & OverflowMenuPresent
 
 // TODO ISC-12114 - The getProp call below depends on a (fixed) inaccuracy of the getProp return type definition.
 const OverflowButton = styled(Button)`
-    z-index: ${getProp("theme.zIndex.menu", 0) as any - 1};
+    z-index: ${(getProp("theme.zIndex.menu", 0) as any) - 1};
     width: 40px;
     padding: 0;
 `;
@@ -69,7 +72,8 @@ const OverflowMenuItem = styled.li`
         &:hover {
             background: ${getColor("common.border")};
         }
-        &:active, &:focus {
+        &:active,
+        &:focus {
             background: ${getColor("primary.main")};
             color: ${getColor("primary.contrast")};
         }
@@ -109,12 +113,14 @@ class OverflowMenu extends React.Component<Props, State> {
         } = this.props;
         const { controlsId } = this.state;
         const { spreadProps } = applyPropBuilder(otherProps, { component: "overflowMenu" });
-        const cssOverrides = spreadProps("cssOverrides" as any) as Required<OverflowMenuPresentationProps>["cssOverrides"];
+        const cssOverrides = spreadProps("cssOverrides" as any) as Required<
+            OverflowMenuPresentationProps
+        >["cssOverrides"];
         const iconProps = spreadProps("iconProps" as any);
         const menuItems: JSX.Element[] = React.Children.map(children, (menuChild, index) => {
             const newProps: { onClick?: (event: Event) => void } = {};
             if (typeof (menuChild as React.ReactElement)?.props?.onClick === "function") {
-                newProps.onClick = (event) => {
+                newProps.onClick = event => {
                     (menuChild as React.ReactElement)?.props?.onClick(event);
                     this.popover.current && (this.popover.current! as any).closePopover();
                 };
@@ -125,7 +131,7 @@ class OverflowMenu extends React.Component<Props, State> {
             return (
                 // eslint-disable-next-line react/no-array-index-key
                 <OverflowMenuItem key={index} css={cssOverrides.menuItem}>
-                    {React.cloneElement((menuChild as React.ReactElement), newProps)}
+                    {React.cloneElement(menuChild as React.ReactElement, newProps)}
                 </OverflowMenuItem>
             );
         });
@@ -139,12 +145,10 @@ class OverflowMenu extends React.Component<Props, State> {
         const popoverTrigger = (
             <OverflowButton
                 {...spreadProps("buttonProps" as any)}
-                data-test-selector="popoverOverflowTrigger"
+                type="button"
+                data-test-selector={otherProps["data-test-selector"] ?? "popoverOverflowTrigger"}
             >
-                {iconProps.color
-                    ? <IconMemo {...iconProps} />
-                    : <ButtonIcon {...iconProps} />
-                }
+                {iconProps.color ? <IconMemo {...iconProps} /> : <ButtonIcon {...iconProps} />}
                 <VisuallyHidden>{otherProps.theme.translate("Menu")}</VisuallyHidden>
             </OverflowButton>
         );

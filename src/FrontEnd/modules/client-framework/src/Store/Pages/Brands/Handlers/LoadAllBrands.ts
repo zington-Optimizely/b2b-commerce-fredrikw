@@ -23,14 +23,11 @@ export const RequestDataFromApi: HandlerType = async props => {
             page,
         };
         const apiResult = await getBrands(parameter);
-        if (apiResult.pagination!.totalItemCount < (page * pageSize)) {
+        if (apiResult.pagination!.totalItemCount < page * pageSize) {
             runApiRequest = false;
         }
         page = page + 1;
-        collection = [
-            ...collection,
-            ...apiResult.brands || [],
-        ];
+        collection = [...collection, ...(apiResult.brands || [])];
     }
     props.result = collection;
 };
@@ -43,14 +40,14 @@ export const DispatchCompleteLoadBrands: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadBrands,
-    RequestDataFromApi,
-    DispatchCompleteLoadBrands,
-];
+export const chain = [DispatchBeginLoadBrands, RequestDataFromApi, DispatchCompleteLoadBrands];
 
-const loadAllBrands = createHandlerChainRunnerOptionalParameter(chain, {
-    page: 1,
-    pageSize: 500,
-}, "LoadAllBrands");
+const loadAllBrands = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {
+        page: 1,
+        pageSize: 500,
+    },
+    "LoadAllBrands",
+);
 export default loadAllBrands;

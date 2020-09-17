@@ -12,11 +12,17 @@ const initialState: PublishModalState = {
 };
 
 const reducer = {
-    "PublishModal/SetPublishButtonExpanded": (draft: Draft<PublishModalState>, action: { publishButtonExpanded: boolean }) => {
+    "PublishModal/SetPublishButtonExpanded": (
+        draft: Draft<PublishModalState>,
+        action: { publishButtonExpanded: boolean },
+    ) => {
         draft.publishButtonExpanded = action.publishButtonExpanded;
     },
 
-    "PublishModal/SetShowModal": (draft: Draft<PublishModalState>, action: { showModal: boolean, isBulkPublish?: true }) => {
+    "PublishModal/SetShowModal": (
+        draft: Draft<PublishModalState>,
+        action: { showModal: boolean; isBulkPublish?: true },
+    ) => {
         delete draft.publishButtonExpanded;
         draft.showModal = action.showModal;
         draft.isBulkPublish = action.isBulkPublish;
@@ -36,13 +42,22 @@ const reducer = {
         };
     },
 
-    "PublishModal/CompleteLoadingPublishInfo": (draft: Draft<PublishModalState>, { pagePublishInfos, publishOn, rollbackOn, isEditingExistingPublish, failedPageIds }: {
-        pagePublishInfos: PagePublishInfo[],
-        publishOn?: Date | null,
-        rollbackOn?: Date | null,
-        isEditingExistingPublish?: boolean,
-        failedPageIds?: Dictionary<boolean> | null,
-     }) => {
+    "PublishModal/CompleteLoadingPublishInfo": (
+        draft: Draft<PublishModalState>,
+        {
+            pagePublishInfos,
+            publishOn,
+            rollbackOn,
+            isEditingExistingPublish,
+            failedPageIds,
+        }: {
+            pagePublishInfos: PagePublishInfo[];
+            publishOn?: Date | null;
+            rollbackOn?: Date | null;
+            isEditingExistingPublish?: boolean;
+            failedPageIds?: Dictionary<boolean> | null;
+        },
+    ) => {
         draft.pagePublishInfosState = {
             isLoading: false,
             value: pagePublishInfos,
@@ -78,11 +93,14 @@ const reducer = {
         draft.rollbackOn = action.rollbackOn;
     },
 
-    "PublishModal/SetFailedToPublishPageIds": (draft: Draft<PublishModalState>, action: { failedPageIds: Dictionary<boolean> }) => {
+    "PublishModal/SetFailedToPublishPageIds": (
+        draft: Draft<PublishModalState>,
+        action: { failedPageIds: Dictionary<boolean> },
+    ) => {
         draft.failedToPublishPageIds = action.failedPageIds;
     },
 
-    "PublishModal/SetIsSelected": (draft: Draft<PublishModalState>, action: { index: number, isSelected: boolean }) => {
+    "PublishModal/SetIsSelected": (draft: Draft<PublishModalState>, action: { index: number; isSelected: boolean }) => {
         draft.pagePublishInfoIsSelected[action.index] = action.isSelected;
     },
 

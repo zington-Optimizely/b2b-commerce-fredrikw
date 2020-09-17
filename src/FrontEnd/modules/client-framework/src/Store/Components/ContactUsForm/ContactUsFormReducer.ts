@@ -10,7 +10,10 @@ const reducer = {
     "Components/ContactUsForm/ClearForm": (draft: Draft<ContactUsFormState>) => {
         draft.fieldValues = {};
     },
-    "Components/ContactUsForm/SetFieldValue": (draft: Draft<ContactUsFormState>, action: { key: string, value: string }) => {
+    "Components/ContactUsForm/SetFieldValue": (
+        draft: Draft<ContactUsFormState>,
+        action: { key: string; value: string },
+    ) => {
         draft.fieldValues[action.key] = action.value;
     },
 };

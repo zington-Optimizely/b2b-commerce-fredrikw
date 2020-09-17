@@ -1,8 +1,8 @@
-
 async function waitFor(isDone: () => boolean, waitTimeInMilliseconds = 30000, intervalInMilliseconds = 50) {
     const loopCount = waitTimeInMilliseconds / intervalInMilliseconds;
     let x = 0;
-    while (x < loopCount) { // wait 30 seconds max
+    while (x < loopCount) {
+        // wait 30 seconds max
         if (isDone()) {
             return true;
         }

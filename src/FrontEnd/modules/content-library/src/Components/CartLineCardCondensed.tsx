@@ -18,7 +18,7 @@ import { css } from "styled-components";
 
 interface OwnProps {
     cart: Cart;
-    promotions: PromotionModel[];
+    promotions?: PromotionModel[];
     editable: boolean;
     extendedStyles?: CartLineCardCondensedStyles;
 }
@@ -72,7 +72,9 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
         gap: 10,
     },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productBrand: {
@@ -115,16 +117,14 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
     },
 };
 
-const CartLineCardCondensed: FC<Props> = ({
-    cart,
-    cartLine,
-    editable,
-    extendedStyles,
-}) => {
+const CartLineCardCondensed: FC<Props> = ({ cart, cartLine, editable, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(cartLineCardCondensedStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.container} data-test-selector={`cartline_condensed_${cartLine.productId}_${cartLine.unitOfMeasure}`}>
+        <GridContainer
+            {...styles.container}
+            data-test-selector={`cartline_condensed_${cartLine.productId}_${cartLine.unitOfMeasure}`}
+        >
             <GridItem {...styles.productImageGridItem}>
                 <ProductImage product={cartLine} extendedStyles={styles.productImage} />
             </GridItem>
@@ -133,9 +133,9 @@ const CartLineCardCondensed: FC<Props> = ({
                     <GridItem {...styles.infoLeftColumn}>
                         <GridContainer {...styles.infoLeftColumnContainer}>
                             <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                                {cartLine.brand
-                                    && <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
-                                }
+                                {cartLine.brand && (
+                                    <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
+                                )}
                                 <ProductDescription product={cartLine} extendedStyles={styles.productDescription} />
                                 <Typography {...styles.productErpNumberText}>{cartLine.erpNumber}</Typography>
                             </GridItem>
@@ -147,22 +147,20 @@ const CartLineCardCondensed: FC<Props> = ({
                                 <ProductPrice
                                     product={cartLine}
                                     currencySymbol={cart.currencySymbol}
-                                    extendedStyles={styles.price} />
-                            </GridItem>
-                            <GridItem {...styles.quantityGridItem}>
-                                <CartLineQuantity
-                                    cart={cart}
-                                    extendedStyles={styles.quantity}
-                                    editable={editable}
+                                    extendedStyles={styles.price}
                                 />
                             </GridItem>
+                            <GridItem {...styles.quantityGridItem}>
+                                <CartLineQuantity cart={cart} extendedStyles={styles.quantity} editable={editable} />
+                            </GridItem>
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
-                                {cartLine.pricing
-                                    && <SmallHeadingAndText
+                                {cartLine.pricing && (
+                                    <SmallHeadingAndText
                                         heading={translate("Subtotal")}
                                         text={cartLine.pricing.extendedUnitNetPriceDisplay}
-                                        extendedStyles={styles.extendedUnitNetPrice} />
-                                }
+                                        extendedStyles={styles.extendedUnitNetPrice}
+                                    />
+                                )}
                             </GridItem>
                         </GridContainer>
                     </GridItem>

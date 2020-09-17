@@ -1,7 +1,7 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import { BudgetWidgetNames } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
 
-type HandlerType = Handler<{ value: BudgetWidgetNames; }>;
+type HandlerType = Handler<{ value: BudgetWidgetNames }>;
 
 export const DispatchSetDisplayedWidgetName: HandlerType = props => {
     props.dispatch({
@@ -10,9 +10,7 @@ export const DispatchSetDisplayedWidgetName: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetDisplayedWidgetName,
-];
+export const chain = [DispatchSetDisplayedWidgetName];
 
 const setDisplayedWidgetName = createHandlerChainRunner(chain, "setDisplayedWidgetName");
 export default setDisplayedWidgetName;

@@ -41,11 +41,15 @@ export const signInResetPasswordFormStyles: SignInResetPasswordFormStyles = {
     },
     buttonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         color: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
@@ -65,11 +69,14 @@ const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
             resetPassword({
                 userName,
                 onSuccess: () => {
-                    toasterContext.addToast({ body: siteMessage("ResetPassword_ResetPasswordEmailSent"), messageType: "success" });
+                    toasterContext.addToast({
+                        body: siteMessage("ResetPassword_ResetPasswordEmailSent"),
+                        messageType: "success",
+                    });
                     onClose();
                     resetForm();
                 },
-                onError: (error) => {
+                onError: error => {
                     setErrorMessage(error);
                 },
             });
@@ -98,13 +105,11 @@ const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
                     value={userName}
                     placeholder={translate("Enter username")}
                     error={errorMessage}
-                    onChange={(e) => setUserName(e.currentTarget.value)}>
-                </TextField>
+                    onChange={e => setUserName(e.currentTarget.value)}
+                ></TextField>
             </GridItem>
             <GridItem {...styles.buttonsGridItem}>
-                <Button
-                    {...styles.cancelButton}
-                    onClick={onCancelClick}>
+                <Button {...styles.cancelButton} onClick={onCancelClick}>
                     {translate("Return to sign in")}
                 </Button>
                 <Button {...styles.sendButton} onClick={() => sendEmail(userName)}>

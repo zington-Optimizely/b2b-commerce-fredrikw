@@ -1,7 +1,9 @@
+import isApiError from "@insite/client-framework/Common/isApiError";
 import {
     ApiParameter,
     API_URL_CURRENT_FRAGMENT,
     del,
+    doesNotHaveExpand,
     get,
     HasPagingParameters,
     patch,
@@ -13,15 +15,19 @@ import {
     AccountModel,
     AccountPaymentProfileCollectionModel,
     AccountPaymentProfileModel,
+    AccountShipToCollectionModel,
+    AccountShipToModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetAccountsApiParameter extends ApiParameter, HasPagingParameters {
     searchText?: string;
+    expand?: "administration"[];
     additionalExpands?: string[];
 }
 
 export interface GetAccountApiParameter extends ApiParameter {
     accountId: string;
+    expand?: ("approvers" | "roles")[];
 }
 
 export interface UpdateAccountApiParameter extends ApiParameter {
@@ -33,7 +39,7 @@ export interface AddAccountApiParameter extends ApiParameter {
 }
 
 export interface GetPaymentProfilesApiParameter extends ApiParameter, HasPagingParameters {
-    expand?: ("properties")[];
+    expand?: "properties"[];
     additionalExpands?: string[];
 }
 
@@ -49,22 +55,59 @@ export interface DeletePaymentProfileApiParameter extends ApiParameter {
     paymentProfileId: string;
 }
 
+export interface GetAccountShipToCollectionApiParameter extends ApiParameter, HasPagingParameters {
+    accountId?: string;
+}
+
+export interface ApplyAccountShipToCollectionApiParameter extends ApiParameter {
+    accountId: string;
+    shipToCollection: AccountShipToModel[];
+}
+
 const accountsUrl = "api/v1/accounts";
 const paymentProfilesUrl = `${accountsUrl}/current/paymentprofiles`;
 
-export function getAccounts(parameter: GetAccountsApiParameter) {
-    return get<AccountCollectionModel>(accountsUrl, parameter);
+export async function getAccounts(parameter: GetAccountsApiParameter) {
+    const accountCollection = await get<AccountCollectionModel>(accountsUrl, parameter);
+    accountCollection.accounts?.forEach(o => cleanAccount(o));
+    return accountCollection;
 }
 
-export function getAccount(parameter: GetAccountApiParameter) {
+export async function getAccount(parameter: GetAccountApiParameter) {
     const accountId = parameter.accountId || API_URL_CURRENT_FRAGMENT;
-    return get<AccountModel>(`${accountsUrl}/${accountId}`, {});
+    const account = await get<AccountModel>(`${accountsUrl}/${accountId}`, {
+        expand: parameter.expand,
+    } as ApiParameter);
+    cleanAccount(account, parameter);
+    return account;
 }
 
-export function updateAccount(parameter: UpdateAccountApiParameter) {
+export async function updateAccount(parameter: UpdateAccountApiParameter) {
     const account = parameter.account;
     const accountId = account.id || API_URL_CURRENT_FRAGMENT;
-    return patch<AccountModel>(`${accountsUrl}/${accountId}`, account);
+    const updatedAccount = await patch<AccountModel>(`${accountsUrl}/${accountId}`, account);
+    cleanAccount(updatedAccount);
+    return updatedAccount;
+}
+
+export async function updateAccountWithResult(
+    parameter: UpdateAccountApiParameter,
+): Promise<ServiceResult<AccountModel>> {
+    try {
+        const updatedAccount = await updateAccount(parameter);
+        return {
+            successful: true,
+            result: updatedAccount,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
 }
 
 export async function addAccount(parameter: AddAccountApiParameter): Promise<ServiceResult<AccountModel>> {
@@ -94,9 +137,50 @@ export function addPaymentProfile(parameter: AddPaymentProfileApiParameter) {
 }
 
 export function updatePaymentProfile(parameter: UpdatePaymentProfileApiParameter) {
-    return patch<AccountPaymentProfileModel>(`${paymentProfilesUrl}/${parameter.paymentProfile.id}`, parameter.paymentProfile);
+    return patch<AccountPaymentProfileModel>(
+        `${paymentProfilesUrl}/${parameter.paymentProfile.id}`,
+        parameter.paymentProfile,
+    );
 }
 
 export function deletePaymentProfile(parameter: DeletePaymentProfileApiParameter) {
     return del(`${accountsUrl}/current/paymentprofiles/${parameter.paymentProfileId}`);
+}
+
+export function getAccountShipToCollection(parameter: GetAccountShipToCollectionApiParameter) {
+    return get<AccountShipToCollectionModel>(`${accountsUrl}/${parameter.accountId}/shiptos`, parameter);
+}
+
+export async function applyAccountShipToCollection(
+    parameter: ApplyAccountShipToCollectionApiParameter,
+): Promise<ServiceResult<AccountShipToCollectionModel>> {
+    try {
+        const shipToCollection = await patch<AccountShipToCollectionModel>(
+            `${accountsUrl}/${parameter.accountId}/shiptos`,
+            { userShipToCollection: parameter.shipToCollection },
+        );
+        return {
+            successful: true,
+            result: shipToCollection,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
+}
+
+function cleanAccount(accountModel: AccountModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
+    accountModel.lastLoginOn = accountModel.lastLoginOn && new Date(accountModel.lastLoginOn);
+    if (doesNotHaveExpand(parameter, "roles")) {
+        delete accountModel.availableRoles;
+    }
+
+    if (doesNotHaveExpand(parameter, "approvers")) {
+        delete accountModel.availableApprovers;
+    }
 }

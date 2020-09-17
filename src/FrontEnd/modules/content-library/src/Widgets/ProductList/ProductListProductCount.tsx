@@ -11,18 +11,17 @@ import React, { FC } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     const pagination = getProductListDataViewProperty(state, "pagination");
-    const correctedQuery = getProductListDataViewProperty(state,  "correctedQuery");
+    const correctedQuery = getProductListDataViewProperty(state, "correctedQuery");
     const { productFilters } = state.pages.productList;
 
-    return ({
+    return {
         totalItemCount: pagination?.totalItemCount,
         query: correctedQuery || productFilters.query,
-    });
+    };
 };
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
@@ -36,10 +35,14 @@ export interface ProductListProductCountStyles {
 
 export const productCountStyles: ProductListProductCountStyles = {
     wrapper: {
-        css: css` margin-top: 10px; `,
+        css: css`
+            margin-top: 10px;
+        `,
     },
     countText: {
-        css: css` white-space: nowrap; `,
+        css: css`
+            white-space: nowrap;
+        `,
     },
     queryText: {
         css: css`
@@ -60,15 +63,20 @@ const ProductListProductCount: FC<Props> = ({ totalItemCount, query }) => {
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.countText} data-test-selector="productListCountText">{totalItemCount}</Typography>
+            <Typography {...styles.countText} data-test-selector="productListCountText">
+                {totalItemCount}
+            </Typography>
             <Typography {...styles.itemsText}>{translate(itemsText)}</Typography>
-            {query && <Typography {...styles.queryText} data-test-selector="productListQueryText">{query}</Typography>}
+            {query && (
+                <Typography {...styles.queryText} data-test-selector="productListQueryText">
+                    {query}
+                </Typography>
+            )}
         </StyledWrapper>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps)(ProductListProductCount),
     definition: {
         group: "Product List",

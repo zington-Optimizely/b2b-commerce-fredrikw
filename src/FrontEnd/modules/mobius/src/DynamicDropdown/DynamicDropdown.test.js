@@ -1,31 +1,31 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import DynamicDropdown, { Option } from './DynamicDropdown';
-import Icon from '../Icon';
-import Link from '../Link';
-import LoadingSpinner from '../LoadingSpinner';
-import Typography from '../Typography';
-import FormField from '../FormField';
-import { colors } from './optionsLists';
-import DisablerContext from '../utilities/DisablerContext';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import DynamicDropdown, { Option } from "./DynamicDropdown";
+import Icon from "../Icon";
+import Link from "../Link";
+import LoadingSpinner from "../LoadingSpinner";
+import Typography from "../Typography";
+import FormField from "../FormField";
+import { colors } from "./optionsLists";
+import DisablerContext from "../utilities/DisablerContext";
 
 const generateOptions = valsArr => valsArr.map(val => ({ optionText: val }));
 const colorOptions = generateOptions(colors);
 
 const validateOptions = (root, options) => {
     const presentValues = {};
-    root.find(Option).forEach((option) => {
+    root.find(Option).forEach(option => {
         const value = option.getDOMNode().innerHTML;
         presentValues[value] = true;
     });
-    options.forEach((c) => {
+    options.forEach(c => {
         expect(presentValues[c]).toBe(true);
     });
 };
 
-describe('DynamicDropdown', () => {
+describe("DynamicDropdown", () => {
     let props = { options: colorOptions };
     let mountedWrapper;
     let disablerValue;
@@ -36,7 +36,7 @@ describe('DynamicDropdown', () => {
                     <DisablerContext.Provider value={disablerValue}>
                         <DynamicDropdown {...props} />
                     </DisablerContext.Provider>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -46,84 +46,84 @@ describe('DynamicDropdown', () => {
         mountedWrapper = undefined;
     });
 
-    describe('component rendering', () => {
-        test('displays a carat icon', () => {
+    describe("component rendering", () => {
+        test("displays a carat icon", () => {
             const root = wrapper();
             expect(root.find(Icon)).toHaveLength(1);
             expect(root.find(Icon).find("[src='ChevronDown']")).toHaveLength(1);
         });
-        test('renders all options as passed', () => {
+        test("renders all options as passed", () => {
             const root = wrapper();
-            root.find('input').simulate('click');
+            root.find("input").simulate("click");
             validateOptions(root, colors);
         });
-        test('renders moreOptions if provided', () => {
+        test("renders moreOptions if provided", () => {
             props = { options: colorOptions, moreOption: <Link href="www.hat.com">more hats</Link> };
             const root = wrapper();
-            root.find('input').simulate('click');
+            root.find("input").simulate("click");
             expect(root.find(Link)).toHaveLength(1);
         });
-        test('renders loading spinner if loading', () => {
+        test("renders loading spinner if loading", () => {
             props = { options: colorOptions, isLoading: true };
             const root = wrapper();
-            root.find('input').simulate('click');
+            root.find("input").simulate("click");
             expect(root.find(LoadingSpinner)).toHaveLength(1);
         });
-        test('is rendered as a `FormField`', () => {
+        test("is rendered as a `FormField`", () => {
             expect(wrapper().find(FormField)).toHaveLength(1);
         });
     });
 
-    describe('functionality', () => {
-        test('renders selected item as passed in initial props', () => {
-            const selected = 'indigo';
+    describe("functionality", () => {
+        test("renders selected item as passed in initial props", () => {
+            const selected = "indigo";
             props = { options: colorOptions, selected };
             const root = wrapper();
-            root.find('input').simulate('click');
+            root.find("input").simulate("click");
             const selectedRow = root.find('div[value="indigo"]');
             expect(selectedRow).toHaveLength(1);
-            expect(selectedRow.prop('aria-selected')).toBe(true);
-            expect(selectedRow).toHaveStyleRule('background', '#275AA8');
-            expect(selectedRow).toHaveStyleRule('color', '#FFFFFF');
+            expect(selectedRow.prop("aria-selected")).toBe(true);
+            expect(selectedRow).toHaveStyleRule("background", "#275AA8");
+            expect(selectedRow).toHaveStyleRule("color", "#FFFFFF");
         });
-        test('displays \'no options\' result if no options from search', () => {
+        test("displays 'no options' result if no options from search", () => {
             const root = wrapper();
-            root.find('input').simulate('change', { target: { value: 'm' } });
+            root.find("input").simulate("change", { target: { value: "m" } });
             const noOptions = root.find('div[data-id="no-options"]');
             expect(noOptions).toHaveLength(1);
         });
-        test('displayed options change as typed input changes', () => {
-            const optionArray = ['red', 'orangered', 'red-blue', 'red-purple', 'reddish'];
+        test("displayed options change as typed input changes", () => {
+            const optionArray = ["red", "orangered", "red-blue", "red-purple", "reddish"];
             props = { options: generateOptions(optionArray) };
             const root = wrapper();
-            root.find('input').simulate('change', { target: { value: 'red' } });
+            root.find("input").simulate("change", { target: { value: "red" } });
             validateOptions(root, optionArray);
-            root.find('input').simulate('change', { target: { value: 'red-' } });
-            validateOptions(root, ['red-blue', 'red-purple']);
-            root.find('input').simulate('change', { target: { value: 'redd' } });
-            validateOptions(root, ['reddish']);
+            root.find("input").simulate("change", { target: { value: "red-" } });
+            validateOptions(root, ["red-blue", "red-purple"]);
+            root.find("input").simulate("change", { target: { value: "redd" } });
+            validateOptions(root, ["reddish"]);
         });
-        test('selected option is visible as non-placeholder text', () => {
-            const selected = 'indigo';
+        test("selected option is visible as non-placeholder text", () => {
+            const selected = "indigo";
             props = { options: colorOptions, selected };
             const root = wrapper();
-            expect(root.find('input').prop('placeholder')).toBe('');
-            expect(root.find(Typography).getDOMNode().innerHTML).toBe('indigo');
+            expect(root.find("input").prop("placeholder")).toBe("");
+            expect(root.find(Typography).getDOMNode().innerHTML).toBe("indigo");
         });
-        describe('is appropriately disabled', () => {
+        describe("is appropriately disabled", () => {
             test("if DisablerContext is true", () => {
                 disablerValue = { disable: true };
-                props = { options: colorOptions, selected: 'indigo' };
+                props = { options: colorOptions, selected: "indigo" };
                 expect(wrapper().find("input").prop("disabled")).toBe(true);
             });
             test("if DisablerContext is false and disabled is true", () => {
                 disablerValue = { disable: false };
-                props = { options: colorOptions, selected: 'indigo', disabled: true };
+                props = { options: colorOptions, selected: "indigo", disabled: true };
                 expect(wrapper().find("input").prop("disabled")).toBe(true);
             });
             test("if DisablerContext is false and disabled is false", () => {
                 disablerValue = { disable: false };
-                props = { options: colorOptions, selected: 'indigo' };
+                props = { options: colorOptions, selected: "indigo" };
                 expect(wrapper().find("input").prop("disabled")).toBe(false);
             });
         });
@@ -143,41 +143,41 @@ describe('DynamicDropdown', () => {
         // });
     });
 
-    describe('accessibility considerations', () => {
-        describe('dom elements', () => {
-            test('aria-expanded appropriate to expanded state', () => {
+    describe("accessibility considerations", () => {
+        describe("dom elements", () => {
+            test("aria-expanded appropriate to expanded state", () => {
                 const root = wrapper();
-                expect(root.find('div[role="combobox"]').prop('aria-expanded')).toBe(false);
-                root.find('input').simulate('click');
-                expect(root.find('div[role="combobox"]').prop('aria-expanded')).toBe(true);
+                expect(root.find('div[role="combobox"]').prop("aria-expanded")).toBe(false);
+                root.find("input").simulate("click");
+                expect(root.find('div[role="combobox"]').prop("aria-expanded")).toBe(true);
             });
-            test('renders an input with role `searchbox`', () => {
-                expect(wrapper().find('input').prop('role')).toBe('searchbox');
+            test("renders an input with role `searchbox`", () => {
+                expect(wrapper().find("input").prop("role")).toBe("searchbox");
             });
-            test('input wrapped in a `combobox` role', () => {
-                expect(wrapper().find('[role="combobox"]').find('input')).toHaveLength(1);
+            test("input wrapped in a `combobox` role", () => {
+                expect(wrapper().find('[role="combobox"]').find("input")).toHaveLength(1);
             });
-            test('list of options is ul with role `listbox`', () => {
+            test("list of options is ul with role `listbox`", () => {
                 const root = wrapper();
-                root.find('input').simulate('click');
-                expect(root.find('ul').prop('role')).toBe('listbox');
+                root.find("input").simulate("click");
+                expect(root.find("ul").prop("role")).toBe("listbox");
             });
         });
-        describe('keyboard interaction', () => {
-        //     test('arrow key focuses options', () => {
-        //     });
-        //     test('enter selects item and closes select', () => {
-        //     });
-        //     describe('implicit selection', () => {
-        //         test('if exact match and no selected item, enter selects', () => {
-        //         });
-        //         test('if exact match and no selected item, tab selects', () => {
-        //         });
-        //         test('if single non-disabled result and no selected item, tab selects', () => {
-        //         });
-        //         test('if single non-disabled result and no selected item, enter selects', () => {
-        //         });
-        //     });
+        describe("keyboard interaction", () => {
+            //     test('arrow key focuses options', () => {
+            //     });
+            //     test('enter selects item and closes select', () => {
+            //     });
+            //     describe('implicit selection', () => {
+            //         test('if exact match and no selected item, enter selects', () => {
+            //         });
+            //         test('if exact match and no selected item, tab selects', () => {
+            //         });
+            //         test('if single non-disabled result and no selected item, tab selects', () => {
+            //         });
+            //         test('if single non-disabled result and no selected item, enter selects', () => {
+            //         });
+            //     });
         });
     });
 });

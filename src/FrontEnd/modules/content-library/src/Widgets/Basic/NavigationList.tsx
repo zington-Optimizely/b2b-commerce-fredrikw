@@ -31,8 +31,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     rootPageLink: getPageLinkByNodeId(state, ownProps.fields.nodeId?.value || getCurrentPage(state).nodeId),
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -56,18 +55,27 @@ class NavigationList extends React.Component<Props> {
 
             const nextDepth = currentDepth + 1;
 
-            return pageLinks.filter(pageLink => !pageLink.excludeFromNavigation).map((pageLink) => {
-                return <li key={pageLink.id}>
-                        <Link data-test-selector={`navigationList-${pageLink.title}`} href={pageLink.url}>{pageLink.title}</Link>
-                        {pageLink.children && pageLink.children.length > 0
-                            && <ListStyle key={pageLink.id}>
-                                {renderLinks(pageLink.children, nextDepth)}
-                            </ListStyle>}
-                        </li>;
-            });
+            return pageLinks
+                .filter(pageLink => !pageLink.excludeFromNavigation)
+                .map(pageLink => {
+                    return (
+                        <li key={pageLink.id}>
+                            <Link data-test-selector={`navigationList-${pageLink.title}`} href={pageLink.url}>
+                                {pageLink.title}
+                            </Link>
+                            {pageLink.children && pageLink.children.length > 0 && (
+                                <ListStyle key={pageLink.id}>{renderLinks(pageLink.children, nextDepth)}</ListStyle>
+                            )}
+                        </li>
+                    );
+                });
         };
 
-        return <ListStyle data-test-selector="navigationList">{renderLinks(this.props.rootPageLink.children, 1)}</ListStyle>;
+        return (
+            <ListStyle data-test-selector="navigationList">
+                {renderLinks(this.props.rootPageLink.children, 1)}
+            </ListStyle>
+        );
     }
 }
 

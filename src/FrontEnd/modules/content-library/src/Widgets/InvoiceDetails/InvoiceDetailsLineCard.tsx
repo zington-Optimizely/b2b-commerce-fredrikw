@@ -80,7 +80,9 @@ export const cardStyles: InvoiceDetailsLineCardStyles = {
     },
     brandStyles: {
         nameText: {
-            css: css` color: ${getColor("text.main")}; `,
+            css: css`
+                color: ${getColor("text.main")};
+            `,
         },
     },
     productNameItem: {
@@ -125,7 +127,9 @@ export const cardStyles: InvoiceDetailsLineCardStyles = {
     totalItem: {
         width: [12, 12, 12, 12, 4],
         printWidth: 4,
-        css: css` font-weight: 600; `,
+        css: css`
+            font-weight: 600;
+        `,
     },
 };
 
@@ -143,19 +147,21 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                 <GridContainer {...styles.infoInnerContainer}>
                     <GridItem {...styles.infoLeftColumn}>
                         <GridContainer {...styles.infoLeftColumnContainer}>
-                            {invoiceLine.brand
-                                && <GridItem {...styles.brandItem} data-test-selector="invoiceLine_brand">
+                            {invoiceLine.brand && (
+                                <GridItem {...styles.brandItem} data-test-selector="invoiceLine_brand">
                                     <ProductBrand
                                         brand={invoiceLine.brand}
                                         showLogo={false}
-                                        extendedStyles={styles.brandStyles} />
+                                        extendedStyles={styles.brandStyles}
+                                    />
                                 </GridItem>
-                            }
+                            )}
                             <GridItem {...styles.productNameItem}>
                                 <Link
                                     {...styles.productNameLink}
                                     href={invoiceLine.productUri}
-                                    data-test-selector="invoiceLine_product">
+                                    data-test-selector="invoiceLine_product"
+                                >
                                     {invoiceLine.shortDescription}
                                 </Link>
                             </GridItem>
@@ -165,24 +171,31 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                                         <SmallHeadingAndText
                                             heading={translate("Part #")}
                                             text={invoiceLine.productERPNumber}
-                                            extendedStyles={styles.partStyles} />
+                                            extendedStyles={styles.partStyles}
+                                        />
                                     </GridItem>
                                     <GridItem {...styles.myPartItem}>
                                         <SmallHeadingAndText
                                             heading={translate("My Part #")}
                                             text={invoiceLine.customerProductNumber}
-                                            extendedStyles={styles.myPartStyles} />
+                                            extendedStyles={styles.myPartStyles}
+                                        />
                                     </GridItem>
                                     <GridItem {...styles.mgfItem}>
                                         <SmallHeadingAndText
                                             heading={translate("MGF #")}
                                             text={invoiceLine.manufacturerItem}
-                                            extendedStyles={styles.mgfStyles} />
+                                            extendedStyles={styles.mgfStyles}
+                                        />
                                     </GridItem>
                                 </GridContainer>
                             </GridItem>
                             <GridItem {...styles.notesItem}>
-                                <SmallHeadingAndText heading={translate("Line Notes")} text={invoiceLine.notes} extendedStyles={styles.notesStyles} />
+                                <SmallHeadingAndText
+                                    heading={translate("Line Notes")}
+                                    text={invoiceLine.notes}
+                                    extendedStyles={styles.notesStyles}
+                                />
                             </GridItem>
                         </GridContainer>
                     </GridItem>
@@ -191,14 +204,26 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                             <GridItem {...styles.priceItem}>
                                 <SmallHeadingAndText
                                     heading={translate("Price")}
-                                    text={invoiceLine.unitPriceDisplay + (invoiceLine.unitOfMeasure ? ` / ${invoiceLine.unitOfMeasure}` : "")}
-                                    extendedStyles={styles.priceStyles} />
+                                    text={
+                                        invoiceLine.unitPriceDisplay +
+                                        (invoiceLine.unitOfMeasure ? ` / ${invoiceLine.unitOfMeasure}` : "")
+                                    }
+                                    extendedStyles={styles.priceStyles}
+                                />
                             </GridItem>
                             <GridItem {...styles.qtyItem}>
-                                <SmallHeadingAndText heading={translate("Qty Invoiced")} text={invoiceLine.qtyInvoiced} extendedStyles={styles.qtyStyles} />
+                                <SmallHeadingAndText
+                                    heading={translate("Qty Invoiced")}
+                                    text={invoiceLine.qtyInvoiced}
+                                    extendedStyles={styles.qtyStyles}
+                                />
                             </GridItem>
                             <GridItem {...styles.totalItem}>
-                                <SmallHeadingAndText heading={translate("Subtotal")} text={invoiceLine.lineTotalDisplay} extendedStyles={styles.totalStyles} />
+                                <SmallHeadingAndText
+                                    heading={translate("Subtotal")}
+                                    text={invoiceLine.lineTotalDisplay}
+                                    extendedStyles={styles.totalStyles}
+                                />
                             </GridItem>
                         </GridContainer>
                     </GridItem>

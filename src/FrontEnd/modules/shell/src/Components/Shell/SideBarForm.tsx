@@ -29,20 +29,31 @@ class SideBarForm extends React.Component<Props> {
     };
 
     render() {
-        return <OverlayStyle data-scroll-container="true">
-            <Wrapper>
-                <Typography variant="h1" data-test-selector={`sideBarName_${this.props.name}`}>{this.props.title}</Typography>
-                <SideBarFormContext.Provider value={{ registerOnSave: this.registerOnSave }}>
-                    {this.props.children}
-                </SideBarFormContext.Provider>
-                <Buttons>
-                    <Button data-test-selector="sideBar_cancel" variant="secondary" onClick={this.props.cancel}>Cancel</Button>
-                    <Button data-test-selector="sideBar_save" variant="primary" onClick={this.saveClick} disabled={this.props.disableSave}>
-                        {this.props.saveText ? this.props.saveText : "Save"}
-                    </Button>
-                </Buttons>
-            </Wrapper>
-        </OverlayStyle>;
+        return (
+            <OverlayStyle data-scroll-container="true">
+                <Wrapper>
+                    <Typography variant="h1" data-test-selector={`sideBarName_${this.props.name}`}>
+                        {this.props.title}
+                    </Typography>
+                    <SideBarFormContext.Provider value={{ registerOnSave: this.registerOnSave }}>
+                        {this.props.children}
+                    </SideBarFormContext.Provider>
+                    <Buttons>
+                        <Button data-test-selector="sideBar_cancel" variant="secondary" onClick={this.props.cancel}>
+                            Cancel
+                        </Button>
+                        <Button
+                            data-test-selector="sideBar_save"
+                            variant="primary"
+                            onClick={this.saveClick}
+                            disabled={this.props.disableSave}
+                        >
+                            {this.props.saveText ? this.props.saveText : "Save"}
+                        </Button>
+                    </Buttons>
+                </Wrapper>
+            </OverlayStyle>
+        );
     }
 }
 
@@ -60,7 +71,7 @@ export function withSideBarForm<P extends HasSideBarForm>(Component: React.Compo
     return function SideBarFormComponent(props: Omit<P, keyof HasSideBarForm>) {
         return (
             <SideBarFormContext.Consumer>
-                {sideBarForm => <Component {...props as P} sideBarForm={sideBarForm}/>}
+                {sideBarForm => <Component {...(props as P)} sideBarForm={sideBarForm} />}
             </SideBarFormContext.Consumer>
         );
     };

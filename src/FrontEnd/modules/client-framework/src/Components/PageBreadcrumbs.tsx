@@ -26,7 +26,7 @@ const PageBreadcrumbs: FC<Props> = (props: Props) => {
         links = [homePageLink, ...links];
     }
 
-    return <Breadcrumbs links={links} data-test-selector="pageBreadcrumbs"/>;
+    return <Breadcrumbs links={links} data-test-selector="pageBreadcrumbs" />;
 };
 
 export function generateLinksFrom(linksState: LinksState, nodeId: string) {
@@ -38,7 +38,9 @@ export function generateLinksFrom(linksState: LinksState, nodeId: string) {
         } else {
             links.unshift({ children: currentLink.title, href: currentLink.url });
         }
-        currentLink = currentLink.parentId ? getPageLinkByNodeId({ links: linksState }, currentLink.parentId) : undefined;
+        currentLink = currentLink.parentId
+            ? getPageLinkByNodeId({ links: linksState }, currentLink.parentId)
+            : undefined;
     }
 
     return links;

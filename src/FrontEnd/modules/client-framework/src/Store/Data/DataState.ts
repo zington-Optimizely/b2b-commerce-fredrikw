@@ -1,6 +1,7 @@
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import deepFreezeObject from "@insite/client-framework/Common/Utilities/deepFreezeObject";
 import { AccountsState } from "@insite/client-framework/Store/Data/Accounts/AccountsState";
+import { AccountShipTosState } from "@insite/client-framework/Store/Data/AccountShipTos/AccountShipTosState";
 import { AddressFieldsState } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsState";
 import { BillTosState } from "@insite/client-framework/Store/Data/BillTos/BillTosState";
 import { BrandsState } from "@insite/client-framework/Store/Data/Brands/BrandsState";
@@ -13,6 +14,7 @@ import { CountriesState } from "@insite/client-framework/Store/Data/Countries/Co
 import { DealersState } from "@insite/client-framework/Store/Data/Dealers/DealersState";
 import { InvoicesState } from "@insite/client-framework/Store/Data/Invoices/InvoicesState";
 import { MessagesState } from "@insite/client-framework/Store/Data/Messages/MessagesState";
+import { OrderApprovalsState } from "@insite/client-framework/Store/Data/OrderApprovals/OrderApprovalsState";
 import { OrdersState } from "@insite/client-framework/Store/Data/Orders/OrdersState";
 import { OrderStatusMappingsState } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsState";
 import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
@@ -31,9 +33,9 @@ import sortBy from "lodash/sortBy";
 
 export interface DataView {
     readonly fetchedDate: Date;
-    readonly ids?: string[],
-    readonly isLoading: boolean,
-    readonly pagination?: Readonly<PaginationModel>,
+    readonly ids?: string[];
+    readonly isLoading: boolean;
+    readonly pagination?: Readonly<PaginationModel>;
     readonly properties: Dictionary<string>;
 }
 
@@ -48,6 +50,7 @@ export interface DataViewState<Model, DataViewModel extends DataView = DataView>
 
 export default interface DataState {
     readonly accounts: AccountsState;
+    readonly accountShipTos: AccountShipTosState;
     readonly addressFields: AddressFieldsState;
     readonly billTos: BillTosState;
     readonly brands: BrandsState;
@@ -60,6 +63,7 @@ export default interface DataState {
     readonly dealers: DealersState;
     readonly invoices: InvoicesState;
     readonly messages: MessagesState;
+    readonly orderApprovals: OrderApprovalsState;
     readonly orders: OrdersState;
     readonly orderStatusMappings: OrderStatusMappingsState;
     readonly pages: PagesState;
@@ -88,14 +92,18 @@ export function setDataViewLoading<T extends { id: string }>(dataViewState: Data
     };
 }
 
-export function setDataViewLoaded<T extends { id: string }, DataViewModel extends DataView, CollectionType extends { pagination?: PaginationModel | null, properties?: Dictionary<string> }>(
+export function setDataViewLoaded<
+    T extends { id: string },
+    DataViewModel extends DataView,
+    CollectionType extends { pagination?: PaginationModel | null; properties?: Dictionary<string> }
+>(
     draft: Draft<DataViewState<T>>,
     parameter: object,
     collection: CollectionType,
     getModels: (collection: CollectionType) => T[],
     modelAction?: (value: T) => void,
-    addExtraData?: (dataView: DataViewModel) => void) {
-
+    addExtraData?: (dataView: DataViewModel) => void,
+) {
     const ids: string[] = [];
     const values = getModels(collection);
     for (const value of values) {
@@ -120,6 +128,14 @@ export function setDataViewLoaded<T extends { id: string }, DataViewModel extend
     draft.dataViews[getDataViewKey(parameter)] = dataView;
 }
 
+export function replaceDataView<T extends { id: string }, DataViewModel extends DataView>(
+    draft: Draft<DataViewState<T>>,
+    parameter: object,
+    dataView: object,
+) {
+    draft.dataViews[getDataViewKey(parameter)] = dataView as DataViewModel;
+}
+
 const cacheMap = new WeakMap<object, SafeDictionary<any>>();
 
 export const dataViewNotFound = Object.freeze({
@@ -127,7 +143,10 @@ export const dataViewNotFound = Object.freeze({
     value: undefined,
 } as const);
 
-export function getDataView<T extends { id: string }, DataViewModel extends DataView>(dataViewState: DataViewState<T, DataViewModel>, parameter: object | undefined) {
+export function getDataView<T extends { id: string }, DataViewModel extends DataView>(
+    dataViewState: DataViewState<T, DataViewModel>,
+    parameter: object | undefined,
+) {
     const key = getDataViewKey(parameter);
     const dataView = dataViewState.dataViews[key];
     if (!dataView) {
@@ -162,7 +181,7 @@ export function getById<T>(dataViewState: HasById<T>, id: string | undefined, ma
         return idNotFound;
     }
 
-    return getOrStoreCachedResult(dataViewState, id,  () => {
+    return getOrStoreCachedResult(dataViewState, id, () => {
         const isLoading = dataViewState.isLoading[id];
         return {
             id,
@@ -172,7 +191,11 @@ export function getById<T>(dataViewState: HasById<T>, id: string | undefined, ma
     });
 }
 
-function getOrStoreCachedResult<ModelType, ResultType extends object>(dataViewState: HasById<ModelType>, key: string, createResult: () => ResultType) {
+function getOrStoreCachedResult<ModelType, ResultType extends object>(
+    dataViewState: HasById<ModelType>,
+    key: string,
+    createResult: () => ResultType,
+) {
     const cached = cacheMap.get(dataViewState)?.[key];
     if (cached) {
         return cached as Readonly<ResultType>;

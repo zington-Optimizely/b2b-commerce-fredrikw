@@ -31,13 +31,17 @@ type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
 const PageTypeLink: React.FC<Props> = ({ pageLink, fields: { queryString, testSelector, overrideTitle } }) => {
     if (!pageLink) {
-        return  null;
+        return null;
     }
 
     const url = queryString ? `${pageLink.url}?${queryString}` : pageLink.url;
 
     const selector = testSelector;
-    return <Link href={url} data-test-selector={selector}>{overrideTitle || pageLink.title}</Link>;
+    return (
+        <Link href={url} data-test-selector={selector}>
+            {overrideTitle || pageLink.title}
+        </Link>
+    );
 };
 
 const pageTypeLink: WidgetModule = {
@@ -58,14 +62,12 @@ const pageTypeLink: WidgetModule = {
                 name: fields.overrideTitle,
                 editorTemplate: "TextField",
                 defaultValue: "",
-
             },
             {
                 fieldType: "Translatable",
                 name: fields.queryString,
                 editorTemplate: "TextField",
                 defaultValue: "",
-
             },
         ],
     },

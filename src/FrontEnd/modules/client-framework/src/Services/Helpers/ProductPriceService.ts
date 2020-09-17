@@ -10,7 +10,8 @@ export const getUnitNetPrice = (pricing: ProductPriceDto, qtyOrdered: number) =>
         pricing.unitRegularBreakPrices,
         pricing.unitNetPrice,
         pricing.unitNetPriceDisplay,
-        qtyOrdered);
+        qtyOrdered,
+    );
     return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
 };
 
@@ -19,7 +20,8 @@ export const getUnitListPrice = (pricing: ProductPriceDto, qtyOrdered: number) =
         pricing.unitListBreakPrices,
         pricing.unitListPrice,
         pricing.unitListPriceDisplay,
-        qtyOrdered);
+        qtyOrdered,
+    );
     return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
 };
 
@@ -30,7 +32,7 @@ const getPrice = (breaks: BreakPriceDto[] | null, price: number, priceToDisplay:
     }
 
     const breakPrice = getBreakPrice(breaks, quantity);
-    if (!breakPrice || (breakPrice && (price < breakPrice.breakPrice))) {
+    if (!breakPrice || (breakPrice && price < breakPrice.breakPrice)) {
         return { price, priceDisplay: priceToDisplay } as PriceModel;
     }
 
@@ -47,7 +49,9 @@ export const getBreakPrice = (breaks: BreakPriceDto[] | null, count: number) => 
     }
 
     const copyBreaks = breaks.slice();
-    copyBreaks.sort((a, b) => { return b.breakQty - a.breakQty; });
+    copyBreaks.sort((a, b) => {
+        return b.breakQty - a.breakQty;
+    });
     for (let i = 0; i < copyBreaks.length; i = i + 1) {
         if (copyBreaks[i].breakQty <= count) {
             return copyBreaks[i];

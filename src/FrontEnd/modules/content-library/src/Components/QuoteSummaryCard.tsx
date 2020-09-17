@@ -54,19 +54,16 @@ export const quoteSummaryCardStyles: QuoteSummaryCardStyles = {
     shipToAddressGridItem: { width: 6 },
 };
 
-const QuoteSummaryCard: FC<Props> = ({
-    quote,
-    session,
-    quoteSettings,
-    extendedStyles,
-}) => {
+const QuoteSummaryCard: FC<Props> = ({ quote, session, quoteSettings, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(quoteSummaryCardStyles, extendedStyles));
 
     const orderDateDisplay = getLocalizedDateTime({
         dateTime: quote.orderDate!,
         language: session.language,
         options: {
-            year: "numeric", month: "numeric", day: "numeric",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
         },
     });
 
@@ -76,7 +73,9 @@ const QuoteSummaryCard: FC<Props> = ({
             dateTime: quote.expirationDate,
             language: session.language,
             options: {
-                year: "numeric", month: "numeric", day: "numeric",
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
             },
         });
     }
@@ -88,62 +87,70 @@ const QuoteSummaryCard: FC<Props> = ({
                 <GridItem {...styles.quoteDetailsLinkGridItem}>
                     <RfqQuoteDetailsPageTypeLink title={quote.quoteNumber} quoteId={quote.id} />
                 </GridItem>
-                {quoteSettings.jobQuoteEnabled
-                    && <GridItem {...styles.typeGridItem}>
+                {quoteSettings.jobQuoteEnabled && (
+                    <GridItem {...styles.typeGridItem}>
                         <SmallHeadingAndText
                             heading={translate("Type")}
                             text={quote.typeDisplay}
-                            extendedStyles={styles.typeHeadingAndText} />
+                            extendedStyles={styles.typeHeadingAndText}
+                        />
                     </GridItem>
-                }
+                )}
                 <GridItem {...styles.statusGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Status")}
                         text={quote.statusDisplay}
-                        extendedStyles={styles.statusHeadingAndText} />
+                        extendedStyles={styles.statusHeadingAndText}
+                    />
                 </GridItem>
                 <GridItem {...styles.orderDateGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Requested")}
                         text={orderDateDisplay}
-                        extendedStyles={styles.orderDateHeadingAndText} />
+                        extendedStyles={styles.orderDateHeadingAndText}
+                    />
                 </GridItem>
                 <GridItem {...styles.expirationDateGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Expires")}
                         text={expirationDateDisplay}
-                        extendedStyles={styles.expirationDateHeadingAndText} />
+                        extendedStyles={styles.expirationDateHeadingAndText}
+                    />
                 </GridItem>
-                {session.isSalesPerson
-                    && <>
+                {session.isSalesPerson && (
+                    <>
                         <GridItem {...styles.salesRepGridItem}>
                             <SmallHeadingAndText
                                 heading={translate("Sales Rep")}
                                 text={quote.salespersonName}
-                                extendedStyles={styles.salesRepHeadingAndText} />
+                                extendedStyles={styles.salesRepHeadingAndText}
+                            />
                         </GridItem>
                         <GridItem {...styles.userNameGridItem}>
                             <SmallHeadingAndText
                                 heading={translate("User")}
                                 text={quote.userName}
-                                extendedStyles={styles.userNameHeadingAndText} />
+                                extendedStyles={styles.userNameHeadingAndText}
+                            />
                         </GridItem>
                     </>
-                }
+                )}
                 <GridItem {...styles.customerGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Customer")}
                         text={customerDisplay}
-                        extendedStyles={styles.customerHeadingAndText} />
+                        extendedStyles={styles.customerHeadingAndText}
+                    />
                 </GridItem>
-                {!session.isSalesPerson
-                    && <GridItem {...styles.shipToAddressGridItem}>
+                {!session.isSalesPerson && (
+                    <GridItem {...styles.shipToAddressGridItem}>
                         <SmallHeadingAndText
                             heading={translate("Ship To / Pick Up")}
                             text={quote.shipToFullAddress}
-                            extendedStyles={styles.shipToAddressHeadingAndText} />
+                            extendedStyles={styles.shipToAddressHeadingAndText}
+                        />
                     </GridItem>
-                }
+                )}
             </GridContainer>
         </GridItem>
     );

@@ -9,10 +9,16 @@ type Props = ContentItemFieldProps<ColumnAlignment[], ColumnAlignmentDefinition>
 
 export default class ColumnAlignmentField extends React.Component<Props> {
     updateColumn = (index: number, value: ColumnAlignment) => {
-        const { fieldValue, updateField, fieldDefinition: { name } } = this.props;
-        fieldValue[index] = value;
+        const {
+            fieldValue,
+            updateField,
+            fieldDefinition: { name },
+        } = this.props;
 
-        updateField(name, fieldValue);
+        const newFieldValue = { ...fieldValue };
+        newFieldValue[index] = value;
+
+        updateField(name, newFieldValue);
     };
 
     render() {
@@ -28,12 +34,19 @@ export default class ColumnAlignmentField extends React.Component<Props> {
             return null;
         }
 
-        return <StandardControl fieldDefinition={fieldDefinition}>
-            {columns.map((column, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <ColumnAlignmentSelector key={index} index={index} updateColumn={this.updateColumn} value={fieldValue[index] || "top"} />
-            ))}
-        </StandardControl>;
+        return (
+            <StandardControl fieldDefinition={fieldDefinition}>
+                {columns.map((column, index) => (
+                    <ColumnAlignmentSelector
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                        index={index}
+                        updateColumn={this.updateColumn}
+                        value={fieldValue[index] || "top"}
+                    />
+                ))}
+            </StandardControl>
+        );
     }
 }
 
@@ -51,11 +64,16 @@ class ColumnAlignmentSelector extends React.Component<SelectorProps> {
     render() {
         const { index, value } = this.props;
 
-        return <Wrapper><span>{index + 1}</span><Select onChange={this.onChange} value={value}>
-            <option value="top">Top</option>
-            <option value="middle">Middle</option>
-            <option value="bottom">Bottom</option>
-        </Select></Wrapper>;
+        return (
+            <Wrapper>
+                <span>{index + 1}</span>
+                <Select onChange={this.onChange} value={value}>
+                    <option value="top">Top</option>
+                    <option value="middle">Middle</option>
+                    <option value="bottom">Bottom</option>
+                </Select>
+            </Wrapper>
+        );
     }
 }
 

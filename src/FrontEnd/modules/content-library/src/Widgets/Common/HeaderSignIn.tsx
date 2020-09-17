@@ -46,10 +46,14 @@ export interface HeaderSignInStyles {
 
 export const headerSignInStyles: HeaderSignInStyles = {
     signOutWrapper: {
-        css: css` display: inline-flex; `,
+        css: css`
+            display: inline-flex;
+        `,
     },
     titleClickable: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     titleIcon: {
         size: 22,
@@ -119,18 +123,21 @@ const HeaderSignIn: FC<Props> = ({
 
     return (
         <StyledWrapper {...styles.signOutWrapper}>
-            {fields.includeAccountMenu && userName && !currentUserIsGuest
-                && <Menu
+            {fields.includeAccountMenu && userName && !currentUserIsGuest && (
+                <Menu
                     descriptionId="accountMenu"
                     menuItems={myAccountPageLink?.children ?? []}
                     maxDepth={1}
                     menuTrigger={
                         <Clickable {...styles.titleClickable} data-test-selector="header_signIn">
                             {showIcon && <Icon {...styles.titleIcon} src={icon} />}
-                            {showLabel
-                                && <Typography {...styles.titleTypography} data-test-selector="header_userName">{userName}</Typography>
-                            }
-                        </Clickable>}
+                            {showLabel && (
+                                <Typography {...styles.titleTypography} data-test-selector="header_userName">
+                                    {userName}
+                                </Typography>
+                            )}
+                        </Clickable>
+                    }
                     cssOverrides={{
                         wrapper: css`
                             flex: 0 1 auto;
@@ -138,24 +145,18 @@ const HeaderSignIn: FC<Props> = ({
                         `,
                     }}
                 />
-            }
-            {(!fields.includeAccountMenu || !userName || (userName && currentUserIsGuest))
-                && <Clickable {...styles.titleClickable} onClick={onSignInHandler} data-test-selector="header_signIn">
+            )}
+            {(!fields.includeAccountMenu || !userName || (userName && currentUserIsGuest)) && (
+                <Clickable {...styles.titleClickable} onClick={onSignInHandler} data-test-selector="header_signIn">
                     {showIcon && <Icon {...styles.titleIcon} src={icon} />}
-                    {showLabel
-                        && <Typography {...styles.titleTypography}>{signInStatusText}</Typography>
-                    }
+                    {showLabel && <Typography {...styles.titleTypography}>{signInStatusText}</Typography>}
                 </Clickable>
-            }
-            {userName && !currentUserIsGuest
-                && <Clickable
-                    {...styles.signOutClickable}
-                    onClick={signOut}
-                    data-test-selector="headerSignOutLink"
-                >
+            )}
+            {userName && !currentUserIsGuest && (
+                <Clickable {...styles.signOutClickable} onClick={signOut} data-test-selector="headerSignOutLink">
                     {translate("Sign Out")}
                 </Clickable>
-            }
+            )}
         </StyledWrapper>
     );
 };

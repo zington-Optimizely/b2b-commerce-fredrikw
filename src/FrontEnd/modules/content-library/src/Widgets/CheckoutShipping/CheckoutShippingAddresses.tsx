@@ -20,7 +20,9 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { CheckoutShippingPageContext } from "@insite/content-library/Pages/CheckoutShippingPage";
 import BillingAddress, { BillingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/BillingAddress";
 import PickUpAddress, { PickUpAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/PickUpAddress";
-import ShippingAddress, { ShippingAddressStyles } from "@insite/content-library/Widgets/CheckoutShipping/ShippingAddress";
+import ShippingAddress, {
+    ShippingAddressStyles,
+} from "@insite/content-library/Widgets/CheckoutShipping/ShippingAddress";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
@@ -33,7 +35,9 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutShipping;
     const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
-    const shipTosDataView = cart ? getShipTosDataView(state, { billToId: cart.billToId, expand: ["validation"], exclude: ["showAll"] }) : undefined;
+    const shipTosDataView = cart
+        ? getShipTosDataView(state, { billToId: cart.billToId, expand: ["validation"], exclude: ["showAll"] })
+        : undefined;
     let newAddress;
     let oneTimeAddress;
     let isShipToSameAsBillTo = false;
@@ -108,29 +112,29 @@ export const fulfillmentMethodAndAddressStyles = checkoutShippingAddressesStyles
 const styles = checkoutShippingAddressesStyles;
 
 const CheckoutShippingAddresses: FC<Props> = ({
-                                                  cart,
-                                                  shipToState,
-                                                  shipTosDataView,
-                                                  session,
-                                                  countries,
-                                                  shipToAddressFields,
-                                                  billToAddressFields,
-                                                  accountSettings,
-                                                  setCurrentShipTo,
-                                                  updatePickUpWarehouse,
-                                                  currentUserIsGuest,
-                                                  useBillingAddress,
-                                                  loadShipTo,
-                                                  loadShipTos,
-                                                  updateBillTo,
-                                                  billToState,
-                                                  updateShipTo,
-                                                  canUseBillToAsShipTo,
-                                                  isShipToSameAsBillTo,
-                                                  newAddress,
-                                                  oneTimeAddress,
-                                                  children,
-                                              }) => {
+    cart,
+    shipToState,
+    shipTosDataView,
+    session,
+    countries,
+    shipToAddressFields,
+    billToAddressFields,
+    accountSettings,
+    setCurrentShipTo,
+    updatePickUpWarehouse,
+    currentUserIsGuest,
+    useBillingAddress,
+    loadShipTo,
+    loadShipTos,
+    updateBillTo,
+    billToState,
+    updateShipTo,
+    canUseBillToAsShipTo,
+    isShipToSameAsBillTo,
+    newAddress,
+    oneTimeAddress,
+    children,
+}) => {
     const toasterContext = React.useContext(ToasterContext);
 
     useEffect(() => {
@@ -148,7 +152,7 @@ const CheckoutShippingAddresses: FC<Props> = ({
     if (!cart) {
         return (
             <StyledWrapper {...styles.loadingWrapper}>
-                <LoadingSpinner/>
+                <LoadingSpinner />
             </StyledWrapper>
         );
     }
@@ -194,8 +198,8 @@ const CheckoutShippingAddresses: FC<Props> = ({
         <GridContainer {...styles.container}>
             <GridItem {...styles.addressItem}>
                 <GridContainer {...styles.addressContainer}>
-                    {billToAddressFields
-                        && <GridItem {...styles.billingAddressGridItem}>
+                    {billToAddressFields && (
+                        <GridItem {...styles.billingAddressGridItem}>
                             <BillingAddress
                                 address={billToState.value}
                                 onChange={changeBillingAddressHandler}
@@ -204,9 +208,9 @@ const CheckoutShippingAddresses: FC<Props> = ({
                                 extendedStyles={styles.billingAddress}
                             />
                         </GridItem>
-                    }
-                    {fulfillmentMethod === FulfillmentMethod.Ship && shipToAddressFields
-                        && <GridItem {...styles.shippingAddressGridItem}>
+                    )}
+                    {fulfillmentMethod === FulfillmentMethod.Ship && shipToAddressFields && (
+                        <GridItem {...styles.shippingAddressGridItem}>
                             <ShippingAddress
                                 address={shipToState.value}
                                 currentBillToId={cart.billToId}
@@ -219,16 +223,20 @@ const CheckoutShippingAddresses: FC<Props> = ({
                                 extendedStyles={styles.shippingAddress}
                                 newAddress={newAddress}
                                 oneTimeAddress={oneTimeAddress}
-                            >{children}</ShippingAddress>
+                            >
+                                {children}
+                            </ShippingAddress>
                         </GridItem>
-                    }
-                    {fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse
-                    && <GridItem {...styles.shippingAddressGridItem}>
-                        <PickUpAddress address={session.pickUpWarehouse}
-                                       onChange={handlePickUpAddressChange}
-                                       extendedStyles={styles.pickUpAddress}/>
-                    </GridItem>
-                    }
+                    )}
+                    {fulfillmentMethod === FulfillmentMethod.PickUp && session.pickUpWarehouse && (
+                        <GridItem {...styles.shippingAddressGridItem}>
+                            <PickUpAddress
+                                address={session.pickUpWarehouse}
+                                onChange={handlePickUpAddressChange}
+                                extendedStyles={styles.pickUpAddress}
+                            />
+                        </GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
         </GridContainer>

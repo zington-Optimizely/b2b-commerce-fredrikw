@@ -14,7 +14,7 @@ describe("Drawer", () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <Drawer {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -34,7 +34,7 @@ describe("Drawer", () => {
                     headline: headlineText,
                     contentLabel: "mooseId",
                 };
-                const typography = wrapper().find("[id=\"drawerTitle\"]").find(Typography);
+                const typography = wrapper().find('[id="drawerTitle"]').find(Typography);
                 expect(typography).toHaveLength(1);
                 expect(typography.text()).toContain(headlineText);
             });
@@ -45,7 +45,7 @@ describe("Drawer", () => {
                     headline: <div data-id="child-headline">{headlineChild}</div>,
                     contentLabel: "mooseId",
                 };
-                const headline = wrapper().find("[data-id=\"child-headline\"]");
+                const headline = wrapper().find('[data-id="child-headline"]');
                 expect(headline).toHaveLength(1);
                 expect(headline.text()).toContain(headlineChild);
             });
@@ -56,7 +56,7 @@ describe("Drawer", () => {
                 isOpen: true,
                 children: <div data-id="child-drawer">{childrenString}</div>,
             };
-            const children = wrapper().find("[data-id=\"child-drawer\"]");
+            const children = wrapper().find('[data-id="child-drawer"]');
             expect(children).toHaveLength(1);
             expect(children.text()).toContain(childrenString);
         });
@@ -71,8 +71,8 @@ describe("Drawer", () => {
                 children: <div data-id="child-drawer">{childrenString}</div>,
             };
             const root = wrapper();
-            const children = root.find("[data-id=\"child-drawer\"]");
-            const drawer = root.find("[data-id=\"testDrawer\"]");
+            const children = root.find('[data-id="child-drawer"]');
+            const drawer = root.find('[data-id="testDrawer"]');
             expect(children).toHaveLength(0);
             expect(drawer).toBeTruthy();
         });
@@ -84,7 +84,7 @@ describe("Drawer", () => {
                 children: <div data-id="child-drawer">{childrenString}</div>,
             };
             const root = wrapper();
-            const children = root.find("[data-id=\"child-drawer\"]");
+            const children = root.find('[data-id="child-drawer"]');
             expect(children).toHaveLength(1);
         });
 

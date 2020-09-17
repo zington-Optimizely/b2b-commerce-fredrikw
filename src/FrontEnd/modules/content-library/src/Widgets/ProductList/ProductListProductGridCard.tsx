@@ -37,25 +37,30 @@ export const productGridCardStyles: ProductListProductGridCardStyles = {
 const styles = productGridCardStyles;
 
 const ProductListProductGridCard: FC<Props> = ({
-                                                   product,
-                                                   showImage,
-                                                   showCompare,
-                                                   showAttributes,
-                                                   showAvailability,
-                                                   showBrand,
-                                                   showPartNumbers,
-                                                   showTitle,
-                                                   showAddToList,
-                                                   showPrice,
-                                               }) => {
+    product,
+    showImage,
+    showCompare,
+    showAttributes,
+    showAvailability,
+    showBrand,
+    showPartNumbers,
+    showTitle,
+    showAddToList,
+    showPrice,
+}) => {
     return (
         <StyledWrapper {...styles.wrapper} data-test-selector={`productListProductCard${product.id}`}>
             <StyledWrapper {...styles.imageWrapper}>
-                <ProductListProductImage showImage={showImage} showCompare={showCompare}/>
+                <ProductListProductImage showImage={showImage} showCompare={showCompare} />
             </StyledWrapper>
-            <ProductListProductInformation showAttributes={showAttributes} showAvailability={showAvailability} showBrand={showBrand}
-                                           showPartNumbers={showPartNumbers} showTitle={showTitle}/>
-            <ProductListActions showAddToList={showAddToList} showPrice={showPrice}/>
+            <ProductListProductInformation
+                showAttributes={showAttributes}
+                showAvailability={showAvailability}
+                showBrand={showBrand}
+                showPartNumbers={showPartNumbers}
+                showTitle={showTitle}
+            />
+            <ProductListActions showAddToList={showAddToList} showPrice={showPrice} />
         </StyledWrapper>
     );
 };

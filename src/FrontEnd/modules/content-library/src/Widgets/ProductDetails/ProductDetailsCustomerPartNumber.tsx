@@ -18,11 +18,15 @@ export const customerPartNumberStyles: ProductDetailsCustomerPartNumberStyles = 
     labelText: {
         size: 16,
         weight: "bold",
-        css: css` margin-right: 15px; `,
+        css: css`
+            margin-right: 15px;
+        `,
     },
     valueText: {
         size: 16,
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
 };
 
@@ -33,7 +37,12 @@ const ProductDetailsCustomerPartNumber: React.FC<Props> = ({ product }) => {
         return null;
     }
 
-    return <Typography {...styles.valueText} as="p"><Typography {...styles.labelText}>{translate("My Part #")}</Typography>{product.customerProductNumber}</Typography>;
+    return (
+        <Typography {...styles.valueText} as="p">
+            <Typography {...styles.labelText}>{translate("My Part #")}</Typography>
+            {product.customerProductNumber}
+        </Typography>
+    );
 };
 
 const widgetModule: WidgetModule = {

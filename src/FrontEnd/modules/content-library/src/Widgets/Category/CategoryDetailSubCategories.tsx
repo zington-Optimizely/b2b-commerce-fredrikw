@@ -19,8 +19,7 @@ const enum fields {
     showImages = "showImages",
 }
 
-interface Props extends WidgetProps, HasCategoryContext {
-}
+interface Props extends WidgetProps, HasCategoryContext {}
 
 export interface CategoryDetailSubCategoriesStyles {
     container?: GridContainerProps;
@@ -39,7 +38,9 @@ export const categoryDetailSubCategoriesStyles: CategoryDetailSubCategoriesStyle
     },
     subCategoryItem: {
         width: [12, 12, 4, 4, 2],
-        css: css` padding-bottom: 30px; `,
+        css: css`
+            padding-bottom: 30px;
+        `,
     },
     innerContainer: {
         gap: 0,
@@ -52,7 +53,9 @@ export const categoryDetailSubCategoriesStyles: CategoryDetailSubCategoriesStyle
         `,
     },
     subCategoryImageClickable: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     subCategoryImage: {
         css: css`
@@ -65,13 +68,26 @@ export const categoryDetailSubCategoriesStyles: CategoryDetailSubCategoriesStyle
         width: [10, 10, 12, 12, 12],
         css: css`
             padding-bottom: 8px;
-            ${({ theme }: {theme: BaseTheme}) =>
-                breakpointMediaQueries(theme, [null, null, css` justify-content: center; `, css` justify-content: center; `, css` justify-content: center; `],
-            )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    null,
+                    null,
+                    css`
+                        justify-content: center;
+                    `,
+                    css`
+                        justify-content: center;
+                    `,
+                    css`
+                        justify-content: center;
+                    `,
+                ])}
         `,
     },
     subCategoryNameLink: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
         color: "text.main",
         typographyProps: {
             weight: "bold",
@@ -91,41 +107,51 @@ const CategoryDetailSubCategories: React.FC<Props> = props => {
         return null;
     }
 
-    const { fields: { showImages } } = props;
+    const {
+        fields: { showImages },
+    } = props;
 
-    return <GridContainer {...styles.container}>
-        {props.category.subCategoryIds.map((subCategoryId) => (
-            <GridItem key={subCategoryId} {...styles.subCategoryItem}>
-                <SubCategoryLink categoryId={subCategoryId} showImages={showImages} />
-            </GridItem>
-        ))}
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.container}>
+            {props.category.subCategoryIds.map(subCategoryId => (
+                <GridItem key={subCategoryId} {...styles.subCategoryItem}>
+                    <SubCategoryLink categoryId={subCategoryId} showImages={showImages} />
+                </GridItem>
+            ))}
+        </GridContainer>
+    );
 };
 
-const SubCategoryLinkView = ({ category, showImages }: ReturnType<typeof mapStateToProps> & { showImages: boolean }) => {
+const SubCategoryLinkView = ({
+    category,
+    showImages,
+}: ReturnType<typeof mapStateToProps> & { showImages: boolean }) => {
     if (!category) {
         return null;
     }
 
-    return <GridContainer {...styles.innerContainer}>
-        {showImages
-        && <GridItem {...styles.subCategoryImageItem}>
-            {category.smallImagePath
-            && <Clickable href={category.path} {...styles.subCategoryImageClickable}>
-                <LazyImage src={category.smallImagePath} {...styles.subCategoryImage}/>
-            </Clickable>
-            }
-        </GridItem>
-        }
-        <GridItem {...styles.subCategoryNameLinkItem}>
-            <Link
-                href={category.path}
-                {...styles.subCategoryNameLink}
-                data-test-selector={`categoryDetailsSubCategoriesLink_${category.id}`}>
-                {category.shortDescription}
-            </Link>
-        </GridItem>
-    </GridContainer>;
+    return (
+        <GridContainer {...styles.innerContainer}>
+            {showImages && (
+                <GridItem {...styles.subCategoryImageItem}>
+                    {category.smallImagePath && (
+                        <Clickable href={category.path} {...styles.subCategoryImageClickable}>
+                            <LazyImage src={category.smallImagePath} {...styles.subCategoryImage} />
+                        </Clickable>
+                    )}
+                </GridItem>
+            )}
+            <GridItem {...styles.subCategoryNameLinkItem}>
+                <Link
+                    href={category.path}
+                    {...styles.subCategoryNameLink}
+                    data-test-selector={`categoryDetailsSubCategoriesLink_${category.id}`}
+                >
+                    {category.shortDescription}
+                </Link>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 const mapStateToProps = (state: ApplicationState, ownProps: { categoryId: string }) => ({

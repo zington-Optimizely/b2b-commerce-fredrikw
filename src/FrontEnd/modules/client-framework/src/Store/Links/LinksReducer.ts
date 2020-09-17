@@ -10,10 +10,9 @@ const initialState: LinksState = {
 };
 
 const reducer = {
-    "Links/BeginLoadPageLinks": (draft: Draft<LinksState>) => {
-    },
+    "Links/BeginLoadPageLinks": (draft: Draft<LinksState>) => {},
 
-    "Links/CompleteLoadPageLinks": (draft: Draft<LinksState>, action: { pageLinks: PageLinkModel[]; }) => {
+    "Links/CompleteLoadPageLinks": (draft: Draft<LinksState>, action: { pageLinks: PageLinkModel[] }) => {
         draft.pageLinks = action.pageLinks;
         draft.nodeIdToPageLinkPath = {};
         draft.pageTypesToNodeId = {};

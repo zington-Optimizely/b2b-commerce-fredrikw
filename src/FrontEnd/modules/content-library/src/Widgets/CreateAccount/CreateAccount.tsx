@@ -1,6 +1,11 @@
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import validatePassword, { lowerCasePasswordLengthMessage, numberPasswordLengthMessage, specialPasswordLengthMessage, upperCasePasswordLengthMessage } from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import validatePassword, {
+    lowerCasePasswordLengthMessage,
+    numberPasswordLengthMessage,
+    specialPasswordLengthMessage,
+    upperCasePasswordLengthMessage,
+} from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import addAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/AddAccount";
@@ -28,8 +33,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     addAccount,
@@ -42,10 +46,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     returnUrl: getCreateAccountReturnUrl(state),
 });
 
-type Props =
-    OwnProps
-    & ReturnType<typeof mapStateToProps>
-    & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CreateAccountStyles {
     spinner?: LoadingSpinnerProps;
@@ -87,13 +88,36 @@ export const createAccountStyles: CreateAccountStyles = {
     userGridItem: {
         width: [12, 12, 6, 6, 6],
         css: css`
-                flex-direction: column;
-                ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, css` padding-left: 100px; `], "min")}
-            `,
+            flex-direction: column;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            padding-left: 100px;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
     },
     userGridContainer: {
-        css: css` ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` max-width: 300px; `], "min")} `,
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            max-width: 300px;
+                        `,
+                    ],
+                    "min",
+                )}
+        `,
     },
     emailGridItem: {
         width: 12,
@@ -118,11 +142,27 @@ export const createAccountStyles: CreateAccountStyles = {
     },
     submitGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     requirementsGridItem: {
         width: [12, 12, 6, 6, 6],
-        css: css` flex-direction: column; ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(theme, [null, null, css` padding-left: 50px; `], "min")} /* stylelint-disable-line declaration-block-single-line-max-declarations */ `,
+        css: css`
+            flex-direction: column;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            padding-left: 50px;
+                        `,
+                    ],
+                    "min",
+                )}/* stylelint-disable-line declaration-block-single-line-max-declarations */
+        `,
     },
     passwordRequirementsGridContainer: {
         gap: 5,
@@ -140,15 +180,9 @@ const styles = createAccountStyles;
 const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_Required");
 const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
 const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");
-const emailRegexp = new RegExp("\\w+([-+.\']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 
-const CreateAccount: FC<Props> = ({
-    addAccount,
-    signIn,
-    validatePassword,
-    accountSettings,
-    returnUrl,
-}) => {
+const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accountSettings, returnUrl }) => {
     const [email, setEmail] = React.useState("");
     const [userName, setUserName] = React.useState("");
     const [userNameError, setUserNameError] = React.useState(userNameRequiredFieldMessage);
@@ -173,7 +207,7 @@ const CreateAccount: FC<Props> = ({
     } = accountSettings;
 
     const validateEmail = (email: string) => {
-        const errorMessage = !email ? emailRequiredFieldMessage : (emailRegexp.test(email) ? "" : emailFieldMessage);
+        const errorMessage = !email ? emailRequiredFieldMessage : emailRegexp.test(email) ? "" : emailFieldMessage;
         setEmailError(errorMessage);
         return !errorMessage;
     };
@@ -185,7 +219,10 @@ const CreateAccount: FC<Props> = ({
     };
 
     const validateConfirmPassword = (newPassword: string, newConfirmPassword: string) => {
-        const errorMessage = newPassword !== newConfirmPassword ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch") : "";
+        const errorMessage =
+            newPassword !== newConfirmPassword
+                ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch")
+                : "";
         setConfirmPasswordErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -206,7 +243,9 @@ const CreateAccount: FC<Props> = ({
 
     const passwordChangeHandler = (newPassword: string) => {
         validateConfirmPassword(newPassword, confirmPassword);
-        validatePassword({ password: newPassword, onComplete: (errorMessage) => {
+        validatePassword({
+            password: newPassword,
+            onComplete: errorMessage => {
                 setPasswordErrorMessage(errorMessage);
             },
         });
@@ -241,7 +280,12 @@ const CreateAccount: FC<Props> = ({
         }
 
         addAccount({
-            email, userName, password, isSubscribed, onSuccess: onSuccessHandler, onError: (error) => {
+            email,
+            userName,
+            password,
+            isSubscribed,
+            onSuccess: onSuccessHandler,
+            onError: error => {
                 setErrorMessage(error);
             },
         });
@@ -258,7 +302,7 @@ const CreateAccount: FC<Props> = ({
                             {...styles.emailTextField}
                             type="email"
                             label={translate("Email Address")}
-                            onChange={(e) => emailChangeHandler(e.currentTarget.value)}
+                            onChange={e => emailChangeHandler(e.currentTarget.value)}
                             value={email}
                             data-test-selector="createAccount_email"
                             required
@@ -271,9 +315,10 @@ const CreateAccount: FC<Props> = ({
                             label={translate("User Name")}
                             value={userName}
                             data-test-selector="createAccount_userName"
-                            onChange={(e) => userChangeHandler(e.currentTarget.value)}
+                            onChange={e => userChangeHandler(e.currentTarget.value)}
                             error={isSubmitted && userNameError}
-                            required />
+                            required
+                        />
                     </GridItem>
                     <GridItem {...styles.passwordGridItem}>
                         <TextField
@@ -282,7 +327,7 @@ const CreateAccount: FC<Props> = ({
                             type={showPassword ? undefined : "password"}
                             label={translate("Password")}
                             value={password}
-                            onChange={(e) => passwordChangeHandler(e.currentTarget.value)}
+                            onChange={e => passwordChangeHandler(e.currentTarget.value)}
                             error={isSubmitted && passwordErrorMessage}
                             iconProps={{ ...styles.passwordIcon, src: showPassword ? EyeOff : Eye }}
                             iconClickableProps={{
@@ -301,7 +346,7 @@ const CreateAccount: FC<Props> = ({
                             type={showConfirmPassword ? undefined : "password"}
                             label={translate("Confirm Password")}
                             value={confirmPassword}
-                            onChange={(e) => confirmPasswordChangeHandler(e.currentTarget.value)}
+                            onChange={e => confirmPasswordChangeHandler(e.currentTarget.value)}
                             error={isSubmitted && confirmPasswordErrorMessage}
                             iconProps={{ ...styles.confirmPasswordIcon, src: showConfirmPassword ? EyeOff : Eye }}
                             iconClickableProps={{
@@ -318,15 +363,17 @@ const CreateAccount: FC<Props> = ({
                             <Checkbox
                                 onChange={(e, value) => setIsSubscribed(value)}
                                 checked={isSubscribed}
-                                data-test-selector="createAccount_Subscription">
+                                data-test-selector="createAccount_Subscription"
+                            >
                                 {siteMessage("SignIn_Sign_Up_Newsletter")}
                             </Checkbox>
                         </CheckboxGroup>
                     </GridItem>
-                    {errorMessage
-                    && <GridItem {...styles.submitErrorGridItem}>
-                        <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
-                    </GridItem>}
+                    {errorMessage && (
+                        <GridItem {...styles.submitErrorGridItem}>
+                            <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
+                        </GridItem>
+                    )}
                     <GridItem {...styles.submitGridItem}>
                         <Button
                             {...styles.submitButton}
@@ -343,19 +390,27 @@ const CreateAccount: FC<Props> = ({
                 <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
                 <GridContainer {...styles.passwordRequirementsGridContainer}>
                     <GridItem {...styles.passwordRequirementsGridItem}>
-                        {translate("Password must be at least {0} characters long").replace("{0}", passwordMinimumLength.toString())}
+                        {translate("Password must be at least {0} characters long").replace(
+                            "{0}",
+                            passwordMinimumLength.toString(),
+                        )}
                     </GridItem>
-                    {passwordRequiresDigit
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>}
-                    {passwordRequiresLowercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>}
-                    {passwordRequiresUppercase
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>}
-                    {passwordRequiresSpecialCharacter
-                    && <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>}
+                    {passwordRequiresDigit && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresLowercase && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresUppercase && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
+                    )}
+                    {passwordRequiresSpecialCharacter && (
+                        <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
-        </GridContainer>);
+        </GridContainer>
+    );
 };
 
 const widgetModule: WidgetModule = {

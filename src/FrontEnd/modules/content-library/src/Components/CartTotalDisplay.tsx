@@ -65,16 +65,42 @@ export const cartTotalDisplayStyles: CartTotalDisplayStyles = {
     },
     labelGridItem: { width: 6 },
     valueGridItem: { width: 6 },
-    subtotalValue: { css: css` margin-left: auto; ` },
-    promotionValue: { css: css` margin-left: auto; ` },
-    discountsValue: { css: css` margin-left: auto; ` },
-    shippingAndHandlingValue: { css: css` margin-left: auto; ` },
-    otherChargesValue: { css: css` margin-left: auto; ` },
-    taxValue: { css: css` margin-left: auto; ` },
+    subtotalValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    promotionValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    discountsValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    shippingAndHandlingValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    otherChargesValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    taxValue: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
     totalLabel: { weight: "bold" },
     totalValue: {
         weight: "bold",
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
     loadingSpinner: {
         size: 15,
@@ -101,8 +127,8 @@ const CartTotalDisplay: FC<Props> = ({
     if (isLoading || !cart) {
         return (
             <GridContainer {...styles.container}>
-                {showTaxAndShipping
-                    && <>
+                {showTaxAndShipping && (
+                    <>
                         <GridItem {...styles.labelGridItem}>
                             <Typography {...styles.totalLabel}>{translate("Total")}</Typography>
                         </GridItem>
@@ -110,9 +136,9 @@ const CartTotalDisplay: FC<Props> = ({
                             <LoadingSpinner {...styles.loadingSpinner} />
                         </GridItem>
                     </>
-                }
-                {!showTaxAndShipping
-                    && <>
+                )}
+                {!showTaxAndShipping && (
+                    <>
                         <GridItem {...styles.labelGridItem}>
                             <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
                         </GridItem>
@@ -120,7 +146,7 @@ const CartTotalDisplay: FC<Props> = ({
                             <LoadingSpinner {...styles.loadingSpinner} />
                         </GridItem>
                     </>
-                }
+                )}
             </GridContainer>
         );
     }
@@ -128,8 +154,8 @@ const CartTotalDisplay: FC<Props> = ({
     if (isCartEmpty) {
         return (
             <GridContainer {...styles.container}>
-                {showTaxAndShipping
-                    && <>
+                {showTaxAndShipping && (
+                    <>
                         <GridItem {...styles.labelGridItem}>
                             <Typography {...styles.totalLabel}>{translate("Total")}</Typography>
                         </GridItem>
@@ -137,9 +163,9 @@ const CartTotalDisplay: FC<Props> = ({
                             <Typography {...styles.totalValue}>{`${cart.currencySymbol} -`}</Typography>
                         </GridItem>
                     </>
-                }
-                {!showTaxAndShipping
-                    && <>
+                )}
+                {!showTaxAndShipping && (
+                    <>
                         <GridItem {...styles.labelGridItem}>
                             <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
                         </GridItem>
@@ -147,38 +173,38 @@ const CartTotalDisplay: FC<Props> = ({
                             <Typography {...styles.subtotalValue}>{`${cart.currencySymbol} -`}</Typography>
                         </GridItem>
                     </>
-                }
+                )}
             </GridContainer>
         );
     }
 
     return (
-        <GridContainer {...styles.container}>
+        <GridContainer {...styles.container} data-test-selector={`cartTotal_${cart.id}`}>
             <GridItem {...styles.labelGridItem}>
                 <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
             </GridItem>
             <GridItem {...styles.valueGridItem}>
-                <Typography {...styles.subtotalValue} data-test-selector="cartTotal_subTotal">{cart.orderSubTotalDisplay}</Typography>
+                <Typography {...styles.subtotalValue} data-test-selector="cartTotal_subTotal">
+                    {cart.orderSubTotalDisplay}
+                </Typography>
             </GridItem>
-            {orderPromotions && orderPromotions.map(promotion => (
-                <Fragment key={promotion.id}>
-                    <GridItem {...styles.labelGridItem}>
-                        <Typography
-                            {...styles.promotionLabel}
-                            data-test-selector="cartTotalOrderPromotionName"
-                        >
-                            {`${translate("Promotion")}: ${promotion.name}`}
-                        </Typography>
-                    </GridItem>
-                    <GridItem {...styles.valueGridItem}>
-                        <Typography {...styles.promotionValue} data-test-selector="cartTotalOrderPromotionValue">
-                            {`-${promotion.amountDisplay}`}
-                        </Typography>
-                    </GridItem>
-                </Fragment>
-            ))}
-            {showTaxAndShipping && cart.shippingAndHandlingDisplay.length > 0
-                && <>
+            {orderPromotions &&
+                orderPromotions.map(promotion => (
+                    <Fragment key={promotion.id}>
+                        <GridItem {...styles.labelGridItem}>
+                            <Typography {...styles.promotionLabel} data-test-selector="cartTotalOrderPromotionName">
+                                {`${translate("Promotion")}: ${promotion.name}`}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.valueGridItem}>
+                            <Typography {...styles.promotionValue} data-test-selector="cartTotalOrderPromotionValue">
+                                {`-${promotion.amountDisplay}`}
+                            </Typography>
+                        </GridItem>
+                    </Fragment>
+                ))}
+            {showTaxAndShipping && cart.shippingAndHandlingDisplay.length > 0 && (
+                <>
                     <GridItem {...styles.labelGridItem}>
                         <Typography {...styles.shippingAndHandlingLabel}>{translate("Shipping & Handling")}</Typography>
                     </GridItem>
@@ -191,70 +217,73 @@ const CartTotalDisplay: FC<Props> = ({
                         </Typography>
                     </GridItem>
                 </>
-            }
-            {shippingPromotions && shippingPromotions.map(promotion => (
-                <Fragment key={promotion.id}>
-                    <GridItem {...styles.labelGridItem}>
-                        <Typography {...styles.promotionLabel}>
-                            {`${translate("Promotion")}: ${promotion.name}`}
-                        </Typography>
-                    </GridItem>
-                    <GridItem {...styles.valueGridItem}>
-                        <Typography {...styles.promotionValue} data-test-selector="cartTotalShippingPromotionValue">
-                            {`-${promotion.amountDisplay}`}
-                        </Typography>
-                    </GridItem>
-                </Fragment>
-            ))}
-            {showTaxAndShipping && cart.totalTaxDisplay.length > 0 && cart.customerOrderTaxes!.length === 0
-                && <>
+            )}
+            {shippingPromotions &&
+                shippingPromotions.map(promotion => (
+                    <Fragment key={promotion.id}>
+                        <GridItem {...styles.labelGridItem}>
+                            <Typography {...styles.promotionLabel}>
+                                {`${translate("Promotion")}: ${promotion.name}`}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.valueGridItem}>
+                            <Typography {...styles.promotionValue} data-test-selector="cartTotalShippingPromotionValue">
+                                {`-${promotion.amountDisplay}`}
+                            </Typography>
+                        </GridItem>
+                    </Fragment>
+                ))}
+            {showTaxAndShipping && cart.totalTaxDisplay.length > 0 && cart.customerOrderTaxes!.length === 0 && (
+                <>
                     <GridItem {...styles.labelGridItem}>
                         <Typography {...styles.taxLabel}>{translate("Tax")}</Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
-                        <Typography
-                            {...styles.taxValue}
-                            data-test-selector="cartTotal_totalTaxDisplay"
-                        >
+                        <Typography {...styles.taxValue} data-test-selector="cartTotal_totalTaxDisplay">
                             {cart.totalTaxDisplay}
                         </Typography>
                     </GridItem>
                 </>
-            }
-            {showTaxAndShipping && cart.customerOrderTaxes!.map(tax => {
-                const key = `${tax.taxCode}_${tax.sortOrder}`;
-                return (
-                    <Fragment key={key}>
-                        <GridItem {...styles.labelGridItem}>
-                            <Typography>{tax.taxDescription || translate("Tax")}</Typography>
-                        </GridItem>
-                        <GridItem {...styles.valueGridItem}>
-                            <Typography {...styles.taxValue}>{tax.taxAmountDisplay}</Typography>
-                        </GridItem>
-                    </Fragment>
-                );
-            })}
-            {showTaxAndShipping
-                && <>
+            )}
+            {showTaxAndShipping &&
+                cart.customerOrderTaxes!.map(tax => {
+                    const key = `${tax.taxCode}_${tax.sortOrder}`;
+                    return (
+                        <Fragment key={key}>
+                            <GridItem {...styles.labelGridItem}>
+                                <Typography>{tax.taxDescription || translate("Tax")}</Typography>
+                            </GridItem>
+                            <GridItem {...styles.valueGridItem}>
+                                <Typography {...styles.taxValue}>{tax.taxAmountDisplay}</Typography>
+                            </GridItem>
+                        </Fragment>
+                    );
+                })}
+            {showTaxAndShipping && (
+                <>
                     <GridItem {...styles.labelGridItem}>
                         <Typography {...styles.totalLabel}>{translate("Total")}</Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
-                        <Typography {...styles.totalValue} data-test-selector="cartTotalOrderGrandTotalDisplay">{cart.orderGrandTotalDisplay}</Typography>
+                        <Typography {...styles.totalValue} data-test-selector="cartTotalOrderGrandTotalDisplay">
+                            {cart.orderGrandTotalDisplay}
+                        </Typography>
                     </GridItem>
                 </>
-            }
-            {discountTotal !== undefined && discountTotal > 0
-                && <>
+            )}
+            {discountTotal !== undefined && discountTotal > 0 && (
+                <>
                     <GridItem {...styles.labelGridItem}>
                         <Typography {...styles.discountsLabel}>{translate("Discounts")}</Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
                         <Typography {...styles.discountsValue}>
-                            {`${translate("You saved")} `} <LocalizedCurrency amount={discountTotal} currencySymbol={cart.currencySymbol} /></Typography>
+                            {`${translate("You saved")} `}{" "}
+                            <LocalizedCurrency amount={discountTotal} currencySymbol={cart.currencySymbol} />
+                        </Typography>
                     </GridItem>
                 </>
-            }
+            )}
         </GridContainer>
     );
 };

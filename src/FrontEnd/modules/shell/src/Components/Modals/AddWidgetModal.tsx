@@ -12,11 +12,7 @@ import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getWidgetDefinition, getWidgetDefinitions, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
 import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
-import {
-    editWidget,
-    hideAddWidgetModal,
-    savePage,
-} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { editWidget, hideAddWidgetModal, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import sortBy from "lodash/sortBy";
@@ -27,8 +23,7 @@ import shellIconsObject from "../Icons/CompatibleIcons/shellIcons";
 
 const iconsObject = { ...shellIconsObject, ...mobiusIconsObject };
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -40,6 +35,13 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
 
     for (const widgetDefinition of getWidgetDefinitions()) {
         if (widgetDefinition.allowedContexts && widgetDefinition.allowedContexts.indexOf(pageType) < 0) {
+            continue;
+        }
+
+        if (state.shellContext.mobileCmsModeActive && widgetDefinition.group !== "Mobile") {
+            continue;
+        }
+        if (!state.shellContext.mobileCmsModeActive && widgetDefinition.group === "Mobile") {
             continue;
         }
 
@@ -116,13 +118,33 @@ class AddWidgetModal extends React.Component<Props, State> {
     };
 
     addWidget = (widgetDefinition: LoadedWidgetDefinition) => {
-        const { addWidgetData, addWidget, currentLanguage, defaultLanguageId, currentPersonaId, defaultPersonaId,
-                currentDeviceType, savePage, editWidget, hideAddWidgetModal, page } = this.props;
+        const {
+            addWidgetData,
+            addWidget,
+            currentLanguage,
+            defaultLanguageId,
+            currentPersonaId,
+            defaultPersonaId,
+            currentDeviceType,
+            savePage,
+            editWidget,
+            hideAddWidgetModal,
+            page,
+        } = this.props;
         if (!addWidgetData) {
             return;
         }
 
-        const newWidget = setupWidgetModel(widgetDefinition, addWidgetData.parentId, addWidgetData.zoneName, currentLanguage, defaultLanguageId, currentDeviceType, currentPersonaId, defaultPersonaId) as WidgetProps;
+        const newWidget = setupWidgetModel(
+            widgetDefinition,
+            addWidgetData.parentId,
+            addWidgetData.zoneName,
+            currentLanguage,
+            defaultLanguageId,
+            currentDeviceType,
+            currentPersonaId,
+            defaultPersonaId,
+        ) as WidgetProps;
         sendToSite({
             type: "AddWidget",
             widget: newWidget,
@@ -135,11 +157,7 @@ class AddWidgetModal extends React.Component<Props, State> {
     };
 
     render() {
-        const {
-            groups,
-            widgetsByGroup,
-            addWidgetData,
-        } = this.props;
+        const { groups, widgetsByGroup, addWidgetData } = this.props;
 
         if (addWidgetData?.addRow && !this.lastAddWidgetData?.addRow) {
             this.addWidget(getWidgetDefinition("Basic/Row"));
@@ -183,22 +201,28 @@ class AddWidgetModal extends React.Component<Props, State> {
                         placeholder="Search Widgets"
                         onChange={this.searchChange}
                         cssOverrides={{ formInputWrapper: formInputWrapperCss, formField: formFieldCss }}
-                        iconProps={{ src: () => <Search/> }}
+                        iconProps={{ src: () => <Search /> }}
                     />
                     <WidgetListScroller>
-                        {groups.map(displayName =>
-                            displayedWidgetsByGroup[displayName]
-                            && <WidgetListGroup key={displayName}>
-                                <WidgetListHeader>{displayName} elements</WidgetListHeader>
-                                <WidgetListItems>
-                                    {displayedWidgetsByGroup[displayName].map(widgetDefinition =>
-                                        <WidgetListItemStyle key={widgetDefinition.type} onClick={() => this.addWidget(widgetDefinition)} data-test-selector={`addWidgetModal_${widgetDefinition.displayName}`}>
-                                            <Icon src={iconsObject[widgetDefinition.icon || "NoIcon"]} />
-                                            {widgetDefinition.displayName}
-                                        </WidgetListItemStyle>,
-                                    )}
-                                </WidgetListItems>
-                            </WidgetListGroup>,
+                        {groups.map(
+                            displayName =>
+                                displayedWidgetsByGroup[displayName] && (
+                                    <WidgetListGroup key={displayName}>
+                                        <WidgetListHeader>{displayName} elements</WidgetListHeader>
+                                        <WidgetListItems>
+                                            {displayedWidgetsByGroup[displayName].map(widgetDefinition => (
+                                                <WidgetListItemStyle
+                                                    key={widgetDefinition.type}
+                                                    onClick={() => this.addWidget(widgetDefinition)}
+                                                    data-test-selector={`addWidgetModal_${widgetDefinition.displayName}`}
+                                                >
+                                                    <Icon src={iconsObject[widgetDefinition.icon || "NoIcon"]} />
+                                                    {widgetDefinition.displayName}
+                                                </WidgetListItemStyle>
+                                            ))}
+                                        </WidgetListItems>
+                                    </WidgetListGroup>
+                                ),
                         )}
                     </WidgetListScroller>
                 </WidgetListWidgets>

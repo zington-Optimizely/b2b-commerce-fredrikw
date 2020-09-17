@@ -7,13 +7,13 @@ import { PageEditorState } from "@insite/shell/Store/PageEditor/PageEditorState"
 import { PageTreeState } from "@insite/shell/Store/PageTree/PageTreeState";
 import { PublishModalState } from "@insite/shell/Store/PublishModal/PublishModalState";
 import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
-import styleGuideReducer from "@insite/shell/Store/StyleGuide/StyleGuideReducer";
+import { StyleGuideState } from "@insite/shell/Store/StyleGuide/StyleGuideState";
 
 export default interface ShellState {
     readonly data: {
         readonly categories: CategoriesState;
         readonly pages: PagesState;
-    }
+    };
     readonly errorModal: ErrorModalState;
     readonly links: LinksState;
     readonly logoutWarningModal: LogoutWarningModalState;
@@ -21,5 +21,5 @@ export default interface ShellState {
     readonly pageTree: PageTreeState;
     readonly publishModal: PublishModalState;
     readonly shellContext: ShellContextState;
-    readonly styleGuide: ReturnType<typeof styleGuideReducer>;
+    readonly styleGuide: StyleGuideState;
 }

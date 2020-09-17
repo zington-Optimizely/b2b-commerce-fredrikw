@@ -11,7 +11,7 @@ const fs = require("fs");
 const path = require("path");
 
 if (!fs.existsSync("./config/settings.js")) {
-    fs.copyFileSync(path.resolve(__dirname, "./config/settings-base.js"), "./config/settings.js", (error) => {
+    fs.copyFileSync(path.resolve(__dirname, "./config/settings-base.js"), "./config/settings.js", error => {
         if (error) {
             throw error;
         }
@@ -55,9 +55,7 @@ const stats = {
     entrypoints: false,
     timings: false,
     version: false,
-    warningsFilter: [
-        /Critical dependency: the request of a dependency is an expression/,
-    ],
+    warningsFilter: [/Critical dependency: the request of a dependency is an expression/],
 };
 
 const clientCompiler = compiler.compilers.find(compiler => compiler.name === "client");
@@ -78,25 +76,31 @@ let server = null;
 const Module = require("module");
 
 const options = {
-    setupExtraMiddleware: (app) => {
+    setupExtraMiddleware: app => {
         app.use(clientWebpackDevMiddleware);
         app.use(serverWebpackDevMiddleware);
         app.use(webpackHotMiddleware(clientCompiler));
         app.use(webpackHotMiddleware(serverCompiler));
     },
-    getServer: (response) => {
+    getServer: response => {
         if (serverHash !== response.locals.webpackStats.hash) {
             const memoryServer = new Module();
-            memoryServer._compile(response.locals.fs.readFileSync(`${response.locals.webpackStats.toJson().outputPath}/server.js`, "utf8"), "");
+            memoryServer._compile(
+                response.locals.fs.readFileSync(
+                    `${response.locals.webpackStats.toJson().outputPath}/server.js`,
+                    "utf8",
+                ),
+                "",
+            );
             server = memoryServer.exports.server;
             serverHash = response.locals.webpackStats.hash;
         }
         return server;
     },
-    finishSetup: (app) => {
+    finishSetup: app => {
         clientWebpackDevMiddleware.waitUntilValid(() =>
             serverWebpackDevMiddleware.waitUntilValid(() => {
-                const [,,, port] = process.argv;
+                const [, , , port] = process.argv;
                 const thePort = port || 3000;
                 app.listen(thePort, () => {
                     console.log(`Startup complete, listening on port ${thePort}.`);

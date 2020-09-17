@@ -1,10 +1,11 @@
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 
 type RecursivePartial<T> = {
-    [P in keyof T]?:
-        T[P] extends (infer U)[] ? RecursivePartial<U>[] :
-        T[P] extends object ? RecursivePartial<T[P]> :
-        T[P];
+    [P in keyof T]?: T[P] extends (infer U)[]
+        ? RecursivePartial<U>[]
+        : T[P] extends object
+        ? RecursivePartial<T[P]>
+        : T[P];
 };
 
 export let preStyleGuideTheme: RecursivePartial<BaseTheme> = {};

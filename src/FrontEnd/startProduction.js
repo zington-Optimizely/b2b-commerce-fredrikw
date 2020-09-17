@@ -47,7 +47,9 @@ const setupExpress = () => {
                 try {
                     // Use an unreferenced timer to kill the process after up to 30 seconds.
                     // `unref` means that if this timer is the only thing left, Node won't wait for and will exit immediately.
-                    setTimeout(() => { process.exit(1); }, 30000).unref();
+                    setTimeout(() => {
+                        process.exit(1);
+                    }, 30000).unref();
 
                     // Disconnect the worker; the cluster master will spawn a replacement.
                     cluster.worker.disconnect();
@@ -62,7 +64,7 @@ const setupExpress = () => {
                 }
             });
         },
-        finishSetup: (app) => {
+        finishSetup: app => {
             app.use(errorHandler);
             nodeServer = app.listen(port, () => {
                 if (cluster.worker) {

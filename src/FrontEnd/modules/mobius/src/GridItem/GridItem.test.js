@@ -1,11 +1,11 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import GridContainer from '../GridContainer';
-import GridItem from './GridItem';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import GridContainer from "../GridContainer";
+import GridItem from "./GridItem";
 
-describe('GridItem', () => {
+describe("GridItem", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -15,7 +15,7 @@ describe('GridItem', () => {
                     <GridContainer>
                         <GridItem {...props} />
                     </GridContainer>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -26,7 +26,7 @@ describe('GridItem', () => {
         mountedWrapper = undefined;
     });
 
-    test('renders as a div by default', () => {
+    test("renders as a div by default", () => {
         const root = wrapper().find(GridItem).getDOMNode();
         expect(root instanceof HTMLDivElement).toBe(true);
     });

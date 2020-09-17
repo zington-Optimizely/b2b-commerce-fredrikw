@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ productId: string, unitOfMeasure: string }>;
+type HandlerType = Handler<{ productId: string; unitOfMeasure: string }>;
 
 export const DispatchRemoveProduct: HandlerType = props => {
     props.dispatch({
@@ -10,9 +10,7 @@ export const DispatchRemoveProduct: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchRemoveProduct,
-];
+export const chain = [DispatchRemoveProduct];
 
 const removeProduct = createHandlerChainRunner(chain, "RemoveProduct");
 export default removeProduct;

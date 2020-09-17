@@ -1,8 +1,8 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type Parameter = {
-    qtyOrdered: number,
-    productId: string,
+    qtyOrdered: number;
+    productId: string;
 };
 
 type HandlerType = Handler<Parameter>;
@@ -15,9 +15,7 @@ export const DispatchChangeQtyOrdered: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchChangeQtyOrdered,
-];
+export const chain = [DispatchChangeQtyOrdered];
 
 const changeQtyOrdered = createHandlerChainRunner(chain, "ChangeQtyOrdered");
 export default changeQtyOrdered;

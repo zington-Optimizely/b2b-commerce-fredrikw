@@ -1,16 +1,16 @@
 # Docker for dummies
 # use this to build the example blueprint. Exclude the two build args to build content-library
-# docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example -t spire
+#   docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example -t spire
 # use this to run the built image, the site will run at http://localhost:3000, and your website domainNames needs to include host.docker.internal
-# docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire
+#   docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire
 # stopping a running container
-# docker ps
-# docker stop {containerId}
+#   docker ps
+#   docker stop {containerId}
 # troubleshooting - you can use the final image name, like spire from above, or any of the images creating during the build, they look like ---> XXXXXXXXXXXXX
-# docker run -it {imagename} /bin/sh
+#   docker run -it {imagename} /bin/sh
 
 # Command to build the base site with automatic Node/Linux image update:
-# docker build --pull .
+#   docker build --pull .
 
 # A maintained LTS release is appropriate for production usage.  For Node, these are typically even-numbered major releases.
 # "Current" versions should be periodically tested for early warning of compatibility problems.
@@ -20,20 +20,19 @@
 # Ensure you are using Linux container mode
 # Build runtime-base image - do this once with a version number like 1.0.0.0
 # BASH
-# DOCKER_BUILDKIT=1 && docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
+#   DOCKER_BUILDKIT=1 && docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
 # Powershell
-# $env:DOCKER_BUILDKIT=1; docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
+#   $env:DOCKER_BUILDKIT=1; docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
 # To build the build-base image - do this each time you change base code, but you can use a version number like 1.0.0.0
 # BASH
-# DOCKER_BUILDKIT=1 && docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
+#   DOCKER_BUILDKIT=1 && docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
 # Powershell
-# $env:DOCKER_BUILDKIT=1; docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
+#   $env:DOCKER_BUILDKIT=1; docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
 # Run the actual blueprints docker file - this must execute from within the blueprints directory
-# cd modules\blueprints
-# docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example --build-arg COMMERCE_VERSION={version} -t spire-blueprint
-# docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire-blueprint
+#   cd modules\blueprints
+#   docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example --build-arg COMMERCE_VERSION={version} -t spire-blueprint
+#   docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire-blueprint
 ARG BUILD_BASE="build-base"
-
 
 ARG RUNTIME_BASE="runtime-base"
 
@@ -49,24 +48,28 @@ COPY ./modules/content-library/package.json ./modules/content-library/package-lo
 COPY ./modules/mobius/package.json ./modules/mobius/package-lock.json ./modules/mobius/
 COPY ./modules/server-framework/package.json ./package-lock.json ./modules/server-framework/
 COPY ./modules/shell/package.json ./modules/shell/package-lock.json ./modules/shell/
-
-RUN ["npm", "install", "--unsafe-perm"]
-
-# spire-linter should change less often than Mobius
+# spire linter needs to exist on disk when we use npm ci
 COPY ./modules/spire-linter ./modules/spire-linter
+
+RUN ["npm", "ci", "--unsafe-perm"]
+
 RUN ["npm", "run", "test:spire-linter"]
 
 # Most branches will not change Mobius, so do the minimum required work to run its tests so the layer can be cached.
 COPY ./babel.config.js ./constants.d.ts ./tsconfig.base.json ./
 COPY ./modules/client-framework/src/Logger.ts ./modules/client-framework/src/
+
+# We need the tsconfig.paths.json file to run the tests. Running it here won't get the blueprint paths setup, but it will get rerun later.
+COPY ./config/webpack/ ./config/webpack/
+RUN ["npm", "run", "setupTsconfigPaths"]
+
 WORKDIR /app/modules/mobius
 COPY ./modules/mobius/ ./
 RUN ["npm", "test"]
 WORKDIR /app
 
-# Linter and Webpack configuration change occasionally.
-COPY ./.eslintignore ./.eslintrc.js ./.stylelintrc ./
-COPY ./config/webpack/ ./config/webpack/
+# Linter configuration change occasionally.
+COPY ./.eslintignore ./.eslintrc.js ./.stylelintrc ./.prettierrc  ./
 
 # These files will change frequently, so useful caching is limited to different build arguments.
 COPY ./modules/ ./modules/
@@ -78,6 +81,7 @@ RUN ["npm", "run", "stylelint"]
 
 # Copy this to get creators and other static files into the base build image.
 COPY ./wwwroot/ ./wwwroot/
+COPY ./config/spire_routes.json ./config/
 # We need these files available on build for the blueprints/Dockerfile
 COPY /startProduction.package.json /startProduction.js /start.js ./
 

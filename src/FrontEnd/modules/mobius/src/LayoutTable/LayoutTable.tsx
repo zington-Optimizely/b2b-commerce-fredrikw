@@ -7,11 +7,14 @@ import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 import LayoutTableContext, { LayoutTableContextData } from "./LayoutTableContext";
 
-export type LayoutTableProps = MobiusStyledComponentProps<"div", LayoutTableContextData & {
-    children?: React.ReactNode;
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<LayoutTableProps>;
-}>;
+export type LayoutTableProps = MobiusStyledComponentProps<
+    "div",
+    LayoutTableContextData & {
+        children?: React.ReactNode;
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<LayoutTableProps>;
+    }
+>;
 
 const margins = {
     column: ["left", "right", "top", "bottom"],
@@ -21,9 +24,7 @@ const margins = {
 const LayoutTableStyle = styled.div<LayoutTableProps>`
     display: grid;
     grid-auto-flow: ${getProp("cellFlow")};
-    ${({
-        cellFlow = "row", cellsPerGroup = 1, gap = 2, numberOfGroups = 1,
-    }) => {
+    ${({ cellFlow = "row", cellsPerGroup = 1, gap = 2, numberOfGroups = 1 }) => {
         const rowRepeat = cellFlow === "row" ? numberOfGroups : cellsPerGroup;
         const columnRepeat = cellFlow === "row" ? cellsPerGroup : numberOfGroups;
         const halfGap = `${gap / 2}px`;
@@ -49,11 +50,8 @@ const LayoutTableStyle = styled.div<LayoutTableProps>`
         `;
         const width = `${100 / columnRepeat}%`;
         const edgeColumnWidth = `calc(${width} - ${gap / 2 - gap / columnRepeat}px)`;
-        const middleColumns = (
-            columnRepeat > 2
-                ? `repeat(${columnRepeat - 2}, calc(${width} + ${gap / columnRepeat}px))`
-                : ""
-        );
+        const middleColumns =
+            columnRepeat > 2 ? `repeat(${columnRepeat - 2}, calc(${width} + ${gap / columnRepeat}px))` : "";
 
         return css`
             grid-template-rows: repeat(${rowRepeat}, max-content);
@@ -73,11 +71,22 @@ const LayoutTableStyle = styled.div<LayoutTableProps>`
  * Useful for layouts that require table-like responsiveness while maintaining semantic markup order (for accessibility) and cross-browser compatibility.
  */
 const LayoutTable: React.FC<LayoutTableProps> = ({
-    cellFlow, cellsPerGroup, children, css: cssProp, gap, numberOfGroups, ...otherProps
+    cellFlow,
+    cellsPerGroup,
+    children,
+    css: cssProp,
+    gap,
+    numberOfGroups,
+    ...otherProps
 }) => (
-    <LayoutTableContext.Provider value={{
-        cellFlow, cellsPerGroup, gap, numberOfGroups,
-    }}>
+    <LayoutTableContext.Provider
+        value={{
+            cellFlow,
+            cellsPerGroup,
+            gap,
+            numberOfGroups,
+        }}
+    >
         <LayoutTableStyle
             css={cssProp}
             {...{

@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunnerOptionalParameter,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler;
 
@@ -11,9 +8,7 @@ export const DispatchCleanupUploadData: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchCleanupUploadData,
-];
+export const chain = [DispatchCleanupUploadData];
 
 const cleanupUploadData = createHandlerChainRunnerOptionalParameter(chain, {}, "CleanupUploadData");
 export default cleanupUploadData;

@@ -12,8 +12,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     toggleFiltersOpen,
@@ -31,7 +30,12 @@ export interface OrderHistoryHeaderStyles {
 }
 
 export const headerStyles: OrderHistoryHeaderStyles = {
-    container: { gap: 8, css: css` padding-bottom: 20px; ` },
+    container: {
+        gap: 8,
+        css: css`
+            padding-bottom: 20px;
+        `,
+    },
     invoiceCountGridItem: {
         width: 11,
         style: { fontWeight: 600 },
@@ -51,11 +55,15 @@ const OrderHistoryHeader: FC<Props> = ({ toggleFiltersOpen, id }) => {
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.invoiceCountGridItem}>
-                <Zone contentId={id} zoneName="Content"/>
+                <Zone contentId={id} zoneName="Content" />
             </GridItem>
             <GridItem {...styles.toggleFilterGridItem}>
-                <Clickable {...styles.toggleFilterClickable} onClick={toggleFiltersOpen} data-test-selector="orderHistory_showHideFilters">
-                    <Icon {...styles.toggleFilterIcon}/>
+                <Clickable
+                    {...styles.toggleFilterClickable}
+                    onClick={toggleFiltersOpen}
+                    data-test-selector="orderHistory_showHideFilters"
+                >
+                    <Icon {...styles.toggleFilterIcon} />
                 </Clickable>
             </GridItem>
         </GridContainer>
@@ -63,7 +71,6 @@ const OrderHistoryHeader: FC<Props> = ({ toggleFiltersOpen, id }) => {
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(null, mapDispatchToProps)(OrderHistoryHeader),
     definition: {
         group: "Order History",

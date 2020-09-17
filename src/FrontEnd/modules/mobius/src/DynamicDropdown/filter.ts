@@ -11,10 +11,7 @@ const trimString = (str: string) => str.replace(/^\s+|\s+$/g, "");
  * @param {string} rawInput The string being searched for within the option.
  * @return {boolean} Whether the option includes the rawInput.
  */
-const filter = (
-    option: OptionObject,
-    rawInput: string,
-) => {
+const filter = (option: OptionObject, rawInput: string) => {
     const input = trimString(rawInput).toLowerCase();
     const candidate = trimString(stringify(option)).toLowerCase();
     return candidate.indexOf(input) > -1;

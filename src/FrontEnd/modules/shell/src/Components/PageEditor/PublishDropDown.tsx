@@ -2,7 +2,10 @@ import Button, { ButtonIcon } from "@insite/mobius/Button";
 import ChevronDown from "@insite/mobius/Icons/ChevronDown";
 import ChevronUp from "@insite/mobius/Icons/ChevronUp";
 import PublishModal from "@insite/shell/Components/Shell/PublishModal";
-import { setPublishButtonExpanded, showPublishModal } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
+import {
+    setPublishButtonExpanded,
+    showPublishModal,
+} from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -57,31 +60,41 @@ class PublishDropDown extends React.Component<Props> {
 
     render() {
         const { visible } = this.props;
-        return <>
-            <PublishButton data-test-selector="headerBar_publish"
-                           onClick={this.onPublish}
-                           expanded={visible}
-                           variant="primary">Publish</PublishButton>
-            <PublishModal />
-            <div ref={this.element}>
-                <PublishDropDownButton data-test-selector="headerBar_expandPublishOptions"
-                                       expanded={visible}
-                                       style={{ width: "100%" }}
-                                       onClick={this.toggle}>
-                    <ButtonIcon
-                        src={visible ? ChevronUp : ChevronDown}
-                        size={14}
-                    />
-                </PublishDropDownButton>
-                {!visible ? null
-                : <InlinePopUpOuterWrapper>
-                    <InlinePopUpInnerWrapper>
-                        <div data-test-selector="headerBar_publishLine" onClick={this.onPublish}>Publish</div>
-                        <div data-test-selector="headerBar_bulkPublishLine" onClick={this.onBulkPublish}>Bulk Publish</div>
-                    </InlinePopUpInnerWrapper>
-                </InlinePopUpOuterWrapper>}
-            </div>
-        </>;
+        return (
+            <>
+                <PublishButton
+                    data-test-selector="headerBar_publish"
+                    onClick={this.onPublish}
+                    expanded={visible}
+                    variant="primary"
+                >
+                    Publish
+                </PublishButton>
+                <PublishModal />
+                <div ref={this.element}>
+                    <PublishDropDownButton
+                        data-test-selector="headerBar_expandPublishOptions"
+                        expanded={visible}
+                        style={{ width: "100%" }}
+                        onClick={this.toggle}
+                    >
+                        <ButtonIcon src={visible ? ChevronUp : ChevronDown} size={14} />
+                    </PublishDropDownButton>
+                    {!visible ? null : (
+                        <InlinePopUpOuterWrapper>
+                            <InlinePopUpInnerWrapper>
+                                <div data-test-selector="headerBar_publishLine" onClick={this.onPublish}>
+                                    Publish
+                                </div>
+                                <div data-test-selector="headerBar_bulkPublishLine" onClick={this.onBulkPublish}>
+                                    Bulk Publish
+                                </div>
+                            </InlinePopUpInnerWrapper>
+                        </InlinePopUpOuterWrapper>
+                    )}
+                </div>
+            </>
+        );
     }
 }
 
@@ -119,7 +132,7 @@ const PublishButton = styled(Button)<HasExpanded>`
 const PublishDropDownButton = styled(Button)<HasExpanded>`
     background: #e3971a;
     border: 0;
-    border-radius: ${props => props.expanded ? "0 4px 0 0" : "0 4px 4px 0"};
+    border-radius: ${props => (props.expanded ? "0 4px 0 0" : "0 4px 4px 0")};
     height: 27px;
     margin: 1px 0 1px 0;
     padding: 0 1px;

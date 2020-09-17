@@ -13,7 +13,11 @@ export interface AddressInfoCondensedDisplayStyles {
 }
 
 export const addressInfoCondensedDisplayStyles: AddressInfoCondensedDisplayStyles = {
-    wrapper: { css: css` font-style: normal; ` },
+    wrapper: {
+        css: css`
+            font-style: normal;
+        `,
+    },
     addressText: { as: "p" },
     cityStatePostalCodeText: { as: "p" },
     countryText: { as: "p" },
@@ -46,14 +50,8 @@ const AddressInfoCondensedDisplay: React.FunctionComponent<Props> = function Add
                 address4={props.address4}
                 styles={styles}
             />
-            <CityStatePostalCode
-                city={props.city}
-                state={props.state}
-                postalCode={props.postalCode}
-                styles={styles} />
-            {props.country
-                && <Typography {...styles.countryText}>{props.country}</Typography>
-            }
+            <CityStatePostalCode city={props.city} state={props.state} postalCode={props.postalCode} styles={styles} />
+            {props.country && <Typography {...styles.countryText}>{props.country}</Typography>}
         </StyledAddress>
     );
 };
@@ -65,19 +63,18 @@ interface CityStatePostalCodeProps {
     styles: AddressInfoCondensedDisplayStyles;
 }
 
-const CityStatePostalCode: React.FunctionComponent<CityStatePostalCodeProps>
-    = function CityStatePostalCode(props: CityStatePostalCodeProps) {
-        let cityStatePostalDisplay = props.city;
-        if (props.state) {
-            cityStatePostalDisplay += `, ${props.state}`;
-        }
-        if (props.postalCode) {
-            cityStatePostalDisplay += ` ${props.postalCode}`;
-        }
-        return (
-            <Typography {...props.styles.cityStatePostalCodeText}>{cityStatePostalDisplay}</Typography>
-        );
-    };
+const CityStatePostalCode: React.FunctionComponent<CityStatePostalCodeProps> = function CityStatePostalCode(
+    props: CityStatePostalCodeProps,
+) {
+    let cityStatePostalDisplay = props.city;
+    if (props.state) {
+        cityStatePostalDisplay += `, ${props.state}`;
+    }
+    if (props.postalCode) {
+        cityStatePostalDisplay += ` ${props.postalCode}`;
+    }
+    return <Typography {...props.styles.cityStatePostalCodeText}>{cityStatePostalDisplay}</Typography>;
+};
 
 interface AddressLineProps {
     address1: string;
@@ -98,9 +95,7 @@ const AddressLine: React.FunctionComponent<AddressLineProps> = (props: AddressLi
     if (props.address4) {
         addressLine += `, ${props.address4}`;
     }
-    return (
-        <Typography {...props.styles.addressText}>{addressLine}</Typography>
-    );
+    return <Typography {...props.styles.addressText}>{addressLine}</Typography>;
 };
 
 export default AddressInfoCondensedDisplay;

@@ -4,8 +4,7 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import * as React from "react";
 
-interface Props extends WidgetProps, HasCategoryContext {
-}
+interface Props extends WidgetProps, HasCategoryContext {}
 
 export interface CategoryImageStyles {
     image?: LazyImageProps;

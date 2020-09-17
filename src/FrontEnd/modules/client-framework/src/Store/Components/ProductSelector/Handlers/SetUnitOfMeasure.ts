@@ -11,9 +11,7 @@ export const DispatchCompleteSetProduct: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchCompleteSetProduct,
-];
+export const chain = [DispatchCompleteSetProduct];
 
 const setUnitOfMeasure = createHandlerChainRunner(chain, "SetUnitOfMeasure");
 export default setUnitOfMeasure;

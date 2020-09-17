@@ -1,5 +1,8 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import AlphabetNavigation, { AlphabetNavigationStyles, LetterDetails } from "@insite/content-library/Widgets/Brand/AlphabetNavigation";
+import AlphabetNavigation, {
+    AlphabetNavigationStyles,
+    LetterDetails,
+} from "@insite/content-library/Widgets/Brand/AlphabetNavigation";
 import React, { FC, useState } from "react";
 
 interface Props {
@@ -18,7 +21,11 @@ const BrandAlphabetNavigation: FC<Props> = ({ letterDetails, onBrandLetterClick,
     const [styles] = useState(() => mergeToNew(brandAlphabetNavigationStyles, extendedStyles));
 
     return (
-        <AlphabetNavigation alphabet={letterDetails} extendedStyles={styles.alphabetNavigation} onLetterClick={onBrandLetterClick} />
+        <AlphabetNavigation
+            alphabet={letterDetails}
+            extendedStyles={styles.alphabetNavigation}
+            onLetterClick={onBrandLetterClick}
+        />
     );
 };
 

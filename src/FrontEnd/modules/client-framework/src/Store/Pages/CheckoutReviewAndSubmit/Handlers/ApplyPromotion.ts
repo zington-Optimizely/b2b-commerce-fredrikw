@@ -6,12 +6,17 @@ import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{
-    promotionCode: string;
-}, AddCartPromotionApiParameter, PromotionModel, {
-    successMessage: string;
-    errorMessage: string;
-}>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {
+        promotionCode: string;
+    },
+    AddCartPromotionApiParameter,
+    PromotionModel,
+    {
+        successMessage: string;
+        errorMessage: string;
+    }
+>;
 
 export const DispatchBeginApplyPromotion: HandlerType = props => {
     props.dispatch({

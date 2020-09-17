@@ -7,8 +7,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import * as React from "react";
 
-interface Props extends WidgetProps, HasCategoryContext {
-}
+interface Props extends WidgetProps, HasCategoryContext {}
 
 export interface CategoryDetailBannerStyles {
     container?: InjectableCss;
@@ -18,9 +17,7 @@ export const bannerStyles: CategoryDetailBannerStyles = {};
 
 const styles = bannerStyles;
 
-const CategoryDetailBanner: React.FC<Props> = ({
-    category,
-}: Props) => {
+const CategoryDetailBanner: React.FC<Props> = ({ category }: Props) => {
     if (!category || !category.htmlContent) {
         return null;
     }

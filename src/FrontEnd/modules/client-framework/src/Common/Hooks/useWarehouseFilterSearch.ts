@@ -1,4 +1,7 @@
-import { getGeoCodeFromAddress, getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
+import {
+    getGeoCodeFromAddress,
+    getGeoCodeFromLatLng,
+} from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
 import { GetWarehousesApiParameter } from "@insite/client-framework/Services/WarehouseService";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import * as React from "react";
@@ -51,10 +54,15 @@ const useWarehouseFilterSearch = ({
 
     // Re-evaluate the Selected Warehouse distance and show details.
     React.useEffect(() => {
-        if(!filter || !selectedWarehouse) {
+        if (!filter || !selectedWarehouse) {
             return;
         }
-        const distanceToSelectedWarehouse = getDistance(filter.latitude, filter.longitude, selectedWarehouse.latitude, selectedWarehouse.longitude);
+        const distanceToSelectedWarehouse = getDistance(
+            filter.latitude,
+            filter.longitude,
+            selectedWarehouse.latitude,
+            selectedWarehouse.longitude,
+        );
         const showSelectedWarehouse = distanceToSelectedWarehouse < defaultRadius;
         setShowSelectedWarehouse(showSelectedWarehouse);
         if (showSelectedWarehouse && distanceToSelectedWarehouse !== selectedWarehouse.distance) {
@@ -70,11 +78,11 @@ const useWarehouseFilterSearch = ({
         if (!currentLocation) {
             return;
         }
-        getGeoCodeFromLatLng(currentLocation.lat(), currentLocation.lng()).then((result) => {
-            setWarehouseSearchFilter(result[0].formatted_address);
-        }).catch(error => {
-
-        });
+        getGeoCodeFromLatLng(currentLocation.lat(), currentLocation.lng())
+            .then(result => {
+                setWarehouseSearchFilter(result[0].formatted_address);
+            })
+            .catch(error => {});
     }, [currentLocation]);
 
     const createFilter = (coords: google.maps.LatLng): GetWarehousesApiParameter => ({
@@ -89,26 +97,27 @@ const useWarehouseFilterSearch = ({
     });
 
     // Search for known Location data
-    const doSearch = (searchFilter: string) => getGeoCodeFromAddress(searchFilter)
-        .then((result) => {
-            setLocationKnown(true);
+    const doSearch = (searchFilter: string) =>
+        getGeoCodeFromAddress(searchFilter)
+            .then(result => {
+                setLocationKnown(true);
 
-            const geocoderResult = result[0];
-            if (geocoderResult.formatted_address) {
-                setWarehouseSearchFilter(geocoderResult.formatted_address);
-            }
+                const geocoderResult = result[0];
+                if (geocoderResult.formatted_address) {
+                    setWarehouseSearchFilter(geocoderResult.formatted_address);
+                }
 
-            setPage(1);
-            setCurrentLocation(geocoderResult.geometry.location);
-        })
-        .catch(_ => {
-            if (selectedWarehouse) {
-                const coords = new google.maps.LatLng(selectedWarehouse.latitude, selectedWarehouse.longitude);
                 setPage(1);
-                setCurrentLocation(coords);
-            }
-            setLocationKnown(false);
-        });
+                setCurrentLocation(geocoderResult.geometry.location);
+            })
+            .catch(_ => {
+                if (selectedWarehouse) {
+                    const coords = new google.maps.LatLng(selectedWarehouse.latitude, selectedWarehouse.longitude);
+                    setPage(1);
+                    setCurrentLocation(coords);
+                }
+                setLocationKnown(false);
+            });
 
     return {
         doSearch,
@@ -120,7 +129,11 @@ const useWarehouseFilterSearch = ({
 };
 
 const getDistance = (latitude1: number, longitude1: number, latitude2: number, longitude2: number) => {
-    let distance = Math.cos(getRadians(latitude1)) * Math.cos(getRadians(latitude2)) * Math.cos(getRadians(longitude2) - getRadians(longitude1)) + Math.sin(getRadians(latitude1)) * Math.sin(getRadians(latitude2));
+    let distance =
+        Math.cos(getRadians(latitude1)) *
+            Math.cos(getRadians(latitude2)) *
+            Math.cos(getRadians(longitude2) - getRadians(longitude1)) +
+        Math.sin(getRadians(latitude1)) * Math.sin(getRadians(latitude2));
     if (distance > 1) {
         distance = 1;
     }

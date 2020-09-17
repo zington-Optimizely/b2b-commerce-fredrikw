@@ -37,7 +37,7 @@ export interface DataTablePresentationProps {
      * @themable */
     cellTypographyProps?: TypographyPresentationProps;
     /** Props that will be passed to the clickable component within sortable header cells.
-    * @themable */
+     * @themable */
     sortClickableProps?: ClickablePresentationProps;
     /** Props to be passed to the sort icon.
      * @themable */
@@ -50,13 +50,16 @@ export interface DataTablePresentationProps {
         descending?: React.ComponentType | string;
         none?: React.ComponentType | string;
         other?: React.ComponentType | string;
-    }
+    };
 }
 
-export type DataTableProps = MobiusStyledComponentProps<"table", DataTablePresentationProps & {
-    /** The list of sort options and order in which they will be applied. */
-    sortOrder?: SortOrderOptions[]
-}>;
+export type DataTableProps = MobiusStyledComponentProps<
+    "table",
+    DataTablePresentationProps & {
+        /** The list of sort options and order in which they will be applied. */
+        sortOrder?: SortOrderOptions[];
+    }
+>;
 
 const DataTableStyle = styled.table`
     width: 100%;
@@ -73,15 +76,17 @@ const DataTable: React.FC<DataTableProps> = ({ sortOrder, ...otherProps }) => {
     const sortIconSources = spreadProps("sortIconSources");
     const sortClickableProps = spreadProps("sortClickableProps");
     return (
-        <DataTableContext.Provider value={{
-            _cssOverrides: cssOverrides,
-            cellTypographyProps,
-            headerTypographyProps,
-            sortClickableProps,
-            sortIconProps,
-            sortIconSources,
-            sortOrder,
-        }}>
+        <DataTableContext.Provider
+            value={{
+                _cssOverrides: cssOverrides,
+                cellTypographyProps,
+                headerTypographyProps,
+                sortClickableProps,
+                sortIconProps,
+                sortIconSources,
+                sortOrder,
+            }}
+        >
             <DataTableStyle css={cssOverrides.table} {...otherProps} />
         </DataTableContext.Provider>
     );

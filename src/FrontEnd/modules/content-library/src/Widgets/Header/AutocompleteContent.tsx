@@ -76,18 +76,22 @@ class AutocompleteContent extends React.Component<Props> {
         }
 
         const styles = this.styles;
-        return <>
-            <Typography {...styles.headerText}>{translate("Content")}</Typography>
-            {content.map(content => (
-                <Link
-                    {...(this.props.focusedItem === content ? styles.focusedLink : styles.link)}
-                    key={content.url}
-                    onClick={() => { this.props.goToUrl(content.url); }}
-                >
-                    {content.title}
-                </Link>
-            ))}
-        </>;
+        return (
+            <>
+                <Typography {...styles.headerText}>{translate("Content")}</Typography>
+                {content.map(content => (
+                    <Link
+                        {...(this.props.focusedItem === content ? styles.focusedLink : styles.link)}
+                        key={content.url}
+                        onClick={() => {
+                            this.props.goToUrl(content.url);
+                        }}
+                    >
+                        {content.title}
+                    </Link>
+                ))}
+            </>
+        );
     }
 }
 

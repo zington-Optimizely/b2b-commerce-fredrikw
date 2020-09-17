@@ -24,7 +24,9 @@ export const shippingAddressStyles: InvoiceDetailsShippingAddressStyles = {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -48,7 +50,8 @@ const InvoiceDetailsShippingAddress: React.FunctionComponent<OwnProps> = ({ invo
                 state={invoice.shipToState}
                 postalCode={invoice.shipToPostalCode}
                 country={invoice.stCountry}
-                extendedStyles={styles.addressDisplay} />
+                extendedStyles={styles.addressDisplay}
+            />
         </StyledWrapper>
     );
 };

@@ -3,7 +3,9 @@ import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import setAddToListModalIsOpen, { wishListsParameter } from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import setAddToListModalIsOpen, {
+    wishListsParameter,
+} from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
 import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -52,8 +54,12 @@ export const addToListModalStyles: AddToListModalStyles = {
     modal: {
         size: 350,
         cssOverrides: {
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     descriptionText: {
@@ -61,12 +67,16 @@ export const addToListModalStyles: AddToListModalStyles = {
     },
     listsSelect: {
         cssOverrides: {
-            formField: css` margin-top: 15px; `,
+            formField: css`
+                margin-top: 15px;
+            `,
         },
     },
     newListInput: {
         cssOverrides: {
-            formField: css` margin-top: 15px; `,
+            formField: css`
+                margin-top: 15px;
+            `,
         },
     },
     buttonsWrapper: {
@@ -79,7 +89,9 @@ export const addToListModalStyles: AddToListModalStyles = {
         variant: "secondary",
     },
     addButton: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
 };
 
@@ -155,64 +167,71 @@ const AddToListModal: React.FC<Props> = ({
                 setNewListName("");
                 toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
             },
-            onError: (errorMessage) => {
+            onError: errorMessage => {
                 setNewListNameError(errorMessage);
             },
         });
     };
 
-    return <Modal
-        {...styles.modal}
-        headline={isAuthenticated ? translate("Add to List") : translate("Please Sign In")}
-        isOpen={modalIsOpen}
-        handleClose={modalCloseHandler}
-    >
-        <div data-test-selector="productAddToListModal">
-            {!isAuthenticated
-                && <Typography
-                    data-test-selector="productAddToListModal_requireSignIn"
-                    {...styles.signInMessageText}
-                >
-                    {siteMessage("Lists_Must_Sign_In")}
-                </Typography>
-            }
-            {isAuthenticated
-                && <form>
-                    <Typography {...styles.descriptionText}>{translate("Copy items to a new or existing list.")}</Typography>
-                    <Select
-                        label={translate("Select List")}
-                        value={selectedWishList?.id.toString() || "new"}
-                        onChange={listChangeHandler}
-                        {...styles.listsSelect}
-                        data-test-selector="productAddToListModal_listSelect"
-                    >
-                        <option value="new">{translate("Create New List")}</option>
-                        {wishLists?.map(wishList =>
-                            <option key={wishList.id.toString()} value={wishList.id.toString()}>{wishList.name}</option>)
-                        }
-                    </Select>
-                    {!selectedWishList
-                        && <TextField
-                            label={translate("New List Name")}
-                            value={newListName}
-                            error={newListNameError}
-                            onChange={newListInputChangeHandler}
-                            {...styles.newListInput}
-                            data-test-selector="productAddToListModal_newName" />
-                    }
-                    <StyledWrapper {...styles.buttonsWrapper}>
-                        <Button {...styles.cancelButton} onClick={modalCloseHandler}>{translate("Cancel")}</Button>
-                        <Button
-                            {...styles.addButton}
-                            onClick={e => addToListButtonClickHandler(e)}
-                            data-test-selector="productAddToListModal_addButton">
-                            {translate("Add to List")}
-                        </Button>
-                    </StyledWrapper>
-                </form>
-            }
-        </div>
-    </Modal>;
+    return (
+        <Modal
+            {...styles.modal}
+            headline={isAuthenticated ? translate("Add to List") : translate("Please Sign In")}
+            isOpen={modalIsOpen}
+            handleClose={modalCloseHandler}
+        >
+            <div data-test-selector="productAddToListModal">
+                {!isAuthenticated && (
+                    <Typography data-test-selector="productAddToListModal_requireSignIn" {...styles.signInMessageText}>
+                        {siteMessage("Lists_Must_Sign_In")}
+                    </Typography>
+                )}
+                {isAuthenticated && (
+                    <form>
+                        <Typography {...styles.descriptionText}>
+                            {translate("Copy items to a new or existing list.")}
+                        </Typography>
+                        <Select
+                            label={translate("Select List")}
+                            value={selectedWishList?.id.toString() || "new"}
+                            onChange={listChangeHandler}
+                            {...styles.listsSelect}
+                            data-test-selector="productAddToListModal_listSelect"
+                        >
+                            <option value="new">{translate("Create New List")}</option>
+                            {wishLists?.map(wishList => (
+                                <option key={wishList.id.toString()} value={wishList.id.toString()}>
+                                    {wishList.name}
+                                </option>
+                            ))}
+                        </Select>
+                        {!selectedWishList && (
+                            <TextField
+                                label={translate("New List Name")}
+                                value={newListName}
+                                error={newListNameError}
+                                onChange={newListInputChangeHandler}
+                                {...styles.newListInput}
+                                data-test-selector="productAddToListModal_newName"
+                            />
+                        )}
+                        <StyledWrapper {...styles.buttonsWrapper}>
+                            <Button {...styles.cancelButton} onClick={modalCloseHandler}>
+                                {translate("Cancel")}
+                            </Button>
+                            <Button
+                                {...styles.addButton}
+                                onClick={e => addToListButtonClickHandler(e)}
+                                data-test-selector="productAddToListModal_addButton"
+                            >
+                                {translate("Add to List")}
+                            </Button>
+                        </StyledWrapper>
+                    </form>
+                )}
+            </div>
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddToListModal);

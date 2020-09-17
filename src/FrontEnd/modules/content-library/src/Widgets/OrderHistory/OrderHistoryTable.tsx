@@ -51,7 +51,10 @@ const mapDispatchToProps = {
     reorder,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & OwnProps & ResolveThunks<typeof mapDispatchToProps> & HasToasterContext;
+type Props = ReturnType<typeof mapStateToProps> &
+    OwnProps &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasToasterContext;
 
 export interface OrderHistoryTableStyles {
     container?: InjectableCss;
@@ -83,7 +86,9 @@ export interface OrderHistoryTableStyles {
 
 export const orderHistoryTableStyles: OrderHistoryTableStyles = {
     container: {
-        css: css` overflow: auto; `,
+        css: css`
+            overflow: auto;
+        `,
     },
     centeringWrapper: {
         css: css`
@@ -93,7 +98,9 @@ export const orderHistoryTableStyles: OrderHistoryTableStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
     noResultsContainer: {
         css: css`
@@ -149,7 +156,6 @@ export const orderHistoryTableStyles: OrderHistoryTableStyles = {
 const styles = orderHistoryTableStyles;
 
 class OrderHistoryTable extends React.Component<Props> {
-
     static contextType = OrdersDataViewContext;
     context!: React.ContextType<typeof OrdersDataViewContext>;
 
@@ -173,7 +179,12 @@ class OrderHistoryTable extends React.Component<Props> {
             return;
         }
         this.props.toaster.addToast({
-            children: <><OrderDetailPageTypeLink title={orderNumber} orderNumber={linkOrderNumber} />&nbsp;{translate("added to cart")}</>,
+            children: (
+                <>
+                    <OrderDetailPageTypeLink title={orderNumber} orderNumber={linkOrderNumber} />
+                    &nbsp;{translate("added to cart")}
+                </>
+            ),
             messageType: "success",
             timeoutLength: 6000,
         });
@@ -194,19 +205,25 @@ class OrderHistoryTable extends React.Component<Props> {
         }
 
         if (ordersDataView.value.length === 0) {
-            return  <StyledWrapper {...styles.noResultsContainer}>
-                <Typography as="p" {...styles.noResultsText} data-test-selector="orderHistoryTable_noOrdersFound">{translate("No orders found")}</Typography>
-            </StyledWrapper>;
+            return (
+                <StyledWrapper {...styles.noResultsContainer}>
+                    <Typography as="p" {...styles.noResultsText} data-test-selector="orderHistoryTable_noOrdersFound">
+                        {translate("No orders found")}
+                    </Typography>
+                </StyledWrapper>
+            );
         }
 
         const rows = ordersDataView.value.map(order => {
             return {
                 id: order.id,
                 linkOrderNumber: order.webOrderNumber || order.erpOrderNumber,
-                date: order.orderDate ? getLocalizedDateTime({
-                    dateTime: new Date(order.orderDate),
-                    language: this.props.language,
-                }) : "",
+                date: order.orderDate
+                    ? getLocalizedDateTime({
+                          dateTime: new Date(order.orderDate),
+                          language: this.props.language,
+                      })
+                    : "",
                 orderNumber: order.webOrderNumber || order.erpOrderNumber,
                 shipTo: `${order.stCompanyName} ${order.btAddress1} ${order.btAddress2} ${order.shipToCity} ${order.shipToState}`,
                 status: order.statusDisplay,
@@ -263,35 +280,56 @@ class OrderHistoryTable extends React.Component<Props> {
                         >
                             {translate("PO #", "customerPO")}
                         </DataTableHeader>
-                        {this.props.fields.showReorderProducts
-                            && <DataTableHeader {...styles.reorderHeader} title={translate("reorder")} />
-                        }
+                        {this.props.fields.showReorderProducts && (
+                            <DataTableHeader {...styles.reorderHeader} title={translate("reorder")} />
+                        )}
                     </DataTableHead>
                     <DataTableBody data-test-selector="orderHistoryTable_tableBody">
                         {rows.map(({ id, linkOrderNumber, date, orderNumber, shipTo, status, po, total }) => (
                             <DataTableRow key={id}>
-                                <DataTableCell {...styles.orderNumberCells} data-test-selector="orderHistoryTable_tableCell_orderNumber">
+                                <DataTableCell
+                                    {...styles.orderNumberCells}
+                                    data-test-selector="orderHistoryTable_tableCell_orderNumber"
+                                >
                                     <OrderDetailPageTypeLink title={orderNumber} orderNumber={linkOrderNumber} />
                                 </DataTableCell>
-                                <DataTableCell {...styles.orderDateCells} data-test-selector="orderHistoryTable_tableCell_date">{date}</DataTableCell>
+                                <DataTableCell
+                                    {...styles.orderDateCells}
+                                    data-test-selector="orderHistoryTable_tableCell_date"
+                                >
+                                    {date}
+                                </DataTableCell>
                                 <DataTableCell {...styles.orderTotalCells}>{total}</DataTableCell>
-                                <DataTableCell {...styles.statusCells} data-test-selector="orderHistoryTable_tableCell_status">{status}</DataTableCell>
+                                <DataTableCell
+                                    {...styles.statusCells}
+                                    data-test-selector="orderHistoryTable_tableCell_status"
+                                >
+                                    {status}
+                                </DataTableCell>
                                 <DataTableCell {...styles.shipToCells}>{shipTo}</DataTableCell>
                                 <DataTableCell {...styles.customerPOCells}>{po}</DataTableCell>
-                                {this.props.fields.showReorderProducts
-                                    && <DataTableCell {...styles.reorderCells}>
-                                        {this.props.isReordering[orderNumber]
-                                            && <LoadingSpinner {...styles.reorderButtonSpinner} />
-                                        }
-                                        {!this.props.isReordering[orderNumber]
-                                            && <Button {...styles.reorderButton}
-                                                onClick={() => this.props.reorder({ orderNumber, onSuccess: () => this.onReorderSuccess(orderNumber, linkOrderNumber) })}>
+                                {this.props.fields.showReorderProducts && (
+                                    <DataTableCell {...styles.reorderCells}>
+                                        {this.props.isReordering[orderNumber] && (
+                                            <LoadingSpinner {...styles.reorderButtonSpinner} />
+                                        )}
+                                        {!this.props.isReordering[orderNumber] && (
+                                            <Button
+                                                disabled={Object.keys(this.props.isReordering).length > 0}
+                                                {...styles.reorderButton}
+                                                onClick={() =>
+                                                    this.props.reorder({
+                                                        orderNumber,
+                                                        onSuccess: () =>
+                                                            this.onReorderSuccess(orderNumber, linkOrderNumber),
+                                                    })
+                                                }
+                                            >
                                                 {translate("Reorder")}
                                             </Button>
-                                        }
-
+                                        )}
                                     </DataTableCell>
-                                }
+                                )}
                             </DataTableRow>
                         ))}
                     </DataTableBody>

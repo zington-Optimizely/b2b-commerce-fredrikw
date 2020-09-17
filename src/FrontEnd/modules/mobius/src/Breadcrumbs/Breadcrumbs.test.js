@@ -1,10 +1,10 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import Breadcrumbs from './Breadcrumbs';
-import ThemeProvider from '../ThemeProvider';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import Breadcrumbs from "./Breadcrumbs";
+import ThemeProvider from "../ThemeProvider";
 
-describe('Breadcrumbs', () => {
+describe("Breadcrumbs", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -12,7 +12,7 @@ describe('Breadcrumbs', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <Breadcrumbs {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -23,26 +23,26 @@ describe('Breadcrumbs', () => {
         mountedWrapper = undefined;
     });
 
-    test('returns null if `links` is undefined', () => {
+    test("returns null if `links` is undefined", () => {
         props = { links: undefined };
         const root = wrapper().find(Breadcrumbs).getDOMNode();
         expect(root).toBeNull();
     });
 
-    test('returns null if `links` is an empty array', () => {
+    test("returns null if `links` is an empty array", () => {
         props = { links: [] };
         const root = wrapper().find(Breadcrumbs).getDOMNode();
         expect(root).toBeNull();
     });
 
-    test('returns null if `links` map yields an array of nulls', () => {
+    test("returns null if `links` map yields an array of nulls", () => {
         props = { links: [{ children: null }] };
         const root = wrapper().find(Breadcrumbs).getDOMNode();
         expect(root).toBeNull();
     });
 
-    test('renders as a nav by default', () => {
-        props = { links: [{ children: 'first' }] };
+    test("renders as a nav by default", () => {
+        props = { links: [{ children: "first" }] };
         const root = wrapper().find(Breadcrumbs).getDOMNode();
         expect(root.outerHTML).toEqual(expect.stringMatching(/^<nav\s/));
     });

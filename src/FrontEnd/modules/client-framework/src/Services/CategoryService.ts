@@ -1,6 +1,11 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
-import { BaseModel, CatalogPageModel, CategoryCollectionModel, CategoryModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    BaseModel,
+    CatalogPageModel,
+    CategoryCollectionModel,
+    CategoryModel,
+} from "@insite/client-framework/Types/ApiModels";
 
 export interface GetCatalogPageByPathApiParameter extends ApiParameter {
     path: string;
@@ -62,7 +67,7 @@ function addBrandToId(category: CategoryModel, brandId: string) {
 function cleanCategory(category: CategoryModel, categoriesById: SafeDictionary<Category>, subCategoryLevels: number) {
     const subCategories = category.subCategories;
     delete category.subCategories;
-    const actualCategory = category as any as Category;
+    const actualCategory = (category as any) as Category;
     if (subCategoryLevels > 0) {
         const subCategoryIds = [];
         if (subCategories) {

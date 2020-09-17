@@ -24,7 +24,9 @@ export const billingAddressStyles: InvoiceDetailsBillingAddressStyles = {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -48,7 +50,8 @@ const InvoiceDetailsBillingAddress: React.FunctionComponent<OwnProps> = ({ invoi
                 state={invoice.billToState}
                 postalCode={invoice.billToPostalCode}
                 country={invoice.btCountry}
-                extendedStyles={styles.addressDisplay} />
+                extendedStyles={styles.addressDisplay}
+            />
         </StyledWrapper>
     );
 };

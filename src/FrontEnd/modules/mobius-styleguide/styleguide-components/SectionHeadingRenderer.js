@@ -1,37 +1,35 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import cx from 'clsx';
-import Heading from 'react-styleguidist/lib/client/rsg-components/Heading';
-import Styled from 'react-styleguidist/lib/client/rsg-components/Styled';
+import React from "react";
+import PropTypes from "prop-types";
+import cx from "clsx";
+import Heading from "react-styleguidist/lib/client/rsg-components/Heading";
+import Styled from "react-styleguidist/lib/client/rsg-components/Styled";
 
 const styles = ({ color /* , space */ }) => ({
     wrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
         // marginBottom: space[1],
     },
     toolbar: {
-        marginLeft: 'auto',
+        marginLeft: "auto",
     },
     sectionName: {
-        '&:hover, &:active': {
+        "&:hover, &:active": {
             isolate: false,
-            textDecoration: 'underline',
-            cursor: 'pointer',
+            textDecoration: "underline",
+            cursor: "pointer",
         },
     },
     isDeprecated: {
         color: color.light,
-        '&, &:hover': {
-            textDecoration: 'line-through',
+        "&, &:hover": {
+            textDecoration: "line-through",
         },
     },
 });
 
-function SectionHeadingRenderer({
-    classes, children, toolbar, id, /* href, */ depth, deprecated,
-}) {
+function SectionHeadingRenderer({ classes, children, toolbar, id, /* href, */ depth, deprecated }) {
     const headingLevel = Math.min(6, depth);
     const sectionNameClasses = cx(classes.sectionName, {
         [classes.isDeprecated]: deprecated,

@@ -21,11 +21,11 @@ const mapStateToProps = (state: ApplicationState) => {
         orderNumber = parsedQuery.orderNumber;
     }
 
-    return ({
+    return {
         orderNumber,
         orderState: getOrderState(state, orderNumber),
         shouldLoadOrderStatusMappings: !getOrderStatusMappingDataView(state).value,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -46,12 +46,14 @@ class OrderDetailsPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <OrderStateContext.Provider value={this.props.orderState}>
-                <Zone contentId={this.props.id} zoneName="Content" />
-            </OrderStateContext.Provider>
-            <AddToListModal />
-        </Page>;
+        return (
+            <Page>
+                <OrderStateContext.Provider value={this.props.orderState}>
+                    <Zone contentId={this.props.id} zoneName="Content" />
+                </OrderStateContext.Provider>
+                <AddToListModal />
+            </Page>
+        );
     }
 }
 

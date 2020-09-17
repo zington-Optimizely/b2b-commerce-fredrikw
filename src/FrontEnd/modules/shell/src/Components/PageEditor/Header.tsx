@@ -29,20 +29,21 @@ interface OwnProps {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
+const mapStateToProps = (state: ShellState, { page }: OwnProps) => {
     const {
-        pageTree: {
-            treeNodesByParentId,
-            headerTreeNodesByParentId,
-            footerTreeNodesByParentId,
-        },
+        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId },
+        shellContext: { contentMode, permissions },
     } = state;
 
     return {
-        contentMode: state.shellContext.contentMode,
-        permissions: state.shellContext.permissions,
-        futurePublishOn: getPageState(ownProps.page.id, treeNodesByParentId[ownProps.page.parentId], headerTreeNodesByParentId[ownProps.page.parentId],
-            footerTreeNodesByParentId[ownProps.page.parentId])?.futurePublishOn,
+        contentMode,
+        permissions,
+        futurePublishOn: getPageState(
+            page.id,
+            treeNodesByParentId[page.parentId],
+            headerTreeNodesByParentId[page.parentId],
+            footerTreeNodesByParentId[page.parentId],
+        )?.futurePublishOn,
     };
 };
 
@@ -73,32 +74,29 @@ class Header extends React.Component<Props> {
                 <Icon src={Spacer} color="#999" />
                 <Icon src={Calendar} size={20} color="white" />
                 <HeaderPublishStatus />
-                {contentMode === "Editing"
-                    && <>
+                {contentMode === "Editing" && (
+                    <>
                         <Icon src={Spacer} color="#999" />
-                        {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date())
-                        && <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage"><Icon src={Edit} size={20} color="#fff"/></PageHeaderButton>}
-                        <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}><DebugMenu color1="#fff" size={16}/></PageHeaderButton>
+                        {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
+                            <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
+                                <Icon src={Edit} size={20} color="#fff" />
+                            </PageHeaderButton>
+                        )}
+                        <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}>
+                            <DebugMenu color1="#fff" size={16} />
+                        </PageHeaderButton>
                     </>
-                }
+                )}
 
-                {!pageDefinition
-                    && <div>There was no component found for the type '{page.type}'</div>
-                }
-                {pageDefinition?.supportsProductSelection
-                    && <ProductSelection/>
-                }
-                {pageDefinition?.supportsCategorySelection
-                    && <CategorySelection/>
-                }
-                {pageDefinition?.supportsBrandSelection
-                    && <BrandSelection />
-                }
-                {contentMode !== "Viewing"
-                    && permissions?.canPublishContent && <PublishDropDownStyle>
+                {!pageDefinition && <div>There was no component found for the type '{page.type}'</div>}
+                {pageDefinition?.supportsProductSelection && <ProductSelection />}
+                {pageDefinition?.supportsCategorySelection && <CategorySelection />}
+                {pageDefinition?.supportsBrandSelection && <BrandSelection />}
+                {contentMode !== "Viewing" && permissions?.canPublishContent && (
+                    <PublishDropDownStyle>
                         <PublishDropDown />
                     </PublishDropDownStyle>
-                }
+                )}
             </PageHeaderStyle>
         );
     }
@@ -123,7 +121,7 @@ const PageHeaderTitle = styled.h2`
 `;
 
 const PageHeaderButton = styled.button<{ active?: boolean }>`
-    background-color: ${props => props.active ? props.theme.colors.primary.main : "transparent"};
+    background-color: ${props => (props.active ? props.theme.colors.primary.main : "transparent")};
     border: none;
     height: 100%;
     min-width: 30px;

@@ -36,31 +36,34 @@ export interface PaginationPresentationProps {
     /** An object containing icon sources for the navigation button icons.
      * @themable */
     navIconsSrc?: {
-        firstPage?: React.ComponentType | string,
-        previousPage?: React.ComponentType | string,
-        nextPage?: React.ComponentType | string,
-        lastPage?: React.ComponentType | string,
-    }
+        firstPage?: React.ComponentType | string;
+        previousPage?: React.ComponentType | string;
+        nextPage?: React.ComponentType | string;
+        lastPage?: React.ComponentType | string;
+    };
 }
 
-export type PaginationComponentProps = MobiusStyledComponentProps<"div", {
-    /** The index of the current page of results being displayed */
-    currentPage: number;
-    /** String describing the "results per page" select */
-    resultsPerPageLabel?: string;
-    /** OnChange function passed to the select component governing the number of results per page. Receives the event as an argument. */
-    onChangeResultsPerPage: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-    /** Function to build href passed to each button in the pagination button/link list. Receives the page index as an argument. */
-    createHref?: (page: number) => void;
-    /** OnChange function passed to each button in the pagination button/link list. Receives the page index as an argument. */
-    onChangePage: (page: number) => void;
-    /** Number of results currently being displayed on each page */
-    resultsPerPage: number;
-    /** Number of total results to be displayed within the pagination component */
-    resultsCount: number;
-    /** Options to be displayed under the "results per page" select */
-    resultsPerPageOptions: number[];
-}>;
+export type PaginationComponentProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** The index of the current page of results being displayed */
+        currentPage: number;
+        /** String describing the "results per page" select */
+        resultsPerPageLabel?: string;
+        /** OnChange function passed to the select component governing the number of results per page. Receives the event as an argument. */
+        onChangeResultsPerPage: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+        /** Function to build href passed to each button in the pagination button/link list. Receives the page index as an argument. */
+        createHref?: (page: number) => void;
+        /** OnChange function passed to each button in the pagination button/link list. Receives the page index as an argument. */
+        onChangePage: (page: number) => void;
+        /** Number of results currently being displayed on each page */
+        resultsPerPage: number;
+        /** Number of total results to be displayed within the pagination component */
+        resultsCount: number;
+        /** Options to be displayed under the "results per page" select */
+        resultsPerPageOptions: number[];
+    }
+>;
 
 export type PaginationProps = PaginationPresentationProps & PaginationComponentProps & ThemeProps<BaseTheme>;
 
@@ -73,7 +76,22 @@ const responsiveStyles = css`
 `;
 
 const iconButtonStyles = css`
-    ${({ theme }) => (breakpointMediaQueries(theme, [css` width: 24px; `, null, null, css` width: 46px; `, null], "min"))};
+    ${({ theme }) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                css`
+                    width: 24px;
+                `,
+                null,
+                null,
+                css`
+                    width: 46px;
+                `,
+                null,
+            ],
+            "min",
+        )};
     justify-content: center;
 `;
 
@@ -82,8 +100,36 @@ const numericButtonStyles = css`
 `;
 
 const PaginationStyle = styled.div<InjectableCss>`
-    ${({ theme }) => (breakpointMediaQueries(theme, [null, null, css` flex-wrap: wrap; `, null, null], "max"))};
-    ${({ theme }) => (breakpointMediaQueries(theme, [css` margin: 4px 0; `, null, null, css` margin: 16px 0; `, null], "min"))};
+    ${({ theme }) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                null,
+                null,
+                css`
+                    flex-wrap: wrap;
+                `,
+                null,
+                null,
+            ],
+            "max",
+        )};
+    ${({ theme }) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                css`
+                    margin: 4px 0;
+                `,
+                null,
+                null,
+                css`
+                    margin: 16px 0;
+                `,
+                null,
+            ],
+            "min",
+        )};
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -91,7 +137,7 @@ const PaginationStyle = styled.div<InjectableCss>`
 `;
 
 const LinkList = styled.nav<InjectableCss>`
-    ${({ theme }) => (breakpointMediaQueries(theme, [null, null, responsiveStyles, null, null], "max"))};
+    ${({ theme }) => breakpointMediaQueries(theme, [null, null, responsiveStyles, null, null], "max")};
     ul {
         list-style: none;
     }
@@ -102,7 +148,7 @@ const LinkList = styled.nav<InjectableCss>`
 `;
 
 const PerPageSelect = styled.span<InjectableCss>`
-    ${({ theme }) => (breakpointMediaQueries(theme, [null, null, responsiveStyles, null, null], "max"))};
+    ${({ theme }) => breakpointMediaQueries(theme, [null, null, responsiveStyles, null, null], "max")};
     ${injectCss}
 `;
 
@@ -137,23 +183,42 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
         }
     } else if (currentPage < 4) {
         pagesToDisplay = [1, 2, 3, 4, "e", finalPageIndex];
-    } else if (currentPage >= 4 && currentPage < (finalPageIndex - 2)) {
+    } else if (currentPage >= 4 && currentPage < finalPageIndex - 2) {
         pagesToDisplay = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, "e", finalPageIndex];
     } else {
-        pagesToDisplay = ["e", finalPageIndex - 4, finalPageIndex - 3, finalPageIndex - 2, finalPageIndex - 1, finalPageIndex];
+        pagesToDisplay = [
+            "e",
+            finalPageIndex - 4,
+            finalPageIndex - 3,
+            finalPageIndex - 2,
+            finalPageIndex - 1,
+            finalPageIndex,
+        ];
     }
 
-    const paginationButtons = pagesToDisplay.map((page) => {
-        if (page === "e") return (<Typography key={page} css={cssOverrides.ellipsis}>&hellip;</Typography>);
+    const paginationButtons = pagesToDisplay.map(page => {
+        if (page === "e") {
+            return (
+                <Typography key={page} css={cssOverrides.ellipsis}>
+                    &hellip;
+                </Typography>
+            );
+        }
         return (
             <li key={`page${page}`}>
                 <Button
                     {...buttonDisplayProps(props, {
-                    moreCss: numericButtonStyles, page, cssOverrides, buttonProps, currentPageButtonVariant,
-                })}>
+                        moreCss: numericButtonStyles,
+                        page,
+                        cssOverrides,
+                        buttonProps,
+                        currentPageButtonVariant,
+                    })}
+                >
                     {page.toString()}
                 </Button>
-            </li>);
+            </li>
+        );
     });
 
     const forwardDisabled = currentPage === finalPageIndex || finalPageIndex === 1;
@@ -168,7 +233,13 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
     ) => (
         <Button
             variant="secondary"
-            {...buttonDisplayProps(props, { page: -1, moreCss: iconButtonStyles, cssOverrides, buttonProps, currentPageButtonVariant })}
+            {...buttonDisplayProps(props, {
+                page: -1,
+                moreCss: iconButtonStyles,
+                cssOverrides,
+                buttonProps,
+                currentPageButtonVariant,
+            })}
             aria-label={ariaLabel}
             disabled={disabledFlag}
             onClick={() => onChangePage(pageIndex)}
@@ -190,16 +261,57 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
                     {...spreadProps("selectProps" as any)}
                     data-test-selector="paginationPerPageSelect"
                 >
-                    {resultsPerPageOptions.map((n: string) => <option key={n} value={n}>{n}</option>)}
+                    {resultsPerPageOptions.map((n: string) => (
+                        <option key={n} value={n}>
+                            {n}
+                        </option>
+                    ))}
                 </Select>
             </PerPageSelect>
-            <LinkList role="navigation" aria-label={translate("Pagination navigation")} css={cssOverrides.linkList} data-test-selector={`paginationCurrentPage${currentPage}`}>
+            <LinkList
+                role="navigation"
+                aria-label={translate("Pagination navigation")}
+                css={cssOverrides.linkList}
+                data-test-selector={`paginationCurrentPage${currentPage}`}
+            >
                 <ul>
-                    <li>{navIcon(1, navIconsSrc.firstPage, translate("First page"), backDisabled)}</li>
-                    <li>{navIcon(currentPage - 1, navIconsSrc.previousPage, translate("Previous page"), backDisabled)}</li>
+                    <li>
+                        {navIcon(
+                            1,
+                            navIconsSrc.firstPage,
+                            translate("First page"),
+                            backDisabled,
+                            "paginationButtonFirst",
+                        )}
+                    </li>
+                    <li>
+                        {navIcon(
+                            currentPage - 1,
+                            navIconsSrc.previousPage,
+                            translate("Previous page"),
+                            backDisabled,
+                            "paginationButtonPrevious",
+                        )}
+                    </li>
                     {paginationButtons}
-                    <li>{navIcon(currentPage + 1, navIconsSrc.nextPage, translate("Next page"), forwardDisabled, "paginationButtonNext")}</li>
-                    <li>{navIcon(finalPageIndex, navIconsSrc.lastPage, translate("Last page"), forwardDisabled)}</li>
+                    <li>
+                        {navIcon(
+                            currentPage + 1,
+                            navIconsSrc.nextPage,
+                            translate("Next page"),
+                            forwardDisabled,
+                            "paginationButtonNext",
+                        )}
+                    </li>
+                    <li>
+                        {navIcon(
+                            finalPageIndex,
+                            navIconsSrc.lastPage,
+                            translate("Last page"),
+                            forwardDisabled,
+                            "paginationButtonLast",
+                        )}
+                    </li>
                 </ul>
             </LinkList>
         </PaginationStyle>

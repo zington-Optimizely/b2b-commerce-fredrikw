@@ -21,7 +21,9 @@ export const requestedDateStyles: OrderDetailsRequestedDateStyles = {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -43,8 +45,10 @@ const OrderDetailsRequestedDate: React.FunctionComponent = () => {
         <StyledWrapper {...styles.wrapper}>
             <Typography {...styles.titleText}>{translate("Date Requested")}</Typography>
             <Typography {...styles.description} data-test-selector="orderDetails_requestedDeliveryDate">
-                <LocalizedDateTime dateTime={new Date(order.requestedDeliveryDateDisplay)}
-                    options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                <LocalizedDateTime
+                    dateTime={new Date(order.requestedDeliveryDateDisplay)}
+                    options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                />
             </Typography>
         </StyledWrapper>
     );

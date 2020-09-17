@@ -1,5 +1,11 @@
 import { ApiParameter, get, HasPagingParameters } from "@insite/client-framework/Services/ApiService";
-import { BrandAlphabetModel, BrandCategoryCollectionModel, BrandCollectionModel, BrandModel, BrandProductLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    BrandAlphabetModel,
+    BrandCategoryCollectionModel,
+    BrandCollectionModel,
+    BrandModel,
+    BrandProductLineCollectionModel,
+} from "@insite/client-framework/Types/ApiModels";
 
 export interface GetBrandByPathApiParameter extends ApiParameter {
     path: string;
@@ -7,7 +13,7 @@ export interface GetBrandByPathApiParameter extends ApiParameter {
 
 export interface GetBrandByIdApiParameter extends ApiParameter {
     brandId: string;
-    expand?: ("htmlContent")[];
+    expand?: "htmlContent"[];
     additionalExpands?: string[];
 }
 

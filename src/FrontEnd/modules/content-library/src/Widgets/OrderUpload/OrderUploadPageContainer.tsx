@@ -19,7 +19,7 @@ export const orderUploadPageContainerStyles: OrderUploadPageContainerStyles = {
 
 const styles = orderUploadPageContainerStyles;
 
-const OrderUploadPageContainer: FC<WidgetProps> = (props) => {
+const OrderUploadPageContainer: FC<WidgetProps> = props => {
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.fileUploadGridItem}>

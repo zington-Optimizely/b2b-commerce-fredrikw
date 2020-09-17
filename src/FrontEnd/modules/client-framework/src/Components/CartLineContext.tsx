@@ -11,7 +11,7 @@ export function withCartLine<P extends HasCartLineContext>(Component: React.Comp
     return function CartLineComponent(props: Omit<P, keyof HasCartLineContext>) {
         return (
             <CartLineContext.Consumer>
-                {cartLine => <Component {...props as P} cartLine={cartLine} />}
+                {cartLine => <Component {...(props as P)} cartLine={cartLine} />}
             </CartLineContext.Consumer>
         );
     };

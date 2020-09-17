@@ -8,57 +8,52 @@ import styled from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
-        publishModal: {
-            pagePublishInfosState,
-        },
-        shellContext: {
-            currentLanguageId,
-            currentPersonaId,
-            currentDeviceType,
-            contentMode,
-        },
-        pageEditor: {
-            isEditingNewPage,
-        },
-        pageTree: {
-            treeNodesByParentId,
-            headerTreeNodesByParentId,
-            footerTreeNodesByParentId,
-        },
+        publishModal: { pagePublishInfosState },
+        shellContext: { currentLanguageId, currentPersonaId, currentDeviceType, contentMode },
+        pageEditor: { isEditingNewPage },
+        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId },
     } = state;
 
     const page = getCurrentPageForShell(state);
     const pageId = page.id;
 
-    return ({
+    return {
         pageId,
-        futurePublishOn: getPageState(pageId, treeNodesByParentId[page.parentId], headerTreeNodesByParentId[page.parentId],
-            footerTreeNodesByParentId[page.parentId])?.futurePublishOn,
+        futurePublishOn: getPageState(
+            pageId,
+            treeNodesByParentId[page.parentId],
+            headerTreeNodesByParentId[page.parentId],
+            footerTreeNodesByParentId[page.parentId],
+        )?.futurePublishOn,
         contentMode,
         loaded: pagePublishInfosState.value,
-        hasDraft: isEditingNewPage
-            || (pagePublishInfosState.value
-                && !!pagePublishInfosState.value.find(({ pageId: publishPageId, languageId, personaId, deviceType }) => publishPageId === pageId
-                                                            && (!languageId || languageId === currentLanguageId)
-                                                            && (!personaId || personaId === currentPersonaId)
-                                                            && (!deviceType || deviceType === currentDeviceType))),
-    });
+        hasDraft:
+            isEditingNewPage ||
+            (pagePublishInfosState.value &&
+                !!pagePublishInfosState.value.find(
+                    ({ pageId: publishPageId, languageId, personaId, deviceType }) =>
+                        publishPageId === pageId &&
+                        (!languageId || languageId === currentLanguageId) &&
+                        (!personaId || personaId === currentPersonaId) &&
+                        (!deviceType || deviceType === currentDeviceType),
+                )),
+    };
 };
 
-const mapDispatchToProps = ({
+const mapDispatchToProps = {
     loadPublishInfo,
-});
+};
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const HeaderPublishStatus: FC<Props> = ({
-                                            pageId,
-                                            contentMode,
-                                            loaded,
-                                            hasDraft,
-                                            loadPublishInfo,
-                                            futurePublishOn,
-                                        }) => {
+    pageId,
+    contentMode,
+    loaded,
+    hasDraft,
+    loadPublishInfo,
+    futurePublishOn,
+}) => {
     useEffect(() => {
         loadPublishInfo(pageId);
     }, [pageId]);
@@ -67,13 +62,14 @@ const HeaderPublishStatus: FC<Props> = ({
 
     if (loaded) {
         switch (contentMode) {
-        case "Previewing":
-        case "Editing":
-            value = (futurePublishOn && futurePublishOn > new Date()) ? "Scheduled" : (hasDraft ? "Draft" : "Published");
-            break;
-        default:
-            value = "Published";
-            break;
+            case "Previewing":
+            case "Editing":
+                value =
+                    futurePublishOn && futurePublishOn > new Date() ? "Scheduled" : hasDraft ? "Draft" : "Published";
+                break;
+            default:
+                value = "Published";
+                break;
         }
     }
 

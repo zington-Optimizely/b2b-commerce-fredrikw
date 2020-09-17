@@ -22,8 +22,8 @@ interface Props extends PageProps, WidgetProps {
     };
 }
 
-const RobotsTxtContent: FC<Props> = (props) => {
-    const domain = (typeof window === "undefined") ? "" : window.location.host?.toLowerCase();
+const RobotsTxtContent: FC<Props> = props => {
+    const domain = typeof window === "undefined" ? "" : window.location.host?.toLowerCase();
 
     return (
         <div>
@@ -68,7 +68,7 @@ const widgetModule: WidgetModule = {
                 fieldType: "General",
                 isRequired: true,
                 sortOrder: 2,
-                isEnabled: (item => !(item?.fields[fields.disallow])),
+                isEnabled: item => !item?.fields[fields.disallow],
             },
         ],
     },

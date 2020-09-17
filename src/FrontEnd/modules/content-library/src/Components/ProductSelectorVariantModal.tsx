@@ -8,7 +8,10 @@ import closeVariantModal from "@insite/client-framework/Store/Components/Product
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
 import updateVariantSelection from "@insite/client-framework/Store/Components/ProductSelector/Handlers/UpdateVariantSelection";
 import { getProductSelector } from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorSelectors";
-import { getProductState, getVariantChildrenDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    getProductState,
+    getVariantChildrenDataView,
+} from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
 import ProductPrice from "@insite/content-library/Components/ProductPrice";
@@ -25,7 +28,12 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const { variantModalIsOpen, variantModalProductId, variantSelection, selectedVariantProductInfo } = getProductSelector(state);
+    const {
+        variantModalIsOpen,
+        variantModalProductId,
+        variantSelection,
+        selectedVariantProductInfo,
+    } = getProductSelector(state);
     return {
         variantModalIsOpen,
         variantParentProduct: getProductState(state, variantModalProductId).value,
@@ -55,9 +63,15 @@ export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
     modal: {
         size: 400,
         cssOverrides: {
-            modalContainer: css` align-items: flex-start; `,
-            modalTitle: css` padding: 10px 20px; `,
-            modalContent: css` padding: 20px; `,
+            modalContainer: css`
+                align-items: flex-start;
+            `,
+            modalTitle: css`
+                padding: 10px 20px;
+            `,
+            modalContent: css`
+                padding: 20px;
+            `,
         },
     },
     variantSelect: {
@@ -69,8 +83,12 @@ export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
             `,
         },
         cssOverrides: {
-            formField: css` margin-bottom: 10px; `,
-            formInputWrapper: css` width: 75%; `,
+            formField: css`
+                margin-bottom: 10px;
+            `,
+            formInputWrapper: css`
+                width: 75%;
+            `,
         },
     },
     selectButton: {
@@ -82,17 +100,17 @@ export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
 };
 
 const ProductSelectorVariantModal: React.FC<Props> = ({
-                                                          variantModalIsOpen,
-                                                          variantParentProduct,
-                                                          variantChildren,
-                                                          selectedVariant,
-                                                          variantSelection,
-                                                          extendedStyles,
-                                                          closeVariantModal,
-                                                          updateVariantSelection,
-                                                          setProduct,
-                                                          selectedVariantProductInfo,
-                                                      }) => {
+    variantModalIsOpen,
+    variantParentProduct,
+    variantChildren,
+    selectedVariant,
+    variantSelection,
+    extendedStyles,
+    closeVariantModal,
+    updateVariantSelection,
+    setProduct,
+    selectedVariantProductInfo,
+}) => {
     const [styles] = React.useState(() => mergeToNew(quickOrderVariantModalStyles, extendedStyles));
 
     if (!variantParentProduct?.variantTraits || !variantChildren) {
@@ -116,38 +134,58 @@ const ProductSelectorVariantModal: React.FC<Props> = ({
         closeVariantModal();
     };
 
-    const filteredVariantTraits = useFilteredVariantTraits(variantParentProduct.variantTraits, variantChildren, variantSelection);
+    const filteredVariantTraits = useFilteredVariantTraits(
+        variantParentProduct.variantTraits,
+        variantChildren,
+        variantSelection,
+    );
 
-    return <Modal
-        {...styles.modal}
-        headline={translate("Select options")}
-        isOpen={variantModalIsOpen}
-        handleClose={closeModalHandler}
-    >
-        <StyledWrapper {...styles.wrapper}>
-            {filteredVariantTraits.map((variantTrait, index) =>
-                <Select
-                    {...styles.variantSelect}
-                    key={variantTrait.id.toString()}
-                    label={variantTrait.nameDisplay}
-                    value={variantSelection[variantTrait.id]}
-                    onChange={(event) => { variantChangeHandler(event.currentTarget.value, variantTrait.id); }}
-                >
-                    <option
-                        value="">{variantTrait.unselectedValue ? variantTrait.unselectedValue : `${translate("Select")} ${variantTrait.nameDisplay}`}</option>
-                    {variantTrait.traitValues?.map(traitValue =>
-                        <option value={`${traitValue.id}`} key={`${traitValue.id}`}>{traitValue.valueDisplay}</option>)
-                    }
-                </Select>)
-            }
-        </StyledWrapper>
-        {selectedVariant && selectedVariantProductInfo
-        && <ProductPrice product={{ product: selectedVariant, productInfo: selectedVariantProductInfo }} showLabel={false}/>
-        }
-        <Button {...styles.selectButton} disabled={!selectedVariant || !selectedVariant.id} onClick={selectButtonClickHandler}>
-            {translate("Select")}
-        </Button>
-    </Modal>;
+    return (
+        <Modal
+            {...styles.modal}
+            headline={translate("Select options")}
+            isOpen={variantModalIsOpen}
+            handleClose={closeModalHandler}
+        >
+            <StyledWrapper {...styles.wrapper}>
+                {filteredVariantTraits.map((variantTrait, index) => (
+                    <Select
+                        {...styles.variantSelect}
+                        key={variantTrait.id.toString()}
+                        label={variantTrait.nameDisplay}
+                        value={variantSelection[variantTrait.id]}
+                        onChange={event => {
+                            variantChangeHandler(event.currentTarget.value, variantTrait.id);
+                        }}
+                    >
+                        <option value="">
+                            {variantTrait.unselectedValue
+                                ? variantTrait.unselectedValue
+                                : `${translate("Select")} ${variantTrait.nameDisplay}`}
+                        </option>
+                        {variantTrait.traitValues?.map(traitValue => (
+                            <option value={`${traitValue.id}`} key={`${traitValue.id}`}>
+                                {traitValue.valueDisplay}
+                            </option>
+                        ))}
+                    </Select>
+                ))}
+            </StyledWrapper>
+            {selectedVariant && selectedVariantProductInfo && (
+                <ProductPrice
+                    product={{ product: selectedVariant, productInfo: selectedVariantProductInfo }}
+                    showLabel={false}
+                />
+            )}
+            <Button
+                {...styles.selectButton}
+                disabled={!selectedVariant || !selectedVariant.id}
+                onClick={selectButtonClickHandler}
+            >
+                {translate("Select")}
+            </Button>
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSelectorVariantModal);

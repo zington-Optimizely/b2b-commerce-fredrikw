@@ -9,9 +9,7 @@ export const ClearFormErrors: HandlerType = props => {
     });
 };
 
-export const chain = [
-    ClearFormErrors,
-];
+export const chain = [ClearFormErrors];
 
 const resetBillingAddressFormValidation = createHandlerChainRunner(chain, "ResetBillingAddressFormValidation");
 export default resetBillingAddressFormValidation;

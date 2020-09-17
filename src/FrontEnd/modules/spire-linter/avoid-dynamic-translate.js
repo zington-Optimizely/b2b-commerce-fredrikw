@@ -4,20 +4,26 @@ module.exports = {
         messages: {
             avoid: "Avoid passing dynamic values to translate.",
             avoidUnsupported: "Avoid passing dynamic values to translate (unsupported case)",
-        }
+        },
     },
     create(context) {
         const filename = context.getFilename().replace(/\\/g, "/");
-        if (filename.indexOf("/modules/content-library/src/Widgets") === -1
-            && filename.indexOf("/modules/content-library/src/Components") === -1
-            && filename.indexOf("/modules/content-library/src/Pages") === -1) {
+        if (
+            filename.indexOf("/modules/content-library/src/Widgets") === -1 &&
+            filename.indexOf("/modules/content-library/src/Components") === -1 &&
+            filename.indexOf("/modules/content-library/src/Pages") === -1
+        ) {
             return {};
         }
 
         return {
             CallExpression(node) {
-                if (!node.callee || node.callee.name !== "translate"
-                    || !node.arguments || node.arguments.length === 0) {
+                if (
+                    !node.callee ||
+                    node.callee.name !== "translate" ||
+                    !node.arguments ||
+                    node.arguments.length === 0
+                ) {
                     return;
                 }
 
@@ -25,7 +31,7 @@ module.exports = {
                 if (argument.type === "MemberExpression") {
                     const variable = findVariable(context.getScope(), argument.object.name);
                     if (variable && variable.defs[0].type === "EnumName") {
-                        return ;
+                        return;
                     }
                     context.report({ node, messageId: "avoid" });
                     return;
@@ -37,7 +43,7 @@ module.exports = {
                         context.report({ node, messageId: "avoidUnsupported" });
                         return;
                     }
-                    const isInitLiteral = isLiteral(init)
+                    const isInitLiteral = isLiteral(init);
                     if (typeof isInitLiteral === "undefined") {
                         context.report({ node, messageId: "avoidUnsupported" });
                     } else if (!isInitLiteral) {
@@ -76,7 +82,7 @@ function isLiteral(value) {
 function findVariable(scope, variableName) {
     let variable = undefined;
     while (typeof variable === "undefined" && scope) {
-        variable = scope.set.get(variableName)
+        variable = scope.set.get(variableName);
         scope = scope.upper;
     }
 

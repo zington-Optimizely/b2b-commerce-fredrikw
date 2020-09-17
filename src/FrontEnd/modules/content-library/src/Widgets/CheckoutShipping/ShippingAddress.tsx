@@ -5,11 +5,20 @@ import { getCurrentUserIsGuest, getSettingsCollection } from "@insite/client-fra
 import setUseBillingAddress from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetUseBillingAddress";
 import setUseOneTimeAddress from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetUseOneTimeAddress";
 import translate from "@insite/client-framework/Translate";
-import { AddressFieldDisplayCollectionModel, BaseAddressModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
+import {
+    AddressFieldDisplayCollectionModel,
+    BaseAddressModel,
+    CountryModel,
+    ShipToModel,
+} from "@insite/client-framework/Types/ApiModels";
 import AddressInfoDisplay, { AddressInfoDisplayStyles } from "@insite/content-library/Components/AddressInfoDisplay";
 import ShipToSelector, { ShipToSelectorStyles } from "@insite/content-library/Components/ShipToSelector";
-import CreateNewAddressModal, { CreateNewAddressModalStyles } from "@insite/content-library/Widgets/CheckoutShipping/CreateNewAddressModal";
-import EditExistingAddressModal, { EditExistingAddressModalStyles } from "@insite/content-library/Widgets/CheckoutShipping/EditExistingAddressModal";
+import CreateNewAddressModal, {
+    CreateNewAddressModalStyles,
+} from "@insite/content-library/Widgets/CheckoutShipping/CreateNewAddressModal";
+import EditExistingAddressModal, {
+    EditExistingAddressModalStyles,
+} from "@insite/content-library/Widgets/CheckoutShipping/EditExistingAddressModal";
 import ShippingAddressForm from "@insite/content-library/Widgets/CheckoutShipping/ShippingAddressForm";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
@@ -155,15 +164,17 @@ const ShippingAddress: FC<Props> = ({
         }
     }, [addressBeingEdited]);
 
-    const oneTimeAddressChangeHandler: CheckboxProps["onChange"] = (_, value) => setUseOneTimeAddress({
-        useOneTimeAddress: value,
-    });
+    const oneTimeAddressChangeHandler: CheckboxProps["onChange"] = (_, value) =>
+        setUseOneTimeAddress({
+            useOneTimeAddress: value,
+        });
 
-    const useBillingAddressChangeHandler: CheckboxProps["onChange"] = (_, value) => setUseBillingAddress({
-        useBillingAddress: value,
-    });
+    const useBillingAddressChangeHandler: CheckboxProps["onChange"] = (_, value) =>
+        setUseBillingAddress({
+            useBillingAddress: value,
+        });
 
-    const addressTypeChangeHandler: RadioGroupProps["onChangeHandler"] = (event) => {
+    const addressTypeChangeHandler: RadioGroupProps["onChangeHandler"] = event => {
         if (event.target.value === "onetime") {
             setUseOneTimeAddress({
                 useOneTimeAddress: true,
@@ -201,7 +212,10 @@ const ShippingAddress: FC<Props> = ({
         });
     };
 
-    const editCustomerHandler = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
+    const editCustomerHandler = (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        customer: BaseAddressModel,
+    ) => {
         event.preventDefault();
         setAddressBeingEdited(customer as ShipToModel);
     };
@@ -222,22 +236,21 @@ const ShippingAddress: FC<Props> = ({
     };
 
     return (
-        <GridContainer
-            {...styles.container}
-            data-test-selector="checkoutShipping_shippingAddress"
-        >
+        <GridContainer {...styles.container} data-test-selector="checkoutShipping_shippingAddress">
             <GridItem {...styles.headingGridItem}>
-                <Typography {...styles.headingText} as="h3">{translate("Shipping Address")}</Typography>
-                {!currentUserIsGuest
-                    && <Link
-                    {...styles.selectSavedAddressLink}
-                    type="button"
-                    onClick={selectAddressClickHandler}
-                    data-test-selector="checkoutShipping_selectSavedAddress"
+                <Typography {...styles.headingText} as="h3">
+                    {translate("Shipping Address")}
+                </Typography>
+                {!currentUserIsGuest && (
+                    <Link
+                        {...styles.selectSavedAddressLink}
+                        type="button"
+                        onClick={selectAddressClickHandler}
+                        data-test-selector="checkoutShipping_selectSavedAddress"
                     >
                         {translate("Select Saved Address")}
                     </Link>
-                }
+                )}
                 <Modal
                     {...styles.addressBookModal}
                     headline={translate("Address Book")}
@@ -263,36 +276,47 @@ const ShippingAddress: FC<Props> = ({
                         </Button>
                     </StyledWrapper>
                 </Modal>
-                {newAddress
-                    && <CreateNewAddressModal
+                {newAddress && (
+                    <CreateNewAddressModal
                         newAddress={newAddress}
                         isModalOpen={isCreateNewAddressModalOpen}
                         onModalClose={createNewAddressModalCloseHandler}
                         onFormSubmit={newShippingAddressFormSubmitHandler}
                     />
-                }
-                {addressBeingEdited
-                    && <EditExistingAddressModal
+                )}
+                {addressBeingEdited && (
+                    <EditExistingAddressModal
                         newAddress={addressBeingEdited}
                         isModalOpen={isEditAddressModalOpen}
                         onModalClose={editAddressModalCloseHandler}
                         onFormSubmit={editAddressFormSubmitHandler}
                     />
-                }
+                )}
             </GridItem>
-            {oneTimeAddress && showUseBillingAddress
-                ? <GridItem {...styles.oneTimeAddressGridItem}>
+            {oneTimeAddress && showUseBillingAddress ? (
+                <GridItem {...styles.oneTimeAddressGridItem}>
                     <RadioGroup
-                        value={shippingAddressFormState ? (shippingAddressFormState.address.oneTimeAddress ? "onetime" : (shippingAddressFormState.address.id === currentBillToId ? "billing" : "")) : ""}
+                        value={
+                            shippingAddressFormState
+                                ? shippingAddressFormState.address.oneTimeAddress
+                                    ? "onetime"
+                                    : shippingAddressFormState.address.id === currentBillToId
+                                    ? "billing"
+                                    : ""
+                                : ""
+                        }
                         onChangeHandler={addressTypeChangeHandler}
                     >
-                        <Radio value="onetime" data-test-selector="checkoutShipping_useOneTimeAddress">{translate("Ship to One-Time Address")}</Radio>
+                        <Radio value="onetime" data-test-selector="checkoutShipping_useOneTimeAddress">
+                            {translate("Ship to One-Time Address")}
+                        </Radio>
                         <Radio value="billing">{translate("Use Billing Address")}</Radio>
                     </RadioGroup>
                 </GridItem>
-                : <>
-                    {oneTimeAddress
-                        && <GridItem {...styles.oneTimeAddressGridItem}>
+            ) : (
+                <>
+                    {oneTimeAddress && (
+                        <GridItem {...styles.oneTimeAddressGridItem}>
                             <CheckboxGroup {...styles.oneTimeAddressCheckboxGroup}>
                                 <Checkbox
                                     {...styles.oneTimeAddressCheckbox}
@@ -304,9 +328,9 @@ const ShippingAddress: FC<Props> = ({
                                 </Checkbox>
                             </CheckboxGroup>
                         </GridItem>
-                    }
-                    {showUseBillingAddress
-                        && <GridItem {...styles.oneTimeAddressGridItem}>
+                    )}
+                    {showUseBillingAddress && (
+                        <GridItem {...styles.oneTimeAddressGridItem}>
                             <CheckboxGroup {...styles.oneTimeAddressCheckboxGroup}>
                                 <Checkbox
                                     {...styles.oneTimeAddressCheckbox}
@@ -318,23 +342,21 @@ const ShippingAddress: FC<Props> = ({
                                 </Checkbox>
                             </CheckboxGroup>
                         </GridItem>
-                    }
+                    )}
                 </>
-            }
+            )}
             <GridItem {...styles.addressDisplayAndFormGridItem}>
-                {(useOneTimeAddress || currentUserIsGuest || isShippingAddressUpdateRequired)
-                    && <ShippingAddressForm
-                        countries={countries}
-                        fieldDisplay={addressFieldDisplayCollection}
-                    />
-                }
-                {!useOneTimeAddress && !currentUserIsGuest && !isShippingAddressUpdateRequired
-                    && <AddressInfoDisplay
+                {(useOneTimeAddress || currentUserIsGuest || isShippingAddressUpdateRequired) && (
+                    <ShippingAddressForm countries={countries} fieldDisplay={addressFieldDisplayCollection} />
+                )}
+                {!useOneTimeAddress && !currentUserIsGuest && !isShippingAddressUpdateRequired && (
+                    <AddressInfoDisplay
                         {...address}
                         state={address.state ? address.state.abbreviation : undefined}
                         country={address.country ? address.country.abbreviation : undefined}
-                        extendedStyles={styles.addressDisplay} />
-                }
+                        extendedStyles={styles.addressDisplay}
+                    />
+                )}
             </GridItem>
         </GridContainer>
     );

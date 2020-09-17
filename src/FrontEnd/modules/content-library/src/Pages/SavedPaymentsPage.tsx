@@ -48,17 +48,17 @@ class SavedPaymentsPage extends React.Component<Props> {
         return (
             <Page>
                 <PaymentProfilesContext.Provider value={this.props.paymentProfilesDataView}>
-                    <Zone contentId={this.props.id} zoneName="Content"/>
-                    {this.props.countries
-                        && <SavedPaymentsEditCardModal/>
-                    }
+                    <Zone contentId={this.props.id} zoneName="Content" />
+                    {this.props.countries && <SavedPaymentsEditCardModal />}
                 </PaymentProfilesContext.Provider>
             </Page>
         );
     }
 }
 
-export const PaymentProfilesContext = React.createContext<ReturnType<typeof getPaymentProfilesDataView>>({} as ReturnType<typeof getPaymentProfilesDataView>);
+export const PaymentProfilesContext = React.createContext<ReturnType<typeof getPaymentProfilesDataView>>(
+    {} as ReturnType<typeof getPaymentProfilesDataView>,
+);
 
 const pageModule: PageModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(SavedPaymentsPage),

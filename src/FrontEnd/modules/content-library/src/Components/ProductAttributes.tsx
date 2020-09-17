@@ -28,22 +28,22 @@ export const productAttributesStyles: ProductAttributesStyles = {
     },
     attributeTypeGridItem: {
         width: [6, 6, 6, 4, 4],
-        css: css` overflow: hidden; `,
+        css: css`
+            overflow: hidden;
+        `,
     },
     attributeValueGridItem: {
         width: [6, 6, 6, 8, 8],
-        css: css` overflow: hidden; `,
+        css: css`
+            overflow: hidden;
+        `,
     },
     attributeTypeText: {
         weight: "bold",
     },
 };
 
-const ProductAttributes: FC<Props> = ({
-                                          product: { attributeTypes },
-                                          maximumNumberAttributeTypes,
-                                          extendedStyles,
-                                 }) => {
+const ProductAttributes: FC<Props> = ({ product: { attributeTypes }, maximumNumberAttributeTypes, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(productAttributesStyles, extendedStyles));
 
     if (!attributeTypes || attributeTypes.length === 0) {
@@ -54,25 +54,33 @@ const ProductAttributes: FC<Props> = ({
     const limitedAttributeTypes = attributeTypes.slice(0, maximum);
 
     const displayAttributeValues = (attributeValues: AttributeValueModel[] | null) => {
-        return <Typography {...styles.attributeValueText}>
-            {(attributeValues ?? []).map(a => a.valueDisplay).join(", ")}
-        </Typography>;
+        return (
+            <Typography {...styles.attributeValueText}>
+                {(attributeValues ?? []).map(a => a.valueDisplay).join(", ")}
+            </Typography>
+        );
     };
 
     return (
         <GridContainer {...styles.container}>
-            {limitedAttributeTypes.map(attributeType =>
+            {limitedAttributeTypes.map(attributeType => (
                 <React.Fragment key={attributeType.id.toString()}>
                     <GridItem {...styles.attributeTypeGridItem}>
-                        <Typography {...styles.attributeTypeText} data-test-selector={`attributeType${attributeType.id}`}>
+                        <Typography
+                            {...styles.attributeTypeText}
+                            data-test-selector={`attributeType${attributeType.id}`}
+                        >
                             {attributeType.label}
                         </Typography>
                     </GridItem>
-                    <GridItem {...styles.attributeValueGridItem} data-test-selector={`attributeValuesFor${attributeType.id}`}>
+                    <GridItem
+                        {...styles.attributeValueGridItem}
+                        data-test-selector={`attributeValuesFor${attributeType.id}`}
+                    >
                         {displayAttributeValues(attributeType.attributeValues)}
                     </GridItem>
-                </React.Fragment>,
-            )}
+                </React.Fragment>
+            ))}
         </GridContainer>
     );
 };

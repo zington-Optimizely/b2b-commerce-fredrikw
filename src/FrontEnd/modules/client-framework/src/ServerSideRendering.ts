@@ -10,16 +10,18 @@ import { URL } from "url";
  * A reference to the `domain` module of Node.
  * It's been deprecated for several years, but (at the time of writing) no replacement has been announced.
  */
-let domain: undefined | {
-    /** The active context--this will switch when there are multiple users with async I/O, such as with API calls. */
-    readonly active: {
-        /**
-         * Insite-specific extensions to the `domain.active` feature.
-         * Using `domain.active` this way is not explicitly supported, but seems to work the way we need.
-         */
-        insiteSession: InsiteSession,
-    }
-};
+let domain:
+    | undefined
+    | {
+          /** The active context--this will switch when there are multiple users with async I/O, such as with API calls. */
+          readonly active: {
+              /**
+               * Insite-specific extensions to the `domain.active` feature.
+               * Using `domain.active` this way is not explicitly supported, but seems to work the way we need.
+               */
+              insiteSession: InsiteSession;
+          };
+      };
 
 interface InsiteSession {
     /** Ensures that we have the url available when needed for server side rendering. */
@@ -42,10 +44,12 @@ interface InsiteSession {
     translationsByKeyword: SafeDictionary<string>;
     displayErrorPage?: true | undefined;
     pageMetadata?: PreparedMetadata;
-    initialPage?: {
-        result: RetrievePageResult,
-        url: string,
-    } | undefined
+    initialPage?:
+        | {
+              result: RetrievePageResult;
+              url: string;
+          }
+        | undefined;
 }
 
 export const throwIfClientSide = () => {
@@ -254,12 +258,7 @@ export function addTask(promise: Promise<any>) {
         let stack = new Error().stack;
 
         if (stack) {
-            stack = stack
-                .substring(5)
-                .split("    at ")
-                .slice(2)
-                .join(" ")
-                .trim();
+            stack = stack.substring(5).split("    at ").slice(2).join(" ").trim();
             promiseAddedCallback(stack);
         }
     }
@@ -300,12 +299,12 @@ export const fetch: typeof window.fetch = (input, init) => {
         preparedInput = input;
     }
 
-    let preparedInit  = init;
+    let preparedInit = init;
     if (!preparedInit) {
         preparedInit = {};
     }
     if (!preparedInit.headers) {
-        preparedInit.headers = { };
+        preparedInit.headers = {};
     }
 
     const preparedHeaders = preparedInit.headers as any;
@@ -313,10 +312,10 @@ export const fetch: typeof window.fetch = (input, init) => {
     for (const key in headers) {
         // Naively forwarding all headers can conflict with Node/Express behavior.
         switch (key) {
-        case "host":
-        case "origin":
-        case "referer":
-            continue;
+            case "host":
+            case "origin":
+            case "referer":
+                continue;
         }
 
         if (key === "cookie" && !sendCookies) {

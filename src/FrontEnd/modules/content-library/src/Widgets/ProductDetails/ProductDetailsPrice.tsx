@@ -30,13 +30,16 @@ export const priceStyles: ProductDetailsPriceStyles = {
 const styles = priceStyles;
 
 const ProductDetailsPrice: React.FC<OwnProps> = ({ productContext, productSettings }) => {
-    return <ProductPrice
-        product={productContext}
-        showLabel={false}
-        showSavings={true}
-        showSavingsAmount={productSettings.showSavingsAmount}
-        showSavingsPercent={productSettings.showSavingsPercent}
-        extendedStyles={styles.productPrice}/>;
+    return (
+        <ProductPrice
+            product={productContext}
+            showLabel={false}
+            showSavings={true}
+            showSavingsAmount={productSettings.showSavingsAmount}
+            showSavingsPercent={productSettings.showSavingsPercent}
+            extendedStyles={styles.productPrice}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

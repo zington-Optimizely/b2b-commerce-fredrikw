@@ -7,7 +7,9 @@ const ModalPresentationPropsDefault: ComponentThemeProps["modal"]["defaultProps"
             margin-bottom: 0;
             display: inline-block;
         `,
-        titleButton: css` padding: 4px; `,
+        titleButton: css`
+            padding: 4px;
+        `,
     },
     closeButtonProps: {
         shape: "pill",

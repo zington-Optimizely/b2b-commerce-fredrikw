@@ -7,9 +7,7 @@ export const DispatchLoadWishLists: HandlerType = props => {
     props.dispatch(loadWishListsData(props.getState().pages.myLists.getWishListsParameter));
 };
 
-export const chain = [
-    DispatchLoadWishLists,
-];
+export const chain = [DispatchLoadWishLists];
 
 const loadWishLists = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadWishLists");
 export default loadWishLists;

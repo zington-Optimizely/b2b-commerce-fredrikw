@@ -37,15 +37,37 @@ export const totalStyles: InvoiceDetailsTotalStyles = {
     },
     labelGridItem: { width: 6 },
     valueGridItem: { width: 6 },
-    subtotalValueText: { css: css` margin-left: auto; ` },
-    discountsValueText: { css: css` margin-left: auto; ` },
-    shippingAndHandlingValueText: { css: css` margin-left: auto; ` },
-    otherChargesValueText: { css: css` margin-left: auto; ` },
-    taxValueText: { css: css` margin-left: auto; ` },
+    subtotalValueText: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    discountsValueText: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    shippingAndHandlingValueText: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    otherChargesValueText: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
+    taxValueText: {
+        css: css`
+            margin-left: auto;
+        `,
+    },
     totalLabelText: { weight: "bold" },
     totalValueText: {
         weight: "bold",
-        css: css` margin-left: auto; `,
+        css: css`
+            margin-left: auto;
+        `,
     },
 };
 
@@ -64,59 +86,66 @@ const InvoiceDetailsTotal: FC = () => {
             <GridItem {...styles.valueGridItem}>
                 <Typography {...styles.subtotalValueText}>{invoice.productTotalDisplay}</Typography>
             </GridItem>
-            {invoice.discountAmount > 0
-            && <>
-                <GridItem {...styles.labelGridItem}>
-                    <Typography {...styles.discountsLabelText}>{translate("Discounts")}</Typography>
-                </GridItem>
-                <GridItem {...styles.valueGridItem}>
-                    <Typography {...styles.discountsValueText}>{invoice.discountAmountDisplay}</Typography>
-                </GridItem>
-            </>
-            }
-            {invoice.shippingAndHandling > 0
-            && <>
-                <GridItem {...styles.labelGridItem}>
-                    <Typography {...styles.shippingAndHandlingLabelText}>{translate("Shipping & Handling")}</Typography>
-                </GridItem>
-                <GridItem {...styles.valueGridItem}>
-                    <Typography {...styles.shippingAndHandlingValueText}>{invoice.shippingAndHandlingDisplay}</Typography>
-                </GridItem>
-            </>
-            }
-            {invoice.otherCharges > 0
-            && <>
-                <GridItem {...styles.labelGridItem}>
-                    <Typography {...styles.otherChargesLabelText}>{translate("Other Charges")}</Typography>
-                </GridItem>
-                <GridItem {...styles.valueGridItem}>
-                    <Typography {...styles.otherChargesValueText}>{invoice.otherChargesDisplay}</Typography>
-                </GridItem>
-            </>
-            }
-            {(!invoice.invoiceHistoryTaxes || invoice.invoiceHistoryTaxes.length === 0)
-            && <>
-                <GridItem {...styles.labelGridItem}>
-                    <Typography {...styles.taxLabelText}>{translate("Taxes")}</Typography>
-                </GridItem>
-                <GridItem {...styles.valueGridItem}>
-                    <Typography {...styles.taxValueText}>{invoice.taxAmountDisplay}</Typography>
-                </GridItem>
-            </>
-            }
-            {invoice.invoiceHistoryTaxes && invoice.invoiceHistoryTaxes!.sort(tax => tax.sortOrder).map(tax => {
-                const key = `${tax.taxCode}_${tax.sortOrder}`;
-                return (
-                    <Fragment key={key}>
-                        <GridItem {...styles.labelGridItem}>
-                            <Typography>{tax.taxDescription || translate("Taxes")}</Typography>
-                        </GridItem>
-                        <GridItem {...styles.valueGridItem}>
-                            <Typography {...styles.taxValueText}>{tax.taxAmountDisplay}</Typography>
-                        </GridItem>
-                    </Fragment>
-                );
-            })}
+            {invoice.discountAmount > 0 && (
+                <>
+                    <GridItem {...styles.labelGridItem}>
+                        <Typography {...styles.discountsLabelText}>{translate("Discounts")}</Typography>
+                    </GridItem>
+                    <GridItem {...styles.valueGridItem}>
+                        <Typography {...styles.discountsValueText}>{invoice.discountAmountDisplay}</Typography>
+                    </GridItem>
+                </>
+            )}
+            {invoice.shippingAndHandling > 0 && (
+                <>
+                    <GridItem {...styles.labelGridItem}>
+                        <Typography {...styles.shippingAndHandlingLabelText}>
+                            {translate("Shipping & Handling")}
+                        </Typography>
+                    </GridItem>
+                    <GridItem {...styles.valueGridItem}>
+                        <Typography {...styles.shippingAndHandlingValueText}>
+                            {invoice.shippingAndHandlingDisplay}
+                        </Typography>
+                    </GridItem>
+                </>
+            )}
+            {invoice.otherCharges > 0 && (
+                <>
+                    <GridItem {...styles.labelGridItem}>
+                        <Typography {...styles.otherChargesLabelText}>{translate("Other Charges")}</Typography>
+                    </GridItem>
+                    <GridItem {...styles.valueGridItem}>
+                        <Typography {...styles.otherChargesValueText}>{invoice.otherChargesDisplay}</Typography>
+                    </GridItem>
+                </>
+            )}
+            {(!invoice.invoiceHistoryTaxes || invoice.invoiceHistoryTaxes.length === 0) && (
+                <>
+                    <GridItem {...styles.labelGridItem}>
+                        <Typography {...styles.taxLabelText}>{translate("Taxes")}</Typography>
+                    </GridItem>
+                    <GridItem {...styles.valueGridItem}>
+                        <Typography {...styles.taxValueText}>{invoice.taxAmountDisplay}</Typography>
+                    </GridItem>
+                </>
+            )}
+            {invoice.invoiceHistoryTaxes &&
+                invoice
+                    .invoiceHistoryTaxes!.sort(tax => tax.sortOrder)
+                    .map(tax => {
+                        const key = `${tax.taxCode}_${tax.sortOrder}`;
+                        return (
+                            <Fragment key={key}>
+                                <GridItem {...styles.labelGridItem}>
+                                    <Typography>{tax.taxDescription || translate("Taxes")}</Typography>
+                                </GridItem>
+                                <GridItem {...styles.valueGridItem}>
+                                    <Typography {...styles.taxValueText}>{tax.taxAmountDisplay}</Typography>
+                                </GridItem>
+                            </Fragment>
+                        );
+                    })}
             <GridItem {...styles.labelGridItem}>
                 <Typography {...styles.totalLabelText}>{translate("Invoice Total")}</Typography>
             </GridItem>

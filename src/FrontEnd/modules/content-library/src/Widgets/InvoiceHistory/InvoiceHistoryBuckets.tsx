@@ -34,14 +34,18 @@ export const bucketsStyles: InvoiceHistoryBucketsStyles = {
     container: {
         gap: 0,
         css: css`
-            ${({ theme }: {theme: BaseTheme}) =>
+            ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` overflow: auto; `,
-                    css` overflow: auto; `,
+                    css`
+                        overflow: auto;
+                    `,
+                    css`
+                        overflow: auto;
+                    `,
                     null,
                     null,
-                    null])
-            }
+                    null,
+                ])}
         `,
     },
     item: {
@@ -68,17 +72,20 @@ class InvoiceHistoryBuckets extends React.Component<Props> {
             return null;
         }
 
-        return <GridContainer {...styles.container} data-test-selector="invoiceHistory_invoiceBalance">
-            <GridItem {...styles.item}>
-                {accountsReceivable.agingBuckets!.map((agingBucket, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <SmallHeadingAndText heading={agingBucket.label} text={agingBucket.amountDisplay} key={index} />
-                ))}
-                <SmallHeadingAndText
-                    heading={accountsReceivable.agingBucketTotal!.label}
-                    text={accountsReceivable.agingBucketTotal!.amountDisplay} />
-            </GridItem>
-        </GridContainer>;
+        return (
+            <GridContainer {...styles.container} data-test-selector="invoiceHistory_invoiceBalance">
+                <GridItem {...styles.item}>
+                    {accountsReceivable.agingBuckets!.map((agingBucket, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <SmallHeadingAndText heading={agingBucket.label} text={agingBucket.amountDisplay} key={index} />
+                    ))}
+                    <SmallHeadingAndText
+                        heading={accountsReceivable.agingBucketTotal!.label}
+                        text={accountsReceivable.agingBucketTotal!.amountDisplay}
+                    />
+                </GridItem>
+            </GridContainer>
+        );
     }
 }
 

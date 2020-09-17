@@ -1,5 +1,8 @@
 import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { addPaymentProfile as addPaymentProfileApi, AddPaymentProfileApiParameter } from "@insite/client-framework/Services/AccountService";
+import {
+    addPaymentProfile as addPaymentProfileApi,
+    AddPaymentProfileApiParameter,
+} from "@insite/client-framework/Services/AccountService";
 import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<AddPaymentProfileApiParameter & HasOnSuccess, AccountPaymentProfileModel>;
@@ -22,12 +25,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchResetPaymentProfiles,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, DispatchResetPaymentProfiles, ExecuteOnSuccessCallback];
 
 const addPaymentProfile = createHandlerChainRunner(chain, "AddPaymentProfile");
 export default addPaymentProfile;

@@ -9,13 +9,19 @@ const initialState: BudgetCalendarsState = {
 };
 
 const reducer = {
-    "Data/Budget/BeginLoadBudgetCalendarCollection": (draft: Draft<BudgetCalendarsState>, action: { parameter: object }) => {
+    "Data/Budget/BeginLoadBudgetCalendarCollection": (
+        draft: Draft<BudgetCalendarsState>,
+        action: { parameter: object },
+    ) => {
         draft.dataViews[getDataViewKey(action.parameter)] = {
             isLoading: true,
             fetchedDate: new Date(),
         };
     },
-    "Data/Budget/CompleteLoadBudgetCalendarCollection": (draft: Draft<BudgetCalendarsState>, action: { parameter: object, collection: BudgetCalendarCollectionModel }) => {
+    "Data/Budget/CompleteLoadBudgetCalendarCollection": (
+        draft: Draft<BudgetCalendarsState>,
+        action: { parameter: object; collection: BudgetCalendarCollectionModel },
+    ) => {
         const dataView = {
             isLoading: false,
             value: action.collection.budgetCalendarCollection!,

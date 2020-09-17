@@ -26,11 +26,7 @@ export const DispatchCompleteLoadWishList: HandlerType = ({ dispatch, apiResult 
     });
 };
 
-export const chain = [
-    DispatchBeginLoadWishList,
-    RequestDataFromApi,
-    DispatchCompleteLoadWishList,
-];
+export const chain = [DispatchBeginLoadWishList, RequestDataFromApi, DispatchCompleteLoadWishList];
 
 const loadWishList = createHandlerChainRunner(chain, "LoadWishList");
 export default loadWishList;

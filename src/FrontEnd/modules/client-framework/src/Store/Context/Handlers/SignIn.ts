@@ -3,23 +3,27 @@ import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { createSession, Session } from "@insite/client-framework/Services/SessionService";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
-type HandlerType = ApiHandler<SignInParameter, SignInResult, {
-    authenticatedSession?: Session;
-}>;
+type HandlerType = ApiHandler<
+    SignInParameter,
+    SignInResult,
+    {
+        authenticatedSession?: Session;
+    }
+>;
 
 export interface SignInParameter {
     userName: string;
     password: string;
     rememberMe: boolean;
     returnUrl?: string | undefined;
-    onError?: (error: string) => void;
+    onError?: (error: string, statusCode?: number) => void;
 }
 
 export interface SignInResult {
-    readonly access_token: string,
-    readonly refresh_token: string,
-    readonly expires_in: number,
-    readonly error_description: string,
+    readonly access_token: string;
+    readonly refresh_token: string;
+    readonly expires_in: number;
+    readonly error_description: string;
 }
 
 export const RequestAccessToken: HandlerType = async props => {
@@ -39,10 +43,10 @@ export const RequestAccessToken: HandlerType = async props => {
     });
 
     props.apiResult = await (response.json() as Promise<{
-        readonly access_token: string,
-        readonly refresh_token: string,
-        readonly expires_in: number,
-        readonly error_description: string,
+        readonly access_token: string;
+        readonly refresh_token: string;
+        readonly expires_in: number;
+        readonly error_description: string;
     }>);
 
     if (!response.ok) {
@@ -50,6 +54,7 @@ export const RequestAccessToken: HandlerType = async props => {
 
         props.dispatch({
             type: "Context/CompleteSignIn",
+            accessToken: props.apiResult.access_token,
         });
 
         return false;
@@ -68,10 +73,11 @@ export const RequestSession: HandlerType = async props => {
     });
 
     if (!session.successful) {
-        props.parameter.onError?.(session.errorMessage);
+        props.parameter.onError?.(session.errorMessage, session.statusCode);
 
         props.dispatch({
             type: "Context/CompleteSignIn",
+            accessToken: props.apiResult.access_token,
         });
 
         return false;
@@ -83,6 +89,7 @@ export const RequestSession: HandlerType = async props => {
 export const DispatchCompleteSignIn: HandlerType = props => {
     props.dispatch({
         type: "Context/CompleteSignIn",
+        accessToken: props.apiResult.access_token,
     });
 };
 
@@ -96,7 +103,11 @@ export const RedirectToChangeCustomer: HandlerType = props => {
         const changeCustomerPageUrl = getPageLinkByPageType(props.getState(), "ChangeCustomerPage")?.url;
         if (homePageUrl && changeCustomerPageUrl) {
             const shouldAddReturnUrl = props.parameter.returnUrl && props.parameter.returnUrl !== homePageUrl;
-            window.location.href = changeCustomerPageUrl + (shouldAddReturnUrl && props.parameter.returnUrl ? `?returnUrl=${encodeURIComponent(props.parameter.returnUrl)}` : "");
+            window.location.href =
+                changeCustomerPageUrl +
+                (shouldAddReturnUrl && props.parameter.returnUrl
+                    ? `?returnUrl=${encodeURIComponent(props.parameter.returnUrl)}`
+                    : "");
             return false;
         }
     }

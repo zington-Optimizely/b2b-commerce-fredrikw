@@ -8,7 +8,11 @@ type SignInAsGuestParameter = {
     returnUrl: string;
 };
 
-type HandlerType = ApiHandlerDiscreteParameter<SignInAsGuestParameter, Partial<AccountModel>, ServiceResult<AccountModel>>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    SignInAsGuestParameter,
+    Partial<AccountModel>,
+    ServiceResult<AccountModel>
+>;
 
 type GuestAccountModel = Partial<AccountModel>;
 
@@ -43,12 +47,14 @@ export const SignIn: HandlerType = props => {
     }
     const { userName, password } = props.apiResult.result;
     const { returnUrl } = props.parameter;
-    props.dispatch(signIn({
-        userName,
-        password,
-        rememberMe: false,
-        returnUrl,
-    }));
+    props.dispatch(
+        signIn({
+            userName,
+            password,
+            rememberMe: false,
+            returnUrl,
+        }),
+    );
 };
 
 export const DispatchCompleteSignInAsGuest: HandlerType = props => {

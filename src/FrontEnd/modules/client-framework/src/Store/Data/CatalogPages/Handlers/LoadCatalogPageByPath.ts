@@ -1,13 +1,18 @@
 import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
 import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { CatalogPage, CatalogPageResult, getCatalogPageByPath, GetCatalogPageByPathApiParameter } from "@insite/client-framework/Services/CategoryService";
+import {
+    CatalogPage,
+    CatalogPageResult,
+    getCatalogPageByPath,
+    GetCatalogPageByPathApiParameter,
+} from "@insite/client-framework/Services/CategoryService";
 
 type Parameter = {
-    path: string,
+    path: string;
 } & HasOnSuccess<CatalogPage>;
 type Props = {
-    apiParameter: GetCatalogPageByPathApiParameter,
-    apiResult: CatalogPageResult,
+    apiParameter: GetCatalogPageByPathApiParameter;
+    apiResult: CatalogPageResult;
 };
 
 type HandlerType = Handler<Parameter, Props>;

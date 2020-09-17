@@ -27,7 +27,9 @@ export interface RequestRmaNotesStyles {
 
 export const notesStyles: RequestRmaNotesStyles = {
     wrapper: {
-        css: css` padding-bottom: 20px; `,
+        css: css`
+            padding-bottom: 20px;
+        `,
     },
 };
 
@@ -35,10 +37,7 @@ const styles = notesStyles;
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RequestRmaNotes: FC<Props> = ({
-    returnNotes,
-    setReturnNotes,
-}) => {
+const RequestRmaNotes: FC<Props> = ({ returnNotes, setReturnNotes }) => {
     const { value: order } = useContext(OrderStateContext);
     if (!order) {
         return null;
@@ -56,7 +55,8 @@ const RequestRmaNotes: FC<Props> = ({
                 rows={5}
                 placeholder={translate("Enter your notes here")}
                 onChange={changeHandler}
-                {...styles.notesTextArea} />
+                {...styles.notesTextArea}
+            />
         </StyledWrapper>
     );
 };

@@ -1,7 +1,7 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import AccountSettingsState from "@insite/client-framework/Store/Pages/AccountSettings/AccountSettingsState";
-import { AccountModel } from "@insite/client-framework/Types/ApiModels";
+import { AccountModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: AccountSettingsState = {
@@ -12,15 +12,19 @@ const initialState: AccountSettingsState = {
 };
 
 const reducer = {
-    "Pages/AccountSettings/UpdateAccountSettings": (draft: Draft<AccountSettingsState>, action: {
-        isSubscribed?: boolean;
-        email?: string;
-        emailErrorMessage?: string;
-        billToId?: string;
-        shipToId?: string;
-        useDefaultCustomer?: boolean;
-        fulfillmentMethod?: string;
-    }) => {
+    "Pages/AccountSettings/UpdateAccountSettings": (
+        draft: Draft<AccountSettingsState>,
+        action: {
+            isSubscribed?: boolean;
+            email?: string;
+            emailErrorMessage?: string;
+            billToId?: string;
+            shipToId?: string;
+            useDefaultCustomer?: boolean;
+            fulfillmentMethod?: string;
+            defaultWarehouse?: WarehouseModel;
+        },
+    ) => {
         if (!draft.editingAccount) {
             throw new Error("There was no editingAccount set and we are trying to update it.");
         }
@@ -50,6 +54,11 @@ const reducer = {
             draft.editingAccount.defaultFulfillmentMethod = action.fulfillmentMethod;
         }
 
+        if (action.defaultWarehouse) {
+            draft.editingAccount.defaultWarehouse = action.defaultWarehouse;
+            draft.editingAccount.defaultWarehouseId = action.defaultWarehouse.id;
+        }
+
         if (typeof action.useDefaultCustomer !== "undefined") {
             draft.useDefaultCustomer = action.useDefaultCustomer;
             if (!action.useDefaultCustomer) {
@@ -58,18 +67,23 @@ const reducer = {
                 draft.editingAccount.defaultWarehouseId = null;
                 draft.editingAccount.defaultCustomerId = null;
             } else {
-                draft.editingAccount.defaultCustomerId = (draft.initialUseDefaultCustomer ? draft.initialShipToId : draft.selectedShipToId) || null;
+                draft.editingAccount.defaultCustomerId =
+                    (draft.initialUseDefaultCustomer ? draft.initialShipToId : draft.selectedShipToId) || null;
             }
-            draft.editingAccount.setDefaultCustomer = draft.editingAccount.defaultCustomerId !== (draft.initialShipToId ?? null);
+            draft.editingAccount.setDefaultCustomer =
+                draft.editingAccount.defaultCustomerId !== (draft.initialShipToId ?? null);
         }
     },
-    "Pages/AccountSettings/SetInitialValues": (draft: Draft<AccountSettingsState>, action: {
-        defaultBillToId?: string;
-        defaultShipToId?: string;
-        showSelectDefaultCustomer: boolean;
-        useDefaultCustomer: boolean;
-        account: AccountModel;
-    }) => {
+    "Pages/AccountSettings/SetInitialValues": (
+        draft: Draft<AccountSettingsState>,
+        action: {
+            defaultBillToId?: string;
+            defaultShipToId?: string;
+            showSelectDefaultCustomer: boolean;
+            useDefaultCustomer: boolean;
+            account: AccountModel;
+        },
+    ) => {
         draft.selectedBillToId = action.defaultBillToId;
         draft.selectedShipToId = action.defaultShipToId;
         draft.initialShipToId = draft.selectedShipToId;

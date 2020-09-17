@@ -25,6 +25,7 @@ const mapStateToProps = ({ shellContext }: ShellState) => ({
     languages: shellContext.languages,
     personas: shellContext.personas,
     deviceTypes: shellContext.deviceTypes,
+    mobileCmsModeActive: shellContext.mobileCmsModeActive,
 });
 
 const mapDispatchToProps = {
@@ -34,8 +35,7 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-interface State {
-}
+interface State {}
 
 const textMain = shellTheme.colors.text.main;
 
@@ -55,7 +55,11 @@ class HeaderBar extends React.Component<Props, State> {
     };
 
     onDeviceTypeChange = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.changeContext(this.props.currentLanguageId, this.props.currentPersonaId, event.currentTarget.value as DeviceType);
+        this.changeContext(
+            this.props.currentLanguageId,
+            this.props.currentPersonaId,
+            event.currentTarget.value as DeviceType,
+        );
     };
 
     changeContext = (languageId: string, personaId: string, deviceType: DeviceType) => {
@@ -65,55 +69,90 @@ class HeaderBar extends React.Component<Props, State> {
     };
 
     render() {
-        const { disabled, languages, currentLanguageId, personas, deviceTypes, currentPersonaId, currentDeviceType } = this.props;
+        const {
+            disabled,
+            languages,
+            currentLanguageId,
+            personas,
+            deviceTypes,
+            currentPersonaId,
+            currentDeviceType,
+            mobileCmsModeActive: mobileCms,
+        } = this.props;
 
-        if (languages.length === 0) {
+        if (languages.length === 0 || mobileCms) {
             return null;
         }
 
-        const { hasDeviceSpecificContent, hasPersonaSpecificContent } = languages.filter(o => o.id === currentLanguageId)[0];
+        const { hasDeviceSpecificContent, hasPersonaSpecificContent } = languages.filter(
+            o => o.id === currentLanguageId,
+        )[0];
 
-        return <HeaderBarStyle>
-            <Icon src={Globe} size={20} />
-            <SelectWrapper>
-                <select onChange={this.onLanguageChange} data-test-selector="headerBar_languageSelect" value={currentLanguageId} disabled={disabled}>
-                    {languages.map(({ id, description }) =>
-                        <option key={id} value={id}>{description}</option>,
-                    )}
-                </select>
-                <ArrowDown color1={textMain} height={7}/>
-            </SelectWrapper>
-            {hasDeviceSpecificContent
-                && <>
-                    <Icon src={Monitor} size={20} />
-                    <SelectWrapper>
-                        <select onChange={this.onDeviceTypeChange} value={currentDeviceType} disabled={disabled}>
-                            {deviceTypes.map(deviceType =>
-                                <option key={deviceType} value={deviceType}>{deviceType}</option>,
-                            )}
-                        </select>
-                        <ArrowDown color1={textMain} height={7}/>
-                    </SelectWrapper>
-                </>}
-            {hasPersonaSpecificContent
-                && <>
-                    <Icon src={Users} size={20} />
-                    <SelectWrapper>
-                        <select onChange={this.onPersonaChange} data-test-selector="headerBar_personaSelect" value={currentPersonaId} disabled={disabled}>
-                            {personas.map(({ id, name }) =>
-                                <option key={id} value={id}>{name}</option>,
-                            )}
-                        </select>
-                        <ArrowDown color1={textMain} height={7}/>
-                    </SelectWrapper>
-                </>}
-        </HeaderBarStyle>;
+        return (
+            <HeaderBarStyle data-test-selector="headerBar">
+                <Icon src={Globe} size={20} />
+                <SelectWrapper>
+                    <select
+                        onChange={this.onLanguageChange}
+                        data-test-selector="headerBar_languageSelect"
+                        value={currentLanguageId}
+                        disabled={disabled}
+                    >
+                        {languages.map(({ id, description }) => (
+                            <option key={id} value={id}>
+                                {description}
+                            </option>
+                        ))}
+                    </select>
+                    <ArrowDown color1={textMain} height={7} />
+                </SelectWrapper>
+                {hasDeviceSpecificContent && (
+                    <>
+                        <Icon src={Monitor} size={20} />
+                        <SelectWrapper>
+                            <select onChange={this.onDeviceTypeChange} value={currentDeviceType} disabled={disabled}>
+                                {deviceTypes.map(deviceType => (
+                                    <option key={deviceType} value={deviceType}>
+                                        {deviceType}
+                                    </option>
+                                ))}
+                            </select>
+                            <ArrowDown color1={textMain} height={7} />
+                        </SelectWrapper>
+                    </>
+                )}
+                {hasPersonaSpecificContent && (
+                    <>
+                        <Icon src={Users} size={20} />
+                        <SelectWrapper>
+                            <select
+                                onChange={this.onPersonaChange}
+                                data-test-selector="headerBar_personaSelect"
+                                value={currentPersonaId}
+                                disabled={disabled}
+                            >
+                                {personas.map(({ id, name }) => (
+                                    <option key={id} value={id}>
+                                        {name}
+                                    </option>
+                                ))}
+                            </select>
+                            <ArrowDown color1={textMain} height={7} />
+                        </SelectWrapper>
+                    </>
+                )}
+            </HeaderBarStyle>
+        );
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);
 
-const SpacerBar: React.FC = () => <svg focusable="false" viewBox="0 0 32 24" width="32" height="24"><line x1="16" x2="16" y1="0" y2="24" stroke="currentColor" strokeWidth="2" /></svg>;
+const SpacerBar: React.FC = () => (
+    <svg focusable="false" viewBox="0 0 32 24" width="32" height="24">
+        <line x1="16" x2="16" y1="0" y2="24" stroke="currentColor" strokeWidth="2" />
+    </svg>
+);
 export const Spacer = React.memo(SpacerBar);
 
 const HeaderBarStyle = styled.div`

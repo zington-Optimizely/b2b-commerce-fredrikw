@@ -3,15 +3,11 @@ import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/Logo
 import { Draft } from "immer";
 
 const reducer = {
-    "LogoutWarningModal/ShowModal": (
-        draft: Draft<LogoutWarningModalState>,
-    ) => {
+    "LogoutWarningModal/ShowModal": (draft: Draft<LogoutWarningModalState>) => {
         draft.isOpen = true;
     },
 
-    "LogoutWarningModal/HideModal": (
-        draft: Draft<LogoutWarningModalState>,
-    ) => {
+    "LogoutWarningModal/HideModal": (draft: Draft<LogoutWarningModalState>) => {
         delete draft.isOpen;
     },
 };

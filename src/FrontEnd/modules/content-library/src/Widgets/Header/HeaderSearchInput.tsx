@@ -7,12 +7,13 @@ export interface HeaderSearchInputStyles {
     searchInputStyles?: SearchInputStyles;
 }
 
-export const searchInputStyles: HeaderSearchInputStyles = {
-};
+export const searchInputStyles: HeaderSearchInputStyles = {};
 
 const styles = searchInputStyles;
 
-const HeaderSearchInput: React.FC<WidgetProps> = ({ id }) => <SearchInput id={id} extendedStyles={styles.searchInputStyles} />;
+const HeaderSearchInput: React.FC<WidgetProps> = ({ id }) => (
+    <SearchInput id={id} extendedStyles={styles.searchInputStyles} />
+);
 
 const widgetModule: WidgetModule = {
     component: HeaderSearchInput,

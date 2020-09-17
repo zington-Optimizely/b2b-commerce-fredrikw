@@ -77,7 +77,6 @@ type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<t
 
 class BrandDetailsPage extends React.Component<Props> {
     private checkState(prevProps?: Props) {
-
         const {
             brandState,
             brandPath,
@@ -103,7 +102,10 @@ class BrandDetailsPage extends React.Component<Props> {
             loadBrandProductLines(brandProductLinesParameter);
         }
 
-        if ((brandState.value && !breadcrumbLinks) || (prevProps && brandState.value?.id !== prevProps.brandState?.value?.id)) {
+        if (
+            (brandState.value && !breadcrumbLinks) ||
+            (prevProps && brandState.value?.id !== prevProps.brandState?.value?.id)
+        ) {
             const links = generateLinksFrom(this.props.links, this.props.parentNodeId);
             links.push({ children: this.props.brandState.value?.name });
             setBreadcrumbs({ links });
@@ -118,15 +120,17 @@ class BrandDetailsPage extends React.Component<Props> {
     }
 
     render() {
-        return <Page>
-            <BrandStateContext.Provider value={this.props.brandState}>
-                <BrandCategoriesStateContext.Provider value={this.props.brandCategoriesDataView}>
-                    <BrandProductLinesStateContext.Provider value={this.props.brandProductLinesDataView}>
-                        <Zone contentId={this.props.id} zoneName="Content" />
-                    </BrandProductLinesStateContext.Provider>
-                </BrandCategoriesStateContext.Provider>
-            </BrandStateContext.Provider>
-        </Page>;
+        return (
+            <Page>
+                <BrandStateContext.Provider value={this.props.brandState}>
+                    <BrandCategoriesStateContext.Provider value={this.props.brandCategoriesDataView}>
+                        <BrandProductLinesStateContext.Provider value={this.props.brandProductLinesDataView}>
+                            <Zone contentId={this.props.id} zoneName="Content" />
+                        </BrandProductLinesStateContext.Provider>
+                    </BrandCategoriesStateContext.Provider>
+                </BrandStateContext.Provider>
+            </Page>
+        );
     }
 }
 

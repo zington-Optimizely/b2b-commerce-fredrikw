@@ -21,7 +21,9 @@ export const shippingMethodStyles: OrderDetailsShippingMethodStyles = {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -35,7 +37,8 @@ const OrderDetailsShippingMethod: React.FunctionComponent = () => {
         return null;
     }
 
-    const hasShippingMethod = (order.fulfillmentMethod === FulfillmentMethod.Ship || !order.fulfillmentMethod) && order.shipCode;
+    const hasShippingMethod =
+        (order.fulfillmentMethod === FulfillmentMethod.Ship || !order.fulfillmentMethod) && order.shipCode;
 
     if (!hasShippingMethod) {
         return null;

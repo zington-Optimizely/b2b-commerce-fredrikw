@@ -30,7 +30,9 @@ export const CopyCurrentValues: HandlerType = props => {
 export const ChangeProductQtyForExistingProduct: HandlerType = props => {
     const quickOrderProductInfos = props.getState().pages.quickOrder.productInfos;
     const { productId, qtyOrdered, unitOfMeasure } = props.productInfo;
-    const existingProductInfo = quickOrderProductInfos.find(o => o.productId === productId && o.unitOfMeasure === unitOfMeasure);
+    const existingProductInfo = quickOrderProductInfos.find(
+        o => o.productId === productId && o.unitOfMeasure === unitOfMeasure,
+    );
     if (!existingProductInfo) {
         return;
     }
@@ -47,17 +49,21 @@ export const GetPrice: HandlerType = async props => {
 
     let loadedPricing = false;
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: [{ productId, unitOfMeasure, qtyOrdered }],
-        onSuccess: realTimePricingModel => {
-            props.productInfo.pricing = realTimePricingModel.realTimePricingResults?.find(o => o.productId === productId);
-            loadedPricing = true;
-        },
-        onError: () => {
-            loadedPricing = true;
-            props.productInfo.failedToLoadPricing = true;
-        },
-    }));
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: [{ productId, unitOfMeasure, qtyOrdered }],
+            onSuccess: realTimePricingModel => {
+                props.productInfo.pricing = realTimePricingModel.realTimePricingResults?.find(
+                    o => o.productId === productId,
+                );
+                loadedPricing = true;
+            },
+            onError: () => {
+                loadedPricing = true;
+                props.productInfo.failedToLoadPricing = true;
+            },
+        }),
+    );
 
     await waitFor(() => loadedPricing);
 };
@@ -67,13 +73,17 @@ export const GetInventory: HandlerType = async props => {
 
     let loadedInventory = false;
 
-    props.dispatch(loadRealTimeInventory({
-        productIds: [productId],
-        onSuccess: realTimeInventoryResult => {
-            loadedInventory = true;
-            props.productInfo.inventory = realTimeInventoryResult.realTimeInventoryResults?.find(o => o.productId === productId);
-        },
-    }));
+    props.dispatch(
+        loadRealTimeInventory({
+            productIds: [productId],
+            onSuccess: realTimeInventoryResult => {
+                loadedInventory = true;
+                props.productInfo.inventory = realTimeInventoryResult.realTimeInventoryResults?.find(
+                    o => o.productId === productId,
+                );
+            },
+        }),
+    );
 
     await waitFor(() => loadedInventory);
 };

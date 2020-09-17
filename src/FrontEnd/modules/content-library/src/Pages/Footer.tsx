@@ -4,11 +4,9 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 
-const Footer: React.FunctionComponent<PageProps> = ({
-    id,
-}: PageProps) => (
+const Footer: React.FunctionComponent<PageProps> = ({ id }: PageProps) => (
     <Page as="footer">
-        <Zone contentId={id} zoneName="Content"/>
+        <Zone contentId={id} zoneName="Content" />
     </Page>
 );
 

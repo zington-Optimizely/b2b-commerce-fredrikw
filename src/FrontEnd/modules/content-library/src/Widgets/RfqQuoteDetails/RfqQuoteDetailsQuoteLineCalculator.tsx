@@ -88,7 +88,9 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
     container: { gap: 20 },
     infoGridItem: {
         width: [12, 12, 6, 6, 6],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     infoWrapper: {
         css: css`
@@ -99,7 +101,9 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
     },
     itemPricingHeader: {
         variant: "h5",
-        css: css` margin: 10px 0 5px 0; `,
+        css: css`
+            margin: 10px 0 5px 0;
+        `,
     },
     itemPricingContainer: { gap: 20 },
     unitCostGridItem: { width: 3 },
@@ -110,63 +114,103 @@ export const rfqQuoteDetailsQuoteLineCalculatorStyles: RfqQuoteDetailsQuoteLineC
     unitCostHeadingAndText: {
         heading: {
             variant: "h6",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     listPriceHeadingAndText: {
         heading: {
             variant: "h6",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     customerPriceHeadingAndText: {
         heading: {
             variant: "h6",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     minimumPriceAllowedHeadingAndText: {
         heading: {
             variant: "h6",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     qtyAvailableHeadingAndText: {
         heading: {
             variant: "h6",
-            css: css` margin-bottom: 0; `,
+            css: css`
+                margin-bottom: 0;
+            `,
         },
     },
     priceBreaksGridItem: {
         width: [12, 12, 6, 6, 6],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
-    priceBreaksTable: { cssOverrides: { table: css` position: relative; ` } },
+    priceBreaksTable: {
+        cssOverrides: {
+            table: css`
+                position: relative;
+            `,
+        },
+    },
     priceHeader: { alignX: "right" },
-    buttonsHeader: { css: css` width: 100px; ` },
-    calculatorHeader: { css: css` display: none; ` },
+    buttonsHeader: {
+        css: css`
+            width: 100px;
+        `,
+    },
+    calculatorHeader: {
+        css: css`
+            display: none;
+        `,
+    },
     addPriceBreakLink: {
         icon: {
             iconProps: { src: PlusCircle },
         },
-        typographyProps: { css: css` padding-left: 5px; ` },
-        css: css` margin-top: 10px; `,
+        typographyProps: {
+            css: css`
+                padding-left: 5px;
+            `,
+        },
+        css: css`
+            margin-top: 10px;
+        `,
     },
     errorText: {
         color: "danger",
-        css: css` margin: 5px 30px; `,
+        css: css`
+            margin: 5px 30px;
+        `,
     },
     buttonsGridItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     cancelButton: {
         variant: "secondary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
     resetButton: {
         variant: "tertiary",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
 };
 
@@ -193,9 +237,12 @@ const RfqQuoteDetailsQuoteLineCalculator = ({
         }
 
         if (quote.isJobQuote) {
-            return quoteLine.pricingRfq?.priceBreaks?.slice()
-                .sort((a, b) => b.startQty - a.startQty)
-                .filter(x => x.startQty <= quoteLine.qtyOrdered!)[0].startQty === priceBreak.startQty;
+            return (
+                quoteLine.pricingRfq?.priceBreaks
+                    ?.slice()
+                    .sort((a, b) => b.startQty - a.startQty)
+                    .filter(x => x.startQty <= quoteLine.qtyOrdered!)[0].startQty === priceBreak.startQty
+            );
         }
 
         return true;
@@ -238,110 +285,124 @@ const RfqQuoteDetailsQuoteLineCalculator = ({
         });
     };
 
-    return <GridContainer {...styles.container}>
-        <GridItem {...styles.infoGridItem}>
-            <StyledWrapper {...styles.infoWrapper}>
-                {quoteLine.brand
-                    && <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />
-                }
-                <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
-                <ProductPartNumbers
-                    productNumber={quoteLine.erpNumber}
-                    customerProductNumber={quoteLine.customerName}
-                    manufacturerItem={quoteLine.manufacturerItem}
-                    extendedStyles={styles.productPartNumbers}
-                />
-                <Typography {...styles.itemPricingHeader}>{translate("Item Pricing")}</Typography>
-                <GridContainer {...styles.itemPricingContainer}>
-                    {quoteLine.pricingRfq?.showUnitCost
-                        && <GridItem {...styles.unitCostGridItem}>
+    return (
+        <GridContainer {...styles.container}>
+            <GridItem {...styles.infoGridItem}>
+                <StyledWrapper {...styles.infoWrapper}>
+                    {quoteLine.brand && <ProductBrand brand={quoteLine.brand} extendedStyles={styles.productBrand} />}
+                    <ProductDescription product={quoteLine} extendedStyles={styles.productDescription} />
+                    <ProductPartNumbers
+                        productNumber={quoteLine.erpNumber}
+                        customerProductNumber={quoteLine.customerName}
+                        manufacturerItem={quoteLine.manufacturerItem}
+                        extendedStyles={styles.productPartNumbers}
+                    />
+                    <Typography {...styles.itemPricingHeader}>{translate("Item Pricing")}</Typography>
+                    <GridContainer {...styles.itemPricingContainer}>
+                        {quoteLine.pricingRfq?.showUnitCost && (
+                            <GridItem {...styles.unitCostGridItem}>
+                                <SmallHeadingAndText
+                                    heading={translate("Unit Cost")}
+                                    text={quoteLine.pricingRfq.unitCostDisplay}
+                                    extendedStyles={styles.unitCostHeadingAndText}
+                                />
+                            </GridItem>
+                        )}
+                        {quoteLine.pricingRfq?.showListPrice && (
+                            <GridItem {...styles.listPriceGridItem}>
+                                <SmallHeadingAndText
+                                    heading={translate("List")}
+                                    text={quoteLine.pricingRfq.listPriceDisplay}
+                                    extendedStyles={styles.listPriceHeadingAndText}
+                                />
+                            </GridItem>
+                        )}
+                        {quoteLine.pricingRfq?.showCustomerPrice && (
+                            <GridItem {...styles.customerPriceGridItem}>
+                                <SmallHeadingAndText
+                                    heading={translate("Customer")}
+                                    text={
+                                        quote.isJobQuote
+                                            ? quoteLine.pricing?.unitNetPriceDisplay || ""
+                                            : quoteLine.pricingRfq.customerPriceDisplay
+                                    }
+                                    extendedStyles={styles.customerPriceHeadingAndText}
+                                />
+                            </GridItem>
+                        )}
+                        {quoteLine.pricingRfq && quoteLine.pricingRfq.minimumPriceAllowed > 0 && (
+                            <GridItem {...styles.minimumPriceAllowedGridItem}>
+                                <SmallHeadingAndText
+                                    heading={translate("Minimum")}
+                                    text={quoteLine.pricingRfq.minimumPriceAllowedDisplay}
+                                    extendedStyles={styles.minimumPriceAllowedHeadingAndText}
+                                />
+                            </GridItem>
+                        )}
+                        <GridItem {...styles.qtyAvailableGridItem}>
                             <SmallHeadingAndText
-                                heading={translate("Unit Cost")}
-                                text={quoteLine.pricingRfq.unitCostDisplay}
-                                extendedStyles={styles.unitCostHeadingAndText}
+                                heading={translate("Quantity Available")}
+                                text={quoteLine.qtyOnHand}
+                                extendedStyles={styles.qtyAvailableHeadingAndText}
                             />
                         </GridItem>
-                    }
-                    {quoteLine.pricingRfq?.showListPrice
-                        && <GridItem {...styles.listPriceGridItem}>
-                            <SmallHeadingAndText
-                                heading={translate("List")}
-                                text={quoteLine.pricingRfq.listPriceDisplay}
-                                extendedStyles={styles.listPriceHeadingAndText}
+                    </GridContainer>
+                </StyledWrapper>
+            </GridItem>
+            <GridItem {...styles.priceBreaksGridItem}>
+                <DataTable {...styles.priceBreaksTable}>
+                    <DataTableHead {...styles.priceBreaksHead}>
+                        <DataTableHeader {...styles.qtyHeader}>{translate("Quantity")}</DataTableHeader>
+                        <DataTableHeader {...styles.priceHeader}>{translate("Price")}</DataTableHeader>
+                        <DataTableHeader {...styles.buttonsHeader}></DataTableHeader>
+                        {priceBreakCalculatorIndex !== undefined && (
+                            <DataTableHeader {...styles.calculatorHeader}></DataTableHeader>
+                        )}
+                    </DataTableHead>
+                    <DataTableBody {...styles.priceBreaksBody}>
+                        {quoteLine.pricingRfq?.priceBreaks?.filter(shouldShowPriceBreak).map((priceBreak, index) => (
+                            <RfqQuoteDetailsQuoteLineCalculatorRow
+                                key={index}
+                                quote={quote}
+                                quoteLine={quoteLine}
+                                priceBreak={priceBreak}
+                                index={index}
+                                calculatorIsOpen={priceBreakCalculatorIndex === index}
+                                openCalculator={openCalculator}
                             />
-                        </GridItem>
-                    }
-                    {quoteLine.pricingRfq?.showCustomerPrice
-                        && <GridItem {...styles.customerPriceGridItem}>
-                            <SmallHeadingAndText
-                                heading={translate("Customer")}
-                                text={quote.isJobQuote ? quoteLine.pricing?.unitNetPriceDisplay || "" : quoteLine.pricingRfq.customerPriceDisplay}
-                                extendedStyles={styles.customerPriceHeadingAndText}
-                            />
-                        </GridItem>
-                    }
-                    {quoteLine.pricingRfq && quoteLine.pricingRfq.minimumPriceAllowed > 0
-                        && <GridItem {...styles.minimumPriceAllowedGridItem}>
-                            <SmallHeadingAndText
-                                heading={translate("Minimum")}
-                                text={quoteLine.pricingRfq.minimumPriceAllowedDisplay}
-                                extendedStyles={styles.minimumPriceAllowedHeadingAndText}
-                            />
-                        </GridItem>
-                    }
-                    <GridItem {...styles.qtyAvailableGridItem}>
-                        <SmallHeadingAndText
-                            heading={translate("Quantity Available")}
-                            text={quoteLine.qtyOnHand}
-                            extendedStyles={styles.qtyAvailableHeadingAndText}
-                        />
-                    </GridItem>
-                </GridContainer>
-            </StyledWrapper>
-        </GridItem>
-        <GridItem {...styles.priceBreaksGridItem}>
-            <DataTable {...styles.priceBreaksTable}>
-                <DataTableHead {...styles.priceBreaksHead}>
-                    <DataTableHeader {...styles.qtyHeader}>{translate("Quantity")}</DataTableHeader>
-                    <DataTableHeader {...styles.priceHeader}>{translate("Price")}</DataTableHeader>
-                    <DataTableHeader {...styles.buttonsHeader}></DataTableHeader>
-                    {priceBreakCalculatorIndex !== undefined
-                        && <DataTableHeader {...styles.calculatorHeader}></DataTableHeader>
-                    }
-                </DataTableHead>
-                <DataTableBody {...styles.priceBreaksBody}>
-                    {quoteLine.pricingRfq?.priceBreaks?.filter(shouldShowPriceBreak).map((priceBreak, index) => (
-                        <RfqQuoteDetailsQuoteLineCalculatorRow
-                            key={index}
-                            quote={quote}
-                            quoteLine={quoteLine}
-                            priceBreak={priceBreak}
-                            index={index}
-                            calculatorIsOpen={priceBreakCalculatorIndex === index}
-                            openCalculator={openCalculator}
-                        />
-                    ))}
-                </DataTableBody>
-            </DataTable>
-            {!quote.isJobQuote && quoteLine.pricingRfq?.priceBreaks && quoteLine.pricingRfq.priceBreaks.length < MAX_PRICE_BREAKS
-                && <Link {...styles.addPriceBreakLink} onClick={addPriceBreakClickHandler}>{translate("Add Price Break")}</Link>
-            }
-            {priceBreakValidations.some(o => o.priceRequired)
-                && <Typography {...styles.errorText}>{siteMessage("Field_Required", translate("Price"))}</Typography>
-            }
-            {priceBreakValidations.some(o => o.invalidPrice)
-                && <Typography {...styles.errorText}>{siteMessage("Rfq_InvalidLinePrice")}</Typography>
-            }
-            {priceBreakValidations.some(o => o.invalidQty)
-                && <Typography {...styles.errorText}>{siteMessage("Rfq_InvalidQty")}</Typography>
-            }
-        </GridItem>
-        <GridItem {...styles.buttonsGridItem}>
-            <Button {...styles.cancelButton} onClick={cancelClickHandler}>{translate("Cancel")}</Button>
-            <Button {...styles.resetButton} onClick={resetClickHandler}>{translate("Reset")}</Button>
-            <Button {...styles.applyButton} onClick={applyClickHandler}>{translate("Apply Quote")}</Button>
-        </GridItem>
-    </GridContainer>;
+                        ))}
+                    </DataTableBody>
+                </DataTable>
+                {!quote.isJobQuote &&
+                    quoteLine.pricingRfq?.priceBreaks &&
+                    quoteLine.pricingRfq.priceBreaks.length < MAX_PRICE_BREAKS && (
+                        <Link {...styles.addPriceBreakLink} onClick={addPriceBreakClickHandler}>
+                            {translate("Add Price Break")}
+                        </Link>
+                    )}
+                {priceBreakValidations.some(o => o.priceRequired) && (
+                    <Typography {...styles.errorText}>{siteMessage("Field_Required", translate("Price"))}</Typography>
+                )}
+                {priceBreakValidations.some(o => o.invalidPrice) && (
+                    <Typography {...styles.errorText}>{siteMessage("Rfq_InvalidLinePrice")}</Typography>
+                )}
+                {priceBreakValidations.some(o => o.invalidQty) && (
+                    <Typography {...styles.errorText}>{siteMessage("Rfq_InvalidQty")}</Typography>
+                )}
+            </GridItem>
+            <GridItem {...styles.buttonsGridItem}>
+                <Button {...styles.cancelButton} onClick={cancelClickHandler}>
+                    {translate("Cancel")}
+                </Button>
+                <Button {...styles.resetButton} onClick={resetClickHandler}>
+                    {translate("Reset")}
+                </Button>
+                <Button {...styles.applyButton} onClick={applyClickHandler}>
+                    {translate("Apply Quote")}
+                </Button>
+            </GridItem>
+        </GridContainer>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RfqQuoteDetailsQuoteLineCalculator);

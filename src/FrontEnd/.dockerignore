@@ -3,3 +3,7 @@
 tools
 **/node_modules/
 **/.sass-cache/
+**/*.md
+dist/
+wwwroot/dist/
+readme-images/

@@ -1,7 +1,4 @@
-import {
-    ApiHandlerDiscreteParameter,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { CartResult, getCart, GetCartApiParameter } from "@insite/client-framework/Services/CartService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ cartId: string }, GetCartApiParameter, CartResult>;

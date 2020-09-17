@@ -32,7 +32,9 @@ export const changePasswordHeaderStyles: ChangePasswordHeaderStyles = {
         gap: 0,
     },
     buttonGridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: [12, 12, 4, 3, 3],
     },
     titleGridItem: {
@@ -43,7 +45,9 @@ export const changePasswordHeaderStyles: ChangePasswordHeaderStyles = {
         as: "h1",
     },
     actions: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
 };
 

@@ -4,13 +4,14 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderHistoryPageContext } from "@insite/content-library/Pages/OrderHistoryPage";
-import SearchFieldWrapper, { SearchFieldWrapperStyles } from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
+import SearchFieldWrapper, {
+    SearchFieldWrapperStyles,
+} from "@insite/content-library/Widgets/OrderHistory/SearchFieldWrapper";
 import Select, { SelectProps } from "@insite/mobius/Select";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     return {
@@ -49,14 +50,19 @@ class OrderHistorySearchFieldOrderTotalOperator extends React.Component<Props> {
                     label={translate("Order Total")}
                     {...styles.select}
                     value={value}
-                    onChange={this.handleChange}>
+                    onChange={this.handleChange}
+                >
                     <option value="">{translate("Select")}</option>
-                    {this.orderTotalOperators.map(operator =>
-                        /* eslint-disable-next-line spire/avoid-dynamic-translate */ // our rule isn't smart enough for this
-                        <option key={operator} value={operator}>{translate(operator)}</option>,
-                    )}
+                    {this.orderTotalOperators.map(operator => (
+                        <option key={operator} value={operator}>
+                            {/* this is valid, our rule isn't smart enough to handle this case */}
+                            {/* eslint-disable-next-line spire/avoid-dynamic-translate */}
+                            {translate(operator)}
+                        </option>
+                    ))}
                 </Select>
-            </SearchFieldWrapper>);
+            </SearchFieldWrapper>
+        );
     }
 }
 

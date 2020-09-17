@@ -1,11 +1,11 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import TextArea from './TextArea';
-import DisablerContext from '../utilities/DisablerContext';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import TextArea from "./TextArea";
+import DisablerContext from "../utilities/DisablerContext";
 
-describe('TextArea', () => {
+describe("TextArea", () => {
     let props;
     let mountedWrapper;
     let disablerValue;
@@ -16,7 +16,7 @@ describe('TextArea', () => {
                     <DisablerContext.Provider value={disablerValue}>
                         <TextArea {...props} />
                     </DisablerContext.Provider>
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -27,11 +27,11 @@ describe('TextArea', () => {
         mountedWrapper = undefined;
     });
 
-    test('render a textarea', () => {
-        expect(wrapper().find('textarea')).toHaveLength(1);
+    test("render a textarea", () => {
+        expect(wrapper().find("textarea")).toHaveLength(1);
     });
 
-    describe('is appropriately disabled', () => {
+    describe("is appropriately disabled", () => {
         test("if DisablerContext is true", () => {
             disablerValue = { disable: true };
             expect(wrapper().find("textarea").prop("disabled")).toBe(true);

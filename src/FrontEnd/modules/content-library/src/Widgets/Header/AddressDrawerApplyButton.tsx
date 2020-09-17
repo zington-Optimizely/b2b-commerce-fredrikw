@@ -20,8 +20,21 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const { enableWarehousePickup } = getSettingsCollection(state).accountSettings;
-    const { fulfillmentMethod: currentFulfillmentMethod, isAuthenticated, isGuest, billToId, shipToId, pickUpWarehouse: currentPickUpWarehouse } = getSession(state);
-    const { fulfillmentMethod, selectedBillTo, selectedShipTo, isApplyingChanges, pickUpWarehouse } = state.components.addressDrawer;
+    const {
+        fulfillmentMethod: currentFulfillmentMethod,
+        isAuthenticated,
+        isGuest,
+        billToId,
+        shipToId,
+        pickUpWarehouse: currentPickUpWarehouse,
+    } = getSession(state);
+    const {
+        fulfillmentMethod,
+        selectedBillTo,
+        selectedShipTo,
+        isApplyingChanges,
+        pickUpWarehouse,
+    } = state.components.addressDrawer;
     const { value: currentBillTo } = getBillToState(state, billToId);
     const { value: currentShipTo } = getShipToState(state, shipToId);
     const isExistingUser = isAuthenticated && !isGuest;
@@ -31,8 +44,11 @@ const mapStateToProps = (state: ApplicationState) => {
     const isPickUpWarehouseChanged = pickUpWarehouse !== null && pickUpWarehouse !== currentPickUpWarehouse;
     return {
         showButton: currentFulfillmentMethod === FulfillmentMethod.Ship || enableWarehousePickup,
-        isEnabled: (isFulfillmentMethodChanged || isPickUpWarehouseChanged
-            || (isExistingUser && (isBillToChanged || isShipToChanged))) && !isApplyingChanges,
+        isEnabled:
+            (isFulfillmentMethodChanged ||
+                isPickUpWarehouseChanged ||
+                (isExistingUser && (isBillToChanged || isShipToChanged))) &&
+            !isApplyingChanges,
         isApplyingChanges,
     };
 };
@@ -52,7 +68,9 @@ export interface AddressDrawerApplyButtonStyles {
 
 export const addressDrawerApplyButtonStyles: AddressDrawerApplyButtonStyles = {
     gridItem: {
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
         width: 12,
     },
 };

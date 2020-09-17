@@ -10,7 +10,4 @@ export interface CustomBooleanTemplate extends BaseFieldDefinition<"CustomBoolea
 }
 
 // We need to extend the base FieldDefinition with any custom FieldDefinitions we are going to define
-export type CustomFieldDefinition =
-    FieldDefinition
-    | CustomTemplateDefinition
-    | CustomBooleanTemplate;
+export type CustomFieldDefinition = FieldDefinition | CustomTemplateDefinition | CustomBooleanTemplate;

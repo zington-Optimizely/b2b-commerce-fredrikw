@@ -10,7 +10,7 @@ interface Parameter {
 }
 
 interface Props {
-    getProductCollectionParameter?: GetProductCollectionApiV2Parameter,
+    getProductCollectionParameter?: GetProductCollectionApiV2Parameter;
     products?: ProductModel[];
     productInfos?: ProductInfo[];
 }
@@ -34,22 +34,24 @@ export const LoadFrequentlyPurchased: HandlerType = props => {
 };
 
 export const LoadProducts: HandlerType = props => {
-    const { getProductCollectionParameter, dispatch, parameter: { widgetId: id } } = props;
+    const {
+        getProductCollectionParameter,
+        dispatch,
+        parameter: { widgetId: id },
+    } = props;
     if (!getProductCollectionParameter) {
         return false;
     }
 
-    dispatch(loadProductInfoList({
-        getProductCollectionParameter,
-        id,
-    }));
+    dispatch(
+        loadProductInfoList({
+            getProductCollectionParameter,
+            id,
+        }),
+    );
 };
 
-export const chain = [
-    LoadRecentlyPurchased,
-    LoadFrequentlyPurchased,
-    LoadProducts,
-];
+export const chain = [LoadRecentlyPurchased, LoadFrequentlyPurchased, LoadProducts];
 
 const loadPurchasedProducts = createHandlerChainRunner(chain, "LoadPurchasedProducts");
 export default loadPurchasedProducts;

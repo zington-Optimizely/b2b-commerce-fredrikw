@@ -1,5 +1,13 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { ApiParameter, doesNotHaveExpand, get, HasPagingParameters, patch, post, ServiceResult } from "@insite/client-framework/Services/ApiService";
+import {
+    ApiParameter,
+    doesNotHaveExpand,
+    get,
+    HasPagingParameters,
+    patch,
+    post,
+    ServiceResult,
+} from "@insite/client-framework/Services/ApiService";
 import {
     OrderCollectionModel,
     OrderModel,
@@ -29,8 +37,7 @@ export interface GetOrderApiParameter extends ApiParameter {
     sTPostalCode?: string;
 }
 
-export interface GetOrderStatusMappingsApiParameter extends ApiParameter {
-}
+export interface GetOrderStatusMappingsApiParameter extends ApiParameter {}
 
 export interface UpdateOrderApiParameter extends ApiParameter {
     order: OrderModel;
@@ -43,7 +50,6 @@ export interface AddRmaApiParameter extends ApiParameter {
 const ordersUrl = "/api/v1/orders";
 
 export async function getOrders(parameter: GetOrdersApiParameter): Promise<OrderCollectionModel> {
-
     // can't send empty status array to API
     if (parameter.status && parameter.status.length === 0) {
         delete parameter.status;
@@ -61,7 +67,6 @@ export function getOrderStatusMappings(parameter: GetOrderStatusMappingsApiParam
 }
 
 export async function getOrder(parameter: GetOrderApiParameter): Promise<OrderModel> {
-
     const orderNumber = parameter.orderNumber;
     delete parameter.orderNumber;
 
@@ -80,7 +85,10 @@ export async function updateOrder(parameter: UpdateOrderApiParameter) {
 
 export async function addRma(parameter: AddRmaApiParameter): Promise<ServiceResult<RmaModel>> {
     try {
-        const rmaModel = await post<RmaModel>(`${ordersUrl}/${parameter.rmaModel.orderNumber}/returns`, parameter.rmaModel);
+        const rmaModel = await post<RmaModel>(
+            `${ordersUrl}/${parameter.rmaModel.orderNumber}/returns`,
+            parameter.rmaModel,
+        );
         return {
             successful: true,
             result: rmaModel,
@@ -96,7 +104,7 @@ export async function addRma(parameter: AddRmaApiParameter): Promise<ServiceResu
     }
 }
 
-function cleanOrder(orderModel: OrderModel, parameter?: { expand?: string[], additionalExpands?: string[] }) {
+function cleanOrder(orderModel: OrderModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     orderModel.orderDate = new Date(orderModel.orderDate);
 
     if (doesNotHaveExpand(parameter, "orderLines")) {

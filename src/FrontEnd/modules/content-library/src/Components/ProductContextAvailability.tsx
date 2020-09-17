@@ -8,20 +8,33 @@ interface OwnProps {
     extendedStyles?: ProductAvailabilityStyles;
 }
 
-const ProductContextAvailability = ({ productInfo, product, isProductDetailsPage, extendedStyles }: HasProduct & OwnProps) => {
+const ProductContextAvailability = ({
+    productInfo,
+    product,
+    isProductDetailsPage,
+    extendedStyles,
+}: HasProduct & OwnProps) => {
     const { inventory, unitOfMeasure } = productInfo;
 
-    const availability = inventory?.inventoryAvailabilityDtos
-        ?.find(o => o.unitOfMeasure.toLowerCase() === (unitOfMeasure?.toLowerCase() || ""))?.availability || undefined;
+    const availability =
+        inventory?.inventoryAvailabilityDtos?.find(
+            o => o.unitOfMeasure.toLowerCase() === (unitOfMeasure?.toLowerCase() || ""),
+        )?.availability || undefined;
 
-    return <ProductAvailability
-        productId={product.id}
-        trackInventory={product.trackInventory}
-        availability={availability}
-        unitOfMeasure={unitOfMeasure}
-        isProductDetailsPage={isProductDetailsPage}
-        extendedStyles={extendedStyles}
-    />;
+    if (product.isVariantParent) {
+        return null;
+    }
+
+    return (
+        <ProductAvailability
+            productId={product.id}
+            trackInventory={product.trackInventory}
+            availability={availability}
+            unitOfMeasure={unitOfMeasure}
+            isProductDetailsPage={isProductDetailsPage}
+            extendedStyles={extendedStyles}
+        />
+    );
 };
 
 export default withProduct(ProductContextAvailability);

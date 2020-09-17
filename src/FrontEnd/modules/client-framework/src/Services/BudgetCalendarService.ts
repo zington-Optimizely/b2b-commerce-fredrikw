@@ -10,5 +10,8 @@ export function getBudgetCalendarCollection() {
 }
 
 export function updateBudgetCalendar(parameter: UpdateBudgetCalendarApiParameter) {
-    return patch<BudgetCalendarModel>(`api/v1/budgetcalendars/${parameter.budgetCalendar.fiscalYear}`, parameter.budgetCalendar);
+    return patch<BudgetCalendarModel>(
+        `api/v1/budgetcalendars/${parameter.budgetCalendar.fiscalYear}`,
+        parameter.budgetCalendar,
+    );
 }

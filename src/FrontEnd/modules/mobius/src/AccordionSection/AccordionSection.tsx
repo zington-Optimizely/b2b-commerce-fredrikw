@@ -18,7 +18,7 @@ export interface AccordionSectionPresentationProps {
      * @themable */
     css?: StyledProp<AccordionSectionProps>;
     /** Props to be passed to the inner AccordionSectionHeader component.
-    * @themable */
+     * @themable */
     headerProps?: AccordionSectionHeaderProps;
     /** Props to be passed to the inner AccordionSectionPanel component.
      * @themable */
@@ -46,8 +46,8 @@ export interface AccordionSectionPresentationProps {
 }
 
 interface TimeoutProp {
-    enter: number,
-    exit: number,
+    enter: number;
+    exit: number;
 }
 
 export interface AccordionSectionComponentProps {
@@ -73,8 +73,9 @@ const IconPositioner = styled.span<IconWrapperProps>`
     ${injectCss}
 `;
 
-export interface AccordionSectionProps extends AccordionSectionComponentProps,
-    Omit<AccordionSectionPresentationProps, "headerProps"> { }
+export interface AccordionSectionProps
+    extends AccordionSectionComponentProps,
+        Omit<AccordionSectionPresentationProps, "headerProps"> {}
 
 type State = Pick<AccordionSectionProps, "expanded" | "uid">;
 type Props = AccordionSectionProps & ThemeProps<BaseTheme>;
@@ -84,7 +85,7 @@ class AccordionSection extends React.Component<Props, State> {
 
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
         let expanded: boolean | undefined = prevState.expanded || false;
-        if ("expanded" in nextProps && (prevState.expanded !== nextProps.expanded)) {
+        if ("expanded" in nextProps && prevState.expanded !== nextProps.expanded) {
             expanded = nextProps.expanded; // eslint-disable-line prefer-destructuring
         }
         return {
@@ -94,18 +95,24 @@ class AccordionSection extends React.Component<Props, State> {
     }
 
     togglePanel = () => {
-        this.setState(({ expanded }) => {
-            return { expanded: !expanded };
-        }, () => {
-            if (this.props.onTogglePanel) {
-                this.props.onTogglePanel(this.state.expanded ?? false);
-            }
-        });
+        this.setState(
+            ({ expanded }) => {
+                return { expanded: !expanded };
+            },
+            () => {
+                if (this.props.onTogglePanel) {
+                    this.props.onTogglePanel(this.state.expanded ?? false);
+                }
+            },
+        );
     };
 
     render() {
         const { children, title } = this.props;
-        const { spreadProps } = applyPropBuilder(this.props, { component: "accordion", propKey: "sectionDefaultProps" });
+        const { spreadProps } = applyPropBuilder(this.props, {
+            component: "accordion",
+            propKey: "sectionDefaultProps",
+        });
         const toggleIconProps = spreadProps("toggleIconProps");
         const collapseIconProps = spreadProps("collapseIconProps");
         const expandIconProps = spreadProps("expandIconProps");
@@ -117,11 +124,7 @@ class AccordionSection extends React.Component<Props, State> {
 
         let titleElement: React.ReactNode = title;
         if (typeof title === "string") {
-            titleElement = (
-                <Typography {...spreadProps("titleTypographyProps")}>
-                    {title}
-                </Typography>
-            );
+            titleElement = <Typography {...spreadProps("titleTypographyProps")}>{title}</Typography>;
         }
 
         return (
@@ -132,7 +135,7 @@ class AccordionSection extends React.Component<Props, State> {
                             headingLevel={headingLevel}
                             expanded={expanded}
                             data-test-selector="sectionHeader"
-                            data-test-key={(typeof title === "string" ? title : "")}
+                            data-test-key={typeof title === "string" ? title : ""}
                             {...spreadProps("headerProps")}
                         >
                             <button
@@ -142,16 +145,15 @@ class AccordionSection extends React.Component<Props, State> {
                                 onClick={this.togglePanel}
                             >
                                 {titleElement}
-                                {usesSingleIcon
-                                    ? <IconMemo
-                                        role="presentation"
-                                        className="toggle"
-                                        {...toggleIconProps}/>
-                                    : <IconPositioner
+                                {usesSingleIcon ? (
+                                    <IconMemo role="presentation" className="toggle" {...toggleIconProps} />
+                                ) : (
+                                    <IconPositioner
                                         _size={toggleIconProps.size || 24}
                                         _height={toggleIconProps.height}
                                         _width={toggleIconProps.width}
-                                        css={toggleTransition.positionerCss}>
+                                        css={toggleTransition.positionerCss}
+                                    >
                                         <TransitionIcon
                                             isIn={!!expanded}
                                             css={toggleTransition.transitionCss}
@@ -173,7 +175,7 @@ class AccordionSection extends React.Component<Props, State> {
                                             }}
                                         />
                                     </IconPositioner>
-                                }
+                                )}
                             </button>
                         </AccordionSectionHeader>
                         <AccordionSectionPanel
@@ -193,8 +195,8 @@ class AccordionSection extends React.Component<Props, State> {
 }
 
 const TransitionManager = styled.span<{
-    transitionState: TransitionStatus,
-    css?: StyledProp<{ transitionState: TransitionStatus }>,
+    transitionState: TransitionStatus;
+    css?: StyledProp<{ transitionState: TransitionStatus }>;
 }>`
     position: absolute;
     bottom: -3px;
@@ -202,15 +204,15 @@ const TransitionManager = styled.span<{
     transition: all ease-in-out 250ms;
     ${({ transitionState }) => {
         switch (transitionState) {
-        case "entering":
-            return "opacity: 0;";
-        case "entered":
-            return "opacity: 1;";
-        case "exiting":
-        case "exited":
-            return "opacity: 0;";
-        default:
-            return "";
+            case "entering":
+                return "opacity: 0;";
+            case "entered":
+                return "opacity: 1;";
+            case "exiting":
+            case "exited":
+                return "opacity: 0;";
+            default:
+                return "";
         }
     }}
     ${injectCss}
@@ -222,20 +224,22 @@ const TransitionIcon = ({
     css,
     timeout,
 }: {
-    isIn: boolean,
-    iconProps: IconProps,
-    timeout: TimeoutProp,
-    css: StyledProp<{ transitionState: TransitionStatus }>,
+    isIn: boolean;
+    iconProps: IconProps;
+    timeout: TimeoutProp;
+    css: StyledProp<{ transitionState: TransitionStatus }>;
 }) => {
     return (
         <Transition
             mountOnEnter
             unmountOnExit
             in={isIn}
-            timeout={timeout ?? {
-                enter: 75,
-                exit: 250,
-            }}
+            timeout={
+                timeout ?? {
+                    enter: 75,
+                    exit: 250,
+                }
+            }
         >
             {state => (
                 <TransitionManager transitionState={state} css={css}>
@@ -246,6 +250,6 @@ const TransitionIcon = ({
     );
 };
 
-
+// withTheme is currently incompatible with getDerivedStateFromProps, as unknown as FunctionComponent to get typescript to understand that this can have children
 /** @component */
-export default withTheme(AccordionSection as React.ComponentType<Props>); // withTheme is currently incompatible with getDerivedStateFromProps
+export default withTheme((AccordionSection as unknown) as React.FunctionComponent<Props>);

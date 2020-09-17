@@ -3,9 +3,13 @@ import { HasProductContext, withProductContext } from "@insite/client-framework/
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAddToListLink, {
+    ProductAddToListLinkStyles,
+} from "@insite/content-library/Components/ProductAddToListLink";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import ProductQuantityBreakPricing, {
+    ProductQuantityBreakPricingStyles,
+} from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -25,10 +29,12 @@ const mapStateToProps = (state: ApplicationState) => ({
     productSettings: getSettingsCollection(state).productSettings,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
-type Props = ReturnType<typeof mapStateToProps> & HasProductContext & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> &
+    HasProductContext &
+    ResolveThunks<typeof mapDispatchToProps> &
+    OwnProps;
 
 export interface ProductListActionsStyles {
     wrapper?: InjectableCss;
@@ -52,12 +58,16 @@ export const actionsStyles: ProductListActionsStyles = {
     },
     unitOfMeasureSelect: {
         cssOverrides: {
-            formField: css` margin-top: 20px; `,
+            formField: css`
+                margin-top: 20px;
+            `,
         },
     },
     quantityBreakPricing: {
         viewLink: {
-            css: css` margin: 8px 0; `,
+            css: css`
+                margin: 8px 0;
+            `,
         },
     },
     addToCartWrapper: {
@@ -67,7 +77,11 @@ export const actionsStyles: ProductListActionsStyles = {
             margin-top: 10px;
         `,
     },
-    addToCartButton: { css: css` width: 80%; ` },
+    addToCartButton: {
+        css: css`
+            width: 80%;
+        `,
+    },
     quantityOrdered: {
         cssOverrides: {
             formField: css`
@@ -87,38 +101,38 @@ export const actionsStyles: ProductListActionsStyles = {
 
 const styles = actionsStyles;
 
-const ProductListActions: FC<Props> = (
-    {
-        productContext,
-        productSettings,
-        showPrice,
-        showAddToList,
-    }) => {
-
+const ProductListActions: FC<Props> = ({ productContext, productSettings, showPrice, showAddToList }) => {
     return (
         <StyledWrapper {...styles.wrapper}>
-            {showPrice
-                && <>
+            {showPrice && (
+                <>
                     <ProductPrice
                         product={productContext}
                         showLabel={false}
                         showSavings={true}
                         showSavingsAmount={productSettings.showSavingsAmount}
                         showSavingsPercent={productSettings.showSavingsPercent}
-                        extendedStyles={styles.price} />
+                        extendedStyles={styles.price}
+                    />
                     <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing} />
                 </>
-            }
+            )}
             <ProductUnitOfMeasureSelect extendedStyles={styles.unitOfMeasureSelect} />
             <StyledWrapper {...styles.addToCartWrapper}>
                 <ProductQuantityOrdered extendedStyles={styles.quantityOrdered} />
-                <ProductAddToCartButton data-test-selector={`actionsAddToCart${productContext.product.id}`} extendedStyles={styles.addToCartButton} />
+                <ProductAddToCartButton
+                    data-test-selector={`actionsAddToCart${productContext.product.id}`}
+                    extendedStyles={styles.addToCartButton}
+                />
             </StyledWrapper>
-            {showAddToList
-                && <StyledWrapper {...styles.addToListWrapper}>
-                    <ProductAddToListLink data-test-selector={`actionsAddToList${productContext.product.id}`} extendedStyles={styles.addToListLink} />
+            {showAddToList && (
+                <StyledWrapper {...styles.addToListWrapper}>
+                    <ProductAddToListLink
+                        data-test-selector={`actionsAddToList${productContext.product.id}`}
+                        extendedStyles={styles.addToListLink}
+                    />
                 </StyledWrapper>
-            }
+            )}
         </StyledWrapper>
     );
 };

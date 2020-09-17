@@ -28,22 +28,38 @@ export const logoLinksSearchStyles: LogoLinksSearchStyles = {
             padding: 20px 45px;
             margin: 0 24px;
             ${({ theme }) => {
-                return breakpointMediaQueries(theme, [null, null, css` flex-grow: 1; `, null, null], "max");
+                return breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        null,
+                        css`
+                            flex-grow: 1;
+                        `,
+                        null,
+                        null,
+                    ],
+                    "max",
+                );
             }}
             img {
                 height: 78px;
                 ${({ theme }) => {
-                    return breakpointMediaQueries(theme, [
-                        null,
-                        null,
-                        css`
-                            height: 42px;
-                            width: auto;
-                            margin: 0;
-                        `,
-                        null,
-                        null,
-                    ], "max");
+                    return breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            null,
+                            css`
+                                height: 42px;
+                                width: auto;
+                                margin: 0;
+                            `,
+                            null,
+                            null,
+                        ],
+                        "max",
+                    );
                 }}
             }
         `,
@@ -53,7 +69,21 @@ export const logoLinksSearchStyles: LogoLinksSearchStyles = {
             text-align: right;
             padding: 20px 45px;
             ${({ theme }) => {
-                return breakpointMediaQueries(theme, [null, css` display: none; `, css` flex-grow: 8; `, null, null], "max");
+                return breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            display: none;
+                        `,
+                        css`
+                            flex-grow: 8;
+                        `,
+                        null,
+                        null,
+                    ],
+                    "max",
+                );
             }}
         `,
     },
@@ -65,13 +95,13 @@ export const logoLinksSearchStyles: LogoLinksSearchStyles = {
 const LogoLinksSearch: React.FC<PageProps> = ({ id }) => (
     <StyledWrapper {...logoLinksSearchStyles.container}>
         <StyledWrapper {...logoLinksSearchStyles.logoWrapper}>
-            <Zone contentId={id} zoneName="Logo" fixed/>
+            <Zone contentId={id} zoneName="Logo" fixed />
         </StyledWrapper>
         <StyledWrapper {...logoLinksSearchStyles.searchMenuWrapper}>
             <Hidden {...logoLinksSearchStyles.linkListHidden}>
-                <Zone contentId={id} zoneName="LinkList" fixed/>
+                <Zone contentId={id} zoneName="LinkList" fixed />
             </Hidden>
-            <Zone contentId={id} zoneName="Search" fixed/>
+            <Zone contentId={id} zoneName="Search" fixed />
         </StyledWrapper>
     </StyledWrapper>
 );

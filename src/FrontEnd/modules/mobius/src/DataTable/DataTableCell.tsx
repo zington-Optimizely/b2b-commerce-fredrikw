@@ -10,7 +10,10 @@ export interface DataTableCellProps extends DataTableCellBaseProps {
 }
 
 const DataTableCell: React.FC<DataTableCellProps> = ({
-    css: cellCss = "", children, typographyProps, ...otherProps
+    css: cellCss = "",
+    children,
+    typographyProps,
+    ...otherProps
 }) => (
     <DataTableContext.Consumer>
         {({ _cssOverrides, cellTypographyProps }) => (
@@ -21,9 +24,13 @@ const DataTableCell: React.FC<DataTableCellProps> = ({
                 `}
                 {...otherProps}
             >
-                {typeof children === "string"
-                    ? <Typography {...cellTypographyProps} {...typographyProps}>{children}</Typography>
-                    : children}
+                {typeof children === "string" ? (
+                    <Typography {...cellTypographyProps} {...typographyProps}>
+                        {children}
+                    </Typography>
+                ) : (
+                    children
+                )}
             </DataTableCellBase>
         )}
     </DataTableContext.Consumer>

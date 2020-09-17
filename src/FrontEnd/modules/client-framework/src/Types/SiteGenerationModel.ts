@@ -15,3 +15,8 @@ export interface SiteGenerationModel {
     home: RootGenerationModel;
     footer: RootGenerationModel;
 }
+
+export interface TemplateInfo {
+    fullPath: string;
+    name: string;
+}

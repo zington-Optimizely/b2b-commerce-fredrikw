@@ -25,7 +25,8 @@ import uniqueId from "../utilities/uniqueId";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 import filter from "./filter";
 
-export interface DynamicDropdownPresentationProps extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {
+export interface DynamicDropdownPresentationProps
+    extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable */
     cssOverrides?: Pick<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> & {
@@ -114,21 +115,27 @@ interface DynamicDropdownState {
     typedInput: string;
 }
 
-type OptionProps = MobiusStyledComponentPropsWithRef<"div", { ref?: React.RefObject<HTMLDivElement> }, {
-    _sizeVariant: FormFieldSizeVariant,
-    focused?: boolean,
-    disabled?: boolean,
-    selected?: boolean,
-    noHover?: boolean,
-    css?: StyledProp<any>,
-    key: string,
-    value: string,
-    uid?: string,
-    onClick?: (value: string) => void,
-    "aria-selected"?: boolean,
-}>;
+type OptionProps = MobiusStyledComponentPropsWithRef<
+    "div",
+    { ref?: React.RefObject<HTMLDivElement> },
+    {
+        _sizeVariant: FormFieldSizeVariant;
+        focused?: boolean;
+        disabled?: boolean;
+        selected?: boolean;
+        noHover?: boolean;
+        css?: StyledProp<any>;
+        key: string;
+        value: string;
+        uid?: string;
+        onClick?: (value: string) => void;
+        "aria-selected"?: boolean;
+    }
+>;
 
-export type DynamicDropdownProps = DynamicDropdownPresentationProps & DynamicDropdownComponentProps & ThemeProps<BaseTheme>;
+export type DynamicDropdownProps = DynamicDropdownPresentationProps &
+    DynamicDropdownComponentProps &
+    ThemeProps<BaseTheme>;
 
 const ESC_KEY = 27;
 const DOWN_KEY = 40;
@@ -144,9 +151,7 @@ const scrollTo = (el: HTMLElement, top: number) => {
 const Option = styled.div<OptionProps>`
     padding: ${({ _sizeVariant }) => (_sizeVariant === "small" ? "5px 0 5px 11px" : "9px 0 9px 11px")};
     font-size: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].fontSize}px;
-    ${({
-        focused, disabled, selected, theme, noHover,
-    }) => {
+    ${({ focused, disabled, selected, theme, noHover }) => {
         let background = get(theme, "colors.common.background");
         let text = get(theme, "colors.common.backgroundContrast");
         const primary = get(theme, "colors.primary.main");
@@ -163,7 +168,9 @@ const Option = styled.div<OptionProps>`
         return css`
             background: ${background};
             color: ${text};
-            ${(!disabled && !noHover) && `&:hover {
+            ${!disabled &&
+            !noHover &&
+            `&:hover {
                 background: ${hover};
                 color: ${get(theme, "colors.common.backgroundContrast")};
             }`}
@@ -188,10 +195,9 @@ const SelectedText = styled(Typography as any)<SizeVariant>`
     ${injectCss}
 `;
 
-const listCssBuilder = (
-    additionalCss: StyledProp<ContentBodyProps>,
-    sizeVariant: FormFieldSizeVariant,
-) => css<ContentBodyProps>`
+const listCssBuilder = (additionalCss: StyledProp<ContentBodyProps>, sizeVariant: FormFieldSizeVariant) => css<
+    ContentBodyProps
+>`
     background: ${getColor("common.background")};
     border: 1px solid ${getColor("common.border")};
     padding-left: 0;
@@ -216,7 +222,10 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
 
     constructor(props: DynamicDropdownProps & HasDisablerContext) {
         super(props);
-        const { applyProp, spreadProps } = applyPropBuilder(props, { component: "dynamicDropdown", category: "formField" });
+        const { applyProp, spreadProps } = applyPropBuilder(props, {
+            component: "dynamicDropdown",
+            category: "formField",
+        });
         this.spreadProps = spreadProps;
         this.sizeVariant = applyProp("sizeVariant", "default");
         this.state = {
@@ -237,7 +246,8 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
 
     popover = React.createRef<typeof Popover>();
 
-    UNSAFE_componentWillReceiveProps(nextProps: DynamicDropdownProps) { // eslint-disable-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps: DynamicDropdownProps) {
+        // eslint-disable-line camelcase
         if (nextProps.selected !== this.props.selected) {
             this.setState({ selected: nextProps.selected });
         }
@@ -256,14 +266,19 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
 
     buildMenuOptions = () => {
         if (!this.props.isLoading) {
-            this.setState(
-                prevState => this.props.options.reduce<{ focusable: OptionObject[], renderOptions: JSX.Element[] }>(
+            this.setState(prevState =>
+                this.props.options.reduce<{ focusable: OptionObject[]; renderOptions: JSX.Element[] }>(
                     (menuState, option) => {
                         const { disabled, optionText } = option;
                         const optionValue = option.optionValue || optionText;
                         const searchString = option.searchString || optionText;
 
-                        if (this.props.filterOption && !this.props.filterOption({ searchString, optionText }, prevState.typedInput)) return menuState;
+                        if (
+                            this.props.filterOption &&
+                            !this.props.filterOption({ searchString, optionText }, prevState.typedInput)
+                        ) {
+                            return menuState;
+                        }
 
                         const isFocused = prevState.focusedOption === option;
                         const selected = prevState.selected === optionValue;
@@ -278,8 +293,12 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                             css: this.spreadProps("cssOverrides").option,
                             onClick: disabled ? undefined : () => this.clickToSelect(optionValue),
                         };
-                        if (isFocused) newProps.ref = this.focused;
-                        if (selected) newProps["aria-selected"] = true;
+                        if (isFocused) {
+                            newProps.ref = this.focused;
+                        }
+                        if (selected) {
+                            newProps["aria-selected"] = true;
+                        }
 
                         menuState.focusable.push(option);
                         menuState.renderOptions.push(<Option {...newProps}>{option.rowChildren || optionText}</Option>);
@@ -287,7 +306,8 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                         return menuState;
                     },
                     { focusable: [], renderOptions: [] },
-            ));
+                ),
+            );
         }
     };
 
@@ -319,31 +339,29 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
         }
         event.stopPropagation();
         switch (event.keyCode) {
-        case DOWN_KEY:
-            this.moveFocus("next");
-            break;
-        case UP_KEY:
-            this.moveFocus("prior");
-            break;
-        case TAB_KEY:
-            this.handleImplicitSelection("tab");
-            break;
-        case ENTER_KEY:
-            this.handleImplicitSelection("enter");
-            break;
-        case ESC_KEY:
-            // being handled in the popover;
-            break;
-        default:
-            break;
+            case DOWN_KEY:
+                this.moveFocus("next");
+                break;
+            case UP_KEY:
+                this.moveFocus("prior");
+                break;
+            case TAB_KEY:
+                this.handleImplicitSelection("tab");
+                break;
+            case ENTER_KEY:
+                this.handleImplicitSelection("enter");
+                break;
+            case ESC_KEY:
+                // being handled in the popover;
+                break;
+            default:
+                break;
         }
     };
 
     handleImplicitSelection = (eventType: "tab" | "enter") => {
         this.setState(
-            ({
-                focusable, focusedOption, typedInput, selected,
-            }) => {
+            ({ focusable, focusedOption, typedInput, selected }) => {
                 const newState = { selected, typedInput: "" };
                 let exactMatch = null;
                 if (focusable.length > 1 && typedInput !== "") {
@@ -373,29 +391,25 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
 
     moveFocus = (direction: "prior" | "next") => {
         !this.state.isOpen && this.openDropdown(undefined, true);
-        this.setState(
-            ({ focusedOption, focusable }) => {
-                const focusableQueue = direction === "prior" ? focusable.reverse() : focusable;
-                const focusedIndex = focusableQueue.indexOf(focusedOption as OptionObject);
-                const newFocusedOption = focusableQueue.find((option, index) => index > focusedIndex && !option.disabled)
-                    || focusableQueue[0];
-                return { focusedOption: newFocusedOption };
-            },
-            this.buildMenuOptions,
-        );
+        this.setState(({ focusedOption, focusable }) => {
+            const focusableQueue = direction === "prior" ? focusable.reverse() : focusable;
+            const focusedIndex = focusableQueue.indexOf(focusedOption as OptionObject);
+            const newFocusedOption =
+                focusableQueue.find((option, index) => index > focusedIndex && !option.disabled) || focusableQueue[0];
+            return { focusedOption: newFocusedOption };
+        }, this.buildMenuOptions);
     };
 
     openDropdown = (event?: Event, callParentOpen = false) => {
         callParentOpen && this.popover.current && (this.popover.current! as any).openPopover();
         this.setState(
             ({ focusable, selected }) => {
-                const newState: Pick<
-                    DynamicDropdownState, "isOpen" | "focusedOption"
-                > = { isOpen: true };
+                const newState: Pick<DynamicDropdownState, "isOpen" | "focusedOption"> = { isOpen: true };
                 // eslint-disable-next-line arrow-body-style
-                selected && (newState.focusedOption = focusable.find(({ optionText, optionValue }) => {
-                    return optionValue ? optionValue === selected : optionText === selected;
-                }));
+                selected &&
+                    (newState.focusedOption = focusable.find(({ optionText, optionValue }) => {
+                        return optionValue ? optionValue === selected : optionText === selected;
+                    }));
                 return newState;
             },
             () => {
@@ -438,7 +452,10 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
             const rowHeight = sizeVariantValues[this.sizeVariant].height;
             const heightOfRows = (this.state.focusable.length + 0.5 + (this.props.moreOption ? 1 : 0)) * rowHeight;
             const listHeight = heightOfRows > 250 ? 250 : heightOfRows;
-            window.scrollTo({ top: bottomOfInput + listHeight + 10 - windowHeight + window.pageYOffset, behavior: "smooth" });
+            window.scrollTo({
+                top: bottomOfInput + listHeight + 10 - windowHeight + window.pageYOffset,
+                behavior: "smooth",
+            });
         }
     };
 
@@ -459,17 +476,22 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
             hideNoOptionsIfEmptySearch,
             ...otherProps
         } = this.props;
-        const {
-            isOpen, focusedOption, uid, typedInput, renderOptions, selected,
-        } = this.state;
+        const { isOpen, focusedOption, uid, typedInput, renderOptions, selected } = this.state;
 
         const {
-            dropdownWrapper, loading, list, moreOption: moreOptionCss, noOptions, option, selectedText, ..._cssOverrides
+            dropdownWrapper,
+            loading,
+            list,
+            moreOption: moreOptionCss,
+            noOptions,
+            option,
+            selectedText,
+            ..._cssOverrides
         } = this.spreadProps("cssOverrides");
 
         // Because disabled html attribute doesn't accept undefined
         // eslint-disable-next-line no-unneeded-ternary
-        const isDisabled = (disable || disabled) ? true : false;
+        const isDisabled = disable || disabled ? true : false;
         const listboxId = `${uid}-listbox`;
         const descriptionId = `${uid}-description`;
         const labelId = `${uid}-label`;
@@ -477,14 +499,25 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
         const hasDescription = error || hint;
 
         let renderList: JSX.Element[] = [
-            <Option css={noOptions || option} noHover _sizeVariant={this.sizeVariant} data-id="no-options" key="no-options" value="no-options">
+            <Option
+                css={noOptions || option}
+                noHover
+                _sizeVariant={this.sizeVariant}
+                data-id="no-options"
+                key="no-options"
+                value="no-options"
+            >
                 {theme.translate("No Options")}
             </Option>,
         ];
         if (isLoading) {
             renderList = [
                 <Option css={loading || option} noHover _sizeVariant={this.sizeVariant} key="loading" value="loading">
-                    <LoadingSpinner size={sizeVariantValues[this.sizeVariant].icon} color="text.disabled" {...this.spreadProps("spinnerProps")}/>
+                    <LoadingSpinner
+                        size={sizeVariantValues[this.sizeVariant].icon}
+                        color="text.disabled"
+                        {...this.spreadProps("spinnerProps")}
+                    />
                 </Option>,
             ];
         } else if (renderOptions && renderOptions.length > 0) {
@@ -519,32 +552,43 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 disabled={isDisabled}
                 data-test-selector={`${(otherProps as any)["data-test-selector"]}-input`}
                 {...inputLabelObj}
-            />);
+            />
+        );
 
-        const triggerSiblings = (<>
-            {typedInput
-                ? null
-                : <SelectedText _sizeVariant={this.sizeVariant} css={selectedText} data-test-selector={`${(otherProps as any)["data-test-selector"]}-selectedText`}>{selectedString}</SelectedText>
-            }
-            <VisuallyHidden>{isOpen ? theme.translate("hide options") : theme.translate("show options")}</VisuallyHidden>
-            <FormFieldIcon {...this.spreadProps("iconProps")} />
-        </>);
+        const triggerSiblings = (
+            <>
+                {typedInput ? null : (
+                    <SelectedText
+                        _sizeVariant={this.sizeVariant}
+                        css={selectedText}
+                        data-test-selector={`${(otherProps as any)["data-test-selector"]}-selectedText`}
+                    >
+                        {selectedString}
+                    </SelectedText>
+                )}
+                <VisuallyHidden>
+                    {isOpen ? theme.translate("hide options") : theme.translate("show options")}
+                </VisuallyHidden>
+                <FormFieldIcon {...this.spreadProps("iconProps")} />
+            </>
+        );
 
         const comboBox = (
-                <Popover
-                    ref={this.popover as any}
-                    controlsId={listboxId}
-                    onOpen={this.openDropdown}
-                    onClose={this.closeDropdown}
-                    handleKeyDown={this.handleKeyDown}
-                    popoverTrigger={popoverTrigger}
-                    triggerSiblings={triggerSiblings}
-                    transitionDuration="short"
-                    xPosition="start"
-                    zIndexKey="dynamicDropdown"
-                    shadowDepth={1}
-                    insideRefs={[this.list, this.input]}
-                    wrapperProps={{
+            <Popover
+                ref={this.popover as any}
+                controlsId={listboxId}
+                onOpen={this.openDropdown}
+                onClose={this.closeDropdown}
+                handleKeyDown={this.handleKeyDown}
+                popoverTrigger={popoverTrigger}
+                triggerSiblings={triggerSiblings}
+                transitionDuration="short"
+                xPosition="start"
+                zIndexKey="dynamicDropdown"
+                shadowDepth={1}
+                insideRefs={[this.list, this.input]}
+                wrapperProps={
+                    {
                         as: "div",
                         role: "combobox",
                         "aria-owns": uid,
@@ -554,25 +598,33 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                         ref: this.input,
                         _width: "unset",
                         _height: "unset",
-                    } as OverflowWrapperProps}
-                    contentBodyProps={{
+                    } as OverflowWrapperProps
+                }
+                contentBodyProps={
+                    {
                         ref: this.list,
                         id: listboxId,
                         role: "listbox",
                         "aria-labelledby": labelId,
                         css: listCssBuilder(list, this.sizeVariant) as any,
                         width: 400,
-
-                    } as ContentBodyProps}
-                    data-test-selector={`${(otherProps as any)["data-test-selector"]}-listbox`}
-                >
-                    {renderList}
-                    {!isLoading && moreOption
-                        ? <Option key="more" css={moreOptionCss || option} noHover _sizeVariant={this.sizeVariant} value="more options">
-                            {moreOption}
-                        </Option>
-                        : null}
-                </Popover>
+                    } as ContentBodyProps
+                }
+                data-test-selector={`${(otherProps as any)["data-test-selector"]}-listbox`}
+            >
+                {renderList}
+                {!isLoading && moreOption ? (
+                    <Option
+                        key="more"
+                        css={moreOptionCss || option}
+                        noHover
+                        _sizeVariant={this.sizeVariant}
+                        value="more options"
+                    >
+                        {moreOption}
+                    </Option>
+                ) : null}
+            </Popover>
         );
         return (
             <FormField

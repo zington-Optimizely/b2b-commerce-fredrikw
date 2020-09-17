@@ -2,10 +2,14 @@ import Zone from "@insite/client-framework/Components/Zone";
 import {
     ExcludeFromNavigation,
     ExcludeFromSignInRequired,
-    HideFooter, HideFromSearchEngines, HideFromSiteSearch,
-    HideHeader, HorizontalRule,
+    HideFooter,
+    HideFromSearchEngines,
+    HideFromSiteSearch,
+    HideHeader,
+    HorizontalRule,
     MetaDescription,
-    MetaKeywords, OpenGraphImage,
+    MetaKeywords,
+    OpenGraphImage,
     OpenGraphTitle,
     OpenGraphUrl,
 } from "@insite/client-framework/Types/FieldDefinition";

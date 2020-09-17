@@ -44,14 +44,18 @@ export interface InvoiceDetailsInformationStyles {
 
 export const informationStyles: InvoiceDetailsInformationStyles = {
     invoiceInformationGridContainer: {
-        css: css` padding: 5px; `,
+        css: css`
+            padding: 5px;
+        `,
     },
     headingAndTextStyles: {
         heading: {
             variant: "h6",
             as: "h2",
             css: css`
-                @media print { font-size: 12px; }
+                @media print {
+                    font-size: 12px;
+                }
                 margin-bottom: 5px;
             `,
         },
@@ -60,7 +64,11 @@ export const informationStyles: InvoiceDetailsInformationStyles = {
         width: 12,
     },
     invoiceInformationGridItems: {
-        css: css` @media print { padding: 5px !important; } `,
+        css: css`
+            @media print {
+                padding: 5px !important;
+            }
+        `,
     },
     statusGridItem: {
         width: [6, 6, 6, 3, 3],
@@ -103,7 +111,11 @@ const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
             <GridItem {...styles.informationGridItem}>
                 <GridContainer {...styles.informationGridContainer}>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.statusGridItem)}>
-                        <SmallHeadingAndText extendedStyles={styles.headingAndTextStyles} heading={translate("Status")} text={invoice.status} />
+                        <SmallHeadingAndText
+                            extendedStyles={styles.headingAndTextStyles}
+                            heading={translate("Status")}
+                            text={invoice.status}
+                        />
                     </GridItem>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.invoiceDateGridItem)}>
                         <SmallHeadingAndText
@@ -112,16 +124,29 @@ const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
                             text={getLocalizedDateTime({
                                 dateTime: new Date(invoice.invoiceDate),
                                 language,
-                            })} />
+                            })}
+                        />
                     </GridItem>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.salespersonGridItem)}>
-                        <SmallHeadingAndText extendedStyles={styles.headingAndTextStyles} heading={translate("Salesperson")} text={invoice.salesperson} />
+                        <SmallHeadingAndText
+                            extendedStyles={styles.headingAndTextStyles}
+                            heading={translate("Salesperson")}
+                            text={invoice.salesperson}
+                        />
                     </GridItem>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.termsGridItem)}>
-                        <SmallHeadingAndText extendedStyles={styles.headingAndTextStyles} heading={translate("Terms")} text={invoice.terms} />
+                        <SmallHeadingAndText
+                            extendedStyles={styles.headingAndTextStyles}
+                            heading={translate("Terms")}
+                            text={invoice.terms}
+                        />
                     </GridItem>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.poNumberGridItem)}>
-                        <SmallHeadingAndText extendedStyles={styles.headingAndTextStyles} heading={translate("PO Number")} text={invoice.customerPO} />
+                        <SmallHeadingAndText
+                            extendedStyles={styles.headingAndTextStyles}
+                            heading={translate("PO Number")}
+                            text={invoice.customerPO}
+                        />
                     </GridItem>
                     <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.dueDateGridItem)}>
                         <SmallHeadingAndText
@@ -130,7 +155,8 @@ const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
                             text={getLocalizedDateTime({
                                 dateTime: new Date(invoice.dueDate),
                                 language,
-                            })} />
+                            })}
+                        />
                     </GridItem>
                 </GridContainer>
             </GridItem>
@@ -140,11 +166,15 @@ const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
             <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.shippingAddressGridItem)}>
                 <InvoiceDetailsShippingAddress invoice={invoice} extendedStyles={styles.shippingAddressStyle} />
             </GridItem>
-            {invoice.notes
-                && <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.invoiceNotesGridItem)}>
-                    <SmallHeadingAndText extendedStyles={styles.headingAndTextStyles} heading={translate("Invoice Notes")} text={invoice.notes} />
+            {invoice.notes && (
+                <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.invoiceNotesGridItem)}>
+                    <SmallHeadingAndText
+                        extendedStyles={styles.headingAndTextStyles}
+                        heading={translate("Invoice Notes")}
+                        text={invoice.notes}
+                    />
                 </GridItem>
-            }
+            )}
         </GridContainer>
     );
 };

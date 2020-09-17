@@ -1,4 +1,8 @@
-import { createHandlerChainRunnerOptionalParameter, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunnerOptionalParameter,
+    Handler,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
@@ -12,13 +16,16 @@ import loadShipTos from "@insite/client-framework/Store/Pages/Addresses/Handlers
 import { BillToModel, CountryModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
 
-type HandlerType = Handler<{}, {
-    cart: Cart;
-    billTo: BillToModel;
-    shipTo: ShipToModel;
-    country: CountryModel | undefined;
-    shipTos: ShipToModel[];
-}>;
+type HandlerType = Handler<
+    {},
+    {
+        cart: Cart;
+        billTo: BillToModel;
+        shipTo: ShipToModel;
+        country: CountryModel | undefined;
+        shipTos: ShipToModel[];
+    }
+>;
 
 export const SetCart: HandlerType = props => {
     const state = props.getState();
@@ -103,7 +110,11 @@ export const LoadShipTos: HandlerType = async props => {
 };
 
 export const DispatchSetLastSelectedShipTo: HandlerType = props => {
-    const { pages: { checkoutShipping: { useOneTimeAddress } } } = props.getState();
+    const {
+        pages: {
+            checkoutShipping: { useOneTimeAddress },
+        },
+    } = props.getState();
     if (useOneTimeAddress) {
         return;
     }
@@ -116,7 +127,11 @@ export const DispatchSetLastSelectedShipTo: HandlerType = props => {
 
 export const ValidateBillingAddress: HandlerType = async ({ dispatch, getState, billTo }) => {
     const state = getState();
-    const { pages: { checkoutShipping: { billingAddressFormState } } } = state;
+    const {
+        pages: {
+            checkoutShipping: { billingAddressFormState },
+        },
+    } = state;
     if (!billingAddressFormState) {
         return;
     }
@@ -126,7 +141,9 @@ export const ValidateBillingAddress: HandlerType = async ({ dispatch, getState, 
         addressFieldsDataView = getAddressFieldsDataView(state);
     }
 
-    const awaitableValidate = makeHandlerChainAwaitable<Parameters<typeof validateAddress>[0], AddressErrors>(validateAddress);
+    const awaitableValidate = makeHandlerChainAwaitable<Parameters<typeof validateAddress>[0], AddressErrors>(
+        validateAddress,
+    );
     const billingAddressErrors = await awaitableValidate({
         address: billTo,
         validationRules: billTo.validation!,
@@ -142,7 +159,9 @@ export const ValidateBillingAddress: HandlerType = async ({ dispatch, getState, 
 
 export const ValidateShippingAddress: HandlerType = async ({ dispatch, getState, shipTo }) => {
     const state = getState();
-    const { context: { session } } = state;
+    const {
+        context: { session },
+    } = state;
     if (session.fulfillmentMethod === FulfillmentMethod.PickUp) {
         return;
     }
@@ -152,7 +171,9 @@ export const ValidateShippingAddress: HandlerType = async ({ dispatch, getState,
         addressFieldsDataView = getAddressFieldsDataView(state);
     }
 
-    const awaitableValidate = makeHandlerChainAwaitable<Parameters<typeof validateAddress>[0], AddressErrors>(validateAddress);
+    const awaitableValidate = makeHandlerChainAwaitable<Parameters<typeof validateAddress>[0], AddressErrors>(
+        validateAddress,
+    );
     const shippingAddressErrors = await awaitableValidate({
         address: shipTo,
         validationRules: shipTo.validation!,

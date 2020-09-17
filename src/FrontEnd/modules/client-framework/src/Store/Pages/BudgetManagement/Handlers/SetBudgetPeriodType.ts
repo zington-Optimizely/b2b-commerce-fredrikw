@@ -36,41 +36,39 @@ export const AssignCalendar: HandlerType = props => {
     let periodCount = 12;
     let step = 1;
     switch (budgetPeriodType) {
-    case BudgetPeriodType.Monthly:
-        periodCount = 12;
-        step = 1;
-        break;
-    case BudgetPeriodType.Quarterly:
-        periodCount = 4;
-        step = 3;
-        break;
-    case BudgetPeriodType.Yearly:
-        periodCount = 1;
-        step = 12;
-        break;
-    case BudgetPeriodType.Custom:
-        periodCount = customBudgetPeriodNumber || 1;
-        step = 1;
-        break;
+        case BudgetPeriodType.Monthly:
+            periodCount = 12;
+            step = 1;
+            break;
+        case BudgetPeriodType.Quarterly:
+            periodCount = 4;
+            step = 3;
+            break;
+        case BudgetPeriodType.Yearly:
+            periodCount = 1;
+            step = 12;
+            break;
+        case BudgetPeriodType.Custom:
+            periodCount = customBudgetPeriodNumber || 1;
+            step = 1;
+            break;
     }
 
     for (let i = 0; i < periodCount; i += 1) {
         budgetPeriods.push(new Date(budgetCalendar.fiscalYear, i * step, 1));
     }
 
-    props.dispatch(setBudgetCalendar({
-        value: {
-            ...budgetCalendar,
-            budgetPeriods,
-        },
-    }));
+    props.dispatch(
+        setBudgetCalendar({
+            value: {
+                ...budgetCalendar,
+                budgetPeriods,
+            },
+        }),
+    );
 };
 
-export const chain = [
-    DispatchSetBudgetPeriodType,
-    SetCustomBudgetPeriodNumber,
-    AssignCalendar,
-];
+export const chain = [DispatchSetBudgetPeriodType, SetCustomBudgetPeriodNumber, AssignCalendar];
 
 const setBudgetPeriodType = createHandlerChainRunner(chain, "setBudgetPeriodType");
 export default setBudgetPeriodType;

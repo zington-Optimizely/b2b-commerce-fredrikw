@@ -17,8 +17,7 @@ type State = {
 export default class ImagePickerField extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = {
-        };
+        this.state = {};
     }
 
     changeImageHandler = () => {
@@ -52,33 +51,39 @@ export default class ImagePickerField extends React.Component<Props, State> {
     };
 
     render() {
-
-        return <StandardControl fieldDefinition={this.props.fieldDefinition}>
-            <Wrapper>
-                {this.state.imagePickerIsOpen && <Scrim zIndexLevel="modal" />}
-                {this.props.fieldValue
-                    && <>
-                        <Button css={changedImageButtonStyles} onClick={this.changeImageHandler} variant="secondary">{translate("Change")}</Button>
-                        <Button onClick={this.deleteImageHandler} variant="secondary">{translate("Delete")}</Button>
-                    </>
-                }
-                {!this.props.fieldValue
-                    && <Button
-                        onClick={this.changeImageHandler}
-                        variant="secondary">
-                        {translate("Add Image")}
-                    </Button>
-                }
-                <Label htmlFor={this.props.fieldDefinition.name}>
-                    {this.props.fieldDefinition.displayName}
-                </Label>
-                <MobiusTextField
-                    id={this.props.fieldDefinition.name}
-                    type="text"
-                    value={this.props.fieldValue}
-                    onChange={this.imageUrlChangeHandler} />
-            </Wrapper>
-        </StandardControl>;
+        return (
+            <StandardControl fieldDefinition={this.props.fieldDefinition}>
+                <Wrapper>
+                    {this.state.imagePickerIsOpen && <Scrim zIndexLevel="modal" />}
+                    {this.props.fieldValue && (
+                        <>
+                            <Button
+                                css={changedImageButtonStyles}
+                                onClick={this.changeImageHandler}
+                                variant="secondary"
+                            >
+                                {translate("Change")}
+                            </Button>
+                            <Button onClick={this.deleteImageHandler} variant="secondary">
+                                {translate("Delete")}
+                            </Button>
+                        </>
+                    )}
+                    {!this.props.fieldValue && (
+                        <Button onClick={this.changeImageHandler} variant="secondary">
+                            {translate("Add Image")}
+                        </Button>
+                    )}
+                    <Label htmlFor={this.props.fieldDefinition.name}>{this.props.fieldDefinition.displayName}</Label>
+                    <MobiusTextField
+                        id={this.props.fieldDefinition.name}
+                        type="text"
+                        value={this.props.fieldValue}
+                        onChange={this.imageUrlChangeHandler}
+                    />
+                </Wrapper>
+            </StandardControl>
+        );
     }
 }
 
@@ -90,7 +95,9 @@ const changedImageButtonStyles = css`
     padding: 0 16px;
 `;
 
-const Wrapper = styled.div` padding-top: 10px; `;
+const Wrapper = styled.div`
+    padding-top: 10px;
+`;
 
 const Label = styled.label`
     display: block;

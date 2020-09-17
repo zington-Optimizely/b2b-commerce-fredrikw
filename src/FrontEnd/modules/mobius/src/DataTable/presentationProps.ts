@@ -18,7 +18,9 @@ const DataTablePresentationPropsDefault: ComponentThemeProps["dataTable"]["defau
     },
     sortIconProps: {
         size: 15,
-        css: css` margin-left: 8px; `,
+        css: css`
+            margin-left: 8px;
+        `,
     },
     sortIconSources: {
         sortable: "ChevronsUpDown",

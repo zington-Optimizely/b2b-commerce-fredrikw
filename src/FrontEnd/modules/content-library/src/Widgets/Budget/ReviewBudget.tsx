@@ -9,17 +9,19 @@ import { getBudgetsDataView, getBudgetYears } from "@insite/client-framework/Sto
 import loadReviews from "@insite/client-framework/Store/Data/Budgets/Handlers/LoadReviews";
 import { getCurrentShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BudgetEnforcementLevel } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
-import { isSearchUserSelectDisabled, isShipToAddressSelectDisabled } from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementSelectors";
+import {
+    isSearchUserSelectDisabled,
+    isShipToAddressSelectDisabled,
+} from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementSelectors";
 import updateLoadParameter from "@insite/client-framework/Store/Pages/BudgetManagement/Handlers/UpdateLoadParameter";
 import translate from "@insite/client-framework/Translate";
-import {
-    AccountModel,
-    ShipToModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { AccountModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BudgetManagementPageContext } from "@insite/content-library/Pages/BudgetManagementPage";
-import EnforcementLevelDisplay, { EnforcementLevelDisplayStyles } from "@insite/content-library/Widgets/Budget/EnforcementLevelDisplay";
+import EnforcementLevelDisplay, {
+    EnforcementLevelDisplayStyles,
+} from "@insite/content-library/Widgets/Budget/EnforcementLevelDisplay";
 import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
 import DataTableBody from "@insite/mobius/DataTable/DataTableBody";
 import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
@@ -112,7 +114,9 @@ export const reviewBudgetStyles: ReviewBudgetStyles = {
     notConfiguredMessageIcon: {
         size: 45,
         color: "text.link",
-        css: css` margin-bottom: 15px; `,
+        css: css`
+            margin-bottom: 15px;
+        `,
     },
     noResultsText: {
         as: "h3",
@@ -137,7 +141,9 @@ export const reviewBudgetStyles: ReviewBudgetStyles = {
         `,
     },
     spinner: {
-        css: css` margin: auto; `,
+        css: css`
+            margin: auto;
+        `,
     },
 };
 
@@ -185,12 +191,7 @@ class ReviewBudget extends React.Component<Props, State> {
             return null;
         }
 
-        const {
-            budgetCalendarsDataView,
-            billToState,
-            budgetDataView,
-            getBudgetParameter,
-        } = this.props;
+        const { budgetCalendarsDataView, billToState, budgetDataView, getBudgetParameter } = this.props;
 
         if (!budgetDataView.isLoading && !budgetDataView.value) {
             this.props.loadReviews(getBudgetParameter);
@@ -198,36 +199,43 @@ class ReviewBudget extends React.Component<Props, State> {
 
         const accounts = this.getAccounts();
         const shipTos = this.getShipTos();
-        const enforcementLevel = !billToState?.isLoading ? (billToState.value?.budgetEnforcementLevel || "") : "";
-        const rows = budgetDataView?.value?.budgetLineCollection?.map((budgetLine) => {
-            return {
-                period: budgetLine.period,
-                startDate: budgetLine.startDate ? getLocalizedDateTime({
-                    dateTime: new Date(budgetLine.startDate),
-                    language: this.props.language,
-                }) : "",
-                currentFiscalYearBudgetDisplay: budgetLine.currentFiscalYearBudgetDisplay,
-                currentFiscalYearActualDisplay: budgetLine.currentFiscalYearActualDisplay,
-                currentFiscalYearVarianceDisplay: budgetLine.currentFiscalYearVarianceDisplay,
-                lastFiscalYearActualDisplay: budgetLine.lastFiscalYearActualDisplay,
-                lastFiscalYearVarianceDisplay: budgetLine.lastFiscalYearVarianceDisplay,
-            };
-        }) || [];
+        const enforcementLevel = !billToState?.isLoading ? billToState.value?.budgetEnforcementLevel || "" : "";
+        const rows =
+            budgetDataView?.value?.budgetLineCollection?.map(budgetLine => {
+                return {
+                    period: budgetLine.period,
+                    startDate: budgetLine.startDate
+                        ? getLocalizedDateTime({
+                              dateTime: new Date(budgetLine.startDate),
+                              language: this.props.language,
+                          })
+                        : "",
+                    currentFiscalYearBudgetDisplay: budgetLine.currentFiscalYearBudgetDisplay,
+                    currentFiscalYearActualDisplay: budgetLine.currentFiscalYearActualDisplay,
+                    currentFiscalYearVarianceDisplay: budgetLine.currentFiscalYearVarianceDisplay,
+                    lastFiscalYearActualDisplay: budgetLine.lastFiscalYearActualDisplay,
+                    lastFiscalYearVarianceDisplay: budgetLine.lastFiscalYearVarianceDisplay,
+                };
+            }) || [];
 
         return (
             <>
                 <Typography {...styles.titleText}>{translate("Review Budgets")}</Typography>
-                {!budgetCalendarsDataView.isLoading
-                    && budgetCalendarsDataView.value?.length === 0
-                    ? <StyledWrapper {...styles.notConfiguredMessageWrapper}>
+                {!budgetCalendarsDataView.isLoading && budgetCalendarsDataView.value?.length === 0 ? (
+                    <StyledWrapper {...styles.notConfiguredMessageWrapper}>
                         <Icon {...styles.notConfiguredMessageIcon} src={DollarSign} />
-                        <Typography {...styles.notConfiguredMessageText}>{translate("Budget Not Configured")}</Typography>
+                        <Typography {...styles.notConfiguredMessageText}>
+                            {translate("Budget Not Configured")}
+                        </Typography>
                     </StyledWrapper>
-                    : <>
+                ) : (
+                    <>
                         <EnforcementLevelDisplay
-                            enforcementLevel={BudgetEnforcementLevel[enforcementLevel as keyof typeof BudgetEnforcementLevel]}
-                            extendedStyles={styles.enforcementLevelDisplayStyles}>
-                        </EnforcementLevelDisplay>
+                            enforcementLevel={
+                                BudgetEnforcementLevel[enforcementLevel as keyof typeof BudgetEnforcementLevel]
+                            }
+                            extendedStyles={styles.enforcementLevelDisplayStyles}
+                        ></EnforcementLevelDisplay>
                         <StyledWrapper {...styles.filterWrapper}>
                             <StyledWrapper {...styles.wrapper}>
                                 <Select
@@ -235,10 +243,13 @@ class ReviewBudget extends React.Component<Props, State> {
                                     {...styles.select}
                                     value={getBudgetParameter.fiscalYear}
                                     onChange={this.handleBudgetYearChange}
-                                    data-test-selector="reviewBudgetYearSelector">
-                                    {this.state.budgetYears.map((budgetYear: number) =>
-                                        <option key={budgetYear} value={budgetYear}>{budgetYear}</option>,
-                                    )}
+                                    data-test-selector="reviewBudgetYearSelector"
+                                >
+                                    {this.state.budgetYears.map((budgetYear: number) => (
+                                        <option key={budgetYear} value={budgetYear}>
+                                            {budgetYear}
+                                        </option>
+                                    ))}
                                 </Select>
                             </StyledWrapper>
                             <StyledWrapper {...styles.wrapper}>
@@ -247,12 +258,17 @@ class ReviewBudget extends React.Component<Props, State> {
                                     {...styles.select}
                                     value={getBudgetParameter.userProfileId}
                                     disabled={this.props.isSearchUserSelectDisabled}
-                                    onChange={(event: React.FormEvent<HTMLSelectElement>) => this.handleChange(event, "user")}
-                                    data-test-selector="reviewBudgetUserSelector">
+                                    onChange={(event: React.FormEvent<HTMLSelectElement>) =>
+                                        this.handleChange(event, "user")
+                                    }
+                                    data-test-selector="reviewBudgetUserSelector"
+                                >
                                     <option value="">{translate("Select User")}</option>,
-                                    {accounts.map((account: AccountModel) =>
-                                        <option key={account.id} value={account.id}>{account.userName}</option>,
-                                    )}
+                                    {accounts.map((account: AccountModel) => (
+                                        <option key={account.id} value={account.id}>
+                                            {account.userName}
+                                        </option>
+                                    ))}
                                 </Select>
                             </StyledWrapper>
                             <StyledWrapper {...styles.wrapper}>
@@ -261,63 +277,95 @@ class ReviewBudget extends React.Component<Props, State> {
                                     {...styles.select}
                                     value={getBudgetParameter.shipToId}
                                     disabled={this.props.isShipToAddressSelectDisabled}
-                                    onChange={(event: React.FormEvent<HTMLSelectElement>) => this.handleChange(event, "shipTo")}
-                                    data-test-selector="shipToSelector">
+                                    onChange={(event: React.FormEvent<HTMLSelectElement>) =>
+                                        this.handleChange(event, "shipTo")
+                                    }
+                                    data-test-selector="shipToSelector"
+                                >
                                     <option value="">{translate("Select Ship To")}</option>,
-                                    {shipTos.map((shipTo: ShipToModel) =>
-                                        <option key={shipTo.id.toString()} value={shipTo.id.toString()}>{shipTo.label}</option>,
-                                    )}
+                                    {shipTos.map((shipTo: ShipToModel) => (
+                                        <option key={shipTo.id.toString()} value={shipTo.id.toString()}>
+                                            {shipTo.label}
+                                        </option>
+                                    ))}
                                 </Select>
                             </StyledWrapper>
                         </StyledWrapper>
-                        {budgetDataView.isLoading
-                            && <StyledWrapper {...styles.centeringWrapper}>
+                        {budgetDataView.isLoading && (
+                            <StyledWrapper {...styles.centeringWrapper}>
                                 <LoadingSpinner {...styles.spinner} />
                             </StyledWrapper>
-                        }
-                        {!budgetDataView.isLoading && rows.length === 0
-                            && <StyledWrapper {...styles.centeringWrapper}>
-                                <Typography {...styles.noResultsText}>{siteMessage("Budget_CreateBudgetForLevel")}</Typography>
+                        )}
+                        {!budgetDataView.isLoading && rows.length === 0 && (
+                            <StyledWrapper {...styles.centeringWrapper}>
+                                <Typography {...styles.noResultsText}>
+                                    {siteMessage("Budget_CreateBudgetForLevel")}
+                                </Typography>
                             </StyledWrapper>
-                        }
-                        {!budgetDataView.isLoading && rows.length > 0
-                            && <DataTable {...styles.dataTable}>
+                        )}
+                        {!budgetDataView.isLoading && rows.length > 0 && (
+                            <DataTable {...styles.dataTable}>
                                 <DataTableHead>
                                     <DataTableHeader {...styles.periodHeader}>{translate("Period")}</DataTableHeader>
-                                    <DataTableHeader {...styles.startDateHeader}>{translate("Start Date")}</DataTableHeader>
-                                    <DataTableHeader {...styles.currentFiscalYearBudgetHeader}>{translate("Budget")}</DataTableHeader>
-                                    <DataTableHeader {...styles.currentFiscalYearActualHeader}>{translate("Current Fiscal Year")}</DataTableHeader>
-                                    <DataTableHeader {...styles.currentFiscalYearVarianceHeader}>{translate("Variance")}</DataTableHeader>
-                                    <DataTableHeader {...styles.lastFiscalYearActualHeader}>{translate("Last Fiscal Year")}</DataTableHeader>
-                                    <DataTableHeader {...styles.lastFiscalYearVarianceHeader}>{translate("Variance")}</DataTableHeader>
+                                    <DataTableHeader {...styles.startDateHeader}>
+                                        {translate("Start Date")}
+                                    </DataTableHeader>
+                                    <DataTableHeader {...styles.currentFiscalYearBudgetHeader}>
+                                        {translate("Budget")}
+                                    </DataTableHeader>
+                                    <DataTableHeader {...styles.currentFiscalYearActualHeader}>
+                                        {translate("Current Fiscal Year")}
+                                    </DataTableHeader>
+                                    <DataTableHeader {...styles.currentFiscalYearVarianceHeader}>
+                                        {translate("Variance")}
+                                    </DataTableHeader>
+                                    <DataTableHeader {...styles.lastFiscalYearActualHeader}>
+                                        {translate("Last Fiscal Year")}
+                                    </DataTableHeader>
+                                    <DataTableHeader {...styles.lastFiscalYearVarianceHeader}>
+                                        {translate("Variance")}
+                                    </DataTableHeader>
                                 </DataTableHead>
                                 <DataTableBody>
-                                    {rows.map(({
-                                        period,
-                                        startDate,
-                                        currentFiscalYearBudgetDisplay,
-                                        currentFiscalYearActualDisplay,
-                                        currentFiscalYearVarianceDisplay,
-                                        lastFiscalYearActualDisplay,
-                                        lastFiscalYearVarianceDisplay,
-                                    }) => (
+                                    {rows.map(
+                                        ({
+                                            period,
+                                            startDate,
+                                            currentFiscalYearBudgetDisplay,
+                                            currentFiscalYearActualDisplay,
+                                            currentFiscalYearVarianceDisplay,
+                                            lastFiscalYearActualDisplay,
+                                            lastFiscalYearVarianceDisplay,
+                                        }) => (
                                             <DataTableRow key={period} data-test-selector="reviewBudgetPeriodRow">
                                                 <DataTableCell {...styles.periodCells}>{period}</DataTableCell>
                                                 <DataTableCell {...styles.startDateCells}>{startDate}</DataTableCell>
-                                                <DataTableCell {...styles.currentFiscalYearBudgetCells} data-test-selector={`budgetAmount_${period - 1}`}>
+                                                <DataTableCell
+                                                    {...styles.currentFiscalYearBudgetCells}
+                                                    data-test-selector={`budgetAmount_${period - 1}`}
+                                                >
                                                     {currentFiscalYearBudgetDisplay}
                                                 </DataTableCell>
-                                                <DataTableCell {...styles.currentFiscalYearActualCells}>{currentFiscalYearActualDisplay}</DataTableCell>
-                                                <DataTableCell {...styles.currentFiscalYearVarianceCells}>{currentFiscalYearVarianceDisplay}</DataTableCell>
-                                                <DataTableCell {...styles.lastFiscalYearActualCells}>{lastFiscalYearActualDisplay}</DataTableCell>
-                                                <DataTableCell {...styles.lastFiscalYearVarianceCells}>{lastFiscalYearVarianceDisplay}</DataTableCell>
+                                                <DataTableCell {...styles.currentFiscalYearActualCells}>
+                                                    {currentFiscalYearActualDisplay}
+                                                </DataTableCell>
+                                                <DataTableCell {...styles.currentFiscalYearVarianceCells}>
+                                                    {currentFiscalYearVarianceDisplay}
+                                                </DataTableCell>
+                                                <DataTableCell {...styles.lastFiscalYearActualCells}>
+                                                    {lastFiscalYearActualDisplay}
+                                                </DataTableCell>
+                                                <DataTableCell {...styles.lastFiscalYearVarianceCells}>
+                                                    {lastFiscalYearVarianceDisplay}
+                                                </DataTableCell>
                                             </DataTableRow>
-                                        ))}
+                                        ),
+                                    )}
                                 </DataTableBody>
                             </DataTable>
-                        }
+                        )}
                     </>
-                }
+                )}
             </>
         );
     }
@@ -328,8 +376,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "BudgetManagement",
         allowedContexts: [BudgetManagementPageContext],
-        fieldDefinitions: [
-        ],
+        fieldDefinitions: [],
     },
 };
 

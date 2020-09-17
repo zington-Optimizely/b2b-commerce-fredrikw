@@ -20,19 +20,21 @@ const CardListHeading: React.FunctionComponent<OwnProps> = ({ heading, viewAllUr
                 <GridItem width={8}>
                     <Typography variant="h5">{heading}</Typography>
                 </GridItem>
-                {viewAllUrl
-                    && <GridItem width={4}>
+                {viewAllUrl && (
+                    <GridItem width={4}>
                         <Link
                             href={viewAllUrl}
                             icon={{ iconProps: { src: ChevronRight } }}
                             typographyProps={{ size: 15 }}
-                            css={css` margin-left: auto; `}
+                            css={css`
+                                margin-left: auto;
+                            `}
                             data-test-selector="cardListHeadingViewAllLink"
                         >
                             {translate("View All")}
                         </Link>
                     </GridItem>
-                }
+                )}
             </GridContainer>
         </GridItem>
     );

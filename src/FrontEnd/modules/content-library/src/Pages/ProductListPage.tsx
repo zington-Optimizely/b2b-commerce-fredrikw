@@ -1,12 +1,14 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import { trackPageChange } from "@insite/client-framework/Common/Utilities/tracking";
+import { CategoryContext } from "@insite/client-framework/Components/CategoryContext";
 import { HasShellContext } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
 import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesSelectors";
+import { getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import clearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearProducts";
@@ -23,15 +25,22 @@ import { connect, ResolveThunks } from "react-redux";
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     const selectedCategoryPath = getSelectedCategoryPath(state);
-    const path = selectedCategoryPath || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
-    const { pages: { productList: { productFilters, parameter, isSearchPage, filterQuery, productInfosByProductId } } } = state;
-
+    const path =
+        selectedCategoryPath || (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
+    const {
+        pages: {
+            productList: { productFilters, parameter, isSearchPage, filterQuery, productInfosByProductId },
+        },
+    } = state;
+    const catalogPage = getCatalogPageStateByPath(state, path).value;
     const productsDataView = getProductsDataView(state, parameter);
-    return ({
+    return {
         stockedItemsOnly: productFilters.stockedItemsOnly,
         query: productFilters.query,
         productsDataView,
-        firstProductDetailPath: productsDataView.value ? productInfosByProductId[productsDataView.value[0]?.id]?.productDetailPath : undefined,
+        firstProductDetailPath: productsDataView.value
+            ? productInfosByProductId[productsDataView.value[0]?.id]?.productDetailPath
+            : undefined,
         filterQuery,
         isSearchPage,
         search: location.search,
@@ -41,7 +50,8 @@ const mapStateToProps = (state: ApplicationState) => {
         websiteName: state.context.website.name,
         pages: state.pages,
         location: getLocation(state),
-    });
+        category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
+    };
 };
 
 const mapDispatchToProps = {
@@ -50,9 +60,15 @@ const mapDispatchToProps = {
     clearProducts,
 };
 
-export const ProductListPageDataContext = React.createContext<{ ref?: React.RefObject<HTMLSpanElement> }>({ ref: undefined });
+export const ProductListPageDataContext = React.createContext<{ ref?: React.RefObject<HTMLSpanElement> }>({
+    ref: undefined,
+});
 
-type Props = HasHistory & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext & PageProps;
+type Props = HasHistory &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasShellContext &
+    PageProps;
 
 class ProductListPage extends React.Component<Props> {
     afterFilters = React.createRef<HTMLSpanElement>();
@@ -91,7 +107,13 @@ class ProductListPage extends React.Component<Props> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        const { filterQuery, location: { pathname, search }, firstProductDetailPath, websiteName, productListCatalogPage } = this.props;
+        const {
+            filterQuery,
+            location: { pathname, search },
+            firstProductDetailPath,
+            websiteName,
+            productListCatalogPage,
+        } = this.props;
 
         // handle the query string change requests initiated by the filtering widget setQueryFilter calls
         if (filterQuery !== prevProps.filterQuery) {
@@ -151,7 +173,16 @@ class ProductListPage extends React.Component<Props> {
             return;
         }
 
-        const { metaDescription, metaKeywords, openGraphImage, openGraphTitle, openGraphUrl, title, primaryImagePath, canonicalPath } = productListCatalogPage;
+        const {
+            metaDescription,
+            metaKeywords,
+            openGraphImage,
+            openGraphTitle,
+            openGraphUrl,
+            title,
+            primaryImagePath,
+            canonicalPath,
+        } = productListCatalogPage;
 
         setPageMetadata({
             metaDescription,
@@ -167,7 +198,9 @@ class ProductListPage extends React.Component<Props> {
     }
 
     setProductListBreadcrumbs() {
-        this.props.setBreadcrumbs({ links: this.props.productListCatalogPage!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })) });
+        this.props.setBreadcrumbs({
+            links: this.props.productListCatalogPage!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })),
+        });
     }
 
     setSearchBreadcrumbs() {
@@ -175,17 +208,25 @@ class ProductListPage extends React.Component<Props> {
     }
 
     render() {
-        if (this.props.productsDataView.value && this.props.productsDataView.exactMatch && !this.props.stockedItemsOnly) {
+        if (
+            this.props.productsDataView.value &&
+            this.props.productsDataView.exactMatch &&
+            !this.props.stockedItemsOnly
+        ) {
             // prevent a flash of data when PLP immediately redirects to PDP
             return null;
         }
 
-        return <Page>
-            <ProductListPageDataContext.Provider value={{ ref: this.afterFilters }}>
-                <Zone contentId={this.props.id} zoneName="Content"/>
-                <AddToListModal/>
-            </ProductListPageDataContext.Provider>
-        </Page>;
+        return (
+            <Page>
+                <CategoryContext.Provider value={this.props.category}>
+                    <ProductListPageDataContext.Provider value={{ ref: this.afterFilters }}>
+                        <Zone contentId={this.props.id} zoneName="Content" />
+                        <AddToListModal />
+                    </ProductListPageDataContext.Provider>
+                </CategoryContext.Provider>
+            </Page>
+        );
     }
 }
 

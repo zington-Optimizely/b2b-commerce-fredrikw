@@ -2,9 +2,11 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import { get } from "@insite/shell/Services/ServiceBase";
 import { SelectBrandModel } from "@insite/shell/Store/PageEditor/PageEditorState";
 
-export const getAdminBrands = (parameter?: AdminODataApiParameter) => getOData<SelectBrandModel[]>("brands", { ...parameter });
+export const getAdminBrands = (parameter?: AdminODataApiParameter) =>
+    getOData<SelectBrandModel[]>("brands", { ...parameter });
 
-export const getAdminSystemListValues = (parameter?: AdminODataApiParameter) => getOData<SystemListValue[]>("systemListValues", { ...parameter });
+export const getAdminSystemListValues = (parameter?: AdminODataApiParameter) =>
+    getOData<SystemListValue[]>("systemListValues", { ...parameter });
 
 export interface AdminODataApiParameter {
     archiveFilter?: ArchiveFilter;

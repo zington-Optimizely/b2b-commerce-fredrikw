@@ -16,7 +16,7 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps { }
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
@@ -42,7 +42,9 @@ export const userInformationStyles: AccountSettingsUserInformationStyles = {
         width: 12,
     },
     changePasswordLink: {
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     userInformationTitle: {
         variant: "h4",
@@ -64,18 +66,29 @@ const AccountSettingsUserInformation: FC<Props> = props => {
         props.updateAccountSettings({ email: event.currentTarget.value });
     };
 
-    const label = <>
-        <Typography>{translate("Password")}</Typography>
-        <Link {...styles.changePasswordLink} href={changePasswordUrl}>{translate("Change")}</Link>
-    </>;
+    const label = (
+        <>
+            <Typography>{translate("Password")}</Typography>
+            <Link {...styles.changePasswordLink} href={changePasswordUrl}>
+                {translate("Change")}
+            </Link>
+        </>
+    );
 
     return (
         <>
             <Typography {...styles.userInformationTitle}>{translate("Your Information")}</Typography>
             <GridContainer>
-                {!useEmailAsUserName && <GridItem {...styles.userInformationGridItem}>
-                    <TextField label={translate("User Name")} value={editingAccount.userName} data-test-selector="accountSettings_userName" disabled />
-                </GridItem>}
+                {!useEmailAsUserName && (
+                    <GridItem {...styles.userInformationGridItem}>
+                        <TextField
+                            label={translate("User Name")}
+                            value={editingAccount.userName}
+                            data-test-selector="accountSettings_userName"
+                            disabled
+                        />
+                    </GridItem>
+                )}
                 <GridItem {...styles.userInformationGridItem}>
                     <TextField
                         type="email"
@@ -94,7 +107,8 @@ const AccountSettingsUserInformation: FC<Props> = props => {
                     <TextField type="password" label={label} disabled value={password} />
                 </GridItem>
             </GridContainer>
-        </>);
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

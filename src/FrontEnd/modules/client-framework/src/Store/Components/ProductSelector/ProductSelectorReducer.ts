@@ -17,32 +17,46 @@ const reducer = {
         draft.isSearching = true;
         draft.searchResults = undefined;
     },
-    "Components/ProductSelector/CompleteSearchProducts": (draft: Draft<ProductSelectorState>, action: { result: ProductAutocompleteItemModel[] | null; }) => {
+    "Components/ProductSelector/CompleteSearchProducts": (
+        draft: Draft<ProductSelectorState>,
+        action: { result: ProductAutocompleteItemModel[] | null },
+    ) => {
         draft.isSearching = false;
         draft.searchResults = action.result ?? [];
     },
-    "Components/ProductSelector/UpdateOptions": (draft: Draft<ProductSelectorState>, action: { result: ProductModel }) => {
-        draft.searchResults = [{
-            id: action.result.id,
-            image: action.result.mediumImagePath,
-            brandName: action.result.brand?.name ?? "",
-            erpNumber: action.result.productNumber,
-            brandDetailPagePath: "",
-            name: action.result.productTitle,
-            url: action.result.urlSegment,
-            isNameCustomerOverride: false,
-            manufacturerItemNumber: action.result.manufacturerItem,
-            title: action.result.productTitle,
-        } as ProductAutocompleteItemModel];
+    "Components/ProductSelector/UpdateOptions": (
+        draft: Draft<ProductSelectorState>,
+        action: { result: ProductModel },
+    ) => {
+        draft.searchResults = [
+            {
+                id: action.result.id,
+                image: action.result.mediumImagePath,
+                brandName: action.result.brand?.name ?? "",
+                erpNumber: action.result.productNumber,
+                brandDetailPagePath: "",
+                name: action.result.productTitle,
+                url: action.result.urlSegment,
+                isNameCustomerOverride: false,
+                manufacturerItemNumber: action.result.manufacturerItem,
+                title: action.result.productTitle,
+            } as ProductAutocompleteItemModel,
+        ];
     },
     "Components/ProductSelector/BeginSetProduct": (draft: Draft<ProductSelectorState>) => {
         delete draft.selectedProductInfo;
         delete draft.errorType;
     },
-    "Components/ProductSelector/CompleteSetProduct": (draft: Draft<ProductSelectorState>, action: { productInfo?: ProductInfo }) => {
+    "Components/ProductSelector/CompleteSetProduct": (
+        draft: Draft<ProductSelectorState>,
+        action: { productInfo?: ProductInfo },
+    ) => {
         draft.selectedProductInfo = action.productInfo;
     },
-    "Components/ProductSelector/SetUnitOfMeasure": (draft: Draft<ProductSelectorState>, action: { unitOfMeasure: string }) => {
+    "Components/ProductSelector/SetUnitOfMeasure": (
+        draft: Draft<ProductSelectorState>,
+        action: { unitOfMeasure: string },
+    ) => {
         if (!draft.selectedProductInfo) {
             return;
         }
@@ -59,18 +73,24 @@ const reducer = {
         draft.selectedVariantProductInfo = undefined;
         draft.variantSelection = {};
     },
-    "Components/ProductSelector/OpenVariantModal": (draft: Draft<ProductSelectorState>, action: {
-        productId: string
-    }) => {
+    "Components/ProductSelector/OpenVariantModal": (
+        draft: Draft<ProductSelectorState>,
+        action: {
+            productId: string;
+        },
+    ) => {
         draft.variantModalIsOpen = true;
         draft.variantModalProductId = action.productId;
-        draft.variantSelection = { };
+        draft.variantSelection = {};
     },
-    "Components/ProductSelector/UpdateVariantSelection": (draft: Draft<ProductSelectorState>, action: {
-        variantSelection: SafeDictionary<string>;
-        variantSelectionCompleted: boolean;
-        productInfo?: ProductInfo;
-    }) => {
+    "Components/ProductSelector/UpdateVariantSelection": (
+        draft: Draft<ProductSelectorState>,
+        action: {
+            variantSelection: SafeDictionary<string>;
+            variantSelectionCompleted: boolean;
+            productInfo?: ProductInfo;
+        },
+    ) => {
         draft.selectedVariantProductInfo = action.productInfo;
         draft.variantSelection = action.variantSelection;
         draft.variantSelectionCompleted = action.variantSelectionCompleted;

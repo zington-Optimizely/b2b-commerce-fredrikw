@@ -11,7 +11,7 @@ import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Hand
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
-import * as  React from "react";
+import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -22,14 +22,14 @@ const mapStateToProps = (state: ApplicationState) => {
         orderNumber = parsedQuery.orderNumber;
     }
 
-    return ({
+    return {
         orderNumber,
         orderState: getOrderState(state, orderNumber),
         links: state.links,
         nodeId: getCurrentPage(state).nodeId,
         orderDetailsLink: getPageLinkByPageType(state, "OrderDetailsPage"),
         breadcrumbLinks: state.components.breadcrumbs.links,
-    });
+    };
 };
 
 const mapDispatchToProps = {

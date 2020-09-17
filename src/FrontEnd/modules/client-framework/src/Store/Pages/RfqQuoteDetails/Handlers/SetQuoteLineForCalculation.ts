@@ -10,9 +10,7 @@ export const DispatchSetQuoteLineForCalculation: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetQuoteLineForCalculation,
-];
+export const chain = [DispatchSetQuoteLineForCalculation];
 
 const setQuoteLineForCalculation = createHandlerChainRunner(chain, "SetQuoteLineForCalculation");
 export default setQuoteLineForCalculation;

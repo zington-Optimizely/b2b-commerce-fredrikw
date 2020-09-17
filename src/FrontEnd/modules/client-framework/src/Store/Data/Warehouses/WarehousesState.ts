@@ -8,6 +8,4 @@ export interface WarehousesDataView extends DataView {
     readonly distanceUnitOfMeasure: string;
 }
 
-export interface WarehousesState extends DataViewState<WarehouseModel, WarehousesDataView> {
-
-}
+export interface WarehousesState extends DataViewState<WarehouseModel, WarehousesDataView> {}

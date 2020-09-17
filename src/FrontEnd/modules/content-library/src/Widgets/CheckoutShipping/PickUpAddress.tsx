@@ -23,21 +23,36 @@ export interface PickUpAddressStyles {
 
 export const pickUpAddressStyles: PickUpAddressStyles = {
     container: { gap: 20 },
-    headingGridItem: { width: 12, css: css` align-items: center; ` },
-    headingText: { variant: "h5", css: css` margin-bottom: 0; ` },
-    findLocationLink: { css: css` margin-left: 20px; ` },
-    selectedLocationGridItem: { width: 12, css: css` flex-direction: column; ` },
+    headingGridItem: {
+        width: 12,
+        css: css`
+            align-items: center;
+        `,
+    },
+    headingText: {
+        variant: "h5",
+        css: css`
+            margin-bottom: 0;
+        `,
+    },
+    findLocationLink: {
+        css: css`
+            margin-left: 20px;
+        `,
+    },
+    selectedLocationGridItem: {
+        width: 12,
+        css: css`
+            flex-direction: column;
+        `,
+    },
 };
 
 const PickUpAddress: FC<{
     address?: WarehouseModel;
     onChange?: (address: WarehouseModel) => void;
     extendedStyles?: PickUpAddressStyles;
-}> = ({
-    address,
-    onChange,
-    extendedStyles,
-}) => {
+}> = ({ address, onChange, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(pickUpAddressStyles, extendedStyles));
     const [isFindLocationOpen, setIsFindLocationOpen] = React.useState(false);
     const handleOpenFindLocation = () => {
@@ -53,7 +68,9 @@ const PickUpAddress: FC<{
     return (
         <GridContainer {...styles.container} data-test-selector="checkoutShipping_pickUpAddress">
             <GridItem {...styles.headingGridItem}>
-                <Typography {...styles.headingText} as="h3">{translate("Pick Up Address")}</Typography>
+                <Typography {...styles.headingText} as="h3">
+                    {translate("Pick Up Address")}
+                </Typography>
                 <Link
                     {...styles.findLocationLink}
                     type="button"
@@ -63,16 +80,23 @@ const PickUpAddress: FC<{
                     {translate("Find Location")}
                 </Link>
             </GridItem>
-            {address
-                && <GridItem {...styles.selectedLocationGridItem}>
-                    <Typography {...styles.selectedLocationName} data-test-selector="checkoutShipping_pickUpAddress_warehouseName">{address.description || address.name}</Typography>
+            {address && (
+                <GridItem {...styles.selectedLocationGridItem}>
+                    <Typography
+                        {...styles.selectedLocationName}
+                        data-test-selector="checkoutShipping_pickUpAddress_warehouseName"
+                    >
+                        {address.description || address.name}
+                    </Typography>
                     <AddressInfoDisplay {...address} extendedStyles={styles.selectedLocationAddressDisplay} />
                 </GridItem>
-            }
-            <FindLocationModal modalIsOpen={isFindLocationOpen}
+            )}
+            <FindLocationModal
+                modalIsOpen={isFindLocationOpen}
                 onWarehouseSelected={handleWarehouseSelected}
                 onModalClose={handleFindLocationModalClose}
-                extendedStyles={styles.findLocationModal} />
+                extendedStyles={styles.findLocationModal}
+            />
         </GridContainer>
     );
 };

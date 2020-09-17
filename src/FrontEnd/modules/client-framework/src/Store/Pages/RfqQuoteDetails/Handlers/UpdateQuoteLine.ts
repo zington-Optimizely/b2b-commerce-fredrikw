@@ -35,12 +35,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-
-export const chain = [
-    RequestUpdateQuoteLine,
-    ResetQuotesData,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [RequestUpdateQuoteLine, ResetQuotesData, ExecuteOnSuccessCallback];
 
 const updateQuoteLine = createHandlerChainRunner(chain, "UpdateQuoteLine");
 export default updateQuoteLine;

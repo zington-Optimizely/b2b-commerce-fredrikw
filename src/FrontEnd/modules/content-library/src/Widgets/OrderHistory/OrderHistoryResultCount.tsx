@@ -28,12 +28,13 @@ const OrderHistoryResultCount: FC<WidgetProps> = () => {
     }
 
     return (
-        <Typography {...styles.orderCountText} data-test-selector="orderHistory_resultCount">{totalItemCount} {translate("orders")}</Typography>
+        <Typography {...styles.orderCountText} data-test-selector="orderHistory_resultCount">
+            {totalItemCount} {translate("orders")}
+        </Typography>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: OrderHistoryResultCount,
     definition: {
         group: "Order History",

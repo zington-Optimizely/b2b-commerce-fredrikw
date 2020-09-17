@@ -7,7 +7,9 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { UploadError } from "@insite/client-framework/Store/Components/OrderUpload/Handlers/BatchLoadProducts";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import addToWishList, { AddToWishListParameter } from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import addToWishList, {
+    AddToWishListParameter,
+} from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListIfNeeded";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
@@ -19,7 +21,9 @@ import { ProductDto, WishListModel } from "@insite/client-framework/Types/ApiMod
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import OrderUpload, { OrderUploadStyles } from "@insite/content-library/Components/OrderUpload";
-import OrderUploadErrorsModal, { OrderUploadErrorsModalStyles } from "@insite/content-library/Components/OrderUploadErrorsModal";
+import OrderUploadErrorsModal, {
+    OrderUploadErrorsModalStyles,
+} from "@insite/content-library/Components/OrderUploadErrorsModal";
 import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
 import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyListsDetailsPage";
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
@@ -95,7 +99,9 @@ export interface MyListsDetailsOptionsStyles {
 export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     wrapper: {
         css: css`
-            @media print { display: none; }
+            @media print {
+                display: none;
+            }
             display: flex;
             margin: 20px 0;
         `,
@@ -116,18 +122,32 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     },
     container: {
         gap: 10,
-        css: css` margin-top: 32px; `,
+        css: css`
+            margin-top: 32px;
+        `,
     },
     selectAllGridItem: {
         width: [12, 12, 6, 4, 3],
         css: css`
             align-items: center;
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [css` justify-content: space-between; `, css` justify-content: space-between; `, null, null, null])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        justify-content: space-between;
+                    `,
+                    css`
+                        justify-content: space-between;
+                    `,
+                    null,
+                    null,
+                    null,
+                ])}
         `,
     },
     selectAll: {
-        css: css` cursor: pointer; `,
+        css: css`
+            cursor: pointer;
+        `,
     },
     editSortOrder: {
         css: css`
@@ -138,13 +158,19 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     searchGridItem: { width: [12, 12, 6, 4, 4] },
     addItemsGridItem: {
         width: [12, 12, 6, 4, 5],
-        css: css` align-items: center; `,
+        css: css`
+            align-items: center;
+        `,
     },
     addItemsLink: {
         icon: {
             iconProps: { src: PlusCircle },
         },
-        typographyProps: { css: css` padding-left: 5px; ` },
+        typographyProps: {
+            css: css`
+                padding-left: 5px;
+            `,
+        },
     },
     addItemsGridContainer: { gap: 10 },
     productSelectorGridItem: {
@@ -152,19 +178,35 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     },
     uploadItemsGridItem: {
         width: [12, 12, 12, 2, 2],
-        css: css` align-items: center; `,
+        css: css`
+            align-items: center;
+        `,
     },
     uploadItemsLink: {
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, null, css` margin-top: 30px; `, css` margin-top: 30px; `])}
+                breakpointMediaQueries(theme, [
+                    null,
+                    null,
+                    null,
+                    css`
+                        margin-top: 30px;
+                    `,
+                    css`
+                        margin-top: 30px;
+                    `,
+                ])}
         `,
     },
     uploadItemsModal: {
         sizeVariant: "large",
         cssOverrides: {
-            modalTitle: css` padding: 10px 30px; `,
-            modalContent: css` padding: 20px 30px; `,
+            modalTitle: css`
+                padding: 10px 30px;
+            `,
+            modalContent: css`
+                padding: 20px 30px;
+            `,
         },
     },
     search: {
@@ -174,7 +216,9 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
         iconProps: { src: ChevronsUpDown },
     },
     selectedSortByClickable: {
-        css: css` color: ${getColor("primary")}; `,
+        css: css`
+            color: ${getColor("primary")};
+        `,
     },
     closeAddItemsToList: {
         src: X,
@@ -207,14 +251,17 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     const [query, setQuery] = React.useState(loadWishListLinesParameter.query);
     const [addItemsToListIsOpen, setAddItemsToListIsOpen] = React.useState(false);
     const [uploadItemsModalIsOpen, setUploadItemsModalIsOpen] = React.useState(false);
-    const debouncedSearch = React.useCallback(debounce((query: string) => {
-        if (!wishListDataView.value) {
-            return;
-        }
+    const debouncedSearch = React.useCallback(
+        debounce((query: string) => {
+            if (!wishListDataView.value) {
+                return;
+            }
 
-        updateLoadWishListLinesParameter({ query });
-        loadWishListLines();
-    }, 200), [wishListDataView]);
+            updateLoadWishListLinesParameter({ query });
+            loadWishListLines();
+        }, 200),
+        [wishListDataView],
+    );
 
     if (!wishListDataView.value || !wishListSettings) {
         return null;
@@ -234,8 +281,10 @@ const MyListsDetailsOptions: React.FC<Props> = ({
         loadWishListLines();
     };
 
-    const isAllSelected = wishListLinesDataView.value && wishListLinesDataView.value.length > 0
-        && wishListLinesDataView.value.every(o => selectedWishListLineIds.indexOf(o.id) >= 0);
+    const isAllSelected =
+        wishListLinesDataView.value &&
+        wishListLinesDataView.value.length > 0 &&
+        wishListLinesDataView.value.every(o => selectedWishListLineIds.indexOf(o.id) >= 0);
 
     const selectAllChangeHandler: CheckboxProps["onChange"] = (_, value) => {
         const allWishListLineIds = value ? wishListLinesDataView?.value?.map(o => o.id) : undefined;
@@ -264,7 +313,11 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     };
 
     const uploadProductsHandler = async (products: ProductDto[]) => {
-        const productInfos = products.map(o => ({ productId: o.id, qtyOrdered: o.qtyOrdered, unitOfMeasure: o.selectedUnitOfMeasure ?? "" }));
+        const productInfos = products.map(o => ({
+            productId: o.id,
+            qtyOrdered: o.qtyOrdered,
+            unitOfMeasure: o.selectedUnitOfMeasure ?? "",
+        }));
         await addToWishList({ productInfos, selectedWishList: wishList });
         setUploadItemsModalIsOpen(false);
         loadWishListIfNeeded({ wishListId: wishList.id });
@@ -275,8 +328,8 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     return (
         <StyledWrapper {...styles.wrapper}>
             <StyledWrapper {...styles.leftColumnWrapper}>
-                {!addItemsToListIsOpen
-                    && <GridContainer {...styles.container}>
+                {!addItemsToListIsOpen && (
+                    <GridContainer {...styles.container}>
                         <GridItem {...styles.searchGridItem}>
                             <TextField
                                 {...styles.search}
@@ -287,30 +340,39 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                             />
                         </GridItem>
                         <GridItem {...styles.selectAllGridItem}>
-                            <Checkbox {...styles.selectAll} checked={isAllSelected} onChange={selectAllChangeHandler} data-test-selector="selectAllItems">
+                            <Checkbox
+                                {...styles.selectAll}
+                                checked={isAllSelected}
+                                onChange={selectAllChangeHandler}
+                                data-test-selector="selectAllItems"
+                            >
                                 {translate("Select All")}
                             </Checkbox>
-                            {loadWishListLinesParameter.sort === "SortOrder" && !query && canEditWishList
-                                && <Checkbox
+                            {loadWishListLinesParameter.sort === "SortOrder" && !query && canEditWishList && (
+                                <Checkbox
                                     {...styles.editSortOrder}
                                     checked={editingSortOrder}
                                     onChange={editingSortOrderChangeHandler}
                                 >
                                     {translate("Edit Sort Order")}
                                 </Checkbox>
-                            }
+                            )}
                         </GridItem>
                         <GridItem {...styles.addItemsGridItem}>
-                            {canEditWishList
-                                && <Link {...styles.addItemsLink} onClick={addItemsToListClickHandler} data-test-selector="addItems">
+                            {canEditWishList && (
+                                <Link
+                                    {...styles.addItemsLink}
+                                    onClick={addItemsToListClickHandler}
+                                    data-test-selector="addItems"
+                                >
                                     {translate("Add Items To List")}
                                 </Link>
-                            }
+                            )}
                         </GridItem>
                     </GridContainer>
-                }
-                {addItemsToListIsOpen
-                    && <GridContainer {...styles.addItemsGridContainer}>
+                )}
+                {addItemsToListIsOpen && (
+                    <GridContainer {...styles.addItemsGridContainer}>
                         <GridItem {...styles.productSelectorGridItem}>
                             <ProductSelector
                                 selectButtonTitle={translate("Add to List")}
@@ -321,7 +383,9 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                             />
                         </GridItem>
                         <GridItem {...styles.uploadItemsGridItem}>
-                            <Link {...styles.uploadItemsLink} onClick={uploadItemsClickHandler}>{translate("Upload Items")}</Link>
+                            <Link {...styles.uploadItemsLink} onClick={uploadItemsClickHandler}>
+                                {translate("Upload Items")}
+                            </Link>
                             <Modal
                                 {...styles.uploadItemsModal}
                                 headline={translate("Upload Items To List")}
@@ -342,8 +406,12 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                                             uploadErrorText={siteMessage("ListUpload_UploadError")}
                                             rowsLimitExceededText={siteMessage("ListUpload_RowsLimitExceeded")}
                                             errorReasons={{
-                                                [UploadError.ConfigurableProduct]: siteMessage("ListUpload_CannotOrderConfigurable"),
-                                                [UploadError.StyledProduct]: siteMessage("ListUpload_CannotOrderStyled"),
+                                                [UploadError.ConfigurableProduct]: siteMessage(
+                                                    "ListUpload_CannotOrderConfigurable",
+                                                ),
+                                                [UploadError.StyledProduct]: siteMessage(
+                                                    "ListUpload_CannotOrderStyled",
+                                                ),
                                                 [UploadError.InvalidUnit]: translate("Invalid U/M"),
                                                 [UploadError.NotFound]: siteMessage("Product_NotFound"),
                                             }}
@@ -357,27 +425,33 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                             </Modal>
                         </GridItem>
                     </GridContainer>
-                }
+                )}
             </StyledWrapper>
             <StyledWrapper {...styles.rightColumnWrapper}>
-                {!addItemsToListIsOpen
-                    && <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
-                        {wishListLinesDataView.value && wishListLinesDataView.pagination?.sortOptions?.map(sortOption =>
-                            <Clickable
-                                {...(sortOption.sortType === loadWishListLinesParameter.sort ? styles.selectedSortByClickable : styles.sortByClickable)}
-                                key={sortOption.sortType}
-                                onClick={() => sortByChangeHandler(sortOption.sortType)}
-                            >
-                                {sortOption.displayName}
-                            </Clickable>)
-                        }
+                {!addItemsToListIsOpen && (
+                    <OverflowMenu position="end" {...styles.sortByOverflowMenu}>
+                        {wishListLinesDataView.value &&
+                            wishListLinesDataView.pagination?.sortOptions?.map(sortOption => (
+                                <Clickable
+                                    {...(sortOption.sortType === loadWishListLinesParameter.sort
+                                        ? styles.selectedSortByClickable
+                                        : styles.sortByClickable)}
+                                    key={sortOption.sortType}
+                                    onClick={() => sortByChangeHandler(sortOption.sortType)}
+                                >
+                                    {sortOption.displayName}
+                                </Clickable>
+                            ))}
                     </OverflowMenu>
-                }
-                {addItemsToListIsOpen
-                    && <Icon {...styles.closeAddItemsToList} onClick={() => {
-                        setAddItemsToListIsOpen(false);
-                    }} />
-                }
+                )}
+                {addItemsToListIsOpen && (
+                    <Icon
+                        {...styles.closeAddItemsToList}
+                        onClick={() => {
+                            setAddItemsToListIsOpen(false);
+                        }}
+                    />
+                )}
             </StyledWrapper>
         </StyledWrapper>
     );

@@ -1,3 +1,4 @@
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import styled from "styled-components";
 import injectCss from "../utilities/injectCss";
@@ -7,21 +8,26 @@ import scopeTab from "./helpers/scopeTab";
 import { OverlayComponentProps, OverlayOwnProps } from "./Overlay";
 import Scrim from "./Scrim";
 
-const ContentContainer = styled.div` ${injectCss} `;
+const ContentContainer = styled.div`
+    ${injectCss}
+`;
 
-const ContentBody = styled.div` ${injectCss} `;
+const ContentBody = styled.div<InjectableCss>`
+    ${injectCss}
+`;
 
 const TAB_KEY = 9;
 const ESC_KEY = 27;
 
 let ariaHiddenInstances = 0;
 
-export type OverlayManagerProps = OverlayComponentProps & OverlayOwnProps & {
-    /* Duration of exit animation. */
-    exitDuration: number;
-    /* Reference to . */
-    ref: React.RefObject<HTMLDivElement>;
-};
+export type OverlayManagerProps = OverlayComponentProps &
+    OverlayOwnProps & {
+        /* Duration of exit animation. */
+        exitDuration: number;
+        /* Reference to . */
+        ref: React.RefObject<HTMLDivElement>;
+    };
 
 interface OverlayManagerState {
     afterOpen: boolean;
@@ -133,17 +139,14 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
 
     // Don't steal focus from inner elements
     focusContent = () => {
-    // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line no-unused-expressions
         this.contentRef && !this.contentHasFocus() && this.contentRef.current?.focus();
     };
 
     closeWithTimeout = (event: React.SyntheticEvent | null) => {
         const closesAt = Date.now() + this.props.exitDuration;
         this.setState({ beforeClose: true, closesAt }, () => {
-            this.closeTimer = setTimeout(
-                this.closeWithoutTimeout,
-                this.state.closesAt - Date.now(),
-            );
+            this.closeTimer = setTimeout(this.closeWithoutTimeout, this.state.closesAt - Date.now());
         });
     };
 
@@ -159,7 +162,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         );
     };
 
-    isPersistentAndVisible = () =>  this.props.persisted && this.contentRef.current?.style.transform !== "";
+    isPersistentAndVisible = () => this.props.persisted && this.contentRef.current?.style.transform !== "";
 
     handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (this.isPersistentAndVisible()) {
@@ -184,7 +187,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     };
 
     handleScrimOnClick = (event: React.SyntheticEvent) => {
-        if (event.target as any === this.scrimRef && this.isPersistentAndVisible()) {
+        if ((event.target as any) === this.scrimRef && this.isPersistentAndVisible()) {
             this.props.handleClose?.(event);
             return;
         }
@@ -225,8 +228,8 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
 
     shouldBeClosed = () => !this.state.isOpen && !this.state.beforeClose;
 
-    contentHasFocus = () => document.activeElement === this.contentRef.current
-    || this.contentRef.current?.contains(document.activeElement);
+    contentHasFocus = () =>
+        document.activeElement === this.contentRef.current || this.contentRef.current?.contains(document.activeElement);
 
     render() {
         const {
@@ -246,7 +249,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         setContentRef && setContentRef(this.contentRef);
 
         const renderComponent = (
-           <Scrim
+            <Scrim
                 persisted={this.props.persisted}
                 persistentClosed={!this.state.isOpen || !this.isPersistentAndVisible()}
                 ref={this.scrimRef}
@@ -275,7 +278,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
                         onClick={this.handleContentOnClick}
                         role={role}
                         aria-label={contentLabel}
-                        aria-labelledby={titleId}
+                        aria-labelledby={titleId as string}
                     >
                         {children}
                     </ContentBody>

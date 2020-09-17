@@ -5,9 +5,7 @@ let globalElement: string | HTMLElement | null = null;
 
 export function assertNodeList(nodeList: { length: number }, selector: string) {
     if (!nodeList || !nodeList.length) {
-        throw new Error(
-            `mobius: No elements were found for selector ${selector}.`,
-        );
+        throw new Error(`mobius: No elements were found for selector ${selector}.`);
     }
 }
 
@@ -16,7 +14,7 @@ export function setElement(element: string) {
     if (typeof useElement === "string" && canUseDOM) {
         const el = document.querySelectorAll(useElement);
         assertNodeList(el, useElement);
-        useElement = "length" in el ? el[0] as HTMLElement : el;
+        useElement = "length" in el ? (el[0] as HTMLElement) : el;
     }
     globalElement = useElement || globalElement;
     return globalElement;

@@ -906,9 +906,8 @@ module insite.cart {
                 onValidate: (success) => {
                     this.handlePaymetricValidateSuccess(success);
                 },
-                onError: function () {
+                onError: () => {
                     this.spinnerService.hide();
-                    this.scrollToTopOfForm();
                     this.submitting = false;
                 },
             });
@@ -960,7 +959,7 @@ module insite.cart {
                     return;
                 }
                 // Set result with CC details 
-                this.cart.paymentOptions.creditCard.cardType = result.data.creditCard.cardType;
+                this.cart.paymentOptions.creditCard.cardType = this.convertPaymetricCardType(result.data.creditCard.cardType);
                 this.cart.paymentOptions.creditCard.expirationMonth = result.data.creditCard.expirationMonth;
                 this.cart.paymentOptions.creditCard.expirationYear = result.data.creditCard.expirationYear;
                 this.cart.paymentOptions.creditCard.cardNumber = result.data.creditCard.cardNumber;
@@ -975,16 +974,25 @@ module insite.cart {
             });
         }
 
-        protected getPaymetricIframeSubmitConfig(paymetricDto: PaymetricDto): any {
-            return {
-                iFrameId: "paymetricIframe",
-                targetUrl: paymetricDto.message,
-                autosizewidth: false,
-                autosizeheight: true,
-                onError: () => {
-                    alert("error")
-                }
-            };
+        private convertPaymetricCardType(cardType: string): string {
+            switch (cardType.toLowerCase()) {
+            case "vi":
+                return "Visa";
+            case "mc":
+                return "MasterCard";
+            case "ax":
+                return "American Express";
+            case "dc":
+                return "Diner's";
+            case "di":
+                return "Discover";
+            case "jc":
+                return "JCB";
+            case "sw":
+                return "Maestro";
+            default:
+                return "unknown";
+            }
         }
 
         protected openDeliveryMethodPopup() {

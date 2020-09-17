@@ -12,11 +12,13 @@ export default interface ContextState {
     settings: SettingsModel;
     areSettingsLoaded: boolean;
     tokenExConfigs: Dictionary<TokenExConfig>;
-    isSigningIn: boolean,
+    isSigningIn: boolean;
     selectedBrandPath?: string;
     selectedProductPath?: string;
     selectedCategoryPath?: string;
     permissions?: PermissionsModel;
     isErrorModalOpen?: boolean;
     canChangePage?: boolean;
+    accessToken?: string;
+    addingProductToCart?: boolean;
 }

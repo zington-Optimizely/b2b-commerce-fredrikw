@@ -9,7 +9,8 @@ type HandlerType = Handler<
     },
     {
         apiResult: BudgetModel;
-    }>;
+    }
+>;
 
 export const CallUpdateBudgetApi: HandlerType = async props => {
     props.apiResult = await updateBudget(props.parameter.updateBudgetApiParameter);
@@ -27,11 +28,7 @@ export const DispatchCompleteUpdateBudget: HandlerType = props => {
     });
 };
 
-export const chain = [
-    CallUpdateBudgetApi,
-    ExecuteOnSuccessCallback,
-    DispatchCompleteUpdateBudget,
-];
+export const chain = [CallUpdateBudgetApi, ExecuteOnSuccessCallback, DispatchCompleteUpdateBudget];
 
 const updateBudgetModule = createHandlerChainRunner(chain, "updateBudgetModule");
 export default updateBudgetModule;

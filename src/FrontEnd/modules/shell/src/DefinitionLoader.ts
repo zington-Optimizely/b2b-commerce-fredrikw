@@ -1,10 +1,18 @@
 import { newGuid, splitCamelCase } from "@insite/client-framework/Common/StringHelpers";
-import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import { getThePageDefinitions, getTheWidgetDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import logger from "@insite/client-framework/Logger";
-import { ContentItemDefinition, PageDefinition, WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
+import {
+    ContentItemDefinition,
+    PageDefinition,
+    WidgetDefinition,
+} from "@insite/client-framework/Types/ContentItemDefinitions";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
 import sortBy from "lodash/sortBy";
+import {
+    commerce_routes as commerceRoutes,
+    spire_system_uris as spireSystemUris,
+} from "../../../config/spire_routes.json";
 
 export type LoadedWidgetDefinition = WidgetDefinition & HasType;
 export type LoadedPageDefinition = PageDefinition & HasType;
@@ -13,22 +21,10 @@ interface HasType {
     type: string;
 }
 
-const systemUris: SafeDictionary<true> = {
-    api: true,
-    admin: true,
-    contentadmin: true,
-    ckfinder: true,
-    systemresources: true,
-    identity: true,
-    bundles: true,
-    email: true,
-    redirectto: true,
-    userfiles: true,
-    dist: true,
-    creators: true,
-    importexport: true,
-    ".spire": true,
-};
+const systemUris = new Set<string>([
+    ...commerceRoutes.map(v => v.toLowerCase()),
+    ...spireSystemUris.map(v => v.toLowerCase()),
+]);
 
 let loadedDefinitions = false;
 const widgetDefinitionsByType: Dictionary<LoadedWidgetDefinition> = {};
@@ -152,17 +148,27 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
     }
 
     if (pageDefinition.hasEditableTitle) {
-        fieldDefinitions.push(
-            {
-                name: "title",
-                displayName: "SEO Title",
-                editorTemplate: "TextField",
-                defaultValue: "New Page",
-                fieldType: "Translatable",
-                isRequired: true,
-                sortOrder: 0,
-            });
+        fieldDefinitions.push({
+            name: "title",
+            displayName: "SEO Title",
+            editorTemplate: "TextField",
+            defaultValue: "New Page",
+            fieldType: "Translatable",
+            isRequired: true,
+            sortOrder: 0,
+        });
     }
+
+    fieldDefinitions.push({
+        name: "variantName",
+        displayName: "Variant Name",
+        editorTemplate: "TextField",
+        defaultValue: "",
+        fieldType: "General",
+        isRequired: true,
+        sortOrder: 0,
+    });
+
     if (pageDefinition.hasEditableUrlSegment) {
         fieldDefinitions.push({
             name: "urlSegment",
@@ -173,7 +179,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
             isRequired: true,
             sortOrder: 100,
             regularExpression: new RegExp("^[0-9a-zA-Z_\\-]+$"),
-            validate: value => (systemUris[value?.toLowerCase()] && "Field has reserved system value") || null,
+            validate: value => (systemUris.has(value?.toLowerCase()) && "Field has reserved system value") || null,
         });
     }
 

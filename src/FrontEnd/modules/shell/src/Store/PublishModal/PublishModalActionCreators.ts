@@ -98,7 +98,10 @@ export const loadAllPagePublishInfo = (pageId: string): ShellThunkAction => asyn
             failedPageIds: null,
         });
 
-        if (((futurePublish || rollbackOn) && !state.publishModal.publishInTheFuture) || (!futurePublish && !rollbackOn && state.publishModal.publishInTheFuture)) {
+        if (
+            ((futurePublish || rollbackOn) && !state.publishModal.publishInTheFuture) ||
+            (!futurePublish && !rollbackOn && state.publishModal.publishInTheFuture)
+        ) {
             dispatch({ type: "PublishModal/TogglePublishInTheFuture" });
         }
     } else {
@@ -121,7 +124,15 @@ export const loadAllPagePublishInfo = (pageId: string): ShellThunkAction => asyn
 export const publish = (): ShellThunkAction => async (dispatch, getState) => {
     const state = getState();
     const page = getCurrentPageForShell(state);
-    const { pagePublishInfoIsSelected, pagePublishInfosState, failedToPublishPageIds, isBulkPublish, publishInTheFuture, publishOn, rollbackOn } = state.publishModal;
+    const {
+        pagePublishInfoIsSelected,
+        pagePublishInfosState,
+        failedToPublishPageIds,
+        isBulkPublish,
+        publishInTheFuture,
+        publishOn,
+        rollbackOn,
+    } = state.publishModal;
     const pages: SafeDictionary<PublishPageSelection> = {};
     for (let x = 0; x < pagePublishInfoIsSelected.length; x += 1) {
         if (!pagePublishInfoIsSelected[x]) {
@@ -156,10 +167,17 @@ export const publish = (): ShellThunkAction => async (dispatch, getState) => {
     const actualPublishOn = publishInTheFuture ? publishOn : undefined;
     const actualRollbackOn = publishInTheFuture ? rollbackOn : undefined;
 
-    const publishResult = await publishPages({ pages: pagesToPublish, futurePublish: !!publishInTheFuture, publishOn: actualPublishOn, rollbackOn: actualRollbackOn });
+    const publishResult = await publishPages({
+        pages: pagesToPublish,
+        futurePublish: !!publishInTheFuture,
+        publishOn: actualPublishOn,
+        rollbackOn: actualRollbackOn,
+    });
 
     if (!publishResult.success) {
-        const previousIds = state.publishModal.failedToPublishPageIds ? cloneDeep(state.publishModal.failedToPublishPageIds) : {};
+        const previousIds = state.publishModal.failedToPublishPageIds
+            ? cloneDeep(state.publishModal.failedToPublishPageIds)
+            : {};
         publishResult.ErrorInfos.forEach(o => {
             previousIds[o.pageId] = true;
         });
@@ -182,7 +200,7 @@ export const publish = (): ShellThunkAction => async (dispatch, getState) => {
             type: "PageTree/UpdatePageState",
             pageId: page.pageId,
             parentId: page.parentId,
-            publishOn: publishOn && rollbackOn && rollbackOn > publishOn ? rollbackOn : (publishOn || rollbackOn),
+            publishOn: publishOn && rollbackOn && rollbackOn > publishOn ? rollbackOn : publishOn || rollbackOn,
         });
     }
 

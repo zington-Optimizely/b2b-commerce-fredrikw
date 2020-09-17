@@ -5,9 +5,9 @@ import { CartPageContext } from "@insite/content-library/Pages/CartPage";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
+import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps;
 
@@ -15,6 +15,7 @@ export interface CartHeaderStyles {
     container?: GridContainerProps;
     gridItem1?: GridItemProps;
     gridItem2?: GridItemProps;
+    approverInfoGridItem?: GridItemProps;
 }
 
 export const cartHeaderStyles: CartHeaderStyles = {
@@ -23,6 +24,12 @@ export const cartHeaderStyles: CartHeaderStyles = {
     },
     gridItem2: {
         width: [2, 2, 4, 3, 3],
+    },
+    approverInfoGridItem: {
+        width: 12,
+        css: css`
+            padding: 0 15px;
+        `,
     },
 };
 
@@ -36,6 +43,9 @@ const CartHeader: FC<Props> = ({ id }) => {
             </GridItem>
             <GridItem {...styles.gridItem2}>
                 <Zone contentId={id} zoneName="Content1" />
+            </GridItem>
+            <GridItem {...styles.approverInfoGridItem}>
+                <Zone contentId={id} zoneName="Content2" />
             </GridItem>
         </GridContainer>
     );

@@ -10,14 +10,20 @@ const initialState: AddressFieldsState = {
 };
 
 const reducer = {
-    "Data/AddressFields/BeginLoadAddressFields": (draft: Draft<AddressFieldsState>, action: { parameter: GetAddressFieldsApiParameter }) => {
+    "Data/AddressFields/BeginLoadAddressFields": (
+        draft: Draft<AddressFieldsState>,
+        action: { parameter: GetAddressFieldsApiParameter },
+    ) => {
         draft.dataViews[getDataViewKey(action.parameter)] = {
             isLoading: true,
             fetchedDate: new Date(),
         };
     },
 
-    "Data/AddressFields/CompleteLoadAddressFields": (draft: Draft<AddressFieldsState>, action: { parameter: GetAddressFieldsApiParameter, collection: AddressFieldCollectionModel }) => {
+    "Data/AddressFields/CompleteLoadAddressFields": (
+        draft: Draft<AddressFieldsState>,
+        action: { parameter: GetAddressFieldsApiParameter; collection: AddressFieldCollectionModel },
+    ) => {
         const dataView = {
             isLoading: false,
             value: {

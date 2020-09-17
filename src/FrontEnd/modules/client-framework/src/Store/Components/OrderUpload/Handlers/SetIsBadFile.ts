@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ isBadFile: boolean }>;
 
@@ -12,9 +9,7 @@ export const DispatchSetIsBadFile: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetIsBadFile,
-];
+export const chain = [DispatchSetIsBadFile];
 
 const setIsBadFile = createHandlerChainRunner(chain, "SetIsBadFile");
 export default setIsBadFile;

@@ -36,8 +36,7 @@ export interface ChangeCustomerBillToSelectorStyles {
     billToSelectorDynamicDropdown?: DynamicDropdownPresentationProps;
 }
 
-export const changeCustomerBillToSelectorStyles: ChangeCustomerBillToSelectorStyles = {
-};
+export const changeCustomerBillToSelectorStyles: ChangeCustomerBillToSelectorStyles = {};
 
 const ChangeCustomerBillToSelector: FC<Props> = ({
     noShipToAndCantCreate,
@@ -52,20 +51,15 @@ const ChangeCustomerBillToSelector: FC<Props> = ({
     const [styles] = useState(() => mergeToNew(changeCustomerBillToSelectorStyles, extendedStyles));
     const [options, setOptions] = useState<OptionObject[]>([]);
 
-    useEffect(
-        () => {
-            if (billTosDataView.value) {
-                const options: OptionObject[] = billTosDataView.value.map(billTo => (
-                    {
-                        optionText: billTo.label,
-                        optionValue: billTo.id,
-                    }
-                ));
-                setOptions(options);
-            }
-        },
-        [billTosDataView],
-    );
+    useEffect(() => {
+        if (billTosDataView.value) {
+            const options: OptionObject[] = billTosDataView.value.map(billTo => ({
+                optionText: billTo.label,
+                optionValue: billTo.id,
+            }));
+            setOptions(options);
+        }
+    }, [billTosDataView]);
 
     const searchTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         setParameter({
@@ -94,9 +88,9 @@ const ChangeCustomerBillToSelector: FC<Props> = ({
             placeholder={translate("Search or Select Bill To")}
             isLoading={isLoading}
             error={noShipToAndCantCreate && siteMessage("SignIn_NoShipToAndCantCreate")}
-            data-test-selector="changeCustomerBillToSelector" />
+            data-test-selector="changeCustomerBillToSelector"
+        />
     );
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeCustomerBillToSelector);

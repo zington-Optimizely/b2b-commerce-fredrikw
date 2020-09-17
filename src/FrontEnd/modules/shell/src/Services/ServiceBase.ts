@@ -16,7 +16,12 @@ export function get<T>(endpoint: string, parameter?: Dictionary<any>) {
 }
 
 export function post<T = void>(endpoint: string, model?: Parameters<typeof JSON["stringify"]>[0]) {
-    return requestJson<T>(endpoint, "POST", { "Content-Type": "application/json" }, model ? JSON.stringify(model) : undefined);
+    return requestJson<T>(
+        endpoint,
+        "POST",
+        { "Content-Type": "application/json" },
+        model ? JSON.stringify(model) : undefined,
+    );
 }
 
 export const postVoid = (endpoint: string, model?: any) =>
@@ -24,9 +29,7 @@ export const postVoid = (endpoint: string, model?: any) =>
 
 export function requestJson<T>(endpoint: string, method: string, headers: Dictionary<string> = {}, body?: string) {
     return new Promise<T>(resolve => {
-        request<T>(`${endpoint}`, method, headers, body)
-            .then(resolve)
-            .catch(showErrorModal);
+        request<T>(`${endpoint}`, method, headers, body).then(resolve).catch(showErrorModal);
     });
 }
 
@@ -44,14 +47,16 @@ export function showErrorModal(error: any) {
         return; // Can't do anything without a connection to Redux.
     }
 
-    if (!error || Object.keys(error).length === 0) { // an empty error indicates a canceled request. There is nothing to display in that case
+    if (!error || Object.keys(error).length === 0) {
+        // an empty error indicates a canceled request. There is nothing to display in that case
         return;
     }
 
     let message: string | undefined;
     let onCloseAction: ErrorModalState["onCloseAction"];
     if (typeof error.status === "number" && error.status === 403) {
-        message = "You need additional permissions to access the CMS. Please contact your system administrator to change your permissions.";
+        message =
+            "You need additional permissions to access the CMS. Please contact your system administrator to change your permissions.";
         onCloseAction = "RedirectToAdmin";
     }
 

@@ -1,4 +1,5 @@
 import AccountsReducer from "@insite/client-framework/Store/Data/Accounts/AccountsReducer";
+import AccountShipTosReducer from "@insite/client-framework/Store/Data/AccountShipTos/AccountShipTosReducer";
 import AddressFieldsReducer from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsReducer";
 import BillTosReducer from "@insite/client-framework/Store/Data/BillTos/BillTosReducer";
 import BrandsReducer from "@insite/client-framework/Store/Data/Brands/BrandsReducer";
@@ -11,6 +12,7 @@ import CountriesReducer from "@insite/client-framework/Store/Data/Countries/Coun
 import DealersReducer from "@insite/client-framework/Store/Data/Dealers/DealersReducer";
 import InvoicesReducer from "@insite/client-framework/Store/Data/Invoices/InvoicesReducer";
 import MessagesReducer from "@insite/client-framework/Store/Data/Messages/MessagesReducer";
+import OrderApprovalsReducer from "@insite/client-framework/Store/Data/OrderApprovals/OrderApprovalsReducer";
 import OrdersReducer from "@insite/client-framework/Store/Data/Orders/OrdersReducer";
 import OrderStatusMappingReducer from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsReducer";
 import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
@@ -26,6 +28,7 @@ import { combineReducers } from "redux";
 
 const dataReducers = {
     accounts: AccountsReducer,
+    accountShipTos: AccountShipTosReducer,
     addressFields: AddressFieldsReducer,
     billTos: BillTosReducer,
     brands: BrandsReducer,
@@ -38,6 +41,7 @@ const dataReducers = {
     dealers: DealersReducer,
     invoices: InvoicesReducer,
     messages: MessagesReducer,
+    orderApprovals: OrderApprovalsReducer,
     orders: OrdersReducer,
     orderStatusMappings: OrderStatusMappingReducer,
     pages: PagesReducer,

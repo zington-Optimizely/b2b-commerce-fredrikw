@@ -11,9 +11,7 @@ interface Props {
  * This component should only be used in cases where the dateTime cannot be generated server side.
  */
 const getLocalizedDateTime = ({ dateTime, language, options }: Props) => {
-    const locale = language
-        ? (language.cultureCode || language.languageCode)
-        : undefined;
+    const locale = language ? language.cultureCode || language.languageCode : undefined;
 
     return dateTime.toLocaleDateString(locale, options);
 };

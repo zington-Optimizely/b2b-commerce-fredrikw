@@ -29,9 +29,11 @@ interface OwnProps {
 
 const SkipNav: React.FC<OwnProps> = (props: OwnProps) => {
     const [styles] = React.useState(() => mergeToNew(skipNavStyles, props.extendedStyles));
-    return <Button {...styles.skipToContent} onClick={() => props.destination?.current?.focus()}>
-        {props.text}
-    </Button>;
+    return (
+        <Button {...styles.skipToContent} onClick={() => props.destination?.current?.focus()}>
+            {props.text}
+        </Button>
+    );
 };
 
 export default SkipNav;

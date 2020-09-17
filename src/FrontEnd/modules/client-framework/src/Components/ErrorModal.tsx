@@ -13,7 +13,6 @@ const mapStateToProps = (state: ApplicationState) => ({
     errorPage: getPageStateByType(state, "UnhandledErrorModal"),
 });
 
-
 const mapDispatchToProps = {
     loadPageByType,
     closeErrorModal,
@@ -21,13 +20,7 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-
-const ErrorModal: React.FC<Props> = ({
-                                         modalIsOpen,
-                                         closeErrorModal,
-                                         errorPage,
-                                         loadPageByType,
-                                     }) => {
+const ErrorModal: React.FC<Props> = ({ modalIsOpen, closeErrorModal, errorPage, loadPageByType }) => {
     useEffect(() => {
         if (!errorPage.value && !errorPage.isLoading) {
             loadPageByType("UnhandledErrorModal");
@@ -42,15 +35,13 @@ const ErrorModal: React.FC<Props> = ({
         return null;
     }
 
-    return <Modal
-        headline={errorPage.value.fields["modalTitle"]}
-        isOpen={modalIsOpen}
-        handleClose={modalCloseHandler}
-    >
-        <div data-test-selector="unhandledErrorModal">
-            {createPageElement(errorPage.value.type, errorPage.value)}
-        </div>
-    </Modal>;
+    return (
+        <Modal headline={errorPage.value.fields["modalTitle"]} isOpen={modalIsOpen} handleClose={modalCloseHandler}>
+            <div data-test-selector="unhandledErrorModal">
+                {createPageElement(errorPage.value.type, errorPage.value)}
+            </div>
+        </Modal>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ErrorModal);

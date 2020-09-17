@@ -7,11 +7,13 @@ export interface AutocompleteApiParameter extends ApiParameter {
     categoryEnabled?: boolean;
     contentEnabled?: boolean;
     productEnabled?: boolean;
+    spireContent?: boolean;
 }
 
 const autocompleteUrl = "/api/v1/autocomplete";
 
 export function autocompleteSearch(parameter: AutocompleteApiParameter) {
+    parameter.spireContent = true;
     return get<AutocompleteModel>(autocompleteUrl, parameter);
 }
 
@@ -51,5 +53,7 @@ export function getSearchHistory() {
         return [];
     }
 
-    return (JSON.parse(window.localStorage.getItem(searchHistoryCacheKey) || "[]") as SearchHistoryItem[]).filter((o: any) => typeof o === "object");
+    return (JSON.parse(window.localStorage.getItem(searchHistoryCacheKey) || "[]") as SearchHistoryItem[]).filter(
+        (o: any) => typeof o === "object",
+    );
 }

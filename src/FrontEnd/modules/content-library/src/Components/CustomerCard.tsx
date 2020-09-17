@@ -53,19 +53,18 @@ export const customerCardStyles: CustomerCardStyles = {
         `,
     },
     selectButton: { variant: "tertiary" },
-    editLink: { css: css` margin-top: 1rem; ` },
+    editLink: {
+        css: css`
+            margin-top: 1rem;
+        `,
+    },
 };
 
-const ActionsWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
+const ActionsWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
-const CustomerCard: FC<OwnProps> = ({
-    customer,
-    isSelected,
-    allowEditCustomer,
-    onEdit,
-    extendedStyles,
-    onSelect,
-}) => {
+const CustomerCard: FC<OwnProps> = ({ customer, isSelected, allowEditCustomer, onEdit, extendedStyles, onSelect }) => {
     const [styles] = React.useState(() => mergeToNew(customerCardStyles, extendedStyles));
 
     const handleEditClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => onEdit?.(event, customer);
@@ -90,15 +89,15 @@ const CustomerCard: FC<OwnProps> = ({
                     >
                         {isSelected ? "Selected" : "Select"}
                     </Button>
-                    {allowEditCustomer && onEdit
-                        && <Link
+                    {allowEditCustomer && onEdit && (
+                        <Link
                             {...styles.editLink}
                             onClick={handleEditClick}
                             data-test-selector={`customerCard_edit_${customer.id}`}
                         >
                             {translate("Edit")}
                         </Link>
-                    }
+                    )}
                 </ActionsWrapper>
             </GridItem>
         </GridContainer>

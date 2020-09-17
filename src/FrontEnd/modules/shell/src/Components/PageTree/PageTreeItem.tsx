@@ -46,32 +46,56 @@ class PageTreeItem extends React.Component<Props> {
             permissions,
         } = this.props;
 
-        const isExpanded = expandedNodes[node.key];
+        const isExpanded = expandedNodes[node.key] && !node.isVariant;
         const expandIcon = isExpanded ? ChevronDown : ChevronRight;
 
         let flyOutMenu: null | JSX.Element = null;
         if (node === flyOutNode) {
-            flyOutMenu = <PageTreeFlyOutActive isActivePage={selectedPageId === node.pageId} onClick={this.handleFlyOutClick}>
-                <TreeOverflow />
-            </PageTreeFlyOutActive>;
+            flyOutMenu = (
+                <PageTreeFlyOutActive isActivePage={selectedPageId === node.pageId} onClick={this.handleFlyOutClick}>
+                    <TreeOverflow />
+                </PageTreeFlyOutActive>
+            );
         } else if (isEditMode) {
-            flyOutMenu = <PageTreeFlyout isActivePage={selectedPageId === node.pageId} onClick={this.handleFlyOutClick} title="More Options" data-test-selector={`pageTreeFlyOut_${node.displayName}`}>
-                <TreeOverflow />
-            </PageTreeFlyout>;
+            flyOutMenu = (
+                <PageTreeFlyout
+                    isActivePage={selectedPageId === node.pageId}
+                    onClick={this.handleFlyOutClick}
+                    title="More Options"
+                    data-test-selector={`pageTreeFlyOut_${node.displayName}`}
+                >
+                    <TreeOverflow />
+                </PageTreeFlyout>
+            );
         }
 
         const children = nodesByParentId[node.nodeId];
         return (
-            <PageTreePage data-haschildren={!!children}>
-                <PageTreeTitle {...node} isActivePage={selectedPageId === node.pageId} isFuturePublish={!!node.futurePublishOn && node.futurePublishOn > new Date()}>
-                    {children
-                        && <ExpandStyle src={expandIcon} size={20} onClick={this.handleExpandClick} data-test-selector={`pageTreeFolder_${node.displayName}`} />
-                    }
+            <PageTreePage data-haschildren={!!children && !node.isVariant}>
+                <PageTreeTitle
+                    {...node}
+                    isActivePage={selectedPageId === node.pageId}
+                    isFuturePublish={!!node.futurePublishOn && node.futurePublishOn > new Date()}
+                >
+                    {children && !node.isVariant && (
+                        <ExpandStyle
+                            src={expandIcon}
+                            size={20}
+                            onClick={this.handleExpandClick}
+                            data-test-selector={`pageTreeFolder_${node.displayName}`}
+                        />
+                    )}
                     <NodeIcon>
-                        <Page height={18}/>
+                        <Page
+                            height={18}
+                            color1={node.isVariant ? (node.isDefaultVariant ? "#4A90E2" : "#FFA500") : "#D8D8D8"}
+                        />
                     </NodeIcon>
-                    <NavLink to={`/ContentAdmin/Page/${node.pageId}`} data-test-selector={`pageTreeLink_${node.displayName}`}>
-                        {node.displayName}
+                    <NavLink
+                        to={`/ContentAdmin/Page/${node.pageId}`}
+                        data-test-selector={`pageTreeLink_${node.displayName}`}
+                    >
+                        {node.displayName} {node.isVariant && node.variantName ? ` - ${node.variantName}` : ""}
                     </NavLink>
                     {pageTreeFlyOutMenuHasItems(node, permissions) && flyOutMenu}
                 </PageTreeTitle>
@@ -114,7 +138,7 @@ const NodeIcon = styled.span`
 `;
 
 const PageTreeFlyout = styled.button<{ isActivePage: boolean }>`
-    ${props => !props.isActivePage ? "display: none;" : ""}
+    ${props => (!props.isActivePage ? "display: none;" : "")}
     cursor: pointer;
     position: absolute;
     width: 20px;
@@ -130,29 +154,37 @@ const PageTreeFlyOutActive = styled(PageTreeFlyout)`
     display: block;
 `;
 
-const PageTreeTitle = styled.h3<{ isMatchingPage: boolean, isActivePage: boolean, isFuturePublish: boolean }>`
-    ${props => !props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : ""}
-    ${props => props.isActivePage ? css`
-        background-color: #777;
-        color: white;
-        & svg circle {
-            fill: white;
-        }
-        &::before {
-            content: "";
-            background-color: #777;
-            position: absolute;
-            height: 100%;
-            width: 22px;
-            left: -22px;
-        }
-        ${ExpandStyle} {
-            color: white;
-        }
-    ` : ""}
-    ${props => props.isFuturePublish ? css`
-        color: ${props.isActivePage ? props.theme.colors.custom.futurePublishActive : props.theme.colors.custom.futurePublish};
-    ` : ""}
+const PageTreeTitle = styled.h3<{ isMatchingPage: boolean; isActivePage: boolean; isFuturePublish: boolean }>`
+    ${props => (!props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : "")}
+    ${props =>
+        props.isActivePage
+            ? css`
+                  background-color: #777;
+                  color: white;
+                  & svg circle {
+                      fill: white;
+                  }
+                  &::before {
+                      content: "";
+                      background-color: #777;
+                      position: absolute;
+                      height: 100%;
+                      width: 22px;
+                      left: -22px;
+                  }
+                  ${ExpandStyle} {
+                      color: white;
+                  }
+              `
+            : ""}
+    ${props =>
+        props.isFuturePublish
+            ? css`
+                  color: ${props.isActivePage
+                      ? props.theme.colors.custom.futurePublishActive
+                      : props.theme.colors.custom.futurePublish};
+              `
+            : ""}
     padding-left: 20px;
     position: relative;
     margin: 0;
@@ -167,7 +199,8 @@ const PageTreeTitle = styled.h3<{ isMatchingPage: boolean, isActivePage: boolean
 const PageTreePage = styled.li`
     ul {
         padding-left: 2px;
-        h3, ul {
+        h3,
+        ul {
             margin-left: 20px;
         }
         li {
@@ -196,7 +229,7 @@ const PageTreePage = styled.li`
         }
     }
 
-    &[data-haschildren='true']::after {
+    &[data-haschildren="true"]::after {
         width: 12px;
     }
 `;

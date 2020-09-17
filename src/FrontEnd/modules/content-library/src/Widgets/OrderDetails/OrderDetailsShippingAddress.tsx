@@ -18,13 +18,17 @@ export interface OrderDetailsShippingAddressStyles {
 
 export const shippingAddressStyles: OrderDetailsShippingAddressStyles = {
     wrapper: {
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
     titleText: {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -42,7 +46,9 @@ const OrderDetailsShippingAddress: React.FunctionComponent = () => {
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.titleText}>{translate(hasShippingAddress ? "Shipping Address" : "Pick Up Location")}</Typography>
+            <Typography {...styles.titleText}>
+                {translate(hasShippingAddress ? "Shipping Address" : "Pick Up Location")}
+            </Typography>
             <AddressInfoDisplay
                 companyName={order.stCompanyName}
                 address1={order.stAddress1}
@@ -51,7 +57,8 @@ const OrderDetailsShippingAddress: React.FunctionComponent = () => {
                 state={order.shipToState}
                 postalCode={order.shipToPostalCode}
                 country={order.stCountry}
-                extendedStyles={styles.addressDisplay} />
+                extendedStyles={styles.addressDisplay}
+            />
         </StyledWrapper>
     );
 };

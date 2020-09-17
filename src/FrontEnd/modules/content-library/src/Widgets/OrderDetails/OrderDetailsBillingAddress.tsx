@@ -18,13 +18,17 @@ export interface OrderDetailsBillingAddressStyles {
 
 export const billingAddressStyles: OrderDetailsBillingAddressStyles = {
     wrapper: {
-        css: css` padding-bottom: 10px; `,
+        css: css`
+            padding-bottom: 10px;
+        `,
     },
     titleText: {
         variant: "h6",
         as: "h2",
         css: css`
-            @media print { font-size: 12px; }
+            @media print {
+                font-size: 12px;
+            }
             margin-bottom: 5px;
         `,
     },
@@ -50,7 +54,8 @@ const OrderDetailsBillingAddress: React.FunctionComponent = () => {
                 state={order.billToState}
                 postalCode={order.billToPostalCode}
                 country={order.btCountry}
-                extendedStyles={styles.addressDisplay} />
+                extendedStyles={styles.addressDisplay}
+            />
         </StyledWrapper>
     );
 };

@@ -10,7 +10,10 @@ const reducer = {
     "Pages/OrderConfirmation/BeginLoadCart": (draft: Draft<OrderConfirmationState>, action: { cartId: string }) => {
         draft.cartId = action.cartId;
     },
-    "Pages/OrderConfirmation/SetIsPreloadingData": (draft: Draft<OrderConfirmationState>, action: { isPreloadingData: boolean }) => {
+    "Pages/OrderConfirmation/SetIsPreloadingData": (
+        draft: Draft<OrderConfirmationState>,
+        action: { isPreloadingData: boolean },
+    ) => {
         draft.isPreloadingData = action.isPreloadingData;
     },
 };

@@ -66,28 +66,74 @@ export interface InvoiceHistoryFilterStyles {
 }
 
 export const filterStyles: InvoiceHistoryFilterStyles = {
-    container: { css: css` padding-bottom: 15px; ` },
-    headingItem: { width: 12, css: css` padding-bottom: 0; ` },
-    heading: { variant: "h5", as: "h2", css: css` margin: 0; ` },
+    container: {
+        css: css`
+            padding-bottom: 15px;
+        `,
+    },
+    headingItem: {
+        width: 12,
+        css: css`
+            padding-bottom: 0;
+        `,
+    },
+    heading: {
+        variant: "h5",
+        as: "h2",
+        css: css`
+            margin: 0;
+        `,
+    },
     shipToGridItem: { width: [12, 12, 5, 5, 4] },
     invoiceNumberGridItem: { width: [12, 12, 3, 3, 2] },
     orderNumberGridItem: { width: [12, 12, 3, 3, 2] },
     fromGridItem: { width: [6, 6, 3, 2, 2] },
     toGridItem: { width: [6, 6, 3, 3, 2] },
-    onlyOpenGridItem: { width: [12, 12, 4, 4, 4], align: "bottom", css: css` padding-top: 0; ` },
-    onlyOpenCheckbox: { typographyProps: { css: css` font-weight: 600; ` } },
+    onlyOpenGridItem: {
+        width: [12, 12, 4, 4, 4],
+        align: "bottom",
+        css: css`
+            padding-top: 0;
+        `,
+    },
+    onlyOpenCheckbox: {
+        typographyProps: {
+            css: css`
+                font-weight: 600;
+            `,
+        },
+    },
     appliedFiltersContainer: { css: horizontalStyles },
     buttonsItem: {
         width: 12,
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
-    clearFiltersButton: { variant: "secondary", css: css` margin-right: 10px; ` },
-    toDate: { cssOverrides: { formField: css` width: 100%; ` } },
-    fromDate: { cssOverrides: { formField: css` width: 100%; ` } },
+    clearFiltersButton: {
+        variant: "secondary",
+        css: css`
+            margin-right: 10px;
+        `,
+    },
+    toDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
+    fromDate: {
+        cssOverrides: {
+            formField: css`
+                width: 100%;
+            `,
+        },
+    },
 };
 
 const styles = filterStyles;
-const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+const tzOffset = new Date().getTimezoneOffset() * 60000;
 class InvoiceHistoryFilter extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -120,8 +166,10 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
         const previousInvoiceNumber = this.getValue(prevProps, "invoiceNumber");
         const currentInvoiceNumber = this.getValue(this.props, "invoiceNumber");
 
-        if ((previousOrderNumber !== currentOrderNumber && currentOrderNumber !== this.state.orderNumber)
-            || (previousInvoiceNumber !== currentInvoiceNumber && currentInvoiceNumber !== this.state.invoiceNumber)) {
+        if (
+            (previousOrderNumber !== currentOrderNumber && currentOrderNumber !== this.state.orderNumber) ||
+            (previousInvoiceNumber !== currentInvoiceNumber && currentInvoiceNumber !== this.state.invoiceNumber)
+        ) {
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState({
                 invoiceNumber: currentInvoiceNumber,
@@ -164,11 +212,15 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
     };
 
     fromDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
-        this.props.updateSearchFields({ fromDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "" });
+        this.props.updateSearchFields({
+            fromDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "",
+        });
     };
 
     toDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
-        this.props.updateSearchFields({ toDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "" });
+        this.props.updateSearchFields({
+            toDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "",
+        });
     };
 
     showOpenOnlyChangeHandler = (showOpenOnly: boolean) => {
@@ -181,43 +233,81 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
 
     render() {
         if (!this.props.filtersOpen) {
-            return <StyledWrapper {...styles.appliedFiltersContainer}>
-                {this.props.getInvoicesParameter.customerSequence && this.props.getInvoicesParameter.customerSequence !== "-1"
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.shipToChangeHandler("-1"); }}>
-                        {`${translate("Ship To")}: ${this.props.getInvoicesParameter.customerSequence}`}
-                    </Tag>
-                }
-                {this.props.getInvoicesParameter.invoiceNumber
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.invoiceNumberChangeHandler(""); }}>
-                        {`${translate("Invoice #")}: ${this.props.getInvoicesParameter.invoiceNumber}`}
-                    </Tag>
-                }
-                {this.props.getInvoicesParameter.orderNumber
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.orderNumberChangeHandler(""); }}>
-                        {`${translate("Order #")}: ${this.props.getInvoicesParameter.orderNumber}`}
-                    </Tag>
-                }
-                {this.props.getInvoicesParameter.fromDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.fromDateChangeHandler({}); }} data-test-selector="invoiceHistory_fromDateButton">
-                        {`${translate("From")}: ${this.props.getInvoicesParameter.fromDate}`}
-                    </Tag>
-                }
-                {this.props.getInvoicesParameter.toDate
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.toDateChangeHandler({}); }}>
-                        {`${translate("To")}: ${this.props.getInvoicesParameter.toDate}`}
-                    </Tag>
-                }
-                {this.props.getInvoicesParameter.showOpenOnly
-                    && <Tag {...styles.appliedFilterTag} onDelete={() => { this.showOpenOnlyChangeHandler(false); }}>
-                        {translate("Only open")}
-                    </Tag>
-                }
-            </StyledWrapper>;
+            return (
+                <StyledWrapper {...styles.appliedFiltersContainer}>
+                    {this.props.getInvoicesParameter.customerSequence &&
+                        this.props.getInvoicesParameter.customerSequence !== "-1" && (
+                            <Tag
+                                {...styles.appliedFilterTag}
+                                onDelete={() => {
+                                    this.shipToChangeHandler("-1");
+                                }}
+                            >
+                                {`${translate("Ship To")}: ${this.props.getInvoicesParameter.customerSequence}`}
+                            </Tag>
+                        )}
+                    {this.props.getInvoicesParameter.invoiceNumber && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.invoiceNumberChangeHandler("");
+                            }}
+                        >
+                            {`${translate("Invoice #")}: ${this.props.getInvoicesParameter.invoiceNumber}`}
+                        </Tag>
+                    )}
+                    {this.props.getInvoicesParameter.orderNumber && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.orderNumberChangeHandler("");
+                            }}
+                        >
+                            {`${translate("Order #")}: ${this.props.getInvoicesParameter.orderNumber}`}
+                        </Tag>
+                    )}
+                    {this.props.getInvoicesParameter.fromDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.fromDateChangeHandler({});
+                            }}
+                            data-test-selector="invoiceHistory_fromDateButton"
+                        >
+                            {`${translate("From")}: ${this.props.getInvoicesParameter.fromDate}`}
+                        </Tag>
+                    )}
+                    {this.props.getInvoicesParameter.toDate && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.toDateChangeHandler({});
+                            }}
+                        >
+                            {`${translate("To")}: ${this.props.getInvoicesParameter.toDate}`}
+                        </Tag>
+                    )}
+                    {this.props.getInvoicesParameter.showOpenOnly && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.showOpenOnlyChangeHandler(false);
+                            }}
+                        >
+                            {translate("Only open")}
+                        </Tag>
+                    )}
+                </StyledWrapper>
+            );
         }
 
-        const shipToOptions = (this.props.currentShipTosDataView.value) || [];
-        const fromDate = this.props.getInvoicesParameter.fromDate ? new Date(new Date(this.props.getInvoicesParameter.fromDate).getTime() + tzOffset) : undefined;
-        const toDate = this.props.getInvoicesParameter.toDate ? new Date(new Date(this.props.getInvoicesParameter.toDate).getTime() + tzOffset) : undefined;
+        const shipToOptions = this.props.currentShipTosDataView.value || [];
+        const fromDate = this.props.getInvoicesParameter.fromDate
+            ? new Date(new Date(this.props.getInvoicesParameter.fromDate).getTime() + tzOffset)
+            : undefined;
+        const toDate = this.props.getInvoicesParameter.toDate
+            ? new Date(new Date(this.props.getInvoicesParameter.toDate).getTime() + tzOffset)
+            : undefined;
 
         return (
             <GridContainer {...styles.container}>
@@ -229,10 +319,13 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                         {...styles.shipToSelect}
                         label={translate("Ship To")}
                         value={this.props.getInvoicesParameter.customerSequence}
-                        onChange={(event) => this.shipToChangeHandler(event.target.value)}>
-                        {shipToOptions.map(shipTo =>
-                            <option key={shipTo.customerSequence} value={shipTo.customerSequence}>{shipTo.label}</option>,
-                        )}
+                        onChange={event => this.shipToChangeHandler(event.target.value)}
+                    >
+                        {shipToOptions.map(shipTo => (
+                            <option key={shipTo.customerSequence} value={shipTo.customerSequence}>
+                                {shipTo.label}
+                            </option>
+                        ))}
                     </Select>
                 </GridItem>
                 <GridItem {...styles.invoiceNumberGridItem}>
@@ -240,7 +333,7 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                         {...styles.invoiceNumberText}
                         value={this.state.invoiceNumber}
                         label={translate("Invoice #")}
-                        onChange={(event) => this.invoiceNumberChangeHandler(event.target.value)}
+                        onChange={event => this.invoiceNumberChangeHandler(event.target.value)}
                         data-test-selector="invoiceHistory_invoiceNumberFilter"
                     />
                 </GridItem>
@@ -249,7 +342,7 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                         {...styles.orderNumberText}
                         value={this.state.orderNumber}
                         label={translate("Order #")}
-                        onChange={(event) => this.orderNumberChangeHandler(event.target.value)}
+                        onChange={event => this.orderNumberChangeHandler(event.target.value)}
                     />
                 </GridItem>
                 <GridItem {...styles.fromGridItem} data-test-selector="invoiceHistory_fromDateFilter">
@@ -282,7 +375,10 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                     <Checkbox
                         {...styles.onlyOpenCheckbox}
                         checked={this.props.getInvoicesParameter.showOpenOnly}
-                        onChange={(_, value) => { this.showOpenOnlyChangeHandler(value); }}>
+                        onChange={(_, value) => {
+                            this.showOpenOnlyChangeHandler(value);
+                        }}
+                    >
                         {translate("Show only open invoices")}
                     </Checkbox>
                 </GridItem>
@@ -290,7 +386,8 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                     <Button
                         {...styles.clearFiltersButton}
                         onClick={this.clearFiltersClickHandler}
-                        data-test-selector="invoiceHistory_clearFiltersButton">
+                        data-test-selector="invoiceHistory_clearFiltersButton"
+                    >
                         {translate("Clear Filters")}
                     </Button>
                 </GridItem>

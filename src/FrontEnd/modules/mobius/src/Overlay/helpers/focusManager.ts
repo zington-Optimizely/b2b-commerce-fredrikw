@@ -19,16 +19,13 @@ export function handleFocus() {
         // the element outside of a setTimeout. Side-effect of this implementation
         // is that the document.body gets focus, and then we focus our element right
         // after, seems fine.
-        setTimeout(
-            () => {
-                if (modalElement?.contains(document.activeElement)) {
-                    return;
-                }
-                const el = findTabbable(modalElement as HTMLElement)[0] || modalElement;
-                el?.focus();
-            },
-            0,
-        );
+        setTimeout(() => {
+            if (modalElement?.contains(document.activeElement)) {
+                return;
+            }
+            const el = findTabbable(modalElement as HTMLElement)[0] || modalElement;
+            el?.focus();
+        }, 0);
     }
 }
 
@@ -46,13 +43,7 @@ export function returnFocus() {
         return;
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.warn(
-            [
-                "You tried to return focus to",
-                toFocus,
-                "but it is not in the DOM anymore",
-            ].join(" "),
-        );
+        console.warn(["You tried to return focus to", toFocus, "but it is not in the DOM anymore"].join(" "));
     }
 }
 

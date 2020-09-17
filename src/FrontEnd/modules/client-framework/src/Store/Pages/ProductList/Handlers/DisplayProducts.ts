@@ -1,7 +1,12 @@
 import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { createHandlerChainRunner, executeAwaitableHandlerChain, Handler } from "@insite/client-framework/HandlerCreator";
+import { trackSearchResultEvent } from "@insite/client-framework/Common/Utilities/tracking";
+import {
+    createHandlerChainRunner,
+    executeAwaitableHandlerChain,
+    Handler,
+} from "@insite/client-framework/HandlerCreator";
 import { CatalogPage } from "@insite/client-framework/Services/CategoryService";
 import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
@@ -10,6 +15,7 @@ import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/C
 import loadCatalogPageByPath from "@insite/client-framework/Store/Data/CatalogPages/Handlers/LoadCatalogPageByPath";
 import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/LoadProducts";
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import qs from "qs";
@@ -66,43 +72,70 @@ export const RequestCatalogPageFromApi: HandlerType = async props => {
 export const ParseQueryParameter: HandlerType = props => {
     const { queryString } = props.parameter;
     const parsedQuery = qs.parse(queryString.startsWith("?") ? queryString.substr(1) : queryString);
-    const splitCommaSeparated = (value?: string|string[]|null) => typeof value === "string" ? value.split(",") : undefined;
-    const { query, page, pageSize, sort, includeSuggestions, stockedItemsOnly, categoryId, brandIds, productLineIds, priceFilters, attributeValueIds, searchWithinQueries } = parsedQuery;
+    const splitCommaSeparated = (value?: string | string[] | null) =>
+        typeof value === "string" ? value.split(",") : undefined;
+    const {
+        query,
+        page,
+        pageSize,
+        sort,
+        includeSuggestions,
+        stockedItemsOnly,
+        categoryId,
+        brandIds,
+        productLineIds,
+        priceFilters,
+        attributeValueIds,
+        searchWithinQueries,
+    } = parsedQuery;
     const { catalogPage } = props.result;
 
     props.result.productFilters = {
-            query,
-            page: page ? parseInt(page as string, 10) : undefined,
-            pageSize: pageSize ? parseInt(pageSize as string, 10) : undefined,
-            sort,
-            includeSuggestions: includeSuggestions !== undefined ? includeSuggestions === "true" : undefined,
-            stockedItemsOnly: stockedItemsOnly !== undefined ? stockedItemsOnly === "true" : undefined,
-            pageCategoryId: catalogPage?.categoryId,
-            pageBrandId: catalogPage?.brandId || undefined,
-            pageProductLineId: catalogPage?.productLineId || undefined,
-            categoryId,
-            brandIds: splitCommaSeparated(brandIds),
-            productLineIds: splitCommaSeparated(productLineIds),
-            priceFilters: splitCommaSeparated(priceFilters),
-            attributeValueIds: splitCommaSeparated(attributeValueIds),
-            searchWithinQueries: splitCommaSeparated(searchWithinQueries),
-        };
+        query,
+        page: page ? parseInt(page as string, 10) : undefined,
+        pageSize: pageSize ? parseInt(pageSize as string, 10) : undefined,
+        sort,
+        includeSuggestions: includeSuggestions !== undefined ? includeSuggestions === "true" : undefined,
+        stockedItemsOnly: stockedItemsOnly !== undefined ? stockedItemsOnly === "true" : undefined,
+        pageCategoryId: catalogPage?.categoryId,
+        pageBrandId: catalogPage?.brandId || undefined,
+        pageProductLineId: catalogPage?.productLineId || undefined,
+        categoryId,
+        brandIds: splitCommaSeparated(brandIds),
+        productLineIds: splitCommaSeparated(productLineIds),
+        priceFilters: splitCommaSeparated(priceFilters),
+        attributeValueIds: splitCommaSeparated(attributeValueIds),
+        searchWithinQueries: splitCommaSeparated(searchWithinQueries),
+    };
 };
 
 export const SetIsFiltered: HandlerType = ({ result, result: { productFilters } }) => {
-    if (productFilters.searchWithinQueries?.length
-        || productFilters.brandIds?.length
-        || productFilters.productLineIds?.length
-        || productFilters.priceFilters?.length
-        || productFilters.attributeValueIds?.length
-        || productFilters.categoryId) {
+    if (
+        productFilters.searchWithinQueries?.length ||
+        productFilters.brandIds?.length ||
+        productFilters.productLineIds?.length ||
+        productFilters.priceFilters?.length ||
+        productFilters.attributeValueIds?.length ||
+        productFilters.categoryId
+    ) {
         result.isFiltered = true;
     }
 };
 
 export const PopulateApiParameter: HandlerType = props => {
     const filters = props.result.productFilters;
-    const { query, brandIds, productLineIds, priceFilters, attributeValueIds, searchWithinQueries, pageCategoryId, pageBrandId, pageProductLineId, ...apiParameter } = filters;
+    const {
+        query,
+        brandIds,
+        productLineIds,
+        priceFilters,
+        attributeValueIds,
+        searchWithinQueries,
+        pageCategoryId,
+        pageBrandId,
+        pageProductLineId,
+        ...apiParameter
+    } = filters;
     props.apiParameter = {
         ...apiParameter,
         search: query,
@@ -152,6 +185,7 @@ export const GetUnfilteredProducts: HandlerType = async props => {
     delete unfilteredApiParameter.priceFilters;
     delete unfilteredApiParameter.attributeValueIds;
     delete unfilteredApiParameter.categoryId;
+    unfilteredApiParameter.stockedItemsOnly = false;
 
     props.result.unfilteredApiParameter = unfilteredApiParameter;
 
@@ -197,43 +231,63 @@ export const DispatchCompleteLoadProducts: HandlerType = props => {
     });
 };
 
-export const LoadRealTimePrices : HandlerType = props => {
-    const { result: { productInfosByProductId } } = props;
+export const SendTracking: HandlerType = props => {
+    const { search } = props.apiParameter;
+
+    if (!search) {
+        return;
+    }
+
+    const state = props.getState();
+    const pagination = getProductListDataViewProperty(state, "pagination");
+    const originalQuery = getProductListDataViewProperty(state, "originalQuery");
+    const correctedQuery = getProductListDataViewProperty(state, "correctedQuery");
+    trackSearchResultEvent(originalQuery || "", pagination?.totalItemCount || 0, correctedQuery);
+};
+
+export const LoadRealTimePrices: HandlerType = props => {
+    const {
+        result: { productInfosByProductId },
+    } = props;
     const productIds = Object.keys(productInfosByProductId);
     if (productIds.length === 0) {
         return;
     }
 
-    props.dispatch(loadRealTimePricing({
-        productPriceParameters: productIds.map(o => (productInfosByProductId[o]!)),
-        onSuccess: realTimePricing => {
-            props.dispatch({
-                type: "Pages/ProductList/CompleteLoadRealTimePricing",
-                realTimePricing,
-            });
-        },
-        onError: () => {
-            props.dispatch({
-                type: "Pages/ProductList/FailedLoadRealTimePricing",
-            });
-        },
-    }));
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: productIds.map(o => productInfosByProductId[o]!),
+            onSuccess: realTimePricing => {
+                props.dispatch({
+                    type: "Pages/ProductList/CompleteLoadRealTimePricing",
+                    realTimePricing,
+                });
+            },
+            onError: () => {
+                props.dispatch({
+                    type: "Pages/ProductList/FailedLoadRealTimePricing",
+                });
+            },
+        }),
+    );
 };
 
-export const LoadRealTimeInventory : HandlerType = props => {
+export const LoadRealTimeInventory: HandlerType = props => {
     if (!props.result.products?.length) {
         return;
     }
 
-    props.dispatch(loadRealTimeInventory({
-        productIds: props.result.products.map(o => o.id),
-        onSuccess: realTimeInventory => {
-            props.dispatch({
-                type: "Pages/ProductList/CompleteLoadRealTimeInventory",
-                realTimeInventory,
-            });
-        },
-    }));
+    props.dispatch(
+        loadRealTimeInventory({
+            productIds: props.result.products.map(o => o.id),
+            onSuccess: realTimeInventory => {
+                props.dispatch({
+                    type: "Pages/ProductList/CompleteLoadRealTimeInventory",
+                    realTimeInventory,
+                });
+            },
+        }),
+    );
 };
 
 export const chain = [
@@ -249,6 +303,7 @@ export const chain = [
     SetUpProductInfos,
     DispatchUpdateIdByPath,
     DispatchCompleteLoadProducts,
+    SendTracking,
     LoadRealTimePrices,
     LoadRealTimeInventory,
 ];

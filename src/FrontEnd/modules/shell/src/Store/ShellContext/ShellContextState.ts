@@ -31,4 +31,10 @@ export interface ShellContextState {
     contentMode: ContentMode;
     homePageId: string;
     permissions?: PermissionsModel;
+
+    /** When true, the CMS can be switched into mobile mode. */
+    enableMobileCms?: boolean;
+
+    /** When true, the CMS is controlling the UI for the mobile app instead of the website. */
+    mobileCmsModeActive?: true;
 }

@@ -24,11 +24,7 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RfqConfirmationPage: FC<Props> = ({
-    id,
-    quoteId,
-    loadQuoteIfNeeded,
-}) => {
+const RfqConfirmationPage: FC<Props> = ({ id, quoteId, loadQuoteIfNeeded }) => {
     useEffect(() => {
         if (quoteId) {
             loadQuoteIfNeeded({ quoteId });

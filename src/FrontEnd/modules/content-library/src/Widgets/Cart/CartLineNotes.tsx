@@ -34,19 +34,22 @@ export interface CartLineNotesStyles {
 
 export const cartLineNotesStyles: CartLineNotesStyles = {
     wrapper: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     toggleLink: {
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
 };
-
 
 const CartLineNotes: FC<Props> = ({
     cart,
     cartLine,
     editable = false,
-    onNotesChange = () => { },
+    onNotesChange = () => {},
     label,
     extendedStyles,
 }) => {
@@ -67,27 +70,32 @@ const CartLineNotes: FC<Props> = ({
 
     const heading = showLineNotes
         ? "Hide Line Notes"
-        : (cartLine.notes.length === 0)
-            ? "Add Line Notes"
-            : "Show Line Notes";
+        : cartLine.notes.length === 0
+        ? "Add Line Notes"
+        : "Show Line Notes";
 
     const [styles] = React.useState(() => mergeToNew(cartLineNotesStyles, extendedStyles));
 
     if (editable) {
         return (
             <StyledWrapper {...styles.wrapper}>
-                <Link {...styles.toggleLink} onClick={lineNotesClickHandler} data-test-selector="cartline_notesShowHideButton">
+                <Link
+                    {...styles.toggleLink}
+                    onClick={lineNotesClickHandler}
+                    data-test-selector="cartline_notesShowHideButton"
+                >
                     {translate(heading)}
                 </Link>
-                {showLineNotes
-                    && <TextArea
+                {showLineNotes && (
+                    <TextArea
                         {...styles.editableNotesTextArea}
                         value={notes}
                         disabled={!cart.canModifyOrder}
                         onChange={changeHandler}
                         onBlur={blurHandler}
-                        data-test-selector="cartline_notes" />
-                }
+                        data-test-selector="cartline_notes"
+                    />
+                )}
             </StyledWrapper>
         );
     }

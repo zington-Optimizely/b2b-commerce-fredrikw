@@ -17,7 +17,10 @@ const reducer = {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/ShipTos/CompleteLoadShipTos": (draft: Draft<ShipTosState>, action: { parameter: GetShipTosApiParameter, collection: ShipToCollectionModel }) => {
+    "Data/ShipTos/CompleteLoadShipTos": (
+        draft: Draft<ShipTosState>,
+        action: { parameter: GetShipTosApiParameter; collection: ShipToCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.shipTos!);
     },
 
@@ -25,7 +28,10 @@ const reducer = {
         draft.isLoading[action.id] = true;
     },
 
-    "Data/ShipTos/CompleteLoadShipTo": (draft: Draft<ShipTosState>, action: { model: ShipToModel, isCurrent?: boolean }) => {
+    "Data/ShipTos/CompleteLoadShipTo": (
+        draft: Draft<ShipTosState>,
+        action: { model: ShipToModel; isCurrent?: boolean },
+    ) => {
         if (action.isCurrent) {
             delete draft.isLoading[API_URL_CURRENT_FRAGMENT];
             draft.currentId = action.model.id;

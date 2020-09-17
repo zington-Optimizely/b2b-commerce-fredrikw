@@ -36,16 +36,11 @@ export interface FirstNameStyles {
     firstNameTextField?: TextFieldPresentationProps;
 }
 
-export const firstNameStyles: FirstNameStyles = {
-};
+export const firstNameStyles: FirstNameStyles = {};
 
 const styles = firstNameStyles;
 
-const FirstName: React.FC<Props> = ({
-    fields,
-    firstName,
-    setFieldValue,
-}) => {
+const FirstName: React.FC<Props> = ({ fields, firstName, setFieldValue }) => {
     const { label, hintText, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [firstNameErrorMessage, setFirstNameErrorMessage] = React.useState("");
@@ -62,9 +57,7 @@ const FirstName: React.FC<Props> = ({
     }, [isRequired]);
 
     const validateFirstName = () => {
-        const errorMessage = isRequired && !firstName
-            ? siteMessage("Field_Required", label) as string
-            : "";
+        const errorMessage = isRequired && !firstName ? (siteMessage("Field_Required", label) as string) : "";
         setFirstNameErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -73,15 +66,17 @@ const FirstName: React.FC<Props> = ({
         setFieldValue({ key: "firstName", value: event.target.value });
     };
 
-    return <TextField
-        {...styles.firstNameTextField}
-        label={label}
-        required={isRequired}
-        placeholder={hintText}
-        value={firstName || ""}
-        error={firstNameErrorMessage}
-        onChange={firstNameChangeHandler}
-    />;
+    return (
+        <TextField
+            {...styles.firstNameTextField}
+            label={label}
+            required={isRequired}
+            placeholder={hintText}
+            value={firstName || ""}
+            error={firstNameErrorMessage}
+            onChange={firstNameChangeHandler}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

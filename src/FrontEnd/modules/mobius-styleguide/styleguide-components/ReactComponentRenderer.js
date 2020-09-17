@@ -1,9 +1,9 @@
-import React from 'react';
-import get from 'lodash/get';
-import PropTypes from 'prop-types';
-import GlobalStyles from '../../mobius/src/GlobalStyle';
-import Pathline from 'react-styleguidist/lib/client/rsg-components/Pathline';
-import Styled from 'react-styleguidist/lib/client/rsg-components/Styled';
+import React from "react";
+import get from "lodash/get";
+import PropTypes from "prop-types";
+import GlobalStyles from "../../mobius/src/GlobalStyle";
+import Pathline from "react-styleguidist/lib/client/rsg-components/Pathline";
+import Styled from "react-styleguidist/lib/client/rsg-components/Styled";
 
 const styles = ({ /* color,  fontSize, */ space }) => ({
     root: {
@@ -19,14 +19,14 @@ const styles = ({ /* color,  fontSize, */ space }) => ({
         marginBottom: space[1],
     },
     tabBody: {
-        overflowX: 'auto',
-        maxWidth: '100%',
-        WebkitOverflowScrolling: 'touch',
+        overflowX: "auto",
+        maxWidth: "100%",
+        WebkitOverflowScrolling: "touch",
     },
     docs: {
         fontSize: 23,
         fontWeight: 300,
-        width: '70%',
+        width: "70%",
     },
 });
 
@@ -41,11 +41,11 @@ export function ReactComponentRenderer({
     tabButtons,
     tabBody,
 }) {
-    const isSingleExample = get(examples, 'props.examples.length') === 1
-        && get(examples, 'props.examples[0].type') === 'code';
+    const isSingleExample =
+        get(examples, "props.examples.length") === 1 && get(examples, "props.examples[0].type") === "code";
     return (
         <div className={classes.root} id={`${name}-container`}>
-            {isSingleExample && <GlobalStyles/>}
+            {isSingleExample && <GlobalStyles />}
             <header className={classes.header}>
                 {heading}
                 {pathLine && <Pathline>{pathLine}</Pathline>}

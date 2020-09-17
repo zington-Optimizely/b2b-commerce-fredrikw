@@ -18,17 +18,23 @@ const About: React.FC = () => {
         });
     });
 
-    return <>
-        <Typography variant="h1">About</Typography>
-        {spireStuff && <table>
-            <tbody>
-                {Object.keys(spireStuff).map(key => <tr key={key}>
-                    <td>{key}</td>
-                    <td>{spireStuff[key]}</td>
-                </tr>)}
-            </tbody>
-        </table>}
-    </>;
+    return (
+        <>
+            <Typography variant="h1">About</Typography>
+            {spireStuff && (
+                <table>
+                    <tbody>
+                        {Object.keys(spireStuff).map(key => (
+                            <tr key={key}>
+                                <td>{key}</td>
+                                <td>{spireStuff[key]}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </>
+    );
 };
 
 export default About;

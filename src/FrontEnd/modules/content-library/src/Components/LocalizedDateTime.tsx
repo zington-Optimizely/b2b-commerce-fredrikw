@@ -24,11 +24,15 @@ const LocalizedDateTime: FC<Props> = ({ dateTime, language, options }) => {
         return null;
     }
 
-    return <>{getLocalizedDateTime({
-        dateTime,
-        language,
-        options,
-    })}</>;
+    return (
+        <>
+            {getLocalizedDateTime({
+                dateTime,
+                language,
+                options,
+            })}
+        </>
+    );
 };
 
 export default connect(mapStateToProps)(LocalizedDateTime);

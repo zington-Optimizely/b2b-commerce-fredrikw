@@ -1,10 +1,14 @@
 import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { Category, getCategoryById, GetCategoryByIdApiParameter } from "@insite/client-framework/Services/CategoryService";
+import {
+    Category,
+    getCategoryById,
+    GetCategoryByIdApiParameter,
+} from "@insite/client-framework/Services/CategoryService";
 
 type Parameter = GetCategoryByIdApiParameter & HasOnSuccess<Category>;
 type Props = {
-    apiParameter: GetCategoryByIdApiParameter,
-    apiResult: Category,
+    apiParameter: GetCategoryByIdApiParameter;
+    apiResult: Category;
 };
 
 type HandlerType = Handler<Parameter, Props>;

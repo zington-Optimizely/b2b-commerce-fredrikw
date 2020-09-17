@@ -30,17 +30,23 @@ export const requestRmaInformationStyles: RequestRmaInformationStyles = {
         `,
     },
     fieldWrapper: {
-        css: css` margin-right: 25px; `,
+        css: css`
+            margin-right: 25px;
+        `,
     },
     titleText: {
         as: "h2",
         variant: "h6",
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
     billingInformationTitleText: {
         as: "h2",
         variant: "h5",
-        css: css` margin-bottom: 10px; `,
+        css: css`
+            margin-bottom: 10px;
+        `,
     },
 };
 
@@ -60,16 +66,22 @@ const RequestRmaInformation: FC = () => {
         <>
             <StyledWrapper {...styles.wrapper}>
                 <StyledWrapper {...styles.fieldWrapper}>
-                    <Typography {...styles.titleText} id="requestRmaOrderNumber">{translate("Order #")}</Typography>
+                    <Typography {...styles.titleText} id="requestRmaOrderNumber">
+                        {translate("Order #")}
+                    </Typography>
                     <Typography {...styles.orderNumberText} aria-labelledby="requestRmaOrderNumber">
                         {order.erpOrderNumber || order.webOrderNumber}
                     </Typography>
                 </StyledWrapper>
                 <StyledWrapper {...styles.fieldWrapper}>
-                    <Typography {...styles.titleText} id="requestRmaOrderDate">{translate("Order Date")}</Typography>
+                    <Typography {...styles.titleText} id="requestRmaOrderDate">
+                        {translate("Order Date")}
+                    </Typography>
                     <Typography {...styles.orderDateText} aria-labelledby="requestRmaOrderDate">
-                        <LocalizedDateTime dateTime={order.orderDate}
-                            options={{ year: "numeric", month: "numeric", day: "numeric" }} />
+                        <LocalizedDateTime
+                            dateTime={order.orderDate}
+                            options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                        />
                     </Typography>
                 </StyledWrapper>
                 <StyledWrapper {...styles.fieldWrapper}>
@@ -77,7 +89,9 @@ const RequestRmaInformation: FC = () => {
                         <span aria-hidden>{translate("PO #")}</span>
                         <VisuallyHidden>{translate("Purchase Order Number")}</VisuallyHidden>
                     </Typography>
-                    <Typography {...styles.customerPOText} aria-labelledby="requestRmaPONumber">{order.customerPO}</Typography>
+                    <Typography {...styles.customerPOText} aria-labelledby="requestRmaPONumber">
+                        {order.customerPO}
+                    </Typography>
                 </StyledWrapper>
             </StyledWrapper>
             <Typography {...styles.billingInformationTitleText}>{translate("Billing Information")}</Typography>
@@ -90,7 +104,8 @@ const RequestRmaInformation: FC = () => {
                 state={order.billToState}
                 postalCode={order.billToPostalCode}
                 country={order.btCountry}
-                extendedStyles={styles.addressDisplay} />
+                extendedStyles={styles.addressDisplay}
+            />
         </>
     );
 };

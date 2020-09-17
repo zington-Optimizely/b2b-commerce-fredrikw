@@ -20,14 +20,18 @@ interface OwnProps {
     extendedStyles?: ButtonPresentationProps;
 }
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasProductContext;
+type Props = OwnProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasProductContext;
 
 const mapStateToProps = (state: ApplicationState, props: HasProductContext) => {
-    return ({
+    return {
         productSettings: getSettingsCollection(state).productSettings,
         canAddToCart: canAddToCart(state, props.productContext.product),
         hasEnoughInventory: hasEnoughInventory(state, props.productContext),
-    });
+        addingProductToCart: state.context.addingProductToCart,
+    };
 };
 
 const mapDispatchToProps = {
@@ -37,15 +41,19 @@ const mapDispatchToProps = {
 export const productAddToCartButtonStyles: ButtonPresentationProps = {};
 
 const ProductAddToCartButton: React.FC<Props> = ({
-                                                     productContext: { product, productInfo: { qtyOrdered, unitOfMeasure, inventory } },
-                                                     productSettings,
-                                                     hasEnoughInventory,
-                                                     addToCart,
-                                                     canAddToCart,
-                                                     labelOverride,
-                                                     extendedStyles,
-                                                     ...otherProps
-                                                 }) => {
+    productContext: {
+        product,
+        productInfo: { qtyOrdered, unitOfMeasure, inventory },
+    },
+    productSettings,
+    hasEnoughInventory,
+    addingProductToCart,
+    addToCart,
+    canAddToCart,
+    labelOverride,
+    extendedStyles,
+    ...otherProps
+}) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productAddToCartButtonStyles, extendedStyles));
 
@@ -65,6 +73,15 @@ const ProductAddToCartButton: React.FC<Props> = ({
         }
     };
 
-    return <Button {...styles} onClick={addToCartClickHandler} disabled={!qtyOrdered} {...otherProps}>{labelOverride ?? translate("Add to Cart")}</Button>;
+    return (
+        <Button
+            {...styles}
+            onClick={addToCartClickHandler}
+            disabled={!qtyOrdered || addingProductToCart}
+            {...otherProps}
+        >
+            {labelOverride ?? translate("Add to Cart")}
+        </Button>
+    );
 };
 export default withProductContext(connect(mapStateToProps, mapDispatchToProps)(ProductAddToCartButton));

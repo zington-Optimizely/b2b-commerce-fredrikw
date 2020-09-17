@@ -1,6 +1,8 @@
 import {
     ApiHandlerDiscreteParameter,
-    createHandlerChainRunnerOptionalParameter, HasOnError, HasOnSuccess,
+    createHandlerChainRunnerOptionalParameter,
+    HasOnError,
+    HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { createQuote, CreateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
@@ -9,7 +11,8 @@ import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
 type HandlerType = ApiHandlerDiscreteParameter<
     HasOnSuccess<QuoteModel> & HasOnError<string>,
     CreateQuoteApiParameter,
-    QuoteModel>;
+    QuoteModel
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     const quoteParameter = props.getState().pages.rfqRequestQuote.quoteParameter;
@@ -24,7 +27,7 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const CreateOrRequestQuote: HandlerType = async props => {
-    const { parameter, apiParameter  } = props;
+    const { parameter, apiParameter } = props;
     const result = await createQuote(apiParameter);
     if (result.successful) {
         props.apiResult = result.result;
@@ -45,7 +48,7 @@ export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
-export const ExecuteOnSuccessCallback : HandlerType = props => {
+export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(props.apiResult);
 };
 

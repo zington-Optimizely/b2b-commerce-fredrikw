@@ -17,6 +17,7 @@ export interface CheckoutReviewAndSubmitPageContainerStyles {
     loadingOverlay?: LoadingOverlayProps;
     container?: GridContainerProps;
     headerGridItem?: GridItemProps;
+    approverInfoGridItem?: GridItemProps;
     promoCodeAndCartTotalGridItem?: GridItemProps;
     promoCodeAndCartTotalContainer?: GridContainerProps;
     promoCodeGridItem?: GridItemProps;
@@ -38,22 +39,37 @@ export interface CheckoutReviewAndSubmitPageContainerStyles {
 }
 
 export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
-    loadingOverlay: { css: css` width: 100%; ` },
+    loadingOverlay: {
+        css: css`
+            width: 100%;
+        `,
+    },
     headerGridItem: { width: 12 },
+    approverInfoGridItem: {
+        width: 12,
+        css: css`
+            padding: 0 15px;
+        `,
+    },
     promoCodeAndCartTotalGridItem: {
         width: [12, 12, 6, 4, 4],
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css` order: 1; `,
-                null,
-                css` order: 2; `,
-                null,
-                null,
-            ],
-            "min",
-        )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            order: 1;
+                        `,
+                        null,
+                        css`
+                            order: 2;
+                        `,
+                        null,
+                        null,
+                    ],
+                    "min",
+                )}
         `,
     },
     promoCodeGridItem: { width: 12 },
@@ -61,17 +77,22 @@ export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
     paymentDetailsAndCreditCardDetailsAndAddressGridItem: {
         width: [12, 12, 6, 8, 8],
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css` order: 2; `,
-                null,
-                css` order: 1; `,
-                null,
-                null,
-            ],
-            "min",
-        )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            order: 2;
+                        `,
+                        null,
+                        css`
+                            order: 1;
+                        `,
+                        null,
+                        null,
+                    ],
+                    "min",
+                )}
         `,
     },
     paymentDetailsGridItem: { width: 12 },
@@ -80,17 +101,20 @@ export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
     shippingInfoAndProductListGridItem: {
         width: [12, 12, 12, 8, 8],
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-            theme,
-            [
-                css` order: 3; `,
-                null,
-                null,
-                null,
-                null,
-            ],
-            "min",
-        )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            order: 3;
+                        `,
+                        null,
+                        null,
+                        null,
+                        null,
+                    ],
+                    "min",
+                )}
         `,
     },
     hiddenShippingInfoAndProductListWide: { below: "lg" },
@@ -110,17 +134,20 @@ export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
     actionButtonsBottomGridItem: {
         css: css`
             order: 4;
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-                theme,
-                [
-                    css` display: none; `,
-                    null,
-                    null,
-                    null,
-                    null,
-                ],
-                "max",
-            )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            display: none;
+                        `,
+                        null,
+                        null,
+                        null,
+                        null,
+                    ],
+                    "max",
+                )}
         `,
         width: 12,
     },
@@ -134,17 +161,15 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 
-
-const CheckoutReviewAndSubmitPageContainer: FC<Props> = ({
-    id,
-    isPreloadingData,
-    isPlacingOrder,
-}) => {
+const CheckoutReviewAndSubmitPageContainer: FC<Props> = ({ id, isPreloadingData, isPlacingOrder }) => {
     return (
         <LoadingOverlay {...styles.loadingOverlay} loading={isPreloadingData || isPlacingOrder}>
             <GridContainer {...styles.container}>
                 <GridItem {...styles.headerGridItem}>
                     <Zone zoneName="Content00" contentId={id} />
+                </GridItem>
+                <GridItem {...styles.approverInfoGridItem}>
+                    <Zone zoneName="Content08" contentId={id} />
                 </GridItem>
                 <GridItem {...styles.promoCodeAndCartTotalGridItem}>
                     <GridContainer {...styles.promoCodeAndCartTotalContainer}>

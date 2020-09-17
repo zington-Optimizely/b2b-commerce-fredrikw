@@ -9,7 +9,6 @@ import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-
 const enum fields {
     label = "label",
     hintText = "hintText",
@@ -19,7 +18,7 @@ const enum fields {
 
 interface TopicModel {
     fields: {
-        topic: string,
+        topic: string;
     };
 }
 
@@ -42,21 +41,15 @@ const mapDispatchToProps = {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-
 export interface AvailableTopicsStyles {
     topicsSelect?: SelectPresentationProps;
 }
 
-export const availableTopicsStyles: AvailableTopicsStyles = {
-};
+export const availableTopicsStyles: AvailableTopicsStyles = {};
 
 export const styles = availableTopicsStyles;
 
-const AvailableTopics: React.FC<Props> = ({
-    fields,
-    topic,
-    setFieldValue,
-}) => {
+const AvailableTopics: React.FC<Props> = ({ fields, topic, setFieldValue }) => {
     const { label, hintText, topics, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [topicErrorMessage, setTopicErrorMessage] = React.useState("");
@@ -73,9 +66,7 @@ const AvailableTopics: React.FC<Props> = ({
     }, [isRequired]);
 
     const validateTopic = () => {
-        const errorMessage = isRequired && !topic
-            ? siteMessage("Field_Required", label) as string
-            : "";
+        const errorMessage = isRequired && !topic ? (siteMessage("Field_Required", label) as string) : "";
         setTopicErrorMessage(errorMessage);
         return !errorMessage;
     };
@@ -84,18 +75,23 @@ const AvailableTopics: React.FC<Props> = ({
         setFieldValue({ key: "topic", value: event.target.value });
     };
 
-    return <Select
-        {...styles.topicsSelect}
-        label={label}
-        required={isRequired}
-        value={topic || ""}
-        error={topicErrorMessage}
-        onChange={topicChangeHandler}>
-        <option value="">{hintText}</option>
-        {topics.map(topic =>
-            <option key={topic.fields.topic} value={topic.fields.topic}>{topic.fields.topic}</option>,
-        )}
-    </Select>;
+    return (
+        <Select
+            {...styles.topicsSelect}
+            label={label}
+            required={isRequired}
+            value={topic || ""}
+            error={topicErrorMessage}
+            onChange={topicChangeHandler}
+        >
+            <option value="">{hintText}</option>
+            {topics.map(topic => (
+                <option key={topic.fields.topic} value={topic.fields.topic}>
+                    {topic.fields.topic}
+                </option>
+            ))}
+        </Select>
+    );
 };
 
 const widgetModule: WidgetModule = {

@@ -1,7 +1,4 @@
-import {
-    ApiHandlerDiscreteParameter,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { addLineCollection } from "@insite/client-framework/Services/CartService";
 import { getOrder } from "@insite/client-framework/Services/OrderService";
@@ -38,18 +35,22 @@ export const PopulateApiParameter: HandlerType = props => {
     }
 
     props.apiParameter = {
-        cartLines: props.apiResult.order.orderLines!.map((line) => ({
-            productId: line.productId,
-            qtyOrdered: line.qtyOrdered,
-            unitOfMeasure: line.unitOfMeasure,
-        } as CartLineModel)),
+        cartLines: props.apiResult.order.orderLines!.map(
+            line =>
+                ({
+                    productId: line.productId,
+                    qtyOrdered: line.qtyOrdered,
+                    unitOfMeasure: line.unitOfMeasure,
+                } as CartLineModel),
+        ),
     } as CartLineCollectionModel;
 };
 
 export const SendDataToApi: HandlerType = async props => {
     props.apiResult.cartLines = await addLineCollection({
         cartId: API_URL_CURRENT_FRAGMENT,
-        cartLineCollection: props.apiParameter });
+        cartLineCollection: props.apiParameter,
+    });
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {

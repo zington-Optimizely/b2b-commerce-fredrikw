@@ -25,15 +25,20 @@ const ErrorModal: React.FC<Props> = ({ dispatch, isOpen, message, error, redirec
         }
     };
 
-    return <Modal
-        isOpen={!!isOpen}
-        headline={redirectToAdmin ? "" : "Unhandled Error"}
-        isCloseable
-        handleClose={close}
-        closeOnEsc>
-            <p data-test-selector="errorModal_message">{message || "Please try again and contact support if you continue to have issues."}</p>
+    return (
+        <Modal
+            isOpen={!!isOpen}
+            headline={redirectToAdmin ? "" : "Unhandled Error"}
+            isCloseable
+            handleClose={close}
+            closeOnEsc
+        >
+            <p data-test-selector="errorModal_message">
+                {message || "Please try again and contact support if you continue to have issues."}
+            </p>
             {!IS_PRODUCTION && <JsonText>{JSON.stringify(error, undefined, 2)}</JsonText>}
-        </Modal>;
+        </Modal>
+    );
 };
 
 const JsonText = styled.pre`

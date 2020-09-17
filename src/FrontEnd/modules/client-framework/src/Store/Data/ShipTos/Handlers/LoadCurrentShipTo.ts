@@ -1,11 +1,16 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { getShipTo, GetShipToApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { ShipToModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetShipToApiParameter, ShipToModel>;
 
 export const PopulateApiParameter: HandlerType = props => {
-    const { session: { billToId, shipToId } } = props.getState().context;
+    const {
+        session: { billToId, shipToId },
+    } = props.getState().context;
     if (!shipToId || !billToId) {
         throw new Error("Unable to load current ship to because it is not defined on the current session");
     }
@@ -35,12 +40,7 @@ export const DispatchCompleteLoadCart: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    DispatchBeginLoadShipTo,
-    GetShipTo,
-    DispatchCompleteLoadCart,
-];
+export const chain = [PopulateApiParameter, DispatchBeginLoadShipTo, GetShipTo, DispatchCompleteLoadCart];
 
 const loadCurrentShipTo = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentShipTo");
 export default loadCurrentShipTo;

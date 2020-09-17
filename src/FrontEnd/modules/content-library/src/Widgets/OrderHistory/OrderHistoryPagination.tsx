@@ -7,8 +7,7 @@ import Pagination, { PaginationPresentationProps } from "@insite/mobius/Paginati
 import React, { FC, useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateSearchFields,
@@ -24,9 +23,7 @@ export const orderHistoryPaginationStyles: OrderHistoryPaginationStyles = {};
 
 const styles = orderHistoryPaginationStyles;
 
-const OrderHistoryPagination: FC<Props> = ({
-                                               updateSearchFields,
-                                           }) => {
+const OrderHistoryPagination: FC<Props> = ({ updateSearchFields }) => {
     const ordersDataView = useContext(OrdersDataViewContext);
 
     if (!ordersDataView.value || !ordersDataView.pagination) {
@@ -61,12 +58,12 @@ const OrderHistoryPagination: FC<Props> = ({
             resultsPerPage={pageSize}
             resultsPerPageOptions={pageSizeOptions}
             onChangePage={changePage}
-            onChangeResultsPerPage={changeResultsPerPage}/>
+            onChangeResultsPerPage={changeResultsPerPage}
+        />
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(null, mapDispatchToProps)(OrderHistoryPagination),
     definition: {
         displayName: "Pagination",

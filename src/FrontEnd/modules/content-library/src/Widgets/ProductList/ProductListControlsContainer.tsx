@@ -9,8 +9,7 @@ import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQuer
 import React, { FC } from "react";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps;
 
@@ -34,14 +33,18 @@ export const controlsContainerStyles: ProductListControlsContainerStyles = {
     viewSelectGridItem: {
         width: [0, 0, 4, 2, 2],
         css: css`
-            ${({ theme }: {theme: BaseTheme}) =>
+            ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
-                    css` display: none; `,
-                    css` display: none; `,
+                    css`
+                        display: none;
+                    `,
+                    css`
+                        display: none;
+                    `,
                     null,
                     null,
-                    null])
-            }
+                    null,
+                ])}
         `,
     },
 };
@@ -65,7 +68,6 @@ const ProductListControlsContainer: FC<Props> = ({ id }) => {
 };
 
 const widgetModule: WidgetModule = {
-
     component: ProductListControlsContainer,
     definition: {
         group: "Product List",

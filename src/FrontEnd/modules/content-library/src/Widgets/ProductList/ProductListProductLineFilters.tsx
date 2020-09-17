@@ -24,11 +24,15 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState) => {
-    const { pages: { productList: { productFilters } } } = state;
-    return ({
+    const {
+        pages: {
+            productList: { productFilters },
+        },
+    } = state;
+    return {
         productLineFacets: getProductListDataViewProperty(state, "productLineFacets"),
         pageProductLineId: productFilters.pageProductLineId,
-    });
+    };
 };
 
 const mapDispatchToProps = {
@@ -38,10 +42,15 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-export const productListProductLineFiltersStyles: ProductListFilterAccordionSectionStyles = {
-};
+export const productListProductLineFiltersStyles: ProductListFilterAccordionSectionStyles = {};
 
-const ProductListProductListFilters: FC<Props> = ({ productLineFacets, addProductFilters, removeProductFilters, fields, pageProductLineId }) => {
+const ProductListProductListFilters: FC<Props> = ({
+    productLineFacets,
+    addProductFilters,
+    removeProductFilters,
+    fields,
+    pageProductLineId,
+}) => {
     // TODO ISC-11787 - make showMoreLimit configurable
     const showMoreLimit = 10;
 
@@ -70,7 +79,6 @@ const ProductListProductListFilters: FC<Props> = ({ productLineFacets, addProduc
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListProductListFilters),
     definition: {
         group: "Product List",

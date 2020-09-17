@@ -80,13 +80,18 @@ export const borderTypes = {
 type BorderKind = FormFieldPresentationPropsCommon["border"];
 
 const borderByState = (
-    { border, _sizeVariant, theme }: {
+    {
+        border,
+        _sizeVariant,
+        theme,
+    }: {
         border: BorderKind;
-        _sizeVariant: keyof typeof sizeVariantValues,
-        theme: BaseTheme
+        _sizeVariant: keyof typeof sizeVariantValues;
+        theme: BaseTheme;
     },
     state: keyof typeof borderTypes,
-    textarea = false) => {
+    textarea = false,
+) => {
     const {
         width,
         color,
@@ -96,14 +101,17 @@ const borderByState = (
         textAreaUnderlinePaddingRule,
     } = borderTypes[state];
     let borderStyle = "solid";
-    if (state === "focus") borderStyle = get(theme, "focus.style");
+    if (state === "focus") {
+        borderStyle = get(theme, "focus.style");
+    }
     const colorProp = get(theme, color);
     /* Border radius of 0 is included to override macOS select default 5px radius */
     if (border === "rectangle") {
         return `border: ${width}px ${borderStyle} ${colorProp};
         border-radius: 0;
         ${textarea ? textAreaBorderPaddingRule : borderPaddingRule}`;
-    } if (border === "rounded") {
+    }
+    if (border === "rounded") {
         return `border: ${width}px ${borderStyle} ${colorProp};
         border-radius: ${sizeVariantValues[_sizeVariant].borderRadius}px;
         ${textarea ? textAreaBorderPaddingRule : borderPaddingRule}`;
@@ -115,14 +123,16 @@ const borderByState = (
     border-radius: 0;`;
 };
 
-export const disabledByType = ({ border, theme }: { border: BorderKind, theme: BaseTheme }) => {
+export const disabledByType = ({ border, theme }: { border: BorderKind; theme: BaseTheme }) => {
     if (border === "rectangle" || border === "rounded") {
-        const disabledBkg = Color(get(theme, "colors.common.disabled")).rgb().mix(Color(get(theme, "colors.common.background")), 0.8).toString();
+        const disabledBkg = Color(get(theme, "colors.common.disabled"))
+            .rgb()
+            .mix(Color(get(theme, "colors.common.background")), 0.8)
+            .toString();
         return css`
             background: ${disabledBkg};
             color: ${get(theme, "colors.common.disabled")};
-            & + ${/* sc-selector */FormFieldIcon},
-            & + button ${/* sc-selector */FormFieldIcon} {
+            & + ${/* sc-selector */ FormFieldIcon}, & + button ${/* sc-selector */ FormFieldIcon} {
                 background: ${disabledBkg};
             }
         `;

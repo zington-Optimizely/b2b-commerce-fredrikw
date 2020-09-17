@@ -7,7 +7,9 @@ import { getBillTosDataView } from "@insite/client-framework/Store/Data/BillTos/
 import loadBillTos from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTos";
 import { BaseAddressModel, BillToModel } from "@insite/client-framework/Types/ApiModels";
 import CustomerSelector, { CustomerSelectorStyles } from "@insite/content-library/Components/CustomerSelector";
-import CustomerSelectorToolbar, { CustomerSelectorToolbarStyles } from "@insite/content-library/Components/CustomerSelectorToolbar";
+import CustomerSelectorToolbar, {
+    CustomerSelectorToolbarStyles,
+} from "@insite/content-library/Components/CustomerSelectorToolbar";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -50,26 +52,23 @@ export const billToSelectorStyles: BillToSelectorStyles = {
     noBillTosText: { variant: "h4" },
 };
 
-const CenteringWrapper = styled.div<InjectableCss>` ${({ css }) => css} `;
+const CenteringWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
-const billToSelector: FC<Props> = ({
-                                       currentBillTo,
-                                       onSelect,
-                                       extendedStyles,
-                                       onEdit,
-                                       defaultPageSize,
-                                   }) => {
-
+const billToSelector: FC<Props> = ({ currentBillTo, onSelect, extendedStyles, onEdit, defaultPageSize }) => {
     const [parameter, setParameter] = useState<GetBillTosApiParameter>({ page: 1, pageSize: defaultPageSize });
 
-    return <WrappedBillToSelector
-                currentBillTo={currentBillTo}
-                onSelect={onSelect}
-                extendedStyles={extendedStyles}
-                parameter={parameter}
-                setParameter={setParameter}
-                onEdit={onEdit}
-            />;
+    return (
+        <WrappedBillToSelector
+            currentBillTo={currentBillTo}
+            onSelect={onSelect}
+            extendedStyles={extendedStyles}
+            parameter={parameter}
+            setParameter={setParameter}
+            onEdit={onEdit}
+        />
+    );
 };
 
 const BillToSelector = connect(mapStateToProps)(billToSelector);
@@ -92,29 +91,29 @@ const mapDispatchToPropsWrapped = {
     loadBillTos,
 };
 
-type WrappedProps = WrappedBillToSelectorProps & ResolveThunks<typeof mapDispatchToPropsWrapped> & ReturnType<typeof mapStateToPropsWrapped>;
+type WrappedProps = WrappedBillToSelectorProps &
+    ResolveThunks<typeof mapDispatchToPropsWrapped> &
+    ReturnType<typeof mapStateToPropsWrapped>;
 
 const wrappedBillToSelector: FC<WrappedProps> = ({
-                                                     currentBillTo,
-                                                     billTosDataView,
-                                                     onSelect,
-                                                     extendedStyles,
-                                                     setParameter,
-                                                     parameter,
-                                                     loadBillTos,
-                                                     customerSettings,
-                                                     onEdit,
-                                                 }) => {
+    currentBillTo,
+    billTosDataView,
+    onSelect,
+    extendedStyles,
+    setParameter,
+    parameter,
+    loadBillTos,
+    customerSettings,
+    onEdit,
+}) => {
     const [styles] = useState(() => mergeToNew(billToSelectorStyles, extendedStyles));
     const [searchText, setSearchText] = useState("");
 
-    useEffect(
-        () => {
-            if (!billTosDataView.value && !billTosDataView.isLoading) {
-                loadBillTos(parameter);
-            }
-        },
-    );
+    useEffect(() => {
+        if (!billTosDataView.value && !billTosDataView.isLoading) {
+            loadBillTos(parameter);
+        }
+    });
 
     const searchHandler = () => {
         setParameter({
@@ -126,11 +125,12 @@ const wrappedBillToSelector: FC<WrappedProps> = ({
 
     const selectCustomerHandler = (customer: BaseAddressModel) => onSelect(customer as BillToModel);
 
-    const editCustomerHandler = (customerSettings?.allowBillToAddressEdit && onEdit)
-    ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
-        onEdit?.(event, customer as BillToModel);
-    }
-    : undefined;
+    const editCustomerHandler =
+        customerSettings?.allowBillToAddressEdit && onEdit
+            ? (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, customer: BaseAddressModel) => {
+                  onEdit?.(event, customer as BillToModel);
+              }
+            : undefined;
 
     const changePageHandler = (page: number) => {
         setParameter({
@@ -147,40 +147,50 @@ const wrappedBillToSelector: FC<WrappedProps> = ({
         });
     };
 
-    return <>
-        <CustomerSelectorToolbar
-            searchText={searchText}
-            onSearchTextChanged={(event: React.ChangeEvent<HTMLInputElement>) => setSearchText(event.currentTarget.value)}
-            onSearch={searchHandler}
-            isSearchDisabled={billTosDataView.isLoading}
-            extendedStyles={styles.customerSelectorToolbar}
-        />
-        {billTosDataView.isLoading || !billTosDataView.value
-            ? <CenteringWrapper {...styles.centeringWrapper}>
-                <LoadingSpinner {...styles.loadingSpinner} />
-            </CenteringWrapper>
-            : <>
-                {billTosDataView.value.length === 0
-                    ? <CenteringWrapper {...styles.centeringWrapper}>
-                        <Typography {...styles.noBillTosText}>
-                            {searchText.length > 0 ? siteMessage("Addresses_NoResultsFound") : siteMessage("Addresses_NoAddressesFound")}
-                        </Typography>
-                    </CenteringWrapper>
-                    : <CustomerSelector
-                        customers={billTosDataView.value}
-                        pagination={billTosDataView.pagination!}
-                        selectedCustomer={currentBillTo}
-                        onSelect={selectCustomerHandler}
-                        allowEditCustomer={customerSettings !== undefined && customerSettings.allowBillToAddressEdit}
-                        onEdit={editCustomerHandler}
-                        onChangePage={changePageHandler}
-                        onChangeResultsPerPage={changeResultsPerPageHandler}
-                        extendedStyles={styles.customerSelector}
-                    />
+    return (
+        <>
+            <CustomerSelectorToolbar
+                searchText={searchText}
+                onSearchTextChanged={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchText(event.currentTarget.value)
                 }
-            </>
-        }
-    </>;
+                onSearch={searchHandler}
+                isSearchDisabled={billTosDataView.isLoading}
+                extendedStyles={styles.customerSelectorToolbar}
+            />
+            {billTosDataView.isLoading || !billTosDataView.value ? (
+                <CenteringWrapper {...styles.centeringWrapper}>
+                    <LoadingSpinner {...styles.loadingSpinner} />
+                </CenteringWrapper>
+            ) : (
+                <>
+                    {billTosDataView.value.length === 0 ? (
+                        <CenteringWrapper {...styles.centeringWrapper}>
+                            <Typography {...styles.noBillTosText}>
+                                {searchText.length > 0
+                                    ? siteMessage("Addresses_NoResultsFound")
+                                    : siteMessage("Addresses_NoAddressesFound")}
+                            </Typography>
+                        </CenteringWrapper>
+                    ) : (
+                        <CustomerSelector
+                            customers={billTosDataView.value}
+                            pagination={billTosDataView.pagination!}
+                            selectedCustomer={currentBillTo}
+                            onSelect={selectCustomerHandler}
+                            allowEditCustomer={
+                                customerSettings !== undefined && customerSettings.allowBillToAddressEdit
+                            }
+                            onEdit={editCustomerHandler}
+                            onChangePage={changePageHandler}
+                            onChangeResultsPerPage={changeResultsPerPageHandler}
+                            extendedStyles={styles.customerSelector}
+                        />
+                    )}
+                </>
+            )}
+        </>
+    );
 };
 
 const WrappedBillToSelector = connect(mapStateToPropsWrapped, mapDispatchToPropsWrapped)(wrappedBillToSelector);

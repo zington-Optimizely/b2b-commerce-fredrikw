@@ -24,13 +24,9 @@ export const popupMessageStyles: PopupMessageStyles = {
 
 const styles = popupMessageStyles;
 
-const PopupMessage: React.FunctionComponent<Props> = (props) => {
-    return(
-        <Modal
-            headline={props.messageTitle}
-            {...styles.modal}
-            isOpen={props.modalIsOpen}
-            handleClose={props.onClose}>
+const PopupMessage: React.FunctionComponent<Props> = props => {
+    return (
+        <Modal headline={props.messageTitle} {...styles.modal} isOpen={props.modalIsOpen} handleClose={props.onClose}>
             <Typography {...styles.bodyText}>{props.messageBody}</Typography>
         </Modal>
     );

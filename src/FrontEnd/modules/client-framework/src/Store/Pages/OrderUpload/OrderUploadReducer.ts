@@ -3,14 +3,14 @@ import OrderUploadState from "@insite/client-framework/Store/Pages/OrderUpload/O
 import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
-const initialState: OrderUploadState = {
-};
+const initialState: OrderUploadState = {};
 
 const reducer = {
-    "Pages/OrderUpload/BeginAddCartLineCollectionFromProducts": (draft: Draft<OrderUploadState>) => {
-    },
-    "Pages/OrderUpload/CompleteAddCartLineCollectionFromProducts": (draft: Draft<OrderUploadState>, action: { result: CartLineCollectionModel; }) => {
-    },
+    "Pages/OrderUpload/BeginAddCartLineCollectionFromProducts": (draft: Draft<OrderUploadState>) => {},
+    "Pages/OrderUpload/CompleteAddCartLineCollectionFromProducts": (
+        draft: Draft<OrderUploadState>,
+        action: { result: CartLineCollectionModel },
+    ) => {},
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

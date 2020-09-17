@@ -11,8 +11,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     const productsDataView = getProductListDataView(state);
@@ -26,8 +25,7 @@ const mapStateToProps = (state: ApplicationState) => {
     return {};
 };
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -42,28 +40,30 @@ const styles = suggestionStyles;
 const ProductListSuggestion: FC<Props> = ({ didYouMeanSuggestions, originalQuery, correctedQuery }) => {
     return (
         <StyledWrapper {...styles.wrapper}>
-            {didYouMeanSuggestions && didYouMeanSuggestions.length > 0
-                && <>
+            {didYouMeanSuggestions && didYouMeanSuggestions.length > 0 && (
+                <>
                     <Typography>{translate("Did you mean ")}</Typography>
-                    <Link href={`/Search?query=${didYouMeanSuggestions[0].suggestion}`}>{didYouMeanSuggestions[0].suggestion}</Link>
+                    <Link href={`/Search?query=${didYouMeanSuggestions[0].suggestion}`}>
+                        {didYouMeanSuggestions[0].suggestion}
+                    </Link>
                 </>
-            }
-            {correctedQuery && originalQuery !== correctedQuery
-                && <>
+            )}
+            {correctedQuery && originalQuery !== correctedQuery && (
+                <>
                     <Typography>{translate("Search instead for ")}</Typography>
                     <Link
                         href={`/Search?query=${originalQuery}&includeSuggestions=false`}
-                        data-test-selector="productListOriginalQuery">
+                        data-test-selector="productListOriginalQuery"
+                    >
                         {originalQuery}
                     </Link>
                 </>
-            }
+            )}
         </StyledWrapper>
     );
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListSuggestion),
     definition: {
         group: "Product List",

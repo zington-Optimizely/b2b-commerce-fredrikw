@@ -5,10 +5,12 @@
  * original referenced solution https://github.com/jscher2000/printable-print-doctor-extension/
  */
 const firefoxPrintFix = () => {
-    const blocks = document.querySelectorAll("html,body,*:not(span):not(h1):not(h2):not(h3):not(h4):not(strong):not(em):not(font):not(img)");
+    const blocks = document.querySelectorAll(
+        "html,body,*:not(span):not(h1):not(h2):not(h3):not(h4):not(strong):not(em):not(font):not(img)",
+    );
     let displayValue = "";
     const blocksToReturn: Element[] = [];
-    blocks.forEach((element) => {
+    blocks.forEach(element => {
         const elementStyle = getComputedStyle(element, null);
         if (parseInt(elementStyle.getPropertyValue("height"), 10) > 400) {
             displayValue = elementStyle.getPropertyValue("display");
@@ -19,7 +21,7 @@ const firefoxPrintFix = () => {
         }
     });
     return () => {
-        blocksToReturn.forEach((element) => element.removeAttribute("style"));
+        blocksToReturn.forEach(element => element.removeAttribute("style"));
     };
 };
 

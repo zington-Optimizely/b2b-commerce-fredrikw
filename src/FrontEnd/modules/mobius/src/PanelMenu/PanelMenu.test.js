@@ -1,22 +1,26 @@
-import { mount } from 'enzyme';
-import 'jest-styled-components';
-import React from 'react';
-import menuItems, { conciseMenuItems, conciseNames } from '../Menu/menuData';
-import PanelMenu from './PanelMenu';
-import PanelRow from './PanelRow';
-import ThemeProvider from '../ThemeProvider';
-import Typography from '../Typography';
+import { mount } from "enzyme";
+import "jest-styled-components";
+import React from "react";
+import menuItems, { conciseMenuItems, conciseNames } from "../Menu/menuData";
+import PanelMenu from "./PanelMenu";
+import PanelRow from "./PanelRow";
+import ThemeProvider from "../ThemeProvider";
+import Typography from "../Typography";
 
 const triggerText = "hi there I'm a button";
 
 const createProps = moreProps => ({
     menuItems,
-    panelTrigger: <PanelRow hasChildren><Typography>{triggerText}</Typography></PanelRow>,
+    panelTrigger: (
+        <PanelRow hasChildren>
+            <Typography>{triggerText}</Typography>
+        </PanelRow>
+    ),
     layer: 0,
     ...moreProps,
 });
 
-describe('PanelMenu', () => {
+describe("PanelMenu", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -24,7 +28,7 @@ describe('PanelMenu', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <PanelMenu {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -35,34 +39,34 @@ describe('PanelMenu', () => {
         mountedWrapper = undefined;
     });
 
-    describe('Renders expected elements', () => {
-        test('`nav` rendered by default', () => {
+    describe("Renders expected elements", () => {
+        test("`nav` rendered by default", () => {
             props = createProps();
-            const root = wrapper().find('nav');
+            const root = wrapper().find("nav");
             expect(root).toHaveLength(1);
         });
-        test('panelTrigger is rendered', () => {
+        test("panelTrigger is rendered", () => {
             props = createProps();
             expect(wrapper().text()).toContain(triggerText);
         });
-        describe('renders all children up to maxDepth', () => {
-            test('Renders all menu items when max depth is less than maxDepth', () => {
+        describe("renders all children up to maxDepth", () => {
+            test("Renders all menu items when max depth is less than maxDepth", () => {
                 props = createProps({ maxDepth: 4, menuItems: conciseMenuItems });
                 const root = wrapper().find(PanelMenu);
                 const presentValues = {};
-                root.find(Typography).forEach((option) => {
+                root.find(Typography).forEach(option => {
                     const value = option.getDOMNode().innerHTML;
                     presentValues[value] = true;
                 });
-                conciseNames.forEach((c) => {
+                conciseNames.forEach(c => {
                     expect(presentValues[c]).toBe(true);
                 });
             });
-            test('Does not render menu items outside of maxDepth', () => {
+            test("Does not render menu items outside of maxDepth", () => {
                 props = createProps({ maxDepth: 2, menuItems: conciseMenuItems });
                 const root = wrapper().find(PanelMenu);
                 const presentValues = {};
-                root.find(Typography).forEach((option) => {
+                root.find(Typography).forEach(option => {
                     const value = option.getDOMNode().innerHTML;
                     presentValues[value] = true;
                 });
@@ -73,14 +77,14 @@ describe('PanelMenu', () => {
             });
         });
     });
-    test('calls `closeOverlay` when X icon is clicked', () => {
+    test("calls `closeOverlay` when X icon is clicked", () => {
         const fn = jest.fn();
         props = createProps({
             closeOverlay: fn,
             maxDepth: 1,
         });
         const root = wrapper();
-        root.find("[src='X']").first().simulate('click');
+        root.find("[src='X']").first().simulate("click");
         expect(fn).toHaveBeenCalled();
     });
 });

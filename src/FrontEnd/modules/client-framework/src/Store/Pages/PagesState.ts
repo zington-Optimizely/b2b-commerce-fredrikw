@@ -10,6 +10,8 @@ import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHis
 import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
 import MyListsState from "@insite/client-framework/Store/Pages/MyLists/MyListsState";
+import OrderApprovalDetailsState from "@insite/client-framework/Store/Pages/OrderApprovalDetails/OrderApprovalDetailsState";
+import OrderApprovalListState from "@insite/client-framework/Store/Pages/OrderApprovalList/OrderApprovalListState";
 import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationState";
 import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
 import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
@@ -24,6 +26,8 @@ import RfqQuoteDetailsState from "@insite/client-framework/Store/Pages/RfqQuoteD
 import RfqRequestQuoteState from "@insite/client-framework/Store/Pages/RfqRequestQuote/RfqRequestQuoteState";
 import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
+import UserListState from "@insite/client-framework/Store/Pages/UserList/UserListState";
+import UserSetupState from "@insite/client-framework/Store/Pages/UserSetup/UserSetupState";
 
 export default interface PagesState {
     readonly accountSettings: AccountSettingsState;
@@ -38,6 +42,8 @@ export default interface PagesState {
     readonly locationFinder: LocationFinderState;
     readonly myLists: MyListsState;
     readonly myListDetails: MyListDetailsState;
+    readonly orderApprovalList: OrderApprovalListState;
+    readonly orderApprovalDetails: OrderApprovalDetailsState;
     readonly orderDetails: OrderDetailsState;
     readonly orderConfirmation: OrderConfirmationState;
     readonly orderHistory: OrderHistoryState;
@@ -52,4 +58,6 @@ export default interface PagesState {
     readonly rfqRequestQuote: RfqRequestQuoteState;
     readonly savedPayments: SavedPaymentsState;
     readonly signIn: SignInState;
+    readonly userList: UserListState;
+    readonly userSetup: UserSetupState;
 }

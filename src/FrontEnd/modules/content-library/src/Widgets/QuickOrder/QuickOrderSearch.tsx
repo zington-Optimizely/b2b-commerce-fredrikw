@@ -21,14 +21,11 @@ export interface QuickOrderSearchStyles {
     productSelector?: ProductSelectorStyles;
 }
 
-export const quickOrderSearchStyles: QuickOrderSearchStyles = {
-};
+export const quickOrderSearchStyles: QuickOrderSearchStyles = {};
 
 const styles = quickOrderSearchStyles;
 
-const QuickOrderSearch: FC<Props> = ({
-    addProduct,
-}) => {
+const QuickOrderSearch: FC<Props> = ({ addProduct }) => {
     const toasterContext = React.useContext(ToasterContext);
 
     const addProductToOrder = (productInfo: ProductInfo, product: ProductModel) => {
@@ -36,12 +33,14 @@ const QuickOrderSearch: FC<Props> = ({
         toasterContext.addToast({ body: translate("Item Added"), messageType: "success" });
     };
 
-    return <ProductSelector
-        selectButtonTitle={translate("Add to Order")}
-        onSelectProduct={addProductToOrder}
-        productIsConfigurableMessage={siteMessage("QuickOrder_CannotOrderConfigurable")}
-        productIsUnavailableMessage={siteMessage("QuickOrder_ProductIsUnavailable")}
-    />;
+    return (
+        <ProductSelector
+            selectButtonTitle={translate("Add to Order")}
+            onSelectProduct={addProductToOrder}
+            productIsConfigurableMessage={siteMessage("QuickOrder_CannotOrderConfigurable")}
+            productIsUnavailableMessage={siteMessage("QuickOrder_ProductIsUnavailable")}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

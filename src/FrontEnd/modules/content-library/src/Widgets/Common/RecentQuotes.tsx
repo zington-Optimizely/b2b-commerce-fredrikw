@@ -66,18 +66,19 @@ class RecentQuotes extends React.Component<Props> {
         return (
             <CardList extendedStyles={styles.cardList}>
                 <CardListHeading heading={translate("Recent Quotes")} viewAllUrl={myQuotesPageUrl} />
-                {quotesDataView.value.length === 0
-                    && <GridItem {...styles.noQuotesGridItem}>
+                {quotesDataView.value.length === 0 && (
+                    <GridItem {...styles.noQuotesGridItem}>
                         <Typography {...styles.noQuotesText}>{siteMessage("Rfq_NoQuotesMessage")}</Typography>
                     </GridItem>
-                }
+                )}
                 {quotesDataView.value.map(quote => (
                     <CardContainer key={quote.id} extendedStyles={styles.cardContainer}>
                         <QuoteSummaryCard
                             quote={quote}
                             session={session}
                             quoteSettings={settingsCollection.quoteSettings}
-                            extendedStyles={styles.quoteSummaryCard} />
+                            extendedStyles={styles.quoteSummaryCard}
+                        />
                     </CardContainer>
                 ))}
             </CardList>

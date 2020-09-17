@@ -7,7 +7,10 @@ import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/Ad
 import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import updateShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/UpdateShipTo";
-import { getCurrentShipToState, getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import {
+    getCurrentShipToState,
+    getShipTosDataView,
+} from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import loadShipTos from "@insite/client-framework/Store/Pages/Addresses/Handlers/LoadShipTos";
 import translate from "@insite/client-framework/Translate";
 import {
@@ -40,8 +43,7 @@ import { createContext, useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     shipTosDataView: getShipTosDataView(state, state.pages.addresses.getShipTosParameter),
@@ -106,14 +108,20 @@ export const addressBookStyles: AddressBookStyles = {
             align-items: center;
         `,
     },
-    spinner: { css: css` margin: auto; ` },
+    spinner: {
+        css: css`
+            margin: auto;
+        `,
+    },
     addressCardGridItem: { width: 12 },
     addressCard: {
         gridContainer: { gap: 20 },
         addressInfoDisplayGridItem: { width: [10, 10, 5, 7, 7] },
         actionsGridItem: {
             width: [2, 2, 7, 5, 5],
-            css: css` justify-content: flex-end; `,
+            css: css`
+                justify-content: flex-end;
+            `,
         },
         actionUseAsShippingAddressButton: { color: "secondary" },
         actionEditLink: {
@@ -132,7 +140,9 @@ export const addressBookStyles: AddressBookStyles = {
         },
         overflowMenu: {
             cssOverrides: {
-                menu: css` width: 210px; `,
+                menu: css`
+                    width: 210px;
+                `,
             },
         },
     },
@@ -147,8 +157,8 @@ type ContextType = {
 };
 
 export const AddressBookContext = createContext<ContextType>({
-    isSettingShipTo: false, setIsSettingShipTo: value => {
-    },
+    isSettingShipTo: false,
+    setIsSettingShipTo: value => {},
 });
 
 const AddressBook: React.FC<Props> = ({
@@ -197,23 +207,27 @@ const AddressBook: React.FC<Props> = ({
         component = (
             <StyledWrapper {...styles.centeringWrapper}>
                 <Typography {...styles.noAddressesText}>
-                    {getShipTosParameter.filter ? siteMessage("Addresses_NoResultsMessage") : siteMessage("Addresses_NoAddressesFound")}
+                    {getShipTosParameter.filter
+                        ? siteMessage("Addresses_NoResultsMessage")
+                        : siteMessage("Addresses_NoAddressesFound")}
                 </Typography>
             </StyledWrapper>
         );
     }
 
-    return <AddressBookContext.Provider value={{ isSettingShipTo, setIsSettingShipTo }}>
-        <GridContainer {...styles.gridContainer}>
-            <GridItem {...styles.titleTextGridItem}>
-                <Typography {...styles.titleText}>{translate("Address Book")}</Typography>
-            </GridItem>
-            <GridItem {...styles.addressHeaderGridItem}>
-                <Zone contentId={id} zoneName="Content00"/>
-            </GridItem>
-            {component}
-        </GridContainer>
-    </AddressBookContext.Provider>;
+    return (
+        <AddressBookContext.Provider value={{ isSettingShipTo, setIsSettingShipTo }}>
+            <GridContainer {...styles.gridContainer}>
+                <GridItem {...styles.titleTextGridItem}>
+                    <Typography {...styles.titleText}>{translate("Address Book")}</Typography>
+                </GridItem>
+                <GridItem {...styles.addressHeaderGridItem}>
+                    <Zone contentId={id} zoneName="Content00" />
+                </GridItem>
+                {component}
+            </GridContainer>
+        </AddressBookContext.Provider>
+    );
 };
 
 interface AddressCardProps {
@@ -250,7 +264,8 @@ const AddressCard: React.FunctionComponent<AddressCardProps> = (props: AddressCa
                     phone={shipTo.phone}
                     fax={shipTo.fax}
                     email={shipTo.email}
-                    extendedStyles={componentStyles.addressInfoDisplay}/>
+                    extendedStyles={componentStyles.addressInfoDisplay}
+                />
             </GridItem>
             <GridItem {...componentStyles.actionsGridItem}>
                 <AddressActions
@@ -292,9 +307,12 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
     const useAsShippingAddressHandler = (e: any) => {
         e.preventDefault();
         addressBookContext.setIsSettingShipTo(true);
-        props.setCurrentShipTo({ shipToId: shipTo.id, onSuccess: () => {
-            addressBookContext.setIsSettingShipTo(false);
-            } });
+        props.setCurrentShipTo({
+            shipToId: shipTo.id,
+            onSuccess: () => {
+                addressBookContext.setIsSettingShipTo(false);
+            },
+        });
     };
 
     const modalCloseHandler = () => {
@@ -333,7 +351,7 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
     return (
         <>
             <Hidden above="sm">
-                <OverflowMenu position="end"  {...componentStyles.overflowMenu}>
+                <OverflowMenu position="end" {...componentStyles.overflowMenu}>
                     <Clickable
                         onClick={useAsShippingAddressHandler}
                         disabled={addressBookContext.isSettingShipTo || shipTo.id === currentShipTo?.id}
@@ -351,10 +369,7 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
                 >
                     {translate("Use as Shipping Address")}
                 </Button>
-                <Link
-                    {...componentStyles.actionEditLink}
-                    onClick={editClickHandler}
-                >
+                <Link {...componentStyles.actionEditLink} onClick={editClickHandler}>
                     {translate("Edit")}
                 </Link>
             </Hidden>
@@ -364,14 +379,15 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
                 handleClose={modalCloseHandler}
                 headline={translate("Edit Shipping Information")}
             >
-                {countries && shipToAddressFields
-                && <CustomerAddressForm
-                    address={shipTo}
-                    countries={countries}
-                    addressFieldDisplayCollection={shipToAddressFields}
-                    onCancel={formCancelHandler}
-                    onSubmit={formSubmitHandler}/>
-                }
+                {countries && shipToAddressFields && (
+                    <CustomerAddressForm
+                        address={shipTo}
+                        countries={countries}
+                        addressFieldDisplayCollection={shipToAddressFields}
+                        onCancel={formCancelHandler}
+                        onSubmit={formSubmitHandler}
+                    />
+                )}
             </Modal>
         </>
     );

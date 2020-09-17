@@ -1,4 +1,5 @@
 {
+    "extends": "./tsconfig.paths.json",
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "baseUrl": "modules",
@@ -11,13 +12,7 @@
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
         "outDir": "dist",
-        "paths": {
-            "@insite/client-framework/*": ["client-framework/src/*"],
-            "@insite/content-library/*": ["content-library/src/*"],
-            "@insite/server-framework/*": ["server-framework/src/*"],
-            "@insite/shell/*": ["shell/src/*"],
-            "@insite/mobius/*": ["mobius/src/*"]
-        },
+        "resolveJsonModule": true,
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true,
@@ -25,13 +20,5 @@
     },
     "exclude": [
         "node_modules"
-    ],
-    "files": [
-        "./modules/server-framework/Entry.ts",
-        "./modules/client-framework/Entry.ts",
-        "./modules/shell/Entry.ts",
-        "constants.d.ts",
-        "./modules/mobius/src/entry.nostyle.d.ts",
-        "./modules/mobius/src/react-datetime-picker.d.ts"
     ]
 }

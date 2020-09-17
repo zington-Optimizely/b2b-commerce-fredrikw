@@ -72,7 +72,9 @@ export const requestRmaProductListStyles: RequestRmaProductListStyles = {
     orderLineCardImageGridItem: {
         width: [3, 3, 2, 2, 1],
         printWidth: 1,
-        css: css` padding-left: 0; `,
+        css: css`
+            padding-left: 0;
+        `,
     },
     orderLineCardInfoGridItem: { width: [9, 9, 7, 7, 8] },
     orderLineCardInfoGridContainer: { gap: 10 },
@@ -86,7 +88,9 @@ export const requestRmaProductListStyles: RequestRmaProductListStyles = {
     },
     qtyToReturnTextField: {
         cssOverrides: {
-            formInputWrapper: css` width: 90px; `,
+            formInputWrapper: css`
+                width: 90px;
+            `,
         },
     },
     productInfoGridItem: { width: [12, 12, 8, 8, 8] },
@@ -97,12 +101,26 @@ export const requestRmaProductListStyles: RequestRmaProductListStyles = {
     productInfoDescriptionGridItem: { width: 12 },
     productInfoPartNumbersGridItem: {
         width: 12,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productPartNumbers: {
-        erpNumberLabelText: { css: css` margin-right: 8px; ` },
-        customerNameLabelText: { css: css` margin-right: 8px; ` },
-        manufacturerItemLabelText: { css: css` margin-right: 8px; ` },
+        erpNumberLabelText: {
+            css: css`
+                margin-right: 8px;
+            `,
+        },
+        customerNameLabelText: {
+            css: css`
+                margin-right: 8px;
+            `,
+        },
+        manufacturerItemLabelText: {
+            css: css`
+                margin-right: 8px;
+            `,
+        },
     },
     orderLineInfoGridItem: {
         width: [12, 12, 4, 4, 4],
@@ -126,11 +144,11 @@ const ProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
             <GridContainer {...styles.productInfoGridContainer}>
                 <GridItem {...styles.productInfoBrandDescriptionGridItem}>
                     <GridContainer {...styles.productInfoBrandDescriptionGridContainer}>
-                        {orderLine.brand
-                            && <GridItem {...styles.productInfoBrandGridItem}>
+                        {orderLine.brand && (
+                            <GridItem {...styles.productInfoBrandGridItem}>
                                 <ProductBrand brand={orderLine.brand} extendedStyles={styles.productBrandStyles} />
                             </GridItem>
-                        }
+                        )}
                         <GridItem {...styles.productInfoDescriptionGridItem}>
                             <ProductDescription product={orderLine} extendedStyles={styles.productDescriptionStyles} />
                         </GridItem>
@@ -141,7 +159,8 @@ const ProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
                         productNumber={orderLine.productErpNumber}
                         customerProductNumber={orderLine.customerProductNumber}
                         manufacturerItem={orderLine.manufacturerItem}
-                        extendedStyles={styles.productPartNumbers} />
+                        extendedStyles={styles.productPartNumbers}
+                    />
                 </GridItem>
             </GridContainer>
         </GridItem>
@@ -155,7 +174,11 @@ const OrderLineInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
                 <GridItem {...styles.orderLinePriceGridItem}>
                     <SmallHeadingAndText
                         heading={translate("Price")}
-                        text={orderLine.unitPriceDisplay + (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")} />
+                        text={
+                            orderLine.unitPriceDisplay +
+                            (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")
+                        }
+                    />
                 </GridItem>
                 <GridItem {...styles.productInfoQtyOrderedGridItem}>
                     <SmallHeadingAndText heading={translate("Qty")} text={`${orderLine.qtyOrdered}`} />
@@ -169,26 +192,29 @@ const OrderLineInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
 };
 
 const OrderLineCard = (props: {
-    order: OrderModel,
-    orderLine: OrderLineModel,
-    totalQuantity: number,
-    qtyChangeHandler: (event: React.ChangeEvent<HTMLInputElement>, lineNumber: number) => void,
-    returnReasonChangeHandler: (event: React.ChangeEvent<HTMLSelectElement>, lineNumber: number) => void,
+    order: OrderModel;
+    orderLine: OrderLineModel;
+    totalQuantity: number;
+    qtyChangeHandler: (event: React.ChangeEvent<HTMLInputElement>, lineNumber: number) => void;
+    returnReasonChangeHandler: (event: React.ChangeEvent<HTMLSelectElement>, lineNumber: number) => void;
 }) => {
     const { order, orderLine, totalQuantity, qtyChangeHandler, returnReasonChangeHandler } = props;
     const minQtyToReturn = totalQuantity > 0 ? 0 : 1;
-    const qtyToReturnError = totalQuantity > 0
-        && ((orderLine.rmaQtyRequested > orderLine.qtyOrdered && siteMessage("Field_Max_Number", translate("QTY Returning"), orderLine.qtyOrdered.toString()))
-            || (orderLine.rmaQtyRequested < minQtyToReturn && siteMessage("Field_Min_Number", translate("QTY Returning"), minQtyToReturn.toString())));
+    const qtyToReturnError =
+        totalQuantity > 0 &&
+        ((orderLine.rmaQtyRequested > orderLine.qtyOrdered &&
+            siteMessage("Field_Max_Number", translate("QTY Returning"), orderLine.qtyOrdered.toString())) ||
+            (orderLine.rmaQtyRequested < minQtyToReturn &&
+                siteMessage("Field_Min_Number", translate("QTY Returning"), minQtyToReturn.toString())));
 
     return (
         <GridContainer {...styles.orderLineCardGridContainer}>
             <GridItem {...styles.orderLineCardImageGridItem}>
-                {orderLine.productUri && orderLine.isActiveProduct
-                    && <Link href={orderLine.productUri}>
+                {orderLine.productUri && orderLine.isActiveProduct && (
+                    <Link href={orderLine.productUri}>
                         <LazyImage {...styles.orderLineCardImage} src={orderLine.mediumImagePath} />
                     </Link>
-                }
+                )}
             </GridItem>
             <GridItem {...styles.orderLineCardInfoGridItem}>
                 <GridContainer {...styles.orderLineCardInfoGridContainer}>
@@ -206,19 +232,31 @@ const OrderLineCard = (props: {
                     max={orderLine.qtyOrdered}
                     error={qtyToReturnError}
                     data-test-selector={`requestRmaLine_qtyToReturn_${orderLine.id}`}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => qtyChangeHandler(event, orderLine.lineNumber)} />
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        qtyChangeHandler(event, orderLine.lineNumber)
+                    }
+                />
                 <Select
                     label={translate("Return Reason")}
                     {...styles.returnReasonSelect}
                     value={orderLine.returnReason}
                     required={orderLine.rmaQtyRequested > 0}
-                    error={orderLine.rmaQtyRequested > 0 && !orderLine.returnReason && siteMessage("Field_Required", translate("Return Reason"))}
+                    error={
+                        orderLine.rmaQtyRequested > 0 &&
+                        !orderLine.returnReason &&
+                        siteMessage("Field_Required", translate("Return Reason"))
+                    }
                     data-test-selector={`requestRmaLine_ReturnReason_${orderLine.id}`}
-                    onChange={(event: React.ChangeEvent<HTMLSelectElement>) => returnReasonChangeHandler(event, orderLine.lineNumber)}>
+                    onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                        returnReasonChangeHandler(event, orderLine.lineNumber)
+                    }
+                >
                     <option value="">{translate("Select a Reason Code")}</option>
-                    {order.returnReasons?.map(returnReason =>
-                        <option key={returnReason} value={returnReason}>{returnReason}</option>,
-                    )}
+                    {order.returnReasons?.map(returnReason => (
+                        <option key={returnReason} value={returnReason}>
+                            {returnReason}
+                        </option>
+                    ))}
                 </Select>
             </GridItem>
         </GridContainer>
@@ -227,11 +265,7 @@ const OrderLineCard = (props: {
 
 const styles = requestRmaProductListStyles;
 
-const RequestRmaProductList: FC<Props> = ({
-    orderLines,
-    setOrderLines,
-    setCanSendReturnRequest,
-}) => {
+const RequestRmaProductList: FC<Props> = ({ orderLines, setOrderLines, setCanSendReturnRequest }) => {
     const [totalQuantity, setTotalQuantity] = React.useState(0);
     const { value: order } = useContext(OrderStateContext);
 
@@ -245,8 +279,11 @@ const RequestRmaProductList: FC<Props> = ({
 
     React.useEffect(() => {
         setCanSendReturnRequest({
-            value: orderLines.some(line => line.rmaQtyRequested > 0 && line.returnReason)
-                && !orderLines.some(line => line.rmaQtyRequested > line.qtyOrdered || (line.rmaQtyRequested > 0 && !line.returnReason)),
+            value:
+                orderLines.some(line => line.rmaQtyRequested > 0 && line.returnReason) &&
+                !orderLines.some(
+                    line => line.rmaQtyRequested > line.qtyOrdered || (line.rmaQtyRequested > 0 && !line.returnReason),
+                ),
         });
     }, [orderLines]);
 
@@ -256,7 +293,9 @@ const RequestRmaProductList: FC<Props> = ({
 
     const qtyChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, lineNumber: number) => {
         const qty = parseInt(event.target.value, 10);
-        const updatedOrderLines = orderLines.map(line => line.lineNumber === lineNumber ? { ...line, rmaQtyRequested: qty } : line);
+        const updatedOrderLines = orderLines.map(line =>
+            line.lineNumber === lineNumber ? { ...line, rmaQtyRequested: qty } : line,
+        );
         setOrderLines({ orderLines: updatedOrderLines });
 
         let totalQty = 0;
@@ -270,7 +309,8 @@ const RequestRmaProductList: FC<Props> = ({
     const returnReasonChangeHandler = (event: React.FormEvent<HTMLSelectElement>, lineNumber: number) => {
         setOrderLines({
             orderLines: orderLines.map(line =>
-                line.lineNumber === lineNumber ? { ...line, returnReason: event.currentTarget.value } : line),
+                line.lineNumber === lineNumber ? { ...line, returnReason: event.currentTarget.value } : line,
+            ),
         });
     };
 
@@ -283,7 +323,8 @@ const RequestRmaProductList: FC<Props> = ({
                         orderLine={orderLine}
                         totalQuantity={totalQuantity}
                         qtyChangeHandler={qtyChangeHandler}
-                        returnReasonChangeHandler={returnReasonChangeHandler} />
+                        returnReasonChangeHandler={returnReasonChangeHandler}
+                    />
                 </CardContainer>
             ))}
         </GridContainer>

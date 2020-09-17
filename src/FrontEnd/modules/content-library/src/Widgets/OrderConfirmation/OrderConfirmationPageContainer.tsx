@@ -19,41 +19,61 @@ export interface OrderConfirmationPageContainerStyles {
 
 export const orderConfirmationPageContainerStyles: OrderConfirmationPageContainerStyles = {
     headerGridItem: {
-        css: css` order: 1; `,
+        css: css`
+            order: 1;
+        `,
         width: 12,
     },
     orderInformationGridItem: {
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-                theme,
-                [
-                    css` order: 3; `,
-                    css` order: 3; `,
-                    css` order: 2; `,
-                    css` order: 2; `,
-                    css` order: 2; `,
-                ],
-            )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
+                        order: 3;
+                    `,
+                    css`
+                        order: 3;
+                    `,
+                    css`
+                        order: 2;
+                    `,
+                    css`
+                        order: 2;
+                    `,
+                    css`
+                        order: 2;
+                    `,
+                ])}
         `,
         width: [12, 12, 6, 8, 8],
     },
     orderTotalGridItem: {
         css: css`
-            ${({ theme }: { theme: BaseTheme }) => breakpointMediaQueries(
-                theme,
-                [
-                    css` order: 2; `,
-                    css` order: 2; `,
-                    css` order: 3; `,
-                    css` order: 3; `,
-                    css` order: 3; `,
-                ],
-            )}
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
+                        order: 2;
+                    `,
+                    css`
+                        order: 2;
+                    `,
+                    css`
+                        order: 3;
+                    `,
+                    css`
+                        order: 3;
+                    `,
+                    css`
+                        order: 3;
+                    `,
+                ])}
         `,
         width: [12, 12, 6, 4, 4],
     },
     productListGridItem: {
-        css: css` order: 4; `,
+        css: css`
+            order: 4;
+        `,
         width: [12, 12, 12, 8, 8],
     },
 };

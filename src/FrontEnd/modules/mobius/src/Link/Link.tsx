@@ -1,9 +1,9 @@
 import Color from "color";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import Clickable, { ClickableComponentProps } from "../Clickable";
+import Clickable, { ClickableComponentProps, ClickableLinkProps } from "../Clickable";
 import { BaseTheme } from "../globals/baseTheme";
-import Icon, { IconPresentationProps }  from "../Icon";
+import Icon, { IconPresentationProps } from "../Icon";
 import Typography, { TypographyPresentationProps } from "../Typography";
 import applyPropBuilder from "../utilities/applyPropBuilder";
 import getProp from "../utilities/getProp";
@@ -18,7 +18,7 @@ export type LinkPresentationProps = InjectableCss<ClickableComponentProps> & {
      * @themable */
     color?: string;
     /** How the color changes when the link is hovered over.
-    * @themable */
+     * @themable */
     hoverMode?: "darken" | "lighten";
     /** Allows for fine-tuning of the hovered state of the link.
      * @themable */
@@ -34,18 +34,18 @@ export type LinkPresentationProps = InjectableCss<ClickableComponentProps> & {
     typographyProps?: TypographyPresentationProps;
 };
 
-export type LinkProps = LinkPresentationProps
-    // Below is the equivalent of `ClickableLinkProps` but was causing deep type instantiation issues.
-    & MobiusStyledComponentProps<"a", ClickableComponentProps>;
+export type LinkProps = LinkPresentationProps & ClickableLinkProps;
 
-const StyledIcon = styled(Icon)`
+const StyledIcon = styled(Icon)<{ size: number; iconAlignment?: "right" | "left" }>`
     vertical-align: middle;
-    ${({ size, iconAlignment }) => ` ${(iconAlignment === "right" ? "margin-left:" : "margin-right:")}${size / 2}px; `}
+    ${({ size, iconAlignment }) => ` ${iconAlignment === "right" ? "margin-left:" : "margin-right:"}${size / 2}px; `}
     ${injectCss}
 `;
 
 const StyledTypography = styled(Typography as any)`
-    @media print { color: ${getProp("theme.colors.text.main")} !important; }
+    @media print {
+        color: ${getProp("theme.colors.text.main")} !important;
+    }
     vertical-align: middle;
     ${injectCss}
 `;
@@ -54,22 +54,26 @@ type StyledClickableProps = Pick<LinkPresentationProps, "hoverMode"> & { _color:
 
 const StyledClickable = styled(Clickable)<any /* StyledClickableProps */>`
     display: inline-flex;
-    ${({ iconAlignment }) => iconAlignment === "right" ? "flex-direction: row-reverse;" : ""}
-    ${/* sc-selector */StyledIcon} {
+    ${({ iconAlignment }) => (iconAlignment === "right" ? "flex-direction: row-reverse;" : "")}
+    ${/* sc-selector */ StyledIcon} {
         transition: all ${getProp("theme.transition.duration.regular")}ms ease-in-out;
         color: ${({ _color, iconColor, theme }) => resolveColor(iconColor || _color, theme)};
     }
-    ${/* sc-selector */StyledTypography} {
+    ${/* sc-selector */ StyledTypography} {
         color: ${({ _color, theme }) => resolveColor(_color, theme)};
     }
     &:hover {
         ${getProp("hoverStyle")}
-        ${/* sc-selector */StyledIcon}, ${/* sc-selector */StyledTypography} {
+        ${/* sc-selector */ StyledIcon}, ${/* sc-selector */ StyledTypography} {
             color:
                 ${({ _color, theme, hoverMode }: StyledClickableProps & ThemeProps<BaseTheme>) => {
-                    if (!hoverMode && !_color) return null;
+                    if (!hoverMode && !_color) {
+                        return null;
+                    }
                     const hoverColor = resolveColor(_color, theme);
-                    if (hoverMode) return Color(hoverColor)[hoverMode](0.3).toString();
+                    if (hoverMode) {
+                        return Color(hoverColor)[hoverMode](0.3).toString();
+                    }
                     return hoverColor;
                 }};
             ${getProp("hoverStyle")}
@@ -82,9 +86,7 @@ const StyledClickable = styled(Clickable)<any /* StyledClickableProps */>`
  * A presentational concern wrapping the `Clickable` utility component. The Link component provides link-type text
  * styling for children and an associated icon.
  */
-const Link: React.FC<LinkProps> = withTheme(({
-    children, ...otherProps
-}) => {
+const Link: React.FC<LinkProps> = withTheme(({ children, ...otherProps }) => {
     const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "link" });
     const typographyProps = spreadProps("typographyProps");
     const hoverOverrides = {
@@ -111,10 +113,7 @@ const Link: React.FC<LinkProps> = withTheme(({
                     {...icon.iconProps}
                 />
             )}
-            <StyledTypography
-                {...hoverOverrides}
-                {...typographyProps}
-            >
+            <StyledTypography {...hoverOverrides} {...typographyProps}>
                 {children}
             </StyledTypography>
         </StyledClickable>

@@ -11,8 +11,12 @@ import loadBillTos from "@insite/client-framework/Store/Data/BillTos/Handlers/Lo
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiModels";
-import ChangeCustomerBillToSelector, { ChangeCustomerBillToSelectorStyles } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerBillToSelector";
-import ChangeCustomerShipToSelector, { ChangeCustomerShipToSelectorStyles } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerShipToSelector";
+import ChangeCustomerBillToSelector, {
+    ChangeCustomerBillToSelectorStyles,
+} from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerBillToSelector";
+import ChangeCustomerShipToSelector, {
+    ChangeCustomerShipToSelectorStyles,
+} from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerShipToSelector";
 import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
 import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -30,7 +34,10 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState, props: OwnProps) => {
     const { fulfillmentMethod, selectedBillTo, selectedShipTo, isDefault } = state.components.addressDrawer;
-    const { accountSettings: { enableWarehousePickup, requireSelectCustomerOnSignIn }, customerSettings } = getSettingsCollection(state);
+    const {
+        accountSettings: { enableWarehousePickup, requireSelectCustomerOnSignIn },
+        customerSettings,
+    } = getSettingsCollection(state);
     return {
         selectedBillTo,
         selectedShipTo,
@@ -96,37 +103,26 @@ const AddressesSelectCustomerContainer = ({
     const [shipToSearchText, setShipToSearchText] = React.useState("");
 
     const [noShipToAndCantCreate, setNoShipToAndCantCreate] = React.useState<boolean>(
-        customerSettings.allowCreateNewShipToAddress
-        && !shipToSearchText
-        && shipTosDataView.value?.length === 0,
+        customerSettings.allowCreateNewShipToAddress && !shipToSearchText && shipTosDataView.value?.length === 0,
     );
 
-    React.useEffect(
-        () => {
-            setNoShipToAndCantCreate(customerSettings.allowCreateNewShipToAddress
-                && !shipToSearchText
-                && shipTosDataView.value?.length === 0);
-        },
-        [customerSettings, shipToSearchText, shipTosDataView],
-    );
+    React.useEffect(() => {
+        setNoShipToAndCantCreate(
+            customerSettings.allowCreateNewShipToAddress && !shipToSearchText && shipTosDataView.value?.length === 0,
+        );
+    }, [customerSettings, shipToSearchText, shipTosDataView]);
 
-    React.useEffect(
-        () => {
-            if (!billTosDataView.value && !billTosDataView.isLoading) {
-                loadBillTos(billTosParameter);
-            }
-        },
-        [billTosParameter, billTosDataView],
-    );
+    React.useEffect(() => {
+        if (!billTosDataView.value && !billTosDataView.isLoading) {
+            loadBillTos(billTosParameter);
+        }
+    }, [billTosParameter, billTosDataView]);
 
-    React.useEffect(
-        () => {
-            if (selectedBillTo && !shipTosDataView.value && !shipTosDataView.isLoading) {
-                loadShipTos(shipTosParameter);
-            }
-        },
-        [shipTosParameter, shipTosDataView],
-    );
+    React.useEffect(() => {
+        if (selectedBillTo && !shipTosDataView.value && !shipTosDataView.isLoading) {
+            loadShipTos(shipTosParameter);
+        }
+    }, [shipTosParameter, shipTosDataView]);
 
     const billToSelectedHandler = (billTo: BillToModel) => {
         selectBillTo({ billTo });
@@ -158,8 +154,8 @@ const AddressesSelectCustomerContainer = ({
                     isLoading={billTosDataView.isLoading}
                 />
             </GridItem>
-            {selectedBillTo
-                && <>
+            {selectedBillTo && (
+                <>
                     <GridItem {...styles.shipToGridItem}>
                         <ChangeCustomerShipToSelector
                             shipTo={selectedShipTo}
@@ -175,8 +171,8 @@ const AddressesSelectCustomerContainer = ({
                             isLoading={shipTosDataView.isLoading}
                         />
                     </GridItem>
-                    {showIsDefaultCheckbox
-                        && <GridItem {...styles.isDefaultGridItem}>
+                    {showIsDefaultCheckbox && (
+                        <GridItem {...styles.isDefaultGridItem}>
                             <CheckboxGroup {...styles.isDefaultCheckboxGroup}>
                                 <Checkbox
                                     {...styles.isDefaultCheckbox}
@@ -188,9 +184,9 @@ const AddressesSelectCustomerContainer = ({
                                 </Checkbox>
                             </CheckboxGroup>
                         </GridItem>
-                    }
+                    )}
                 </>
-            }
+            )}
         </GridContainer>
     );
 };

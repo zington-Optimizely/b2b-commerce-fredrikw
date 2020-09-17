@@ -9,7 +9,9 @@ import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { RfqRequestQuotePageContext } from "@insite/content-library/Pages/RfqRequestQuotePage";
-import CartLineCardExpanded, { CartLineCardExpandedStyles } from "@insite/content-library/Widgets/Cart/CartLineCardExpanded";
+import CartLineCardExpanded, {
+    CartLineCardExpandedStyles,
+} from "@insite/content-library/Widgets/Cart/CartLineCardExpanded";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -47,13 +49,7 @@ export const rfqRequestQuoteProductListStyles: RfqRequestQuoteProductListStyles 
 
 const styles = rfqRequestQuoteProductListStyles;
 
-const RfqRequestQuoteProductList: FC<Props> = ({
-   cart,
-   productSettings,
-   updateCartLine,
-   removeCartLine,
-}) => {
-
+const RfqRequestQuoteProductList: FC<Props> = ({ cart, productSettings, updateCartLine, removeCartLine }) => {
     if (!cart || !cart.cartLines) {
         return null;
     }
@@ -63,7 +59,9 @@ const RfqRequestQuoteProductList: FC<Props> = ({
     return (
         <>
             <StyledWrapper {...styles.lineCountWrapper}>
-                <Typography {...styles.lineCountStyles}>{cartLines.length} {translate("Products")}</Typography>
+                <Typography {...styles.lineCountStyles}>
+                    {cartLines.length} {translate("Products")}
+                </Typography>
             </StyledWrapper>
             {cartLines.map(cartLine => {
                 const showRemoveAction = !cartLine.isPromotionItem && cart.canModifyOrder;

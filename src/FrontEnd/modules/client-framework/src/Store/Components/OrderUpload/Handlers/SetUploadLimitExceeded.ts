@@ -1,7 +1,4 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-} from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
 type HandlerType = Handler<{ uploadLimitExceeded: boolean }>;
 
@@ -12,9 +9,7 @@ export const DispatchSetUploadLimitExceeded: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetUploadLimitExceeded,
-];
+export const chain = [DispatchSetUploadLimitExceeded];
 
 const setUploadLimitExceeded = createHandlerChainRunner(chain, "SetUploadLimitExceeded");
 export default setUploadLimitExceeded;

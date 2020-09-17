@@ -10,7 +10,7 @@ export function withParentProductId<P extends HasParentProductId>(Component: Rea
     return function ProductComponent(props: Omit<P, keyof HasParentProductId>) {
         return (
             <ParentProductIdContext.Consumer>
-                {value => <Component {...props as P} parentProductId={value}/>}
+                {value => <Component {...(props as P)} parentProductId={value} />}
             </ParentProductIdContext.Consumer>
         );
     };

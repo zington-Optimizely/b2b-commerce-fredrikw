@@ -5,10 +5,12 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import Page from "@insite/mobius/Page";
 import React from "react";
 
-const ExamplePage = ({ id }: PageProps) => <Page>
-            <Zone contentId={id} zoneName="Content"></Zone>
-        <AddToListModal/>
-    </Page>;
+const ExamplePage = ({ id }: PageProps) => (
+    <Page>
+        <Zone contentId={id} zoneName="Content"></Zone>
+        <AddToListModal />
+    </Page>
+);
 
 const pageModule: PageModule = {
     component: ExamplePage,

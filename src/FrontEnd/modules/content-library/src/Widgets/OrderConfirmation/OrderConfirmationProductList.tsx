@@ -39,17 +39,13 @@ export const productListStyles: OrderConfirmationProductListStyles = {
 
 const styles = productListStyles;
 
-const OrderConfirmationProductList: FC<Props> = ({
-                                                     cartState,
-                                                     promotionsDataView,
-                                                     settingsCollection,
-                                                 }) => {
+const OrderConfirmationProductList: FC<Props> = ({ cartState, promotionsDataView, settingsCollection }) => {
     const [isCondensed, setIsCondensed] = useState(false);
 
     if (!cartState.value || !promotionsDataView.value) {
         return (
             <StyledWrapper {...styles.centeringWrapper}>
-                <LoadingSpinner/>
+                <LoadingSpinner />
             </StyledWrapper>
         );
     }

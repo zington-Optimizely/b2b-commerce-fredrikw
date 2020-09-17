@@ -17,7 +17,10 @@ const reducer = {
         setDataViewLoading(draft, action.parameter);
     },
 
-    "Data/BillTos/CompleteLoadBillTos": (draft: Draft<BillTosState>, action: { parameter: GetBillTosApiParameter, collection: BillToCollectionModel }) => {
+    "Data/BillTos/CompleteLoadBillTos": (
+        draft: Draft<BillTosState>,
+        action: { parameter: GetBillTosApiParameter; collection: BillToCollectionModel },
+    ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.billTos!);
     },
 
@@ -25,7 +28,10 @@ const reducer = {
         draft.isLoading[action.id] = true;
     },
 
-    "Data/BillTos/CompleteLoadBillTo": (draft: Draft<BillTosState>, action: { model: BillToModel, isCurrent?: boolean }) => {
+    "Data/BillTos/CompleteLoadBillTo": (
+        draft: Draft<BillTosState>,
+        action: { model: BillToModel; isCurrent?: boolean },
+    ) => {
         if (action.isCurrent) {
             delete draft.isLoading[API_URL_CURRENT_FRAGMENT];
             draft.currentId = action.model.id;

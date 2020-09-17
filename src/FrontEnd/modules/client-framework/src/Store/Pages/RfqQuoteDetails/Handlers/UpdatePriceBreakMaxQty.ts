@@ -1,9 +1,13 @@
-import { createHandlerChainRunner, HandlerWithResult, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import validatePriceBreaks from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/ValidatePriceBreaks";
 import { getPriceBreaksForCurrentQuoteLine } from "@insite/client-framework/Store/Pages/RfqQuoteDetails/RfqQuoteDetailsSelectors";
 import { BreakPriceRfqModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = HandlerWithResult<{ index: number, maxQty: string }, { updatedPriceBreaks: BreakPriceRfqModel[] }>;
+type HandlerType = HandlerWithResult<{ index: number; maxQty: string }, { updatedPriceBreaks: BreakPriceRfqModel[] }>;
 
 export const UpdateMaxQty: HandlerType = props => {
     const priceBreaks = getPriceBreaksForCurrentQuoteLine(props.getState());
@@ -20,7 +24,7 @@ export const UpdateMaxQty: HandlerType = props => {
     }
 
     updatedPriceBreaks[index] = {
-        ...(updatedPriceBreaks[index]),
+        ...updatedPriceBreaks[index],
         endQty: numValue,
     };
 
@@ -41,11 +45,7 @@ export const ValidatePriceBreaks: HandlerType = async ({ dispatch, getState }) =
     }
 };
 
-export const chain = [
-    UpdateMaxQty,
-    DispatchUpdatePriceBreaks,
-    ValidatePriceBreaks,
-];
+export const chain = [UpdateMaxQty, DispatchUpdatePriceBreaks, ValidatePriceBreaks];
 
 const updateMaxQty = createHandlerChainRunner(chain, "UpdateMaxQty");
 export default updateMaxQty;

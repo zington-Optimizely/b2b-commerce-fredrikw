@@ -13,7 +13,10 @@ const reducer = {
     "Pages/RfqQuoteDetails/SetQuoteId": (draft: Draft<RfqQuoteDetailsState>, action: { quoteId: string }) => {
         draft.quoteId = action.quoteId;
     },
-    "Pages/RfqQuoteDetails/SetExpirationDate": (draft: Draft<RfqQuoteDetailsState>, action: { expirationDate?: Date, forceValidation?: boolean }) => {
+    "Pages/RfqQuoteDetails/SetExpirationDate": (
+        draft: Draft<RfqQuoteDetailsState>,
+        action: { expirationDate?: Date; forceValidation?: boolean },
+    ) => {
         if (draft.expirationDate === undefined && action.expirationDate === undefined && !action.forceValidation) {
             return;
         }
@@ -21,14 +24,23 @@ const reducer = {
         draft.expirationDate = action.expirationDate;
         draft.expirationDateError = action.expirationDate ? "" : siteMessage("Rfq_NoExpirationDate");
     },
-    "Pages/RfqQuoteDetails/SetQuoteLineForCalculation": (draft: Draft<RfqQuoteDetailsState>, action: { quoteLine?: QuoteLineModel }) => {
+    "Pages/RfqQuoteDetails/SetQuoteLineForCalculation": (
+        draft: Draft<RfqQuoteDetailsState>,
+        action: { quoteLine?: QuoteLineModel },
+    ) => {
         draft.quoteLineForCalculation = action.quoteLine;
         draft.priceBreakValidations = [];
     },
-    "Pages/RfqQuoteDetails/UpdatePriceBreaks": (draft: Draft<RfqQuoteDetailsState>, action: { updatedPriceBreaks: BreakPriceRfqModel[] }) => {
+    "Pages/RfqQuoteDetails/UpdatePriceBreaks": (
+        draft: Draft<RfqQuoteDetailsState>,
+        action: { updatedPriceBreaks: BreakPriceRfqModel[] },
+    ) => {
         draft.quoteLineForCalculation!.pricingRfq!.priceBreaks = action.updatedPriceBreaks;
     },
-    "Pages/RfqQuoteDetails/CompleteValidatePriceBreaks": (draft: Draft<RfqQuoteDetailsState>, action: { validations: PriceBreakValidation[] }) => {
+    "Pages/RfqQuoteDetails/CompleteValidatePriceBreaks": (
+        draft: Draft<RfqQuoteDetailsState>,
+        action: { validations: PriceBreakValidation[] },
+    ) => {
         draft.priceBreakValidations = action.validations;
     },
 };

@@ -5,14 +5,17 @@ import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps"
 import omitMultiple from "../utilities/omitMultiple";
 import uniqueId from "../utilities/uniqueId";
 
-export type TextAreaComponentProps = MobiusStyledComponentProps<"textarea", {
-    /** Error message to be displayed below the textarea. */
-    error?: React.ReactNode;
-    /** Hint text to be displayed below the textarea. */
-    hint?: React.ReactNode;
-    /** Label to be displayed above the textarea. */
-    label?: React.ReactNode;
-} & Partial<FormFieldComponentProps>>;
+export type TextAreaComponentProps = MobiusStyledComponentProps<
+    "textarea",
+    {
+        /** Error message to be displayed below the textarea. */
+        error?: React.ReactNode;
+        /** Hint text to be displayed below the textarea. */
+        hint?: React.ReactNode;
+        /** Label to be displayed above the textarea. */
+        label?: React.ReactNode;
+    } & Partial<FormFieldComponentProps>
+>;
 
 export type TextAreaProps = FormFieldPresentationProps<TextAreaComponentProps> & TextAreaComponentProps;
 
@@ -20,20 +23,11 @@ export type TextAreaProps = FormFieldPresentationProps<TextAreaComponentProps> &
  * TextArea is a form element with an optional label, hint text, error message and optional icon.
  * Props not contained in the list below get passed into the input component (e.g. event handlers, `value`, etc).
  */
-const TextArea: React.FC<TextAreaProps & HasDisablerContext> = (props) => {
-    const {
-        disable,
-        disabled,
-        error,
-        hint,
-        id,
-        placeholder,
-        required,
-        ...otherProps
-    } = props;
+const TextArea: React.FC<TextAreaProps & HasDisablerContext> = props => {
+    const { disable, disabled, error, hint, id, placeholder, required, ...otherProps } = props;
     // Because disabled html attribute doesn't accept undefined
     // eslint-disable-next-line no-unneeded-ternary
-    const isDisabled = (disable || disabled) ? true : false;
+    const isDisabled = disable || disabled ? true : false;
     const inputId = id || uniqueId();
     const labelId = `${inputId}-label`;
     const inputLabelObj = otherProps.label === 0 || otherProps.label ? { "aria-labelledby": labelId } : {};

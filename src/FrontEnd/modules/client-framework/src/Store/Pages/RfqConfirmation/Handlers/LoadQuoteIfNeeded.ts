@@ -20,10 +20,7 @@ export const DispatchLoadQuoteIfNeeded: HandlerType = props => {
     }
 };
 
-export const chain = [
-    DispatchSetQuoteId,
-    DispatchLoadQuoteIfNeeded,
-];
+export const chain = [DispatchSetQuoteId, DispatchLoadQuoteIfNeeded];
 
 const loadQuoteIfNeeded = createHandlerChainRunner(chain, "LoadQuoteIfNeeded");
 export default loadQuoteIfNeeded;

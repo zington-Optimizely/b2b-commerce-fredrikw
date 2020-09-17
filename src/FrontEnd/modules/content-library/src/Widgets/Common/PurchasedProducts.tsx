@@ -78,7 +78,16 @@ export const purchasedProductsStyles: PurchasedProductsStyles = {
             padding: 10px;
             background-color: ${getColor("common.accent")};
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, css` display: none; `], "max")}
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            display: none;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
     itemHeaderGridItem: { width: [0, 0, 6, 6, 6] },
@@ -88,13 +97,23 @@ export const purchasedProductsStyles: PurchasedProductsStyles = {
         css: css`
             justify-content: flex-end;
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [null, null, css` padding-right: 35px; `, null, null])}
+                breakpointMediaQueries(theme, [
+                    null,
+                    null,
+                    css`
+                        padding-right: 35px;
+                    `,
+                    null,
+                    null,
+                ])}
         `,
     },
     priceHeaderText: { weight: "bold" },
     addToCartHeaderGridItem: {
         width: [0, 0, 3, 3, 3],
-        css: css` justify-content: flex-end; `,
+        css: css`
+            justify-content: flex-end;
+        `,
     },
     addToCartHeaderText: { weight: "bold" },
 };
@@ -116,52 +135,46 @@ const TitleWrapper = styled.div<{ position: string }>`
     justify-content: ${({ position }) => getJustifyContent(position)};
 `;
 
-const PurchasedProducts: React.FC<Props> = ({
-                                                id,
-                                                fields,
-                                                products,
-                                                loadPurchasedProducts,
-                                            }) => {
-    React.useEffect(
-        () => {
-            loadPurchasedProducts({ widgetId: id, purchaseType: fields.purchaseType });
-        },
-        [fields.purchaseType],
-    );
+const PurchasedProducts: React.FC<Props> = ({ id, fields, products, loadPurchasedProducts }) => {
+    React.useEffect(() => {
+        loadPurchasedProducts({ widgetId: id, purchaseType: fields.purchaseType });
+    }, [fields.purchaseType]);
 
     if (!products || products.length === 0) {
         return null;
     }
 
-    return <>
-        <TitleWrapper {...styles.titleWrapper} position={fields.titlePosition}>
-            <Typography {...styles.titleText}>{fields.title}</Typography>
-        </TitleWrapper>
-        <GridContainer {...styles.headerContainer}>
-            <GridItem {...styles.itemHeaderGridItem}>
-                <Typography {...styles.itemHeaderText}>{translate("Item")}</Typography>
-            </GridItem>
-            <GridItem {...styles.priceHeaderGridItem}>
-                <Typography {...styles.priceHeaderText}>{translate("Price")}</Typography>
-            </GridItem>
-            <GridItem {...styles.addToCartHeaderGridItem}>
-                <Typography {...styles.addToCartHeaderText}>{translate("Add to Cart")}</Typography>
-            </GridItem>
-        </GridContainer>
-        {products.map(product => (
-            <PurchasedProductCard
-                key={product.id}
-                product={product}
-                widgetId={id}
-                showBrand={fields.showBrand}
-                showPartNumbers={fields.showPartNumbers}
-                showPrice={fields.showPrice}
-                showAvailability={fields.showAvailability}
-                showAddToCart={fields.showAddToCart}
-                showAddToList={fields.showAddToList}
-            />
-        ))}
-    </>;
+    return (
+        <>
+            <TitleWrapper {...styles.titleWrapper} position={fields.titlePosition}>
+                <Typography {...styles.titleText}>{fields.title}</Typography>
+            </TitleWrapper>
+            <GridContainer {...styles.headerContainer}>
+                <GridItem {...styles.itemHeaderGridItem}>
+                    <Typography {...styles.itemHeaderText}>{translate("Item")}</Typography>
+                </GridItem>
+                <GridItem {...styles.priceHeaderGridItem}>
+                    <Typography {...styles.priceHeaderText}>{translate("Price")}</Typography>
+                </GridItem>
+                <GridItem {...styles.addToCartHeaderGridItem}>
+                    <Typography {...styles.addToCartHeaderText}>{translate("Add to Cart")}</Typography>
+                </GridItem>
+            </GridContainer>
+            {products.map(product => (
+                <PurchasedProductCard
+                    key={product.id}
+                    product={product}
+                    widgetId={id}
+                    showBrand={fields.showBrand}
+                    showPartNumbers={fields.showPartNumbers}
+                    showPrice={fields.showPrice}
+                    showAvailability={fields.showAvailability}
+                    showAddToCart={fields.showAddToCart}
+                    showAddToList={fields.showAddToList}
+                />
+            ))}
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

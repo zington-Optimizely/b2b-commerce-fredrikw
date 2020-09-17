@@ -26,7 +26,9 @@ export interface ProductDetailsDocumentsStyles {
 
 export const documentsStyles: ProductDetailsDocumentsStyles = {
     wrapper: {
-        css: css` padding: 10px 15px 30px; `,
+        css: css`
+            padding: 10px 15px 30px;
+        `,
     },
     documentGridItem: {
         width: [12, 12, 6, 6, 6],
@@ -34,10 +36,14 @@ export const documentsStyles: ProductDetailsDocumentsStyles = {
     documentIcon: {
         src: File,
         color: "text.link",
-        css: css` margin-right: 10px; `,
+        css: css`
+            margin-right: 10px;
+        `,
     },
     documentNameText: {
-        css: css` vertical-align: super; `,
+        css: css`
+            vertical-align: super;
+        `,
     },
 };
 
@@ -48,18 +54,25 @@ const ProductDetailsDocuments: React.FC<OwnProps> = ({ product: { documents } })
         return null;
     }
 
-    return <StyledWrapper {...styles.wrapper}>
-        <GridContainer {...styles.container}>
-            {documents.map(document =>
-                <GridItem key={document.id.toString()} {...styles.documentGridItem}>
-                    <Link href={document.filePath} target="_new" {...styles.documentLink} data-test-selector={`productDetails_${document.id}`}>
-                        <IconMemo {...styles.documentIcon} />
-                        <Typography {...styles.documentNameText}>{document.name}</Typography>
-                    </Link>
-                </GridItem>)
-            }
-        </GridContainer>
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            <GridContainer {...styles.container}>
+                {documents.map(document => (
+                    <GridItem key={document.id.toString()} {...styles.documentGridItem}>
+                        <Link
+                            href={document.filePath}
+                            target="_new"
+                            {...styles.documentLink}
+                            data-test-selector={`productDetails_${document.id}`}
+                        >
+                            <IconMemo {...styles.documentIcon} />
+                            <Typography {...styles.documentNameText}>{document.name}</Typography>
+                        </Link>
+                    </GridItem>
+                ))}
+            </GridContainer>
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

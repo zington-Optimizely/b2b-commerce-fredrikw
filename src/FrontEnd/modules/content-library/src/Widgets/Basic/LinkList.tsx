@@ -34,10 +34,14 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
     const titleLink = getLink(state, ownProps.fields.titleLink);
-    const links = mapLinks<LinkModel, { openInNewWindow: boolean, overriddenTitle: string }>(state, ownProps.fields.links, (widgetLink) => ({
-        openInNewWindow: widgetLink.fields.openInNewWindow,
-        overriddenTitle: widgetLink.fields.overriddenTitle,
-    }));
+    const links = mapLinks<LinkModel, { openInNewWindow: boolean; overriddenTitle: string }>(
+        state,
+        ownProps.fields.links,
+        widgetLink => ({
+            openInNewWindow: widgetLink.fields.openInNewWindow,
+            overriddenTitle: widgetLink.fields.overriddenTitle,
+        }),
+    );
     return {
         titleLink,
         links,
@@ -61,19 +65,18 @@ export const linkListStyles: LinkListStyles = {
         `,
     },
     titleWrapper: {
-        css: css` font-weight: bold; `,
+        css: css`
+            font-weight: bold;
+        `,
     },
     linkWrapper: {
-        css: css` padding: 1px 18px 0 0; `,
+        css: css`
+            padding: 1px 18px 0 0;
+        `,
     },
 };
 
-const LinkList: React.FC<Props> = ({
-    fields,
-    titleLink,
-    links,
-    extendedStyles,
-}) => {
+const LinkList: React.FC<Props> = ({ fields, titleLink, links, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(linkListStyles, extendedStyles));
 
     const alignmentStyles = css`
@@ -86,20 +89,29 @@ const LinkList: React.FC<Props> = ({
         ${styles.linkWrapper?.css}
     `;
 
-    return <StyledWrapper css={alignmentStyles}>
-        <StyledWrapper {...styles.titleWrapper}>
-            {titleLink
-                ? <Link href={titleLink.url}>{fields.title || titleLink.title}</Link>
-                : <Typography as="h3" {...styles.title}>{fields.title}</Typography>
-            }
+    return (
+        <StyledWrapper css={alignmentStyles}>
+            <StyledWrapper {...styles.titleWrapper}>
+                {titleLink ? (
+                    <Link href={titleLink.url}>{fields.title || titleLink.title}</Link>
+                ) : (
+                    <Typography as="h3" {...styles.title}>
+                        {fields.title}
+                    </Typography>
+                )}
+            </StyledWrapper>
+            {links.map((link, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <StyledWrapper key={index} css={directionStyles}>
+                    {link?.url && (
+                        <Link href={link.url} target={link.openInNewWindow ? "_blank" : ""}>
+                            {link.overriddenTitle || link.title}
+                        </Link>
+                    )}
+                </StyledWrapper>
+            ))}
         </StyledWrapper>
-        {links.map((link, index) =>
-            // eslint-disable-next-line react/no-array-index-key
-            <StyledWrapper key={index} css={directionStyles}>
-                {link?.url && <Link href={link.url} target={link.openInNewWindow ? "_blank" : ""}>{link.overriddenTitle || link.title}</Link>}
-            </StyledWrapper>,
-        )}
-    </StyledWrapper>;
+    );
 };
 
 const widgetModule: WidgetModule = {

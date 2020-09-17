@@ -14,12 +14,12 @@ import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps"
 import omitMultiple from "../utilities/omitMultiple";
 import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 
-export type SizeVariant = "small" | "medium" |  "large";
+export type SizeVariant = "small" | "medium" | "large";
 
 export interface ModalPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable
-    */
+     */
     cssOverrides?: {
         scrim?: StyledProp<any>;
         modalContainer?: StyledProp<ModalProps>;
@@ -48,22 +48,25 @@ export interface ModalPresentationProps {
     transition?: Transition;
 }
 
-type ModalOwnProps = MobiusStyledComponentProps<"div", {
-    /**
-    * Governs whether the overlay can be closed, if false, the 'x' button will not appear,
-    * and the props `closeOnScrimClick` and `closeOnEsc` will be set to false.
-    * Both props can also be managed independently.
-    * */
-    isCloseable?: boolean;
-    /** whether the modal is an alertdialog (for use in cases where the dialog requires immediate attention). */
-    alert?: boolean;
-    /** Content to render as modal headline.  A string is automatically wrapped in Typography. */
-    headline?: React.ReactNode;
-}>;
+type ModalOwnProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /**
+         * Governs whether the overlay can be closed, if false, the 'x' button will not appear,
+         * and the props `closeOnScrimClick` and `closeOnEsc` will be set to false.
+         * Both props can also be managed independently.
+         * */
+        isCloseable?: boolean;
+        /** whether the modal is an alertdialog (for use in cases where the dialog requires immediate attention). */
+        alert?: boolean;
+        /** Content to render as modal headline.  A string is automatically wrapped in Typography. */
+        headline?: React.ReactNode;
+    }
+>;
 
-export type ModalProps = ModalPresentationProps
-    & ModalOwnProps
-    & Omit<OverlayComponentProps, "isCloseable" | "zIndexLevel" | "titleId">;
+export type ModalProps = ModalPresentationProps &
+    ModalOwnProps &
+    Omit<OverlayComponentProps, "isCloseable" | "zIndexLevel" | "titleId">;
 
 const ModalTitle = styled.div<InjectableCss<any>>`
     border-bottom: 1px solid ${getColor("common.border")};
@@ -87,10 +90,8 @@ const modalContainerStyles = (cssOverrides: any) => css`
     align-items: center;
     justify-content: center;
     height: 100%;
-    animation: ${({ isClosing, transition }: {transition: Transition, isClosing: boolean }) => css`
-        ${isClosing
-            ? transition?.overlayExitKeyframes
-            : transition?.overlayEntryKeyframes} ${transition?.length}ms
+    animation: ${({ isClosing, transition }: { transition: Transition; isClosing: boolean }) => css`
+        ${isClosing ? transition?.overlayExitKeyframes : transition?.overlayEntryKeyframes} ${transition?.length}ms
     `};
     ${cssOverrides}
 `;
@@ -108,29 +109,30 @@ const modalBodyStyles = (cssOverrides: any, size?: number, sizeVariant?: SizeVar
     &:focus {
         outline: none;
     }
-    ${({ theme }: ModalBodyProps) => (breakpointMediaQueries(
-        theme,
-        [
-            css`
-                height: 100%;
-                margin: 0;
-                max-width: 100%;
-            `,
-            null,
-            null,
-            css`
-                height: auto;
-                max-height: calc(100% - 90px);
-                margin: 45px;
-                max-width: ${(typeof size === "number" && size)
-                    || theme?.modal.sizeVariants[sizeVariant || "medium"]
-                    || 1100}px;
-                box-shadow: ${theme?.shadows[3]};
-            `,
-            null,
-        ],
-        "min")
-    )};
+    ${({ theme }: ModalBodyProps) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                css`
+                    height: 100%;
+                    margin: 0;
+                    max-width: 100%;
+                `,
+                null,
+                null,
+                css`
+                    height: auto;
+                    max-height: calc(100% - 90px);
+                    margin: 45px;
+                    max-width: ${(typeof size === "number" && size) ||
+                    theme?.modal.sizeVariants[sizeVariant || "medium"] ||
+                    1100}px;
+                    box-shadow: ${theme?.shadows[3]};
+                `,
+                null,
+            ],
+            "min",
+        )};
     ${cssOverrides}
 `;
 
@@ -138,7 +140,7 @@ const modalBodyStyles = (cssOverrides: any, size?: number, sizeVariant?: SizeVar
  * Modal is an overlay that handles its own visibility, and manages app focus based on its visibility.
  */
 Overlay.setAppElement("body");
-const Modal: React.FC<ModalProps> = withTheme((props) => {
+const Modal: React.FC<ModalProps> = withTheme(props => {
     if (typeof window === "undefined") {
         return null;
     }
@@ -210,9 +212,7 @@ const Modal: React.FC<ModalProps> = withTheme((props) => {
                 {headlineComponent}
                 {titleButton}
             </ModalTitle>
-            <ModalContent css={cssOverrides?.modalContent}>
-                {children}
-            </ModalContent>
+            <ModalContent css={cssOverrides?.modalContent}>{children}</ModalContent>
         </Overlay>
     );
 });

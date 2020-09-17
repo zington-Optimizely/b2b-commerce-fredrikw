@@ -12,15 +12,12 @@ const formatDateWithTimezone = function (date: Date) {
         const norm = Math.floor(Math.abs(num));
         return (norm < 10 ? "0" : "") + norm;
     };
-    return `${
-        date.getFullYear()}-${
-        padNumber(date.getMonth() + 1)}-${ // Since month starts a 0 index, add one to get month as "number"
-        padNumber(date.getDate())}T${
-        padNumber(date.getHours())}:${
-        padNumber(date.getMinutes())}:${
-        padNumber(date.getSeconds())}${
-        timezoneSymbol}${padNumber(timezone / 60)}:${
-        padNumber(timezone % 60)}`;
+    return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${
+        // Since month starts a 0 index, add one to get month as "number"
+        padNumber(date.getDate())
+    }T${padNumber(date.getHours())}:${padNumber(date.getMinutes())}:${padNumber(
+        date.getSeconds(),
+    )}${timezoneSymbol}${padNumber(timezone / 60)}:${padNumber(timezone % 60)}`;
 };
 
 export default formatDateWithTimezone;

@@ -7,7 +7,11 @@ interface OwnProps {
     readonly id: string;
 }
 
-const mapStateToProps = ({ data: { pages: { widgetsById, widgetIdsByParentIdAndZone } } }: ShellState) => {
+const mapStateToProps = ({
+    data: {
+        pages: { widgetsById, widgetIdsByParentIdAndZone },
+    },
+}: ShellState) => {
     return {
         widgetIdsByParentIdAndZone,
         widgetsById,
@@ -20,25 +24,30 @@ const WidgetTree: React.FC<Props> = ({ widgetIdsByParentIdAndZone, id, widgetsBy
     const zones = widgetIdsByParentIdAndZone[id];
 
     if (!zones) {
-        return  null;
+        return null;
     }
 
-    return <ul>
-        {Object.keys(zones).map(zoneName =>
-            <li key={zoneName}>
-                <ZoneNameStyle>{zoneName}</ZoneNameStyle>
-                <ChildrenStyle>
-                    {zones[zoneName].map(id =>
-                        <li key={id}>{widgetsById[id].type}
-                            <WidgetTree id={id}
-                                        widgetsById={widgetsById}
-                                        widgetIdsByParentIdAndZone={widgetIdsByParentIdAndZone} />
-                        </li>,
-                    )}
-                </ChildrenStyle>
-            </li>,
-        )}
-    </ul>;
+    return (
+        <ul>
+            {Object.keys(zones).map(zoneName => (
+                <li key={zoneName}>
+                    <ZoneNameStyle>{zoneName}</ZoneNameStyle>
+                    <ChildrenStyle>
+                        {zones[zoneName].map(id => (
+                            <li key={id}>
+                                {widgetsById[id].type}
+                                <WidgetTree
+                                    id={id}
+                                    widgetsById={widgetsById}
+                                    widgetIdsByParentIdAndZone={widgetIdsByParentIdAndZone}
+                                />
+                            </li>
+                        ))}
+                    </ChildrenStyle>
+                </li>
+            ))}
+        </ul>
+    );
 };
 
 export default connect(mapStateToProps)(WidgetTree);
@@ -48,5 +57,7 @@ const ZoneNameStyle = styled.span`
 `;
 
 const ChildrenStyle = styled.ul`
-    li { padding-left: 10px; }
+    li {
+        padding-left: 10px;
+    }
 `;

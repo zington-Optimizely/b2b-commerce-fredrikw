@@ -13,7 +13,9 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import CardContainer, { CardContainerStyles } from "@insite/content-library/Components/CardContainer";
 import CardList from "@insite/content-library/Components/CardList";
 import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAddToListLink, {
+    ProductAddToListLinkStyles,
+} from "@insite/content-library/Components/ProductAddToListLink";
 import { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductContextAvailability from "@insite/content-library/Components/ProductContextAvailability";
@@ -39,7 +41,10 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     productInfos: state.pages.quickOrder.productInfos,
-    products: state.pages.quickOrder.productInfos.map(o => getProductState(state, o.productId).value) as (ProductModel | undefined)[],
+    products: state.pages.quickOrder.productInfos.map(o => getProductState(state, o.productId).value) as (
+        | ProductModel
+        | undefined
+    )[],
     total: state.pages.quickOrder.total,
     currencySymbol: state.context.session.currency?.currencySymbol || "",
 });
@@ -103,23 +108,41 @@ export const quickOrderProductListStyles: QuickOrderProductListStyles = {
         width: 2,
         css: css`
             ${({ theme }: { theme: BaseTheme }) =>
-            breakpointMediaQueries(theme, [
-                css` padding-left: 0; padding-right: 0; font-size: 10px; `,
-                css` padding-left: 0; padding-right: 0; font-size: 10px; `,
-                css` padding-left: 0; `,
-                css` padding-left: 0; `,
-                css` padding-left: 0; `,
-            ])}
+                breakpointMediaQueries(theme, [
+                    css`
+                        padding-left: 0;
+                        padding-right: 0;
+                        font-size: 10px;
+                    `,
+                    css`
+                        padding-left: 0;
+                        padding-right: 0;
+                        font-size: 10px;
+                    `,
+                    css`
+                        padding-left: 0;
+                    `,
+                    css`
+                        padding-left: 0;
+                    `,
+                    css`
+                        padding-left: 0;
+                    `,
+                ])}
         `,
     },
     productInfoGridItem: { width: [7, 7, 7, 8, 8] },
     brandAndProductDescriptionGridItem: {
         width: [12, 12, 12, 6, 5],
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     availability: {
         container: {
-            css: css` margin-top: 10px; `,
+            css: css`
+                margin-top: 10px;
+            `,
         },
     },
     priceAndQuantityGridItem: { width: [12, 12, 12, 6, 7] },
@@ -140,7 +163,9 @@ export const quickOrderProductListStyles: QuickOrderProductListStyles = {
             `,
         },
         cssOverrides: {
-            formInputWrapper: css` width: 70px; `,
+            formInputWrapper: css`
+                width: 70px;
+            `,
         },
     },
     extendedPriceGridItem: { width: [6, 6, 3, 3, 4] },
@@ -178,22 +203,19 @@ const styles = quickOrderProductListStyles;
 const StyledSection = getStyledWrapper("section");
 
 const QuickOrderProductList: FC<Props> = ({
-                                              products,
-                                              productInfos,
-                                              total,
-                                              currencySymbol,
-                                              calculateTotal,
-                                              changeProductQty,
-                                              removeProduct,
-                                          }) => {
+    products,
+    productInfos,
+    total,
+    currencySymbol,
+    calculateTotal,
+    changeProductQty,
+    removeProduct,
+}) => {
     if (!products || products.length === 0) {
         return null;
     }
 
-    React.useEffect(
-        () => calculateTotal(),
-        [products],
-    );
+    React.useEffect(() => calculateTotal(), [products]);
 
     const removeProductHandler = (productInfo: ProductInfo) => {
         removeProduct({ productId: productInfo.productId, unitOfMeasure: productInfo.unitOfMeasure });
@@ -209,67 +231,86 @@ const QuickOrderProductList: FC<Props> = ({
             product,
             productInfo,
             onQtyOrderedChanged: qtyOrdered => {
-                changeProductQty({ qtyOrdered, productId: product.id, unitOfMeasure: productInfo.unitOfMeasure, product });
+                changeProductQty({
+                    qtyOrdered,
+                    productId: product.id,
+                    unitOfMeasure: productInfo.unitOfMeasure,
+                    product,
+                });
             },
         };
-        return <ProductContext.Provider value={productContext} key={product.id + productInfo.unitOfMeasure}>
-            <CardContainer extendedStyles={styles.cardContainer}>
-                <GridContainer {...styles.gridContainer} data-test-selector={`QuickOrderProductList_ProductId_${product.id}`}>
-                    <GridItem {...styles.productImageGridItem}>
-                        <ProductImage product={productContext} extendedStyles={styles.productImage}/>
-                    </GridItem>
-                    <GridItem {...styles.productInfoGridItem}>
-                        <GridContainer {...styles.productInfoContainer}>
-                            <GridItem {...styles.brandAndProductDescriptionGridItem}>
-                                <ProductBrand brand={product.brand!} extendedStyles={styles.brand}/>
-                                <ProductDescription product={productContext} extendedStyles={styles.productDescription}/>
-                                <Typography {...styles.productNumberText}>{product.productNumber}</Typography>
-                                {!product.quoteRequired
-                                && <ProductContextAvailability
-                                    extendedStyles={styles.availability}/>
-                                }
-                            </GridItem>
-                            <GridItem {...styles.priceAndQuantityGridItem}>
-                                <GridContainer {...styles.priceAndQuantityContainer}>
-                                    <GridItem {...styles.priceGridItem}>
-                                        <ProductPrice
-                                            product={productContext}
-                                            currencySymbol={currencySymbol}
-                                            showSavings={false}
-                                            showLabel={false}
-                                            extendedStyles={styles.price}/>
-                                    </GridItem>
-                                    <GridItem {...styles.quantityGridItem}>
-                                        <ProductQuantityOrdered extendedStyles={styles.quantityOrdered}/>
-                                    </GridItem>
-                                    <GridItem {...styles.extendedPriceGridItem}>
-                                        {!product.quoteRequired && !productInfo.pricing?.requiresRealTimePrice
-                                        && <Typography {...styles.extendedPriceText}> {productInfo.pricing?.extendedUnitNetPriceDisplay} </Typography>
-                                        }
-                                    </GridItem>
-                                </GridContainer>
-                            </GridItem>
-                        </GridContainer>
-                    </GridItem>
-                    <GridItem {...styles.removeProductGridItem}>
-                        <Clickable {...styles.removeProductClickable} onClick={() => removeProductHandler(productInfo)}>
-                            <IconMemo {...styles.removeProductIcon} />
-                        </Clickable>
-                        <ProductAddToListLink extendedStyles={styles.addToListLink}/>
-                    </GridItem>
-                </GridContainer>
-            </CardContainer>
-        </ProductContext.Provider>;
+        return (
+            <ProductContext.Provider value={productContext} key={product.id + productInfo.unitOfMeasure}>
+                <CardContainer extendedStyles={styles.cardContainer}>
+                    <GridContainer
+                        {...styles.gridContainer}
+                        data-test-selector={`QuickOrderProductList_ProductId_${product.id}`}
+                    >
+                        <GridItem {...styles.productImageGridItem}>
+                            <ProductImage product={productContext} extendedStyles={styles.productImage} />
+                        </GridItem>
+                        <GridItem {...styles.productInfoGridItem}>
+                            <GridContainer {...styles.productInfoContainer}>
+                                <GridItem {...styles.brandAndProductDescriptionGridItem}>
+                                    <ProductBrand brand={product.brand!} extendedStyles={styles.brand} />
+                                    <ProductDescription
+                                        product={productContext}
+                                        extendedStyles={styles.productDescription}
+                                    />
+                                    <Typography {...styles.productNumberText}>{product.productNumber}</Typography>
+                                    {!product.quoteRequired && (
+                                        <ProductContextAvailability extendedStyles={styles.availability} />
+                                    )}
+                                </GridItem>
+                                <GridItem {...styles.priceAndQuantityGridItem}>
+                                    <GridContainer {...styles.priceAndQuantityContainer}>
+                                        <GridItem {...styles.priceGridItem}>
+                                            <ProductPrice
+                                                product={productContext}
+                                                currencySymbol={currencySymbol}
+                                                showSavings={false}
+                                                showLabel={false}
+                                                extendedStyles={styles.price}
+                                            />
+                                        </GridItem>
+                                        <GridItem {...styles.quantityGridItem}>
+                                            <ProductQuantityOrdered extendedStyles={styles.quantityOrdered} />
+                                        </GridItem>
+                                        <GridItem {...styles.extendedPriceGridItem}>
+                                            {!product.quoteRequired && !productInfo.pricing?.requiresRealTimePrice && (
+                                                <Typography {...styles.extendedPriceText}>
+                                                    {" "}
+                                                    {productInfo.pricing?.extendedUnitNetPriceDisplay}{" "}
+                                                </Typography>
+                                            )}
+                                        </GridItem>
+                                    </GridContainer>
+                                </GridItem>
+                            </GridContainer>
+                        </GridItem>
+                        <GridItem {...styles.removeProductGridItem}>
+                            <Clickable
+                                {...styles.removeProductClickable}
+                                onClick={() => removeProductHandler(productInfo)}
+                            >
+                                <IconMemo {...styles.removeProductIcon} />
+                            </Clickable>
+                            <ProductAddToListLink extendedStyles={styles.addToListLink} />
+                        </GridItem>
+                    </GridContainer>
+                </CardContainer>
+            </ProductContext.Provider>
+        );
     });
 
     return (
         <>
             <StyledSection {...styles.wrapper}>
-                <CardList>
-                    {productListDisplay}
-                </CardList>
+                <CardList>{productListDisplay}</CardList>
             </StyledSection>
-            <Typography {...styles.totalText}>{`${translate("Total")}`} <LocalizedCurrency amount={total}/></Typography>
+            <Typography {...styles.totalText}>
+                {`${translate("Total")}`} <LocalizedCurrency amount={total} />
+            </Typography>
         </>
     );
 };

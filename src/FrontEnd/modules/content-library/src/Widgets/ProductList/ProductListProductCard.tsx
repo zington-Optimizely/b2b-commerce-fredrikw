@@ -29,7 +29,9 @@ export const productCardStyles: ProductListProductCardStyles = {
     },
     leftColumnGridItem: {
         width: [4, 4, 4, 3, 3],
-        css: css` padding-right: 20px; `,
+        css: css`
+            padding-right: 20px;
+        `,
     },
     rightColumnGridItem: {
         width: [8, 8, 8, 9, 9],
@@ -58,10 +60,11 @@ const ProductListProductCard: FC<Props> = props => {
                             showTitle={props.showTitle}
                             showPartNumbers={props.showPartNumbers}
                             showAvailability={props.showAvailability}
-                            showAttributes={props.showAttributes} />
+                            showAttributes={props.showAttributes}
+                        />
                     </GridItem>
                     <GridItem {...styles.actionsGridItem}>
-                        <ProductListActions showPrice={props.showPrice} showAddToList={props.showAddToList}/>
+                        <ProductListActions showPrice={props.showPrice} showAddToList={props.showAddToList} />
                     </GridItem>
                 </GridContainer>
             </GridItem>

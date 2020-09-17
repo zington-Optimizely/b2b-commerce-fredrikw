@@ -19,13 +19,17 @@ export interface ProductDetailsAttributesStyles {
 
 export const attributesStyles: ProductDetailsAttributesStyles = {
     wrapper: {
-        css: css` padding-bottom: 15px; `,
+        css: css`
+            padding-bottom: 15px;
+        `,
     },
     attributeTypeLabelText: {
         weight: "bold",
     },
     attributeTypeValuesText: {
-        css: css` margin-bottom: 5px; `,
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
 };
 
@@ -38,20 +42,36 @@ const ProductDetailsAttributes: React.FC<Props> = ({ product: { brand, attribute
 
     const limitedAttributeTypes = (attributeTypes ?? []).slice(0, 5);
 
-    return <StyledWrapper {...styles.wrapper} data-test-selector="productDetails_attributes">
-        {brand
-            && <Typography data-test-selector="brand_item" as="p" {...styles.attributeTypeValuesText}>
-                <Typography data-test-selector="brand_item_label" {...styles.attributeTypeLabelText}>{translate("Brand")}&nbsp;:&nbsp;</Typography>
-                <span data-test-selector="brand_item_value" >{brand.name}</span>
-            </Typography>
-        }
-        {limitedAttributeTypes.map(attributeType =>
-            <Typography key={attributeType.id.toString()} data-test-selector="attributes_item" data-attributetypeid={attributeType.id} {...styles.attributeTypeValuesText} as="p">
-                <Typography data-test-selector="attributes_item_label" {...styles.attributeTypeLabelText}>{attributeType.label}&nbsp;:&nbsp;</Typography>
-                <span data-test-selector="attributes_item_value">{(attributeType.attributeValues ?? []).map(attributeValue => attributeValue.valueDisplay).join(", ")}</span>
-            </Typography>)
-        }
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper} data-test-selector="productDetails_attributes">
+            {brand && (
+                <Typography data-test-selector="brand_item" as="p" {...styles.attributeTypeValuesText}>
+                    <Typography data-test-selector="brand_item_label" {...styles.attributeTypeLabelText}>
+                        {translate("Brand")}&nbsp;:&nbsp;
+                    </Typography>
+                    <span data-test-selector="brand_item_value">{brand.name}</span>
+                </Typography>
+            )}
+            {limitedAttributeTypes.map(attributeType => (
+                <Typography
+                    key={attributeType.id.toString()}
+                    data-test-selector="attributes_item"
+                    data-attributetypeid={attributeType.id}
+                    {...styles.attributeTypeValuesText}
+                    as="p"
+                >
+                    <Typography data-test-selector="attributes_item_label" {...styles.attributeTypeLabelText}>
+                        {attributeType.label}&nbsp;:&nbsp;
+                    </Typography>
+                    <span data-test-selector="attributes_item_value">
+                        {(attributeType.attributeValues ?? [])
+                            .map(attributeValue => attributeValue.valueDisplay)
+                            .join(", ")}
+                    </span>
+                </Typography>
+            ))}
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

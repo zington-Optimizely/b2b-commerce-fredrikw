@@ -35,10 +35,15 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-export const productListCategoryFiltersStyles: ProductListFilterAccordionSectionStyles = {
-};
+export const productListCategoryFiltersStyles: ProductListFilterAccordionSectionStyles = {};
 
-const ProductListCategoryFilters: FC<Props> = ({ categoryFacets, isCategoryPage, addProductFilters, removeProductFilters, fields }) => {
+const ProductListCategoryFilters: FC<Props> = ({
+    categoryFacets,
+    isCategoryPage,
+    addProductFilters,
+    removeProductFilters,
+    fields,
+}) => {
     // TODO ISC-11787 - make showMoreLimit configurable
     const showMoreLimit = 10;
 
@@ -73,7 +78,6 @@ const ProductListCategoryFilters: FC<Props> = ({ categoryFacets, isCategoryPage,
 };
 
 const widgetModule: WidgetModule = {
-
     component: connect(mapStateToProps, mapDispatchToProps)(ProductListCategoryFilters),
     definition: {
         group: "Product List",

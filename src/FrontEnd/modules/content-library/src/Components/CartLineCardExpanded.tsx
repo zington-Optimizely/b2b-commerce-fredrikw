@@ -20,7 +20,7 @@ import { css } from "styled-components";
 
 interface OwnProps {
     cart: Cart;
-    promotions: PromotionModel[];
+    promotions?: PromotionModel[];
     showSavingsAmount: boolean;
     showSavingsPercent: boolean;
     editable: boolean;
@@ -97,7 +97,9 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
         },
     },
     productBrandAndDescriptionGridItem: {
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
         width: 12,
     },
     productPartNumbersGridItem: {
@@ -116,7 +118,9 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     priceGridItem: {
         width: [12, 5, 12, 5, 5],
         printWidth: 5,
-        css: css` flex-direction: column; `,
+        css: css`
+            flex-direction: column;
+        `,
     },
     price: {
         price: {
@@ -150,7 +154,10 @@ const CartLineCardExpanded: React.FC<Props> = ({
     const [styles] = React.useState(() => mergeToNew(cartLineCardExpandedStyles, extendedStyles));
 
     return (
-        <GridContainer {...styles.container} data-test-selector={`cartline_expanded_${cartLine.productId}_${cartLine.unitOfMeasure}`}>
+        <GridContainer
+            {...styles.container}
+            data-test-selector={`cartline_expanded_${cartLine.productId}_${cartLine.unitOfMeasure}`}
+        >
             <GridItem {...styles.productImageGridItem}>
                 <ProductImage product={cartLine} extendedStyles={styles.productImage} />
             </GridItem>
@@ -159,9 +166,9 @@ const CartLineCardExpanded: React.FC<Props> = ({
                     <GridItem {...styles.productDescriptionAndPartNumbersGridItem}>
                         <GridContainer {...styles.productDescriptionAndPartNumbersContainer}>
                             <GridItem {...styles.productBrandAndDescriptionGridItem}>
-                                {cartLine.brand
-                                    && <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
-                                }
+                                {cartLine.brand && (
+                                    <ProductBrand brand={cartLine.brand} extendedStyles={styles.productBrand} />
+                                )}
                                 <ProductDescription product={cartLine} extendedStyles={styles.productDescription} />
                             </GridItem>
                             <GridItem {...styles.productPartNumbersGridItem}>
@@ -184,36 +191,40 @@ const CartLineCardExpanded: React.FC<Props> = ({
                                     showSavingsPercent={showSavingsPercent}
                                     extendedStyles={styles.price}
                                 />
-                                {promotions.map(promotion => (
-                                    <Typography {...styles.promotionNameText} key={promotion.id} data-test-selector="orderLineCardExpandedPromotionName">{promotion.name}</Typography>
+                                {promotions?.map(promotion => (
+                                    <Typography
+                                        {...styles.promotionNameText}
+                                        key={promotion.id}
+                                        data-test-selector="orderLineCardExpandedPromotionName"
+                                    >
+                                        {promotion.name}
+                                    </Typography>
                                 ))}
                             </GridItem>
                             <GridItem {...styles.quantityGridItem}>
-                                <CartLineQuantity
-                                    cart={cart}
-                                    editable={editable}
-                                    extendedStyles={styles.quantity}
-                                />
+                                <CartLineQuantity cart={cart} editable={editable} extendedStyles={styles.quantity} />
                             </GridItem>
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
-                                {cartLine.pricing
-                                    && <SmallHeadingAndText
+                                {cartLine.pricing && (
+                                    <SmallHeadingAndText
                                         heading={translate("Subtotal")}
                                         text={cartLine.pricing.extendedUnitNetPriceDisplay}
-                                        extendedStyles={styles.extendedUnitNetPrice} />
-                                }
+                                        extendedStyles={styles.extendedUnitNetPrice}
+                                    />
+                                )}
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-                    {cartLine.notes
-                        && <GridItem {...styles.orderLineNotesGridItem}>
+                    {cartLine.notes && (
+                        <GridItem {...styles.orderLineNotesGridItem}>
                             <CartLineNotes
                                 cart={cart}
                                 editable={editable}
                                 label={translate("Line Notes")}
-                                extendedStyles={styles.cartLineNotes} />
+                                extendedStyles={styles.cartLineNotes}
+                            />
                         </GridItem>
-                    }
+                    )}
                 </GridContainer>
             </GridItem>
         </GridContainer>

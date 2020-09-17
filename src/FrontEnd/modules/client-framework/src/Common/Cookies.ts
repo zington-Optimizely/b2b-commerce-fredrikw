@@ -15,7 +15,7 @@ export function removeCookie(name: string, options?: CookieAttributes) {
 function getCookies() {
     return Cookies.withConverter({
         read: decodeCookie,
-        write: (value) => encodeCookie(value.toString()),
+        write: value => encodeCookie(value.toString()),
     });
 }
 

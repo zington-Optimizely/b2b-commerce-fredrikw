@@ -37,11 +37,7 @@ const onClick = (history: History, link: string) => {
 
 type Props = HasHistory & OwnProps & ReturnType<typeof mapStateToProps>;
 
-const CmsButton: React.FunctionComponent<Props> = ({
-    fields,
-    history,
-    url,
-}: Props) => {
+const CmsButton: React.FunctionComponent<Props> = ({ fields, history, url }: Props) => {
     const wrapperStyles = {
         css: css`
             width: 100%;
@@ -50,11 +46,13 @@ const CmsButton: React.FunctionComponent<Props> = ({
         `,
     };
 
-    return <StyledWrapper {...wrapperStyles}>
-        <Button variant={fields.variant} onClick={() => onClick(history, url)}>
-            {fields.label}
-        </Button>
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...wrapperStyles}>
+            <Button variant={fields.variant} onClick={() => onClick(history, url)}>
+                {fields.label}
+            </Button>
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

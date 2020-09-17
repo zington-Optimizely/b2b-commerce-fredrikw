@@ -36,8 +36,12 @@ export const productQuantityBreakPricingStyles: ProductQuantityBreakPricingStyle
     modal: {
         size: 400,
         cssOverrides: {
-            modalContent: css` padding: 0; `,
-            modalTitle: css` padding: 10px 10px 10px 20px; `,
+            modalContent: css`
+                padding: 0;
+            `,
+            modalTitle: css`
+                padding: 10px 10px 10px 20px;
+            `,
             headlineTypography: css`
                 font-size: 20px;
                 margin-bottom: 0;
@@ -53,6 +57,7 @@ export const productQuantityBreakPricingStyles: ProductQuantityBreakPricingStyle
 };
 
 const ProductQuantityBreakPricing: FC<OwnProps & HasProduct> = ({
+    product,
     productInfo: { pricing },
     extendedStyles,
 }) => {
@@ -66,39 +71,57 @@ const ProductQuantityBreakPricing: FC<OwnProps & HasProduct> = ({
 
     const [styles] = React.useState(() => mergeToNew(productQuantityBreakPricingStyles, extendedStyles));
 
-    if (!pricing || !pricing.unitRegularBreakPrices || pricing.unitRegularBreakPrices.length < 2) {
+    if (
+        !product ||
+        product.quoteRequired ||
+        !pricing ||
+        !pricing.unitRegularBreakPrices ||
+        pricing.unitRegularBreakPrices.length < 2
+    ) {
         return null;
     }
 
-    return <>
-        <Link {...styles.viewLink} onClick={viewLinkClickHandler} data-test-selector="quantityBreakPricingLink">
-            {translate("View Quantity Break Pricing")}
-        </Link>
-        <Modal
-            {...styles.modal}
-            headline={translate("Quantity Pricing")}
-            isOpen={modalIsOpen}
-            handleClose={modalCloseHandler}
-            data-test-selector="quantityBreakPricingModal"
-        >
-            <DataTable {...styles.table}>
-                <DataTableHead {...styles.tableHead}>
-                    <DataTableHeader {...styles.breakQtyHeader}>{translate("Min Qty")}</DataTableHeader>
-                    <DataTableHeader {...styles.breakPriceHeader}>{translate("Price Per")}</DataTableHeader>
-                    <DataTableHeader {...styles.savingsHeader} title={translate("Savings")} />
-                </DataTableHead>
-                <DataTableBody {...styles.tableBody}>
-                    {pricing!.unitRegularBreakPrices!.map(breakPrice =>
-                        <DataTableRow {...styles.tableRow} key={breakPrice.breakQty} data-test-selector="breakPriceRow">
-                            <DataTableCell {...styles.breakQtyCell} data-test-selector="breakQty">{breakPrice.breakQty}</DataTableCell>
-                            <DataTableCell {...styles.breakPriceCell} data-test-selector="price">{breakPrice.breakPriceDisplay}</DataTableCell>
-                            <DataTableCell {...styles.savingsCell} data-test-selector="message">{breakPrice.savingsMessage}</DataTableCell>
-                        </DataTableRow>)
-                    }
-                </DataTableBody>
-            </DataTable>
-        </Modal>
-    </>;
+    return (
+        <>
+            <Link {...styles.viewLink} onClick={viewLinkClickHandler} data-test-selector="quantityBreakPricingLink">
+                {translate("View Quantity Break Pricing")}
+            </Link>
+            <Modal
+                {...styles.modal}
+                headline={translate("Quantity Pricing")}
+                isOpen={modalIsOpen}
+                handleClose={modalCloseHandler}
+                data-test-selector="quantityBreakPricingModal"
+            >
+                <DataTable {...styles.table}>
+                    <DataTableHead {...styles.tableHead}>
+                        <DataTableHeader {...styles.breakQtyHeader}>{translate("Min Qty")}</DataTableHeader>
+                        <DataTableHeader {...styles.breakPriceHeader}>{translate("Price Per")}</DataTableHeader>
+                        <DataTableHeader {...styles.savingsHeader} title={translate("Savings")} />
+                    </DataTableHead>
+                    <DataTableBody {...styles.tableBody}>
+                        {pricing!.unitRegularBreakPrices!.map(breakPrice => (
+                            <DataTableRow
+                                {...styles.tableRow}
+                                key={breakPrice.breakQty}
+                                data-test-selector="breakPriceRow"
+                            >
+                                <DataTableCell {...styles.breakQtyCell} data-test-selector="breakQty">
+                                    {breakPrice.breakQty}
+                                </DataTableCell>
+                                <DataTableCell {...styles.breakPriceCell} data-test-selector="price">
+                                    {breakPrice.breakPriceDisplay}
+                                </DataTableCell>
+                                <DataTableCell {...styles.savingsCell} data-test-selector="message">
+                                    {breakPrice.savingsMessage}
+                                </DataTableCell>
+                            </DataTableRow>
+                        ))}
+                    </DataTableBody>
+                </DataTable>
+            </Modal>
+        </>
+    );
 };
 
 export default withProduct(ProductQuantityBreakPricing);

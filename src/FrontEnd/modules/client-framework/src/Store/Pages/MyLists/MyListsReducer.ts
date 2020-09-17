@@ -9,7 +9,10 @@ const initialState: MyListsState = {
 };
 
 const reducer = {
-    "Pages/MyLists/UpdateLoadParameter": (draft: Draft<MyListsState>, action: { parameter: GetWishListsApiParameter; }) => {
+    "Pages/MyLists/UpdateLoadParameter": (
+        draft: Draft<MyListsState>,
+        action: { parameter: GetWishListsApiParameter },
+    ) => {
         draft.getWishListsParameter = { ...draft.getWishListsParameter, ...action.parameter };
 
         for (const key in draft.getWishListsParameter) {
@@ -28,18 +31,12 @@ const reducer = {
             }
         }
     },
-    "Pages/MyLists/BeginAddWishList": (draft: Draft<MyListsState>) => {
-    },
-    "Pages/MyLists/CompleteAddWishList": (draft: Draft<MyListsState>, action: { result: AddWishListResult; }) => {
-    },
-    "Pages/MyLists/BeginAddWishListLines": (draft: Draft<MyListsState>) => {
-    },
-    "Pages/MyLists/CompleteAddWishListLines": (draft: Draft<MyListsState>) => {
-    },
-    "Pages/MyLists/BeginDeleteWishList": (draft: Draft<MyListsState>) => {
-    },
-    "Pages/MyLists/CompleteDeleteWishList": (draft: Draft<MyListsState>) => {
-    },
+    "Pages/MyLists/BeginAddWishList": (draft: Draft<MyListsState>) => {},
+    "Pages/MyLists/CompleteAddWishList": (draft: Draft<MyListsState>, action: { result: AddWishListResult }) => {},
+    "Pages/MyLists/BeginAddWishListLines": (draft: Draft<MyListsState>) => {},
+    "Pages/MyLists/CompleteAddWishListLines": (draft: Draft<MyListsState>) => {},
+    "Pages/MyLists/BeginDeleteWishList": (draft: Draft<MyListsState>) => {},
+    "Pages/MyLists/CompleteDeleteWishList": (draft: Draft<MyListsState>) => {},
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

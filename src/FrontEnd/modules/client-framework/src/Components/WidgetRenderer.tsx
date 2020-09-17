@@ -7,10 +7,7 @@ import { HasShellContext, withIsInShell } from "@insite/client-framework/Compone
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import {
-    beginDraggingWidget,
-    endDraggingWidget,
-} from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { beginDraggingWidget, endDraggingWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Icon from "@insite/mobius/Icon";
 import Edit from "@insite/mobius/Icons/Edit";
@@ -31,7 +28,12 @@ interface State {
 }
 
 const mapStateToProps = (state: ApplicationState, { id }: OwnProps) => {
-    const { data: { pages: { widgetsById, draggingWidgetId, pageDefinitionsByType } }, context: { permissions, canChangePage } } = state;
+    const {
+        data: {
+            pages: { widgetsById, draggingWidgetId, pageDefinitionsByType },
+        },
+        context: { permissions, canChangePage },
+    } = state;
     return {
         widget: widgetsById[id],
         draggingWidgetId,
@@ -166,14 +168,22 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
 
     private canMoveWidget = () => {
         const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
-        return pageDefinition && this.props.canChangePage && ((this.props.permissions?.canMoveWidgets && pageDefinition.pageType === "Content")
-            || (this.props.permissions?.canMoveSystemWidgets && pageDefinition.pageType === "System"));
+        return (
+            pageDefinition &&
+            this.props.canChangePage &&
+            ((this.props.permissions?.canMoveWidgets && pageDefinition.pageType === "Content") ||
+                (this.props.permissions?.canMoveSystemWidgets && pageDefinition.pageType === "System"))
+        );
     };
 
     private canDeleteWidget = () => {
         const pageDefinition = this.props.pageDefinitionsByType?.[this.props.currentPageType];
-        return pageDefinition && this.props.canChangePage && ((this.props.permissions?.canDeleteWidget && pageDefinition.pageType === "Content")
-            || (this.props.permissions?.canDeleteSystemWidget && pageDefinition.pageType === "System"));
+        return (
+            pageDefinition &&
+            this.props.canChangePage &&
+            ((this.props.permissions?.canDeleteWidget && pageDefinition.pageType === "Content") ||
+                (this.props.permissions?.canDeleteSystemWidget && pageDefinition.pageType === "System"))
+        );
     };
 
     render() {
@@ -183,9 +193,12 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
 
         if (this.state.hasError) {
             if (isInShell) {
-                return <ErrorWithWidgetStyle>There was an unhandled exception that occurred while trying to render the
-                    widget: {this.state.error}.
-                    See the console for more details.</ErrorWithWidgetStyle>;
+                return (
+                    <ErrorWithWidgetStyle>
+                        There was an unhandled exception that occurred while trying to render the widget:{" "}
+                        {this.state.error}. See the console for more details.
+                    </ErrorWithWidgetStyle>
+                );
             }
 
             return <ErrorWithWidgetStyle>An error occurred.</ErrorWithWidgetStyle>;
@@ -195,32 +208,52 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
 
         if (isInShell && isEditing && isCurrentPage) {
             // this extra div appears necessary to make sure data-widget shows up if the server renders the wrong version of isInShell
-            return <div data-widget={type}>
-                <WidgetStyle>
-                    {(!draggingWidgetId || draggingWidgetId === widget.id)
-                        && <HoverStyle ref={this.widgetHover} onDragStart={this.dragStart} onDrag={this.drag} onDragEnd={this.dragEnd} data-test-selector={`widgetHover_${type}`}>
-                            <WidgetHoverNameStyle fixed={fixed || !this.canMoveWidget()} onMouseDown={this.dragHandleMouseDown} data-test-selector="widgetHover_title">{widget.type}</WidgetHoverNameStyle>
-                            {this.canEditWidget()
-                            && <IconLink onClick={this.editWidget} data-test-selector="widgetHover_edit" title="Edit">
-                                <Icon src={Edit} size={20} color="#fff" />
-                            </IconLink>
-                            }
-                            {!fixed && this.canDeleteWidget()
-                            && <IconLink onClick={this.removeWidget} title="Delete" data-test-selector="widgetHover_delete">
-                                <Icon src={Trash2} size={20} color="#fff" />
-                            </IconLink>
-                            }
-                        </HoverStyle>
-                    }
-                    <WidgetWrapper>
-                        {draggingWidgetId === widget.id
-                            && <WidgetDisabler/>
-                        }
-                        {widgetElement}
-                        <WidgetClearer></WidgetClearer>
-                    </WidgetWrapper>
-                </WidgetStyle>
-            </div>;
+            return (
+                <div data-widget={type}>
+                    <WidgetStyle>
+                        {(!draggingWidgetId || draggingWidgetId === widget.id) && (
+                            <HoverStyle
+                                ref={this.widgetHover}
+                                onDragStart={this.dragStart}
+                                onDrag={this.drag}
+                                onDragEnd={this.dragEnd}
+                                data-test-selector={`widgetHover_${type}`}
+                            >
+                                <WidgetHoverNameStyle
+                                    fixed={fixed || !this.canMoveWidget()}
+                                    onMouseDown={this.dragHandleMouseDown}
+                                    data-test-selector="widgetHover_title"
+                                >
+                                    {widget.type}
+                                </WidgetHoverNameStyle>
+                                {this.canEditWidget() && (
+                                    <IconLink
+                                        onClick={this.editWidget}
+                                        data-test-selector="widgetHover_edit"
+                                        title="Edit"
+                                    >
+                                        <Icon src={Edit} size={20} color="#fff" />
+                                    </IconLink>
+                                )}
+                                {!fixed && this.canDeleteWidget() && (
+                                    <IconLink
+                                        onClick={this.removeWidget}
+                                        title="Delete"
+                                        data-test-selector="widgetHover_delete"
+                                    >
+                                        <Icon src={Trash2} size={20} color="#fff" />
+                                    </IconLink>
+                                )}
+                            </HoverStyle>
+                        )}
+                        <WidgetWrapper>
+                            {draggingWidgetId === widget.id && <WidgetDisabler />}
+                            {widgetElement}
+                            <WidgetClearer></WidgetClearer>
+                        </WidgetWrapper>
+                    </WidgetStyle>
+                </div>
+            );
         }
         if (isInShell && isCurrentPage) {
             return <div data-widget={type}>{widgetElement}</div>;
@@ -263,7 +296,7 @@ const WidgetHoverNameStyle = styled.span<{ fixed: boolean }>`
     font-weight: 300;
     font-size: 15px;
     letter-spacing: 0.5px;
-    cursor: ${props => !props.fixed ? "grab" : "auto"};
+    cursor: ${props => (!props.fixed ? "grab" : "auto")};
     white-space: nowrap;
 `;
 
@@ -271,7 +304,7 @@ const WidgetWrapper = styled.div`
     border: 1px solid #999;
     min-height: 8px;
     padding: 1px;
-    &[data-dragging='true'] {
+    &[data-dragging="true"] {
         background-color: grey;
     }
     position: relative;

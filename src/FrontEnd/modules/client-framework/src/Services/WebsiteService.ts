@@ -8,7 +8,7 @@ import {
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetCurrentCountriesApiParameter extends ApiParameter {
-    expand?: ("states")[];
+    expand?: "states"[];
     additionalExpands?: string[];
 }
 
@@ -42,11 +42,13 @@ export type GetSiteMessageParameter = ApiParameter & {
     languageCode?: string;
 };
 
-export const getSiteMessages = (parameter?: GetSiteMessageParameter) => get<SiteMessageCollectionModel>("/api/v1/websites/current/sitemessages", parameter);
+export const getSiteMessages = (parameter?: GetSiteMessageParameter) =>
+    get<SiteMessageCollectionModel>("/api/v1/websites/current/sitemessages", parameter);
 
 export type GetTranslationDictionariesParameter = ApiParameter & {
     languageCode?: string;
     pageSize: number;
 };
 
-export const getTranslationDictionaries = (parameter?: GetTranslationDictionariesParameter) => get<TranslationDictionaryCollectionModel>("/api/v1/translationdictionaries", parameter);
+export const getTranslationDictionaries = (parameter?: GetTranslationDictionariesParameter) =>
+    get<TranslationDictionaryCollectionModel>("/api/v1/translationdictionaries", parameter);

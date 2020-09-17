@@ -52,20 +52,19 @@ type Attributes = {
 const spinnerSvgAttributes: Attributes = {
     viewBox: "0 0 66 66",
     xmlns: "http://www.w3.org/2000/svg",
-    children: <circle cx="33" cy="33" r="30"/>,
+    children: <circle cx="33" cy="33" r="30" />,
 };
 
-const LoadingSpinnerStyle = styled.svg.attrs<LoadingSpinnerProps>(() => spinnerSvgAttributes)`
-    height: ${({ size, theme }) => (size || get(theme, "loadingSpinner.defaultProps.size") || "40")}px;
-    width: ${({ size, theme }) => (size || get(theme, "loadingSpinner.defaultProps.size") || "40")}px;
+const LoadingSpinnerStyle = styled.svg.attrs<LoadingSpinnerProps, LoadingSpinnerProps>(() => spinnerSvgAttributes)`
+    height: ${({ size, theme }) => size || get(theme, "loadingSpinner.defaultProps.size") || "40"}px;
+    width: ${({ size, theme }) => size || get(theme, "loadingSpinner.defaultProps.size") || "40"}px;
     animation: ${rotator} ${duration} linear infinite;
     circle {
         fill: none;
-        stroke:
-            ${({ color, theme }) => {
-                const colorOverride = color || get(theme, "loadingSpinner.defaultProps.color");
-                return colorOverride ? resolveColor(colorOverride, theme) : "currentColor";
-            }};
+        stroke: ${({ color, theme }) => {
+            const colorOverride = color || get(theme, "loadingSpinner.defaultProps.color");
+            return colorOverride ? resolveColor(colorOverride, theme) : "currentColor";
+        }};
         stroke-dasharray: ${dashOffset}px;
         stroke-dashoffset: 0;
         stroke-linecap: round;
@@ -77,7 +76,7 @@ const LoadingSpinnerStyle = styled.svg.attrs<LoadingSpinnerProps>(() => spinnerS
     ${injectCss}
 `;
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = (props) => <LoadingSpinnerStyle {...props} />;
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = props => <LoadingSpinnerStyle {...props} />;
 
 /** @component */
 export default LoadingSpinner;

@@ -6,8 +6,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 type Props = OwnProps;
 
@@ -37,7 +36,7 @@ const ProductListColumns: FC<Props> = ({ id }) => {
             <GridItem {...styles.leftColumnGridItem}>
                 <Zone contentId={id} zoneName="Content00" />
             </GridItem>
-            <GridItem  {...styles.rightColumnGridItem}>
+            <GridItem {...styles.rightColumnGridItem}>
                 <Zone contentId={id} zoneName="Content01" />
             </GridItem>
         </GridContainer>
@@ -45,7 +44,6 @@ const ProductListColumns: FC<Props> = ({ id }) => {
 };
 
 const widgetModule: WidgetModule = {
-
     component: ProductListColumns,
     definition: {
         group: "Product List",

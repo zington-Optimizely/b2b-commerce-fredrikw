@@ -14,8 +14,7 @@ import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends PageProps {
-}
+interface OwnProps extends PageProps {}
 
 const mapDispatchToProps = {
     loadCurrentCart,
@@ -37,13 +36,15 @@ export interface CartPageStyles {
 
 export const cartPageStyles: CartPageStyles = {
     loadingOverlay: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
 };
 
 class CartPage extends Component<Props> {
     UNSAFE_componentWillMount() {
-        const { cart, shouldLoadPromotions, loadCurrentCart, loadCurrentPromotions } = this.props;
+        const { cart, shouldLoadPromotions, loadCurrentCart, loadCurrentPromotions, isPreloadingData } = this.props;
 
         if (!cart.isLoading && (!cart.value || !cart.value.cartLines)) {
             loadCurrentCart();
@@ -53,7 +54,9 @@ class CartPage extends Component<Props> {
             loadCurrentPromotions();
         }
 
-        this.props.setIsPreloadingData({ isPreloadingData: false });
+        if (isPreloadingData) {
+            this.props.setIsPreloadingData({ isPreloadingData: false });
+        }
     }
 
     render() {

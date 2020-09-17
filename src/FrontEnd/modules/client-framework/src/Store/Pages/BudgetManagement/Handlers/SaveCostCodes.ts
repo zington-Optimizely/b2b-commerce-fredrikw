@@ -1,13 +1,21 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnSuccess,
+} from "@insite/client-framework/HandlerCreator";
 import { updateBillTo, UpdateBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { BillToModel, CostCodeModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{
-    billToId: string;
-    costCodeTitle: string;
-    costCodes: CostCodeModel[];
-    onSuccess?: () => void;
-}, UpdateBillToApiParameter & HasOnSuccess<BillToModel>, BillToModel>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {
+        billToId: string;
+        costCodeTitle: string;
+        costCodes: CostCodeModel[];
+        onSuccess?: () => void;
+    },
+    UpdateBillToApiParameter & HasOnSuccess<BillToModel>,
+    BillToModel
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {

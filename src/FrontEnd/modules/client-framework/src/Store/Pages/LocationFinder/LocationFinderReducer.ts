@@ -3,11 +3,13 @@ import { GetDealersApiParameter } from "@insite/client-framework/Services/Dealer
 import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 import { Draft } from "immer";
 
-const initialState: LocationFinderState = {
-};
+const initialState: LocationFinderState = {};
 
 const reducer = {
-    "Pages/LocationFinder/BeginLoadDealers": (draft: Draft<LocationFinderState>, action: { parameter: GetDealersApiParameter }) => {
+    "Pages/LocationFinder/BeginLoadDealers": (
+        draft: Draft<LocationFinderState>,
+        action: { parameter: GetDealersApiParameter },
+    ) => {
         draft.getDealersParameter = action.parameter;
     },
 };

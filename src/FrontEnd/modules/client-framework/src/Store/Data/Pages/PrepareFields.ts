@@ -1,6 +1,12 @@
 import ContentItemModel, { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 
-export function createContextualIds(languageId: string, defaultLanguageId: string, deviceType: DeviceType, personaIds: string[], defaultPersonaId: string) {
+export function createContextualIds(
+    languageId: string,
+    defaultLanguageId: string,
+    deviceType: DeviceType,
+    personaIds: string[],
+    defaultPersonaId: string,
+) {
     const ids: string[] = [];
 
     const doWork = (theLanguageId: string) => {
@@ -36,7 +42,12 @@ export function createContextualIds(languageId: string, defaultLanguageId: strin
     return ids;
 }
 
-export function prepareFields(contentItem: ContentItemModel, languageId: string, defaultLanguageId: string, contextualIds: string[]) {
+export function prepareFields(
+    contentItem: ContentItemModel,
+    languageId: string,
+    defaultLanguageId: string,
+    contextualIds: string[],
+) {
     let { generalFields, fields, translatableFields, contextualFields } = contentItem;
     if (!fields) {
         fields = contentItem.fields = {};

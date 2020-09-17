@@ -3,9 +3,11 @@ import { request } from "@insite/client-framework/Services/ApiService";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 
-export const getPageByType = (type: string) => get<{ page: PageModel, statusCode: number, redirectTo: string }>("pageByType", { type });
+export const getPageByType = (type: string) =>
+    get<{ page: PageModel; statusCode: number; redirectTo: string }>("pageByType", { type });
 
-export const getPageByUrl = (url: string, bypassFilters?: boolean) => get<RetrievePageResult>("pageByUrl", { url, bypassFilters });
+export const getPageByUrl = (url: string, bypassFilters?: boolean) =>
+    get<RetrievePageResult>("pageByUrl", { url, bypassFilters });
 
 export const getPageLinks = () => get<PageLinkModel[]>("pageLinks");
 
@@ -31,7 +33,12 @@ function get<T>(endpoint: string, parameter?: Dictionary<any>) {
 }
 
 function post<T>(endpoint: string, model?: T) {
-    return request<T>(contentUrl + endpoint, "POST", { "Content-Type": "application/json" }, model ? JSON.stringify(model) : undefined);
+    return request<T>(
+        contentUrl + endpoint,
+        "POST",
+        { "Content-Type": "application/json" },
+        model ? JSON.stringify(model) : undefined,
+    );
 }
 
 export interface PageLinkModel {
@@ -45,13 +52,13 @@ export interface PageLinkModel {
 }
 
 export interface RetrievePageResult {
-    page?: PageModel,
-    statusCode: number,
-    redirectTo?: string
+    page?: PageModel;
+    statusCode: number;
+    redirectTo?: string;
 }
 
 export interface BasicLanguageModel {
-    id: string,
-    hasPersonaSpecificContent: boolean,
-    hasDeviceSpecificContent: boolean
+    id: string;
+    hasPersonaSpecificContent: boolean;
+    hasDeviceSpecificContent: boolean;
 }

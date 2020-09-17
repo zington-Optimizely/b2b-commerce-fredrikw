@@ -11,7 +11,7 @@ interface Props<M extends LocationModel> {
     showSelectedLocation: boolean;
     locationType?: "WAREHOUSE" | "LOCATION";
     setLocationOfInfoWindow: (location: M | undefined) => void;
-    setCurrentLocationInfoWindow: (currentLocation: CurrentLocationInfoWindow | undefined) =>void;
+    setCurrentLocationInfoWindow: (currentLocation: CurrentLocationInfoWindow | undefined) => void;
 }
 
 export interface LocationInfoWindow<M extends LocationModel> {
@@ -47,7 +47,7 @@ const useLocationGoogleMarkers = <M extends LocationModel>({
     setLocationOfInfoWindow,
     setCurrentLocationInfoWindow,
 }: Props<M>) => {
-    const [mapMarkersElements, setMapMarkersElements] =  React.useState<LocationGoogleMapsMarker[]>([]);
+    const [mapMarkersElements, setMapMarkersElements] = React.useState<LocationGoogleMapsMarker[]>([]);
 
     const createMarkerClickHandler = (location: M) => {
         return () => {
@@ -64,12 +64,12 @@ const useLocationGoogleMarkers = <M extends LocationModel>({
     };
 
     const getLocationNumber = (index: number): number => {
-        if(!locationsPagination) {
+        if (!locationsPagination) {
             return 0;
         }
         const pageSize = locationsPagination.pageSize;
         const page = locationsPagination.page;
-        return index + 1 + ((pageSize) * (page - 1));
+        return index + 1 + pageSize * (page - 1);
     };
 
     const clearLocationGoogleMarkers = () => {
@@ -89,7 +89,9 @@ const useLocationGoogleMarkers = <M extends LocationModel>({
             locationId: location.id,
             position: new google.maps.LatLng(location.latitude, location.longitude),
             type: locationType || "LOCATION",
-            icon: `https://mt.google.com/vt/icon/text=${getLocationNumber(index)}&psize=16&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1`,
+            icon: `https://mt.google.com/vt/icon/text=${getLocationNumber(
+                index,
+            )}&psize=16&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1`,
             onClick: createMarkerClickHandler(location),
         }));
         // Add Selected Location Marker
@@ -113,7 +115,15 @@ const useLocationGoogleMarkers = <M extends LocationModel>({
             });
         }
         setMapMarkersElements(markers);
-    }, [locations, currentLocation, locationSearchFilter, locationsPagination, selectedLocation, showSelectedLocation, locationType]);
+    }, [
+        locations,
+        currentLocation,
+        locationSearchFilter,
+        locationsPagination,
+        selectedLocation,
+        showSelectedLocation,
+        locationType,
+    ]);
 
     return {
         mapMarkersElements,

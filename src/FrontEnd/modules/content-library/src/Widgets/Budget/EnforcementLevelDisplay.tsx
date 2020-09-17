@@ -22,27 +22,29 @@ export const enforcementLevelDisplayStyles: EnforcementLevelDisplayStyles = {
     labelText: {
         as: "h3",
         variant: "h6",
-        css: css` display: inline-block; `,
+        css: css`
+            display: inline-block;
+        `,
     },
 };
 
-const EnforcementLevelDisplay: React.FunctionComponent<Props> = (props) => {
+const EnforcementLevelDisplay: React.FunctionComponent<Props> = props => {
     const [styles] = React.useState(() => mergeToNew(enforcementLevelDisplayStyles, props.extendedStyles));
 
     let enforcementText;
     switch (props.enforcementLevel) {
-    case "None":
-        enforcementText = translate("No Enforcement");
-        break;
-    case "ShipTo":
-        enforcementText = translate("Customer ship to level");
-        break;
-    case "Customer":
-        enforcementText = translate("Customer level");
-        break;
-    case "User":
-        enforcementText = translate("User level");
-        break;
+        case "None":
+            enforcementText = translate("No Enforcement");
+            break;
+        case "ShipTo":
+            enforcementText = translate("Customer ship to level");
+            break;
+        case "Customer":
+            enforcementText = translate("Customer level");
+            break;
+        case "User":
+            enforcementText = translate("User level");
+            break;
     }
 
     return (

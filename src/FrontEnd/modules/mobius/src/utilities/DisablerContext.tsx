@@ -7,20 +7,22 @@ export interface DisablerContextData {
 const DisablerContext = React.createContext<DisablerContextData>({ disable: false });
 
 export interface HasDisablerContext {
-    disable: DisablerContextData,
+    disable: DisablerContextData;
 }
 
 export function withDisabler<P extends HasDisablerContext>(Component: React.ComponentType<P>) {
     return function DisableableComponent(props: Pick<P, Exclude<keyof P, keyof HasDisablerContext>>) {
-        return <DisablerContext.Consumer>
+        return (
+            <DisablerContext.Consumer>
                 {DisablerContextData => (
                     <Component
-                        {...props as P}
+                        {...(props as P)}
                         // eslint-disable-next-line no-unneeded-ternary
-                        disable={(DisablerContextData && DisablerContextData.disable) ? true : false}
+                        disable={DisablerContextData && DisablerContextData.disable ? true : false}
                     />
                 )}
-        </DisablerContext.Consumer>;
+            </DisablerContext.Consumer>
+        );
     };
 }
 

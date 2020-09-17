@@ -4,7 +4,9 @@ import {
     AttributeTypeFacetModel,
     CategoryFacetModel,
     FacetModel,
-    PriceRangeModel, ProductModel, SuggestionModel,
+    PriceRangeModel,
+    ProductModel,
+    SuggestionModel,
 } from "@insite/client-framework/Types/ApiModels";
 
 export interface ProductsDataView extends DataView {
@@ -23,5 +25,5 @@ export interface ProductsDataView extends DataView {
 }
 
 export interface ProductsState extends DataViewState<ProductModel, ProductsDataView> {
-    readonly idByPath: Dictionary<string>
+    readonly idByPath: Dictionary<string>;
 }

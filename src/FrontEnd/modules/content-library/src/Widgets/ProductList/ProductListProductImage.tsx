@@ -39,12 +39,15 @@ export const productImageStyles: ProductListProductImageStyles = {
         css: css`
             align-self: center;
             padding-top: 20px;
-        ` },
+        `,
+    },
     productImage: {
         image: {
             width: "100%",
             css: css`
-                img { min-width: 100%; }
+                img {
+                    min-width: 100%;
+                }
             `,
         },
     },
@@ -53,14 +56,14 @@ export const productImageStyles: ProductListProductImageStyles = {
 const styles = productImageStyles;
 
 const ProductListProductImage: FC<Props> = ({ productContext, showImage, showCompare, settingsCollection }) => {
-    return <StyledWrapper {...styles.wrapper}>
-        {showImage
-            && <ProductImage extendedStyles={styles.productImage} product={productContext}/>
-        }
-        {showCompare && settingsCollection.productSettings.enableProductComparisons
-            && <Checkbox {...styles.compareCheckbox}>{translate("Compare")}</Checkbox>
-        }
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.wrapper}>
+            {showImage && <ProductImage extendedStyles={styles.productImage} product={productContext} />}
+            {showCompare && settingsCollection.productSettings.enableProductComparisons && (
+                <Checkbox {...styles.compareCheckbox}>{translate("Compare")}</Checkbox>
+            )}
+        </StyledWrapper>
+    );
 };
 
 export default connect(mapStateToProps)(withProductContext(ProductListProductImage));

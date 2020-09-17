@@ -1,14 +1,21 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { initializeSiteHole } from "@insite/client-framework/Components/ShellHole";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { selectBrand, selectCategory, selectProduct, setCMSPermissions } from "@insite/client-framework/Store/Context/ContextActionCreators";
+import {
+    selectBrand,
+    selectCategory,
+    selectProduct,
+    setCMSPermissions,
+} from "@insite/client-framework/Store/Context/ContextActionCreators";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
 import {
     addWidget,
     beginDraggingWidget,
     endDraggingWidget,
     removeWidget,
-    replaceItem, setPageDefinitions, updateField,
+    replaceItem,
+    setPageDefinitions,
+    updateField,
     UpdateFieldParameter,
 } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -46,10 +53,7 @@ const mapDispatchToProps = {
     setPageDefinitions,
 };
 
-type Props =
-    ReturnType<typeof mapStateToProps>
-    & ResolveThunks<typeof mapDispatchToProps>
-    & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 interface MainNavigation {
     close: () => void;
@@ -67,38 +71,38 @@ class ShellHoleProvider extends React.Component<Props> {
         super(props);
 
         initializeSiteHole({
-            LoadUrl: ({ url }: { url: string; }) => {
+            LoadUrl: ({ url }: { url: string }) => {
                 props.history.push(url);
             },
             UpdateField: (data: UpdateFieldParameter) => {
                 this.props.updateField(data);
             },
-            BeginDraggingWidget: ({ id }: { id: string; }) => {
+            BeginDraggingWidget: ({ id }: { id: string }) => {
                 this.props.beginDraggingWidget(id);
             },
             EndDraggingWidget: () => {
                 cleanupAfterDragging();
                 this.props.endDraggingWidget();
             },
-            AddWidget: ({ widget, sortOrder }: { widget: WidgetProps; sortOrder: number; }) => {
+            AddWidget: ({ widget, sortOrder }: { widget: WidgetProps; sortOrder: number }) => {
                 this.props.addWidget(widget, sortOrder, props.page.id);
             },
-            RemoveWidget: ({ id }: { id: string; }) => {
+            RemoveWidget: ({ id }: { id: string }) => {
                 this.props.removeWidget(id);
             },
-            ReplaceItem: ({ item }: { item: ItemProps; }) => {
+            ReplaceItem: ({ item }: { item: ItemProps }) => {
                 this.props.replaceItem(item);
             },
-            ChangeLanguage: ({ languageId }: { languageId: string; }) => {
+            ChangeLanguage: ({ languageId }: { languageId: string }) => {
                 this.props.setLanguage({ languageId });
             },
-            SelectProduct: ({ productPath }: { productPath: string; }) => {
+            SelectProduct: ({ productPath }: { productPath: string }) => {
                 this.props.selectProduct(productPath);
             },
-            SelectCategory: ({ categoryPath }: { categoryPath: string; }) => {
+            SelectCategory: ({ categoryPath }: { categoryPath: string }) => {
                 this.props.selectCategory(categoryPath);
             },
-            SelectBrand: ({ brandPath }: { brandPath: string; }) => {
+            SelectBrand: ({ brandPath }: { brandPath: string }) => {
                 this.props.selectBrand(brandPath);
             },
             CloseMainNavigation: () => {
@@ -113,10 +117,20 @@ class ShellHoleProvider extends React.Component<Props> {
             ReloadPageLinks: () => {
                 this.props.loadPageLinks();
             },
-            CMSPermissions: ({ permissions, canChangePage }: { permissions: PermissionsModel; canChangePage: boolean; }) => {
+            CMSPermissions: ({
+                permissions,
+                canChangePage,
+            }: {
+                permissions: PermissionsModel;
+                canChangePage: boolean;
+            }) => {
                 this.props.setCMSPermissions(permissions, canChangePage);
             },
-            PageDefinitions: ({ pageDefinitionsByType }: { pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>; }) => {
+            PageDefinitions: ({
+                pageDefinitionsByType,
+            }: {
+                pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>;
+            }) => {
                 this.props.setPageDefinitions(pageDefinitionsByType);
             },
         });

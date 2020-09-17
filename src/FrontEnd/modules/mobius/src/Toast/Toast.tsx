@@ -44,66 +44,81 @@ export interface ToastPresentationProps {
     /** Source for icons that will be rendered based on the type of message in the toast.
      * @themable */
     iconSrcByMessage?: {
-        success?: React.ComponentType | string,
-        warning?: React.ComponentType | string,
-        danger?: React.ComponentType | string,
-        info?: React.ComponentType | string,
-    }
+        success?: React.ComponentType | string;
+        warning?: React.ComponentType | string;
+        danger?: React.ComponentType | string;
+        info?: React.ComponentType | string;
+    };
 }
 
-export type ToastComponentProps = MobiusStyledComponentProps<"div", {
-    /** Text to display in the body of the Toast. Will be ignored if `children` are passed. */
-    body?: React.ReactNode;
-    /** The type of message to be displayed, which governs color and iconography. */
-    messageType?: "success" | "danger" | "info" | "warning";
-    /** Description of type of message to be read to screenreader, to replace the iconography and color in relaying
-     * the importance or valence of the message. Defaults to `messageType` value if not passed in.
-     * Can be used for translations or additional specificity if necessary. */
-    messageTypeString?: string;
-    /** The length of time in miliseconds for the toast to display. Themable in `Toaster`. */
-    timeoutLength?: number;
-}>;
+export type ToastComponentProps = MobiusStyledComponentProps<
+    "div",
+    {
+        /** Text to display in the body of the Toast. Will be ignored if `children` are passed. */
+        body?: React.ReactNode;
+        /** The type of message to be displayed, which governs color and iconography. */
+        messageType?: "success" | "danger" | "info" | "warning";
+        /** Description of type of message to be read to screenreader, to replace the iconography and color in relaying
+         * the importance or valence of the message. Defaults to `messageType` value if not passed in.
+         * Can be used for translations or additional specificity if necessary. */
+        messageTypeString?: string;
+        /** The length of time in miliseconds for the toast to display. Themable in `Toaster`. */
+        timeoutLength?: number;
+    }
+>;
 
 export type ToastProps = ToastComponentProps & ToastPresentationProps;
 
 type ToastStyleProps = {
-    transitionState: TransitionStatus
+    transitionState: TransitionStatus;
     messageType: ToastProps["messageType"];
 };
 
 const ToastStyle = styled.div<any>`
     ${({ transitionState, theme }) => {
-        const liveMargin = breakpointMediaQueries(theme, [null, null, css` margin-top: 20px; `, null, null], "min");
+        const liveMargin = breakpointMediaQueries(
+            theme,
+            [
+                null,
+                null,
+                css`
+                    margin-top: 20px;
+                `,
+                null,
+                null,
+            ],
+            "min",
+        );
         switch (transitionState) {
-        case "entering":
-            return css`
-                margin-top: 0;
-                top: -100px;
-                max-height: 0;
-                opacity: 0;
-            `;
-        case "entered":
-            return css`
-                ${liveMargin}
-                top: 0;
-                max-height: 500px;
-                opacity: 1;
-            `;
-        case "exiting":
-            return css`
-                ${liveMargin}
-                opacity: 0;
-                top: -20px;
-                height: 100%;
-            `;
-        case "exited":
-            return css`
-                margin-top: 0;
-                opacity: 0;
-                height: 0;
-            `;
-        default:
-            return "";
+            case "entering":
+                return css`
+                    margin-top: 0;
+                    top: -100px;
+                    max-height: 0;
+                    opacity: 0;
+                `;
+            case "entered":
+                return css`
+                    ${liveMargin}
+                    top: 0;
+                    max-height: 500px;
+                    opacity: 1;
+                `;
+            case "exiting":
+                return css`
+                    ${liveMargin}
+                    opacity: 0;
+                    top: -20px;
+                    height: 100%;
+                `;
+            case "exited":
+                return css`
+                    margin-top: 0;
+                    opacity: 0;
+                    height: 0;
+                `;
+            default:
+                return "";
         }
     }}
     transition: all ease-in-out ${getProp("transitionLength")}ms;
@@ -116,14 +131,30 @@ const ToastStyle = styled.div<any>`
     max-width: 100%;
     box-shadow: ${getProp("theme.shadows.3")};
     background: ${getColor("common.background")};
-    border-color: ${({ messageType, theme }: { messageType: ToastProps["messageType"], theme: BaseTheme }) => resolveColor(messageType, theme)};
+    border-color: ${({ messageType, theme }: { messageType: ToastProps["messageType"]; theme: BaseTheme }) =>
+        resolveColor(messageType, theme)};
     border-style: none none none solid;
     border-width: 0 0 0 10px;
     ${injectCss}
 `;
 
 const ToastBody = styled.div<InjectableCss>`
-    ${({ theme }) => breakpointMediaQueries(theme, [css` margin: 5px 44px 5px 10px; `, null, css` margin: 20px 44px 20px 10px; `, null, null], "min")}
+    ${({ theme }) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                css`
+                    margin: 5px 44px 5px 10px;
+                `,
+                null,
+                css`
+                    margin: 20px 44px 20px 10px;
+                `,
+                null,
+                null,
+            ],
+            "min",
+        )}
     margin-right: 44px;
     display: flex;
     flex-direction: row;
@@ -140,8 +171,14 @@ const ToastText = styled(Typography as any)`
  * Component governing the visual style of the Toasts rendered within the toaster.
  * Relies on Toaster and ToasterContext for positioning, animation, and timeout.
  */
-const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
-    body, children, in: transitionIn, messageType, messageTypeString, toastId, ...otherProps
+const Toast: React.FC<{ toastId: number; in?: boolean } & ToastProps> = ({
+    body,
+    children,
+    in: transitionIn,
+    messageType,
+    messageTypeString,
+    toastId,
+    ...otherProps
 }) => {
     const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "toast" });
     const cssOverrides = spreadProps("cssOverrides");
@@ -169,11 +206,17 @@ const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
                             src={messageType && iconSrcByMessage[messageType]}
                             color={messageType}
                             size={40}
-                            css={css` margin-right: 10px; `}
+                            css={css`
+                                margin-right: 10px;
+                            `}
                             {...spreadProps("iconProps")}
                         />
                         <VisuallyHidden>{messageTypeString || messageType}</VisuallyHidden>
-                        {children || <Typography {...spreadProps("bodyTypographyProps")} data-test-selector="toastBody">{body}</Typography>}
+                        {children || (
+                            <Typography {...spreadProps("bodyTypographyProps")} data-test-selector="toastBody">
+                                {body}
+                            </Typography>
+                        )}
                     </ToastBody>
                     <ToasterContext.Consumer>
                         {({ removeToast }) => (
@@ -183,7 +226,9 @@ const Toast: React.FC<{ toastId: number, in?: boolean } & ToastProps> = ({
                                 {...spreadProps("closeButtonProps")}
                             >
                                 <IconMemo {...spreadProps("closeButtonIconProps")} />
-                                <VisuallyHidden id={`close-toast${toastId}`}>{otherProps.theme!.translate("close toast")}</VisuallyHidden>
+                                <VisuallyHidden id={`close-toast${toastId}`}>
+                                    {otherProps.theme!.translate("close toast")}
+                                </VisuallyHidden>
                             </Button>
                         )}
                     </ToasterContext.Consumer>

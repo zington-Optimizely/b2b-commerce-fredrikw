@@ -9,8 +9,7 @@ import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
 import React, { ChangeEvent, Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutShipping;

@@ -16,16 +16,16 @@ export interface ProductDetailsUnitOfMeasureSelectStyles {
 export const unitOfMeasureSelectStyles: ProductDetailsUnitOfMeasureSelectStyles = {
     unitOfMeasureSelect: {
         cssOverrides: {
-            formField: css` margin-top: 10px; `,
+            formField: css`
+                margin-top: 10px;
+            `,
         },
     },
 };
 
 const styles = unitOfMeasureSelectStyles;
 
-const ProductDetailsUnitOfMeasureSelect: React.FC<Props> = ({
-    product,
-}) => {
+const ProductDetailsUnitOfMeasureSelect: React.FC<Props> = ({ product }) => {
     if (!product || !product.unitOfMeasures) {
         return null;
     }

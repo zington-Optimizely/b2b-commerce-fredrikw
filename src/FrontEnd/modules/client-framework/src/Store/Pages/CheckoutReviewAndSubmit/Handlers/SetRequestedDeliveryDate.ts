@@ -1,6 +1,6 @@
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<{ requestedDeliveryDate?: Date; }>;
+type HandlerType = Handler<{ requestedDeliveryDate?: Date }>;
 
 export const DispatchSetRequestedDeliveryDate: HandlerType = props => {
     props.dispatch({
@@ -9,9 +9,7 @@ export const DispatchSetRequestedDeliveryDate: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetRequestedDeliveryDate,
-];
+export const chain = [DispatchSetRequestedDeliveryDate];
 
 const setRequestedDeliveryDate = createHandlerChainRunner(chain, "SetRequestedDeliveryDate");
 export default setRequestedDeliveryDate;

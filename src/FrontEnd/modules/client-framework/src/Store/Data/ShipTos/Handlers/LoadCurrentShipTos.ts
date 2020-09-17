@@ -1,4 +1,7 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { getShipTos, GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { ShipToCollectionModel } from "@insite/client-framework/Types/ApiModels";
@@ -34,12 +37,7 @@ export const DispatchCompleteLoadCart: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadShipTos,
-    PopulateApiParameter,
-    GetShipTos,
-    DispatchCompleteLoadCart,
-];
+export const chain = [DispatchBeginLoadShipTos, PopulateApiParameter, GetShipTos, DispatchCompleteLoadCart];
 
 const loadCurrentShipTos = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentShipTos");
 export default loadCurrentShipTos;

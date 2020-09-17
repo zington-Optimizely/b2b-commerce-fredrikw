@@ -15,7 +15,7 @@ const mapDispatchToProps = {
     changeStageMode,
 };
 
-type OwnProps = { targetStageMode: DeviceType, icon: React.FC, disabled?: boolean };
+type OwnProps = { targetStageMode: DeviceType; icon: React.FC; disabled?: boolean };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
@@ -27,7 +27,9 @@ class ViewPortClicker extends React.Component<Props> {
 
     render() {
         const { targetMatchesCurrentStageMode, icon, disabled, targetStageMode } = this.props;
-        const { colors: { common, primary, text } } = shellTheme;
+        const {
+            colors: { common, primary, text },
+        } = shellTheme;
 
         let iconColor: string;
 
@@ -39,9 +41,16 @@ class ViewPortClicker extends React.Component<Props> {
             iconColor = text.accent;
         }
 
-        return <ClickerStyle clickable={!targetMatchesCurrentStageMode} onClick={this.onClick} disabled={disabled} title={`${targetStageMode} Preview`}>
-            <Icon src={icon} color={iconColor} />
-        </ClickerStyle>;
+        return (
+            <ClickerStyle
+                clickable={!targetMatchesCurrentStageMode}
+                onClick={this.onClick}
+                disabled={disabled}
+                title={`${targetStageMode} Preview`}
+            >
+                <Icon src={icon} color={iconColor} />
+            </ClickerStyle>
+        );
     }
 }
 

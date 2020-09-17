@@ -1,12 +1,5 @@
-import {
-    ApiHandler,
-    createHandlerChainRunner,
-
-} from "@insite/client-framework/HandlerCreator";
-import {
-    getCartPromotions,
-    GetCartPromotionsApiParameter,
-} from "@insite/client-framework/Services/CartService";
+import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import { getCartPromotions, GetCartPromotionsApiParameter } from "@insite/client-framework/Services/CartService";
 import { PromotionCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandler<GetCartPromotionsApiParameter, PromotionCollectionModel>;
@@ -34,12 +27,7 @@ export const DispatchCompleteLoadPromotions: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadPromotions,
-    PopulateApiParameter,
-    GetPromotions,
-    DispatchCompleteLoadPromotions,
-];
+export const chain = [DispatchBeginLoadPromotions, PopulateApiParameter, GetPromotions, DispatchCompleteLoadPromotions];
 
 const loadPromotions = createHandlerChainRunner(chain, "LoadPromotions");
 export default loadPromotions;

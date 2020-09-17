@@ -5,14 +5,17 @@ import { StyledProp } from "../utilities/InjectableCss";
 import injectCss from "../utilities/injectCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
-export type DataTableCellBaseProps = MobiusStyledComponentProps<"td", {
-    /** How the content should align within the cell. */
-    alignX?: "left" | "center" | "right";
-    /** CSS string or styled-components function to be injected into this component. */
-    css?: StyledProp<DataTableCellBaseProps>;
-    /** Sets the cell/column width to be as narrow as possible. */
-    tight?: boolean;
-}>;
+export type DataTableCellBaseProps = MobiusStyledComponentProps<
+    "td",
+    {
+        /** How the content should align within the cell. */
+        alignX?: "left" | "center" | "right";
+        /** CSS string or styled-components function to be injected into this component. */
+        css?: StyledProp<DataTableCellBaseProps>;
+        /** Sets the cell/column width to be as narrow as possible. */
+        tight?: boolean;
+    }
+>;
 
 const DataTableCellBase = styled.td<DataTableHeaderProps>`
     box-sizing: border-box;

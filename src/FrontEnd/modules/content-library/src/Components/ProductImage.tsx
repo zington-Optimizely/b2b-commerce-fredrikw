@@ -20,10 +20,12 @@ export interface ProductImageStyles {
 
 export const productImageStyles: ProductImageStyles = {
     linkWrappingImage: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     image: {
-        css: css` 
+        css: css`
             img {
                 height: 100%;
             }
@@ -31,29 +33,20 @@ export const productImageStyles: ProductImageStyles = {
     },
 };
 
-const ProductImage: FC<Props> = ({
-    product,
-    extendedStyles,
-}) => {
+const ProductImage: FC<Props> = ({ product, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(productImageStyles, extendedStyles));
 
     let altText = "product" in product ? product.product.imageAltText : product.altText;
     if (!altText || altText === "") {
-        altText = ("product" in product ? product.product.productTitle : product.productName);
+        altText = "product" in product ? product.product.productTitle : product.productName;
     }
     const smallImagePath = "product" in product ? product.product.smallImagePath : product.smallImagePath;
 
-    const productDetailPath = "product" in product
-        ? product.productInfo.productDetailPath
-        : product.productUri;
+    const productDetailPath = "product" in product ? product.productInfo.productDetailPath : product.productUri;
 
     return (
         <Clickable {...styles.linkWrappingImage} href={productDetailPath} data-test-selector="productImage">
-            <LazyImage
-                {...styles.image}
-                src={smallImagePath}
-                altText={altText}
-            />
+            <LazyImage {...styles.image} src={smallImagePath} altText={altText} />
         </Clickable>
     );
 };

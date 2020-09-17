@@ -1,8 +1,5 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import {
-    addAccount as addAccountApi,
-    AddAccountApiParameter,
-} from "@insite/client-framework/Services/AccountService";
+import { addAccount as addAccountApi, AddAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { updateCart } from "@insite/client-framework/Services/CartService";
 import { deleteSession } from "@insite/client-framework/Services/SessionService";
@@ -55,10 +52,9 @@ export const SignOutGuest: HandlerType = async props => {
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
-        account:
-            {
-                ...props.parameter,
-            } as AccountModel,
+        account: {
+            ...props.parameter,
+        } as AccountModel,
     };
 };
 

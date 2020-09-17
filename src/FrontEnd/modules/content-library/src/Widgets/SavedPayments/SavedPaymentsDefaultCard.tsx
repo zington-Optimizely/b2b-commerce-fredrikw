@@ -127,7 +127,9 @@ export const defaultCardStyles: SavedPaymentsDefaultCardStyles = {
     },
     linksContainer: {
         gap: 20,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     editLinkGridItem: {
         width: [6, 6, 12, 12, 12],
@@ -163,10 +165,7 @@ const getImageName = (cardType: string) => {
     return "";
 };
 
-const SavedPaymentsDefaultCard: React.FC<Props> = ({
-    updateEditModal,
-    deletePaymentProfile,
-}) => {
+const SavedPaymentsDefaultCard: React.FC<Props> = ({ updateEditModal, deletePaymentProfile }) => {
     const toasterContext = useContext(ToasterContext);
     const [deleteCardModalIsOpen, setDeleteCardModalIsOpen] = React.useState(false);
 
@@ -202,57 +201,89 @@ const SavedPaymentsDefaultCard: React.FC<Props> = ({
         setDeleteCardModalIsOpen(true);
     };
 
-    return <>
-        <Typography {...styles.titleText} id="cardTitle">{translate("Default Card")}</Typography>
-        <StyledWrapper {...styles.mainWrapper} aria-labelledby="cardTitle" data-test-selector="defaultCard">
-            <StyledWrapper {...styles.headerWrapper}>
-                <LazyImage {...styles.cardTypeImage} src={`/images/card-types/${getImageName(defaultCard.cardType)}.png`} altText=""/>
-                <Typography {...styles.descriptionText}>
-                    {defaultCard.description
-                    && <>{defaultCard.description}&nbsp;&mdash;&nbsp;</>
-                    }
-                    {`${defaultCard.cardType} ${translate("ending in")} ${defaultCard.maskedCardNumber.substring(defaultCard.maskedCardNumber.length - 4)}`}
-                </Typography>
-            </StyledWrapper>
-            <GridContainer {...styles.container}>
-                <GridItem {...styles.leftColumnGridItem}>
-                    <Typography {...styles.nameOnCardLabelText} id="nameOnCard">{translate("Name on Card")}</Typography>
-                    <Typography {...styles.nameOnCardText} aria-labelledby="nameOnCard">{defaultCard.cardHolderName}</Typography>
-                    <Typography {...styles.expirationLabelText} id="expiration">{translate("Expiration")}</Typography>
-                    <Typography {...styles.expirationText} aria-labelledby="expiration">{defaultCard.expirationDate}</Typography>
-                </GridItem>
-                <GridItem {...styles.centerColumnGridItem}>
-                    <Typography {...styles.billingAddressLabelText} id="billingAddress">{translate("Billing Address")}</Typography>
-                    <Typography {...styles.billingAddressText} aria-labelledby="billingAddress">
-                        {[defaultCard.address1, defaultCard.address2, defaultCard.address3, defaultCard.address4].filter(o => !!o).join(", ")}<br/>
-                        {defaultCard.city}, {defaultCard.state}<br/>
-                        {defaultCard.postalCode}<br/>
-                        {defaultCard.country}
+    return (
+        <>
+            <Typography {...styles.titleText} id="cardTitle">
+                {translate("Default Card")}
+            </Typography>
+            <StyledWrapper {...styles.mainWrapper} aria-labelledby="cardTitle" data-test-selector="defaultCard">
+                <StyledWrapper {...styles.headerWrapper}>
+                    <LazyImage
+                        {...styles.cardTypeImage}
+                        src={`/images/card-types/${getImageName(defaultCard.cardType)}.png`}
+                        altText=""
+                    />
+                    <Typography {...styles.descriptionText}>
+                        {defaultCard.description && <>{defaultCard.description}&nbsp;&mdash;&nbsp;</>}
+                        {`${defaultCard.cardType} ${translate("ending in")} ${defaultCard.maskedCardNumber.substring(
+                            defaultCard.maskedCardNumber.length - 4,
+                        )}`}
                     </Typography>
-                </GridItem>
-                <GridItem {...styles.rightColumnGridItem}>
-                    <GridContainer {...styles.linksContainer}>
-                        <GridItem {...styles.editLinkGridItem}>
-                            <Link {...styles.editLink} onClick={editClickHandler} data-test-selector="editButton">{translate("Edit")}</Link>
-                        </GridItem>
-                        <GridItem {...styles.deleteLinkGridItem}>
-                            <Link {...styles.deleteLink} onClick={deleteClickHandler} data-test-selector="deleteButton">{translate("Delete")}</Link>
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        </StyledWrapper>
-        <TwoButtonModal
-            {...styles.deleteCardModal}
-            modalIsOpen={deleteCardModalIsOpen}
-            headlineText={translate("Delete Card")}
-            messageText={translate("Are you sure you want to delete this card?")}
-            cancelButtonText={translate("Cancel")}
-            submitButtonText={translate("Delete")}
-            onCancel={deleteCancelHandler}
-            onSubmit={deleteSubmitHandler}
-            submitTestSelector="submitDeleteDefaultCardButton"/>
-    </>;
+                </StyledWrapper>
+                <GridContainer {...styles.container}>
+                    <GridItem {...styles.leftColumnGridItem}>
+                        <Typography {...styles.nameOnCardLabelText} id="nameOnCard">
+                            {translate("Name on Card")}
+                        </Typography>
+                        <Typography {...styles.nameOnCardText} aria-labelledby="nameOnCard">
+                            {defaultCard.cardHolderName}
+                        </Typography>
+                        <Typography {...styles.expirationLabelText} id="expiration">
+                            {translate("Expiration")}
+                        </Typography>
+                        <Typography {...styles.expirationText} aria-labelledby="expiration">
+                            {defaultCard.expirationDate}
+                        </Typography>
+                    </GridItem>
+                    <GridItem {...styles.centerColumnGridItem}>
+                        <Typography {...styles.billingAddressLabelText} id="billingAddress">
+                            {translate("Billing Address")}
+                        </Typography>
+                        <Typography {...styles.billingAddressText} aria-labelledby="billingAddress">
+                            {[defaultCard.address1, defaultCard.address2, defaultCard.address3, defaultCard.address4]
+                                .filter(o => !!o)
+                                .join(", ")}
+                            <br />
+                            {defaultCard.city}, {defaultCard.state}
+                            <br />
+                            {defaultCard.postalCode}
+                            <br />
+                            {defaultCard.country}
+                        </Typography>
+                    </GridItem>
+                    <GridItem {...styles.rightColumnGridItem}>
+                        <GridContainer {...styles.linksContainer}>
+                            <GridItem {...styles.editLinkGridItem}>
+                                <Link {...styles.editLink} onClick={editClickHandler} data-test-selector="editButton">
+                                    {translate("Edit")}
+                                </Link>
+                            </GridItem>
+                            <GridItem {...styles.deleteLinkGridItem}>
+                                <Link
+                                    {...styles.deleteLink}
+                                    onClick={deleteClickHandler}
+                                    data-test-selector="deleteButton"
+                                >
+                                    {translate("Delete")}
+                                </Link>
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                </GridContainer>
+            </StyledWrapper>
+            <TwoButtonModal
+                {...styles.deleteCardModal}
+                modalIsOpen={deleteCardModalIsOpen}
+                headlineText={translate("Delete Card")}
+                messageText={translate("Are you sure you want to delete this card?")}
+                cancelButtonText={translate("Cancel")}
+                submitButtonText={translate("Delete")}
+                onCancel={deleteCancelHandler}
+                onSubmit={deleteSubmitHandler}
+                submitTestSelector="submitDeleteDefaultCardButton"
+            />
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {

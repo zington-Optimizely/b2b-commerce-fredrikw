@@ -1,36 +1,38 @@
-const b64DecodeUnicode = (str: string) => decodeURIComponent(
-    atob(str)
-    .split("")
-    .map(c => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
-    .join(""),
-);
+const b64DecodeUnicode = (str: string) =>
+    decodeURIComponent(
+        atob(str)
+            .split("")
+            .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+            .join(""),
+    );
 
 type RawInsiteToken = Readonly<{
-    client_id: "isc" | "ext" | "isc_admin" | "isc_admin_ext" | "mobile",
-    scope: readonly ("iscapi" | "offline_access" | "isc_admin_api")[],
-    sub: string,
-    amr: readonly ("password")[],
-    auth_time: number,
+    client_id: "isc" | "ext" | "isc_admin" | "isc_admin_ext" | "mobile";
+    scope: readonly ("iscapi" | "offline_access" | "isc_admin_api")[];
+    sub: string;
+    amr: readonly "password"[];
+    auth_time: number;
     /** Identity provider. */
-    idp: "idsrv",
-    preferred_username: string,
-    role: string,
+    idp: "idsrv";
+    preferred_username: string;
+    role: string;
     /** Issuer. */
-    iss: string,
+    iss: string;
     /** Audience. */
-    aud: string,
-    exp: number,
-    nbf: number,
+    aud: string;
+    exp: number;
+    nbf: number;
 }>;
 
-type InsiteToken = Omit<RawInsiteToken, "auth_time" | "exp" | "nbf"> & Readonly<{
-    /** Authorization completed at this time. */
-    auth_time: Date,
-    /** Token expiration time. */
-    exp: Date,
-    /** Token is not valid before this time. */
-    nbf: Date,
-}>;
+type InsiteToken = Omit<RawInsiteToken, "auth_time" | "exp" | "nbf"> &
+    Readonly<{
+        /** Authorization completed at this time. */
+        auth_time: Date;
+        /** Token expiration time. */
+        exp: Date;
+        /** Token is not valid before this time. */
+        nbf: Date;
+    }>;
 
 const parseFromLocalStorage = (name: string, returnExpiredTokens?: true) => {
     if (typeof localStorage === "undefined") {
@@ -66,4 +68,5 @@ const parseFromLocalStorage = (name: string, returnExpiredTokens?: true) => {
 
 export const adminAccessTokenName = "admin-accessToken";
 
-export const parseAdminTokenFromLocalStorage = (returnExpiredTokens?: true) => parseFromLocalStorage(adminAccessTokenName, returnExpiredTokens);
+export const parseAdminTokenFromLocalStorage = (returnExpiredTokens?: true) =>
+    parseFromLocalStorage(adminAccessTokenName, returnExpiredTokens);

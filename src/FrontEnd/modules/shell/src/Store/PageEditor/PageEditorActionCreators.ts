@@ -7,6 +7,7 @@ import { AdminODataApiParameter, getAdminBrands } from "@insite/shell/Services/A
 import {
     getBrands,
     getCategories,
+    getPageStateFromDictionaries,
     savePage as savePageApi,
     SavePageResponseModel,
 } from "@insite/shell/Services/ContentAdminService";
@@ -37,7 +38,7 @@ export const searchProducts = (search: string): ShellThunkAction => dispatch => 
                     displayName: o.title,
                 })),
             });
-        }()),
+        })(),
     );
 };
 
@@ -65,41 +66,47 @@ export const searchBrands = (search: string): ShellThunkAction => dispatch => {
                     displayName: o.productLineName ? `${o.productLineName} in ${o.title}` : o.title,
                 })),
             });
-        }()),
+        })(),
     );
 };
 
 export const loadBrands = (): ShellThunkAction => dispatch => {
-    addTask(async function () {
-        const brands = await getBrands();
+    addTask(
+        (async function () {
+            const brands = await getBrands();
 
-        dispatch({
-            brands,
-            type: "PageEditor/CompleteLoadBrands",
-        });
-    }());
+            dispatch({
+                brands,
+                type: "PageEditor/CompleteLoadBrands",
+            });
+        })(),
+    );
 };
 
 export const loadSelectBrands = (parameter?: AdminODataApiParameter): ShellThunkAction => dispatch => {
-    addTask(async function () {
-        const brands = await getAdminBrands(parameter);
+    addTask(
+        (async function () {
+            const brands = await getAdminBrands(parameter);
 
-        dispatch({
-            brands,
-            type: "PageEditor/CompleteLoadSelectBrands",
-        });
-    }());
+            dispatch({
+                brands,
+                type: "PageEditor/CompleteLoadSelectBrands",
+            });
+        })(),
+    );
 };
 
 export const loadSelectedBrands = (parameter?: AdminODataApiParameter): ShellThunkAction => dispatch => {
-    addTask(async function () {
-        const brands = await getAdminBrands(parameter);
+    addTask(
+        (async function () {
+            const brands = await getAdminBrands(parameter);
 
-        dispatch({
-            brands,
-            type: "PageEditor/CompleteLoadSelectedBrands",
-        });
-    }());
+            dispatch({
+                brands,
+                type: "PageEditor/CompleteLoadSelectedBrands",
+            });
+        })(),
+    );
 };
 
 export const selectCategory = (path: string): AnyShellAction => ({
@@ -122,29 +129,38 @@ export const searchCategories = (search: string): ShellThunkAction => dispatch =
                     displayName: o.title,
                 })),
             });
-        }()),
+        })(),
     );
 };
 
 export const loadCategories = (): ShellThunkAction => dispatch => {
-    addTask(async function () {
-        const categories = await getCategories();
+    addTask(
+        (async function () {
+            const categories = await getCategories();
 
-        dispatch({
-            categories,
-            type: "PageEditor/CompleteLoadCategories",
-        });
-    }());
+            dispatch({
+                categories,
+                type: "PageEditor/CompleteLoadCategories",
+            });
+        })(),
+    );
 };
 
-export const savePage = (afterSavePage?: (response: SavePageResponseModel) => void): ShellThunkAction => (dispatch, getState) => {
+export const savePage = (
+    isVariant?: boolean,
+    afterSavePage?: (response: SavePageResponseModel) => void,
+): ShellThunkAction => (dispatch, getState) => {
     (async () => {
         const state = getState();
         const { shellContext } = state;
         const currentPage = getCurrentPageForShell(state);
         const storablePage = getStorablePage(state, shellContext.websiteId);
 
-        const savePageResponse = await savePageApi(storablePage);
+        if (storablePage.generalFields["variantName"]) {
+            storablePage.variantName = storablePage.generalFields["variantName"];
+        }
+
+        const savePageResponse = await savePageApi(storablePage, !!isVariant);
 
         dispatch({
             type: "PageEditor/CompleteSavePage",
@@ -159,26 +175,38 @@ export const savePage = (afterSavePage?: (response: SavePageResponseModel) => vo
     })();
 };
 
-export const editPageOptions = (id: string, isNewPage?: boolean, afterEditLoads?: () => void): ShellThunkAction => (dispatch, getState) => {
-    addTask(async function () {
-        // TODO ISC-11025 we should actually load the page we want here instead of doing this hacky thing that
-        // waits for it to hopefully have been loaded before this action was called
-        while (getCurrentPageForShell(getState()).id !== id) {
-            await sleep(100);
-        }
+export const editPageOptions = (
+    id: string,
+    isVariant?: boolean,
+    isNewPage?: boolean,
+    afterEditLoads?: () => void,
+): ShellThunkAction => (dispatch, getState) => {
+    addTask(
+        (async function () {
+            // TODO ISC-11025 we should actually load the page we want here instead of doing this hacky thing that
+            // waits for it to hopefully have been loaded before this action was called
+            let attempts = 0;
+            while (getCurrentPageForShell(getState()).id !== id) {
+                await sleep(100);
+                if (++attempts > 50) {
+                    throw new Error(`Page with id ${id} has never loaded.`);
+                }
+            }
 
-        const page = getCurrentPageForShell(getState());
-        dispatch({
-            type: "PageEditor/EditItem",
-            id: page.id,
-            item: page,
-            isNewPage,
-        });
+            const page = getCurrentPageForShell(getState());
+            dispatch({
+                type: "PageEditor/EditItem",
+                id: page.id,
+                item: page,
+                isNewPage,
+                isVariant,
+            });
 
-        if (afterEditLoads) {
-            afterEditLoads();
-        }
-    }());
+            if (afterEditLoads) {
+                afterEditLoads();
+            }
+        })(),
+    );
 };
 
 export const editWidget = (id: string, removeIfCanceled?: boolean): ShellThunkAction => (dispatch, getState) => {
@@ -192,21 +220,38 @@ export const editWidget = (id: string, removeIfCanceled?: boolean): ShellThunkAc
 
 export const doneEditingItem = (): ShellThunkAction => (dispatch, getState) => {
     const state = getState();
-    dispatch(savePage(({ duplicatesFound }) => {
-        if (duplicatesFound) {
-            dispatch({
-                type: "ErrorModal/ShowModal",
-                message: "A page with this URL already exists. Please try a different page title or position.",
-            });
-            return;
-        }
+    let isVariant = false;
 
-        dispatch({ type: "PageEditor/DoneEditingItem" });
+    if (!state.pageEditor.isEditingNewPage) {
+        const pageId = getCurrentPageForShell(state).id;
+        const pageState = getPageStateFromDictionaries(
+            pageId,
+            state.pageTree.treeNodesByParentId,
+            state.pageTree.headerTreeNodesByParentId,
+            state.pageTree.footerTreeNodesByParentId,
+        );
+        isVariant = !!pageState?.isVariant;
+    }
 
-        if (state.pageEditor.editingId === getCurrentPageForShell(state).id) {
-            dispatch(loadTreeNodes());
-        }
-    }));
+    dispatch(
+        savePage(isVariant, ({ duplicatesFound }) => {
+            if (duplicatesFound) {
+                dispatch({
+                    type: "ErrorModal/ShowModal",
+                    message: isVariant
+                        ? "A variant with this name already exists."
+                        : "A page with this URL already exists. Please try a different page title or position.",
+                });
+                return;
+            }
+
+            dispatch({ type: "PageEditor/DoneEditingItem" });
+
+            if (state.pageEditor.editingId === getCurrentPageForShell(state).id) {
+                dispatch(loadTreeNodes());
+            }
+        }),
+    );
 };
 
 export const cancelEditingItem = (): ShellThunkAction => (dispatch, getState) => {

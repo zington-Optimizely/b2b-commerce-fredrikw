@@ -7,7 +7,6 @@ import "url-search-params-polyfill";
 if (!Array.prototype.fill) {
     Object.defineProperty(Array.prototype, "fill", {
         value(value: any) {
-
             // Steps 1-2.
             if (this == null) {
                 throw new TypeError("this is null or not defined");
@@ -25,20 +24,18 @@ if (!Array.prototype.fill) {
             const relativeStart = start >> 0;
 
             // Step 8.
-            let k = relativeStart < 0
-                ? Math.max(len + relativeStart, 0)
-                : Math.min(relativeStart, len);
+            let k = relativeStart < 0 ? Math.max(len + relativeStart, 0) : Math.min(relativeStart, len);
 
             // Steps 9-10.
             const end = arguments[2];
-            const relativeEnd = end === undefined
-                // eslint-disable-next-line no-bitwise
-                ? len : end >> 0;
+            const relativeEnd =
+                end === undefined
+                    ? // eslint-disable-next-line no-bitwise
+                      len
+                    : end >> 0;
 
             // Step 11.
-            const final = relativeEnd < 0
-                ? Math.max(len + relativeEnd, 0)
-                : Math.min(relativeEnd, len);
+            const final = relativeEnd < 0 ? Math.max(len + relativeEnd, 0) : Math.min(relativeEnd, len);
 
             // Step 12.
             while (k < final) {
@@ -66,43 +63,43 @@ if (!String.prototype.startsWith) {
 if (!Array.prototype.find) {
     Object.defineProperty(Array.prototype, "find", {
         value(predicate: any) {
-        // 1. Let O be ? ToObject(this value).
-        if (this == null) {
-            throw TypeError("\"this\" is null or not defined");
-        }
-
-        const o = Object(this);
-
-        // 2. Let len be ? ToLength(? Get(O, "length")).
-        const len = o.length >>> 0;
-
-        // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-        if (typeof predicate !== "function") {
-            throw TypeError("predicate must be a function");
-        }
-
-        // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-        const thisArg = arguments[1];
-
-        // 5. Let k be 0.
-        let k = 0;
-
-        // 6. Repeat, while k < len
-        while (k < len) {
-            // a. Let Pk be ! ToString(k).
-            // b. Let kValue be ? Get(O, Pk).
-            // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-            // d. If testResult is true, return kValue.
-            const kValue = o[k];
-            if (predicate.call(thisArg, kValue, k, o)) {
-            return kValue;
+            // 1. Let O be ? ToObject(this value).
+            if (this == null) {
+                throw TypeError('"this" is null or not defined');
             }
-            // e. Increase k by 1.
-            k++;
-        }
 
-        // 7. Return undefined.
-        return undefined;
+            const o = Object(this);
+
+            // 2. Let len be ? ToLength(? Get(O, "length")).
+            const len = o.length >>> 0;
+
+            // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+            if (typeof predicate !== "function") {
+                throw TypeError("predicate must be a function");
+            }
+
+            // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+            const thisArg = arguments[1];
+
+            // 5. Let k be 0.
+            let k = 0;
+
+            // 6. Repeat, while k < len
+            while (k < len) {
+                // a. Let Pk be ! ToString(k).
+                // b. Let kValue be ? Get(O, Pk).
+                // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+                // d. If testResult is true, return kValue.
+                const kValue = o[k];
+                if (predicate.call(thisArg, kValue, k, o)) {
+                    return kValue;
+                }
+                // e. Increase k by 1.
+                k++;
+            }
+
+            // 7. Return undefined.
+            return undefined;
         },
         configurable: true,
         writable: true,
@@ -139,9 +136,12 @@ if (!Array.prototype.includes) {
 
         while (k < len) {
             currentElement = O[k];
-            if (searchElement === currentElement
-            // eslint-disable-next-line no-self-compare
-            || (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
+            if (
+                searchElement === currentElement ||
+                // eslint-disable-next-line no-self-compare
+                (searchElement !== searchElement && currentElement !== currentElement)
+            ) {
+                // NaN !== NaN
                 return true;
             }
             k++;
@@ -155,11 +155,13 @@ if (!Array.prototype.includes) {
 // https://tc39.es/ecma262/#sec-string.prototype.includes
 if (!String.prototype.includes) {
     String.prototype.includes = function (search: any, start: any) {
-      if (search instanceof RegExp) {
-        throw TypeError("first argument must not be a RegExp");
-      }
-      if (start === undefined) { start = 0; }
-      return this.indexOf(search, start) !== -1;
+        if (search instanceof RegExp) {
+            throw TypeError("first argument must not be a RegExp");
+        }
+        if (start === undefined) {
+            start = 0;
+        }
+        return this.indexOf(search, start) !== -1;
     };
 }
 
@@ -167,55 +169,53 @@ if (!String.prototype.includes) {
 // https://tc39.github.io/ecma262/#sec-array.prototype.findindex
 if (!Array.prototype.findIndex) {
     Object.defineProperty(Array.prototype, "findIndex", {
-      value(predicate: any) {
-       // 1. Let O be ? ToObject(this value).
-        if (this == null) {
-          throw new TypeError("\"this\" is null or not defined");
-        }
+        value(predicate: any) {
+            // 1. Let O be ? ToObject(this value).
+            if (this == null) {
+                throw new TypeError('"this" is null or not defined');
+            }
 
-        const o = Object(this);
+            const o = Object(this);
 
-        // 2. Let len be ? ToLength(? Get(O, "length")).
-        const len = o.length >>> 0;
+            // 2. Let len be ? ToLength(? Get(O, "length")).
+            const len = o.length >>> 0;
 
-        // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-        if (typeof predicate !== "function") {
-          throw new TypeError("predicate must be a function");
-        }
+            // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+            if (typeof predicate !== "function") {
+                throw new TypeError("predicate must be a function");
+            }
 
-        // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-        const thisArg = arguments[1];
+            // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+            const thisArg = arguments[1];
 
-        // 5. Let k be 0.
-        let k = 0;
+            // 5. Let k be 0.
+            let k = 0;
 
-        // 6. Repeat, while k < len
-        while (k < len) {
-          // a. Let Pk be ! ToString(k).
-          // b. Let kValue be ? Get(O, Pk).
-          // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-          // d. If testResult is true, return k.
-          const kValue = o[k];
-          if (predicate.call(thisArg, kValue, k, o)) {
-            return k;
-          }
-          // e. Increase k by 1.
-          k++;
-        }
+            // 6. Repeat, while k < len
+            while (k < len) {
+                // a. Let Pk be ! ToString(k).
+                // b. Let kValue be ? Get(O, Pk).
+                // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+                // d. If testResult is true, return k.
+                const kValue = o[k];
+                if (predicate.call(thisArg, kValue, k, o)) {
+                    return k;
+                }
+                // e. Increase k by 1.
+                k++;
+            }
 
-        // 7. Return -1.
-        return -1;
-      },
-      configurable: true,
-      writable: true,
+            // 7. Return -1.
+            return -1;
+        },
+        configurable: true,
+        writable: true,
     });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 if (!Element.prototype.matches) {
-    Element.prototype.matches
-        = (Element.prototype as any).msMatchesSelector
-        || Element.prototype.webkitMatchesSelector;
+    Element.prototype.matches = (Element.prototype as any).msMatchesSelector || Element.prototype.webkitMatchesSelector;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
@@ -224,7 +224,9 @@ if (!Element.prototype.closest) {
         let el: any = this;
 
         do {
-            if (el.matches(s)) return el;
+            if (el.matches(s)) {
+                return el;
+            }
             el = el.parentElement || el.parentNode;
         } while (el !== null && el.nodeType === 1);
         return null;
@@ -232,7 +234,7 @@ if (!Element.prototype.closest) {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN
-if(!Number.isNaN) {
+if (!Number.isNaN) {
     Number.isNaN = function isNaN(input: number) {
         // eslint-disable-next-line no-self-compare
         return typeof input === "number" && input !== input;

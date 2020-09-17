@@ -18,16 +18,16 @@ import { css } from "styled-components";
 interface OwnProps {
     extendedStyles?: WishListSharingStatusStyles;
     /**
-    * @deprecated Use the `wishList.id` property instead.
-    */
+     * @deprecated Use the `wishList.id` property instead.
+     */
     isSharedList?: boolean;
     /**
-    * @deprecated Use the `wishList.id` property instead.
-    */
+     * @deprecated Use the `wishList.id` property instead.
+     */
     wishListSharesCount?: number;
     /**
-    * @deprecated Use the `wishList.id` property instead.
-    */
+     * @deprecated Use the `wishList.id` property instead.
+     */
     sharedByDisplayName?: string;
     wishList?: WishListModel;
     showNoPermissionsTooltip?: boolean;
@@ -54,12 +54,16 @@ export const wishListSharingStatusStyles: WishListSharingStatusStyles = {
     privateIcon: {
         src: HelpCircle,
         size: 15,
-        css: css` margin-left: 5px; `,
+        css: css`
+            margin-left: 5px;
+        `,
     },
     sharedIcon: {
         src: Users,
         size: 15,
-        css: css` margin-right: 5px; `,
+        css: css`
+            margin-right: 5px;
+        `,
     },
 };
 
@@ -89,29 +93,32 @@ const WishListSharingStatus: FC<Props> = ({
 
     return (
         <>
-            {!isSharedListInner && wishListSharesCountInner === 0
-                && <Typography {...styles.statusText}>
+            {!isSharedListInner && wishListSharesCountInner === 0 && (
+                <Typography {...styles.statusText}>
                     {translate("Private")}
                     <Tooltip {...styles.privateTooltip} text={siteMessage("Lists_Share_List_Tooltip") as string} />
                 </Typography>
-            }
-            {!isSharedListInner && wishListSharesCountInner > 0
-                && <>
+            )}
+            {!isSharedListInner && wishListSharesCountInner > 0 && (
+                <>
                     <Link {...styles.statusText} onClick={() => manageShareListClickHandler()}>
                         <Icon {...styles.sharedIcon} />
                         {translate("Shared with")} {wishListSharesCountInner} {translate("others")}
                     </Link>
                 </>
-            }
-            {isSharedListInner && sharedByDisplayNameInner
-                && <Typography {...styles.statusText}>
+            )}
+            {isSharedListInner && sharedByDisplayNameInner && (
+                <Typography {...styles.statusText}>
                     <Icon {...styles.sharedIcon} />
                     {translate("Shared by")} {sharedByDisplayNameInner}
-                    {!wishList?.allowEdit && showNoPermissionsTooltip
-                        && <Tooltip {...styles.privateTooltip} text={siteMessage("Lists_Share_List_No_Permissions_Tooltip") as string} />
-                    }
+                    {!wishList?.allowEdit && showNoPermissionsTooltip && (
+                        <Tooltip
+                            {...styles.privateTooltip}
+                            text={siteMessage("Lists_Share_List_No_Permissions_Tooltip") as string}
+                        />
+                    )}
                 </Typography>
-            }
+            )}
         </>
     );
 };

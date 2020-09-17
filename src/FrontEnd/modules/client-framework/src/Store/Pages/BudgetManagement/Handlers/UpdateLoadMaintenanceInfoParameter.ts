@@ -10,9 +10,7 @@ export const DispatchUpdateLoadMaintenanceInfoParameter: HandlerType = props => 
     });
 };
 
-export const chain = [
-    DispatchUpdateLoadMaintenanceInfoParameter,
-];
+export const chain = [DispatchUpdateLoadMaintenanceInfoParameter];
 
 const updateLoadMaintenanceInfoParameter = createHandlerChainRunner(chain, "updateLoadMaintenanceInfoParameter");
 export default updateLoadMaintenanceInfoParameter;

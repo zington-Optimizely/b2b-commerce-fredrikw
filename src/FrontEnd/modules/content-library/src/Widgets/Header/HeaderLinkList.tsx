@@ -12,7 +12,9 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
-const enum fields { links = "links" }
+const enum fields {
+    links = "links",
+}
 
 interface OwnProps extends WidgetProps {
     fields: { [fields.links]: LinkModel[] };
@@ -20,7 +22,7 @@ interface OwnProps extends WidgetProps {
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const links = mapLinks<LinkModel, { openInNewWindow: boolean }>(state, ownProps.fields.links, (widgetLink) => ({
+    const links = mapLinks<LinkModel, { openInNewWindow: boolean }>(state, ownProps.fields.links, widgetLink => ({
         openInNewWindow: widgetLink.fields.openInNewWindow,
     }));
     return {
@@ -49,33 +51,38 @@ export const headerLinkListStyles: HeaderLinkListStyles = {
             css: css`
                 margin: 0 9px 0 9px;
                 display: inline-block;
-                &&& { color: ${getColor("text.main")}; }
+                &&& {
+                    color: ${getColor("text.main")};
+                }
             `,
         },
     },
 };
 
-const HeaderLinkList: React.FC<Props> = ({
-    links,
-    extendedStyles,
-}) => {
-    if (links.length < 1) return null;
+const HeaderLinkList: React.FC<Props> = ({ links, extendedStyles }) => {
+    if (links.length < 1) {
+        return null;
+    }
 
     const [styles] = React.useState(() => mergeToNew(headerLinkListStyles, extendedStyles));
 
-    return <StyledWrapper {...styles.headerLinkListWrapper}>
-        {links.map((link) =>
-            link?.url
-                && <Link
-                    key={`${link.url}.${link.title}`}
-                    href={link.url}
-                    target={link.openInNewWindow ? "_blank" : ""}
-                    {...styles.link}
-                >
-                    {link.title}
-                </Link>,
-        )}
-    </StyledWrapper>;
+    return (
+        <StyledWrapper {...styles.headerLinkListWrapper}>
+            {links.map(
+                link =>
+                    link?.url && (
+                        <Link
+                            key={`${link.url}.${link.title}`}
+                            href={link.url}
+                            target={link.openInNewWindow ? "_blank" : ""}
+                            {...styles.link}
+                        >
+                            {link.title}
+                        </Link>
+                    ),
+            )}
+        </StyledWrapper>
+    );
 };
 
 const widgetModule: WidgetModule = {

@@ -3,6 +3,7 @@ import { SettingsModel } from "@insite/client-framework/Services/SettingsService
 import { BillToModel, CartModel } from "@insite/client-framework/Types/ApiModels";
 
 let lastTrackedUrl = "";
+let lastTrackedSearchTerm = "";
 
 export function getHeadTrackingScript(settings?: SettingsModel, session?: Session) {
     if (!settings?.settingsCollection || !session) {
@@ -11,7 +12,6 @@ export function getHeadTrackingScript(settings?: SettingsModel, session?: Sessio
 
     const { googleTrackingTypeComputed, googleTrackingAccountId } = settings.settingsCollection.websiteSettings;
     if (googleTrackingTypeComputed === "GoogleAnalytics") {
-
         return `
             (function (i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
@@ -24,7 +24,6 @@ export function getHeadTrackingScript(settings?: SettingsModel, session?: Sessio
     }
 
     if (googleTrackingTypeComputed === "GoogleTagManager") {
-
         const userId = session && session.userProfileId;
         return `
             dataLayer = [{
@@ -72,35 +71,38 @@ export function trackPageChange() {
     }
 
     const url = window.location.pathname + window.location.search;
-    if (url !== lastTrackedUrl) {
-        lastTrackedUrl = url;
+    if (url === lastTrackedUrl) {
+        return;
+    }
 
-        const dataLayer = getDataLayer();
+    lastTrackedUrl = url;
 
-        if (dataLayer) {
-            dataLayer.push({
-                event: "virtualPageView",
-                page: {
-                    title: window.document.title,
-                    url,
-                },
-            });
-        } else {
-            const ga = getGa();
-            if (ga) {
-                ga("set", "location", url);
-                ga("set", "page", window.location.pathname + window.location.search);
-                ga("send", "pageview");
-            }
+    const dataLayer = getDataLayer();
+
+    if (dataLayer) {
+        dataLayer.push({
+            event: "virtualPageView",
+            page: {
+                title: window.document.title,
+                url,
+            },
+        });
+    } else {
+        const ga = getGa();
+        if (ga) {
+            ga("set", "location", url);
+            ga("set", "page", window.location.pathname + window.location.search);
+            ga("send", "pageview");
         }
     }
 }
 
-// TODO ISC-13675 wire this up to search results in new redux handler
-export function trackSearchResultEvent(searchTerm: string, correctedSearchTerm: string, resultCount: number) {
-    if (IS_SERVER_SIDE) {
+export function trackSearchResultEvent(searchTerm: string, resultCount: number, correctedSearchTerm?: string) {
+    if (IS_SERVER_SIDE || lastTrackedSearchTerm === searchTerm) {
         return;
     }
+
+    lastTrackedSearchTerm = searchTerm;
 
     const dataLayer = getDataLayer();
 
@@ -121,7 +123,7 @@ interface TransactionData {
     transactionTotal: number;
     transactionTax: number;
     transactionShipping: number;
-    transactionProducts: { sku: string, name: string, price?: number, quantity: number | null }[]
+    transactionProducts: { sku: string; name: string; price?: number; quantity: number | null }[];
 }
 export function trackCompletedOrder(cart: CartModel, billTo?: BillToModel) {
     if (IS_SERVER_SIDE) {

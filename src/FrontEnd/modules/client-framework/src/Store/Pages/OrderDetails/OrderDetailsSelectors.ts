@@ -8,7 +8,10 @@ export const canCancelOrder = (state: ApplicationState, order?: OrderModel) => {
         return false;
     }
 
-    return order !== undefined && orderStatusMappings.some(status => status.erpOrderStatus === order.status && status.allowCancellation);
+    return (
+        order !== undefined &&
+        orderStatusMappings.some(status => status.erpOrderStatus === order.status && status.allowCancellation)
+    );
 };
 
 export const canRmaOrder = (state: ApplicationState, order?: OrderModel) => {
@@ -16,5 +19,8 @@ export const canRmaOrder = (state: ApplicationState, order?: OrderModel) => {
     if (!orderStatusMappings) {
         return false;
     }
-    return order !== undefined && orderStatusMappings.some(status => status.erpOrderStatus === order.status && status.allowRma);
+    return (
+        order !== undefined &&
+        orderStatusMappings.some(status => status.erpOrderStatus === order.status && status.allowRma)
+    );
 };

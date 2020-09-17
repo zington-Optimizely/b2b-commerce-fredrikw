@@ -39,11 +39,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    SendDataToApi,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, SendDataToApi, ExecuteOnSuccessCallback];
 
 const shareProduct = createHandlerChainRunner(chain, "ShareProduct");
 export default shareProduct;

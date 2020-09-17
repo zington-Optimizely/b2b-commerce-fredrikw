@@ -1,4 +1,7 @@
-import { ApiHandlerNoParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerNoParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
 import { getBudgetCalendarCollection } from "@insite/client-framework/Services/BudgetCalendarService";
 import { BudgetCalendarCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -29,5 +32,9 @@ export const chain = [
     DispatchCompleteLoadBudgetCalendarCollection,
 ];
 
-const loadBudgetCalendarCollection = createHandlerChainRunnerOptionalParameter(chain, {}, "loadBudgetCalendarCollection");
+const loadBudgetCalendarCollection = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {},
+    "loadBudgetCalendarCollection",
+);
 export default loadBudgetCalendarCollection;

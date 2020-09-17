@@ -6,8 +6,18 @@ import { trackPageChange } from "@insite/client-framework/Common/Utilities/track
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
-import { addTask, clearInitialPage, getInitialPage, redirectTo, setStatusCode } from "@insite/client-framework/ServerSideRendering";
-import { BasicLanguageModel as ActualBasicLanguageModel, getPageByType, getPageByUrl } from "@insite/client-framework/Services/ContentService";
+import {
+    addTask,
+    clearInitialPage,
+    getInitialPage,
+    redirectTo,
+    setStatusCode,
+} from "@insite/client-framework/ServerSideRendering";
+import {
+    BasicLanguageModel as ActualBasicLanguageModel,
+    getPageByType,
+    getPageByUrl,
+} from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getPageStateByPath, getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -58,7 +68,10 @@ export const replaceItem = (item: ItemProps): AnyAction => ({
     item,
 });
 
-export const changeContext = (languageId: string, personaId: string, deviceType: DeviceType): AppThunkAction => (dispatch, getState) => {
+export const changeContext = (languageId: string, personaId: string, deviceType: DeviceType): AppThunkAction => (
+    dispatch,
+    getState,
+) => {
     const contextData = getContextData(getState());
 
     dispatch({
@@ -72,127 +85,134 @@ export const changeContext = (languageId: string, personaId: string, deviceType:
 };
 
 export const loadPageByType = (type: string): AppThunkAction => (dispatch, getState) => {
-    addTask(async function () {
-        dispatch({
-            type: "Data/Pages/BeginLoadPage",
-            key: type,
-        });
-
-        const state = getState();
-        const result = await getPageByType(type);
-
-        dispatch({
-            type: "Data/Pages/CompleteLoadPage",
-            page: result.page,
-            pageType: type,
-            ...getContextData(state),
-        });
-    }());
-};
-
-export const loadPage = (location: Location, history?: History, onSuccess?: () => void): AppThunkAction => (dispatch, getState) => {
-    addTask(async function () {
-        const url = location.pathname + location.search;
-
-        const finished = (page: PageProps) => {
-            sendToShell({
-                type: "LoadPageComplete",
-                pageId: page.id,
-                parentId: page.parentId,
-            });
+    addTask(
+        (async function () {
             dispatch({
-                type: "Data/Pages/SetLocation",
-                location,
+                type: "Data/Pages/BeginLoadPage",
+                key: type,
             });
-            onSuccess?.();
 
             const state = getState();
-            if (state.pages && state.context) {
-                // product list and product details call trackPageChange when they get data
-                if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
-                    trackPageChange();
-                }
-            }
-        };
+            const result = await getPageByType(type);
 
-        const currentState = getState();
-        const page = getPageStateByPath(currentState, location.pathname);
-        if (page.value) {
-            finished(page.value);
-            return;
-        }
-
-        dispatch({
-            type: "Data/Pages/BeginLoadPage",
-            key: location.pathname,
-        });
-
-
-        let result;
-        const bypassFilters = url.startsWith("/Content/Page/");
-
-        try {
-            const initialPage = getInitialPage();
-
-            if (initialPage && initialPage.result && url === initialPage.url) {
-                result = initialPage.result;
-                clearInitialPage();
-            } else {
-                result = await getPageByUrl(url, bypassFilters);
-            }
-        } catch (ex) {
-            logger.error(ex);
-            const pageLink = getPageLinkByPageType(getState(), "UnhandledErrorPage");
-            if (pageLink) {
-                redirectTo(pageLink.url);
-            }
-            return;
-        }
-
-
-        setStatusCode(result.statusCode);
-        if (result.redirectTo) {
-            if (IS_SERVER_SIDE) {
-                redirectTo(result.redirectTo);
-            } else if (result.redirectTo.startsWith("http")) {
-                window.location.href = result.redirectTo;
-            } else if (history) {
-                history.push(result.redirectTo);
-                onSuccess?.();
-            }
-        } else if (result.page) {
-            const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
-            if (hasPageByType) {
-                dispatch({
-                    type: "Data/Pages/SetPageIsLoaded",
-                    pageType: result.page.type,
-                    page: result.page,
-                    path: location.pathname,
-                });
-
-                finished(result.page);
-            } else {
-                dispatch({
-                    type: "Data/Pages/CompleteLoadPage",
-                    page: result.page,
-                    path: location.pathname,
-                    ...getContextData(getState()),
-                });
-
-                finished(result.page);
-            }
-        }
-    }());
+            dispatch({
+                type: "Data/Pages/CompleteLoadPage",
+                page: result.page,
+                pageType: type,
+                ...getContextData(state),
+            });
+        })(),
+    );
 };
 
-export const setPageDefinitions = (pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>): AnyAction => ({
+export const loadPage = (location: Location, history?: History, onSuccess?: () => void): AppThunkAction => (
+    dispatch,
+    getState,
+) => {
+    addTask(
+        (async function () {
+            const url = location.pathname + location.search;
+
+            const finished = (page: PageProps) => {
+                sendToShell({
+                    type: "LoadPageComplete",
+                    pageId: page.id,
+                    parentId: page.parentId,
+                });
+                dispatch({
+                    type: "Data/Pages/SetLocation",
+                    location,
+                });
+                onSuccess?.();
+
+                const state = getState();
+                if (state.pages && state.context) {
+                    // product list and product details call trackPageChange when they get data
+                    if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
+                        trackPageChange();
+                    }
+                }
+            };
+
+            const currentState = getState();
+            const page = getPageStateByPath(currentState, location.pathname);
+            if (page.value) {
+                finished(page.value);
+                return;
+            }
+
+            dispatch({
+                type: "Data/Pages/BeginLoadPage",
+                key: location.pathname,
+            });
+
+            let result;
+            const bypassFilters = url.startsWith("/Content/Page/");
+
+            try {
+                const initialPage = getInitialPage();
+
+                if (initialPage && initialPage.result && url === initialPage.url) {
+                    result = initialPage.result;
+                    clearInitialPage();
+                } else {
+                    result = await getPageByUrl(url, bypassFilters);
+                }
+            } catch (ex) {
+                logger.error(ex);
+                const pageLink = getPageLinkByPageType(getState(), "UnhandledErrorPage");
+                if (pageLink) {
+                    redirectTo(pageLink.url);
+                }
+                return;
+            }
+
+            setStatusCode(result.statusCode);
+            if (result.redirectTo) {
+                if (IS_SERVER_SIDE) {
+                    redirectTo(result.redirectTo);
+                } else if (result.redirectTo.startsWith("http")) {
+                    window.location.href = result.redirectTo;
+                } else if (history) {
+                    history.push(result.redirectTo);
+                }
+            } else if (result.page) {
+                const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
+                if (hasPageByType) {
+                    dispatch({
+                        type: "Data/Pages/SetPageIsLoaded",
+                        pageType: result.page.type,
+                        page: result.page,
+                        path: location.pathname,
+                    });
+
+                    finished(result.page);
+                } else {
+                    dispatch({
+                        type: "Data/Pages/CompleteLoadPage",
+                        page: result.page,
+                        path: location.pathname,
+                        ...getContextData(getState()),
+                    });
+
+                    finished(result.page);
+                }
+            }
+        })(),
+    );
+};
+
+export const setPageDefinitions = (
+    pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">>,
+): AnyAction => ({
     type: "Data/Pages/PageDefinitions",
     pageDefinitionsByType,
 });
 
 function getContextData(state: ApplicationState) {
     const { context } = state;
-    if (context) { // determines if we are working in the public site
+    if (context) {
+        // determines if we are working in the public site
         const { website, session } = context;
 
         const defaultLanguages = website.languages!.languages!.filter(o => o.isDefault);
@@ -207,7 +227,13 @@ function getContextData(state: ApplicationState) {
     }
 
     // otherwise we are working in the shell so we need some hacky code
-    const { defaultLanguageId, currentLanguageId, currentPersonaId, currentDeviceType, defaultPersonaId } = (state as any).shellContext as ShellContext;
+    const {
+        defaultLanguageId,
+        currentLanguageId,
+        currentPersonaId,
+        currentDeviceType,
+        defaultPersonaId,
+    } = (state as any).shellContext as ShellContext;
     return {
         defaultLanguageId,
         currentLanguageId,
@@ -226,7 +252,7 @@ interface ShellContext {
 }
 
 // this had to move to ContentService to avoid a circular dependency.
-export interface BasicLanguageModel extends ActualBasicLanguageModel { }
+export interface BasicLanguageModel extends ActualBasicLanguageModel {}
 
 export interface UpdateFieldParameter {
     id: string;

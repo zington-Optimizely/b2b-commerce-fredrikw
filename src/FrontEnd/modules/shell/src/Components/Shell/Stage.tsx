@@ -9,26 +9,27 @@ import styled, { css } from "styled-components";
 const StageFlexContainer = styled.div<StageProps>`
     ${({ stageMode }) => {
         if (stageMode === "Desktop") {
-            return css`            
+            return css`
                 overflow: auto;
-                width: calc(100% - 18px);
-                height: calc(100% - 18px);
+                width: 100%;
+                height: 100%;
             `;
         }
     }}
-    margin: 0 18px 18px 0;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 `;
 
-interface StageProps { stageMode: "Desktop" | "Tablet" | "Phone"; }
+interface StageProps {
+    stageMode: "Desktop" | "Tablet" | "Phone";
+}
 
 const StageWrapper = styled.div<StageProps>`
     ${({ stageMode }) => {
         if (stageMode === "Desktop") {
-            return css` 
+            return css`
                 position: absolute;
                 left: 0;
                 width: 100%;
@@ -61,8 +62,8 @@ const DeviceContent = styled.div<StageProps>`
         return css`
             position: absolute;
             z-index: 2;
-            top: ${isMobile ? "28" : "37"}px;
-            left: ${isMobile ? "13" : "24"}px;
+            top: ${isMobile ? "58" : "67"}px;
+            left: ${isMobile ? "43" : "54"}px;
             width: ${isMobile ? "374" : "768"}px;
             height: ${isMobile ? "813" : "1024"}px;
         `;
@@ -76,12 +77,14 @@ const mapStateToProps = (state: ShellState) => ({
 type Props = ReturnType<typeof mapStateToProps> & { className?: string };
 
 const StyledDeviceMobile = styled(DeviceMobile)`
+    margin: 30px 0 0 30px;
     position: absolute;
     z-index: 3;
     pointer-events: none;
 `;
 
 const StyledDeviceTablet = styled(DeviceTablet)`
+    margin: 30px 0 0 30px;
     position: absolute;
     z-index: 3;
     pointer-events: none;
@@ -90,10 +93,12 @@ const StyledDeviceTablet = styled(DeviceTablet)`
 const Stage: React.FC<Props> = ({ stageMode, children, className }) => {
     return (
         <StageFlexContainer stageMode={stageMode}>
-            <StageWrapper stageMode={stageMode}>
+            <StageWrapper stageMode={stageMode} data-test-selector="stageWrapper">
                 {stageMode === "Phone" && <StyledDeviceMobile />}
                 {stageMode === "Tablet" && <StyledDeviceTablet />}
-                <DeviceContent stageMode={stageMode} className={className}>{children}</DeviceContent>
+                <DeviceContent stageMode={stageMode} className={className}>
+                    {children}
+                </DeviceContent>
             </StageWrapper>
         </StageFlexContainer>
     );

@@ -24,11 +24,7 @@ export const DispatchCompleteLoadBrand: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchBeginLoadBrandCategories,
-    RequestDataFromApi,
-    DispatchCompleteLoadBrand,
-];
+export const chain = [DispatchBeginLoadBrandCategories, RequestDataFromApi, DispatchCompleteLoadBrand];
 
 const loadBrandCategories = createHandlerChainRunner(chain, "LoadBrandCategories");
 export default loadBrandCategories;

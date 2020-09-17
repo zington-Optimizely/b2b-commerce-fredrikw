@@ -85,7 +85,9 @@ export const autocompleteProductsStyles: AutocompleteProductsStyles = {
                 margin: 0;
             `,
         },
-        css: css` width: 270px; `,
+        css: css`
+            width: 270px;
+        `,
     },
     erpNumberText: {
         ellipsis: true,
@@ -111,24 +113,28 @@ class AutocompleteProducts extends React.Component<Props> {
     render() {
         const { products } = this.props;
         const styles = this.styles;
-        return <>
-            <Typography {...styles.headerText}>{translate("Products")}</Typography>
-            {products.map(product => (
-                <GridContainer
-                    {...(this.props.focusedItem === product ? styles.focusedContainer : styles.container)}
-                    key={product.id!}
-                    onClick={() => { this.props.goToUrl(product.url); }}
-                >
-                    <GridItem {...styles.imageGridItem}>
-                        <LazyImage {...styles.image} src={product.image} />
-                    </GridItem>
-                    <GridItem {...styles.infoGridItem}>
-                        <Link {...styles.titleLink}>{product.title}</Link>
-                        <Typography {...styles.erpNumberText}>{product.erpNumber}</Typography>
-                    </GridItem>
-                </GridContainer>
-            ))}
-        </>;
+        return (
+            <>
+                <Typography {...styles.headerText}>{translate("Products")}</Typography>
+                {products.map(product => (
+                    <GridContainer
+                        {...(this.props.focusedItem === product ? styles.focusedContainer : styles.container)}
+                        key={product.id!}
+                        onClick={() => {
+                            this.props.goToUrl(product.url);
+                        }}
+                    >
+                        <GridItem {...styles.imageGridItem}>
+                            <LazyImage {...styles.image} src={product.image} />
+                        </GridItem>
+                        <GridItem {...styles.infoGridItem}>
+                            <Link {...styles.titleLink}>{product.title}</Link>
+                            <Typography {...styles.erpNumberText}>{product.erpNumber}</Typography>
+                        </GridItem>
+                    </GridContainer>
+                ))}
+            </>
+        );
     }
 }
 

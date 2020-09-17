@@ -9,9 +9,7 @@ export const DispatchSetQuantityAdjustmentModalIsOpen: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchSetQuantityAdjustmentModalIsOpen,
-];
+export const chain = [DispatchSetQuantityAdjustmentModalIsOpen];
 
 const setQuantityAdjustmentModalIsOpen = createHandlerChainRunner(chain, "SetQuantityAdjustmentModalIsOpen");
 export default setQuantityAdjustmentModalIsOpen;

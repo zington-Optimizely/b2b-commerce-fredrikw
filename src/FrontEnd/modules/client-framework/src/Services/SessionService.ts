@@ -11,6 +11,7 @@ export enum FulfillmentMethod {
 
 export interface UpdateSessionApiParameter extends ApiParameter {
     session: Partial<Session>;
+    accessToken?: string;
 }
 
 export interface UpdateSessionWithResultApiParameter extends ApiParameter {
@@ -26,9 +27,9 @@ export interface ForgotPasswordApiParameter extends ApiParameter {
 }
 
 export interface ResetPasswordApiParameter extends ApiParameter {
-    userName: string,
-    newPassword: string,
-    resetToken: string,
+    userName: string;
+    newPassword: string;
+    resetToken: string;
 }
 
 export interface CreateSessionApiParameter {
@@ -38,6 +39,10 @@ export interface CreateSessionApiParameter {
     returnUrl?: string | undefined;
     isGuest?: boolean;
     accessToken: string;
+}
+
+export interface SendAccountActivationEmailApiParameter {
+    userName: string;
 }
 
 export type Session = Omit<SessionModel, "billTo" | "shipTo"> & {
@@ -65,7 +70,7 @@ export async function createSession(parameter: CreateSessionApiParameter): Promi
         let errorMessage: string;
         let errorJson: any;
         if (response.headers.get("Content-Type")?.startsWith("application/json")) {
-            errorJson = await response.json() as { message: string };
+            errorJson = (await response.json()) as { message: string };
             errorMessage = errorJson.message;
         } else {
             errorMessage = await response.text();
@@ -73,6 +78,7 @@ export async function createSession(parameter: CreateSessionApiParameter): Promi
         return {
             successful: false,
             errorMessage,
+            statusCode: response.status,
         };
     }
 
@@ -104,13 +110,24 @@ export async function updateSession(parameter: UpdateSessionApiParameter) {
         (patchedSession as SessionModel).shipTo = { id: patchedSession.shipToId } as ShipToModel;
         delete patchedSession.shipToId;
     }
-    const session = await patch<SessionModel>("/api/v1/sessions/current", patchedSession);
+    const response = await fetch(`${sessionsUrl}/current`, {
+        method: "PATCH",
+        headers: {
+            authorization: `Bearer ${parameter.accessToken}`,
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(patchedSession),
+    });
+    const session = await (response.json() as Promise<SessionModel>);
     cleanSession(session);
     informShell(session);
     return session;
 }
 
-export async function updateSessionWithResult(parameter: UpdateSessionWithResultApiParameter): Promise<ServiceResult<SessionModel>> {
+export async function updateSessionWithResult(
+    parameter: UpdateSessionWithResultApiParameter,
+): Promise<ServiceResult<SessionModel>> {
     try {
         const session = await patch<SessionModel>("/api/v1/sessions/current", parameter.session);
         cleanSession(session);
@@ -194,4 +211,28 @@ function informShell(session: SessionModel) {
         type: "FrontEndSessionLoaded",
         personas: session.personas,
     });
+}
+
+export async function sendAccountActivationEmail(
+    parameter: SendAccountActivationEmailApiParameter,
+): Promise<ServiceResult<SessionModel>> {
+    try {
+        const session = await patch<SessionModel>(`${sessionsUrl}/current`, {
+            ...parameter,
+            activateAccount: true,
+        });
+        cleanSession(session);
+        return {
+            successful: true,
+            result: session,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
 }

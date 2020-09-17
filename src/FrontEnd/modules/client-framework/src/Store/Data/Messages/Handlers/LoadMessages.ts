@@ -1,7 +1,4 @@
-import {
-    ApiHandler,
-    createHandlerChainRunner,
-} from "@insite/client-framework/HandlerCreator";
+import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { getMessages, GetMessagesApiParameter } from "@insite/client-framework/Services/MessageService";
 import { MessageCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -30,12 +27,7 @@ export const DispatchCompleteLoadMessage: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    DispatchBeginLoadMessage,
-    RequestDataFromApi,
-    DispatchCompleteLoadMessage,
-];
+export const chain = [PopulateApiParameter, DispatchBeginLoadMessage, RequestDataFromApi, DispatchCompleteLoadMessage];
 
 const loadMessages = createHandlerChainRunner(chain, "LoadMessages");
 export default loadMessages;

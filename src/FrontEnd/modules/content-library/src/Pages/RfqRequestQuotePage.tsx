@@ -18,9 +18,11 @@ class RfqRequestQuotePage extends Component<Props> {
     }
 
     render() {
-        return <Page>
-            <Zone contentId={this.props.id} zoneName="Content" />
-        </Page>;
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+            </Page>
+        );
     }
 }
 

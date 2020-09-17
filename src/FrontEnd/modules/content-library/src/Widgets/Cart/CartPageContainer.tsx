@@ -47,7 +47,8 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-columns: minmax(0, 2fr) minmax(0, 1fr);
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
     headerContainer: {
@@ -70,7 +71,8 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-row: 1;
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
     cartLinesContainer: {
@@ -93,7 +95,8 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-row-span: 6;
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
     fulfillmentMethodContainer: {
@@ -114,7 +117,8 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-row: 2;
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
     cartTotalContainer: {
@@ -135,7 +139,8 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-row: 3;
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
     productCarouselContainer: {
@@ -156,16 +161,15 @@ export const cartPageContainerStyles: CartPageContainerStyles = {
                             -ms-grid-row: 4;
                         `,
                     ],
-                    "min")}
+                    "min",
+                )}
         `,
     },
 };
 
 const styles = cartPageContainerStyles;
 
-const CartPageContainer = ({
-    id,
-}: WidgetProps) => {
+const CartPageContainer = ({ id }: WidgetProps) => {
     return (
         <StyledWrapper {...styles.container}>
             <StyledWrapper {...styles.headerContainer}>

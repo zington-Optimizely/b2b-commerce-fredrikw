@@ -1,162 +1,152 @@
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setSelectedImageIndex from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/SetSelectedImageIndex";
 import { getSelectedImage } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
+import { ImageModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductImageCarousel, {
+    ProductImageCarouselStyles,
+} from "@insite/content-library/Components/ProductImageCarousel";
+import ProductPrimaryImage, { ProductPrimaryImageStyles } from "@insite/content-library/Components/ProductPrimaryImage";
 import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
-import LazyImage from "@insite/mobius/LazyImage";
-import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import { LazyImageProps } from "@insite/mobius/LazyImage";
+import { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
-    productSettings: getSettingsCollection(state).productSettings,
     selectedImage: getSelectedImage(state, ownProps.product),
+    selectedImageIndex: state.pages.productDetails.selectedImageIndex,
 });
 
+const mapDispatchToProps = {
+    setSelectedImageIndex,
+};
+
 export interface ProductDetailsPrimaryImageStyles {
+    /**
+     * @deprecated Use primaryImage styles instead.
+     */
     centeringWrapper?: InjectableCss;
     hiddenWrapper?: InjectableCss;
     spinner?: LoadingSpinnerProps;
+    image?: LazyImageProps;
+
+    primaryImage?: ProductPrimaryImageStyles;
+    fullPrimaryImageModal?: ModalPresentationProps;
+    fullPrimaryImage?: ProductPrimaryImageStyles;
+    imageCarousel?: ProductImageCarouselStyles;
 }
 
 export const primaryImageStyles: ProductDetailsPrimaryImageStyles = {
-    centeringWrapper: {
-        css: css`
-            min-height: 300px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            img {
-                height: auto;
-                max-width: 100%;
-            }
-        `,
+    fullPrimaryImageModal: {
+        cssOverrides: {
+            modalContainer: css`
+                width: auto;
+            `,
+            modalBody: css`
+                width: auto;
+                max-width: initial;
+                max-height: initial !important;
+            `,
+            modalTitle: css`
+                border-bottom: none;
+                padding: 10px 10px 0;
+            `,
+            modalContent: css`
+                text-align: center;
+            `,
+        },
     },
-    hiddenWrapper: {
-        css: css` display: none; `,
-    },
-    spinner: {
-        css: css` margin: auto; `,
+    fullPrimaryImage: {
+        image: {
+            css: css`
+                img {
+                    width: auto;
+                    max-height: 70vh;
+                }
+            `,
+        },
     },
 };
 
 const styles = primaryImageStyles;
 
 const ProductDetailsPrimaryImage: React.FC<Props> = ({
-    productSettings,
     product,
     selectedImage,
+    selectedImageIndex,
+    setSelectedImageIndex,
 }) => {
-    const [lastHeight, setLastHeight] = React.useState(300);
-    const [lastInstance, setLastInstance] = React.useState<HTMLElement | null>(null);
-    const setRefHandler = (instance: HTMLElement | null) => {
-        if (instance) {
-            setLastInstance(instance);
-        }
+    const [fullPrimaryImageModalIsOpen, setFullImageModalIsOpen] = React.useState(false);
+    const imageClickHandler = () => {
+        setFullImageModalIsOpen(true);
+    };
+    const fullPrimaryImageModalCloseHandler = () => {
+        setFullImageModalIsOpen(false);
     };
 
-    const [isLoading, setIsLoading] = React.useState(false);
-    const onLoadHandler = React.useCallback(
-        () => {
-            setIsLoading(false);
-            setTimeout(
-                () => {
-                    if (lastInstance && lastInstance.clientHeight > 0) {
-                        setLastHeight(lastInstance.clientHeight);
-                    }
-                },
-                100,
-            );
-        },
-        [setIsLoading, lastInstance, setLastHeight],
-    );
-
-    React.useEffect(
-        () => {
-            if (selectedImage?.imageType === "Static") {
-                setIsLoading(true);
-            }
-        },
-        [selectedImage?.id],
-    );
+    const selectImageHandler = (index: number) => {
+        setSelectedImageIndex({ index });
+    };
 
     if (!product) {
         return null;
     }
 
-    const image = selectedImage ?? {
-        id: product.id,
-        imageAltText: product.imageAltText,
-        imageType: "Static",
-        largeImagePath: product.largeImagePath,
-        mediumImagePath: product.mediumImagePath,
-        name: "",
-        smallImagePath: product.smallImagePath,
-        sortOrder: 0,
-    };
-
-    React.useEffect(
-        () => {
-            if ((window as any).sirvScriptAdded) {
-                return;
-            }
-
-            if (productSettings.imageProvider !== "SIRV" || !product.images || product.images.every(o => o.imageType !== "360")) {
-                return;
-            }
-
-            const script = document.createElement("script");
-            script.src = "https://scripts.sirv.com/sirv.js";
-            script.async = true;
-
-            document.body.appendChild(script);
-            (window as any).sirvScriptAdded = true;
-        },
-        [productSettings.imageProvider, product],
-    );
+    const image =
+        selectedImage ??
+        ({
+            id: product.id,
+            imageAltText: product.imageAltText,
+            imageType: "Static",
+            largeImagePath: product.largeImagePath,
+            mediumImagePath: product.mediumImagePath,
+            smallImagePath: product.smallImagePath,
+        } as ImageModel);
 
     const path = image.mediumImagePath || image.largeImagePath;
     if (!path) {
         return null;
     }
 
-    return <>
-        {isLoading
-            && <StyledWrapper {...styles.centeringWrapper} style={{ height: lastHeight }}>
-                <LoadingSpinner {...styles.spinner} />
-            </StyledWrapper>
-        }
-        {image.imageType === "Static"
-            && <StyledWrapper {...(isLoading ? styles.hiddenWrapper : styles.centeringWrapper)}>
-                <LazyImage
-                    key={image.id}
-                    src={path}
-                    altText={image.imageAltText}
-                    imgProps={{ ref: setRefHandler }}
-                    onLoad={onLoadHandler}
-                    onError={onLoadHandler}
-                    data-test-selector="productDetails_mainImage"
+    return (
+        <>
+            <ProductPrimaryImage
+                product={product}
+                image={image}
+                onClick={imageClickHandler}
+                extendedStyles={styles.primaryImage}
+            />
+            <Modal
+                {...styles.fullPrimaryImageModal}
+                isOpen={fullPrimaryImageModalIsOpen}
+                handleClose={fullPrimaryImageModalCloseHandler}
+            >
+                <ProductPrimaryImage
+                    product={product}
+                    image={image}
+                    useLargeImage={true}
+                    extendedStyles={styles.fullPrimaryImage}
                 />
-            </StyledWrapper>
-        }
-        {image.imageType === "360" && productSettings.imageProvider === "SIRV"
-            && <div style={{ minHeight: lastHeight }}>
-                <div className="Sirv" key={image.id} data-src={image.mediumImagePath} />
-            </div>
-        }
-    </>;
+                <ProductImageCarousel
+                    selectedIndex={selectedImageIndex}
+                    onSelectImage={selectImageHandler}
+                    extendedStyles={styles.imageCarousel}
+                />
+            </Modal>
+        </>
+    );
 };
 
 const widgetModule: WidgetModule = {
-    component: withProduct(connect(mapStateToProps)(ProductDetailsPrimaryImage)),
+    component: withProduct(connect(mapStateToProps, mapDispatchToProps)(ProductDetailsPrimaryImage)),
     definition: {
         displayName: "Primary Image",
         group: "Product Details",

@@ -5,8 +5,7 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import setRequestedDeliveryDate
-    from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedDeliveryDate";
+import setRequestedDeliveryDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedDeliveryDate";
 import setRequestedPickUpDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedPickUpDate";
 import setShippingMethod from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetShippingMethod";
 import translate from "@insite/client-framework/Translate";
@@ -24,8 +23,7 @@ import React, { ChangeEvent, FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {
-}
+interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => {
     const settingsCollection = getSettingsCollection(state);
@@ -35,8 +33,10 @@ const mapStateToProps = (state: ApplicationState) => {
     return {
         cart: cartState.value,
         showShippingMethod: session.fulfillmentMethod === FulfillmentMethod.Ship,
-        showPickUpDate: settingsCollection.accountSettings.enableWarehousePickup && settingsCollection.cartSettings.enableRequestPickUpDate
-            && session.fulfillmentMethod === FulfillmentMethod.PickUp,
+        showPickUpDate:
+            settingsCollection.accountSettings.enableWarehousePickup &&
+            settingsCollection.cartSettings.enableRequestPickUpDate &&
+            session.fulfillmentMethod === FulfillmentMethod.PickUp,
         session,
         accountSettings: settingsCollection.accountSettings,
         cartSettings: settingsCollection.cartSettings,
@@ -90,18 +90,18 @@ export const checkoutShippingCarrierService = checkoutShippingCarrierServiceStyl
 const styles = checkoutShippingCarrierServiceStyles;
 
 const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
-                                                       cart,
-                                                       cartSettings,
-                                                       setRequestedDeliveryDate,
-                                                       setRequestedPickUpDate,
-                                                       showShippingMethod,
-                                                       setShippingMethod,
-                                                       showPickUpDate,
-                                                   }) => {
+    cart,
+    cartSettings,
+    setRequestedDeliveryDate,
+    setRequestedPickUpDate,
+    showShippingMethod,
+    setShippingMethod,
+    showPickUpDate,
+}) => {
     if (!cart || !cart.cartLines) {
         return (
             <StyledWrapper {...styles.centeringWrapper}>
-                <LoadingSpinner data-test-selector="checkoutShipping_carrierServiceLoading"/>
+                <LoadingSpinner data-test-selector="checkoutShipping_carrierServiceLoading" />
             </StyledWrapper>
         );
     }
@@ -140,7 +140,9 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                 <>
                     {cart.carriers!.length === 0 && (
                         <GridItem {...styles.noCarriersFoundGridItem}>
-                            <Typography {...styles.noCarriersFoundText}>{siteMessage("ReviewAndPay_NoCarriersFound")}</Typography>
+                            <Typography {...styles.noCarriersFoundText}>
+                                {siteMessage("ReviewAndPay_NoCarriersFound")}
+                            </Typography>
                         </GridItem>
                     )}
                     {cart.carriers!.length > 0 && (
@@ -156,7 +158,9 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                     {cart.carriers!.map(c => {
                                         const id = c.id!.toString();
                                         return (
-                                            <option key={id} value={id}>{c.description}</option>
+                                            <option key={id} value={id}>
+                                                {c.description}
+                                            </option>
                                         );
                                     })}
                                 </Select>
@@ -169,18 +173,24 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                     onChange={shipViaChangeHandler}
                                     data-test-selector="checkoutReviewAndSubmitShippingServiceSelect"
                                 >
-                                    {carrier && carrier.shipVias!.map(s => {
-                                        const id = s.id.toString();
-                                        return (
-                                            <option key={id} value={id}>{s.description}</option>
-                                        );
-                                    })}
+                                    {carrier &&
+                                        carrier.shipVias!.map(s => {
+                                            const id = s.id.toString();
+                                            return (
+                                                <option key={id} value={id}>
+                                                    {s.description}
+                                                </option>
+                                            );
+                                        })}
                                 </Select>
                             </GridItem>
                         </>
                     )}
                     {cartSettings.canRequestDeliveryDate && (
-                        <GridItem {...styles.deliveryDateGridItem} data-test-selector="checkoutShippingRequestedDeliveryDate">
+                        <GridItem
+                            {...styles.deliveryDateGridItem}
+                            data-test-selector="checkoutShippingRequestedDeliveryDate"
+                        >
                             <DatePicker
                                 label={`${translate("Request Delivery Date")} (${translate("optional")})`}
                                 hint={siteMessage("Checkout_RequestedDeliveryDateInformation")}
@@ -188,10 +198,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                 selectedDay={cart.requestedDeliveryDateDisplay!}
                                 dateTimePickerProps={{
                                     minDate: new Date(),
-                                    maxDate: addDays(
-                                        new Date(),
-                                        cartSettings.maximumDeliveryPeriod,
-                                    ),
+                                    maxDate: addDays(new Date(), cartSettings.maximumDeliveryPeriod),
                                     ...styles.deliveryDatePicker?.dateTimePickerProps,
                                 }}
                                 onDayChange={handleRequestDeliveryDateChanged}
@@ -223,10 +230,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(CheckoutReviewAndSubmitCarrierService),
+    component: connect(mapStateToProps, mapDispatchToProps)(CheckoutReviewAndSubmitCarrierService),
     definition: {
         displayName: "Carrier & Service",
         group: "Checkout - Review & Submit",

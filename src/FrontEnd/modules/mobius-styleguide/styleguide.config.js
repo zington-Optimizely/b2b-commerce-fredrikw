@@ -2,48 +2,57 @@ const path = require("path");
 const parser = require("react-docgen-typescript");
 const sections = require("./config/sections");
 
-const resolveSection = sectionComponents => sectionComponents.map(componentPath => require.resolve(`../mobius/src/${componentPath}/${componentPath}.tsx`));
+const resolveSection = sectionComponents =>
+    sectionComponents.map(componentPath => require.resolve(`../mobius/src/${componentPath}/${componentPath}.tsx`));
 
 module.exports = {
     assetsDir: "static",
     propsParser: parser.withDefaultConfig({
-        propFilter: (prop => prop.parent && !prop.parent.fileName.includes("node_modules")),
+        propFilter: prop => prop.parent && !prop.parent.fileName.includes("node_modules"),
     }).parse,
     exampleMode: "collapse",
-    ignore: [
-        "**/*.test.{js,jsx,ts,tsx}",
-        "**/*.spec.{js,jsx,ts,tsx}",
-        "**/*.d.ts",
+    ignore: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}", "**/*.d.ts"],
+    sections: [
+        {
+            name: "Theme",
+            components: resolveSection(sections.theme),
+        },
+        {
+            name: "Resources",
+            sections: [
+                {
+                    name: "Colors",
+                    content: "docs/colors.md",
+                },
+                {
+                    name: "Icons",
+                    content: "docs/icons.md",
+                },
+                {
+                    name: "Helper Functions",
+                    content: "docs/helpers.md",
+                },
+                {
+                    name: "Responsive",
+                    content: "docs/responsive.md",
+                },
+            ],
+        },
+        {
+            name: "Foundations",
+            components: resolveSection(sections.foundations),
+            description:
+                "Foundations are the basic building blocks of this design system. They provide a basic set of configurable options to be used by components and widgets.",
+        },
+        {
+            name: "Components",
+            components: resolveSection(sections.components),
+        },
+        {
+            name: "Utilities",
+            components: resolveSection(sections.utilities),
+        },
     ],
-    sections: [{
-        name: "Theme",
-        components: resolveSection(sections.theme),
-    }, {
-        name: "Resources",
-        sections: [{
-            name: "Colors",
-            content: "docs/colors.md",
-        }, {
-            name: "Icons",
-            content: "docs/icons.md",
-        }, {
-            name: "Helper Functions",
-            content: "docs/helpers.md",
-        }, {
-            name: "Responsive",
-            content: "docs/responsive.md",
-        }],
-    }, {
-        name: "Foundations",
-        components: resolveSection(sections.foundations),
-        description: "Foundations are the basic building blocks of this design system. They provide a basic set of configurable options to be used by components and widgets.",
-    }, {
-        name: "Components",
-        components: resolveSection(sections.components),
-    }, {
-        name: "Utilities",
-        components: resolveSection(sections.utilities),
-    }],
     styleguideComponents: {
         ComponentsListRenderer: path.join(__dirname, "styleguide-components/ComponentsListRenderer"),
         HeadingRenderer: path.join(__dirname, "styleguide-components/HeadingRenderer"),
@@ -60,31 +69,37 @@ module.exports = {
     template: {
         title: "Insite Mobius Style Guide",
         head: {
-            links: [{
-                rel: "shortcut icon",
-                type: "image/x-icon",
-                href: "mobius.ico",
-            }, {
-                rel: "icon",
-                type: "image/png",
-                sizes: "192x192",
-                href: "android-icon-192x192.png",
-            }, {
-                rel: "icon",
-                type: "image/png",
-                sizes: "96x96",
-                href: "android-icon-96x96.png",
-            }, {
-                rel: "icon",
-                type: "image/png",
-                sizes: "32x32",
-                href: "favicon-32x32.png",
-            }, {
-                rel: "icon",
-                type: "image/png",
-                sizes: "16x16",
-                href: "favicon-16x16.png",
-            }],
+            links: [
+                {
+                    rel: "shortcut icon",
+                    type: "image/x-icon",
+                    href: "mobius.ico",
+                },
+                {
+                    rel: "icon",
+                    type: "image/png",
+                    sizes: "192x192",
+                    href: "android-icon-192x192.png",
+                },
+                {
+                    rel: "icon",
+                    type: "image/png",
+                    sizes: "96x96",
+                    href: "android-icon-96x96.png",
+                },
+                {
+                    rel: "icon",
+                    type: "image/png",
+                    sizes: "32x32",
+                    href: "favicon-32x32.png",
+                },
+                {
+                    rel: "icon",
+                    type: "image/png",
+                    sizes: "16x16",
+                    href: "favicon-16x16.png",
+                },
+            ],
         },
     },
     theme: {

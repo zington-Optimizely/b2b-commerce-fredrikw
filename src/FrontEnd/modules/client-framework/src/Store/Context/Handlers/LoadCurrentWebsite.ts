@@ -1,5 +1,12 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
-import { getCurrentWebsite, GetCurrentWebsiteApiParameter, Website } from "@insite/client-framework/Services/WebsiteService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    getCurrentWebsite,
+    GetCurrentWebsiteApiParameter,
+    Website,
+} from "@insite/client-framework/Services/WebsiteService";
 
 type HandlerType = ApiHandlerDiscreteParameter<{}, GetCurrentWebsiteApiParameter, Website>;
 
@@ -20,11 +27,7 @@ export const DispatchCompleteLoadCurrentWebsite: HandlerType = props => {
     });
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchCompleteLoadCurrentWebsite,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, DispatchCompleteLoadCurrentWebsite];
 
 const loadCurrentWebsite = createHandlerChainRunnerOptionalParameter(chain, {}, "LoadCurrentWebsite");
 export default loadCurrentWebsite;

@@ -45,7 +45,8 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
     updateField = (fieldName: string, value: readonly HasFields[]) => {
         this.props.updateField(fieldName, value);
 
-        setTimeout(() => { // we need item to be updated before we can validate it
+        setTimeout(() => {
+            // we need item to be updated before we can validate it
             const { fieldDefinitions, item } = this.props;
             const changedDefinitions = fieldDefinitions.filter(o => o.name === fieldName);
             if (changedDefinitions.length !== 1) {
@@ -102,9 +103,14 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
                     updateField: this.updateField,
                 };
                 return (
-                    <FieldErrorBoundary key={fieldDefinition.name + fieldDefinition.sortOrder} name={fieldDefinition.name}>
+                    <FieldErrorBoundary
+                        key={fieldDefinition.name + fieldDefinition.sortOrder}
+                        name={fieldDefinition.name}
+                    >
                         {getEditorTemplate(fieldDefinition, editorProps, () => this.forceUpdate())}
-                        <ErrorMessage data-test-selector={`controlFor_${fieldDefinition.name}_error`}>{this.state.validationErrors[fieldDefinition.name]}</ErrorMessage>
+                        <ErrorMessage data-test-selector={`controlFor_${fieldDefinition.name}_error`}>
+                            {this.state.validationErrors[fieldDefinition.name]}
+                        </ErrorMessage>
                     </FieldErrorBoundary>
                 );
             });
@@ -112,11 +118,9 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
 
         return (
             <>
-                {tabs.length === 0
-                    ? null
-                    : tabs.length > 1
-                    ? <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }}>
-                        {tabs.map(tab =>
+                {tabs.length === 0 ? null : tabs.length > 1 ? (
+                    <TabGroup cssOverrides={{ tabContent, tabGroup, wrapper }}>
+                        {tabs.map(tab => (
                             <Tab
                                 key={tab.displayName}
                                 tabKey={tab.displayName}
@@ -125,11 +129,12 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
                                 data-test-selector={`editItem_${tab.dataTestSelector}`}
                             >
                                 {renderFields(tab)}
-                            </Tab>,
-                        )}
+                            </Tab>
+                        ))}
                     </TabGroup>
-                    : renderFields(tabs[0])
-                }
+                ) : (
+                    renderFields(tabs[0])
+                )}
             </>
         );
     }
@@ -150,9 +155,9 @@ const tabCss: FlattenSimpleInterpolation = css`
     font-size: 16px;
     padding: 6px;
     &:hover {
-        cursor: ${(props: TabProps) => props.selected ? "default" : "pointer"};
+        cursor: ${(props: TabProps) => (props.selected ? "default" : "pointer")};
     }
-    font-weight: ${(props: TabProps) => props.selected ? "bold" : "inherit"};
+    font-weight: ${(props: TabProps) => (props.selected ? "bold" : "inherit")};
 ` as FlattenSimpleInterpolation;
 
 const tabContent = css`
@@ -169,7 +174,7 @@ const wrapper = css`
     padding: 0;
 `;
 
-type FieldErrorBoundaryProps = { name: string; };
+type FieldErrorBoundaryProps = { name: string };
 
 class FieldErrorBoundary extends React.Component<FieldErrorBoundaryProps, { hasError?: true }> {
     constructor(props: FieldErrorBoundaryProps) {

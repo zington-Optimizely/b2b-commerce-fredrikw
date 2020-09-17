@@ -1,4 +1,10 @@
-import { createHandlerChainRunner, Handler, HasOnError, HasOnSuccess, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnError,
+    HasOnSuccess,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import changeCustomerContext from "@insite/client-framework/Store/Context/Handlers/ChangeCustomerContext";
 
@@ -10,14 +16,14 @@ export const DispatchBeginApplyChanges: HandlerType = ({ dispatch }) => {
     });
 };
 
-export const ChangeCustomerContext: HandlerType = async ({
-    dispatch,
-    getState,
-    parameter: {
-        onError,
-    },
-}) => {
-    const { fulfillmentMethod, selectedBillTo, selectedShipTo, isDefault, pickUpWarehouse } = getState().components.addressDrawer;
+export const ChangeCustomerContext: HandlerType = async ({ dispatch, getState, parameter: { onError } }) => {
+    const {
+        fulfillmentMethod,
+        selectedBillTo,
+        selectedShipTo,
+        isDefault,
+        pickUpWarehouse,
+    } = getState().components.addressDrawer;
     const awaitableChangeCustomerContext = makeHandlerChainAwaitable(changeCustomerContext);
     await awaitableChangeCustomerContext({
         billToId: selectedBillTo?.id,
@@ -40,20 +46,11 @@ export const DispatchCompleteApplyChanges: HandlerType = ({ dispatch }) => {
     });
 };
 
-export const FireOnSuccess: HandlerType = ({
-    parameter: {
-        onSuccess,
-    },
-}) => {
+export const FireOnSuccess: HandlerType = ({ parameter: { onSuccess } }) => {
     onSuccess?.();
 };
 
-export const chain = [
-    DispatchBeginApplyChanges,
-    ChangeCustomerContext,
-    DispatchCompleteApplyChanges,
-    FireOnSuccess,
-];
+export const chain = [DispatchBeginApplyChanges, ChangeCustomerContext, DispatchCompleteApplyChanges, FireOnSuccess];
 
 const applyChanges = createHandlerChainRunner(chain, "ApplyChanges");
 export default applyChanges;

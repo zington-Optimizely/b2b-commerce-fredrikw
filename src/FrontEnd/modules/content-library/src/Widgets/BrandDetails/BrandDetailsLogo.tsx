@@ -9,8 +9,7 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
 
-interface Props extends WidgetProps {
-}
+interface Props extends WidgetProps {}
 
 export interface BrandDetailsLogoStyles {
     container?: InjectableCss;
@@ -51,14 +50,13 @@ const BrandDetailsLogo: FC<Props> = () => {
     }
     return (
         <StyledWrapper {...styles.container} data-test-selector="brandLogo">
-            {brand.logoLargeImagePath
-                ? <LazyImage
-                    src={brand.logoLargeImagePath}
-                    altText={brand.logoAltText}
-                    {...styles.image} />
-                : <Typography
-                    data-test-selector="brandLogoHeading"
-                    {...styles.heading}>{brand.name}</Typography>}
+            {brand.logoLargeImagePath ? (
+                <LazyImage src={brand.logoLargeImagePath} altText={brand.logoAltText} {...styles.image} />
+            ) : (
+                <Typography data-test-selector="brandLogoHeading" {...styles.heading}>
+                    {brand.name}
+                </Typography>
+            )}
         </StyledWrapper>
     );
 };

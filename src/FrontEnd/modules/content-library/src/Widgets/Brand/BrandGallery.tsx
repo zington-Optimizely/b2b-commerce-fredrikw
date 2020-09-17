@@ -74,9 +74,9 @@ export const listStyles: BrandListStyles = {
         variant: "h3",
         transform: "inherit",
         css: css`
-                border-width: 20px;
-                text-align: center;
-            `,
+            border-width: 20px;
+            text-align: center;
+        `,
     },
     imageItem: {
         css: css`
@@ -97,7 +97,10 @@ class BrandGallery extends React.Component<Props> {
     }
 
     render() {
-        const { brandsState: { isLoading, value: brandList }, fields } = this.props;
+        const {
+            brandsState: { isLoading, value: brandList },
+            fields,
+        } = this.props;
 
         if (isLoading || !brandList) {
             return null;
@@ -117,23 +120,25 @@ class BrandGallery extends React.Component<Props> {
 
         return (
             <StyledWrapper {...styles.container} data-test-selector="brandGallery">
-                {this.props.fields.title && <Typography
-                    variant="headerSecondary"
-                    {...styles.titleText}
-                    data-test-selector="brandGalleryTitle"
-                >
-                    {this.props.fields.title}
-                </Typography>}
+                {this.props.fields.title && (
+                    <Typography variant="headerSecondary" {...styles.titleText} data-test-selector="brandGalleryTitle">
+                        {this.props.fields.title}
+                    </Typography>
+                )}
                 <FlexWrapContainer {...styles.imageContainer}>
                     {brandList.map(brand => (
-                        <FlexItem key={brand.id} flexColumns={[mobile, tablet, tablet, desktop, desktop]}
-                            {...styles.imageItem}>
+                        <FlexItem
+                            key={brand.id}
+                            flexColumns={[mobile, tablet, tablet, desktop, desktop]}
+                            {...styles.imageItem}
+                        >
                             <Clickable href={brand.detailPagePath} {...styles.link}>
                                 <LazyImage
                                     imgProps={imgProps}
                                     {...styles.image}
                                     src={brand.logoSmallImagePath}
-                                    altText={brand.logoAltText} />
+                                    altText={brand.logoAltText}
+                                />
                             </Clickable>
                         </FlexItem>
                     ))}
@@ -174,7 +179,8 @@ const widgetModule: WidgetModule = {
                 ],
                 defaultValue: "random",
                 fieldType: "General",
-                tooltip: "Brand logos can be picked at random on page load, or you can select specific brands to display.",
+                tooltip:
+                    "Brand logos can be picked at random on page load, or you can select specific brands to display.",
             },
             {
                 name: fields.numberOfBrandsToDisplay,
@@ -202,13 +208,13 @@ const widgetModule: WidgetModule = {
                     { displayName: "18", value: "18" },
                 ],
                 fieldType: "General",
-                isVisible: (item) => item.fields.brandsToDisplay === "random",
+                isVisible: item => item.fields.brandsToDisplay === "random",
             },
             {
                 name: fields.brandsSelected,
                 displayName: "Select brands",
                 editorTemplate: "SelectBrandsField",
-                isVisible: (item) => item.fields.brandsToDisplay === "select-brands",
+                isVisible: item => item.fields.brandsToDisplay === "select-brands",
                 defaultValue: [],
                 fieldType: "General",
             },
@@ -226,7 +232,8 @@ const widgetModule: WidgetModule = {
                     { displayName: "6", value: "6" },
                 ],
                 fieldType: "General",
-                tooltip: "Up to 6 brands can display per row. This number should be adjusted based on the number of brands you choose to display. For example, if you display 10 brands you likely want 5 to display per row. Logos will also stack responsively for smaller screen sizes.",
+                tooltip:
+                    "Up to 6 brands can display per row. This number should be adjusted based on the number of brands you choose to display. For example, if you display 10 brands you likely want 5 to display per row. Logos will also stack responsively for smaller screen sizes.",
             },
             {
                 name: fields.maximumBrandImageHeight,
@@ -234,7 +241,8 @@ const widgetModule: WidgetModule = {
                 editorTemplate: "IntegerField",
                 defaultValue: 100,
                 fieldType: "General",
-                tooltip: "By default, images will scale to meet the width of the screen for the number of brands to display per row. The maximum height value can be used to scale brand logos to be smaller. Default value is 100 pixels.",
+                tooltip:
+                    "By default, images will scale to meet the width of the screen for the number of brands to display per row. The maximum height value can be used to scale brand logos to be smaller. Default value is 100 pixels.",
             },
         ],
     },

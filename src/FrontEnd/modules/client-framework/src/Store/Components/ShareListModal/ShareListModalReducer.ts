@@ -8,11 +8,14 @@ const initialState: ShareListModalState = {
 };
 
 const reducer = {
-    "Components/ShareListModal/CompleteSetIsOpen": (draft: Draft<ShareListModalState>, action: {
-        isOpen: boolean;
-        wishListId?: string,
-        fromManage: boolean,
-    }) => {
+    "Components/ShareListModal/CompleteSetIsOpen": (
+        draft: Draft<ShareListModalState>,
+        action: {
+            isOpen: boolean;
+            wishListId?: string;
+            fromManage: boolean;
+        },
+    ) => {
         draft.isOpen = action.isOpen;
         if (action.isOpen) {
             draft.wishListId = action.wishListId;

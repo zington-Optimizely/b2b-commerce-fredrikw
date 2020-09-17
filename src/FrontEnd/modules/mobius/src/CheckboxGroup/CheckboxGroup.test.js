@@ -1,10 +1,10 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import ThemeProvider from '../ThemeProvider';
-import CheckboxGroup from './CheckboxGroup';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import ThemeProvider from "../ThemeProvider";
+import CheckboxGroup from "./CheckboxGroup";
 
-describe('CheckboxGroup', () => {
+describe("CheckboxGroup", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -12,7 +12,7 @@ describe('CheckboxGroup', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <CheckboxGroup {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
@@ -23,7 +23,7 @@ describe('CheckboxGroup', () => {
         mountedWrapper = undefined;
     });
 
-    test('renders a fieldset by default', () => {
+    test("renders a fieldset by default", () => {
         const root = wrapper().find(CheckboxGroup).getDOMNode();
         expect(root instanceof HTMLFieldSetElement).toBe(true);
     });

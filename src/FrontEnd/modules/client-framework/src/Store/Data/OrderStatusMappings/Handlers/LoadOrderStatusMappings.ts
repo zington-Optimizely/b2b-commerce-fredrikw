@@ -1,8 +1,18 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunnerOptionalParameter } from "@insite/client-framework/HandlerCreator";
-import { getOrderStatusMappings, GetOrderStatusMappingsApiParameter } from "@insite/client-framework/Services/OrderService";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunnerOptionalParameter,
+} from "@insite/client-framework/HandlerCreator";
+import {
+    getOrderStatusMappings,
+    GetOrderStatusMappingsApiParameter,
+} from "@insite/client-framework/Services/OrderService";
 import { OrderStatusMappingCollectionModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = ApiHandlerDiscreteParameter<{}, GetOrderStatusMappingsApiParameter, OrderStatusMappingCollectionModel>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    {},
+    GetOrderStatusMappingsApiParameter,
+    OrderStatusMappingCollectionModel
+>;
 
 export const DispatchBeginLoadOrderStatusMapping: HandlerType = props => {
     props.dispatch({

@@ -20,14 +20,17 @@ export interface TabPresentationProps {
     typographyProps?: object;
 }
 
-export type TabProps = MobiusStyledComponentProps<"button", {
-    /** Whether or not the tab is currently selected */
-    selected?: boolean;
-    /** Unique key for tab presentation. */
-    tabKey: string;
-    /** String to render as the tab headline. */
-    headline: React.ReactNode ;
-} & TabPresentationProps>;
+export type TabProps = MobiusStyledComponentProps<
+    "button",
+    {
+        /** Whether or not the tab is currently selected */
+        selected?: boolean;
+        /** Unique key for tab presentation. */
+        tabKey: string;
+        /** String to render as the tab headline. */
+        headline: React.ReactNode;
+    } & TabPresentationProps
+>;
 
 type TabStyleProps = {
     ref?: React.Ref<React.Component<ButtonProps>>;
@@ -41,10 +44,9 @@ const TabStyle = styled(Button).attrs<TabProps, TabStyleProps>({ role: "presenta
     padding: 8px 16px 16px;
     min-width: 85px;
     text-align: center;
-    border-bottom:
-        4px solid ${({ selected, theme }: TabProps) => (selected
-        ? resolveColor("common.backgroundContrast", theme!)
-        : "transparent")};
+    border-bottom: 4px solid
+        ${({ selected, theme }: TabProps) =>
+            selected ? resolveColor("common.backgroundContrast", theme!) : "transparent"};
     transition: all 0.4s;
     &:hover {
         border-bottom: 4px solid ${getColor("secondary.main")};
@@ -57,31 +59,33 @@ const TabStyle = styled(Button).attrs<TabProps, TabStyleProps>({ role: "presenta
     ${injectCss}
 `;
 
-const Tab = React.forwardRef<React.Component<ButtonProps>, TabProps>((
-{
-    headline,
-    onClick,
-    ...otherProps
-}: TabProps,
-ref) => {
-    const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "tab" });
-    const tabHeader = (typeof headline === "string")
-        ? <Typography role="tab" {...spreadProps("typographyProps")}>{headline}</Typography>
-        : headline;
-    return (
-        <TabStyle
-            as="li"
-            aria-selected={otherProps.selected}
-            tabIndex={otherProps.selected ? 0 : -1}
-            onClick={onClick}
-            ref={ref}
-            css={applyProp("css")}
-            headline={headline}
-            {...omitSingle(otherProps, "css")}>
-            {tabHeader}
-        </TabStyle>
-    );
-});
+const Tab = React.forwardRef<React.Component<ButtonProps>, TabProps>(
+    ({ headline, onClick, ...otherProps }: TabProps, ref) => {
+        const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "tab" });
+        const tabHeader =
+            typeof headline === "string" ? (
+                <Typography role="tab" {...spreadProps("typographyProps")}>
+                    {headline}
+                </Typography>
+            ) : (
+                headline
+            );
+        return (
+            <TabStyle
+                as="li"
+                aria-selected={otherProps.selected}
+                tabIndex={otherProps.selected ? 0 : -1}
+                onClick={onClick}
+                ref={ref}
+                css={applyProp("css")}
+                headline={headline}
+                {...omitSingle(otherProps, "css")}
+            >
+                {tabHeader}
+            </TabStyle>
+        );
+    },
+);
 
 Tab.displayName = "Tab";
 

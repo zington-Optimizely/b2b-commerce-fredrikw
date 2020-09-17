@@ -1,5 +1,8 @@
 import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
-import { deletePaymentProfile as deletePaymentProfileApi, DeletePaymentProfileApiParameter } from "@insite/client-framework/Services/AccountService";
+import {
+    deletePaymentProfile as deletePaymentProfileApi,
+    DeletePaymentProfileApiParameter,
+} from "@insite/client-framework/Services/AccountService";
 
 type HandlerType = ApiHandler<DeletePaymentProfileApiParameter & HasOnSuccess, {}>;
 
@@ -21,12 +24,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    DispatchResetPaymentProfiles,
-    ExecuteOnSuccessCallback,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, DispatchResetPaymentProfiles, ExecuteOnSuccessCallback];
 
 const deletePaymentProfile = createHandlerChainRunner(chain, "DeletePaymentProfile");
 export default deletePaymentProfile;

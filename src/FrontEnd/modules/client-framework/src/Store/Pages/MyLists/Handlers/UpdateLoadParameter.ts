@@ -10,9 +10,7 @@ export const DispatchUpdateLoadParameter: HandlerType = props => {
     });
 };
 
-export const chain = [
-    DispatchUpdateLoadParameter,
-];
+export const chain = [DispatchUpdateLoadParameter];
 
 const updateLoadParameter = createHandlerChainRunner(chain, "UpdateLoadParameter");
 export default updateLoadParameter;

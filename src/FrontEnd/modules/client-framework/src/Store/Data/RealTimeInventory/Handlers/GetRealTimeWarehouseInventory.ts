@@ -7,17 +7,20 @@ import { ProductInventoryDto, WarehouseDto } from "@insite/client-framework/Type
 
 interface Result {
     errorMessage: string;
-    warehouses?: WarehouseDto[],
+    warehouses?: WarehouseDto[];
 }
 
-type HandlerType = Handler<GetProductRealTimeInventoryApiV2Parameter & {
-    onComplete: (result: Result) => void;
-    unitOfMeasure: string;
-}, {
-    apiParameter: GetProductRealTimeInventoryApiV2Parameter,
-    apiResult?: ProductInventoryDto,
-    result: Result,
-}>;
+type HandlerType = Handler<
+    GetProductRealTimeInventoryApiV2Parameter & {
+        onComplete: (result: Result) => void;
+        unitOfMeasure: string;
+    },
+    {
+        apiParameter: GetProductRealTimeInventoryApiV2Parameter;
+        apiResult?: ProductInventoryDto;
+        result: Result;
+    }
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = props.parameter;
@@ -33,8 +36,9 @@ export const FindWarehouseData: HandlerType = props => {
     };
 
     if (props.apiResult && props.apiResult.inventoryWarehousesDtos) {
-        const inventoryWarehousesDto = props.apiResult.inventoryWarehousesDtos
-            .find(o => o.unitOfMeasure.toLowerCase() === props.parameter.unitOfMeasure.toLowerCase());
+        const inventoryWarehousesDto = props.apiResult.inventoryWarehousesDtos.find(
+            o => o.unitOfMeasure.toLowerCase() === props.parameter.unitOfMeasure.toLowerCase(),
+        );
 
         if (inventoryWarehousesDto && inventoryWarehousesDto.warehouseDtos) {
             props.result = {
@@ -49,12 +53,7 @@ export const CallOnComplete: HandlerType = props => {
     props.parameter.onComplete(props.result);
 };
 
-export const chain = [
-    PopulateApiParameter,
-    RequestDataFromApi,
-    FindWarehouseData,
-    CallOnComplete,
-];
+export const chain = [PopulateApiParameter, RequestDataFromApi, FindWarehouseData, CallOnComplete];
 
 const getRealTimeWarehouseInventory = createHandlerChainRunner(chain, "GetRealTimeWarehouseInventory");
 export default getRealTimeWarehouseInventory;

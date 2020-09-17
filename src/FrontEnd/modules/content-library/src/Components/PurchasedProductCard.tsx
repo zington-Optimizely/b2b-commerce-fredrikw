@@ -7,7 +7,9 @@ import { getProductInfoFromList } from "@insite/client-framework/Store/Component
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
-import ProductAddToListLink, { ProductAddToListLinkStyles } from "@insite/content-library/Components/ProductAddToListLink";
+import ProductAddToListLink, {
+    ProductAddToListLinkStyles,
+} from "@insite/content-library/Components/ProductAddToListLink";
 import { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
 import ProductContextAvailability from "@insite/content-library/Components/ProductContextAvailability";
@@ -15,7 +17,9 @@ import ProductDescription, { ProductDescriptionStyles } from "@insite/content-li
 import ProductImage, { ProductImageStyles } from "@insite/content-library/Components/ProductImage";
 import ProductPartNumbers, { ProductPartNumbersStyles } from "@insite/content-library/Components/ProductPartNumbers";
 import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Components/ProductPrice";
-import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import ProductQuantityBreakPricing, {
+    ProductQuantityBreakPricingStyles,
+} from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
 import ProductUnitOfMeasureSelect from "@insite/content-library/Components/ProductUnitOfMeasureSelect";
 import { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -93,7 +97,9 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
     },
     leftColumnGridItem: {
         width: [4, 4, 2, 1, 1],
-        css: css` padding-right: 15px; `,
+        css: css`
+            padding-right: 15px;
+        `,
     },
     rightColumnGridItem: {
         width: [8, 8, 10, 11, 11],
@@ -104,11 +110,15 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
     },
     infoContainer: {
         gap: 0,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     descriptionStyles: {
         productDetailLink: {
-            css: css` width: 100%; `,
+            css: css`
+                width: 100%;
+            `,
             typographyProps: {
                 size: 14,
             },
@@ -130,7 +140,9 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
         },
         erpNumberValueText: {
             color: "text.disabled",
-            css: css` padding-left: 5px; `,
+            css: css`
+                padding-left: 5px;
+            `,
         },
     },
     availabilityGridItem: {
@@ -151,7 +163,17 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
                 width: auto;
                 text-align: end;
                 ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, css` align-self: flex-end; `], "min")}
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            null,
+                            css`
+                                align-self: flex-end;
+                            `,
+                        ],
+                        "min",
+                    )}
             `,
         },
     },
@@ -161,7 +183,17 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
             css: css`
                 text-align: end;
                 ${({ theme }: { theme: BaseTheme }) =>
-                breakpointMediaQueries(theme, [null, null, css` align-self: flex-end; `], "min")}
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            null,
+                            css`
+                                align-self: flex-end;
+                            `,
+                        ],
+                        "min",
+                    )}
             `,
         },
     },
@@ -170,7 +202,9 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
     },
     actionsContainer: {
         gap: 0,
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     quantityGridItem: { width: 3 },
     addToGridItem: {
@@ -182,10 +216,14 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
         `,
     },
     addToCartButton: {
-        css: css` width: 100%; `,
+        css: css`
+            width: 100%;
+        `,
     },
     addToListWrapper: {
-        css: css` margin-top: 5px; `,
+        css: css`
+            margin-top: 5px;
+        `,
     },
     addToListLink: {
         link: {
@@ -195,19 +233,19 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
 };
 
 const PurchasedProductCard: React.FC<Props> = ({
-                                                   product,
-                                                   productInfo,
-                                                   showBrand,
-                                                   showPartNumbers,
-                                                   showPrice,
-                                                   showAvailability,
-                                                   showAddToCart,
-                                                   showAddToList,
-                                                   productSettings,
-                                                   extendedStyles,
-                                                   updateProductInfo,
-                                                   widgetId,
-                                               }) => {
+    product,
+    productInfo,
+    showBrand,
+    showPartNumbers,
+    showPrice,
+    showAvailability,
+    showAddToCart,
+    showAddToList,
+    productSettings,
+    extendedStyles,
+    updateProductInfo,
+    widgetId,
+}) => {
     const [styles] = React.useState(() => mergeToNew(purchasedProductCardStyles, extendedStyles));
 
     if (!productInfo || !product) {
@@ -225,82 +263,95 @@ const PurchasedProductCard: React.FC<Props> = ({
         },
     };
 
-    return <ProductContext.Provider value={productContext}>
-        <GridContainer {...styles.container} data-test-selector={`purchasedProductCard_${product.id}`}>
-            <GridItem {...styles.leftColumnGridItem}>
-                <ProductImage extendedStyles={styles.productImage} product={productContext}/>
-            </GridItem>
-            <GridItem {...styles.rightColumnGridItem}>
-                <GridContainer {...styles.rightColumnGridContainer}>
-                    <GridItem {...styles.infoGridItem}>
-                        <GridContainer {...styles.infoContainer}>
-                            {product.brand && showBrand
-                            && <GridItem {...styles.brandGridItem}>
-                                <ProductBrand brand={product.brand} extendedStyles={styles.brandStyles}/>
-                            </GridItem>
-                            }
-                            <GridItem {...styles.descriptionGridItem}>
-                                <ProductDescription product={productContext} extendedStyles={styles.descriptionStyles}/>
-                            </GridItem>
-                            {showPartNumbers
-                            && <GridItem {...styles.partNumbersGridItem}>
-                                <ProductPartNumbers
-                                    productNumber={product.productNumber}
-                                    customerProductNumber={product.customerProductNumber}
-                                    manufacturerItem={product.manufacturerItem}
-                                    extendedStyles={styles.partNumbersStyles}
-                                />
-                            </GridItem>
-                            }
-                            {productSettings.showInventoryAvailability && showAvailability
-                            && <GridItem {...styles.availabilityGridItem}>
-                                <ProductContextAvailability extendedStyles={styles.availabilityStyles} />
-                            </GridItem>
-                            }
-                        </GridContainer>
-                    </GridItem>
-                    <GridItem {...styles.priceGridItem}>
-                        {showPrice
-                        && <>
-                            <ProductPrice
-                                product={productContext}
-                                showLabel={false}
-                                showSavings={true}
-                                showSavingsAmount={productSettings.showSavingsAmount}
-                                showSavingsPercent={productSettings.showSavingsPercent}
-                                extendedStyles={styles.priceStyles}
-                            />
-                            <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing}/>
-                            {product.unitOfMeasures
-                                && <ProductUnitOfMeasureSelect
-                                    labelOverride=""
-                                    id={`${product.id}-uom`}/>}
-                        </>
-                        }
-                    </GridItem>
-                    <GridItem {...styles.actionsGridItem}>
-                        <GridContainer {...styles.actionsContainer}>
-                            <GridItem {...styles.quantityGridItem}>
-                                {showAddToCart
-                                && <ProductQuantityOrdered labelOverride="" extendedStyles={styles.quantityOrdered}/>
-                                }
-                            </GridItem>
-                            <GridItem {...styles.addToGridItem}>
-                                {showAddToCart
-                                && <ProductAddToCartButton data-test-selector={`actionsAddToCart${product.id}`} extendedStyles={styles.addToCartButton}/>
-                                }
-                                {showAddToList
-                                && <StyledWrapper {...styles.addToListWrapper}>
-                                    <ProductAddToListLink data-test-selector={`actionsAddToList${product.id}`} extendedStyles={styles.addToListLink}/>
-                                </StyledWrapper>
-                                }
-                            </GridItem>
-                        </GridContainer>
-                    </GridItem>
-                </GridContainer>
-            </GridItem>
-        </GridContainer>
-    </ProductContext.Provider>;
+    return (
+        <ProductContext.Provider value={productContext}>
+            <GridContainer {...styles.container} data-test-selector={`purchasedProductCard_${product.id}`}>
+                <GridItem {...styles.leftColumnGridItem}>
+                    <ProductImage extendedStyles={styles.productImage} product={productContext} />
+                </GridItem>
+                <GridItem {...styles.rightColumnGridItem}>
+                    <GridContainer {...styles.rightColumnGridContainer}>
+                        <GridItem {...styles.infoGridItem}>
+                            <GridContainer {...styles.infoContainer}>
+                                {product.brand && showBrand && (
+                                    <GridItem {...styles.brandGridItem}>
+                                        <ProductBrand brand={product.brand} extendedStyles={styles.brandStyles} />
+                                    </GridItem>
+                                )}
+                                <GridItem {...styles.descriptionGridItem}>
+                                    <ProductDescription
+                                        product={productContext}
+                                        extendedStyles={styles.descriptionStyles}
+                                    />
+                                </GridItem>
+                                {showPartNumbers && (
+                                    <GridItem {...styles.partNumbersGridItem}>
+                                        <ProductPartNumbers
+                                            productNumber={product.productNumber}
+                                            customerProductNumber={product.customerProductNumber}
+                                            manufacturerItem={product.manufacturerItem}
+                                            extendedStyles={styles.partNumbersStyles}
+                                        />
+                                    </GridItem>
+                                )}
+                                {productSettings.showInventoryAvailability && showAvailability && (
+                                    <GridItem {...styles.availabilityGridItem}>
+                                        <ProductContextAvailability extendedStyles={styles.availabilityStyles} />
+                                    </GridItem>
+                                )}
+                            </GridContainer>
+                        </GridItem>
+                        <GridItem {...styles.priceGridItem}>
+                            {showPrice && (
+                                <>
+                                    <ProductPrice
+                                        product={productContext}
+                                        showLabel={false}
+                                        showSavings={true}
+                                        showSavingsAmount={productSettings.showSavingsAmount}
+                                        showSavingsPercent={productSettings.showSavingsPercent}
+                                        extendedStyles={styles.priceStyles}
+                                    />
+                                    <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing} />
+                                    {product.unitOfMeasures && (
+                                        <ProductUnitOfMeasureSelect labelOverride="" id={`${product.id}-uom`} />
+                                    )}
+                                </>
+                            )}
+                        </GridItem>
+                        <GridItem {...styles.actionsGridItem}>
+                            <GridContainer {...styles.actionsContainer}>
+                                <GridItem {...styles.quantityGridItem}>
+                                    {showAddToCart && (
+                                        <ProductQuantityOrdered
+                                            labelOverride=""
+                                            extendedStyles={styles.quantityOrdered}
+                                        />
+                                    )}
+                                </GridItem>
+                                <GridItem {...styles.addToGridItem}>
+                                    {showAddToCart && (
+                                        <ProductAddToCartButton
+                                            data-test-selector={`actionsAddToCart${product.id}`}
+                                            extendedStyles={styles.addToCartButton}
+                                        />
+                                    )}
+                                    {showAddToList && (
+                                        <StyledWrapper {...styles.addToListWrapper}>
+                                            <ProductAddToListLink
+                                                data-test-selector={`actionsAddToList${product.id}`}
+                                                extendedStyles={styles.addToListLink}
+                                            />
+                                        </StyledWrapper>
+                                    )}
+                                </GridItem>
+                            </GridContainer>
+                        </GridItem>
+                    </GridContainer>
+                </GridItem>
+            </GridContainer>
+        </ProductContext.Provider>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PurchasedProductCard);

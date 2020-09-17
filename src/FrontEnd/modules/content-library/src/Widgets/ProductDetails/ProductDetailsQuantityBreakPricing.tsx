@@ -1,7 +1,9 @@
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import ProductQuantityBreakPricing, { ProductQuantityBreakPricingStyles } from "@insite/content-library/Components/ProductQuantityBreakPricing";
+import ProductQuantityBreakPricing, {
+    ProductQuantityBreakPricingStyles,
+} from "@insite/content-library/Components/ProductQuantityBreakPricing";
 import { ProductDetailsPageContext } from "@insite/content-library/Pages/ProductDetailsPage";
 import * as React from "react";
 import { css } from "styled-components";
@@ -15,7 +17,9 @@ export interface ProductDetailsQuantityBreakPricingStyles {
 export const quantityBreakPricingStyles: ProductDetailsQuantityBreakPricingStyles = {
     quantityBreakPricing: {
         viewLink: {
-            css: css` margin: 8px 0; `,
+            css: css`
+                margin: 8px 0;
+            `,
         },
     },
 };
@@ -27,7 +31,7 @@ const ProductDetailsQuantityBreakPricing: React.FC<Props> = ({ product }) => {
         return null;
     }
 
-    return <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing}/>;
+    return <ProductQuantityBreakPricing extendedStyles={styles.quantityBreakPricing} />;
 };
 
 const widgetModule: WidgetModule = {

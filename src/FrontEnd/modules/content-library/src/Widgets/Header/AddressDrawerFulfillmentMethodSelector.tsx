@@ -24,9 +24,7 @@ interface OwnProps extends WidgetProps {}
 const mapStateToProps = (state: ApplicationState) => {
     const {
         components: {
-            addressDrawer: {
-                fulfillmentMethod,
-            },
+            addressDrawer: { fulfillmentMethod },
         },
     } = state;
     const signInPageLink = getPageLinkByPageType(state, "SignInPage")?.url;
@@ -34,9 +32,8 @@ const mapStateToProps = (state: ApplicationState) => {
         fulfillmentMethod,
         showPickUpOption: getSettingsCollection(state).accountSettings.enableWarehousePickup,
         signInPageLink,
-        showSignInMessage: fulfillmentMethod === FulfillmentMethod.Ship
-            && !getSession(state).isAuthenticated
-            && signInPageLink,
+        showSignInMessage:
+            fulfillmentMethod === FulfillmentMethod.Ship && !getSession(state).isAuthenticated && signInPageLink,
     };
 };
 
@@ -76,7 +73,7 @@ const AddressDrawerFulfillmentMethodSelector = ({
     setDrawerIsOpen,
     setNavDrawerIsOpen,
 }: Props) => {
-    const handleChangeFulfillmentMethod: RadioGroupComponentProps["onChangeHandler"] = (event) => {
+    const handleChangeFulfillmentMethod: RadioGroupComponentProps["onChangeHandler"] = event => {
         changeFulfillmentMethod({ fulfillmentMethod: event.target.value });
     };
 
@@ -108,19 +105,17 @@ const AddressDrawerFulfillmentMethodSelector = ({
                 >
                     {translate("Ship")}
                 </Radio>
-                {showPickUpOption
-                    && <Radio
+                {showPickUpOption && (
+                    <Radio
                         {...styles.pickUpRadio}
                         value={FulfillmentMethod.PickUp}
                         data-test-selector="addressDrawer_fulfillmentMethod_pickUp"
                     >
                         {translate("Pick Up")}
                     </Radio>
-                }
+                )}
             </RadioGroup>
-            {showSignInMessage
-                && <SignInMessage onClick={handleSignInMessageClick} />
-            }
+            {showSignInMessage && <SignInMessage onClick={handleSignInMessageClick} />}
         </StyledWrapper>
     );
 };
@@ -129,14 +124,15 @@ interface SignInMessageProps {
     onClick: LinkProps["onClick"];
 }
 
-const SignInMessage = ({
-    onClick,
-}: SignInMessageProps) => {
+const SignInMessage = ({ onClick }: SignInMessageProps) => {
     return (
-        <StyledWrapper css={css` margin-top: 1rem; `}>
-            <Link onClick={onClick}>
-                {translate("Sign in")}
-            </Link><Typography> {translate("or enter address during checkout")}</Typography>
+        <StyledWrapper
+            css={css`
+                margin-top: 1rem;
+            `}
+        >
+            <Link onClick={onClick}>{translate("Sign in")}</Link>
+            <Typography> {translate("or enter address during checkout")}</Typography>
         </StyledWrapper>
     );
 };

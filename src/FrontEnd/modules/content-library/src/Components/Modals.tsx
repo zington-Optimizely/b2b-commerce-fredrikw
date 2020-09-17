@@ -3,9 +3,11 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import * as React from "react";
 
 const Modals: React.FC = () => {
-    return <>
+    return (
+        <>
             <AddToListModal />
-        </>;
+        </>
+    );
 };
 
 export default Modals;

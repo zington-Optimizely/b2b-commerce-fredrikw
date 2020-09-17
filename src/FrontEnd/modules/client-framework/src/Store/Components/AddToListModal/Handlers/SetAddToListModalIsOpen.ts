@@ -6,7 +6,7 @@ import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLi
 
 interface Parameter {
     productInfos?: Omit<ProductInfo, "productDetailPath">[];
-    modalIsOpen: boolean
+    modalIsOpen: boolean;
 }
 
 type HandlerType = Handler<Parameter>;
@@ -17,7 +17,11 @@ export const wishListsParameter = {
 };
 
 export const LoadLists: HandlerType = async props => {
-    if (props.parameter.modalIsOpen && props.getState().context.session.isAuthenticated && !getWishListsDataView(props.getState(), wishListsParameter).value) {
+    if (
+        props.parameter.modalIsOpen &&
+        props.getState().context.session.isAuthenticated &&
+        !getWishListsDataView(props.getState(), wishListsParameter).value
+    ) {
         props.dispatch(loadWishLists(wishListsParameter));
 
         for (let x = 0; x < 200; x += 1) {
@@ -37,10 +41,7 @@ export const DispatchCompleteSetAddToListModalIsOpen: HandlerType = props => {
     });
 };
 
-export const chain = [
-    LoadLists,
-    DispatchCompleteSetAddToListModalIsOpen,
-];
+export const chain = [LoadLists, DispatchCompleteSetAddToListModalIsOpen];
 
 const setAddToListModalIsOpen = createHandlerChainRunner(chain, "SetAddToListModalIsOpen");
 export default setAddToListModalIsOpen;

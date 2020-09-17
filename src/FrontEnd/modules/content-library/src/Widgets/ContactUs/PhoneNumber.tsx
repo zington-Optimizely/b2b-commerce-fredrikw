@@ -36,17 +36,12 @@ export interface PhoneNumberStyles {
     phoneNumberTextField?: TextFieldPresentationProps;
 }
 
-export const phoneNumberStyles: PhoneNumberStyles = {
-};
+export const phoneNumberStyles: PhoneNumberStyles = {};
 
 const styles = phoneNumberStyles;
 const phoneRegex = /^([\(\)/\-\.\+\s]*\d\s?(ext)?[\(\)/\-\.\+\s]*){10,}$/;
 
-const PhoneNumber: React.FC<Props> = ({
-    fields,
-    phoneNumber,
-    setFieldValue,
-}) => {
+const PhoneNumber: React.FC<Props> = ({ fields, phoneNumber, setFieldValue }) => {
     const { label, hintText, isRequired } = fields;
     const contactFormContext = React.useContext(ContactFormContext);
     const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = React.useState("");
@@ -60,11 +55,12 @@ const PhoneNumber: React.FC<Props> = ({
     }, [isRequired]);
 
     const validatePhoneNumber = () => {
-        const errorMessage = !phoneNumber && isRequired
-            ? siteMessage("ContactUsForm_PhoneNumberIsRequiredErrorMessage")
-            : (!phoneNumber || phoneRegex.test(phoneNumber)
+        const errorMessage =
+            !phoneNumber && isRequired
+                ? siteMessage("ContactUsForm_PhoneNumberIsRequiredErrorMessage")
+                : !phoneNumber || phoneRegex.test(phoneNumber)
                 ? ""
-                : siteMessage("ContactUsForm_PhoneNumberIsInvalidErrorMessage"));
+                : siteMessage("ContactUsForm_PhoneNumberIsInvalidErrorMessage");
         setPhoneNumberErrorMessage(errorMessage as string);
         return !errorMessage;
     };
@@ -77,16 +73,18 @@ const PhoneNumber: React.FC<Props> = ({
         validatePhoneNumber();
     };
 
-    return <TextField
-        {...styles.phoneNumberTextField}
-        label={label}
-        required={isRequired}
-        placeholder={hintText}
-        value={phoneNumber || ""}
-        onChange={phoneNumberChangeHandler}
-        onBlur={phoneNumberBlurHandler}
-        error={phoneNumberErrorMessage}
-    />;
+    return (
+        <TextField
+            {...styles.phoneNumberTextField}
+            label={label}
+            required={isRequired}
+            placeholder={hintText}
+            value={phoneNumber || ""}
+            onChange={phoneNumberChangeHandler}
+            onBlur={phoneNumberBlurHandler}
+            error={phoneNumberErrorMessage}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

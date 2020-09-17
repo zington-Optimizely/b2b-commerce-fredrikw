@@ -1,10 +1,10 @@
-import 'jest-styled-components';
-import React from 'react';
-import { mount } from 'enzyme';
-import LoadingSpinner from './LoadingSpinner';
-import ThemeProvider from '../ThemeProvider';
+import "jest-styled-components";
+import React from "react";
+import { mount } from "enzyme";
+import LoadingSpinner from "./LoadingSpinner";
+import ThemeProvider from "../ThemeProvider";
 
-describe('LoadingSpinner', () => {
+describe("LoadingSpinner", () => {
     let props;
     let mountedWrapper;
     const wrapper = () => {
@@ -12,18 +12,20 @@ describe('LoadingSpinner', () => {
             mountedWrapper = mount(
                 <ThemeProvider>
                     <LoadingSpinner {...props} />
-                </ThemeProvider>
+                </ThemeProvider>,
             );
         }
         return mountedWrapper;
     };
 
     beforeEach(() => {
-        props = { /* prop: undefined */ };
+        props = {
+            /* prop: undefined */
+        };
         mountedWrapper = undefined;
     });
 
-    test('renders as an svg by default', () => {
+    test("renders as an svg by default", () => {
         const root = wrapper().find(LoadingSpinner).getDOMNode();
         expect(root instanceof SVGElement).toBe(true);
     });

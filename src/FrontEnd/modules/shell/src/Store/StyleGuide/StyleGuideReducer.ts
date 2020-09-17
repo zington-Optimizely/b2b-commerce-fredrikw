@@ -1,114 +1,69 @@
-import createTypedReducer from "@insite/client-framework/Common/CreateTypedReducer";
+import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
-
-export const enum LoadStatus {
-    None,
-    Loading,
-    Loaded,
-}
-
-type LoadState<T extends LoadStatus> = {
-    loadStatus: T;
-};
+import { StyleGuideState } from "@insite/shell/Store/StyleGuide/StyleGuideState";
+import { Draft } from "immer";
 
 type HasTheme = {
     theme: Partial<BaseTheme>;
 };
 
-export type State =
-    LoadState<LoadStatus.None>
-    | LoadState<LoadStatus.Loading>
-    | (LoadState<LoadStatus.Loaded> & HasTheme & {
-        saving?: true;
-        history: Partial<BaseTheme>[];
-        historyIndex: number,
-    });
-
-const initialState: State = {
-    loadStatus: LoadStatus.None,
+const initialState: StyleGuideState = {
+    history: [],
+    historyIndex: 0,
 };
 
 const reducer = {
-    "StyleGuide/SetTheme": (state: State, action: HasTheme) => {
-        if (state.loadStatus !== LoadStatus.Loaded) {
-            return state;
+    "StyleGuide/SetTheme": (draft: Draft<StyleGuideState>, action: HasTheme) => {
+        // the as any's are needed to avoid typescript getting confused by TS2589: Type instantiation is excessively deep and possibly infinite.
+        const themeAsAny = action.theme as any;
+        draft.history = (draft.history as Partial<BaseTheme>[]).slice(0, draft.historyIndex + 1) as any;
+        draft.history.push(themeAsAny);
+        draft.theme = themeAsAny;
+        draft.historyIndex = draft.history.length - 1;
+    },
+    "StyleGuide/Undo": (draft: Draft<StyleGuideState>) => {
+        if (draft.historyIndex === 0) {
+            return;
         }
 
-        const newHistory = state.history.slice(0, state.historyIndex + 1);
-        newHistory.push(action.theme);
-
-        return {
-            ...state,
-            theme: action.theme,
-            history: newHistory,
-            historyIndex: newHistory.length - 1,
-        };
+        draft.theme = draft.history[draft.historyIndex - 1];
+        draft.historyIndex = draft.historyIndex - 1;
     },
-    "StyleGuide/Undo": (state: State) => {
-        if (state.loadStatus !== LoadStatus.Loaded || state.historyIndex === 0) {
-            return state;
+    "StyleGuide/Redo": (draft: Draft<StyleGuideState>) => {
+        if (draft.historyIndex === draft.history.length - 1) {
+            return;
         }
 
-        return {
-            ...state,
-            theme: state.history[state.historyIndex - 1],
-            historyIndex: state.historyIndex - 1,
-        };
+        draft.theme = draft.history[draft.historyIndex + 1];
+        draft.historyIndex = draft.historyIndex + 1;
     },
-    "StyleGuide/Redo": (state: State) => {
-        if (state.loadStatus !== LoadStatus.Loaded || state.historyIndex === state.history.length - 1) {
-            return state;
+    "StyleGuide/Cancel": (draft: Draft<StyleGuideState>) => {
+        draft.historyIndex = 0;
+        draft.theme = draft.history[0];
+        draft.history = [draft.theme];
+    },
+    "StyleGuide/SaveStarted": (draft: Draft<StyleGuideState>) => {
+        draft.saving = true;
+    },
+    "StyleGuide/SaveCompleted": (draft: Draft<StyleGuideState>) => {
+        if (!draft.theme) {
+            return;
         }
-
-        return {
-            ...state,
-            theme: state.history[state.historyIndex + 1],
-            historyIndex: state.historyIndex + 1,
-        };
+        draft.historyIndex = 0;
+        draft.history = [draft.theme];
+        draft.saving = undefined;
     },
-    "StyleGuide/Cancel": (state: State) => {
-        if (state.loadStatus !== LoadStatus.Loaded) {
-            return state;
-        }
-
-        return {
-            ...state,
-            theme: state.history[0],
-            history: [state.history[0]],
-            historyIndex: 0,
-        };
+    "StyleGuide/LoadStarted": (draft: Draft<StyleGuideState>) => {
+        draft.theme = undefined;
     },
-    "StyleGuide/SaveStarted": (state: State) => {
-        if (state.loadStatus !== LoadStatus.Loaded) {
-            return state;
-        }
-
-        return {
-            ...state,
-            saving: true,
-        } as const;
+    "StyleGuide/LoadCompleted": (draft: Draft<StyleGuideState>, action: HasTheme) => {
+        draft.theme = action.theme as any;
+        draft.history = [action.theme as any];
+        draft.historyIndex = 0;
     },
-    "StyleGuide/SaveCompleted": (state: State) => {
-        if (state.loadStatus !== LoadStatus.Loaded) {
-            return state;
-        }
-
-        return {
-            ...state,
-            history: [state.theme],
-            historyIndex: 0,
-        };
+    "StyleGuide/Unload": () => {
+        return initialState;
     },
-    "StyleGuide/LoadStarted": (state: State): State => ({
-        loadStatus: LoadStatus.Loading,
-    }),
-    "StyleGuide/LoadCompleted": (state: State, action: HasTheme): State => ({
-        loadStatus: LoadStatus.Loaded,
-        theme: { ...action.theme },
-        history: [action.theme],
-        historyIndex: 0,
-    }),
-    "StyleGuide/Unload": (state: State) => initialState,
 };
 
-export default createTypedReducer<State, typeof reducer>(initialState, reducer);
+export default createTypedReducerWithImmer(initialState, reducer);

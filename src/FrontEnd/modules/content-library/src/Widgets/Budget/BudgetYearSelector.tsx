@@ -30,7 +30,7 @@ export const yearSelectorStyles: BudgetYearSelectorStyles = {
     },
 };
 
-const BudgetYearSelector: React.FunctionComponent<Props> = (props) => {
+const BudgetYearSelector: React.FunctionComponent<Props> = props => {
     const budgetYears = getBudgetYears(5);
 
     const [styles] = React.useState(() => mergeToNew(yearSelectorStyles, props.extendedStyles));
@@ -42,10 +42,15 @@ const BudgetYearSelector: React.FunctionComponent<Props> = (props) => {
                 {...styles.select}
                 value={props.budgetYear}
                 data-test-selector={props.dataTestSelector}
-                onChange={(event: React.FormEvent<HTMLSelectElement>) => props.onBudgetYearChange(Number(event.currentTarget.value))}>
-                {budgetYears.map((budgetYear: number) =>
-                    <option key={budgetYear} value={budgetYear}>{budgetYear}</option>,
-                )}
+                onChange={(event: React.FormEvent<HTMLSelectElement>) =>
+                    props.onBudgetYearChange(Number(event.currentTarget.value))
+                }
+            >
+                {budgetYears.map((budgetYear: number) => (
+                    <option key={budgetYear} value={budgetYear}>
+                        {budgetYear}
+                    </option>
+                ))}
             </Select>
         </StyledWrapper>
     );

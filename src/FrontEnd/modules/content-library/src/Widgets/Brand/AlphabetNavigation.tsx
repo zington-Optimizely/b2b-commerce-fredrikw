@@ -44,7 +44,9 @@ export const alphabetNavigationStyles: AlphabetNavigationStyles = {
         `,
     },
     navigationLink: {
-        css: css` display: block; `,
+        css: css`
+            display: block;
+        `,
         typographyProps: {
             transform: "uppercase",
             variant: "headerTertiary",
@@ -83,18 +85,18 @@ const AlphabetNavigation: FC<Props> = (props: Props) => {
     return (
         <StyledWrapper {...styles.container} data-test-selector="alphabetNavigation">
             {alphabet.map(alphabetItem => (
-                <StyledSpan {...styles.navigationItem} key={alphabetItem.letter} data-test-selector="alphabetNavigationItemLetter">
-                    {alphabetItem.linkable
-                        ? <Link
-                            {...styles.navigationLink}
-                            onClick={createHandleClickOfLetter(alphabetItem.letter)}
-                        >
+                <StyledSpan
+                    {...styles.navigationItem}
+                    key={alphabetItem.letter}
+                    data-test-selector="alphabetNavigationItemLetter"
+                >
+                    {alphabetItem.linkable ? (
+                        <Link {...styles.navigationLink} onClick={createHandleClickOfLetter(alphabetItem.letter)}>
                             {alphabetItem.letter}
                         </Link>
-                        : <Typography {...styles.navigationTextEmpty} >
-                            {alphabetItem.letter}
-                        </Typography>
-                    }
+                    ) : (
+                        <Typography {...styles.navigationTextEmpty}>{alphabetItem.letter}</Typography>
+                    )}
                 </StyledSpan>
             ))}
         </StyledWrapper>

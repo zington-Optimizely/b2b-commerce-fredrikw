@@ -45,7 +45,9 @@ export interface RequestRmaButtonsStyles {
 export const requestRmaButtonsStyles: RequestRmaButtonsStyles = {
     sendButton: {
         variant: "primary",
-        css: css` margin-left: 10px; `,
+        css: css`
+            margin-left: 10px;
+        `,
     },
     cancelButton: {
         buttonType: "outline",
@@ -61,7 +63,11 @@ export const requestRmaButtonsStyles: RequestRmaButtonsStyles = {
 
 const styles = requestRmaButtonsStyles;
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory & HasToasterContext;
+type Props = OwnProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasHistory &
+    HasToasterContext;
 
 const RequestRmaButtons: FC<Props> = ({
     orderDetailsLink,
@@ -114,18 +120,29 @@ const RequestRmaButtons: FC<Props> = ({
     return (
         <>
             <Hidden {...styles.menuHiddenContainer}>
-                <OverflowMenu  {...styles.narrowOverflowMenu}>
-                    <Clickable {...styles.cancelClickable} onClick={cancelClickHandlel}>{translate("Cancel")}</Clickable>
+                <OverflowMenu {...styles.narrowOverflowMenu}>
+                    <Clickable {...styles.cancelClickable} onClick={cancelClickHandlel}>
+                        {translate("Cancel")}
+                    </Clickable>
                     <Clickable {...styles.sendClickable} onClick={modalOpenHandler} disabled={!canSendReturnRequest}>
                         {translate("Send Return Request")}
                     </Clickable>
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.buttonsHiddenContainer}>
-                <Button {...styles.cancelButton} onClick={cancelClickHandlel} data-test-selector="requestRmaHeader_cancel">
+                <Button
+                    {...styles.cancelButton}
+                    onClick={cancelClickHandlel}
+                    data-test-selector="requestRmaHeader_cancel"
+                >
                     {translate("Cancel")}
                 </Button>
-                <Button {...styles.sendButton} onClick={modalOpenHandler} disabled={!canSendReturnRequest} data-test-selector="requestRmaHeader_send">
+                <Button
+                    {...styles.sendButton}
+                    onClick={modalOpenHandler}
+                    disabled={!canSendReturnRequest}
+                    data-test-selector="requestRmaHeader_send"
+                >
                     {translate("Send Return Request")}
                 </Button>
             </Hidden>
@@ -139,7 +156,8 @@ const RequestRmaButtons: FC<Props> = ({
                 submitButtonText={translate("Agree")}
                 submitTestSelector="agreeSendReturnRequestButton"
                 onCancel={modalCloseHandler}
-                onSubmit={sendReturnRequestHandler} />
+                onSubmit={sendReturnRequestHandler}
+            />
         </>
     );
 };

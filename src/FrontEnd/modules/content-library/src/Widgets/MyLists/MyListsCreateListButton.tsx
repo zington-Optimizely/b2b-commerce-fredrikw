@@ -68,7 +68,11 @@ class MyListsCreateListButton extends React.Component<Props, State> {
                     </OverflowMenu>
                 </Hidden>
                 <Hidden below="md">
-                    <Button {...styles.createListButton} onClick={this.buttonClickHandler} data-test-selector="myListsCreateListButton">
+                    <Button
+                        {...styles.createListButton}
+                        onClick={this.buttonClickHandler}
+                        data-test-selector="myListsCreateListButton"
+                    >
                         {translate("Create List")}
                     </Button>
                 </Hidden>
@@ -76,11 +80,12 @@ class MyListsCreateListButton extends React.Component<Props, State> {
                     headline={translate("Create List")}
                     {...styles.createListModal}
                     isOpen={this.state.createListModalIsOpen}
-                    handleClose={this.modalCloseHandler}>
+                    handleClose={this.modalCloseHandler}
+                >
                     <MyListsEditListForm
                         onCancel={this.modalCloseHandler}
-                        onSubmit={this.modalCloseHandler}>
-                    </MyListsEditListForm>
+                        onSubmit={this.modalCloseHandler}
+                    ></MyListsEditListForm>
                 </Modal>
             </StyledWrapper>
         );

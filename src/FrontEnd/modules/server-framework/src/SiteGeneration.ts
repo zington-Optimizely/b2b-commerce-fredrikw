@@ -1,24 +1,42 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Components/ContentItemStore";
 import logger from "@insite/client-framework/Logger";
 import { getNodeIdForPageName } from "@insite/client-framework/Services/ContentService";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
+import { TemplateInfo } from "@insite/client-framework/Types/SiteGenerationModel";
 import { getSiteGenerationData, saveInitialPages } from "@insite/server-framework/InternalService";
 import { setupPageModel } from "@insite/shell/Services/PageCreation";
-import { access, constants, readdir, readFile } from "fs";
+import { access, constants, promises, readFile } from "fs";
+import { relative, resolve } from "path";
 import { promisify } from "util";
 
 const readFileAsync = promisify(readFile);
-const readDirAsync = promisify(readdir);
+
+// Mobile pages/widgets aren't immediately loaded by client-framework so they're not included in the storefront bundle.
+// Instead, they're added at shell startup (for the shell front end), shell-storefront connection, and here.
+addPagesFromContext(require.context("../../client-framework/src/Internal/Pages", true, /\.tsx$/));
+addWidgetsFromContext(require.context("../../client-framework/src/Internal/Widgets", true, /\.tsx$/));
+
+// Improved from https://stackoverflow.com/a/45130990
+async function* getFilesRecursively(directory: string): AsyncGenerator<string, void> {
+    for await (const entry of await promises.opendir(directory)) {
+        const resolved = resolve(directory, entry.name);
+        if (entry.isDirectory()) {
+            yield* getFilesRecursively(resolved);
+        } else {
+            yield resolved;
+        }
+    }
+}
 
 const existsAsync = (file: string) => {
-    return new Promise((resolve) => {
+    return new Promise<boolean>(resolve => {
         access(file, constants.F_OK, (err: NodeJS.ErrnoException | null) => {
             resolve(!err);
         });
     });
-
 };
 
 // because production is different than dev, these have to be functions to make sure __basedir is available
@@ -31,7 +49,7 @@ interface PageCreator {
     template: string;
     urlSegment: string;
     excludeFromNavigation?: boolean;
-    pages?: PageCreator[],
+    pages?: PageCreator[];
     parentType: string;
 }
 
@@ -40,7 +58,6 @@ async function getPageCreators() {
     await loadPageCreators(`${blueprintAppDataPath()}/PageCreators`, pageCreatorsByParent);
     await loadPageCreators(`${appDataPath()}/PageCreators/${BLUEPRINT_NAME}`, pageCreatorsByParent);
     await loadPageCreators(`${appDataPath()}/PageCreators/BuiltIn`, pageCreatorsByParent);
-
 
     const types: string[] = [];
     types.push("");
@@ -73,13 +90,13 @@ async function getPageCreators() {
 }
 
 async function loadPageCreators(pageCreatorsPath: string, pageCreatorsByParent: SafeDictionary<PageCreator[]>) {
-    if (!await existsAsync(pageCreatorsPath)) {
+    if (!(await existsAsync(pageCreatorsPath))) {
         return;
     }
-    const files = await readDirAsync(pageCreatorsPath);
 
-    for (const file of files) {
-        const filePath = `${pageCreatorsPath}/${file}`;
+    for await (const filePath of getFilesRecursively(pageCreatorsPath)) {
+        const file = relative(pageCreatorsPath, filePath).replace("\\", "/"); // Normalize directory separator to Unix format.;
+
         if (!filePath.endsWith(".json")) {
             logOrThrow(`The file at ${filePath} did not end with .json and it needs to.`);
         }
@@ -100,13 +117,18 @@ async function loadPageCreators(pageCreatorsPath: string, pageCreatorsByParent: 
             continue;
         }
         if (pageCreator.parentType === pageCreator.type) {
-            logOrThrow(`The pageCreator at ${filePath} had a "parentType" of "${pageCreator.parentType}" which matches the type it is trying to create.`);
+            logOrThrow(
+                `The pageCreator at ${filePath} had a "parentType" of "${pageCreator.parentType}" which matches the type it is trying to create.`,
+            );
         }
-        if (!pageCreator.parentType
-            && pageCreator.type !== "HomePage"
-            && pageCreator.type !== "Header"
-            && pageCreator.type !== "Footer"
-            && pageCreator.type !== "RobotsTxtPage") {
+        if (
+            !pageCreator.parentType &&
+            pageCreator.type !== "HomePage" &&
+            pageCreator.type !== "Header" &&
+            pageCreator.type !== "Footer" &&
+            !pageCreator.type.startsWith("Mobile/") &&
+            pageCreator.type !== "RobotsTxtPage"
+        ) {
             logOrThrow(`The pageCreator at ${filePath} did not contain a value for "parentType"`);
             continue;
         }
@@ -125,7 +147,8 @@ export async function generateSiteIfNeeded() {
     const pageGenerationSettings: PageGenerationSettings = { ...(await getSiteGenerationData()), pages: [] };
     const pageTypeToNodeId: SafeDictionary<string> = {};
     for (const pageType in pageGenerationSettings.pageTypeToNodeId) {
-        pageTypeToNodeId[pageType.substring(0, 1).toUpperCase() + pageType.substring(1)] = pageGenerationSettings.pageTypeToNodeId[pageType];
+        pageTypeToNodeId[pageType.substring(0, 1).toUpperCase() + pageType.substring(1)] =
+            pageGenerationSettings.pageTypeToNodeId[pageType];
     }
 
     pageGenerationSettings.pageTypeToNodeId = pageTypeToNodeId;
@@ -140,7 +163,9 @@ export async function generateSiteIfNeeded() {
         if (pageCreator.parentType) {
             parentId = pageTypeToNodeId[pageCreator.parentType];
             if (!parentId) {
-                logOrThrow(`The pageCreator for ${pageCreator.type} specified a parentType of ${pageCreator.parentType} but that page was not found.`);
+                logOrThrow(
+                    `The pageCreator for ${pageCreator.type} specified a parentType of ${pageCreator.parentType} but that page was not found.`,
+                );
                 continue;
             }
         }
@@ -185,7 +210,9 @@ export async function generateSiteIfNeeded() {
         if (typeof pageKey === "undefined") {
             pageKey = await getNodeIdForPageName(pageName);
             if (pageKey === emptyGuid) {
-                logOrThrow(`A page template specified ${fullThing} but there was no page found for the name ${pageName}`);
+                logOrThrow(
+                    `A page template specified ${fullThing} but there was no page found for the name ${pageName}`,
+                );
                 return;
             }
         }
@@ -205,7 +232,12 @@ interface PageGenerationSettings {
     pageTypeToNodeId: SafeDictionary<string>;
 }
 
-async function addPage(pageCreator: PageCreator, parentId: string, sortOrder: number, pageGenerationSettings: PageGenerationSettings) {
+async function addPage(
+    pageCreator: PageCreator,
+    parentId: string,
+    sortOrder: number,
+    pageGenerationSettings: PageGenerationSettings,
+) {
     const pageModel = await setupPage(pageCreator, parentId, sortOrder, pageGenerationSettings);
     if (!pageModel) {
         return;
@@ -213,7 +245,11 @@ async function addPage(pageCreator: PageCreator, parentId: string, sortOrder: nu
     await addChildPages(pageCreator, pageModel, pageGenerationSettings);
 }
 
-async function addChildPages(pageCreator: PageCreator, parentPageModel: PageModel, pageGenerationSettings: PageGenerationSettings) {
+async function addChildPages(
+    pageCreator: PageCreator,
+    parentPageModel: PageModel,
+    pageGenerationSettings: PageGenerationSettings,
+) {
     if (!pageCreator.pages) {
         return;
     }
@@ -223,6 +259,31 @@ async function addChildPages(pageCreator: PageCreator, parentPageModel: PageMode
         await addPage(page, parentPageModel.nodeId, childSortOrder, pageGenerationSettings);
         childSortOrder = childSortOrder + 1;
     }
+}
+
+export async function getTemplatePathsForPageType(pageType: string) {
+    const directoryPathsToCheck = [
+        `${blueprintAppDataPath()}/PageTemplates/${pageType}/`,
+        `${appDataPath()}/PageTemplates/${BLUEPRINT_NAME}/${pageType}/`,
+        `${appDataPath()}/PageTemplates/BuiltIn/${pageType}/`,
+    ];
+
+    const paths: TemplateInfo[] = [];
+    for (const directoryPath of directoryPathsToCheck) {
+        if (await existsAsync(directoryPath)) {
+            const files = await promises.readdir(directoryPath);
+            files.forEach(file => {
+                paths.push({
+                    fullPath: directoryPath + file,
+                    name: file.split(".")[0],
+                });
+            });
+        }
+    }
+
+    paths.sort((a, b) => a.name.localeCompare(b.name));
+
+    return paths;
 }
 
 export function getTemplatePathForPageType(pageType: string) {
@@ -250,12 +311,23 @@ async function getTemplatePath(template: string) {
     };
 }
 
-async function setupPage(pageCreator: PageCreator, parentNodeId: string, sortOrder: number, pageGenerationSettings: PageGenerationSettings): Promise<PageModel | undefined> {
+async function setupPage(
+    pageCreator: PageCreator,
+    parentNodeId: string,
+    sortOrder: number,
+    pageGenerationSettings: PageGenerationSettings,
+): Promise<PageModel | undefined> {
     const template = pageCreator.template ?? `${pageCreator.type}/Standard.json`;
     const { templatePath, checkedFilePaths } = await getTemplatePath(template);
 
     if (!templatePath) {
-        logOrThrow(`The pageCreator for ${pageCreator.type} had a template of ${template} which could not be found at any of the following paths \n${checkedFilePaths.join("\n")}`);
+        logOrThrow(
+            `The pageCreator for ${
+                pageCreator.type
+            } had a template of ${template} which could not be found at any of the following paths \n${checkedFilePaths.join(
+                "\n",
+            )}`,
+        );
         return;
     }
     let pageModel;
@@ -266,13 +338,26 @@ async function setupPage(pageCreator: PageCreator, parentNodeId: string, sortOrd
         return;
     }
     if (pageCreator.type !== pageModel.type) {
-        logOrThrow(`The pageCreator with the type of ${pageCreator.type} used a template at ${template}. That template was for a page type of ${pageModel.type} so the page was not created.`);
+        logOrThrow(
+            `The pageCreator with the type of ${pageCreator.type} used a template at ${template}. That template was for a page type of ${pageModel.type} so the page was not created.`,
+        );
         return;
     }
 
     const { pages, defaultLanguage, defaultPersonaId, websiteId, pageTypeToNodeId } = pageGenerationSettings;
 
-    setupPageModel(pageModel, pageCreator.name, pageCreator.urlSegment, parentNodeId, sortOrder, defaultLanguage, defaultPersonaId, defaultPersonaId, websiteId);
+    setupPageModel(
+        pageModel,
+        pageCreator.name,
+        pageCreator.urlSegment,
+        parentNodeId,
+        sortOrder,
+        defaultLanguage,
+        defaultPersonaId,
+        defaultPersonaId,
+        websiteId,
+        false,
+    );
 
     if (pageCreator.type === "Page" && pageCreator.excludeFromNavigation) {
         pageModel.generalFields["excludeFromNavigation"] = true;
