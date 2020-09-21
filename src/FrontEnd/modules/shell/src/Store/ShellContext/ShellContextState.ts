@@ -30,6 +30,7 @@ export interface ShellContextState {
     stageMode: DeviceType;
     contentMode: ContentMode;
     homePageId: string;
+    mobileHomePageId: string;
     permissions?: PermissionsModel;
 
     /** When true, the CMS can be switched into mobile mode. */

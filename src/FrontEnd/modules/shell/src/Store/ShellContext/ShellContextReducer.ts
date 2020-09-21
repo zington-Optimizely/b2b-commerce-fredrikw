@@ -27,6 +27,7 @@ const initialState: ShellContextState = {
     stageMode: "Desktop",
     contentMode: getStoredContentMode(),
     homePageId: emptyGuid,
+    mobileHomePageId: emptyGuid,
 };
 
 function getStoredContentMode() {
@@ -54,6 +55,7 @@ const reducer = {
             | "defaultPersonaId"
             | "websiteId"
             | "homePageId"
+            | "mobileHomePageId"
             | "enableMobileCms"
         >,
     ) => {
@@ -66,6 +68,7 @@ const reducer = {
         draft.defaultPersonaId = action.defaultPersonaId;
         draft.websiteId = action.websiteId;
         draft.homePageId = action.homePageId;
+        draft.mobileHomePageId = action.mobileHomePageId;
         draft.enableMobileCms = action.enableMobileCms;
 
         const languagesById: ShellContextState["languagesById"] = {};

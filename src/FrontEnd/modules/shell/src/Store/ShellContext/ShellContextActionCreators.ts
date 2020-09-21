@@ -8,7 +8,7 @@ import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreato
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
-import { Location } from "history";
+import { History, Location } from "history";
 
 export const loadShellContext = (): ShellThunkAction => dispatch => {
     addTask(
@@ -44,9 +44,13 @@ export const logOut = (): ShellThunkAction => dispatch => {
     window.location.reload();
 };
 
-export const toggleMobileCmsMode = (): AnyShellAction => ({
-    type: "ShellContext/ToggleMobileCmsMode",
-});
+export const toggleMobileCmsMode = (pageId: string, history: History): ShellThunkAction => dispatch => {
+    dispatch({
+        type: "ShellContext/ToggleMobileCmsMode",
+    });
+
+    history.push(`/Content/Page/${pageId}`);
+};
 
 export const setContentMode = (contentMode: ContentMode): ShellThunkAction => (dispatch, getState) => {
     addTask(

@@ -28,7 +28,9 @@ const homePageLoader = (props: ReturnType<typeof mapStateToProps> & RouteCompone
 };
 
 const mapStateToProps = (state: ShellState) => ({
-    homePageId: state.shellContext.homePageId,
+    homePageId: state.shellContext.mobileCmsModeActive
+        ? state.shellContext.mobileHomePageId
+        : state.shellContext.homePageId,
 });
 
 const HomePageLoader = connect(mapStateToProps)(withRouter(homePageLoader));

@@ -7,11 +7,16 @@ import { logOut, toggleMobileCmsMode } from "@insite/shell/Store/ShellContext/Sh
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
 import { css } from "styled-components";
 
-const mapStateToProps = ({ shellContext: { mobileCmsModeActive, enableMobileCms } }: ShellState) => ({
+const mapStateToProps = ({
+    shellContext: { mobileCmsModeActive, enableMobileCms, homePageId, mobileHomePageId },
+}: ShellState) => ({
     mobileCmsModeActive,
     enableMobileCms,
+    homePageId,
+    mobileHomePageId,
 });
 
 const mapDispatchToProps = {
@@ -33,12 +38,19 @@ const overflowWrapperFix = css`
     height: 30px;
 `;
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = RouteComponentProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const LogOutClicker = ({ mobileCmsModeActive, enableMobileCms, toggleMobileCmsMode, logOut }: Props) => {
+const LogOutClicker = ({
+    mobileCmsModeActive,
+    enableMobileCms,
+    homePageId,
+    mobileHomePageId,
+    history,
+    toggleMobileCmsMode,
+    logOut,
+}: Props) => {
     const [showAbout, setShowAbout] = React.useState(false);
 
-    // TODO ISC-13946 - Remove the style={{ display: "none" }} to make the option available again for mobile-CMS-enabled sites.
     return (
         <>
             <OverflowMenu
@@ -50,8 +62,9 @@ const LogOutClicker = ({ mobileCmsModeActive, enableMobileCms, toggleMobileCmsMo
                 {enableMobileCms && (
                     <Clickable
                         data-test-selector="shellSettings_switchCms"
-                        style={{ display: "none" }}
-                        onClick={toggleMobileCmsMode}
+                        onClick={() =>
+                            toggleMobileCmsMode(mobileCmsModeActive ? homePageId : mobileHomePageId, history)
+                        }
                     >
                         {mobileCmsModeActive ? "Switch to Desktop CMS" : "Switch to Mobile CMS"}
                     </Clickable>
@@ -70,4 +83,4 @@ const LogOutClicker = ({ mobileCmsModeActive, enableMobileCms, toggleMobileCmsMo
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LogOutClicker);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LogOutClicker));

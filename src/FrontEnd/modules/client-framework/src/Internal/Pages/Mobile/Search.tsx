@@ -6,7 +6,7 @@ import React from "react";
 
 const Search = ({ id }: PageProps) => (
     <Page>
-        <Zone contentId={id} zoneName="Content" requireRows />
+        <Zone contentId={id} zoneName="Content" />
     </Page>
 );
 

@@ -67,6 +67,7 @@ export const getShellContext = () =>
         currentLanguageId: string;
         websiteId: string;
         homePageId: string;
+        mobileHomePageId: string;
         adminClientId: string;
         adminClientSecret: string;
         permissions: PermissionsModel;
