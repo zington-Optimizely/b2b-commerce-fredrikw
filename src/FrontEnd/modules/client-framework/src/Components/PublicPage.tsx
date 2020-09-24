@@ -23,6 +23,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     websiteName: state.context.website.name,
     errorPageLink: getPageLinkByPageType(state, "UnhandledErrorPage"),
     pathname: state.data.pages.location.pathname,
+    permissionsLoaded: !!state.context.permissions,
 });
 
 type Props = ReturnType<typeof mapStateToProps> & HasShellContext;
@@ -123,7 +124,16 @@ class PublicPage extends React.Component<Props> {
             redirectTo(this.props.errorPageLink.url);
         }
 
-        const { page } = this.props;
+        const {
+            page,
+            permissionsLoaded,
+            shellContext: { isInShell },
+        } = this.props;
+
+        if (isInShell && page.type.startsWith("Mobile/") && !permissionsLoaded) {
+            return null;
+        }
+
         if (page.id === "") {
             return this.wrapContent(<p>Loading</p>);
         }
