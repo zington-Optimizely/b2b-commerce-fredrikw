@@ -9,6 +9,7 @@ import {
 import { getWishListLines, GetWishListLinesApiParameter } from "@insite/client-framework/Services/WishListService";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
 import { WishListLineCollectionModel, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
@@ -72,7 +73,7 @@ export const MapProducts: HandlerType = props => {
     });
 };
 
-export const LoadRealTimePrices: HandlerType = props => {
+export const LoadRealTimePrices: HandlerType = async props => {
     const { wishListLines, productInfosByWishListLineId } = props;
     if (!wishListLines?.length) {
         props.pricingLoaded = true;
@@ -109,6 +110,10 @@ export const LoadRealTimePrices: HandlerType = props => {
             },
         }),
     );
+
+    if (getSettingsCollection(props.getState()).productSettings.inventoryIncludedWithPricing) {
+        await waitFor(() => !!props.pricingLoaded);
+    }
 };
 
 export const LoadRealTimeInventory: HandlerType = props => {

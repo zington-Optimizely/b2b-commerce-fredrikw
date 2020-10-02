@@ -10,6 +10,7 @@ import {
 import { getProductByPath, getVariantChildren } from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadProductByPath from "@insite/client-framework/Store/Data/Products/Handlers/LoadProductByPath";
 import loadVariantChildren from "@insite/client-framework/Store/Data/Products/Handlers/LoadVariantChildren";
 import {
@@ -151,7 +152,7 @@ export const DispatchCompleteLoadProduct: HandlerType = props => {
     });
 };
 
-export const LoadRealTimePrices: HandlerType = props => {
+export const LoadRealTimePrices: HandlerType = async props => {
     if (!props.product || !props.productInfosById) {
         return;
     }
@@ -190,6 +191,10 @@ export const LoadRealTimePrices: HandlerType = props => {
             },
         }),
     );
+
+    if (getSettingsCollection(props.getState()).productSettings.inventoryIncludedWithPricing) {
+        await waitFor(() => !!props.pricingLoaded);
+    }
 };
 
 export const LoadRealTimeInventory: HandlerType = props => {
@@ -252,7 +257,7 @@ export const LoadRealTimeInventory: HandlerType = props => {
 };
 
 export const InitVariantProduct: HandlerType = async props => {
-    if (!props.product) {
+    if (!props.product || !props.product.variantTypeId) {
         return;
     }
     const checkData = () => {

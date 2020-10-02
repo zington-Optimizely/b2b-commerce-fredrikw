@@ -1,4 +1,5 @@
 import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
 import {
     createHandlerChainRunner,
     executeAwaitableHandlerChain,
@@ -10,6 +11,7 @@ import {
 } from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/LoadProducts";
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
@@ -26,6 +28,7 @@ interface Parameter {
 interface Props {
     products?: ProductModel[];
     productInfos?: ProductInfo[];
+    pricingLoaded?: true;
 }
 
 type HandlerType = Handler<Parameter, Props>;
@@ -96,7 +99,7 @@ export const DispatchCompleteLoadPurchasedProducts: HandlerType = props => {
     });
 };
 
-export const LoadRealTimePrices: HandlerType = props => {
+export const LoadRealTimePrices: HandlerType = async props => {
     if (!props.productInfos || props.productInfos.length === 0) {
         return;
     }
@@ -110,15 +113,21 @@ export const LoadRealTimePrices: HandlerType = props => {
                     id: props.parameter.id,
                     realTimePricing,
                 });
+                props.pricingLoaded = true;
             },
             onError: () => {
                 props.dispatch({
                     type: "Components/ProductInfoLists/FailedLoadRealTimePricing",
                     id: props.parameter.id,
                 });
+                props.pricingLoaded = true;
             },
         }),
     );
+
+    if (getSettingsCollection(props.getState()).productSettings.inventoryIncludedWithPricing) {
+        await waitFor(() => !!props.pricingLoaded);
+    }
 };
 
 export const LoadRealTimeInventory: HandlerType = props => {
