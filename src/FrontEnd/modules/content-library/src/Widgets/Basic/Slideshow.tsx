@@ -26,6 +26,10 @@ interface SlideModel {
         slideTitle: string;
         background: "image" | "color";
         image: string;
+        imageOverlay: string;
+        partialOverlay: boolean;
+        partialOverlayPositioning: "top" | "middle" | "bottom";
+        responsiveImageBehavior: "cover" | "center" | "prioritizeHeight" | "prioritizeWidth";
         backgroundColor: string;
         heading: string;
         subheading: string;
@@ -42,6 +46,7 @@ interface SlideModel {
             | "bottomLeft"
             | "bottomCenter"
             | "bottomRight";
+        contentPadding: number;
     };
 }
 
@@ -80,6 +85,7 @@ export interface SlideshowStyles {
     carouselContainer?: InjectableCss;
     slideContainerWrapper?: InjectableCss;
     slideContentWrapper?: InjectableCss;
+    slideOverlayWrapper?: InjectableCss;
     headingText?: TypographyPresentationProps;
     subheadingText?: TypographyPresentationProps;
     slideButton?: ButtonPresentationProps;
@@ -132,10 +138,16 @@ export const slideshowStyles: SlideshowStyles = {
     },
     slideContentWrapper: {
         css: css`
+            display: flex;
             flex: 0 0 100%;
             position: relative;
             color: white;
-            padding: 70px 100px 50px 100px;
+            background-repeat: no-repeat;
+        `,
+    },
+    slideOverlayWrapper: {
+        css: css`
+            width: 100%;
         `,
     },
     slideButton: {
@@ -275,43 +287,79 @@ const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyl
                 <StyledWrapper {...styles.slideContainerWrapper}>
                     {fields.slides?.map((slide, index) => {
                         const buttonLink = buttonLinks[index];
+
+                        let responsiveImageBehaviorStyles;
+                        if (slide.fields.responsiveImageBehavior === "cover") {
+                            responsiveImageBehaviorStyles = "background-size: cover;";
+                        } else if (slide.fields.responsiveImageBehavior === "center") {
+                            responsiveImageBehaviorStyles = "background-size: contain;";
+                        } else if (slide.fields.responsiveImageBehavior === "prioritizeHeight") {
+                            responsiveImageBehaviorStyles = "background-size: auto 100%;";
+                        } else if (slide.fields.responsiveImageBehavior === "prioritizeWidth") {
+                            responsiveImageBehaviorStyles = "background-size: 100% auto;";
+                        }
+
                         const backgroundStyles =
                             slide.fields.background === "image"
-                                ? `background-image: url(${slide.fields.image});
-                                   background-size: cover;`
+                                ? `background-image: url(${slide.fields.image});`
                                 : `background-color: ${slide.fields.backgroundColor};`;
                         const focalPointStyles = getFocalPointStyles(slide.fields.focalPoint);
+
+                        let overlayPositioningStyles;
+                        if (!slide.fields.partialOverlay) {
+                            overlayPositioningStyles = "align-items: stretch;";
+                        } else if (slide.fields.partialOverlayPositioning === "top") {
+                            overlayPositioningStyles = "align-items: flex-start;";
+                        } else if (slide.fields.partialOverlayPositioning === "middle") {
+                            overlayPositioningStyles = "align-items: center;";
+                        } else if (slide.fields.partialOverlayPositioning === "bottom") {
+                            overlayPositioningStyles = "align-items: flex-end;";
+                        }
+
                         const slideWrapperStyles = {
                             css: css`
                                 ${styles.slideContentWrapper?.css || ""}
                                 ${heightStyles}
                                 ${textAlignStyles}
                                 ${backgroundStyles}
+                                ${responsiveImageBehaviorStyles}
                                 ${focalPointStyles}
+                                ${overlayPositioningStyles}
+                            `,
+                        };
+                        const slideOverlayWrapperStyles = {
+                            css: css`
+                                ${styles.slideOverlayWrapper?.css || ""}
+                                background-color: ${
+                                    slide.fields.background === "image" ? slide.fields.imageOverlay : ""
+                                };
+                                padding: ${slide.fields.contentPadding}px;
                             `,
                         };
                         return (
                             // eslint-disable-next-line react/no-array-index-key
                             <StyledWrapper key={index} {...slideWrapperStyles}>
-                                {slide.fields.heading && (
-                                    <Typography {...styles.headingText}>
-                                        {parse(slide.fields.heading, parserOptions)}
-                                    </Typography>
-                                )}
-                                {slide.fields.subheading && (
-                                    <Typography {...styles.subheadingText}>
-                                        {parse(slide.fields.subheading, parserOptions)}
-                                    </Typography>
-                                )}
-                                {(slide.fields.buttonLabel || slide.fields.buttonLink.value) && (
-                                    <Button
-                                        {...styles.slideButton}
-                                        variant={slide.fields.buttonVariant}
-                                        onClick={() => onClick(history, buttonLink?.url)}
-                                    >
-                                        {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
-                                    </Button>
-                                )}
+                                <StyledWrapper {...slideOverlayWrapperStyles}>
+                                    {slide.fields.heading && (
+                                        <Typography {...styles.headingText}>
+                                            {parse(slide.fields.heading, parserOptions)}
+                                        </Typography>
+                                    )}
+                                    {slide.fields.subheading && (
+                                        <Typography {...styles.subheadingText}>
+                                            {parse(slide.fields.subheading, parserOptions)}
+                                        </Typography>
+                                    )}
+                                    {(slide.fields.buttonLabel || slide.fields.buttonLink.value) && (
+                                        <Button
+                                            {...styles.slideButton}
+                                            variant={slide.fields.buttonVariant}
+                                            onClick={() => onClick(history, buttonLink?.url)}
+                                        >
+                                            {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
+                                        </Button>
+                                    )}
+                                </StyledWrapper>
                             </StyledWrapper>
                         );
                     })}
@@ -455,6 +503,42 @@ const widgetModule: WidgetModule = {
                         isVisible: widget => widget.fields.background === "image",
                     },
                     {
+                        name: "imageOverlay",
+                        displayName: "Image Color Overlay",
+                        editorTemplate: "ColorPickerField",
+                        defaultValue: "",
+                        isVisible: widget => widget.fields.background === "image",
+                    },
+                    {
+                        name: "partialOverlay",
+                        editorTemplate: "CheckboxField",
+                        defaultValue: false,
+                    },
+                    {
+                        name: "partialOverlayPositioning",
+                        editorTemplate: "DropDownField",
+                        options: [
+                            { displayName: "Top", value: "top" },
+                            { displayName: "Middle", value: "middle" },
+                            { displayName: "Bottom", value: "bottom" },
+                        ],
+                        hideEmptyOption: true,
+                        defaultValue: "bottom",
+                        isVisible: widget => widget.fields.partialOverlay,
+                    },
+                    {
+                        name: "responsiveImageBehavior",
+                        editorTemplate: "DropDownField",
+                        options: [
+                            { displayName: "Cover", value: "cover" },
+                            { displayName: "Center", value: "center" },
+                            { displayName: "Prioritize height", value: "prioritizeHeight" },
+                            { displayName: "Prioritize width", value: "prioritizeWidth" },
+                        ],
+                        hideEmptyOption: true,
+                        defaultValue: "cover",
+                    },
+                    {
                         name: "backgroundColor",
                         editorTemplate: "ColorPickerField",
                         displayName: "Color",
@@ -524,6 +608,11 @@ const widgetModule: WidgetModule = {
                         ],
                         hideEmptyOption: true,
                         defaultValue: "primary",
+                    },
+                    {
+                        name: "contentPadding",
+                        editorTemplate: "IntegerField",
+                        defaultValue: 50,
                     },
                 ],
             },
