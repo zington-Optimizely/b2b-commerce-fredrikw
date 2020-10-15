@@ -1,6 +1,7 @@
 import { QuoteType } from "@insite/client-framework/Services/QuoteService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import createOrRequestQuote from "@insite/client-framework/Store/Pages/RfqRequestQuote/Handlers/CreateOrRequestQuote";
@@ -26,6 +27,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     accounts: state.pages.rfqRequestQuote.accounts,
     rfqQuoteDetailsPageUrl: getPageLinkByPageType(state, "RfqQuoteDetailsPage")?.url,
     rfqQuoteConfirmationPageUrl: getPageLinkByPageType(state, "RfqConfirmationPage")?.url,
+    jobQuoteEnabled: getSettingsCollection(state).quoteSettings.jobQuoteEnabled,
 });
 
 const mapDispatchToProps = {
@@ -91,6 +93,7 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
     history,
     rfqQuoteDetailsPageUrl,
     rfqQuoteConfirmationPageUrl,
+    jobQuoteEnabled,
 }) => {
     const [notes, setNotes] = useState(cart?.notes);
     const [jobName, setJobName] = useState("");
@@ -173,20 +176,22 @@ const RfqRequestQuoteSpecifications: FC<Props> = ({
 
     return (
         <form onSubmit={submitHandler}>
-            <RadioGroup
-                {...styles.quoteTypeRadioGroup}
-                label={translate("Quote Type")}
-                value={quoteType}
-                onChangeHandler={quoteTypeChangeHandler}
-                data-test-selector="requestQuoteTypeRadio"
-            >
-                <Radio {...styles.quoteTypeRadioButton} value="quote">
-                    {translate("Sales Quote")}
-                </Radio>
-                <Radio {...styles.quoteTypeRadioButton} value="job">
-                    {translate("Job Quote")}
-                </Radio>
-            </RadioGroup>
+            {jobQuoteEnabled && (
+                <RadioGroup
+                    {...styles.quoteTypeRadioGroup}
+                    label={translate("Quote Type")}
+                    value={quoteType}
+                    onChangeHandler={quoteTypeChangeHandler}
+                    data-test-selector="requestQuoteTypeRadio"
+                >
+                    <Radio {...styles.quoteTypeRadioButton} value="quote">
+                        {translate("Sales Quote")}
+                    </Radio>
+                    <Radio {...styles.quoteTypeRadioButton} value="job">
+                        {translate("Job Quote")}
+                    </Radio>
+                </RadioGroup>
+            )}
             {quoteType === "job" && (
                 <TextField
                     {...styles.jobNameTextField}

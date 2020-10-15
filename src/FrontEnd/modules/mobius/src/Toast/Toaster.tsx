@@ -1,12 +1,12 @@
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Toast, { ToastProps } from "@insite/mobius/Toast/Toast";
+import ToasterContext, { ToastContextData } from "@insite/mobius/Toast/ToasterContext";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import { TransitionGroup } from "react-transition-group";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import Toast, { ToastProps } from "./Toast";
-import ToasterContext, { ToastContextData } from "./ToasterContext";
 
 export interface ToasterPresentationProps {
     /** The position for the toasts to display on medium, large, and extra large breakpoints.

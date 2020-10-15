@@ -1,4 +1,4 @@
-import { LogFunction, LogReceiver, setLogger } from "@insite/client-framework/Logger";
+import { LogFunction, setLogger } from "@insite/client-framework/Logger";
 import winston, { createLogger } from "winston";
 
 const options = {
@@ -14,57 +14,60 @@ const logger = createLogger({
     exitOnError: false, // do not exit on handled exceptions
 });
 
-const winstonReceiver = (function createWinstonReceiver(): LogReceiver {
-    function createLoggerForLevel(level: "debug" | "error" | "info" | "warn" | "verbose"): LogFunction {
-        const levelLogger = logger[level].bind(logger);
+function createLoggerForLevel(level: "debug" | "error" | "info" | "warn" | "verbose"): LogFunction {
+    const levelLogger = logger[level].bind(logger);
 
-        return (message, metadata) => {
-            if (message instanceof Error) {
-                levelLogger(message.message, { stack: message.stack, ...metadata });
+    return (message, metadata) => {
+        if (message instanceof Error) {
+            levelLogger(message.message, { stack: message.stack, ...metadata });
+            return;
+        }
+
+        if (typeof message === "string") {
+            levelLogger(message, metadata);
+            return;
+        }
+
+        if (typeof message === "object" && message) {
+            if (metadata) {
+                levelLogger({
+                    ...message,
+                    metadata,
+                });
                 return;
             }
 
-            if (typeof message === "string") {
-                levelLogger(message, metadata);
-                return;
-            }
+            levelLogger(message);
+            return;
+        }
 
-            if (typeof message === "object" && message) {
-                if (metadata) {
-                    levelLogger({
-                        ...message,
-                        metadata,
-                    });
-                    return;
-                }
+        if (message === null) {
+            levelLogger("(Null)", metadata);
+            return;
+        }
 
-                levelLogger(message);
-                return;
-            }
+        if (typeof message === "number" || typeof message === "boolean" || typeof message === "bigint") {
+            levelLogger(message.toString(), metadata);
+            return;
+        }
 
-            if (message === null) {
-                levelLogger("(Null)", metadata);
-                return;
-            }
+        levelLogger(typeof message, metadata);
+    };
+}
 
-            if (typeof message === "number" || typeof message === "boolean" || typeof message === "bigint") {
-                levelLogger(message.toString(), metadata);
-                return;
-            }
+/** Updates the Winston logging level from `process.env.ISC_WINSTON_LOG_LEVEL`. */
+export function setLoggerLevel() {
+    logger.level = process.env.ISC_WINSTON_LOG_LEVEL?.toLowerCase().trim() || (IS_PRODUCTION ? "info" : "debug");
+}
 
-            levelLogger(typeof message, metadata);
-        };
-    }
+if (IS_PRODUCTION || process.env.ISC_WINSTON_LOG_LEVEL?.trim()) {
+    setLoggerLevel();
 
-    return {
-        debug: IS_PRODUCTION ? () => {} : createLoggerForLevel("debug"),
+    setLogger({
+        debug: createLoggerForLevel("debug"),
         error: createLoggerForLevel("error"),
         log: createLoggerForLevel("info"), // Winston's "log" function has a unique signature and is inappropriate for this.
         info: createLoggerForLevel("info"),
         warn: createLoggerForLevel("warn"),
-    };
-})();
-
-if (IS_PRODUCTION) {
-    setLogger(winstonReceiver);
+    });
 }

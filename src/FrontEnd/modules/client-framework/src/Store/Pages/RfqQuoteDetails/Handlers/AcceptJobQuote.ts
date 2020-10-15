@@ -34,6 +34,15 @@ export const SendDataToApi: HandlerType = async props => {
     }
 };
 
+export const ResetQuotesData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/Quotes/Reset",
+    });
+    props.dispatch({
+        type: "Data/JobQuotes/Reset",
+    });
+};
+
 export const DispatchCompleteLoadQuote: HandlerType = props => {
     props.dispatch({
         type: "Data/Quotes/CompleteLoadQuote",
@@ -45,7 +54,13 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [PopulateApiParameter, SendDataToApi, DispatchCompleteLoadQuote, ExecuteOnSuccessCallback];
+export const chain = [
+    PopulateApiParameter,
+    SendDataToApi,
+    ResetQuotesData,
+    DispatchCompleteLoadQuote,
+    ExecuteOnSuccessCallback,
+];
 
 const acceptJobQuote = createHandlerChainRunner(chain, "AcceptJobQuote");
 export default acceptJobQuote;

@@ -1,7 +1,7 @@
+import baseTheme, { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
+import safeColor from "@insite/mobius/utilities/safeColor";
 import Color from "color";
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
-import resolveColor from "./resolveColor";
-import safeColor from "./safeColor";
 
 /**
  * Reaches into the theme to evaluate whether there is a contrast color defined for the element. If not, returns

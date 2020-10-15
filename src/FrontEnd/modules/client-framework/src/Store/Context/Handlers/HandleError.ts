@@ -10,7 +10,7 @@ export const LogError: HandlerType = props => {
 
 export const DisplayError: HandlerType = props => {
     if (IS_SERVER_SIDE) {
-        setDisplayErrorPage();
+        setDisplayErrorPage(props.parameter.error);
     } else {
         props.dispatch({
             type: "Context/SetErrorModalIsOpen",

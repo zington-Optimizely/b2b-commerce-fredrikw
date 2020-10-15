@@ -1,8 +1,10 @@
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import Button from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
 import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
 import Typography from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -26,7 +28,7 @@ import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
-        shellContext: { languagesById, personasById },
+        shellContext: { languagesById, personasById, permissions },
         publishModal: {
             showModal,
             publishInTheFuture,
@@ -49,7 +51,7 @@ const mapStateToProps = (state: ShellState) => {
         pagePublishInfosState,
         languagesById,
         personasById,
-        permissions: state.shellContext.permissions,
+        permissions,
         isEditingExistingPublish,
         publishOn,
         rollbackOn,
@@ -195,6 +197,7 @@ const PublishModal: React.FC<Props> = ({
     setIsSelectedForAll,
 }) => {
     const [selectAll, setSelectAll] = React.useState<boolean | "indeterminate">(true);
+    const toasterContext = React.useContext(ToasterContext);
 
     useEffect(() => {
         if (!visible) {
@@ -226,6 +229,18 @@ const PublishModal: React.FC<Props> = ({
             (o, index) => !o || failedToPublishPageIds[pagePublishInfosState.value![index].pageId],
         );
 
+    const isApprover =
+        permissions?.canApproveContent && pagePublishInfosState?.value?.some(o => o.isWaitingForApproval);
+
+    let hasFewPagesForApproval = false;
+    if (isApprover && isBulkPublish) {
+        const pageIds: Dictionary<boolean> = {};
+        pagePublishInfosState?.value?.forEach(o => {
+            pageIds[o.pageId] = true;
+        });
+        hasFewPagesForApproval = Object.keys(pageIds).length > 1;
+    }
+
     const hasFailedToPublishPages = failedToPublishPageIds && Object.keys(failedToPublishPageIds).length > 0;
 
     const publishOnChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
@@ -241,7 +256,8 @@ const PublishModal: React.FC<Props> = ({
         setSelectAll(value);
     };
 
-    const size = nothingToPublish || hasFailedToPublishPages ? 350 : isBulkPublish ? 980 : undefined;
+    const size =
+        nothingToPublish || hasFewPagesForApproval || hasFailedToPublishPages ? 350 : isBulkPublish ? 980 : undefined;
 
     return (
         <ModalStyle
@@ -271,8 +287,13 @@ const PublishModal: React.FC<Props> = ({
                         </ul>
                     </Typography>
                 )}
+                {hasFewPagesForApproval && (
+                    <Typography color="danger" data-test-selector="publishModal_hasFewPagesForApproval">
+                        It is not possible to approve and publish multiple pages, please, use Publish instead.
+                    </Typography>
+                )}
             </MessageContainer>
-            {!nothingToPublish && !hasFailedToPublishPages && (
+            {!nothingToPublish && !hasFewPagesForApproval && !hasFailedToPublishPages && (
                 <>
                     <PublishableContextTable cellSpacing={0}>
                         <thead>
@@ -377,7 +398,7 @@ const PublishModal: React.FC<Props> = ({
                         <div>
                             <DatePicker
                                 {...styles.datePicker}
-                                disabled={publishImmediately || !permissions?.canPublishContent}
+                                disabled={publishImmediately}
                                 selectedDay={publishOn}
                                 onDayChange={publishOnChangeHandler}
                                 dateTimePickerProps={{
@@ -391,7 +412,7 @@ const PublishModal: React.FC<Props> = ({
                         <div>
                             <DatePicker
                                 {...styles.datePicker}
-                                disabled={publishImmediately || !permissions?.canPublishContent}
+                                disabled={publishImmediately}
                                 selectedDay={rollbackOn}
                                 onDayChange={rollbackOnChangeHandler}
                                 dateTimePickerProps={{
@@ -426,14 +447,22 @@ const PublishModal: React.FC<Props> = ({
                         disabled={
                             !pagePublishInfosState.value ||
                             !!nothingToPublish ||
-                            !permissions?.canPublishContent ||
+                            hasFewPagesForApproval ||
                             (pagePublishInfoIsSelected.every(o => !o) && !isEditingExistingPublish) ||
-                            (!publishImmediately && !publishOn && !rollbackOn && !isEditingExistingPublish) ||
+                            (!publishImmediately && !publishOn && !isEditingExistingPublish) ||
                             allPagesSkipped
                         }
-                        onClick={() => publish()}
+                        onClick={() => publish(toasterContext)}
                     >
-                        {hasFailedToPublishPages ? "Skip and publish" : "Publish"}
+                        {hasFailedToPublishPages
+                            ? permissions?.canPublishContent
+                                ? "Skip and publish"
+                                : "Skip and submit for approval"
+                            : permissions?.canPublishContent
+                            ? isApprover
+                                ? "Approve and Publish"
+                                : "Publish"
+                            : "Submit for Approval"}
                     </Button>
                 )}
             </PublishCancelButtonContainer>

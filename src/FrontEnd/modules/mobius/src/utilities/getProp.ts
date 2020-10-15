@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import baseTheme from "../globals/baseTheme";
-import get from "./get";
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import get from "@insite/mobius/utilities/get";
 
 const isUndefined = (val: unknown) => val === undefined;
 

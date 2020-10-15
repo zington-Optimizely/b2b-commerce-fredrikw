@@ -20,7 +20,7 @@ import Para from "react-styleguidist/lib/client/rsg-components/Para";
 import Table from "react-styleguidist/lib/client/rsg-components/Table";
 import { unquote, getType, showSpaces } from "react-styleguidist/lib/client/rsg-components/Props/util";
 import Tooltip from "../../mobius/src/Tooltip";
-import Icon from "../../mobius/src/Icon";
+import Icon from "../..//mobius/src/Icon";
 import ExternalLink from "../../mobius/src/Icons/ExternalLink";
 import ThemeProvider from "../../mobius/src/ThemeProvider";
 

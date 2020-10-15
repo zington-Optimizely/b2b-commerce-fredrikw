@@ -1,14 +1,14 @@
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import isUrl from "@insite/mobius/utilities/isUrl";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import SVG from "react-inlinesvg";
 import styled, { ThemeConsumer } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import isUrl from "../utilities/isUrl";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import resolveColor from "../utilities/resolveColor";
 
 export interface IconThemableProps {
     /** The color of the icon.

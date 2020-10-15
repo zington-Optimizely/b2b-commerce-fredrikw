@@ -1,5 +1,5 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { Metadata, PreparedMetadata } from "@insite/client-framework/Common/Utilities/setPageMetadata";
+import { PreparedMetadata } from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import logger from "@insite/client-framework/Logger";
 import { RetrievePageResult } from "@insite/client-framework/Services/ContentService";
 import "isomorphic-fetch";
@@ -35,6 +35,7 @@ interface InsiteSession {
      * @deprecated Use headers["cookie"] instead
      */
     cookies?: string | undefined;
+    cookiesDictionary?: SafeDictionary<string>;
     /**
      * @deprecated Use headers["user-agent"] instead
      */
@@ -43,6 +44,7 @@ interface InsiteSession {
     messagesByName: SafeDictionary<string>;
     translationsByKeyword: SafeDictionary<string>;
     displayErrorPage?: true | undefined;
+    errorStatusCode?: number;
     pageMetadata?: PreparedMetadata;
     initialPage?:
         | {
@@ -113,26 +115,34 @@ export const setDomain = (newDomain: typeof domain) => {
     domain = newDomain;
 };
 
+class MissingDomainError extends Error {}
+
 /** Gets the server-side session, throws an error if used client-side. */
 const getSession = () => {
     throwIfClientSide();
 
     const data = domain?.active?.insiteSession;
     if (!data) {
-        throw new Error("`setDomain` must be called before server-side session data can be accessed.");
+        throw new MissingDomainError("`setDomain` must be called before server-side session data can be accessed.");
     }
 
     return data;
 };
 
-export function setDisplayErrorPage() {
+export function setDisplayErrorPage(error: any) {
     throwIfClientSide();
 
-    getSession().displayErrorPage = true;
+    const session = getSession();
+    session.errorStatusCode = (error && "status" in error && error.status) || -1;
+    session.displayErrorPage = true;
 }
 
 export function getDisplayErrorPage() {
     return getSessionValue("displayErrorPage");
+}
+
+export function getErrorStatusCode() {
+    return getSessionValue("errorStatusCode");
 }
 
 export function getInitialPage() {
@@ -158,14 +168,55 @@ export function getStatusCode() {
     return getSessionValue("statusCode");
 }
 
-export function setSessionCookies(cookies: string | undefined) {
-    setSessionValue("cookies", cookies);
+export function setSessionCookies(cookies: SafeDictionary<string> | string | undefined) {
+    const cookiesString = typeof cookies === "object" ? convertCookiesToString(cookies) : cookies;
+
+    setSessionValue("cookies", cookiesString);
+    if (typeof cookies === "object") {
+        setSessionValue("cookiesDictionary", cookies);
+    } else if (typeof cookies === "string") {
+        const cookiesDictionary: SafeDictionary<string> = {};
+        cookies.split(";").forEach(cookie => {
+            const splitIndex = cookie.indexOf("=");
+            const cookieName = cookie.substring(0, splitIndex).trim();
+            const cookieValue = cookie.substring(splitIndex + 1);
+            cookiesDictionary[cookieName] = cookieValue;
+        });
+        setSessionValue("cookiesDictionary", cookiesDictionary);
+    }
 
     const { headers } = getSession();
     if (!headers) {
         return;
     }
-    headers["cookie"] = cookies;
+    headers["cookie"] = cookiesString;
+}
+
+function convertCookiesToString(cookies: SafeDictionary<string>) {
+    let cookiesString = "";
+    Object.keys(cookies).forEach(cookieName => {
+        cookiesString += `${cookieName}=${cookies[cookieName]}; `;
+    });
+
+    return cookiesString;
+}
+
+export function getSessionCookies() {
+    if (IS_SERVER_SIDE === false) {
+        return;
+    }
+
+    try {
+        return getSession().cookiesDictionary;
+    } catch (error) {
+        if (error instanceof MissingDomainError) {
+            logger.warn(
+                "getCookie was called during Server Side Rendering before setDomain. Cookies are not currently available.",
+            );
+        } else {
+            throw error;
+        }
+    }
 }
 
 /** Ensures that we have the url available when needed for server side rendering */

@@ -1,4 +1,4 @@
-import { ComponentThemeProps } from "../globals/baseTheme";
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 
 const LazyImagePresentationPropsDefault: ComponentThemeProps["lazyImage"]["defaultProps"] = {
     height: "100%",

@@ -19,5 +19,6 @@ export const InvoicesDataViewContext = createContext<ReturnType<typeof getInvoic
 export const InvoiceStateContext = createContext<ReturnType<typeof getInvoiceState>>({
     value: undefined,
     isLoading: false,
+    errorStatusCode: undefined,
     id: undefined,
 });

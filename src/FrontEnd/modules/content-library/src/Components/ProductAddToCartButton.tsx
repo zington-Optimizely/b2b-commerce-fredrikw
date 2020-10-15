@@ -77,7 +77,7 @@ const ProductAddToCartButton: React.FC<Props> = ({
         <Button
             {...styles}
             onClick={addToCartClickHandler}
-            disabled={!qtyOrdered || addingProductToCart}
+            disabled={qtyOrdered <= 0 || addingProductToCart}
             {...otherProps}
         >
             {labelOverride ?? translate("Add to Cart")}

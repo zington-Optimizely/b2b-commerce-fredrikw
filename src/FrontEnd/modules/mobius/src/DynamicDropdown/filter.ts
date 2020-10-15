@@ -1,4 +1,4 @@
-import { OptionObject } from "./DynamicDropdown";
+import { OptionObject } from "@insite/mobius/DynamicDropdown/DynamicDropdown";
 
 const stringify = (option: OptionObject) => `${option.searchString || ""} ${option.optionText}`;
 const trimString = (str: string) => str.replace(/^\s+|\s+$/g, "");

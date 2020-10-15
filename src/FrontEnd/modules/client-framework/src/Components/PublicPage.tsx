@@ -7,16 +7,16 @@ import {
 import ErrorModal from "@insite/client-framework/Components/ErrorModal";
 import Footer from "@insite/client-framework/Components/Footer";
 import Header from "@insite/client-framework/Components/Header";
+import { HasShellContext, ShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import PageBreadcrumbs from "@insite/client-framework/Components/PageBreadcrumbs";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
-import { getDisplayErrorPage, redirectTo } from "@insite/client-framework/ServerSideRendering";
+import { getDisplayErrorPage, getErrorStatusCode, redirectTo } from "@insite/client-framework/ServerSideRendering";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 import { connect } from "react-redux";
-import { HasShellContext, ShellContext, withIsInShell } from "./IsInShell";
 
 const mapStateToProps = (state: ApplicationState) => ({
     page: getCurrentPage(state),
@@ -120,8 +120,13 @@ class PublicPage extends React.Component<Props> {
     }
 
     render() {
-        if (getDisplayErrorPage() && this.props.errorPageLink) {
-            redirectTo(this.props.errorPageLink.url);
+        if (getDisplayErrorPage()) {
+            const errorCode = getErrorStatusCode();
+            if (errorCode === 403 || errorCode === 404) {
+                redirectTo("/NotFoundErrorPage");
+            } else if (this.props.errorPageLink) {
+                redirectTo(this.props.errorPageLink.url);
+            }
         }
 
         const {

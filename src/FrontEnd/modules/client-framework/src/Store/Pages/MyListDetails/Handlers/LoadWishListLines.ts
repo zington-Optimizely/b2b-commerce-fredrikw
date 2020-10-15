@@ -87,24 +87,23 @@ export const LoadRealTimePrices: HandlerType = async props => {
                 unitOfMeasure: o.unitOfMeasure,
                 qtyOrdered: o.qtyOrdered,
             })),
-            onSuccess: realTimePricing => {
-                realTimePricing.realTimePricingResults?.forEach(pricing => {
-                    for (const wishListLineId in productInfosByWishListLineId) {
-                        const productInfo = productInfosByWishListLineId[wishListLineId]!;
-                        if (
-                            productInfo.productId === pricing.productId &&
-                            productInfo.unitOfMeasure === pricing.unitOfMeasure
-                        ) {
-                            productInfo.pricing = pricing;
+            onComplete: realTimePricingProps => {
+                if (realTimePricingProps?.apiResult) {
+                    realTimePricingProps.apiResult.realTimePricingResults?.forEach(pricing => {
+                        for (const wishListLineId in productInfosByWishListLineId) {
+                            const productInfo = productInfosByWishListLineId[wishListLineId]!;
+                            if (
+                                productInfo.productId === pricing.productId &&
+                                productInfo.unitOfMeasure === pricing.unitOfMeasure
+                            ) {
+                                productInfo.pricing = pricing;
+                            }
                         }
+                    });
+                } else if (realTimePricingProps.error) {
+                    for (const wishListLineId in productInfosByWishListLineId) {
+                        productInfosByWishListLineId[wishListLineId]!.failedToLoadPricing = true;
                     }
-                });
-
-                props.pricingLoaded = true;
-            },
-            onError: () => {
-                for (const wishListLineId in productInfosByWishListLineId) {
-                    productInfosByWishListLineId[wishListLineId]!.failedToLoadPricing = true;
                 }
                 props.pricingLoaded = true;
             },
@@ -127,8 +126,8 @@ export const LoadRealTimeInventory: HandlerType = props => {
     props.dispatch(
         loadRealTimeInventory({
             productIds: wishListLineIds.map(o => productInfosByWishListLineId[o]!.productId),
-            onSuccess: realTimeInventory => {
-                realTimeInventory.realTimeInventoryResults?.forEach(inventory => {
+            onComplete: realTimeInventoryProps => {
+                realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.forEach(inventory => {
                     wishListLineIds.forEach(o => {
                         const productInfo = productInfosByWishListLineId[o]!;
                         if (productInfo.productId === inventory.productId) {

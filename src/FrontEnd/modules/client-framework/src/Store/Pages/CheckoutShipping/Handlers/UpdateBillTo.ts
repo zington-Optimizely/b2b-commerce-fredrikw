@@ -1,10 +1,16 @@
 import { updateContext } from "@insite/client-framework/Context";
-import { createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnSuccess,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { Session, updateSession } from "@insite/client-framework/Services/SessionService";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
 import updateBillToChain from "@insite/client-framework/Store/Data/BillTos/Handlers/UpdateBillTo";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
@@ -14,7 +20,7 @@ import { BillToModel, ShipToModel } from "@insite/client-framework/Types/ApiMode
 type HandlerType = Handler<
     {
         billTo: BillToModel;
-    },
+    } & HasOnSuccess<boolean>,
     {
         shipTos: ShipToModel[];
         defaultShipTo: ShipToModel;
@@ -88,13 +94,13 @@ export const UpdateSession: HandlerType = async props => {
     });
 };
 
-export const LoadCart: HandlerType = props => {
+export const LoadCart: HandlerType = async props => {
     const state = props.getState();
     const { cartId } = state.pages.checkoutShipping;
     if (cartId) {
         props.dispatch(loadCart({ cartId }));
     } else {
-        props.dispatch(loadCurrentCart());
+        await makeHandlerChainAwaitable(loadCurrentCart)({ OnSuccess: () => {} })(props.dispatch, props.getState);
     }
 };
 
@@ -114,6 +120,14 @@ export const DispatchCompleteUpdateShipTo: HandlerType = props => {
     });
 };
 
+export const ExecuteOnSuccessCallback: HandlerType = props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
+    const hasCartlines = (cart?.cartLines?.length || 0) > 0;
+    props.parameter.onSuccess?.(hasCartlines);
+};
+
 const chain = [
     UpdateBillTo,
     LoadShipTos,
@@ -123,6 +137,7 @@ const chain = [
     LoadCart,
     DispatchCompleteUpdateBillTo,
     DispatchCompleteUpdateShipTo,
+    ExecuteOnSuccessCallback,
 ];
 
 const updateBillTo = createHandlerChainRunner(chain, "UpdateBillTo");

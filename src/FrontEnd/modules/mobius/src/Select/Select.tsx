@@ -1,19 +1,19 @@
-import * as React from "react";
-import { ThemeConsumer } from "styled-components";
 import FormField, {
     FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-} from "../FormField";
-import { sizeVariantValues } from "../FormField/formStyles";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconPresentationProps } from "../Icon";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
+} from "@insite/mobius/FormField";
+import { sizeVariantValues } from "@insite/mobius/FormField/formStyles";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
+import * as React from "react";
+import { ThemeConsumer } from "styled-components";
 
 export interface SelectPresentationProps extends FormFieldPresentationProps<SelectComponentProps> {
     /** The props for icon displaying on the select.

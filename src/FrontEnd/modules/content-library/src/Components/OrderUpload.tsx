@@ -15,9 +15,11 @@ import { ProductDto } from "@insite/client-framework/Types/ApiModels";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
 import FileUpload, { FileUploadPresentationProps } from "@insite/mobius/FileUpload";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import { breakpointMediaQueries } from "@insite/mobius/utilities";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useContext, useRef, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -110,12 +112,36 @@ export const orderUploadStyles: OrderUploadStyles = {
         variant: "secondary",
         css: css`
             float: right;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            width: 100%;
+                        `,
+                    ],
+                    "max",
+                )}
         `,
     },
     uploadFileButton: {
         css: css`
             float: right;
-            margin-left: 15px;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        css`
+                            margin-bottom: 10px;
+                            width: 100%;
+                        `,
+                        css`
+                            margin-left: 15px;
+                            width: initial;
+                        `,
+                    ],
+                    "min",
+                )}
         `,
     },
     spinner: {

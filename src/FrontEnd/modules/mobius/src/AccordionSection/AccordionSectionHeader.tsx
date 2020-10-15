@@ -1,13 +1,13 @@
+import { AccordionContextData } from "@insite/mobius/Accordion/AccordionContext";
+import AccordionSectionPanel from "@insite/mobius/AccordionSection/AccordionSectionPanel";
+import { IconWrapper } from "@insite/mobius/Icon";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import React from "react";
 import styled, { css } from "styled-components";
-import { AccordionContextData } from "../Accordion/AccordionContext";
-import { IconWrapper } from "../Icon";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import AccordionSectionPanel from "./AccordionSectionPanel";
 
 export type AccordionSectionHeaderProps = MobiusStyledComponentProps<
     "dt",

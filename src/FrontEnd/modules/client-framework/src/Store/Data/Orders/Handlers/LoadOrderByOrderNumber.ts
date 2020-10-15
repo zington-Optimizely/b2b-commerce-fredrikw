@@ -19,7 +19,19 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getOrder(props.apiParameter);
+    try {
+        props.apiResult = await getOrder(props.apiParameter);
+    } catch (error) {
+        if ("status" in error && error.status === 404) {
+            props.dispatch({
+                type: "Data/Orders/FailedToLoadOrder",
+                orderNumber: props.parameter.orderNumber,
+                status: 404,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadOrder: HandlerType = props => {

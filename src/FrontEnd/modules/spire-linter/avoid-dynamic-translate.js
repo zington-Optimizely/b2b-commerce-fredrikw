@@ -1,4 +1,9 @@
 /* eslint-disable */
+const fs = require("fs");
+const path = require("path");
+
+let translations = [];
+
 module.exports = {
     meta: {
         messages: {
@@ -6,7 +11,20 @@ module.exports = {
             avoidUnsupported: "Avoid passing dynamic values to translate (unsupported case)",
         },
     },
+    schema: [
+        {
+            type: "object",
+            properties: {
+                generateTranslations: {
+                    type: "boolean",
+                    default: false
+                }
+            },
+            additionalProperties: false
+        }
+    ],
     create(context) {
+        const generateTranslations = (context.options[0] || {}).generateTranslations;
         const filename = context.getFilename().replace(/\\/g, "/");
         if (
             filename.indexOf("/modules/content-library/src/Widgets") === -1 &&
@@ -16,7 +34,19 @@ module.exports = {
             return {};
         }
 
+        const writeTranslationsFileIfConfigured = () => {
+            if (generateTranslations) {
+                const translationsFilePath = path.resolve("./wwwroot/AppData/translations.csv");
+                fs.writeFileSync(translationsFilePath, "", { encoding: "utf8" });
+                const data = [...new Set(translations)].filter(o => o).sort(new Intl.Collator("en").compare);
+                fs.appendFileSync(translationsFilePath, data.join("\r\n"), { encoding: "utf8" });
+            }
+        };
+
         return {
+            "Program:exit"(_) {
+                writeTranslationsFileIfConfigured();
+            },
             CallExpression(node) {
                 if (
                     !node.callee ||
@@ -49,6 +79,9 @@ module.exports = {
                     } else if (!isInitLiteral) {
                         context.report({ node, messageId: "avoid" });
                     }
+                }
+                if (generateTranslations) {
+                    translations.push(argument.value);
                 }
             },
         };

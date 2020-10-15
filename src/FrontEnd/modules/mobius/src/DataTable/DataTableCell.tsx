@@ -1,8 +1,8 @@
+import DataTableCellBase, { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
+import DataTableContext from "@insite/mobius/DataTable/DataTableContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import * as React from "react";
 import { css } from "styled-components";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import DataTableCellBase, { DataTableCellBaseProps } from "./DataTableCellBase";
-import DataTableContext from "./DataTableContext";
 
 export interface DataTableCellProps extends DataTableCellBaseProps {
     /** Props to be passed to the cell's typography child. */

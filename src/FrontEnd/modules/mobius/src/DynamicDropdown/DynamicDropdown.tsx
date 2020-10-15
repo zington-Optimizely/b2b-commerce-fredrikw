@@ -1,29 +1,29 @@
 /* eslint-disable no-unused-expressions */
-import * as React from "react";
-import styled, { css, ThemeProps, withTheme } from "styled-components";
+import filter from "@insite/mobius/DynamicDropdown/filter";
 import FormField, {
     FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-} from "../FormField";
-import { sizeVariantValues } from "../FormField/formStyles";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconPresentationProps } from "../Icon";
-import LoadingSpinner, { LoadingSpinnerProps } from "../LoadingSpinner";
-import Popover, { ContentBodyProps, OverflowWrapperProps } from "../Popover";
-import Typography from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import get from "../utilities/get";
-import getColor from "../utilities/getColor";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
-import safeColor from "../utilities/safeColor";
-import uniqueId from "../utilities/uniqueId";
-import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
-import filter from "./filter";
+} from "@insite/mobius/FormField";
+import { sizeVariantValues } from "@insite/mobius/FormField/formStyles";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
+import Popover, { ContentBodyProps, OverflowWrapperProps } from "@insite/mobius/Popover";
+import Typography from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import get from "@insite/mobius/utilities/get";
+import getColor from "@insite/mobius/utilities/getColor";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import { MobiusStyledComponentPropsWithRef } from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import safeColor from "@insite/mobius/utilities/safeColor";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden/VisuallyHidden";
+import * as React from "react";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 
 export interface DynamicDropdownPresentationProps
     extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {

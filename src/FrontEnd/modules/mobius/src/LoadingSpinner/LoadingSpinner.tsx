@@ -1,9 +1,9 @@
+import get from "@insite/mobius/utilities/get";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { keyframes } from "styled-components";
-import get from "../utilities/get";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import resolveColor from "../utilities/resolveColor";
 
 export interface LoadingSpinnerProps extends React.SVGAttributes<SVGElement> {
     /** The stroke color of the circular segment.

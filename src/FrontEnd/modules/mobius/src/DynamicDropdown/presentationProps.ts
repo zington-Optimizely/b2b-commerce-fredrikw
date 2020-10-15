@@ -1,6 +1,6 @@
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
+import getColor from "@insite/mobius/utilities/getColor";
 import { css } from "styled-components";
-import { ComponentThemeProps } from "../globals/baseTheme";
-import getColor from "../utilities/getColor";
 
 const DynamicDropdownPresentationPropsDefault: ComponentThemeProps["dynamicDropdown"]["defaultProps"] = {
     cssOverrides: {

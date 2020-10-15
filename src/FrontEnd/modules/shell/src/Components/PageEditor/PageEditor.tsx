@@ -9,6 +9,7 @@ import Header from "@insite/shell/Components/PageEditor/Header";
 import SiteFrame from "@insite/shell/Components/Shell/SiteFrame";
 import Stage from "@insite/shell/Components/Shell/Stage";
 import { getPageDefinition } from "@insite/shell/DefinitionLoader";
+import { clearModelSelection } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import { Location } from "history";
@@ -38,6 +39,7 @@ const mapStateToProps = (state: ShellState) => {
 const mapDispatchToProps = {
     loadPage,
     loadPageLinks,
+    clearModelSelection,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -65,6 +67,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
     }
 
     static loadPage(id: string, props: Props) {
+        props.clearModelSelection();
         props.loadPage({ pathname: `/Content/Page/${id}`, search: "" } as Location);
     }
 

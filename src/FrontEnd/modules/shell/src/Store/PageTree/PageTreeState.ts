@@ -10,6 +10,7 @@ export interface TreeNodeModel {
     isMatchingPage: boolean;
     type: string;
     futurePublishOn?: Date;
+    isWaitingForApproval: boolean;
     variantName: string;
     isDefaultVariant: boolean;
     isVariant?: boolean;

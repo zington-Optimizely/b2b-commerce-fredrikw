@@ -1,11 +1,11 @@
+import { LayoutCellStyle } from "@insite/mobius/LayoutCell/LayoutCell";
+import LayoutTableContext, { LayoutTableContextData } from "@insite/mobius/LayoutTable/LayoutTableContext";
+import getProp from "@insite/mobius/utilities/getProp";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { css } from "styled-components";
-import { LayoutCellStyle } from "../LayoutCell/LayoutCell";
-import getProp from "../utilities/getProp";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import LayoutTableContext, { LayoutTableContextData } from "./LayoutTableContext";
 
 export type LayoutTableProps = MobiusStyledComponentProps<
     "div",

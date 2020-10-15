@@ -72,7 +72,12 @@ const ProductAddToListLink: React.FC<Props> = ({
     };
 
     return (
-        <Link {...styles.link} onClick={addToListLinkClickHandler} {...otherProps}>
+        <Link
+            {...styles.link}
+            onClick={addToListLinkClickHandler}
+            disabled={productInfo.qtyOrdered <= 0}
+            {...otherProps}
+        >
             {labelOverride ?? translate("Add to List")}
         </Link>
     );

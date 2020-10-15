@@ -1,6 +1,6 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
 
-type HandlerType = Handler<void>;
+type HandlerType = Handler;
 
 export const ClearFormErrors: HandlerType = props => {
     props.dispatch({
@@ -11,5 +11,9 @@ export const ClearFormErrors: HandlerType = props => {
 
 export const chain = [ClearFormErrors];
 
-const resetShippingAddressFormValidation = createHandlerChainRunner(chain, "ResetShippingAddressFormValidation");
+const resetShippingAddressFormValidation = createHandlerChainRunnerOptionalParameter(
+    chain,
+    {},
+    "ResetShippingAddressFormValidation",
+);
 export default resetShippingAddressFormValidation;

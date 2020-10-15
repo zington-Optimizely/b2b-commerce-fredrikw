@@ -22,5 +22,6 @@ export const OrderApprovalsDataViewContext = createContext<ReturnType<typeof get
 export const OrderApprovalsStateContext = createContext<ReturnType<typeof getOrderApprovalsState>>({
     value: undefined,
     isLoading: false,
+    errorStatusCode: undefined,
     id: undefined,
 });

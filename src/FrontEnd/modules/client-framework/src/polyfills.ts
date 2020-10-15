@@ -273,3 +273,16 @@ if (!window.WeakSet) {
 
     window.WeakSet = WeakSet as any;
 }
+
+if (!Object.entries) {
+    Object.entries = function (value: object) {
+        const ownProps = Object.keys(value);
+        let i = ownProps.length;
+        const result = new Array(i); // preallocate the Array
+        while (i--) {
+            result[i] = [ownProps[i], (value as any)[ownProps[i]]];
+        }
+
+        return result;
+    };
+}

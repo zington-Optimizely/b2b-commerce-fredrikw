@@ -1,9 +1,9 @@
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
 import { GetInvoicesApiParameter } from "@insite/client-framework/Services/InvoiceService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import loadInvoices from "@insite/client-framework/Store/Data/Invoices/Handlers/LoadInvoices";
 import {
     getInvoicesDataView,
@@ -15,6 +15,7 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import qs from "qs";
 import * as React from "react";
 import { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -46,21 +47,27 @@ const InvoiceHistoryPage: FC<Props> = ({
     let firstLoad = false;
     useEffect(() => {
         firstLoad = true;
+        const pageSizeCookie = getCookie("InvoiceHistory-PageSize");
+        const pageSize = pageSizeCookie ? parseInt(pageSizeCookie, 10) : undefined;
         if (location.search) {
             const getInvoicesApiParameter = parseQueryString<GetInvoicesApiParameter>(location.search);
+            if (pageSize) {
+                getInvoicesApiParameter.pageSize = pageSize;
+            }
             updateSearchFields({ ...getInvoicesApiParameter, type: "Replace" });
         } else if (settings.invoiceSettings.lookBackDays > 0) {
             const tzOffset = new Date().getTimezoneOffset() * 60000;
             const fromDate = new Date(
                 Date.now() - settings.invoiceSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset,
             );
-            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
+            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize", pageSize });
         }
     }, []);
 
     useEffect(() => {
         if (!firstLoad) {
-            history.replace(`${location.pathname}?${getDataViewKey(getInvoicesParameter)}`);
+            const queryString = qs.stringify(getInvoicesParameter);
+            history.replace(`${location.pathname}${queryString !== "" ? `?${queryString}` : ""}`);
         }
     }, [getInvoicesParameter]);
 

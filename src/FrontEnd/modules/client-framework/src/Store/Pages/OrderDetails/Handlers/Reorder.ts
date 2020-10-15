@@ -1,3 +1,4 @@
+import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
@@ -12,6 +13,8 @@ import { CartLineCollectionModel, CartLineModel, OrderLineModel } from "@insite/
 type HandlerType = ApiHandlerDiscreteParameter<HasOnSuccess, CartLineCollectionModel, CartLineCollectionModel>;
 
 export const DispatchBeginReorder: HandlerType = props => {
+    throwErrorIfTesting();
+
     props.dispatch({
         type: "Pages/OrderDetails/BeginReorder",
     });

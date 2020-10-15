@@ -3,7 +3,6 @@ import { HasShellContext, withIsInShell } from "@insite/client-framework/Compone
 import Zone from "@insite/client-framework/Components/Zone";
 import { GetQuotesApiParameter } from "@insite/client-framework/Services/QuoteService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import loadQuotes from "@insite/client-framework/Store/Data/Quotes/Handlers/LoadQuotes";
 import { getQuotesDataView } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
@@ -12,6 +11,7 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import qs from "qs";
 import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
@@ -65,7 +65,8 @@ const RfqMyQuotesPage = ({
 
     useEffect(() => {
         if (!firstLoad) {
-            history.replace(`${location.pathname}?${getDataViewKey(getQuotesParameter)}`);
+            const queryString = qs.stringify(getQuotesParameter);
+            history.replace(`${location.pathname}${queryString !== "" ? `?${queryString}` : ""}`);
         }
     }, [getQuotesParameter]);
 

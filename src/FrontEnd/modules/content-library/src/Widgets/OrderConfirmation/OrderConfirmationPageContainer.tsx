@@ -12,6 +12,7 @@ import { css } from "styled-components";
 export interface OrderConfirmationPageContainerStyles {
     container?: GridContainerProps;
     headerGridItem?: GridItemProps;
+    accountSignUpGridItem?: GridItemProps;
     orderInformationGridItem?: GridItemProps;
     orderTotalGridItem?: GridItemProps;
     productListGridItem?: GridItemProps;
@@ -21,6 +22,12 @@ export const orderConfirmationPageContainerStyles: OrderConfirmationPageContaine
     headerGridItem: {
         css: css`
             order: 1;
+        `,
+        width: 12,
+    },
+    accountSignUpGridItem: {
+        css: css`
+            order: 2;
         `,
         width: 12,
     },
@@ -85,6 +92,9 @@ const OrderConfirmationPageContainer = ({ id }: WidgetProps) => {
         <GridContainer {...styles.container}>
             <GridItem {...styles.headerGridItem}>
                 <Zone zoneName="Content00" contentId={id} />
+            </GridItem>
+            <GridItem {...styles.accountSignUpGridItem}>
+                <Zone zoneName="Content04" contentId={id} />
             </GridItem>
             <GridItem {...styles.orderInformationGridItem}>
                 <Zone zoneName="Content01" contentId={id} />

@@ -14,13 +14,22 @@ interface Props {
 export class ModelSelection extends React.Component<Props> {
     private timer?: number;
 
+    // this becomes unmounted when switching contentmodes or publishing, we need to send the selected path back to the siteframe
+    componentDidMount() {
+        if (this.props.selectedValue) {
+            const value = this.props.selectedValue;
+            // to get the siteFrame to resend the selected path, we first blank it out
+            this.props.onSelectionChange("");
+            setTimeout(() => {
+                this.props.onSelectionChange(value);
+            }, 1);
+        }
+    }
+
     searchTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         clearTimeout(this.timer);
 
         const value = event.currentTarget.value;
-        this.setState({
-            searchValue: value,
-        });
         this.timer = setTimeout(() => {
             this.props.onInputChange(value);
         }, 50);
@@ -28,7 +37,7 @@ export class ModelSelection extends React.Component<Props> {
 
     render() {
         return (
-            <Wrapper>
+            <Wrapper data-test-selector={`modelSelection_${this.props.modelType}`}>
                 <DynamicDropdown
                     iconProps={{ size: 20 }}
                     labelPosition="left"
@@ -38,6 +47,7 @@ export class ModelSelection extends React.Component<Props> {
                     selected={this.props.selectedValue}
                     options={this.props.options}
                     hideNoOptionsIfEmptySearch
+                    data-test-selector={`modelSelection_${this.props.modelType}_search`}
                 ></DynamicDropdown>
             </Wrapper>
         );

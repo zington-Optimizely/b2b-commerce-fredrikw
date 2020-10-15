@@ -1,6 +1,6 @@
-import { BaseTheme } from "mobius/src/globals/baseTheme";
-import { TypographyPresentationProps } from "../Typography";
-import get from "./get";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { TypographyPresentationProps } from "@insite/mobius/Typography";
+import get from "@insite/mobius/utilities/get";
 
 interface Arguments {
     theme: BaseTheme;

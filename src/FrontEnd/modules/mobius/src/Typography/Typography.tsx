@@ -1,11 +1,11 @@
+import { BaseTheme, ThemeTypography } from "@insite/mobius/globals/baseTheme";
+import TypographyEllipsis from "@insite/mobius/Typography/TypographyEllipsis";
+import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import { FontWeightProperty, TextTransformProperty } from "csstype";
 import * as React from "react";
 import { ThemeConsumer, ThemeProps } from "styled-components";
-import { BaseTheme, ThemeTypography } from "../globals/baseTheme";
-import { StyledProp } from "../utilities/InjectableCss";
-import TypographyEllipsis from "./TypographyEllipsis";
-import TypographyStyle from "./TypographyStyle";
 
 export interface TypographyPresentationProps {
     /** The color of the text. */

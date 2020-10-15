@@ -1,6 +1,6 @@
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled from "styled-components";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 const VisuallyHiddenStyle = styled.span`
     /** from https://allyjs.io/tutorials/hiding-elements.html */

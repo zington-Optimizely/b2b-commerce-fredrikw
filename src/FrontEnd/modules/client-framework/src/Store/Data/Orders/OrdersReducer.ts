@@ -10,6 +10,7 @@ const initialState: OrdersState = {
     idByOrderNumber: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -39,6 +40,17 @@ const reducer = {
         delete draft.isLoading[action.model.erpOrderNumber];
         draft.byId[action.model.id] = action.model;
         storeIdByOrderNumber(draft, action.model);
+        if (draft.errorStatusCodeById) {
+            delete draft.errorStatusCodeById[action.model.webOrderNumber];
+            delete draft.errorStatusCodeById[action.model.erpOrderNumber];
+        }
+    },
+
+    "Data/Orders/FailedToLoadOrder": (draft: Draft<OrdersState>, action: { orderNumber: string; status: number }) => {
+        delete draft.isLoading[action.orderNumber];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.orderNumber] = action.status;
+        }
     },
 
     "Data/Orders/Reset": () => {

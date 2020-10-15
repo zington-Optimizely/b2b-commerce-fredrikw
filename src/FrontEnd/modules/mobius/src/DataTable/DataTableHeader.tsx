@@ -1,17 +1,17 @@
+import Clickable from "@insite/mobius/Clickable";
+import { DataTablePresentationProps, SortOrderOptions } from "@insite/mobius/DataTable/DataTable";
+import DataTableCellBase, { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
+import DataTableContext from "@insite/mobius/DataTable/DataTableContext";
+import { IconMemo } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import getColor from "@insite/mobius/utilities/getColor";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { css, withTheme } from "styled-components";
-import Clickable from "../Clickable";
-import { IconMemo } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import getColor from "../utilities/getColor";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import VisuallyHidden from "../VisuallyHidden";
-import { DataTablePresentationProps, SortOrderOptions } from "./DataTable";
-import DataTableCellBase, { DataTableCellBaseProps } from "./DataTableCellBase";
-import DataTableContext from "./DataTableContext";
 
 let sortOrderObject:
     | {}

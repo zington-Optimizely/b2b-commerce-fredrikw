@@ -9,6 +9,7 @@ import {
 } from "@insite/client-framework/Types/ContentItemDefinitions";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
 import sortBy from "lodash/sortBy";
+// eslint-disable-next-line spire/fenced-imports
 import {
     commerce_routes as commerceRoutes,
     spire_system_uris as spireSystemUris,

@@ -1,18 +1,18 @@
+import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme, ThemeTransitionDuration } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import Popover, { PopoverProps } from "@insite/mobius/Popover";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitSingle from "@insite/mobius/utilities/omitSingle";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
-import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps } from "../Icon";
-import Popover, { PopoverProps } from "../Popover";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitSingle from "../utilities/omitSingle";
-import uniqueId from "../utilities/uniqueId";
-import VisuallyHidden from "../VisuallyHidden";
 
 export interface OverflowMenuPresentationProps {
     /** An object containing props to be passed down to trigger button component.

@@ -166,27 +166,27 @@ export const LoadRealTimePrices: HandlerType = async props => {
     props.dispatch(
         loadRealTimePricing({
             productPriceParameters: [productInfo],
-            onSuccess: realTimePricing => {
-                const pricing = realTimePricing.realTimePricingResults!.find(o => o.productId === productId);
-                if (pricing) {
-                    props.dispatch({
-                        type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
-                        pricing,
-                    });
-                } else {
+            onComplete: pricingProps => {
+                if (pricingProps.apiResult) {
+                    const pricing = pricingProps.apiResult.realTimePricingResults!.find(o => o.productId === productId);
+                    if (pricing) {
+                        props.dispatch({
+                            type: "Pages/ProductDetails/CompleteLoadRealTimePricing",
+                            pricing,
+                        });
+                    } else {
+                        props.dispatch({
+                            type: "Pages/ProductDetails/FailedLoadRealTimePricing",
+                            productId,
+                        });
+                    }
+                } else if (pricingProps.error) {
                     props.dispatch({
                         type: "Pages/ProductDetails/FailedLoadRealTimePricing",
                         productId,
                     });
                 }
 
-                props.pricingLoaded = true;
-            },
-            onError: () => {
-                props.dispatch({
-                    type: "Pages/ProductDetails/FailedLoadRealTimePricing",
-                    productId,
-                });
                 props.pricingLoaded = true;
             },
         }),
@@ -205,51 +205,58 @@ export const LoadRealTimeInventory: HandlerType = props => {
     props.dispatch(
         loadRealTimeInventory({
             productIds: [props.product.id, ...(props.variantChildren?.map(o => o.id) ?? [])],
-            onSuccess: realTimeInventory => {
-                if (realTimeInventory.realTimeInventoryResults && props.variantChildren && props.product) {
-                    const discontinued: SafeDictionary<boolean> = {};
-                    for (const result of realTimeInventory.realTimeInventoryResults) {
-                        if (!result.qtyOnHand) {
-                            discontinued[result.productId] = true;
+            onComplete: realTimeInventoryProps => {
+                const realTimeInventory = realTimeInventoryProps?.apiResult;
+                if (realTimeInventory) {
+                    if (realTimeInventory.realTimeInventoryResults && props.variantChildren && props.product) {
+                        const discontinued: SafeDictionary<boolean> = {};
+                        for (const result of realTimeInventory.realTimeInventoryResults) {
+                            if (!result.qtyOnHand) {
+                                discontinued[result.productId] = true;
+                            }
                         }
-                    }
-                    const initialCount = props.variantChildren.length;
-                    props.variantChildren = props.variantChildren.filter(
-                        o => !o.isDiscontinued || (o.isDiscontinued && !discontinued[o.id]),
-                    );
-
-                    if (initialCount !== props.variantChildren.length) {
-                        const variantChildrenDataView = getVariantChildrenDataView(props.getState(), props.product.id);
-                        const { value, ...otherProps } = variantChildrenDataView;
-                        props.dispatch({
-                            type: "Data/Products/ReplaceDataView",
-                            parameter: {
-                                productId: props.product.id,
-                                variantChildren: true,
-                            },
-                            dataView: {
-                                value: props.variantChildren,
-                                ...otherProps,
-                            },
-                        });
-
-                        const productInfo = createFromProduct(
-                            getProductState(props.getState(), props.product.id).value!,
+                        const initialCount = props.variantChildren.length;
+                        props.variantChildren = props.variantChildren.filter(
+                            o => !o.isDiscontinued || (o.isDiscontinued && !discontinued[o.id]),
                         );
 
-                        props.dispatch({
-                            type: "Pages/ProductDetails/UpdateVariantSelection",
-                            variantSelection: {},
-                            variantSelectionCompleted: false,
-                            selectedProductInfo: productInfo,
-                        });
+                        if (initialCount !== props.variantChildren.length) {
+                            const variantChildrenDataView = getVariantChildrenDataView(
+                                props.getState(),
+                                props.product.id,
+                            );
+                            const { value, ...otherProps } = variantChildrenDataView;
+                            props.dispatch({
+                                type: "Data/Products/ReplaceDataView",
+                                parameter: {
+                                    productId: props.product.id,
+                                    variantChildren: true,
+                                },
+                                dataView: {
+                                    value: props.variantChildren,
+                                    ...otherProps,
+                                },
+                            });
+
+                            const productInfo = createFromProduct(
+                                getProductState(props.getState(), props.product.id).value!,
+                            );
+
+                            props.dispatch({
+                                type: "Pages/ProductDetails/UpdateVariantSelection",
+                                variantSelection: {},
+                                variantSelectionCompleted: false,
+                                selectedProductInfo: productInfo,
+                            });
+                        }
                     }
+
+                    props.dispatch({
+                        type: "Pages/ProductDetails/CompleteLoadRealTimeInventory",
+                        realTimeInventory,
+                    });
                 }
 
-                props.dispatch({
-                    type: "Pages/ProductDetails/CompleteLoadRealTimeInventory",
-                    realTimeInventory,
-                });
                 props.inventoryLoaded = true;
             },
         }),

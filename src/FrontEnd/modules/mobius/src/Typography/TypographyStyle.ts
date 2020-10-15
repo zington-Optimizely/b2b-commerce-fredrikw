@@ -1,8 +1,7 @@
-import "core-js/fn/array/includes"; // needed for IE
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { TypographyComponentProps, TypographyPresentationProps } from "@insite/mobius/Typography/Typography";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import styled, { ThemeProps } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import resolveColor from "../utilities/resolveColor";
-import { TypographyComponentProps, TypographyPresentationProps } from "./Typography";
 
 /**
  * This is a highly simplified version of the styled-components internal utility functions `flatten` and `interleave`.

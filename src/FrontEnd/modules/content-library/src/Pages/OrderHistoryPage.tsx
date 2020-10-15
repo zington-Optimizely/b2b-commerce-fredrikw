@@ -1,9 +1,9 @@
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import Zone from "@insite/client-framework/Components/Zone";
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { getOrdersDataView, OrdersDataViewContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import loadOrderStatusMappings from "@insite/client-framework/Store/Data/OrderStatusMappings/Handlers/LoadOrderStatusMappings";
@@ -14,6 +14,7 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import qs from "qs";
 import * as React from "react";
 import { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -49,15 +50,20 @@ const OrderHistoryPage: React.FC<Props> = ({
     let firstLoad = false;
     React.useEffect(() => {
         firstLoad = true;
+        const pageSizeCookie = getCookie("OrderHistory-PageSize");
+        const pageSize = pageSizeCookie ? parseInt(pageSizeCookie, 10) : undefined;
         if (location.search) {
             const getOrdersApiParameter = parseQueryString<GetOrdersApiParameter>(location.search);
+            if (pageSize) {
+                getOrdersApiParameter.pageSize = pageSize;
+            }
             updateSearchFields({ ...getOrdersApiParameter, type: "Replace" });
         } else if (settings.orderSettings.lookBackDays > 0) {
             const tzOffset = new Date().getTimezoneOffset() * 60000;
             const fromDate = new Date(
                 Date.now() - settings.orderSettings.lookBackDays * 60 * 60 * 24 * 1000 - tzOffset,
             );
-            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize" });
+            updateSearchFields({ fromDate: fromDate.toISOString().split("T")[0], type: "Initialize", pageSize });
         }
 
         if (shouldLoadOrderStatusMappings) {
@@ -67,7 +73,8 @@ const OrderHistoryPage: React.FC<Props> = ({
 
     useEffect(() => {
         if (!firstLoad) {
-            history.replace(`${location.pathname}?${getDataViewKey(getOrdersParameter)}`);
+            const queryString = qs.stringify(getOrdersParameter);
+            history.replace(`${location.pathname}${queryString !== "" ? `?${queryString}` : ""}`);
         }
     }, [getOrdersParameter]);
 

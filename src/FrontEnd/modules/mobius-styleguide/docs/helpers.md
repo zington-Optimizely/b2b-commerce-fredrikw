@@ -33,7 +33,7 @@ This function is a closure to allow you to arbitrarily access props. This helper
 > **@return** *{function}* A function that accepts component props and attempts to access the value at the path defined in outer function argument.  
 
 ```js static
-import getProp from '../../mobius/src/utilities/getProp';
+import getProp from '../../mobius/src//utilities/getProp';
 
 const Example = styled.div`
     height: ${getProp('size', '40')}px;
@@ -56,7 +56,7 @@ This function is a closure to allow you to access a path within the color object
 > **@return** *{function}* A function that accepts component props and attempts to access the color defined in the function argument.  
 
 ```js static
-import getColor from '../../mobius/src/utilities/getColor';
+import getColor from '../../mobius/src//utilities/getColor';
 
 /* 
  * given a theme: 
@@ -90,7 +90,7 @@ This function allows you to access a path within the color object of the theme. 
 > **@return** *{string}* The color.  
 
 ```js static
-import resolveColor from '../../mobius/src/utilities/resolveColor';
+import resolveColor from '../../mobius/src//utilities/resolveColor';
 
 const ExampleDiv = styled.div`
     background: ${({ error, theme }) => (error ? resolveColor('danger', theme) : null)};
@@ -112,14 +112,14 @@ Reaches into the theme to evaluate whether there is a contrast color defined for
 
 ```js
 const css = require('styled-components').css;
-const GridContainer = require('../../mobius/src/GridContainer').default;
-const GridItem = require('../../mobius/src/GridItem').default;
-const resolveColor = require('../../mobius/src/utilities/resolveColor.ts').default;
-const getContrastColor = require('../../mobius/src/utilities/getContrastColor').default;
-const Typography = require('../../mobius/src/Typography').default;
-const TextField = require('../../mobius/src/TextField').default;
-const Select = require('../../mobius/src/Select').default;
-const Tooltip = require('../../mobius/src/Tooltip').default;
+const GridContainer = require('../../mobius/src//GridContainer').default;
+const GridItem = require('../../mobius/src//GridItem').default;
+const resolveColor = require('../../mobius/src//utilities/resolveColor.ts').default;
+const getContrastColor = require('../../mobius/src//utilities/getContrastColor').default;
+const Typography = require('../../mobius/src//Typography').default;
+const TextField = require('../../mobius/src//TextField').default;
+const Select = require('../../mobius/src//Select').default;
+const Tooltip = require('../../mobius/src//Tooltip').default;
 
 class Example extends React.Component {
     constructor(props) {

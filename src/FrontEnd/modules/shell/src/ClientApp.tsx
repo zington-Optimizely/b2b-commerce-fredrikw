@@ -10,6 +10,7 @@ import shellTheme from "@insite/shell/ShellTheme";
 import { parseAdminTokenFromLocalStorage } from "@insite/shell/Store/BearerToken";
 import { configureStore } from "@insite/shell/Store/ConfigureStore";
 import { clearCookiesAndStorage } from "@insite/shell/Store/ShellContext/ShellContextReducer";
+import ShellState from "@insite/shell/Store/ShellState";
 import { ConnectedRouter } from "connected-react-router";
 import { createBrowserHistory } from "history";
 import "promise-polyfill/src/polyfill";
@@ -18,7 +19,6 @@ import { hydrate, render, Renderer } from "react-dom";
 import { Provider } from "react-redux";
 import { css } from "styled-components";
 import "whatwg-fetch";
-import ShellState from "./Store/ShellState";
 
 const pages = require.context("../../client-framework/src/Internal/Pages", true, /\.tsx$/);
 const onHotPageReplace = addPagesFromContext(pages);

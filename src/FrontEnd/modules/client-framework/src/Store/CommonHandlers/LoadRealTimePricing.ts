@@ -1,4 +1,4 @@
-import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
 import {
     GetProductCollectionRealTimePriceApiV2Parameter,
@@ -8,9 +8,8 @@ import { getSettingsCollection } from "@insite/client-framework/Store/Context/Co
 import { RealTimePricingModel } from "@insite/client-framework/Types/ApiModels";
 
 type Parameter = GetProductCollectionRealTimePriceApiV2Parameter &
-    HasOnSuccess<RealTimePricingModel> & {
-        onError?: (error: unknown) => void;
-    };
+    HasOnSuccess<RealTimePricingModel> &
+    HasOnError<unknown>;
 
 interface Props {
     apiResult: RealTimePricingModel;
@@ -46,7 +45,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.error) {
-        props.parameter.onError?.(props.apiResult);
+        props.parameter.onError?.(props.error);
     }
 };
 

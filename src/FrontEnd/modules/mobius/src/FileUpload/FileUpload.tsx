@@ -1,28 +1,28 @@
-import * as React from "react";
-import { Transition } from "react-transition-group";
-import { TransitionStatus } from "react-transition-group/Transition";
-import styled, { AnyStyledComponent, css, ThemeConsumer } from "styled-components";
-import Button, { ButtonPresentationProps } from "../Button";
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import FormField, {
     FormFieldClickable,
     FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-} from "../FormField";
-import { sizeVariantValues, VariantValues } from "../FormField/formStyles";
-import { BaseTheme, ThemeTransitionDuration } from "../globals/baseTheme";
-import { IconPresentationProps } from "../Icon";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import get from "../utilities/get";
-import getProp from "../utilities/getProp";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
-import VisuallyHidden from "../VisuallyHidden";
+} from "@insite/mobius/FormField";
+import { sizeVariantValues, VariantValues } from "@insite/mobius/FormField/formStyles";
+import { BaseTheme, ThemeTransitionDuration } from "@insite/mobius/globals/baseTheme";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import get from "@insite/mobius/utilities/get";
+import getProp from "@insite/mobius/utilities/getProp";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
+import * as React from "react";
+import { Transition } from "react-transition-group";
+import { TransitionStatus } from "react-transition-group/Transition";
+import styled, { AnyStyledComponent, css, ThemeConsumer } from "styled-components";
 
 interface FileUploadCssOverrides extends Pick<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
     appearanceTransition?: StyledProp<any>;

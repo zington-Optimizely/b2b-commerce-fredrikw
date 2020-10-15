@@ -1,5 +1,7 @@
 import { FrameHole, setupSiteHole } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
+import { autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { Action, Dispatch, MiddlewareAPI } from "redux";
@@ -10,14 +12,38 @@ interface SiteHole {
 
 let siteHole: SiteHole;
 
-export const sendToSite = (message: any): boolean => {
+export const closeSiteHole = () => {
+    (window as any).frameHoleIsReady = false; // makes sure our AUI tests won't try to access the iframe until it reestablishes the connection which indicates it is done loading.
+    delete siteHole.frameHole;
+};
+
+export const sendToSite = (message: any) => {
     if (!siteHole || !siteHole.frameHole) {
-        return false;
+        addQueuedMessage(message);
+        return;
     }
 
     siteHole.frameHole.send(message as any);
-    return true;
 };
+
+const queuedMessages: any[] = [];
+let messageInterval: number | undefined;
+
+function addQueuedMessage(message: any) {
+    queuedMessages.push(message);
+    clearInterval(messageInterval);
+    messageInterval = setInterval(() => {
+        if (!siteHole || !siteHole.frameHole) {
+            return;
+        }
+
+        while (queuedMessages.length > 0) {
+            siteHole.frameHole.send(queuedMessages.shift());
+        }
+
+        clearInterval(messageInterval);
+    }, 50);
+}
 
 export const setSiteFrame = (frame: HTMLIFrameElement, handlers: Dictionary<(data: any) => void>) => {
     siteHole = {};

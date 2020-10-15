@@ -1,15 +1,15 @@
+import Clickable from "@insite/mobius/Clickable";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import get from "@insite/mobius/utilities/get";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import Clickable from "../Clickable";
-import { IconMemo, IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import get from "../utilities/get";
-import getColor from "../utilities/getColor";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import VisuallyHidden from "../VisuallyHidden";
 
 export interface TooltipPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.

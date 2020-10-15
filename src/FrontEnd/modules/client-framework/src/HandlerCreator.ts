@@ -108,15 +108,17 @@ export function setErrorHandler(value: typeof errorHandler) {
     errorHandler = value;
 }
 
-const runChain = async <Parameter, Props = {}>(
+const runChain = async <Parameter extends HasOnException & HasOnComplete<Props>, Props = {}>(
     parameter: Parameter,
     dispatch: StrictInputDispatch,
     getState: () => ApplicationState,
     chain: Handler<Parameter, Props>[],
     name: string,
+    callOnComplete = true,
 ) => {
     // An "initial props" parameter would make the props value below correct, but no handlers written so far require it.
-    const props = { parameter, dispatch, getState };
+    // `as any` needed due to `props` not having any required fields from Props.
+    const props = { parameter, dispatch, getState } as any;
     // This approach to handler "chains" doesn't give TypeScript enough info to recognize transitions in values and nullness.
     let x = 0;
     if (!IS_SERVER_SIDE) {
@@ -128,7 +130,7 @@ const runChain = async <Parameter, Props = {}>(
 
     for (const handler of chain) {
         try {
-            const possiblePromise = handler(props as any); // `as any` needed due to `props` not having any required fields from Props.
+            const possiblePromise = handler(props);
             const result = possiblePromise instanceof Promise ? await possiblePromise : possiblePromise;
             if (devTools) {
                 try {
@@ -143,7 +145,11 @@ const runChain = async <Parameter, Props = {}>(
                 break;
             }
         } catch (e) {
+            props.parameter.onException?.(e);
             if (IS_SERVER_SIDE && !IS_PRODUCTION) {
+                if (callOnComplete) {
+                    props.parameter.onComplete?.(props);
+                }
                 throw e;
             }
             dispatch(errorHandler({ error: e }));
@@ -152,9 +158,23 @@ const runChain = async <Parameter, Props = {}>(
         x += 1;
     }
 
+    if (callOnComplete) {
+        props.parameter.onComplete?.(props);
+    }
+
     if (!IS_SERVER_SIDE) {
         (window as any).activeHandlers -= 1;
     }
+};
+
+/**
+ * @deprecated this should not be used for any new handlers. It is used for existing handlers that defined onComplete before it was added to all handlers.
+ */
+export const createHandlerChainRunnerForOldOnComplete = <Parameter, Props = {}, CompleteResult = {}>(
+    chain: Handler<Parameter, Props>[],
+    name: string,
+) => {
+    return internalCreateHandlerChainRunner(chain, name, false);
 };
 
 /**
@@ -162,11 +182,19 @@ const runChain = async <Parameter, Props = {}>(
  * The source array is not copied, so changes to it will affect the operation.
  */
 export const createHandlerChainRunner = <Parameter, Props = {}>(chain: Handler<Parameter, Props>[], name: string) => {
+    return internalCreateHandlerChainRunner<Parameter, Parameter & HasOnComplete<Props>, Props>(chain, name);
+};
+
+const internalCreateHandlerChainRunner = <ChainParameter, ReturnedParameter extends ChainParameter, Props = {}>(
+    chain: Handler<ChainParameter, Props>[],
+    name: string,
+    callOnComplete = true,
+) => {
     checkChainForDuplicates(chain);
 
-    return (parameter: Parameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
+    return (parameter: ReturnedParameter) => (dispatch: StrictInputDispatch, getState: () => ApplicationState) => {
         checkForSyntheticEvent(parameter, name);
-        addTask(runChain(parameter, dispatch, getState, chain, name));
+        addTask(runChain(parameter, dispatch, getState, chain, name, callOnComplete));
     };
 };
 
@@ -197,10 +225,18 @@ export type HasOnSuccess<Result = void> = {
     onSuccess?: (result: Result) => void;
 };
 
-/** The standard pattern for parameters that report their failure. */
 export type HasOnError<Result = void> = {
     /** Called upon failure of the handler chain. */
     onError?: (result: Result) => void;
+};
+
+export type HasOnException<Result = void> = {
+    /** Called upon non catched failure of the handler chain. */
+    onException?: (result: Result) => void;
+};
+
+type HasOnComplete<Result = unknown> = {
+    onComplete?: (result: Partial<Result>) => void;
 };
 
 type Thunk<Result> = (dispatch: StrictInputDispatch, getState: () => ApplicationState) => Result;
@@ -209,11 +245,12 @@ type Thunk<Result> = (dispatch: StrictInputDispatch, getState: () => Application
 export const makeHandlerChainAwaitable = <Parameter extends HasOnSuccess<Result>, Result>(
     handlerChain: (parameter: Parameter) => Thunk<void>,
 ) => (parameter: Omit<Parameter, "onSuccess">): Thunk<Promise<Result>> => dispatch =>
-    new Promise<Result>(resolve => {
+    new Promise<Result>((resolve, reject) => {
         dispatch(
             handlerChain({
                 ...(parameter as Parameter),
                 onSuccess: resolve,
+                onException: reject,
             }),
         );
     });

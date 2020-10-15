@@ -1,7 +1,7 @@
 import { getProp } from "@insite/mobius/utilities";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import styled from "styled-components";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
 
 export const OrderedList = styled.ol<InjectableCss>`
     padding: 0 0 0 40px;

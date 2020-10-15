@@ -133,5 +133,7 @@ module.exports = {
         semi: "off", // handled by prettier
         "spire/avoid-dynamic-translate": "error",
         "spire/export-styles": "error",
+        "spire/fenced-imports": ["error", { failRelativeImports: true }],
+        "spire/restrict-lodash-import": "error",
     },
 };

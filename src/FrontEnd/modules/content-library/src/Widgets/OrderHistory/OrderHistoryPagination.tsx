@@ -59,6 +59,7 @@ const OrderHistoryPagination: FC<Props> = ({ updateSearchFields }) => {
             resultsPerPageOptions={pageSizeOptions}
             onChangePage={changePage}
             onChangeResultsPerPage={changeResultsPerPage}
+            pageSizeCookie="OrderHistory-PageSize"
         />
     );
 };

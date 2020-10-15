@@ -1,9 +1,9 @@
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { OverlayComponentProps, Transition } from "@insite/mobius/Overlay/Overlay";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import * as React from "react";
 import styled, { css, ThemeProps } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import { OverlayComponentProps, Transition } from "./Overlay";
 
 export type ScrimProps = {
     isClosing?: boolean;

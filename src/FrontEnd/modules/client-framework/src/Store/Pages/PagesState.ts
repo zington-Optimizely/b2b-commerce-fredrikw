@@ -21,9 +21,13 @@ import ProductListState from "@insite/client-framework/Store/Pages/ProductList/P
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
 import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
 import RfqConfirmationState from "@insite/client-framework/Store/Pages/RfqConfirmation/RfqConfirmationState";
+import RfqJobQuoteDetailsState from "@insite/client-framework/Store/Pages/RfqJobQuoteDetails/RfqJobQuoteDetailsState";
+import RfqJobQuotesState from "@insite/client-framework/Store/Pages/RfqJobQuotes/RfqJobQuotesState";
 import RfqMyQuotesState from "@insite/client-framework/Store/Pages/RfqMyQuotes/RfqMyQuotesState";
 import RfqQuoteDetailsState from "@insite/client-framework/Store/Pages/RfqQuoteDetails/RfqQuoteDetailsState";
 import RfqRequestQuoteState from "@insite/client-framework/Store/Pages/RfqRequestQuote/RfqRequestQuoteState";
+import SavedOrderDetailsState from "@insite/client-framework/Store/Pages/SavedOrderDetails/SavedOrderDetailsState";
+import SavedOrderListState from "@insite/client-framework/Store/Pages/SavedOrderList/SavedOrderListState";
 import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
 import UserListState from "@insite/client-framework/Store/Pages/UserList/UserListState";
@@ -53,9 +57,13 @@ export default interface PagesState {
     readonly requestRma: RequestRmaState;
     readonly quickOrder: QuickOrderState;
     readonly rfqConfirmation: RfqConfirmationState;
+    readonly rfqJobQuotes: RfqJobQuotesState;
+    readonly rfqJobQuoteDetails: RfqJobQuoteDetailsState;
     readonly rfqMyQuotes: RfqMyQuotesState;
     readonly rfqQuoteDetails: RfqQuoteDetailsState;
     readonly rfqRequestQuote: RfqRequestQuoteState;
+    readonly savedOrderList: SavedOrderListState;
+    readonly savedOrderDetails: SavedOrderDetailsState;
     readonly savedPayments: SavedPaymentsState;
     readonly signIn: SignInState;
     readonly userList: UserListState;

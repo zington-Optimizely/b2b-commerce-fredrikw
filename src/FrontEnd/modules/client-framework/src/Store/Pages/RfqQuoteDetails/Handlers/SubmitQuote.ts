@@ -52,6 +52,12 @@ export const SendDataToApi: HandlerType = async props => {
     }
 };
 
+export const ResetQuotesData: HandlerType = props => {
+    props.dispatch({
+        type: "Data/Quotes/Reset",
+    });
+};
+
 export const DispatchCompleteLoadQuote: HandlerType = props => {
     props.dispatch({
         type: "Data/Quotes/CompleteLoadQuote",
@@ -67,6 +73,7 @@ export const chain = [
     CheckExpirationDate,
     PopulateApiParameter,
     SendDataToApi,
+    ResetQuotesData,
     DispatchCompleteLoadQuote,
     ExecuteOnSuccessCallback,
 ];

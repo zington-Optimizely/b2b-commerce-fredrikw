@@ -44,7 +44,7 @@ import { SelectPresentationProps } from "@insite/mobius/Select";
 import { TextFieldProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -579,7 +579,7 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                                 </Link>
                             </Hidden>
                             <StyledWrapper {...styles.updateQuantityWrapper}>
-                                {wishListLine.qtyOrdered !== productInfo.qtyOrdered && (
+                                {productInfo.qtyOrdered > 0 && wishListLine.qtyOrdered !== productInfo.qtyOrdered && (
                                     <Link {...styles.updateQuantityLink} onClick={() => onUpdateQuantityClick()}>
                                         {translate("Update QTY")}
                                     </Link>

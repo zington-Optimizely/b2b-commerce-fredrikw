@@ -93,6 +93,7 @@ const reducer = {
                 isMatchingPage: pageState.attributes.indexOf("NonMatching") < 0,
                 type: pageState.type,
                 futurePublishOn: pageState.futurePublishOn ? new Date(pageState.futurePublishOn) : undefined,
+                isWaitingForApproval: pageState.isWaitingForApproval,
                 variantName: pageState.variantName,
                 isDefaultVariant: pageState.isDefaultVariant,
                 isShared: pageState.isShared,
@@ -147,7 +148,7 @@ const reducer = {
 
     "PageTree/UpdatePageState": (
         draft: Draft<PageTreeState>,
-        action: { pageId: string; parentId: string | null; publishOn?: Date },
+        action: { pageId: string; parentId: string | null; publishOn?: Date; isWaitingForApproval: boolean },
     ) => {
         const pageState = action.parentId
             ? getPageState(
@@ -167,6 +168,7 @@ const reducer = {
         }
 
         pageState.futurePublishOn = action.publishOn;
+        pageState.isWaitingForApproval = action.isWaitingForApproval;
     },
 
     "PageTree/SetExpandedNodes": (draft: Draft<PageTreeState>, action: { expandedNodes: Dictionary<boolean> }) => {

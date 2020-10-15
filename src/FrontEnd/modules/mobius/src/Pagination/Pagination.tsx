@@ -1,18 +1,19 @@
+import Button, { ButtonIcon, ButtonPresentationProps, ButtonVariants } from "@insite/mobius/Button";
+import { FormFieldPresentationProps } from "@insite/mobius/FormField";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import buttonDisplayProps from "@insite/mobius/Pagination/buttonDisplayProps";
+import Select, { SelectComponentProps } from "@insite/mobius/Select";
+import Typography from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { setCookie } from "@insite/mobius/utilities/cookies";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitSingle from "@insite/mobius/utilities/omitSingle";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
-import Button, { ButtonIcon, ButtonPresentationProps, ButtonVariants } from "../Button";
-import { FormFieldPresentationProps } from "../FormField";
-import { BaseTheme } from "../globals/baseTheme";
-import Select, { SelectComponentProps } from "../Select";
-import Typography from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitSingle from "../utilities/omitSingle";
-import VisuallyHidden from "../VisuallyHidden";
-import buttonDisplayProps from "./buttonDisplayProps";
 
 export interface PaginationPresentationProps {
     /** CSS string or styled-components function to be injected into this component
@@ -46,6 +47,7 @@ export interface PaginationPresentationProps {
 export type PaginationComponentProps = MobiusStyledComponentProps<
     "div",
     {
+        pageSizeCookie?: string;
         /** The index of the current page of results being displayed */
         currentPage: number;
         /** String describing the "results per page" select */
@@ -165,8 +167,17 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
         resultsPerPageLabel,
         resultsCount,
         resultsPerPageOptions,
+        pageSizeCookie,
         ...otherProps
     } = props;
+
+    const changeResultsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        if (pageSizeCookie) {
+            setCookie(pageSizeCookie, event.currentTarget.value);
+        }
+
+        onChangeResultsPerPage(event);
+    };
 
     const { spreadProps, applyProp } = applyPropBuilder(otherProps, { component: "pagination" });
     const cssOverrides = spreadProps("cssOverrides" as any);
@@ -254,7 +265,7 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
         <PaginationStyle css={cssOverrides.pagination} {...omitSingle(otherProps, "cssOverrides")}>
             <PerPageSelect css={cssOverrides.perPageSelect}>
                 <Select
-                    onChange={onChangeResultsPerPage}
+                    onChange={changeResultsPerPage}
                     label={resultsPerPageLabel || translate("Results Per Page")}
                     labelPosition="left"
                     value={resultsPerPage}

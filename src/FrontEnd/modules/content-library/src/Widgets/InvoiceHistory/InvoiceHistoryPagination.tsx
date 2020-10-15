@@ -55,6 +55,7 @@ const InvoiceHistoryPagination: FC<Props> = ({ updateSearchFields }) => {
             resultsPerPageOptions={pagination.pageSizeOptions}
             onChangePage={changePage}
             onChangeResultsPerPage={changeResultsPerPage}
+            pageSizeCookie="InvoiceHistory-PageSize"
         />
     );
 };

@@ -40,14 +40,9 @@ ARG NODE_BASE_IMAGE="node:12-alpine"
 
 FROM $NODE_BASE_IMAGE AS build-base
 
-# These files rarely change and are the minimum required for `npm install` and Lerna.
+# These files rarely change and are the minimum required for `npm install`.
 WORKDIR /app
-COPY ./package.json ./package-lock.json ./lerna.json ./
-COPY ./modules/client-framework/package.json ./package-lock.json ./modules/client-framework/
-COPY ./modules/content-library/package.json ./modules/content-library/package-lock.json ./modules/content-library/
-COPY ./modules/mobius/package.json ./modules/mobius/package-lock.json ./modules/mobius/
-COPY ./modules/server-framework/package.json ./package-lock.json ./modules/server-framework/
-COPY ./modules/shell/package.json ./modules/shell/package-lock.json ./modules/shell/
+COPY ./package.json ./package-lock.json ./
 # spire linter needs to exist on disk when we use npm ci
 COPY ./modules/spire-linter ./modules/spire-linter
 
@@ -63,13 +58,11 @@ COPY ./modules/client-framework/src/Logger.ts ./modules/client-framework/src/
 COPY ./config/webpack/ ./config/webpack/
 RUN ["npm", "run", "setupTsconfigPaths"]
 
-WORKDIR /app/modules/mobius
-COPY ./modules/mobius/ ./
-RUN ["npm", "test"]
-WORKDIR /app
+COPY ./modules/mobius/ ./modules/mobius
+RUN ["npm", "run", "test:mobius"]
 
 # Linter configuration change occasionally.
-COPY ./.eslintignore ./.eslintrc.js ./.stylelintrc ./.prettierrc  ./
+COPY ./.eslintignore ./.eslintrc.js ./.eslintrc-blueprint.js ./.stylelintrc ./.prettierrc  ./
 
 # These files will change frequently, so useful caching is limited to different build arguments.
 COPY ./modules/ ./modules/

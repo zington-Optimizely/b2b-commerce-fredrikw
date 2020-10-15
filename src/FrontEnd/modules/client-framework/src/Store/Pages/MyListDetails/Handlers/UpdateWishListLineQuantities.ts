@@ -44,7 +44,7 @@ export const PopulateApiParameter: HandlerType = props => {
     for (const wishListLineId in productInfosByWishListLineId) {
         const wishListLine = state.data.wishListLines.byId[wishListLineId];
         const qtyOrdered = productInfosByWishListLineId[wishListLineId]!.qtyOrdered;
-        if (!wishListLine || wishListLine.qtyOrdered === qtyOrdered) {
+        if (!wishListLine || !qtyOrdered || wishListLine.qtyOrdered === qtyOrdered) {
             continue;
         }
 

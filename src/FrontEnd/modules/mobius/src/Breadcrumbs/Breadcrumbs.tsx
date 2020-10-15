@@ -1,11 +1,11 @@
+import Link, { LinkProps } from "@insite/mobius/Link";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import Link, { LinkProps } from "../Link";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type BreadcrumbsProps = MobiusStyledComponentProps<
     "nav",

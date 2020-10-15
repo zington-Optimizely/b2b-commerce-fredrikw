@@ -80,7 +80,6 @@ export const ParseQueryParameter: HandlerType = props => {
     const {
         query,
         page,
-        pageSize,
         sort,
         includeSuggestions,
         stockedItemsOnly,
@@ -91,6 +90,13 @@ export const ParseQueryParameter: HandlerType = props => {
         attributeValueIds,
         searchWithinQueries,
     } = parsedQuery;
+
+    let pageSize = parsedQuery.pageSize;
+
+    if (!pageSize) {
+        pageSize = getCookie("ProductList-PageSize");
+    }
+
     const { catalogPage } = props.result;
 
     props.result.productFilters = {

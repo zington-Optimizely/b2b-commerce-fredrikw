@@ -7,6 +7,7 @@ import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 export default interface ContextState {
     session: Session;
     isSessionLoaded: boolean;
+    punchOutSessionId?: string;
     website: Website;
     isWebsiteLoaded: boolean;
     settings: SettingsModel;

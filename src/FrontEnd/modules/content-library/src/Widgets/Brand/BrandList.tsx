@@ -56,6 +56,7 @@ export interface BrandListStyles {
     actions?: InjectableCss;
     actionLinks?: LinkPresentationProps;
     actionLinksDisabled?: TypographyPresentationProps;
+    buttons?: InjectableCss;
     backToTopButton?: ButtonPresentationProps;
 }
 
@@ -84,7 +85,6 @@ export const listStyles: BrandListStyles = {
         variant: "secondary",
         sizeVariant: "small",
         css: css`
-            float: right;
             margin: 10px;
         `,
     },
@@ -113,6 +113,12 @@ export const listStyles: BrandListStyles = {
             margin: 5px;
         `,
         color: "text.disabled",
+    },
+    buttons: {
+        css: css`
+            display: flex;
+            justify-content: flex-end;
+        `,
     },
 };
 
@@ -266,9 +272,11 @@ const BrandList: FC<Props> = (props: Props) => {
                     </AccordionSection>
                 ))}
             </Accordion>
-            <Button {...styles.backToTopButton} onClick={handleBackToTop}>
-                {translate("Back to top")}
-            </Button>
+            <StyledWrapper {...styles.buttons}>
+                <Button {...styles.backToTopButton} onClick={handleBackToTop}>
+                    {translate("Back to top")}
+                </Button>
+            </StyledWrapper>
         </StyledWrapper>
     );
 };

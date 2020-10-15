@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import resolveColor from "./resolveColor";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 
 /**
  * Use in styled-components template strings to pull color values from the theme.

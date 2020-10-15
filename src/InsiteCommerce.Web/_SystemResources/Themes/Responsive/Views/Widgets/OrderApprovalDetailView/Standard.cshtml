@@ -43,7 +43,7 @@
             <isc-cart-lines cart="vm.cart" include-quote-required="true" class="medium-12 large-12 columns item-list cart-items"></isc-cart-lines>
         </div>
 
-        <isc-cart-total-display cart="vm.cart" order-taxes="vm.cart.customerOrderTaxes"></isc-cart-total-display>
+        <isc-cart-total-display cart="vm.cart" promotions="vm.promotions" order-taxes="vm.cart.customerOrderTaxes"></isc-cart-total-display>
 
         <div class="btns" ng-if="vm.cart">
             <button type="button" class="btn primary btn-place-saved-order" id="tst_orderApprovalDetail_approveOrder" ng-if="vm.account.canApproveOrders" ng-click="vm.approveOrder('[% urlForPage 'CartPage' %]')">[% translate 'Approve Order' %]</button>

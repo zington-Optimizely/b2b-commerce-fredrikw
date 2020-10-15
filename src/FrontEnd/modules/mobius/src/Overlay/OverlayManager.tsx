@@ -1,12 +1,12 @@
+import * as ariaAppHider from "@insite/mobius/Overlay/helpers/ariaAppHider";
+import * as focusManager from "@insite/mobius/Overlay/helpers/focusManager";
+import scopeTab from "@insite/mobius/Overlay/helpers/scopeTab";
+import { OverlayComponentProps, OverlayOwnProps } from "@insite/mobius/Overlay/Overlay";
+import Scrim from "@insite/mobius/Overlay/Scrim";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import * as React from "react";
 import styled from "styled-components";
-import injectCss from "../utilities/injectCss";
-import * as ariaAppHider from "./helpers/ariaAppHider";
-import * as focusManager from "./helpers/focusManager";
-import scopeTab from "./helpers/scopeTab";
-import { OverlayComponentProps, OverlayOwnProps } from "./Overlay";
-import Scrim from "./Scrim";
 
 const ContentContainer = styled.div`
     ${injectCss}

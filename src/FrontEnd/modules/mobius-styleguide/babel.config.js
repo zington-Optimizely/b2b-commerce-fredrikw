@@ -13,6 +13,15 @@ module.exports = {
     ],
 
     plugins: [
+        [
+            "module-resolver",
+            {
+                root: ["./"],
+                alias: {
+                    "@insite/mobius": "../mobius/src",
+                },
+            },
+        ],
         "@babel/plugin-proposal-class-properties",
         "babel-plugin-styled-components",
         "@babel/plugin-proposal-optional-chaining",

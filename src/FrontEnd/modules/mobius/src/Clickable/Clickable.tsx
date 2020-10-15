@@ -1,13 +1,13 @@
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import getProp from "@insite/mobius/utilities/getProp";
+import HistoryContext from "@insite/mobius/utilities/HistoryContext";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import isRelativeUrl from "@insite/mobius/utilities/isRelativeUrl";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import getProp from "../utilities/getProp";
-import HistoryContext from "../utilities/HistoryContext";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import isRelativeUrl from "../utilities/isRelativeUrl";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type ClickablePresentationProps = InjectableCss<ClickableComponentProps>;
 

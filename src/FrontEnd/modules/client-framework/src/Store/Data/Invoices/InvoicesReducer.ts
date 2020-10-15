@@ -10,6 +10,7 @@ const initialState: InvoicesState = {
     idByInvoiceNumber: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -47,6 +48,19 @@ const reducer = {
         delete draft.isLoading[action.model.invoiceNumber];
         draft.byId[action.model.id] = action.model;
         storeIdByInvoiceNumber(draft, action.model);
+        if (draft.errorStatusCodeById) {
+            delete draft.errorStatusCodeById[action.model.invoiceNumber];
+        }
+    },
+
+    "Data/Invoices/FailedToLoadInvoiceByInvoiceNumber": (
+        draft: Draft<InvoicesState>,
+        action: { invoiceNumber: string; status: number },
+    ) => {
+        delete draft.isLoading[action.invoiceNumber];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.invoiceNumber] = action.status;
+        }
     },
 
     "Data/Invoices/Reset": () => {

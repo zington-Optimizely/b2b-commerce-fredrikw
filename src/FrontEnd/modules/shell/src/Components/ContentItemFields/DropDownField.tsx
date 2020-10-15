@@ -16,6 +16,7 @@ const mapStateToProps = (state: ShellState) => {
     const page = getCurrentPageForShell(state);
     return {
         page,
+        settings: state.shellContext.settings,
     };
 };
 
@@ -82,7 +83,7 @@ class DropDownField extends React.Component<Props, State> {
                         ? options.filter(
                               o =>
                                   this.props.fieldDefinition.customFilter &&
-                                  this.props.fieldDefinition.customFilter(o, this.props.page),
+                                  this.props.fieldDefinition.customFilter(o, this.props.page, this.props.settings),
                           )
                         : options
                     ).map(option => (

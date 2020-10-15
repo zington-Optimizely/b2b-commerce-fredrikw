@@ -7,9 +7,9 @@ then `<Icon src={[iconName]} />`
 ```jsx
 
 const css = require('styled-components').css;
-const Icon = require('../../mobius/src/Icon').default;
-const Typography = require('../../mobius/src/Typography').default;
-const iconsObject = require('../../mobius/src/Icons/commonIcons').default;
+const Icon = require('../../mobius/src//Icon').default;
+const Typography = require('../../mobius/src//Typography').default;
+const iconsObject = require('../../mobius/src//Icons/commonIcons').default;
 
 const IconDemo = ({ iconSrc, name }) => (
     <div style={{ 

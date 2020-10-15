@@ -227,6 +227,19 @@ export const DispatchResetPaymentProfiles: HandlerType = props => {
     }
 };
 
+export const DispatchResetQuotes: HandlerType = props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch({
+            type: "Data/Quotes/Reset",
+        });
+        props.dispatch({
+            type: "Data/JobQuotes/Reset",
+        });
+    }
+};
+
 export const chain = [
     DispatchBeginPlaceOrder,
     SetCartStatus,
@@ -241,6 +254,7 @@ export const chain = [
     DispatchResetOrders,
     DispatchResetPaymentProfiles,
     DispatchResetOrderApprovals,
+    DispatchResetQuotes,
 ];
 
 const placeOrder = createHandlerChainRunner(chain, "PlaceOrder");

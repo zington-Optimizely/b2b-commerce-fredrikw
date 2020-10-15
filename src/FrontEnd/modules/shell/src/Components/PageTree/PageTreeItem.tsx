@@ -76,6 +76,7 @@ class PageTreeItem extends React.Component<Props> {
                     {...node}
                     isActivePage={selectedPageId === node.pageId}
                     isFuturePublish={!!node.futurePublishOn && node.futurePublishOn > new Date()}
+                    isWaitingForApproval={node.isWaitingForApproval}
                 >
                     {children && !node.isVariant && (
                         <ExpandStyle
@@ -154,7 +155,12 @@ const PageTreeFlyOutActive = styled(PageTreeFlyout)`
     display: block;
 `;
 
-const PageTreeTitle = styled.h3<{ isMatchingPage: boolean; isActivePage: boolean; isFuturePublish: boolean }>`
+const PageTreeTitle = styled.h3<{
+    isMatchingPage: boolean;
+    isActivePage: boolean;
+    isFuturePublish: boolean;
+    isWaitingForApproval: boolean;
+}>`
     ${props => (!props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : "")}
     ${props =>
         props.isActivePage
@@ -183,6 +189,14 @@ const PageTreeTitle = styled.h3<{ isMatchingPage: boolean; isActivePage: boolean
                   color: ${props.isActivePage
                       ? props.theme.colors.custom.futurePublishActive
                       : props.theme.colors.custom.futurePublish};
+              `
+            : ""}
+    ${props =>
+        props.isWaitingForApproval
+            ? css`
+                  color: ${props.isActivePage
+                      ? props.theme.colors.custom.isWaitingForApprovalActive
+                      : props.theme.colors.custom.isWaitingForApproval};
               `
             : ""}
     padding-left: 20px;

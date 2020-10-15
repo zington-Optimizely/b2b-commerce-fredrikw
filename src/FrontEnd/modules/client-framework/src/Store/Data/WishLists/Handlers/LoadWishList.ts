@@ -16,7 +16,19 @@ export const DispatchBeginLoadWishList: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getWishList(props.parameter);
+    try {
+        props.apiResult = await getWishList(props.parameter);
+    } catch (error) {
+        if ("status" in error && error.status === 404) {
+            props.dispatch({
+                type: "Data/WishLists/FailedToLoadWishList",
+                wishListId: props.parameter.wishListId,
+                status: 404,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadWishList: HandlerType = ({ dispatch, apiResult }) => {

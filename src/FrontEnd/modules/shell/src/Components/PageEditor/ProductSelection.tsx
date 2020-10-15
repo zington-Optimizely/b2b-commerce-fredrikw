@@ -1,9 +1,5 @@
 import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
-import {
-    clearModelSelection,
-    searchProducts,
-    selectProduct,
-} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { searchProducts, selectProduct } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -16,7 +12,6 @@ const mapStateToProps = (state: ShellState) => ({
 const mapDispatchToProps = {
     selectProduct,
     searchProducts,
-    clearModelSelection,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -30,10 +25,6 @@ class ProductSelection extends React.Component<Props> {
         }
         this.props.selectProduct(selectedPath);
     };
-
-    componentWillUnmount() {
-        this.props.clearModelSelection();
-    }
 
     render() {
         const productSearchResults = this.props.productSearchResults ?? [];

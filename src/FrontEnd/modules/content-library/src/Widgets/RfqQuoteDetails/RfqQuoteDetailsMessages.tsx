@@ -16,7 +16,7 @@ import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";

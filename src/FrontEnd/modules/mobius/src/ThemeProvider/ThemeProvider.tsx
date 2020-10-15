@@ -1,7 +1,7 @@
+import baseTheme, { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GlobalStyle, { ChildGlobals } from "@insite/mobius/GlobalStyle";
 import * as React from "react";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
-import GlobalStyle, { ChildGlobals } from "../GlobalStyle";
 
 export interface ExtendedTheme extends BaseTheme {
     [key: string]: any;

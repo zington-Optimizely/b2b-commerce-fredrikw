@@ -2599,6 +2599,7 @@ export interface WebsiteModel extends BaseModel {
     isRestricted: boolean;
     languages: LanguageCollectionModel | null;
     languagesUri: string;
+    websiteFavicon: string;
     mobilePrimaryColor: string;
     mobilePrivacyPolicyUrl: string;
     mobileTermsOfUseUrl: string;

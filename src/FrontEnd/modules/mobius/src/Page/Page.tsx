@@ -1,11 +1,11 @@
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { css } from "styled-components";
-import baseTheme from "../globals/baseTheme";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import resolveColor from "../utilities/resolveColor";
 
 export type PageProps = MobiusStyledComponentProps<
     "main",

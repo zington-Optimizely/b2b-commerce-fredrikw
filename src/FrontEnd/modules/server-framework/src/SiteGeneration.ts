@@ -6,13 +6,12 @@ import { getNodeIdForPageName } from "@insite/client-framework/Services/ContentS
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { TemplateInfo } from "@insite/client-framework/Types/SiteGenerationModel";
+import { getAppDataPath, getBlueprintAppDataPath } from "@insite/server-framework/FileHelper";
 import { getSiteGenerationData, saveInitialPages } from "@insite/server-framework/InternalService";
 import { setupPageModel } from "@insite/shell/Services/PageCreation";
-import { access, constants, promises, readFile } from "fs";
+import { constants, promises, readFile } from "fs";
 import { relative, resolve } from "path";
 import { promisify } from "util";
-
-const readFileAsync = promisify(readFile);
 
 // Mobile pages/widgets aren't immediately loaded by client-framework so they're not included in the storefront bundle.
 // Instead, they're added at shell startup (for the shell front end), shell-storefront connection, and here.
@@ -31,17 +30,16 @@ async function* getFilesRecursively(directory: string): AsyncGenerator<string, v
     }
 }
 
-const existsAsync = (file: string) => {
-    return new Promise<boolean>(resolve => {
-        access(file, constants.F_OK, (err: NodeJS.ErrnoException | null) => {
-            resolve(!err);
-        });
-    });
-};
+const readFileAsync = promisify(readFile);
 
-// because production is different than dev, these have to be functions to make sure __basedir is available
-const appDataPath = () => `${(global as any).__basedir}/wwwroot/AppData`;
-const blueprintAppDataPath = () => `${(global as any).__basedir}/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData`;
+async function existsAsync(filePath: string) {
+    try {
+        await promises.access(filePath, constants.F_OK);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
 
 interface PageCreator {
     type: string;
@@ -55,9 +53,9 @@ interface PageCreator {
 
 async function getPageCreators() {
     const pageCreatorsByParent: Dictionary<PageCreator[]> = {};
-    await loadPageCreators(`${blueprintAppDataPath()}/PageCreators`, pageCreatorsByParent);
-    await loadPageCreators(`${appDataPath()}/PageCreators/${BLUEPRINT_NAME}`, pageCreatorsByParent);
-    await loadPageCreators(`${appDataPath()}/PageCreators/BuiltIn`, pageCreatorsByParent);
+    await loadPageCreators(`${getBlueprintAppDataPath()}/PageCreators`, pageCreatorsByParent);
+    await loadPageCreators(`${getAppDataPath()}/PageCreators/${BLUEPRINT_NAME}`, pageCreatorsByParent);
+    await loadPageCreators(`${getAppDataPath()}/PageCreators/BuiltIn`, pageCreatorsByParent);
 
     const types: string[] = [];
     types.push("");
@@ -263,9 +261,9 @@ async function addChildPages(
 
 export async function getTemplatePathsForPageType(pageType: string) {
     const directoryPathsToCheck = [
-        `${blueprintAppDataPath()}/PageTemplates/${pageType}/`,
-        `${appDataPath()}/PageTemplates/${BLUEPRINT_NAME}/${pageType}/`,
-        `${appDataPath()}/PageTemplates/BuiltIn/${pageType}/`,
+        `${getBlueprintAppDataPath()}/PageTemplates/${pageType}/`,
+        `${getAppDataPath()}/PageTemplates/${BLUEPRINT_NAME}/${pageType}/`,
+        `${getAppDataPath()}/PageTemplates/BuiltIn/${pageType}/`,
     ];
 
     const paths: TemplateInfo[] = [];
@@ -292,9 +290,9 @@ export function getTemplatePathForPageType(pageType: string) {
 
 async function getTemplatePath(template: string) {
     const filePathsToCheck = [
-        `${blueprintAppDataPath()}/PageTemplates/${template}`,
-        `${appDataPath()}/PageTemplates/${BLUEPRINT_NAME}/${template}`,
-        `${appDataPath()}/PageTemplates/BuiltIn/${template}`,
+        `${getBlueprintAppDataPath()}/PageTemplates/${template}`,
+        `${getAppDataPath()}/PageTemplates/${BLUEPRINT_NAME}/${template}`,
+        `${getAppDataPath()}/PageTemplates/BuiltIn/${template}`,
     ];
 
     for (const potentialFilePath of filePathsToCheck) {

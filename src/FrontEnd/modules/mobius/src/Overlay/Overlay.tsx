@@ -1,13 +1,13 @@
 /** Note: modal based on logic from `react-modal`. */
+import { ZIndex } from "@insite/mobius/globals/baseTheme";
+import * as ariaAppHider from "@insite/mobius/Overlay/helpers/ariaAppHider";
+import OverlayManager from "@insite/mobius/Overlay/OverlayManager";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import { canUseDOM } from "exenv";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Keyframes } from "styled-components";
-import { ZIndex } from "../globals/baseTheme";
-import { StyledProp } from "../utilities/InjectableCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import * as ariaAppHider from "./helpers/ariaAppHider";
-import OverlayManager from "./OverlayManager";
 
 export interface Transition {
     enabled: boolean;

@@ -1,5 +1,5 @@
+import { BaseTheme, CategoryThemeProps, ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 import { ThemeProps } from "styled-components";
-import { BaseTheme, CategoryThemeProps, ComponentThemeProps } from "../globals/baseTheme";
 
 type Combination<Component, Category, Props> = {
     /** Name of the component as described in the theme object. */

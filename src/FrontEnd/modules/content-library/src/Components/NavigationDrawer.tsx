@@ -7,9 +7,11 @@ import setNavDrawerIsOpen from "@insite/client-framework/Store/Components/Addres
 import {
     getCurrencies,
     getFulfillmentLabel,
+    getIsPunchOutSession,
     getLanguages,
     getSettingsCollection,
 } from "@insite/client-framework/Store/Context/ContextSelectors";
+import cancelPunchOut from "@insite/client-framework/Store/Context/Handlers/CancelPunchOut";
 import setCurrency from "@insite/client-framework/Store/Context/Handlers/SetCurrency";
 import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLanguage";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
@@ -66,6 +68,7 @@ const mapStateToProps = (state: ApplicationState) => {
         showCustomerMenuItem: getSettingsCollection(state).accountSettings.enableWarehousePickup,
         fulfillmentLabel: getFulfillmentLabel(state),
         drawerIsOpen: state.components.addressDrawer.navDrawerIsOpen,
+        isPunchOutSession: getIsPunchOutSession(state),
     };
 };
 
@@ -73,6 +76,7 @@ const mapDispatchToProps = {
     setCurrency,
     setLanguage,
     signOut,
+    cancelPunchOut,
     setInitialValues,
     setNavDrawerIsOpen,
 };
@@ -97,8 +101,10 @@ export interface NavigationDrawerStyles {
     panelSectionWrapper?: InjectableCss;
     menuRowIcon?: IconProps;
     userRowTypography?: TypographyPresentationProps;
+    punchOutUserRowText?: TypographyPresentationProps;
     mainNavigationRow?: PanelRowPresentationProps;
     mainNavigationRowIcon?: IconProps;
+    punchOutNavigationRowIcon?: IconProps;
     mainNavigationRowTypography?: TypographyPresentationProps;
     logoLinks?: PanelRowPresentationProps & { typographyProps: TypographyPresentationProps };
     currencySymbol?: TypographyPresentationProps;
@@ -108,6 +114,8 @@ export interface NavigationDrawerStyles {
     addressesGridItem?: GridItemProps;
     pickUpAddressGridItem?: GridItemProps;
     applyButtonGridItem?: GridItemProps;
+    signOutRow?: PanelRowPresentationProps;
+    signOutRowText?: TypographyPresentationProps;
 }
 
 const StyledSection = getStyledWrapper("section");
@@ -172,6 +180,10 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
         transform: "uppercase",
         color: "common.background",
     },
+    punchOutUserRowText: {
+        transform: "uppercase",
+        color: "common.background",
+    },
     mainNavigationRow: {
         color: "common.backgroundContrast",
         css: css`
@@ -179,6 +191,20 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
         `,
     },
     mainNavigationRowIcon: {
+        src: User,
+        color: "common.background",
+        size: 22,
+        css: css`
+            margin-top: -2px;
+            margin-right: 10px;
+            width: 24px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        `,
+    },
+    punchOutNavigationRowIcon: {
+        src: User,
         color: "common.background",
         size: 22,
         css: css`
@@ -228,6 +254,9 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
     addressesGridItem: { width: 12 },
     pickUpAddressGridItem: { width: 12 },
     applyButtonGridItem: { width: 12 },
+    signOutRowText: {
+        transform: "uppercase",
+    },
 };
 
 const styles = navigationDrawerStyles;
@@ -250,6 +279,11 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
         setTimeout(() => this.props.setNavDrawerIsOpen({ navDrawerIsOpen: undefined }), 300);
     };
 
+    onSignOutHandler = () => {
+        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
+        this.props.isPunchOutSession ? this.props.cancelPunchOut() : this.props.signOut();
+    };
+
     render() {
         const {
             quickOrderLink,
@@ -269,6 +303,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
             currentLocation,
             showCustomerMenuItem,
             fulfillmentLabel,
+            isPunchOutSession,
         } = this.props;
 
         const currentPageUrl = currentLocation.pathname;
@@ -288,13 +323,13 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                     contentLabel="menu drawer"
                 >
                     <StyledSection {...styles.drawerSectionWrapper}>
-                        {userName && !isGuest ? (
+                        {userName && !isGuest && !isPunchOutSession ? (
                             <PanelMenu
                                 currentUrl={currentPageUrl}
                                 panelTrigger={
                                     <PanelRow hasChildren {...styles.mainNavigationRow}>
                                         <StyledSpan {...styles.panelSectionWrapper}>
-                                            <Icon src={User} {...styles.mainNavigationRowIcon} />
+                                            <Icon {...styles.mainNavigationRowIcon} />
                                             <Typography {...styles.userRowTypography}>{userName}</Typography>
                                         </StyledSpan>
                                     </PanelRow>
@@ -305,6 +340,13 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 layer={0}
                                 {...styles.panelMenu}
                             />
+                        ) : isPunchOutSession ? (
+                            <PanelRow {...styles.mainNavigationRow}>
+                                <StyledSpan {...styles.panelSectionWrapper}>
+                                    <Icon {...styles.punchOutNavigationRowIcon} />
+                                    <Typography {...styles.punchOutUserRowText}>{userName}</Typography>
+                                </StyledSpan>
+                            </PanelRow>
                         ) : (
                             <PanelRow
                                 {...styles.mainNavigationRow}
@@ -313,8 +355,8 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 href={signInUrl?.url}
                             >
                                 <StyledSpan {...styles.panelSectionWrapper}>
-                                    <Icon src={User} {...styles.mainNavigationRowIcon} />
-                                    <Typography {...styles.userRowTypography}>Sign In</Typography>
+                                    <Icon {...styles.mainNavigationRowIcon} />
+                                    <Typography {...styles.userRowTypography}>{translate("Sign In")}</Typography>
                                 </StyledSpan>
                             </PanelRow>
                         )}
@@ -436,27 +478,44 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                                 layer={0}
                                 closeOverlay={this.closeDrawer}
                             >
-                                <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
-                                    <GridContainer {...styles.changeCustomerRowContainer}>
-                                        <GridItem {...styles.fulfillmentMethodGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", {
-                                                fields: {},
-                                            })}
-                                        </GridItem>
-                                        <GridItem {...styles.addressesGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerSelectCustomer", { fields: {} })}
-                                        </GridItem>
-                                        <GridItem {...styles.pickUpAddressGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", {
-                                                fields: {},
-                                            })}
-                                        </GridItem>
-                                        <GridItem {...styles.applyButtonGridItem}>
-                                            {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
-                                        </GridItem>
-                                    </GridContainer>
-                                </PanelRow>
+                                {isPunchOutSession ? (
+                                    <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
+                                        {createWidgetElement("Header/AddressDrawerPunchOutCustomer", {
+                                            fields: {},
+                                        })}
+                                    </PanelRow>
+                                ) : (
+                                    <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
+                                        <GridContainer {...styles.changeCustomerRowContainer}>
+                                            <GridItem {...styles.fulfillmentMethodGridItem}>
+                                                {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", {
+                                                    fields: {},
+                                                })}
+                                            </GridItem>
+                                            <GridItem {...styles.addressesGridItem}>
+                                                {createWidgetElement("Header/AddressDrawerSelectCustomer", {
+                                                    fields: {},
+                                                })}
+                                            </GridItem>
+                                            <GridItem {...styles.pickUpAddressGridItem}>
+                                                {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", {
+                                                    fields: {},
+                                                })}
+                                            </GridItem>
+                                            <GridItem {...styles.applyButtonGridItem}>
+                                                {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
+                                            </GridItem>
+                                        </GridContainer>
+                                    </PanelRow>
+                                )}
                             </PanelMenu>
+                        )}
+                        {userName && !isGuest && (
+                            <PanelRow onClick={this.onSignOutHandler} {...styles.signOutRow}>
+                                <Typography {...styles.signOutRowText}>
+                                    {isPunchOutSession ? translate("Cancel PunchOut") : translate("Sign Out")}
+                                </Typography>
+                            </PanelRow>
                         )}
                     </StyledSection>
                 </Drawer>

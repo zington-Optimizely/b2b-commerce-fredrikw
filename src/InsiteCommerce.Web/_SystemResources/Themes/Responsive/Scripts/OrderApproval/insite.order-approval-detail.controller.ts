@@ -7,15 +7,17 @@
         cart: CartModel;
         approveOrderErrorMessage: string;
         validationMessage: string;
+        promotions: PromotionModel[];
 
-        static $inject = ["orderApprovalService", "cartService", "accountService", "coreService", "queryString"];
+        static $inject = ["orderApprovalService", "cartService", "accountService", "coreService", "queryString", "promotionService"];
 
         constructor(
             protected orderApprovalService: orderapproval.IOrderApprovalService,
             protected cartService: cart.ICartService,
             protected accountService: account.IAccountService,
             protected coreService: core.ICoreService,
-            protected queryString: common.IQueryStringService) {
+            protected queryString: common.IQueryStringService,
+            protected promotionService: promotions.IPromotionService,) {
         }
 
         $onInit(): void {
@@ -30,6 +32,14 @@
             this.orderApprovalService.getCart(cartId).then(
                 (cart: CartModel) => { this.orderApprovalServiceGetCartCompleted(cart); },
                 (error: any) => { this.orderApprovalServiceGetCartFailed(error); });
+
+            this.promotionService.getCartPromotions(cartId).then(
+                (promotionCollection: PromotionCollectionModel) => {
+                    this.getCartPromotionsCompleted(promotionCollection);
+                },
+                (error: any) => {
+                    this.getCartPromotionsFailed(error);
+                });
         }
 
         protected initEvents(): void {
@@ -83,6 +93,13 @@
 
         protected updateCartFailed(error: any): void {
             this.approveOrderErrorMessage = error.message;
+        }
+
+        protected getCartPromotionsCompleted(promotionCollection: PromotionCollectionModel): void {
+            this.promotions = promotionCollection.promotions;
+        }
+
+        protected getCartPromotionsFailed(error: any): void {
         }
     }
 

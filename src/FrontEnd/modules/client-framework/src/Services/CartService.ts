@@ -5,12 +5,14 @@ import {
     del,
     doesNotHaveExpand,
     get,
+    HasPagingParameters,
     patch,
     post,
     ServiceResult,
 } from "@insite/client-framework/Services/ApiService";
 import {
     BillToModel,
+    CartCollectionModel,
     CartLineCollectionModel,
     CartLineModel,
     CartModel,
@@ -34,9 +36,21 @@ export interface GetCartApiParameter extends ApiParameter {
         | "cartLines"
         | "alsoPurchased"
         | "restrictions"
+        | "hiddenproducts"
     )[];
     additionalExpands?: string[];
     alsoPurchasedMaxResults?: number;
+}
+
+export interface GetCartsApiParameter extends ApiParameter, HasPagingParameters {
+    shipToId?: string;
+    billToId?: string;
+    status?: string;
+    orderNumber?: string;
+    fromDate?: string;
+    toDate?: string;
+    orderTotalOperator?: string;
+    orderTotal?: string;
 }
 
 export interface UpdateCartApiParameter extends ApiParameter {
@@ -101,6 +115,31 @@ export async function getCart(parameter: GetCartApiParameter) {
     const cartModel = await get<CartModel>(`${cartsUrl}/${parameter.cartId}`, newParameter);
     const cartResult = cleanCart(cartModel, parameter);
     return cartResult;
+}
+
+export async function getCarts(parameter: GetCartsApiParameter): Promise<ServiceResult<CartCollectionModel>> {
+    try {
+        const carts = await get<CartCollectionModel>(cartsUrl, parameter);
+        cleanCarts(carts);
+        return {
+            successful: true,
+            result: carts,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
+}
+
+function cleanCarts(cartCollection: CartCollectionModel) {
+    cartCollection.carts?.forEach(cart => {
+        cart.orderDate = cart.orderDate && new Date(cart.orderDate);
+    });
 }
 
 export async function updateCart(parameter: UpdateCartApiParameter) {
@@ -183,10 +222,27 @@ function cleanCart(cartModel: CartModel, parameter?: { expand?: string[]; additi
     return cartResult;
 }
 
-export function getCartPromotions(parameter: GetCartPromotionsApiParameter) {
+export async function getCartPromotions(parameter: GetCartPromotionsApiParameter) {
     const newParameter = { ...parameter };
     delete newParameter.cartId;
-    return get<PromotionCollectionModel>(`${cartsUrl}/${parameter.cartId}/promotions`, newParameter);
+    const promotionCollection = await get<PromotionCollectionModel>(
+        `${cartsUrl}/${parameter.cartId}/promotions`,
+        newParameter,
+    );
+
+    if (promotionCollection.promotions) {
+        addCartLineToId(promotionCollection.promotions);
+    }
+
+    return promotionCollection;
+}
+
+function addCartLineToId(promotions: PromotionModel[]) {
+    promotions.forEach(promo => {
+        if (promo.orderLineId) {
+            promo.id = `${promo.id}:${promo.orderLineId}`;
+        }
+    });
 }
 
 export function addLineCollection(parameter: AddCartLinesApiParameter) {

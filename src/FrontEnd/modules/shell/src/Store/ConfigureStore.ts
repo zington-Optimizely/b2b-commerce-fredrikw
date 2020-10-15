@@ -1,4 +1,6 @@
 import { siteHoleMessenger } from "@insite/shell/Components/Shell/SiteHole";
+import * as StoreModule from "@insite/shell/Store/Reducers";
+import ShellState from "@insite/shell/Store/ShellState";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { History } from "history";
 import {
@@ -11,8 +13,6 @@ import {
     StoreEnhancerStoreCreator,
 } from "redux";
 import reduxThunk from "redux-thunk";
-import * as StoreModule from "./Reducers";
-import ShellState from "./ShellState";
 
 const reducers = StoreModule.reducers;
 

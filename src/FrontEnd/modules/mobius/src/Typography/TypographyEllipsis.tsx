@@ -1,8 +1,8 @@
+import { TypographyComponentProps } from "@insite/mobius/Typography/Typography";
+import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import * as React from "react";
 import styled from "styled-components";
-import injectCss from "../utilities/injectCss";
-import { TypographyComponentProps } from "./Typography";
-import TypographyStyle from "./TypographyStyle";
 
 export const TypographyEllipsisStyle = styled(TypographyStyle)`
     overflow: hidden;

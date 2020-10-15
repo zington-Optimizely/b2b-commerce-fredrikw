@@ -1,4 +1,4 @@
-import findTabbable from "./tabbable";
+import findTabbable from "@insite/mobius/Overlay/helpers/tabbable";
 
 export default function scopeTab(node: HTMLElement, event: React.KeyboardEvent<HTMLDivElement>) {
     const tabbable: HTMLElement[] = findTabbable(node);

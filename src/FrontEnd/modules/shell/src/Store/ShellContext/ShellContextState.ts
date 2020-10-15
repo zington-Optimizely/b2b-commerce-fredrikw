@@ -1,5 +1,6 @@
 import ContentMode from "@insite/client-framework/Common/ContentMode";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import LoadedState from "@insite/client-framework/Types/LoadedState";
@@ -32,6 +33,7 @@ export interface ShellContextState {
     homePageId: string;
     mobileHomePageId: string;
     permissions?: PermissionsModel;
+    settings: SettingsModel;
 
     /** When true, the CMS can be switched into mobile mode. */
     enableMobileCms?: boolean;

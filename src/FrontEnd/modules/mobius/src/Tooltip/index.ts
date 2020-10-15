@@ -1,4 +1,4 @@
-import Tooltip from "./Tooltip";
+import Tooltip from "@insite/mobius/Tooltip/Tooltip";
 
 export default Tooltip;
 

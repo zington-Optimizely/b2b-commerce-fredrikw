@@ -1,3 +1,4 @@
+import { setCookie } from "@insite/client-framework/Common/Cookies";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
@@ -51,6 +52,7 @@ const ProductListPagination: FC<Props> = ({ addProductFilters, pagination }) => 
             resultsPerPageOptions={pagination!.pageSizeOptions}
             onChangePage={changePage}
             onChangeResultsPerPage={changeResultsPerPage}
+            pageSizeCookie="ProductList-PageSize"
         />
     );
 };

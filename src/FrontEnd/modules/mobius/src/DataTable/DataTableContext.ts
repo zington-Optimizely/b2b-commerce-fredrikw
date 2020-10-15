@@ -1,5 +1,5 @@
+import { DataTableCssOverrides, DataTablePresentationProps, DataTableProps } from "@insite/mobius/DataTable/DataTable";
 import * as React from "react";
-import { DataTableCssOverrides, DataTablePresentationProps, DataTableProps } from "./DataTable";
 
 export interface DataTableContextData
     extends Omit<DataTablePresentationProps, "cssOverrides">,

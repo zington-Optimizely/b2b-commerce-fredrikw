@@ -1,4 +1,4 @@
-import { EE } from "../Overlay/helpers/safeHTMLElement";
+import { EE } from "@insite/mobius/Overlay/helpers/safeHTMLElement";
 
 const focusWithinImportInBrowser = () => {
     if (EE.canUseDOM) {

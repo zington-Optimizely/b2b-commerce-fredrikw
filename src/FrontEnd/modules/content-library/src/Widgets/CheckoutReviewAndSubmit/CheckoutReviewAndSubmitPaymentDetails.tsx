@@ -26,6 +26,7 @@ import CreditCardDetailsEntry, {
     CreditCardDetailsEntryStyles,
 } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardDetailsEntry";
 import PaymentProfileBillingAddress from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PaymentProfileBillingAddress";
+import PayPalButton, { PayPalButtonStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PayPalButton";
 import SavedPaymentProfileEntry, {
     SavedPaymentProfileEntryStyles,
 } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/SavedPaymentProfileEntry";
@@ -44,7 +45,6 @@ import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css, ThemeProps, withTheme } from "styled-components";
-import PayPalButton, { PayPalButtonStyles } from "./PayPalButton";
 
 const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutReviewAndSubmit;

@@ -1,14 +1,14 @@
-import { ButtonProps } from "mobius/src/Button";
+import { ButtonProps } from "@insite/mobius/Button";
+import Tab, { TabProps } from "@insite/mobius/Tab";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import get from "@insite/mobius/utilities/get";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import Tab, { TabProps } from "../Tab";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import get from "../utilities/get";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export interface TabGroupPresentationProps {
     /** CSS strings or styled-components functions to be injected into nested components.

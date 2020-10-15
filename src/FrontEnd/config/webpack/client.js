@@ -8,11 +8,4 @@ module.exports = {
         chunkFilename: "[name].chunk.js",
         publicPath: "/dist/",
     },
-    resolve: {
-        modules: [
-            path.resolve(__dirname, "../../modules/client-framework/node_modules"),
-            path.resolve(__dirname, "../../modules/mobius/node_modules"),
-            path.resolve(__dirname, "../../modules/shell/node_modules"),
-        ],
-    },
 };

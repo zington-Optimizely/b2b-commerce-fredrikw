@@ -1,4 +1,4 @@
-import Modal from "./Modal";
+import Modal from "@insite/mobius/Modal/Modal";
 
 export default Modal;
 

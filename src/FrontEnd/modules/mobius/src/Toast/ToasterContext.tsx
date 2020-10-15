@@ -1,5 +1,5 @@
+import { ToastProps } from "@insite/mobius/Toast";
 import * as React from "react";
-import { ToastProps } from ".";
 
 export interface ToastContextData {
     addToast: (toastProps: ToastProps) => void;

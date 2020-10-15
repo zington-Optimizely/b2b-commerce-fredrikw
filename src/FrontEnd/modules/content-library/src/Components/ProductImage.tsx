@@ -40,13 +40,16 @@ const ProductImage: FC<Props> = ({ product, extendedStyles }) => {
     if (!altText || altText === "") {
         altText = "product" in product ? product.product.productTitle : product.productName;
     }
-    const smallImagePath = "product" in product ? product.product.smallImagePath : product.smallImagePath;
+    const imagePath =
+        "product" in product
+            ? product.product.mediumImagePath || product.product.smallImagePath
+            : product.smallImagePath;
 
     const productDetailPath = "product" in product ? product.productInfo.productDetailPath : product.productUri;
 
     return (
         <Clickable {...styles.linkWrappingImage} href={productDetailPath} data-test-selector="productImage">
-            <LazyImage {...styles.image} src={smallImagePath} altText={altText} />
+            <LazyImage {...styles.image} src={imagePath} altText={altText} />
         </Clickable>
     );
 };

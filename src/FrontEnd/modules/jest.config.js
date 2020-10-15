@@ -1,4 +1,6 @@
 // @ts-check
+const { pathsToModuleNameMapper } = require("ts-jest/utils");
+const { compilerOptions } = require("../tsconfig.paths");
 
 module.exports = {
     preset: "ts-jest",
@@ -8,12 +10,6 @@ module.exports = {
             tsConfig: "../tsconfig.base.json",
         },
     },
-    moduleNameMapper: {
-        "^@insite/client-framework/(.*)$": "<rootDir>/client-framework/src/$1",
-        "^@insite/content-library/(.*)$": "<rootDir>/content-library/src/$1",
-        "^@insite/server-framework/(.*)$": "<rootDir>/server-framework/src/$1",
-        "^@insite/shell/(.*)$": "<rootDir>/shell/src/$1",
-        "^@insite/mobius/(.*)$": "<rootDir>/mobius/src/$1",
-    },
+    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: "<rootDir>/" }),
     testPathIgnorePatterns: ["/node_modules/", "/mobius/", "/spire-linter/"],
 };

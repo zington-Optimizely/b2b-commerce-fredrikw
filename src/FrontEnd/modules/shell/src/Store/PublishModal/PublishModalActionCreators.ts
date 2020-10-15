@@ -1,10 +1,13 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { ToastContextData } from "@insite/mobius/Toast/ToasterContext";
 import { PublishPageSelection } from "@insite/shell/Components/Shell/PublishModal";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
+import { closeSiteHole, sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageBulkPublishInfo, getPagePublishInfo, publishPages } from "@insite/shell/Services/ContentAdminService";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
+import { Location } from "history";
 import cloneDeep from "lodash/cloneDeep";
 
 export const showPublishModal = (isBulkPublish?: true): AnyShellAction => ({
@@ -121,18 +124,21 @@ export const loadAllPagePublishInfo = (pageId: string): ShellThunkAction => asyn
     }
 };
 
-export const publish = (): ShellThunkAction => async (dispatch, getState) => {
+export const publish = (toasterContext: ToastContextData): ShellThunkAction => async (dispatch, getState) => {
     const state = getState();
-    const page = getCurrentPageForShell(state);
+    const currentPage = getCurrentPageForShell(state);
     const {
-        pagePublishInfoIsSelected,
-        pagePublishInfosState,
-        failedToPublishPageIds,
-        isBulkPublish,
-        publishInTheFuture,
-        publishOn,
-        rollbackOn,
-    } = state.publishModal;
+        shellContext: { permissions },
+        publishModal: {
+            pagePublishInfoIsSelected,
+            pagePublishInfosState,
+            failedToPublishPageIds,
+            isBulkPublish,
+            publishInTheFuture,
+            publishOn,
+            rollbackOn,
+        },
+    } = state;
     const pages: SafeDictionary<PublishPageSelection> = {};
     for (let x = 0; x < pagePublishInfoIsSelected.length; x += 1) {
         if (!pagePublishInfoIsSelected[x]) {
@@ -149,7 +155,7 @@ export const publish = (): ShellThunkAction => async (dispatch, getState) => {
         if (!pageGroup) {
             pageGroup = pages[pagePublishInfo.pageId] = {
                 pageId: pagePublishInfo.pageId,
-                parentId: isBulkPublish ? null : page.parentId,
+                parentId: isBulkPublish ? null : currentPage.parentId,
                 contexts: [],
             };
         }
@@ -201,10 +207,21 @@ export const publish = (): ShellThunkAction => async (dispatch, getState) => {
             pageId: page.pageId,
             parentId: page.parentId,
             publishOn: publishOn && rollbackOn && rollbackOn > publishOn ? rollbackOn : publishOn || rollbackOn,
+            isWaitingForApproval: !permissions?.canPublishContent,
         });
     }
 
-    if (!pagesToPublish.some(o => o.pageId === page.id)) {
+    if (!permissions?.canPublishContent) {
+        toasterContext.addToast({
+            body:
+                pagesToPublish.length > 1
+                    ? "Pages submitted for approval"
+                    : `The Page ${currentPage.name} submitted for approval`,
+            messageType: "success",
+        });
+    }
+
+    if (!pagesToPublish.some(o => o.pageId === currentPage.id)) {
         return;
     }
 
@@ -215,4 +232,11 @@ export const publish = (): ShellThunkAction => async (dispatch, getState) => {
     });
 
     sendToSite({ type: "Reload" });
+    closeSiteHole();
+
+    // we need to get the model selection dropdowns to reload so they retrigger selecting product/category/brand
+    dispatch({
+        type: "Data/Pages/Reset",
+    });
+    dispatch(loadPage({ pathname: `/Content/Page/${currentPage.id}`, search: "" } as Location));
 };

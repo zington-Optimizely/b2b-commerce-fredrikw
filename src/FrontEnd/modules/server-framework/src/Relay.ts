@@ -1,6 +1,7 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
 import { Request, Response } from "express";
+// eslint-disable-next-line spire/fenced-imports
 import { commerce_routes as commerceRoutes } from "../../../config/spire_routes.json";
 
 interface ApiMethod {
@@ -44,6 +45,7 @@ function createRelay(prefix: string) {
             method: request.method,
             body: request.body,
             headers,
+            redirect: "manual", // needed to allow punchout sessionrequest in 302 to work correctly
         });
 
         const body = await (result as any).buffer(); // Buffer is part of node-fetch but not standard fetch.

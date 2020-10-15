@@ -1,4 +1,4 @@
-import * as utilities from "./utilities";
+import * as utilities from "@insite/mobius/utilities";
 
 export { utilities };
 

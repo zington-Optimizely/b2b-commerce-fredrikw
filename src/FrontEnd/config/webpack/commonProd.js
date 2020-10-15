@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const GoodFencesPlugin = require("./goodFencesPlugin");
+const LicenseWebpackPlugin = require("license-webpack-plugin").LicenseWebpackPlugin;
+// Note: Changes to this list requires approval from legal
+const PackageInformation = require("./packageInformation").PackageInformation;
+const allowedLicenses = require("./allowedLicenseTypes");
+const path = require("path");
 
 module.exports = {
     mode: "production",
@@ -13,9 +17,29 @@ module.exports = {
             tsconfig: "tsconfig.base.json",
             useTypescriptIncrementalApi: false,
         }),
-        // good-fences violations are extremely rare and this tool takes a long time to run.
-        // Only run it with production builds to reduce load on developer systems.
-        new GoodFencesPlugin(),
+        new LicenseWebpackPlugin({
+            perChunkOutput: false,
+            // to stop all the missing license text warnings....
+            licenseTemplateDir: path.resolve(__dirname, "./default-license-texts"),
+            outputFilename: "licenses.json",
+            unacceptableLicenseTest: licenseType => {
+                // Note: This list requires approval from legal. Likely more licenses may also be added
+                return !allowedLicenses.includes(licenseType);
+            },
+            modulesDirectories: [
+                path.resolve(__dirname, "../../node_modules"),
+            ],
+            renderLicenses: modules => {
+                console.log(`Licenses discovered: ${modules.length}`);
+                const mapped = modules
+                    .sort((left, right) => {
+                        return left.name < right.name ? -1 : 1;
+                    })
+                    .map(module => new PackageInformation(module));
+
+                return JSON.stringify(mapped);
+            },
+        }),
     ],
     devtool: "source-map",
 };

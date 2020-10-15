@@ -1,6 +1,6 @@
+import AccordionSection, { AccordionSectionProps } from "@insite/mobius/AccordionSection/AccordionSection";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import React from "react";
-import omitMultiple from "../utilities/omitMultiple";
-import AccordionSection, { AccordionSectionProps } from "./AccordionSection";
 
 type State = Pick<AccordionSectionProps, "expanded">;
 

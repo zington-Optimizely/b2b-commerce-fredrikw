@@ -1,6 +1,6 @@
+import { ExtendedTheme } from "@insite/mobius/ThemeProvider";
 import React from "react";
 import { StyledComponentProps } from "styled-components";
-import { ExtendedTheme } from "../ThemeProvider";
 
 type AsTypes = keyof JSX.IntrinsicElements | React.ComponentType<any>;
 

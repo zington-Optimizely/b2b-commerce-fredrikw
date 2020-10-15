@@ -1,6 +1,6 @@
 import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { encodeCookie } from "@insite/client-framework/Common/Cookies";
-import { Dictionary } from "@insite/client-framework/Common/Types";
+import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { getHeadTrackingScript, getNoscriptTrackingScript } from "@insite/client-framework/Common/Utilities/tracking";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
@@ -38,6 +38,7 @@ import healthCheck from "@insite/server-framework/healthCheck";
 import Relay from "@insite/server-framework/Relay";
 import robots from "@insite/server-framework/Robots";
 import { generateSiteIfNeeded } from "@insite/server-framework/SiteGeneration";
+import { generateTranslations } from "@insite/server-framework/TranslationGeneration";
 import { configureStore as shellConfigureStore } from "@insite/shell/Store/ConfigureStore";
 import { Request, Response } from "express";
 import { createMemoryHistory } from "history";
@@ -52,6 +53,7 @@ setResolver(serverSiteMessageResolver);
 setTranslationResolver(serverTranslationResolver);
 
 let checkedForSiteGeneration = false;
+let triedToGenerateTranslations = false;
 
 const classicToSpirePageMapping: Dictionary<string> = {
     MyListDetailPage: "MyListsDetailsPage",
@@ -127,6 +129,15 @@ async function pageRenderer(request: Request, response: Response) {
             logger.error(`Site generation failed: ${e}`);
         }
         checkedForSiteGeneration = true;
+    }
+
+    if (!triedToGenerateTranslations || !IS_PRODUCTION) {
+        try {
+            await generateTranslations();
+        } catch (e) {
+            logger.error(`Translation generation failed: ${e}`);
+        }
+        triedToGenerateTranslations = true;
     }
 
     // Prepare an instance of the application and perform an initial render that will cause any async tasks (e.g., data access) to begin.
@@ -314,6 +325,7 @@ async function pageRenderer(request: Request, response: Response) {
     const state = store.getState() as ApplicationState;
     const noscriptTrackingScript = getNoscriptTrackingScript(state.context?.settings);
     const headTrackingScript = getHeadTrackingScript(state.context?.settings, state.context?.session);
+    const favicon = state.context?.website.websiteFavicon;
 
     const app = (rawHtml: string) => (
         <html lang={languageCode}>
@@ -323,6 +335,7 @@ async function pageRenderer(request: Request, response: Response) {
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
                 <title>{isShellRequest ? "Content Administration" : metadata?.title}</title>
+                {favicon && <link rel="icon" href={favicon} type="image/x-icon" />}
                 <meta id="ogTitle" property="og:title" content={metadata?.openGraphTitle} />
                 <meta id="ogImage" property="og:image" content={metadata?.openGraphImage} />
                 <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl} />
@@ -397,9 +410,9 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
         pageByUrlResult = await pageByUrlResponse.json();
         setInitialPage(pageByUrlResult, request.url);
 
-        const existingCookies = request.cookies;
+        const existingCookies = request.cookies as SafeDictionary<string>;
         Object.keys(existingCookies).forEach((cookieName: string | number) => {
-            existingCookies[cookieName] = encodeCookie(existingCookies[cookieName]);
+            existingCookies[cookieName] = encodeCookie(existingCookies[cookieName]!);
         });
 
         // getAll does exist and is needed to get more than a single set-cookie value
@@ -414,12 +427,8 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
             response.cookie(cookie.name, cookie.value, options);
             existingCookies[cookie.name] = cookie.value;
         }
-        let cookiesString = "";
-        Object.keys(existingCookies).forEach(cookieName => {
-            cookiesString += `${cookieName}=${existingCookies[cookieName]}; `;
-        });
 
-        setSessionCookies(cookiesString);
+        setSessionCookies(existingCookies);
 
         return responseCookies;
     }

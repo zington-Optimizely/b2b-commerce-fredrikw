@@ -92,7 +92,7 @@ class Header extends React.Component<Props> {
                 {pageDefinition?.supportsProductSelection && <ProductSelection />}
                 {pageDefinition?.supportsCategorySelection && <CategorySelection />}
                 {pageDefinition?.supportsBrandSelection && <BrandSelection />}
-                {contentMode !== "Viewing" && permissions?.canPublishContent && (
+                {contentMode !== "Viewing" && (
                     <PublishDropDownStyle>
                         <PublishDropDown />
                     </PublishDropDownStyle>

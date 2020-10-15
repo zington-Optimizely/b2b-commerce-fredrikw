@@ -3,7 +3,7 @@ import { HasShellContext, withIsInShell } from "@insite/client-framework/Compone
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setDrawerIsOpen from "@insite/client-framework/Store/Components/AddressDrawer/Handlers/SetDrawerIsOpen";
-import { getFulfillmentLabel } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getFulfillmentLabel, getIsPunchOutSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -21,6 +21,7 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => ({
     fulfillmentLabel: getFulfillmentLabel(state),
     isDrawerOpen: state.components.addressDrawer.isOpen,
+    isPunchOutSession: getIsPunchOutSession(state),
 });
 
 const mapDispatchToProps = {
@@ -36,6 +37,7 @@ export interface HeaderShipToAddressStyles {
     titleTypography?: TypographyPresentationProps;
     drawer?: DrawerPresentationProps;
     drawerInShell?: DrawerPresentationProps;
+    drawerInPunchOut?: DrawerPresentationProps;
 }
 
 const baseDrawerStyles: DrawerPresentationProps = {
@@ -106,6 +108,17 @@ export const headerShipToAddressStyles: HeaderShipToAddressStyles = {
             `,
         },
     },
+    drawerInPunchOut: {
+        ...baseDrawerStyles,
+        cssOverrides: {
+            ...baseDrawerStyles.cssOverrides,
+            drawerBody: css`
+                background: ${getColor("common.background")};
+                overflow-x: inherit;
+                overflow-y: show;
+            `,
+        },
+    },
 };
 
 interface OwnProps extends WidgetProps {
@@ -114,7 +127,14 @@ interface OwnProps extends WidgetProps {
 
 const styles = headerShipToAddressStyles;
 
-const HeaderShipToAddress: FC<Props> = ({ id, fulfillmentLabel, isDrawerOpen, setDrawerIsOpen, shellContext }) => {
+const HeaderShipToAddress: FC<Props> = ({
+    id,
+    fulfillmentLabel,
+    isDrawerOpen,
+    setDrawerIsOpen,
+    shellContext,
+    isPunchOutSession,
+}) => {
     const handleClickAddress = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setDrawerIsOpen({ isOpen: !isDrawerOpen });
     };
@@ -123,7 +143,14 @@ const HeaderShipToAddress: FC<Props> = ({ id, fulfillmentLabel, isDrawerOpen, se
         setDrawerIsOpen({ isOpen: false });
     };
 
-    const drawerStyles = shellContext.isInShell && shellContext.isEditing ? styles.drawerInShell : styles.drawer;
+    let drawerStyles: DrawerPresentationProps | undefined;
+    if (shellContext.isInShell && shellContext.isEditing) {
+        drawerStyles = styles.drawerInShell;
+    } else if (isPunchOutSession) {
+        drawerStyles = styles.drawerInPunchOut;
+    } else {
+        drawerStyles = styles.drawer;
+    }
 
     return (
         <>
@@ -145,7 +172,7 @@ const HeaderShipToAddress: FC<Props> = ({ id, fulfillmentLabel, isDrawerOpen, se
                 {...(drawerStyles as DrawerProps)}
                 position="top"
                 isOpen={isDrawerOpen}
-                headline={translate("Change Customer")}
+                headline={isPunchOutSession ? "" : translate("Change Customer")}
                 handleClose={handleCloseDrawer}
                 data-test-selector="addressDrawer"
             >

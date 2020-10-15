@@ -42,6 +42,7 @@ export function getBrandsDataView(state: ApplicationState, parameter: GetBrandsA
 export const BrandStateContext = createContext<ReturnType<typeof getBrandStateById>>({
     value: undefined,
     isLoading: false,
+    errorStatusCode: undefined,
     id: undefined,
 });
 export const BrandCategoriesStateContext = createContext<ReturnType<typeof getBrandCategoriesDataView>>({

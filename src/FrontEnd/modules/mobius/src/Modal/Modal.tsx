@@ -1,18 +1,18 @@
+import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { IconPresentationProps } from "@insite/mobius/Icon";
+import Overlay, { OverlayComponentProps, Transition } from "@insite/mobius/Overlay";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import getColor from "@insite/mobius/utilities/getColor";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden/VisuallyHidden";
 import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
-import Button, { ButtonIcon, ButtonPresentationProps } from "../Button";
-import { BaseTheme } from "../globals/baseTheme";
-import Overlay, { OverlayComponentProps, Transition } from "../Overlay";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import getColor from "../utilities/getColor";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import VisuallyHidden from "../VisuallyHidden/VisuallyHidden";
 
 export type SizeVariant = "small" | "medium" | "large";
 

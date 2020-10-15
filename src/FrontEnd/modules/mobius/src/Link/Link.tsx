@@ -1,17 +1,17 @@
+import Clickable, { ClickableComponentProps, ClickableLinkProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import getProp from "@insite/mobius/utilities/getProp";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import Color from "color";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import Clickable, { ClickableComponentProps, ClickableLinkProps } from "../Clickable";
-import { BaseTheme } from "../globals/baseTheme";
-import Icon, { IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import getProp from "../utilities/getProp";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import resolveColor from "../utilities/resolveColor";
 
 export type LinkPresentationProps = InjectableCss<ClickableComponentProps> & {
     /** Color of the link text and icon.

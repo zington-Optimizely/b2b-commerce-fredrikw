@@ -1,14 +1,14 @@
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import LoadingSpinner from "@insite/mobius/LoadingSpinner";
+import DisablerContext from "@insite/mobius/utilities/DisablerContext";
+import getProp from "@insite/mobius/utilities/getProp";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import safeColor from "@insite/mobius/utilities/safeColor";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import LoadingSpinner from "../LoadingSpinner";
-import DisablerContext from "../utilities/DisablerContext";
-import getProp from "../utilities/getProp";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import safeColor from "../utilities/safeColor";
-import VisuallyHidden from "../VisuallyHidden";
 
 export type LoadingOverlayProps = MobiusStyledComponentProps<
     "div",

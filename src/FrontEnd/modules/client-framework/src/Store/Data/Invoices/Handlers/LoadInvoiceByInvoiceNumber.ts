@@ -19,7 +19,19 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getInvoice(props.apiParameter);
+    try {
+        props.apiResult = await getInvoice(props.apiParameter);
+    } catch (error) {
+        if ("status" in error && (error.status === 400 || error.status === 404)) {
+            props.dispatch({
+                type: "Data/Invoices/FailedToLoadInvoiceByInvoiceNumber",
+                invoiceNumber: props.parameter.invoiceNumber,
+                status: 404,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadInvoice: HandlerType = props => {

@@ -22,10 +22,10 @@ import { getTemplate } from "@insite/shell/Services/SpireService";
 import { editPageOptions, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import ShellState from "@insite/shell/Store/ShellState";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import { push } from "connected-react-router";
 import { History } from "history";
-import ShellState from "../ShellState";
 
 export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch => {
     addTask(

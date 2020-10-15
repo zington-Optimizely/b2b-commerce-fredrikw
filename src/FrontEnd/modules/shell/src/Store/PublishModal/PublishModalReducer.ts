@@ -31,6 +31,8 @@ const reducer = {
     "PublishModal/TogglePublishInTheFuture": (draft: Draft<PublishModalState>) => {
         if (draft.publishInTheFuture) {
             delete draft.publishInTheFuture;
+            delete draft.publishOn;
+            delete draft.rollbackOn;
         } else {
             draft.publishInTheFuture = true;
         }

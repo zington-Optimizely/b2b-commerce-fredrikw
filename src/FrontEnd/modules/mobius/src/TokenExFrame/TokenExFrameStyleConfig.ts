@@ -1,7 +1,7 @@
-import borderByState, { sizeVariantValues } from "../FormField/formStyles";
-import { BaseTheme } from "../globals/baseTheme";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import get from "../utilities/get";
+import borderByState, { sizeVariantValues } from "@insite/mobius/FormField/formStyles";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import get from "@insite/mobius/utilities/get";
 
 /**
  * Provides a config object that describes the styles of the form field in accordance with the props passed.

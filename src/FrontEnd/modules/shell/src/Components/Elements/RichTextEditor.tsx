@@ -1,6 +1,6 @@
 // The below handles type definition for the `react-froala-wysiwyg` FroalaEditor.
 // eslint-disable-next-line spaced-comment
-///<reference path= "../../../node_modules/react-froala-wysiwyg/lib/index.d.ts" />
+///<reference path= "../../../../../node_modules/react-froala-wysiwyg/lib/index.d.ts" />
 // eslint-disable-next-line spaced-comment
 ///<reference path= "../../Froalaeditor.d.ts" />
 import { rawRequest } from "@insite/client-framework/Services/ApiService";

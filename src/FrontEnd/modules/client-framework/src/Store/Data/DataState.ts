@@ -13,6 +13,7 @@ import { CategoriesState } from "@insite/client-framework/Store/Data/Categories/
 import { CountriesState } from "@insite/client-framework/Store/Data/Countries/CountriesState";
 import { DealersState } from "@insite/client-framework/Store/Data/Dealers/DealersState";
 import { InvoicesState } from "@insite/client-framework/Store/Data/Invoices/InvoicesState";
+import { JobQuotesState } from "@insite/client-framework/Store/Data/JobQuotes/JobQuotesState";
 import { MessagesState } from "@insite/client-framework/Store/Data/Messages/MessagesState";
 import { OrderApprovalsState } from "@insite/client-framework/Store/Data/OrderApprovals/OrderApprovalsState";
 import { OrdersState } from "@insite/client-framework/Store/Data/Orders/OrdersState";
@@ -42,6 +43,7 @@ export interface DataView {
 interface HasById<Model> {
     readonly isLoading: Dictionary<boolean>;
     readonly byId: Dictionary<Readonly<Model>>;
+    readonly errorStatusCodeById?: Dictionary<Readonly<number>>;
 }
 
 export interface DataViewState<Model, DataViewModel extends DataView = DataView> extends HasById<Model> {
@@ -71,6 +73,7 @@ export default interface DataState {
     readonly products: ProductsState;
     readonly promotions: PromotionsState;
     readonly quotes: QuotesState;
+    readonly jobQuotes: JobQuotesState;
     readonly shipTos: ShipTosState;
     readonly warehouses: WarehousesState;
     readonly wishLists: WishListsState;
@@ -173,6 +176,7 @@ export function getDataView<T extends { id: string }, DataViewModel extends Data
 const idNotFound = Object.freeze({
     isLoading: false,
     value: undefined,
+    errorStatusCode: undefined,
     id: undefined,
 } as const);
 
@@ -186,6 +190,7 @@ export function getById<T>(dataViewState: HasById<T>, id: string | undefined, ma
         return {
             id,
             value: dataViewState.byId[!mapId ? id : mapId(id)],
+            errorStatusCode: dataViewState.errorStatusCodeById && dataViewState.errorStatusCodeById[id],
             isLoading: !!isLoading,
         };
     });

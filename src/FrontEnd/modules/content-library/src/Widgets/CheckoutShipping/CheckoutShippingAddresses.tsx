@@ -12,6 +12,7 @@ import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countri
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
 import { getShipTosDataView, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import updateBillTo from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateBillTo";
 import updateShipTo from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/UpdateShipTo";
 import translate from "@insite/client-framework/Translate";
@@ -27,6 +28,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -65,6 +67,7 @@ const mapStateToProps = (state: ApplicationState) => {
         currentUserIsGuest: getCurrentUserIsGuest(state),
         useBillingAddress: state.pages.checkoutShipping.useBillingAddress,
         billToState: getBillToState(state, cart?.billToId),
+        cartPageLink: getPageLinkByPageType(state, "CartPage")?.url,
     };
 };
 
@@ -77,7 +80,7 @@ const mapDispatchToProps = {
     updateBillTo,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 export interface CheckoutShippingAddressesStyles {
     loadingWrapper?: InjectableCss;
@@ -134,6 +137,8 @@ const CheckoutShippingAddresses: FC<Props> = ({
     newAddress,
     oneTimeAddress,
     children,
+    cartPageLink,
+    history,
 }) => {
     const toasterContext = React.useContext(ToasterContext);
 
@@ -172,12 +177,22 @@ const CheckoutShippingAddresses: FC<Props> = ({
         updateShipTo({
             billToId: billToId!,
             shipTo: address,
+            onSuccess: hasCartlines => {
+                if (!hasCartlines) {
+                    history.push(cartPageLink!);
+                }
+            },
         });
     };
 
     const changeBillingAddressHandler = (address: BillToModel) => {
         updateBillTo({
             billTo: address,
+            onSuccess: hasCartlines => {
+                if (!hasCartlines) {
+                    history.push(cartPageLink!);
+                }
+            },
         });
     };
 
@@ -244,7 +259,7 @@ const CheckoutShippingAddresses: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(CheckoutShippingAddresses),
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(CheckoutShippingAddresses)),
     definition: {
         group: "Checkout - Shipping",
         allowedContexts: [CheckoutShippingPageContext],

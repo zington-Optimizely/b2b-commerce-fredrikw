@@ -4,6 +4,7 @@ import { Draft } from "immer";
 
 const initialState: CartState = {
     isClearingCart: false,
+    isSavingOrder: false,
     isRemovingCartLine: {},
 };
 
@@ -19,6 +20,12 @@ const reducer = {
     },
     "Pages/Cart/CompleteRemoveCartLine": (draft: Draft<CartState>, action: { cartLineId: string }) => {
         delete draft.isRemovingCartLine[action.cartLineId];
+    },
+    "Pages/Cart/BeginSavingOrder": (draft: Draft<CartState>) => {
+        draft.isSavingOrder = true;
+    },
+    "Pages/Cart/CompleteSavingOrder": (draft: Draft<CartState>) => {
+        draft.isSavingOrder = false;
     },
 };
 

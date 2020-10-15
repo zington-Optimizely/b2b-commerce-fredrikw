@@ -14,11 +14,4 @@ module.exports = {
     optimization: {
         minimize: false, // No need to minify on the server side.
     },
-    resolve: {
-        modules: [
-            path.resolve(__dirname, "../../modules/client-framework/node_modules"),
-            path.resolve(__dirname, "../../modules/mobius/node_modules"),
-            "node_modules",
-        ],
-    },
 };

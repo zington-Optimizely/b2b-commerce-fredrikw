@@ -1,7 +1,8 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentUserIsGuest, getIsPunchOutSession } from "@insite/client-framework/Store/Context/ContextSelectors";
+import cancelPunchOut from "@insite/client-framework/Store/Context/Handlers/CancelPunchOut";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -30,10 +31,12 @@ const mapStateToProps = (state: ApplicationState) => ({
     myAccountPageLink: getPageLinkByPageType(state, "MyAccountPage"),
     signInUrl: getPageLinkByPageType(state, "SignInPage")?.url,
     currentUserIsGuest: getCurrentUserIsGuest(state),
+    isPunchOutSession: getIsPunchOutSession(state),
 });
 
 const mapDispatchToProps = {
     signOut,
+    cancelPunchOut,
 };
 
 export interface HeaderSignInStyles {
@@ -91,10 +94,12 @@ const HeaderSignIn: FC<Props> = ({
     isSigningIn,
     currentUserIsGuest,
     signOut,
+    cancelPunchOut,
     fields,
     history,
     myAccountPageLink,
     signInUrl,
+    isPunchOutSession,
 }) => {
     const showIcon = fields.visibilityState === "both" || fields.visibilityState === "icon";
     const showLabel = fields.visibilityState === "both" || fields.visibilityState === "label";
@@ -112,6 +117,10 @@ const HeaderSignIn: FC<Props> = ({
                 history.push(signInUrl);
             }
         }
+    };
+
+    const onSignOutHandler = () => {
+        isPunchOutSession ? cancelPunchOut() : signOut();
     };
 
     let signInStatusText = translate("Sign In");
@@ -153,8 +162,12 @@ const HeaderSignIn: FC<Props> = ({
                 </Clickable>
             )}
             {userName && !currentUserIsGuest && (
-                <Clickable {...styles.signOutClickable} onClick={signOut} data-test-selector="headerSignOutLink">
-                    {translate("Sign Out")}
+                <Clickable
+                    {...styles.signOutClickable}
+                    onClick={onSignOutHandler}
+                    data-test-selector="headerSignOutLink"
+                >
+                    {isPunchOutSession ? translate("Cancel PunchOut") : translate("Sign Out")}
                 </Clickable>
             )}
         </StyledWrapper>

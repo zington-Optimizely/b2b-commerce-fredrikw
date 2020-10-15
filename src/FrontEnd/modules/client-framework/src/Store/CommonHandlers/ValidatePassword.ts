@@ -1,4 +1,4 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerForOldOnComplete, Handler } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -16,6 +16,7 @@ export const specialPasswordLengthMessage = translate("Password must include at 
 type HandlerType = Handler<
     {
         password: string;
+        /** This is a legacy onComplete, it will only fire if the Handler CallOnComplete is hit */
         onComplete: (errorMessage: React.ReactNode) => void;
     },
     {
@@ -65,5 +66,5 @@ export const CallOnComplete: HandlerType = props => {
 
 export const chain = [ValidatePassword, CallOnComplete];
 
-const validatePassword = createHandlerChainRunner(chain, "ValidatePassword");
+const validatePassword = createHandlerChainRunnerForOldOnComplete(chain, "ValidatePassword");
 export default validatePassword;

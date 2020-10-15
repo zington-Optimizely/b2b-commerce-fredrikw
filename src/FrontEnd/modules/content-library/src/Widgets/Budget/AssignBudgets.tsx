@@ -46,7 +46,7 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";

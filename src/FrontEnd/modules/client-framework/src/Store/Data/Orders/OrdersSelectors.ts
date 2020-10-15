@@ -19,5 +19,6 @@ export const OrdersDataViewContext = createContext<ReturnType<typeof getOrdersDa
 export const OrderStateContext = createContext<ReturnType<typeof getOrderState>>({
     value: undefined,
     isLoading: false,
+    errorStatusCode: undefined,
     id: undefined,
 });

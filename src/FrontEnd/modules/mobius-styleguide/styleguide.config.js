@@ -3,7 +3,9 @@ const parser = require("react-docgen-typescript");
 const sections = require("./config/sections");
 
 const resolveSection = sectionComponents =>
-    sectionComponents.map(componentPath => require.resolve(`../mobius/src/${componentPath}/${componentPath}.tsx`));
+    sectionComponents.map(componentPath =>
+        require.resolve(`../../modules/mobius/src/${componentPath}/${componentPath}.tsx`),
+    );
 
 module.exports = {
     assetsDir: "static",
@@ -64,7 +66,7 @@ module.exports = {
         SectionHeadingRenderer: path.join(__dirname, "styleguide-components/SectionHeadingRenderer"),
         StyleGuideRenderer: path.join(__dirname, "styleguide-components/StyleGuideRenderer"),
         TableOfContentsRenderer: path.join(__dirname, "styleguide-components/TableOfContentsRenderer"),
-        Wrapper: require.resolve("../mobius/src/ThemeProvider/ThemeProvider.tsx"),
+        Wrapper: require.resolve("../../modules/mobius/src/ThemeProvider/ThemeProvider.tsx"),
     },
     template: {
         title: "Insite Mobius Style Guide",

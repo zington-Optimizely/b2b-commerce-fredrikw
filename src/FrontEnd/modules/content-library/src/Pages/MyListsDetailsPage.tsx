@@ -93,7 +93,12 @@ class MyListsDetailsPage extends React.Component<Props, State> {
     }
 
     componentDidUpdate(): void {
-        if (!this.props.wishListState.value && !this.props.wishListState.isLoading && this.props.wishListId) {
+        if (
+            !this.props.wishListState.value &&
+            !this.props.wishListState.isLoading &&
+            this.props.wishListId &&
+            !this.props.wishListState.errorStatusCode
+        ) {
             this.props.loadWishListIfNeeded({ wishListId: this.props.wishListId });
         }
     }
@@ -102,10 +107,12 @@ class MyListsDetailsPage extends React.Component<Props, State> {
         const styles = myListsDetailsPageStyles;
         return (
             <Page>
-                {this.state.inviteIsNotAvailable ? (
+                {this.state.inviteIsNotAvailable || this.props.wishListState.errorStatusCode === 404 ? (
                     <StyledWrapper {...styles.inviteIsNotAvailableWrapper}>
                         <Typography {...styles.inviteIsNotAvailableText}>
-                            {siteMessage("Lists_InviteIsNotAvailable")}
+                            {this.state.inviteIsNotAvailable
+                                ? siteMessage("Lists_InviteIsNotAvailable")
+                                : siteMessage("Lists_List_NotFound")}
                         </Typography>
                     </StyledWrapper>
                 ) : (

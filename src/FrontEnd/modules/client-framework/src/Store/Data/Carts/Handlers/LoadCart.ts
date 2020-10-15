@@ -3,10 +3,13 @@ import { CartResult, getCart, GetCartApiParameter } from "@insite/client-framewo
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 type HandlerType = Handler<
-    {
-        cartId: string;
-        shouldLoadFullCart?: boolean;
-    } & HasOnSuccess,
+    | {
+          cartId: string;
+          shouldLoadFullCart?: boolean;
+      }
+    | ({
+          apiParameter: GetCartApiParameter;
+      } & HasOnSuccess),
     {
         apiParameter: GetCartApiParameter;
         apiResult: CartResult;
@@ -16,11 +19,15 @@ type HandlerType = Handler<
 export const DispatchBeginLoadCart: HandlerType = props => {
     props.dispatch({
         type: "Data/Carts/BeginLoadCart",
-        id: props.parameter.cartId,
+        id: "cartId" in props.parameter ? props.parameter.cartId : props.parameter.apiParameter.cartId,
     });
 };
 
 export const SetNeedFullCart: HandlerType = props => {
+    if (!("cartId" in props.parameter)) {
+        return;
+    }
+
     const pageType = getCurrentPage(props.getState()).type;
     props.needFullCart =
         props.parameter.shouldLoadFullCart ||
@@ -30,6 +37,11 @@ export const SetNeedFullCart: HandlerType = props => {
 };
 
 export const PopulateApiParameter: HandlerType = props => {
+    if ("apiParameter" in props.parameter) {
+        props.apiParameter = props.parameter.apiParameter;
+        return;
+    }
+
     props.apiParameter = {
         cartId: props.parameter.cartId,
         expand: ["validation"],

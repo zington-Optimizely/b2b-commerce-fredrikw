@@ -18,6 +18,8 @@ export interface ShellColors extends ThemeColors {
         accentSecondary: string;
         futurePublish: string;
         futurePublishActive: string;
+        isWaitingForApproval: string;
+        isWaitingForApprovalActive: string;
     };
 }
 
@@ -28,6 +30,8 @@ const colors: ShellColors = {
         accentSecondary: "#cccccc",
         futurePublish: "#0072bc",
         futurePublishActive: "#c4e9fc",
+        isWaitingForApproval: "#f7941d",
+        isWaitingForApprovalActive: "#f2d7b8",
     },
     primary: {
         main: "#78BC21",

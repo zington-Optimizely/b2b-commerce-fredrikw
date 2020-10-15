@@ -1,4 +1,4 @@
-import { ComponentThemeProps } from "mobius/src/globals/baseTheme";
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 import { css, keyframes } from "styled-components";
 
 const ModalPresentationPropsDefault: ComponentThemeProps["modal"]["defaultProps"] = {

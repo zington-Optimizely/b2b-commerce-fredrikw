@@ -1,5 +1,5 @@
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 import { css } from "styled-components";
-import { ComponentThemeProps } from "../globals/baseTheme";
 
 const TagPresentationPropsDefault: ComponentThemeProps["tag"]["defaultProps"] = {
     typographyProps: {

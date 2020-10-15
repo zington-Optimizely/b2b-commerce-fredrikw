@@ -7,13 +7,15 @@ import {
     canSaveOrder,
     getCurrentCartState,
     isCartEmpty,
+    isPunchOutOrder,
 } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CartPageContext } from "@insite/content-library/Pages/CartPage";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import CartSaveOrderButton from "@insite/content-library/Widgets/Cart/CartSaveOrderButton";
+import { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
@@ -30,6 +32,7 @@ const mapStateToProps = (state: ApplicationState) => {
         isCartEmpty: isCartEmpty(cart),
         canSaveOrder: canSaveOrder(cart),
         canAddAllToList: canAddAllToList(cart),
+        isPunchOutOrder: isPunchOutOrder(cart),
     };
 };
 
@@ -67,7 +70,8 @@ export const cartActionsStyles: CartActionsStyles = {
         `,
     },
     saveOrderButton: {
-        color: "secondary",
+        buttonType: "outline",
+        variant: "secondary",
     },
     wideOverflowMenu: {
         cssOverrides: {
@@ -84,12 +88,12 @@ const CartActions: FC<Props> = ({
     cart,
     isCartEmpty,
     canAddAllToList,
-    canSaveOrder,
     wishListSettings,
     setAddToListModalIsOpen,
     addToWishList,
+    isPunchOutOrder,
 }) => {
-    if (!cart) {
+    if (!cart || isPunchOutOrder) {
         return null;
     }
 
@@ -147,20 +151,12 @@ const CartActions: FC<Props> = ({
         <>
             <Hidden {...styles.narrowHidden} data-test-selector="cartActionsNarrow">
                 <OverflowMenu position="end" {...styles.narrowOverflowMenu}>
-                    <Clickable
-                        {...styles.saveOrderClickable}
-                        disabled={!canSaveOrder}
-                        data-test-selector="cartlineSaveOrder"
-                    >
-                        {translate("Save Order")}
-                    </Clickable>
+                    <CartSaveOrderButton variant="clickable" extendedStyles={styles.saveOrderClickable} />
                     {overflowItems}
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.wideHidden} data-test-selector="cartActionsWide">
-                <Button {...styles.saveOrderButton} disabled={!canSaveOrder} data-test-selector="cartlineSaveOrder">
-                    {translate("Save Order")}
-                </Button>
+                <CartSaveOrderButton variant="button" extendedStyles={styles.saveOrderButton} />
                 {wideHiddenOverflowMenu}
             </Hidden>
         </>

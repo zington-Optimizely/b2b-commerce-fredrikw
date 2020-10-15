@@ -30,6 +30,7 @@ type HandlerType = ApiHandlerDiscreteParameter<
         pickUpWarehouse: WarehouseModel | null;
         isDefault?: boolean;
         returnUrl?: string;
+        skipRedirect?: boolean;
     } & HasOnSuccess &
         HasOnError<string>,
     UpdateSessionApiParameter,
@@ -154,6 +155,10 @@ export const LoadCurrentCart: HandlerType = async props => {
 };
 
 export const NavigateToReturnUrl: HandlerType = props => {
+    if (props.parameter.skipRedirect) {
+        return;
+    }
+
     const state = props.getState();
     const session = getSession(state);
     const dashboardUrl = getPageLinkByPageType(state, "MyAccountPage")?.url;

@@ -1,22 +1,22 @@
-import * as React from "react";
-import { ThemeConsumer } from "styled-components";
-import { ClickablePresentationProps, ClickableProps } from "../Clickable";
+import { ClickablePresentationProps, ClickableProps } from "@insite/mobius/Clickable";
 import FormField, {
     FormFieldClickable,
     FormFieldComponentProps,
     FormFieldIcon,
     FormFieldPresentationProps,
     FormFieldSizeVariant,
-} from "../FormField";
-import { sizeVariantValues } from "../FormField/formStyles";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconPresentationProps } from "../Icon";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import { MobiusStyledComponentPropsWithRef } from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
-import VisuallyHidden from "../VisuallyHidden";
+} from "@insite/mobius/FormField";
+import { sizeVariantValues } from "@insite/mobius/FormField/formStyles";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import { MobiusStyledComponentPropsWithRef } from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
+import * as React from "react";
+import { ThemeConsumer } from "styled-components";
 
 export interface TextFieldPresentationProps extends FormFieldPresentationProps<TextFieldComponentProps> {
     /** Props to be passed into the Clickable component that will optionally wrap the icon.

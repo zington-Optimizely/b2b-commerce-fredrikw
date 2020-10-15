@@ -70,6 +70,9 @@ const reducer = {
     "Context/CompleteAddingProductToCart": (draft: Draft<ContextState>) => {
         draft.addingProductToCart = false;
     },
+    "Context/SetIsPunchOutSessionId": (draft: Draft<ContextState>, action: { punchOutSessionId?: string }) => {
+        draft.punchOutSessionId = action.punchOutSessionId;
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

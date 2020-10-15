@@ -169,8 +169,6 @@ class SiteFrame extends React.Component<Props, State> {
                 this.framePageId = data.pageId;
                 this.props.history.push(url);
 
-                let attempts = 15;
-
                 const pageDefinitions = getPageDefinitions();
                 const pageDefinitionsByType: SafeDictionary<Pick<PageDefinition, "pageType">> = {};
                 pageDefinitions.forEach(definition => {
@@ -184,22 +182,16 @@ class SiteFrame extends React.Component<Props, State> {
                     this.props.footerNodesByParentId[data.parentId],
                 );
 
-                const interval = setInterval(() => {
-                    if (
-                        (sendToSite({
-                            type: "CMSPermissions",
-                            permissions: this.props.permissions,
-                            canChangePage: !pageState?.futurePublishOn || pageState.futurePublishOn <= new Date(),
-                        }) &&
-                            sendToSite({
-                                type: "PageDefinitions",
-                                pageDefinitionsByType,
-                            })) ||
-                        !attempts--
-                    ) {
-                        clearInterval(interval);
-                    }
-                }, 200);
+                sendToSite({
+                    type: "CMSPermissions",
+                    permissions: this.props.permissions,
+                    canChangePage: !pageState?.futurePublishOn || pageState.futurePublishOn <= new Date(),
+                });
+
+                sendToSite({
+                    type: "PageDefinitions",
+                    pageDefinitionsByType,
+                });
             },
             MoveWidgetTo: (data: { id: string; parentId: string; zoneName: string; index: number }) => {
                 this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index);

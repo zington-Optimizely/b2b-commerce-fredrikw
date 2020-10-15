@@ -1,23 +1,23 @@
+import ToggleInput from "@insite/mobius/Checkbox/ToggleInput";
+import CheckboxGroupContext, { CheckboxGroupContextData } from "@insite/mobius/CheckboxGroup/CheckboxGroupContext";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps, IconProps } from "@insite/mobius/Icon";
+import Typography from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import combineTypographyProps from "@insite/mobius/utilities/combineTypographyProps";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import FieldSetPresentationProps from "@insite/mobius/utilities/fieldSetProps";
+import get from "@insite/mobius/utilities/get";
+import getColor from "@insite/mobius/utilities/getColor";
+import getContrastColor from "@insite/mobius/utilities/getContrastColor";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
 import Color from "color";
 import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
-import CheckboxGroupContext, { CheckboxGroupContextData } from "../CheckboxGroup/CheckboxGroupContext";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps, IconProps } from "../Icon";
-import Typography from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import combineTypographyProps from "../utilities/combineTypographyProps";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import FieldSetPresentationProps from "../utilities/fieldSetProps";
-import get from "../utilities/get";
-import getColor from "../utilities/getColor";
-import getContrastColor from "../utilities/getContrastColor";
-import InjectableCss from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import omitMultiple from "../utilities/omitMultiple";
-import resolveColor from "../utilities/resolveColor";
-import uniqueId from "../utilities/uniqueId";
-import ToggleInput from "./ToggleInput";
 
 export interface CheckboxPresentationProps
     extends FieldSetPresentationProps<CheckboxProps & StyleProps>,

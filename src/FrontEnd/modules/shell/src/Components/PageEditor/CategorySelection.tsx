@@ -1,9 +1,5 @@
 import { ModelSelection } from "@insite/shell/Components/PageEditor/ModelSelection";
-import {
-    clearModelSelection,
-    searchCategories,
-    selectCategory,
-} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { searchCategories, selectCategory } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -16,7 +12,6 @@ const mapStateToProps = (state: ShellState) => ({
 const mapDispatchToProps = {
     selectCategory,
     searchCategories,
-    clearModelSelection,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -25,10 +20,6 @@ class CategorySelection extends React.Component<Props> {
     onSelectionChange = (categoryPath?: string) => {
         this.props.selectCategory(categoryPath ?? "");
     };
-
-    componentWillUnmount() {
-        this.props.clearModelSelection();
-    }
 
     render() {
         const categorySearchResults = this.props.categorySearchResults ?? [];

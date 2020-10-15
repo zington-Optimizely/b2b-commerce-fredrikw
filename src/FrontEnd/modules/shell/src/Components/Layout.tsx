@@ -1,4 +1,5 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import Toaster from "@insite/mobius/Toast/Toaster";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
@@ -53,29 +54,31 @@ const MainArea = styled.div`
 
 const layout = (
     <FlexWrapper>
-        <SideBarArea>
-            <MainNavigation />
-            <Switch>
-                <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuideEditor} />
-                <Route path="/ContentAdmin/Page/" component={PageTreeSideBar} />
-            </Switch>
-        </SideBarArea>
-        <MainArea>
-            <Switch>
-                <Route path="/ContentAdmin/Page/*" render={props => <MainHeader {...props} />} />
-                <Route path={["/ContentAdmin/Design", "/ContentAdmin/"]}>
-                    <MainHeader disabled />
-                </Route>
-                <MainHeader />
-            </Switch>
-            <Switch>
-                <Route exact path="/ContentAdmin/Page/:id" component={PageEditor} />
-                <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuidePreview} />
-                <Route component={HomePageLoader} />
-            </Switch>
-        </MainArea>
-        <LogoutWarningModal />
-        <ErrorModal />
+        <Toaster>
+            <SideBarArea>
+                <MainNavigation />
+                <Switch>
+                    <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuideEditor} />
+                    <Route path="/ContentAdmin/Page/" component={PageTreeSideBar} />
+                </Switch>
+            </SideBarArea>
+            <MainArea>
+                <Switch>
+                    <Route path="/ContentAdmin/Page/*" render={props => <MainHeader {...props} />} />
+                    <Route path={["/ContentAdmin/Design", "/ContentAdmin/"]}>
+                        <MainHeader disabled />
+                    </Route>
+                    <MainHeader />
+                </Switch>
+                <Switch>
+                    <Route exact path="/ContentAdmin/Page/:id" component={PageEditor} />
+                    <Route exact path="/ContentAdmin/Design/StyleGuide" component={StyleGuidePreview} />
+                    <Route component={HomePageLoader} />
+                </Switch>
+            </MainArea>
+            <LogoutWarningModal />
+            <ErrorModal />
+        </Toaster>
     </FlexWrapper>
 );
 

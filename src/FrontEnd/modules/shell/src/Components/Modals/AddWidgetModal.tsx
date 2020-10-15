@@ -7,6 +7,7 @@ import Icon from "@insite/mobius/Icon";
 import mobiusIconsObject from "@insite/mobius/Icons/commonIcons";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import TextField from "@insite/mobius/TextField";
+import shellIconsObject from "@insite/shell/Components/Icons/CompatibleIcons/shellIcons";
 import Search from "@insite/shell/Components/Icons/Search";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getWidgetDefinition, getWidgetDefinitions, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
@@ -19,7 +20,6 @@ import sortBy from "lodash/sortBy";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
-import shellIconsObject from "../Icons/CompatibleIcons/shellIcons";
 
 const iconsObject = { ...shellIconsObject, ...mobiusIconsObject };
 

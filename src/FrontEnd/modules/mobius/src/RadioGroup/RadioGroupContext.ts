@@ -1,5 +1,5 @@
+import { checkboxSizes } from "@insite/mobius/Checkbox";
 import * as React from "react";
-import { checkboxSizes } from "../Checkbox";
 
 const RadioGroupContext = React.createContext<{
     name?: string;

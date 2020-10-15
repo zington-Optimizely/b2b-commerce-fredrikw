@@ -1,10 +1,11 @@
 import { createHandlerChainRunner, Handler, makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { Cart } from "@insite/client-framework/Services/CartService";
+import { Cart, updateCart as updateCartApi } from "@insite/client-framework/Services/CartService";
 import { GetShipTosApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import setCurrentShipTo from "@insite/client-framework/Store/Context/Handlers/SetCurrentShipTo";
 import { getAddressFieldsDataView } from "@insite/client-framework/Store/Data/AddressFields/AddressFieldsSelector";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import validateShippingAddressForm from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/ValidateShippingAddressForm";
@@ -97,12 +98,36 @@ export const SetShipToForEditing: HandlerType = props => {
 };
 
 export const SetCurrentShipTo: HandlerType = props => {
-    if (props.cart.shipToId !== props.shipToForEditing.id) {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (!cartId && props.cart.shipToId !== props.shipToForEditing.id) {
         props.dispatch(
             setCurrentShipTo({
                 shipToId: props.shipToForEditing.id,
             }),
         );
+    }
+};
+
+export const UpdateCart: HandlerType = async props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        const cart = getCartState(state, cartId).value!;
+        await updateCartApi({
+            cart: {
+                ...cart,
+                shipToId: props.shipToForEditing.id,
+            },
+        });
+    }
+};
+
+export const LoadCart: HandlerType = props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId) {
+        props.dispatch(loadCart({ cartId }));
     }
 };
 
@@ -141,6 +166,8 @@ export const chain = [
     GetShipTosForBillTo,
     SetShipToForEditing,
     SetCurrentShipTo,
+    UpdateCart,
+    LoadCart,
     ValidateShippingAddress,
     DispatchUseBillingAddress,
 ];

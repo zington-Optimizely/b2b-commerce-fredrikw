@@ -1,6 +1,6 @@
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import { css } from "styled-components";
-import baseTheme from "../globals/baseTheme";
-import { StyledProp } from "./InjectableCss";
 
 export type BreakpointKey = "xs" | "sm" | "md" | "lg" | "xl";
 

@@ -9,7 +9,6 @@ import {
 } from "@insite/client-framework/Store/Data/Accounts/AccountsSelector";
 import loadAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/LoadAccount";
 import loadAccounts from "@insite/client-framework/Store/Data/Accounts/Handlers/LoadAccounts";
-import { getDataViewKey } from "@insite/client-framework/Store/Data/DataState";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import updateSearchFields from "@insite/client-framework/Store/Pages/UserList/Handlers/UpdateSearchFields";
 import PageModule from "@insite/client-framework/Types/PageModule";
@@ -17,6 +16,7 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import isEmpty from "lodash/isEmpty";
+import qs from "qs";
 import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
@@ -58,9 +58,8 @@ class UserListPage extends Component<Props> {
             this.props.loadAccount({ accountId: API_URL_CURRENT_FRAGMENT });
         }
         if (this.props.getAccountsParameter !== prevProps.getAccountsParameter) {
-            this.props.history.replace(
-                `${this.props.location.pathname}?${getDataViewKey(this.props.getAccountsParameter)}`,
-            );
+            const queryString = qs.stringify(this.props.getAccountsParameter);
+            this.props.history.replace(`${this.props.location.pathname}${queryString !== "" ? `?${queryString}` : ""}`);
         }
     }
 

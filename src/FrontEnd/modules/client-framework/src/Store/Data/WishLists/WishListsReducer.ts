@@ -16,6 +16,7 @@ const initialState: WishListsState = {
     isLoading: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -37,6 +38,18 @@ const reducer = {
     "Data/WishLists/CompleteLoadWishList": (draft: Draft<WishListsState>, action: { wishList: WishListModel }) => {
         delete draft.isLoading[action.wishList.id];
         draft.byId[action.wishList.id] = action.wishList;
+        if (draft.errorStatusCodeById) {
+            delete draft.errorStatusCodeById[action.wishList.id];
+        }
+    },
+    "Data/WishLists/FailedToLoadWishList": (
+        draft: Draft<WishListsState>,
+        action: { wishListId: string; status: number },
+    ) => {
+        delete draft.isLoading[action.wishListId];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.wishListId] = action.status;
+        }
     },
     "Data/WishLists/Reset": () => {
         return initialState;

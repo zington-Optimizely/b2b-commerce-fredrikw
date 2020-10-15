@@ -1,5 +1,5 @@
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
-import get from "./get";
+import baseTheme, { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import get from "@insite/mobius/utilities/get";
 
 /**
  * Used to translate theme colors into CSS color values.

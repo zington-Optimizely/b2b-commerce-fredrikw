@@ -56,7 +56,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const mapDispatchToProps = {
-    removeCart: clearCurrentCart,
+    clearCurrentCart,
     updateCartLine,
     removeCartLine,
 };
@@ -164,7 +164,7 @@ const CartLines: FC<Props> = ({
     cart,
     promotionsDataView,
     settingsCollection,
-    removeCart,
+    clearCurrentCart,
     fields,
     isClearingCart,
     updateCartLine,
@@ -202,7 +202,7 @@ const CartLines: FC<Props> = ({
     };
 
     const removeAllClickHandler = () => {
-        removeCart({ cartId: cart.id });
+        clearCurrentCart();
     };
 
     const { productSettings } = settingsCollection;

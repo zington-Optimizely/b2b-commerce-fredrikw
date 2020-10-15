@@ -5,6 +5,7 @@ import {
     UpdateCartLineApiParameter,
 } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
+import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 
 interface UpdateCartLineParameter {
@@ -29,11 +30,15 @@ export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
 
+export const LoadPromotions: HandlerType = props => {
+    props.dispatch(loadCurrentPromotions());
+};
+
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [PopulateApiParameter, UpdateCartLine, LoadCart, ExecuteOnSuccessCallback];
+export const chain = [PopulateApiParameter, UpdateCartLine, LoadCart, LoadPromotions, ExecuteOnSuccessCallback];
 
 const updateCartLine = createHandlerChainRunner(chain, "UpdateCartLine");
 export default updateCartLine;

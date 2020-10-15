@@ -65,7 +65,9 @@ const OrderApprovalListHeader = (props: Props) => {
             <Zone contentId={props.id} zoneName="Content00" />
             <GridContainer {...styles.container}>
                 <GridItem {...styles.orderApprovalCountGridItem}>
-                    {orderApprovalsCount && translate("{0} orders", orderApprovalsCount.toString())}
+                    {orderApprovalsCount !== undefined &&
+                        orderApprovalsCount > 0 &&
+                        translate("{0} orders", orderApprovalsCount.toString())}
                 </GridItem>
                 <GridItem {...styles.toggleFilterGridItem}>
                     <Clickable data-test-selector="orderApproval_toggleFilter" onClick={props.toggleFiltersOpen}>

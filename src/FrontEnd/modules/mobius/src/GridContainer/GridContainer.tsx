@@ -1,12 +1,12 @@
+import baseTheme, { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import GridContext from "@insite/mobius/GridContainer/GridContext";
+import { GridItemStyle } from "@insite/mobius/GridItem/GridItem";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { css } from "styled-components";
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
-import { GridItemStyle } from "../GridItem/GridItem";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import GridContext from "./GridContext";
 
 export type GridContainerProps = MobiusStyledComponentProps<
     "div",

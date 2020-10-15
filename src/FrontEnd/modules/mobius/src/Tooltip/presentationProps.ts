@@ -1,5 +1,5 @@
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 import { css } from "styled-components";
-import { ComponentThemeProps } from "../globals/baseTheme";
 
 const TooltipPresentationPropsDefault: ComponentThemeProps["tooltip"]["defaultProps"] = {
     typographyProps: {

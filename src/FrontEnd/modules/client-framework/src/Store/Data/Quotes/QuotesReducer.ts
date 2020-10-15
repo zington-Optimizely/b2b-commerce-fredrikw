@@ -9,6 +9,7 @@ const initialState: QuotesState = {
     isLoading: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -37,6 +38,15 @@ const reducer = {
     "Data/Quotes/CompleteLoadQuote": (draft: Draft<QuotesState>, action: { quote: QuoteModel }) => {
         delete draft.isLoading[action.quote.id];
         draft.byId[action.quote.id] = action.quote;
+        if (draft.errorStatusCodeById) {
+            delete draft.errorStatusCodeById[action.quote.id];
+        }
+    },
+    "Data/Quotes/FailedToLoadQuote": (draft: Draft<QuotesState>, action: { quoteId: string; status: number }) => {
+        delete draft.isLoading[action.quoteId];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.quoteId] = action.status;
+        }
     },
     "Data/Quotes/Reset": () => {
         return initialState;

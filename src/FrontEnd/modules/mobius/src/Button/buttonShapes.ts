@@ -1,5 +1,5 @@
-import get from "../utilities/get";
-import buttonSizeVariants from "./buttonSizeVariants";
+import buttonSizeVariants from "@insite/mobius/Button/buttonSizeVariants";
+import get from "@insite/mobius/utilities/get";
 
 const buttonShapes = {
     pill: ({ _sizeVariant, _size }: { _sizeVariant?: keyof typeof buttonSizeVariants; _size?: number }) => {

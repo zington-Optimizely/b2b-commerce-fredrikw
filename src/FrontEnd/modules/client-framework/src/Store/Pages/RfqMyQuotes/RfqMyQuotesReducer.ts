@@ -5,9 +5,7 @@ import { UpdateSearchFieldsType } from "@insite/client-framework/Types/UpdateSea
 import { Draft } from "immer";
 
 const initialState: RfqMyQuotesState = {
-    getQuotesParameter: {
-        types: "quote",
-    },
+    getQuotesParameter: {},
     filtersOpen: false,
 };
 

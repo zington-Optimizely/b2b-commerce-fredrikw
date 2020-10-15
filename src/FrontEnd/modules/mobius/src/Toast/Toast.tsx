@@ -1,22 +1,22 @@
+import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import get from "@insite/mobius/utilities/get";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import styled, { css, withTheme } from "styled-components";
-import Button, { ButtonPresentationProps } from "../Button";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import get from "../utilities/get";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import resolveColor from "../utilities/resolveColor";
-import VisuallyHidden from "../VisuallyHidden";
-import ToasterContext from "./ToasterContext";
 
 export interface ToastPresentationProps {
     /** Props that will be passed to the typography body component if the `body` is a string.
@@ -64,6 +64,7 @@ export type ToastComponentProps = MobiusStyledComponentProps<
         messageTypeString?: string;
         /** The length of time in miliseconds for the toast to display. Themable in `Toaster`. */
         timeoutLength?: number;
+        onClose?: () => void;
     }
 >;
 
@@ -177,6 +178,7 @@ const Toast: React.FC<{ toastId: number; in?: boolean } & ToastProps> = ({
     in: transitionIn,
     messageType,
     messageTypeString,
+    onClose,
     toastId,
     ...otherProps
 }) => {
@@ -221,7 +223,10 @@ const Toast: React.FC<{ toastId: number; in?: boolean } & ToastProps> = ({
                     <ToasterContext.Consumer>
                         {({ removeToast }) => (
                             <Button
-                                onClick={() => removeToast(toastId)}
+                                onClick={() => {
+                                    onClose?.();
+                                    removeToast(toastId);
+                                }}
                                 aria-labelledby={`close-toast${toastId}`}
                                 {...spreadProps("closeButtonProps")}
                             >

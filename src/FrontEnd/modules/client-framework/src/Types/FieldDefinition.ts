@@ -1,3 +1,4 @@
+import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { HasCategoriesState } from "@insite/client-framework/Store/Data/Categories/CategoriesState";
 import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
@@ -30,7 +31,7 @@ export interface IntegerFieldDefinition extends BaseFieldDefinition<"IntegerFiel
 export interface DropDownFieldDefinition<TValue> extends BaseFieldDefinition<"DropDownField", TValue> {
     options: Option<TValue>[] | (() => Promise<Option<TValue>[]>);
     hideEmptyOption?: boolean;
-    customFilter?: (item: Option<string | number>, page: PageProps) => boolean;
+    customFilter?: (item: Option<string | number>, page: PageProps, settings: SettingsModel) => boolean;
 }
 
 export interface SystemListDropDownFieldDefinition extends BaseFieldDefinition<"SystemListDropDownField", string> {

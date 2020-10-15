@@ -4,6 +4,8 @@ FROM registry.cloud.insitehq.net/spire/build-base:${COMMERCE_VERSION} as build
 WORKDIR /app
 COPY . ./modules/blueprints/
 
+RUN ["npm", "run", "eslint:blueprint"]
+
 # Create the JS bundles for the application.
 ARG BLUEPRINT=content-library
 RUN npm run build:docker || exit 1

@@ -1,5 +1,3 @@
-import "core-js/fn/array/includes"; // needed for IE
-import "core-js/fn/object/entries"; // needed for IE
 import * as React from "react";
 
 const numericProperties = ["line-height", "font-weight"];

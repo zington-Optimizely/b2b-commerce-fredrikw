@@ -51,3 +51,7 @@ export const getFulfillmentLabel = (state: ApplicationState) => {
 
     return addressLabel;
 };
+
+export const getIsPunchOutSession = (state: ApplicationState) => {
+    return !!state.context.punchOutSessionId && !!state.context.session?.userName;
+};

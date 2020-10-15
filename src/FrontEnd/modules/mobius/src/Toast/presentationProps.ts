@@ -1,6 +1,6 @@
+import { BaseTheme, ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { css, ThemeProps } from "styled-components";
-import { BaseTheme, ComponentThemeProps } from "../globals/baseTheme";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
 
 const toasterProps: ComponentThemeProps["toast"]["toasterProps"] = {
     position: "top-right",

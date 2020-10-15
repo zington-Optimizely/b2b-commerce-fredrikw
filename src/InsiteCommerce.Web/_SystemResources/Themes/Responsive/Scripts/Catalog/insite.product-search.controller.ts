@@ -1,4 +1,6 @@
 ﻿import ProductAutocompleteItemModel = Insite.Catalog.WebApi.V1.ApiModels.ProductAutocompleteItemModel;
+import AutocompleteItemModel = Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel;
+import BrandAutocompleteModel = Insite.Catalog.WebApi.V1.ApiModels.BrandAutocompleteModel;
 
 module insite.catalog {
     "use strict";
@@ -14,6 +16,9 @@ module insite.catalog {
     export class ProductSearchController {
         criteria: string;
         products: ProductAutocompleteItemModel[] = [];
+        categories: AutocompleteItemModel[];
+        content: AutocompleteItemModel[];
+        brands: BrandAutocompleteModel[];
         autocomplete: any;
         autocompleteOptions: AutoCompleteOptions;
         autocompleteType: string;
@@ -171,16 +176,16 @@ module insite.catalog {
             this.products = autocompleteModel.products;
             this.products.forEach((p: any) => p.type = AutocompleteTypes.product);
 
-            const categories = autocompleteModel.categories;
-            categories.forEach((p: any) => p.type = AutocompleteTypes.category);
+            this.categories = autocompleteModel.categories;
+            this.categories.forEach((p: any) => p.type = AutocompleteTypes.category);
 
-            const content = autocompleteModel.content;
-            content.forEach((p: any) => p.type = AutocompleteTypes.content);
+            this.content = autocompleteModel.content;
+            this.content.forEach((p: any) => p.type = AutocompleteTypes.content);
 
-            const brands = autocompleteModel.brands;
-            brands.forEach((p: any) => p.type = AutocompleteTypes.brand);
+            this.brands = autocompleteModel.brands;
+            this.brands.forEach((p: any) => p.type = AutocompleteTypes.brand);
 
-            this.searchData = data.concat(categories, brands, content, this.products);
+            this.searchData = data.concat(this.categories, this.brands, this.content, this.products);
             options.success(this.searchData);
         }
 
@@ -201,6 +206,8 @@ module insite.catalog {
             if (this.autocompleteType === AutocompleteTypes.searchHistory) {
                 this.search(dataItem.q, dataItem.includeSuggestions);
             } else {
+                // Capture the criteria that is available after a non-searchhistory item was selected
+                this.addAutocompleteSearchResultEvent(this.criteria);
                 setTimeout(() => {
                     this.coreService.redirectToPath(dataItem.url);
                     this.$scope.$apply();
@@ -412,13 +419,30 @@ module insite.catalog {
             this.redirectToSearchPage(searchTerm, includeSuggestions);
         }
 
-        protected addSearchResultEvent(searchTerm: string): void{
+        protected addSearchResultEvent(searchTerm: string): void {
             if (this.$window.dataLayer && searchTerm) {
                 this.$window.dataLayer.push({
                     'event': 'searchResults',
                     'searchQuery': searchTerm,
                     'correctedQuery': null,
                     'numSearchResults': 1
+                });
+            }
+        }
+
+        protected addAutocompleteSearchResultEvent(searchTerm: string): void {
+            if (this.$window.dataLayer && searchTerm) {
+                this.$window.dataLayer.push({
+                    'event': 'autocompleteSearchResults',
+                    'searchTerm': searchTerm,
+                    'searchQuery': searchTerm,
+                    'correctQuery': null,
+                    // It is all products, categories, content, and brands
+                    'numSearchResults': this.searchData.length,
+                    'product_numSearchResults': this.products.length,
+                    'categories_numSearchResults': this.categories.length,
+                    'content_numSearchResults': this.content.length,
+                    'brands_numSearchResults': this.brands.length,
                 });
             }
         }

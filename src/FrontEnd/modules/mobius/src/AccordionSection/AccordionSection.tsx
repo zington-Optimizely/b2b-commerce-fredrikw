@@ -1,17 +1,21 @@
+import AccordionContext from "@insite/mobius/Accordion/AccordionContext";
+import AccordionSectionHeader, {
+    AccordionSectionHeaderProps,
+} from "@insite/mobius/AccordionSection/AccordionSectionHeader";
+import AccordionSectionPanel, {
+    AccordionSectionPanelProps,
+} from "@insite/mobius/AccordionSection/AccordionSectionPanel";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps, IconProps, IconWrapperProps } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
 import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import AccordionContext from "../Accordion/AccordionContext";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps, IconProps, IconWrapperProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import uniqueId from "../utilities/uniqueId";
-import AccordionSectionHeader, { AccordionSectionHeaderProps } from "./AccordionSectionHeader";
-import AccordionSectionPanel, { AccordionSectionPanelProps } from "./AccordionSectionPanel";
 
 export interface AccordionSectionPresentationProps {
     /** CSS string or styled-components function to be injected into this component.

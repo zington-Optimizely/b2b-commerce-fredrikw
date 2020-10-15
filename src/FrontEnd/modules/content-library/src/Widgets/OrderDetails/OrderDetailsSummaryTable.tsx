@@ -364,7 +364,7 @@ const OrderLineCard = (props: {
     };
 
     return (
-        <GridContainer>
+        <GridContainer data-test-selector={`orderLineCard${orderLine.productId}`}>
             <GridItem {...styles.orderLineCardImageGridItem}>
                 {orderLine.productUri && orderLine.isActiveProduct && (
                     <Link href={orderLine.productUri}>

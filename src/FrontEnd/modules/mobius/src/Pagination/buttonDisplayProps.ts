@@ -1,8 +1,8 @@
+import { ButtonVariants } from "@insite/mobius/Button";
+import { PaginationProps } from "@insite/mobius/Pagination/Pagination";
+import get from "@insite/mobius/utilities/get";
+import getProp from "@insite/mobius/utilities/getProp";
 import { css, Interpolation } from "styled-components";
-import { ButtonVariants } from "../Button";
-import get from "../utilities/get";
-import getProp from "../utilities/getProp";
-import { PaginationProps } from "./Pagination";
 
 const buttonDisplayProps = (
     props: PaginationProps,

@@ -493,6 +493,12 @@ const widgetModule: WidgetModule = {
                 defaultValue: "crossSells",
                 fieldType: "General",
                 sortOrder: 1,
+                customFilter: (item, page, settings) => {
+                    return (
+                        settings.settingsCollection.websiteSettings.enableDynamicRecommendations ||
+                        item.value !== "topSellers"
+                    );
+                },
             },
             {
                 name: fields.displayProductsFrom,

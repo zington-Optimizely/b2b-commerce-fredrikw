@@ -2,7 +2,7 @@ import ContentMode from "@insite/client-framework/Common/ContentMode";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
+import { closeSiteHole, sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getShellContext, switchContentMode } from "@insite/shell/Services/ContentAdminService";
 import { loadTreeNodes } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
@@ -56,10 +56,10 @@ export const setContentMode = (contentMode: ContentMode): ShellThunkAction => (d
     addTask(
         (async function () {
             await switchContentMode(contentMode);
-            (window as any).frameHoleIsReady = false; // makes sure our AUI tests won't try to access the iframe until it reestablishes the connection which indicates it is done loading.
             sendToSite({
                 type: "Reload",
             });
+            closeSiteHole();
             const pageId = getCurrentPageForShell(getState()).id;
             // we need to clear out any already loaded pages so our editor doesn't show the wrong field values
             dispatch({

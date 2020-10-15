@@ -1,5 +1,5 @@
-import { TypographyPresentationProps } from "../Typography";
-import { StyledProp } from "./InjectableCss";
+import { TypographyPresentationProps } from "@insite/mobius/Typography";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 
 // A subset of fieldset props that could reasonably be used to determine theme css based on the value of the prop.
 export interface FieldSetPropsMock {

@@ -1,17 +1,17 @@
+import Clickable, { ClickablePresentationProps, ClickableProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import focusWithinImportInBrowser from "@insite/mobius/utilities/focusWithin";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
 import React from "react";
 import styled, { ThemeConsumer, ThemeProps, withTheme } from "styled-components";
-import Clickable, { ClickablePresentationProps, ClickableProps } from "../Clickable";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import focusWithinImportInBrowser from "../utilities/focusWithin";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import uniqueId from "../utilities/uniqueId";
 
 focusWithinImportInBrowser();
 

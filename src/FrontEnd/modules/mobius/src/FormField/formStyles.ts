@@ -1,9 +1,9 @@
+import { ButtonSizeVariants } from "@insite/mobius/Button";
+import { FormFieldIcon, FormFieldPresentationPropsCommon } from "@insite/mobius/FormField/FormField";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import get from "@insite/mobius/utilities/get";
 import Color from "color";
 import { css } from "styled-components";
-import { ButtonSizeVariants } from "../Button";
-import { BaseTheme } from "../globals/baseTheme";
-import get from "../utilities/get";
-import { FormFieldIcon, FormFieldPresentationPropsCommon } from "./FormField";
 
 export interface VariantValues {
     fontSize: number;

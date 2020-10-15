@@ -3,12 +3,12 @@
  * field definition templates allow you to control how a field will be edited in the shell.
  */
 
+import { CustomFieldDefinition } from "@example/CustomFieldDefinition";
 import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Typography from "@insite/mobius/Typography";
 import React from "react";
-import { CustomFieldDefinition } from "../CustomFieldDefinition";
 
 const enum fields {
     textField = "textField",

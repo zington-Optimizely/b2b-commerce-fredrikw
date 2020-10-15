@@ -1,16 +1,16 @@
+import { checkboxSizes, CheckboxStyle } from "@insite/mobius/Checkbox";
+import CheckboxGroupContext from "@insite/mobius/CheckboxGroup/CheckboxGroupContext";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import Typography from "@insite/mobius/Typography";
+import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-import { checkboxSizes, CheckboxStyle } from "../Checkbox";
-import { BaseTheme } from "../globals/baseTheme";
-import Typography from "../Typography";
-import TypographyStyle from "../Typography/TypographyStyle";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { FieldSetGroupPresentationProps } from "../utilities/fieldSetProps";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
-import CheckboxGroupContext from "./CheckboxGroupContext";
 
 export type CheckboxGroupComponentProps = MobiusStyledComponentProps<
     "fieldset",

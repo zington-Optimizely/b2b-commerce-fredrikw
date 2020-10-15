@@ -11,6 +11,7 @@ import CategoriesReducer from "@insite/client-framework/Store/Data/Categories/Ca
 import CountriesReducer from "@insite/client-framework/Store/Data/Countries/CountriesReducer";
 import DealersReducer from "@insite/client-framework/Store/Data/Dealers/DealersReducer";
 import InvoicesReducer from "@insite/client-framework/Store/Data/Invoices/InvoicesReducer";
+import JobQuotesReducer from "@insite/client-framework/Store/Data/JobQuotes/JobQuotesReducer";
 import MessagesReducer from "@insite/client-framework/Store/Data/Messages/MessagesReducer";
 import OrderApprovalsReducer from "@insite/client-framework/Store/Data/OrderApprovals/OrderApprovalsReducer";
 import OrdersReducer from "@insite/client-framework/Store/Data/Orders/OrdersReducer";
@@ -40,6 +41,7 @@ const dataReducers = {
     countries: CountriesReducer,
     dealers: DealersReducer,
     invoices: InvoicesReducer,
+    jobQuotes: JobQuotesReducer,
     messages: MessagesReducer,
     orderApprovals: OrderApprovalsReducer,
     orders: OrdersReducer,

@@ -15,11 +15,14 @@ const mapStateToProps = (state: ApplicationState) => {
     const categoryPath =
         getSelectedCategoryPath(state) ||
         (location.pathname.toLowerCase().startsWith("/content/") ? "" : location.pathname);
-    const catalogPage = getCatalogPageStateByPath(state, categoryPath).value;
+    const catalogPageState = getCatalogPageStateByPath(state, categoryPath);
 
     return {
-        catalogPage,
-        category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
+        catalogPageState,
+        category: getCategoryState(
+            state,
+            catalogPageState.value?.categoryIdWithBrandId ?? catalogPageState.value?.categoryId,
+        ).value,
         categoryPath,
         breadcrumbLinks: state.components.breadcrumbs.links,
         location: getLocation(state),
@@ -35,35 +38,38 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 class CurrentCategory extends React.Component<Props> {
     UNSAFE_componentWillMount() {
-        const { categoryPath, catalogPage } = this.props;
-        if (!catalogPage) {
-            if (categoryPath) {
+        const { categoryPath, catalogPageState } = this.props;
+        if (!catalogPageState.value) {
+            if (categoryPath && !catalogPageState.isLoading) {
                 this.props.loadCatalogPageByPath({ path: categoryPath });
             }
-        } else if (catalogPage.breadCrumbs && !this.props.breadcrumbLinks) {
+        } else if (catalogPageState.value.breadCrumbs && !this.props.breadcrumbLinks) {
             this.setBreadcrumbs();
         }
     }
 
     componentDidUpdate(prevProps: Props): void {
-        const { categoryPath, catalogPage } = this.props;
-        if (!catalogPage) {
-            if (categoryPath) {
+        const { categoryPath, catalogPageState } = this.props;
+        if (!catalogPageState.value) {
+            if (categoryPath && !catalogPageState.isLoading) {
                 this.props.loadCatalogPageByPath({ path: categoryPath });
             }
-        } else if (catalogPage.breadCrumbs && (prevProps.catalogPage !== catalogPage || !this.props.breadcrumbLinks)) {
+        } else if (
+            catalogPageState.value.breadCrumbs &&
+            (prevProps.catalogPageState.value !== catalogPageState.value || !this.props.breadcrumbLinks)
+        ) {
             this.setBreadcrumbs();
         }
     }
 
     setBreadcrumbs() {
         this.props.setBreadcrumbs({
-            links: this.props.catalogPage!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })),
+            links: this.props.catalogPageState.value!.breadCrumbs!.map(o => ({ children: o.text, href: o.url })),
         });
     }
 
     render() {
-        if (!this.props.catalogPage) {
+        if (!this.props.catalogPageState.value) {
             return this.props.children;
         }
 

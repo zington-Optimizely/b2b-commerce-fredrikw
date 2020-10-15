@@ -1,15 +1,15 @@
+import Button, { ButtonProps } from "@insite/mobius/Button";
+import Typography from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import getColor from "@insite/mobius/utilities/getColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitSingle from "@insite/mobius/utilities/omitSingle";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import Button, { ButtonProps } from "../Button";
-import Typography from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import getColor from "../utilities/getColor";
-import getProp from "../utilities/getProp";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitSingle from "../utilities/omitSingle";
-import resolveColor from "../utilities/resolveColor";
 
 export interface TabPresentationProps {
     /** CSS string or styled-components function to be injected into this component.

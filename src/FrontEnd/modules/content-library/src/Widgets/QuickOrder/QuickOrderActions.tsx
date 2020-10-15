@@ -27,11 +27,13 @@ import { css } from "styled-components";
 
 const enum fields {
     useOverflowMenu = "useOverflowMenu",
+    hideForEmptyProductList = "hideForEmptyProductList",
 }
 
 interface OwnProps extends WidgetProps {
     fields: {
         [fields.useOverflowMenu]: boolean;
+        [fields.hideForEmptyProductList]: boolean;
     };
 }
 
@@ -158,13 +160,10 @@ const QuickOrderActions: FC<Props> = ({
     clearProducts,
     loadCurrentCart,
 }) => {
-    if (!productInfos || productInfos.length === 0) {
-        return null;
-    }
-
     const toasterContext = React.useContext(ToasterContext);
 
     const [allQtysIsValid, setAllQtysIsValid] = useState(false);
+    const productsExist = productInfos && productInfos.length > 0;
 
     React.useEffect(() => {
         const isValid = productInfos.every(productInfo => {
@@ -172,6 +171,10 @@ const QuickOrderActions: FC<Props> = ({
         });
         setAllQtysIsValid(isValid);
     }, [productInfos]);
+
+    if (fields.hideForEmptyProductList && !productsExist) {
+        return null;
+    }
 
     const uploadOrderClickHandler = () => {
         orderUploadPageLink && history.push(orderUploadPageLink.url);
@@ -198,9 +201,11 @@ const QuickOrderActions: FC<Props> = ({
                     {translate("Upload Order")}
                 </Button>
             )}
-            <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>
-                {translate("Add To List")}
-            </Button>
+            {productsExist && (
+                <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>
+                    {translate("Add To List")}
+                </Button>
+            )}
         </>
     );
 
@@ -217,18 +222,22 @@ const QuickOrderActions: FC<Props> = ({
                 </>
             )}
             {!fields.useOverflowMenu && buttons}
-            <Button {...styles.addAllToCartButton} onClick={addAllToCartClickHandler} disabled={!allQtysIsValid}>
-                {translate("Add All to Cart & Check Out")}
-            </Button>
+            {productsExist && (
+                <Button {...styles.addAllToCartButton} onClick={addAllToCartClickHandler} disabled={!allQtysIsValid}>
+                    {translate("Add All to Cart & Check Out")}
+                </Button>
+            )}
             {fields.useOverflowMenu && (
                 <Hidden below="md" above="md" {...styles.menuHidden}>
                     <OverflowMenu position="end" {...styles.overflowMenu}>
                         {canOrderUpload && (
                             <Clickable onClick={uploadOrderClickHandler}>{translate("Upload Order")}</Clickable>
                         )}
-                        <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>
-                            {translate("Add To List")}
-                        </Clickable>
+                        {productsExist && (
+                            <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>
+                                {translate("Add To List")}
+                            </Clickable>
+                        )}
                     </OverflowMenu>
                 </Hidden>
             )}
@@ -246,6 +255,13 @@ const widgetModule: WidgetModule = {
             {
                 name: fields.useOverflowMenu,
                 displayName: "Use overflow menu on responsive views",
+                editorTemplate: "CheckboxField",
+                defaultValue: false,
+                fieldType: "General",
+            },
+            {
+                name: fields.hideForEmptyProductList,
+                displayName: "Hide if Product List is Empty",
                 editorTemplate: "CheckboxField",
                 defaultValue: false,
                 fieldType: "General",

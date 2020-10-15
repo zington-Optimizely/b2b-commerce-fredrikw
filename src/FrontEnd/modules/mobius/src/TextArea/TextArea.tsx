@@ -1,9 +1,9 @@
+import FormField, { FormFieldComponentProps, FormFieldPresentationProps } from "@insite/mobius/FormField";
+import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitMultiple from "@insite/mobius/utilities/omitMultiple";
+import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
-import FormField, { FormFieldComponentProps, FormFieldPresentationProps } from "../FormField";
-import { HasDisablerContext, withDisabler } from "../utilities/DisablerContext";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitMultiple from "../utilities/omitMultiple";
-import uniqueId from "../utilities/uniqueId";
 
 export type TextAreaComponentProps = MobiusStyledComponentProps<
     "textarea",

@@ -52,15 +52,16 @@ export const GetPrice: HandlerType = async props => {
     props.dispatch(
         loadRealTimePricing({
             productPriceParameters: [{ productId, unitOfMeasure, qtyOrdered }],
-            onSuccess: realTimePricingModel => {
-                props.productInfo.pricing = realTimePricingModel.realTimePricingResults?.find(
-                    o => o.productId === productId,
-                );
+            onComplete: realTimePricingProps => {
+                if (realTimePricingProps.apiResult) {
+                    props.productInfo.pricing = realTimePricingProps.apiResult.realTimePricingResults?.find(
+                        o => o.productId === productId,
+                    );
+                } else if (realTimePricingProps.error) {
+                    props.productInfo.failedToLoadPricing = true;
+                }
+
                 loadedPricing = true;
-            },
-            onError: () => {
-                loadedPricing = true;
-                props.productInfo.failedToLoadPricing = true;
             },
         }),
     );
@@ -76,9 +77,9 @@ export const GetInventory: HandlerType = async props => {
     props.dispatch(
         loadRealTimeInventory({
             productIds: [productId],
-            onSuccess: realTimeInventoryResult => {
+            onComplete: realTimeInventoryProps => {
                 loadedInventory = true;
-                props.productInfo.inventory = realTimeInventoryResult.realTimeInventoryResults?.find(
+                props.productInfo.inventory = realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.find(
                     o => o.productId === productId,
                 );
             },

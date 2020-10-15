@@ -2,12 +2,12 @@
 import * as React from "react";
 import styled from "styled-components";
 import { IconMemo, IconPresentationProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import getProp from "../utilities/getProp";
-import injectCss from "../utilities/injectCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import resolveColor from "../utilities/resolveColor";
-import { StyledProp } from "../utilities/InjectableCss";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type LazyImagePresentationProps = {
@@ -135,12 +135,22 @@ class LazyImage extends React.Component<LazyImageProps, State> {
         };
     };
 
-    componentDidMount() {
+    reloadImage() {
         this.setState({ startTime: Date.now() });
         this.loadImage();
         setTimeout(() => {
             this.setState({ showPlaceholder: true });
         }, fadeInThreshold);
+    }
+
+    componentDidMount() {
+        this.reloadImage();
+    }
+
+    componentDidUpdate(prevProps: LazyImageProps) {
+        if (this.props.src !== prevProps.src) {
+            this.reloadImage();
+        }
     }
 
     render() {

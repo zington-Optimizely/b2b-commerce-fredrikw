@@ -1,4 +1,4 @@
-import findTabbable from "./tabbable";
+import findTabbable from "@insite/mobius/Overlay/helpers/tabbable";
 
 const focusLaterElements: HTMLElement[] = [];
 let modalElement: HTMLElement | null = null;

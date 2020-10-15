@@ -4,6 +4,7 @@ import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter from "@insite/client-framework/Components/SpireRouter";
+import "@insite/client-framework/polyfills";
 import { setResolver } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { configureStore } from "@insite/client-framework/Store/ConfigureStore";
@@ -15,7 +16,6 @@ import * as React from "react";
 import { hydrate, render, Renderer } from "react-dom";
 import { Provider } from "react-redux";
 import "whatwg-fetch";
-import "./polyfills";
 
 /**
  * To debug potentially unnecessary rendering, import "@welldone-software/why-did-you-render": "^4.2.5" in

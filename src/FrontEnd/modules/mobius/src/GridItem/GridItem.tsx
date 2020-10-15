@@ -1,11 +1,11 @@
+import GridContext from "@insite/mobius/GridContainer/GridContext";
+import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import gridWidth from "@insite/mobius/utilities/gridWidth";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { css } from "styled-components";
-import GridContext from "../GridContainer/GridContext";
-import breakpointMediaQueries from "../utilities/breakpointMediaQueries";
-import gridWidth from "../utilities/gridWidth";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
 
 export type GridWidths = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 

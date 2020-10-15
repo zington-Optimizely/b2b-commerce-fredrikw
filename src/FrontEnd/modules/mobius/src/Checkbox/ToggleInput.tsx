@@ -1,11 +1,11 @@
+import { IconMemo } from "@insite/mobius/Icon";
+import getColor from "@insite/mobius/utilities/getColor";
+import getContrastColor from "@insite/mobius/utilities/getContrastColor";
+import getProp from "@insite/mobius/utilities/getProp";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { css } from "styled-components";
-import { IconMemo } from "../Icon";
-import getColor from "../utilities/getColor";
-import getContrastColor from "../utilities/getContrastColor";
-import getProp from "../utilities/getProp";
-import injectCss from "../utilities/injectCss";
-import resolveColor from "../utilities/resolveColor";
 
 const toggleSizes = {
     default: {

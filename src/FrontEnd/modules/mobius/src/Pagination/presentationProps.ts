@@ -1,7 +1,7 @@
+import { ButtonProps } from "@insite/mobius/Button";
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import { css } from "styled-components";
-import { ButtonProps } from "../Button";
-import { ComponentThemeProps } from "../globals/baseTheme";
-import resolveColor from "../utilities/resolveColor";
 
 const PaginationPresentationPropsDefault: ComponentThemeProps["pagination"]["defaultProps"] = {
     buttonProps: {

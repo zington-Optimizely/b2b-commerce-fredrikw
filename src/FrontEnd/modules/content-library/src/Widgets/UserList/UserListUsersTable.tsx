@@ -229,7 +229,16 @@ const UserListUsersTable = ({
                                     data-test-selector="userListUsersTable_cell_status"
                                     data-test-key={account.id}
                                 >
-                                    {account.activationStatus}
+                                    {account.isApproved &&
+                                        account.activationStatus === "EmailNotSent" &&
+                                        translate("Email not sent")}
+                                    {account.isApproved &&
+                                        account.activationStatus === "EmailSent" &&
+                                        translate("Email sent")}
+                                    {account.isApproved &&
+                                        account.activationStatus === "Activated" &&
+                                        translate("Active")}
+                                    {!account.isApproved && translate("Deactivated")}
                                 </DataTableCell>
                                 <DataTableCell
                                     {...styles.roleCells}

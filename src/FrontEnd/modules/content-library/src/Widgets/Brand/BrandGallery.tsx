@@ -7,6 +7,7 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { BrandsPageContext } from "@insite/content-library/Pages/BrandsPage";
 import { HomePageContext } from "@insite/content-library/Pages/HomePage";
 import FlexItem, { FlexItemProps } from "@insite/content-library/Widgets/Brand/FlexItem";
+import FlexWrapContainer, { FlexWrapContainerProps } from "@insite/content-library/Widgets/Brand/FlexWrapContainer";
 import Clickable from "@insite/mobius/Clickable";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import { LinkProps } from "@insite/mobius/Link";
@@ -15,7 +16,6 @@ import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-import FlexWrapContainer, { FlexWrapContainerProps } from "./FlexWrapContainer";
 
 const enum fields {
     title = "title",

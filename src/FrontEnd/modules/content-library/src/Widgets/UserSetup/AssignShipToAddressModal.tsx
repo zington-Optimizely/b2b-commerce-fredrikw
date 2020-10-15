@@ -18,7 +18,7 @@ import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterCont
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import React, { useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";

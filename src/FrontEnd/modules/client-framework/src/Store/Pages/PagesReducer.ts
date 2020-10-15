@@ -21,9 +21,13 @@ import ProductListReducer from "@insite/client-framework/Store/Pages/ProductList
 import QuickOrderReducer from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderReducer";
 import RequestRmaReducer from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaReducer";
 import RfqConfirmationReducer from "@insite/client-framework/Store/Pages/RfqConfirmation/RfqConfirmationReducer";
+import RfqJobQuoteDetailsReducer from "@insite/client-framework/Store/Pages/RfqJobQuoteDetails/RfqJobQuoteDetailsReducer";
+import RfqJobQuotesReducer from "@insite/client-framework/Store/Pages/RfqJobQuotes/RfqJobQuotesReducer";
 import RfqMyQuotesReducer from "@insite/client-framework/Store/Pages/RfqMyQuotes/RfqMyQuotesReducer";
 import RfqQuoteDetailsReducer from "@insite/client-framework/Store/Pages/RfqQuoteDetails/RfqQuoteDetailsReducer";
 import RfqRequestQuoteReducer from "@insite/client-framework/Store/Pages/RfqRequestQuote/RfqRequestQuoteReducer";
+import SavedOrderDetailsReducer from "@insite/client-framework/Store/Pages/SavedOrderDetails/SavedOrderDetailsReducer";
+import SavedOrderListReducer from "@insite/client-framework/Store/Pages/SavedOrderList/SavedOrderListReducer";
 import SavedPaymentsReducer from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsReducer";
 import SignInReducer from "@insite/client-framework/Store/Pages/SignIn/SignInReducer";
 import UserListReducer from "@insite/client-framework/Store/Pages/UserList/UserListReducer";
@@ -54,9 +58,13 @@ const reducers = {
     quickOrder: QuickOrderReducer,
     requestRma: RequestRmaReducer,
     rfqConfirmation: RfqConfirmationReducer,
+    rfqJobQuotes: RfqJobQuotesReducer,
+    rfqJobQuoteDetails: RfqJobQuoteDetailsReducer,
     rfqMyQuotes: RfqMyQuotesReducer,
     rfqQuoteDetails: RfqQuoteDetailsReducer,
     rfqRequestQuote: RfqRequestQuoteReducer,
+    savedOrderDetails: SavedOrderDetailsReducer,
+    savedOrderList: SavedOrderListReducer,
     savedPayments: SavedPaymentsReducer,
     signIn: SignInReducer,
     userList: UserListReducer,

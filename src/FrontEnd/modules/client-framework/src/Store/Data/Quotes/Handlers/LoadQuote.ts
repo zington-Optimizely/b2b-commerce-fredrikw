@@ -16,7 +16,19 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getQuote(props.apiParameter);
+    try {
+        props.apiResult = await getQuote(props.apiParameter);
+    } catch (error) {
+        if ("status" in error && (error.status === 400 || error.status === 404)) {
+            props.dispatch({
+                type: "Data/Quotes/FailedToLoadQuote",
+                quoteId: props.parameter.quoteId,
+                status: 404,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadQuote: HandlerType = props => {

@@ -1,10 +1,10 @@
+import { ButtonIcon, ButtonProps } from "@insite/mobius/Button/Button";
+import baseTheme, { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import getContrastColor from "@insite/mobius/utilities/getContrastColor";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
+import safeColor from "@insite/mobius/utilities/safeColor";
+import styleObjectToString from "@insite/mobius/utilities/styleObjectToString";
 import { css, ThemeProps } from "styled-components";
-import baseTheme, { BaseTheme } from "../globals/baseTheme";
-import getContrastColor from "../utilities/getContrastColor";
-import resolveColor from "../utilities/resolveColor";
-import safeColor from "../utilities/safeColor";
-import styleObjectToString from "../utilities/styleObjectToString";
-import { ButtonIcon, ButtonProps } from "./Button";
 
 type ButtonTypesProps = ThemeProps<BaseTheme> &
     Pick<ButtonProps, "hoverMode" | "hoverStyle" | "activeMode" | "activeStyle"> & {

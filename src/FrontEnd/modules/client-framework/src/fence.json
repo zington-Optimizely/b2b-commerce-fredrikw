@@ -1,6 +1,0 @@
-{
-    "tags": [ "client-framework" ],
-    "imports": [
-        "mobius"
-    ]
-}

@@ -4,12 +4,10 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const BlueprintReplacementPlugin = require("./blueprintReplacementPlugin");
 const path = require("path");
 const setupEntryFiles = require("./setupEntryFiles");
+const validatePageTemplates = require("./validatePageTemplates");
 require("./setupTsconfigPathsFile");
-const LicenseWebpackPlugin = require("license-webpack-plugin").LicenseWebpackPlugin;
-const PackageInformation = require("./packageInformation").PackageInformation;
-// Changes to this list requires approval from legal
-const allowedLicenses = require("./allowedLicenseTypes.json");
 const webpack = require("webpack");
+const RemovePlugin = require("remove-files-webpack-plugin");
 
 exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
     let blueprint = env && env.BLUEPRINT && `blueprints/${env.BLUEPRINT}`;
@@ -28,9 +26,23 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
         blueprint = "content-library";
     }
 
+    if (blueprint === "content-library") {
+        validatePageTemplates();
+    }
+
     console.log(`Blueprint is ${blueprint}.`);
 
     setupEntryFiles(isDevBuild, blueprint);
+
+    const removePluginOptions = {
+        include: [
+            "./modules/client-framework/node_modules",
+            "./modules/mobius/node_modules",
+            "./modules/server-framework/node_modules",
+            "./modules/shell/node_modules",
+        ],
+        logWarning: false, // otherwise we get extra logging later about these directories not existing
+    };
 
     const commonConfig = {
         resolve: {
@@ -38,33 +50,11 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
             plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.base.json" })],
         },
         plugins: [
-            new BlueprintReplacementPlugin(blueprint),
-            new LicenseWebpackPlugin({
-                perChunkOutput: false,
-                // to stop all the missing license text warnings....
-                licenseTemplateDir: path.resolve(__dirname, "./default-license-texts"),
-                outputFilename: "licenses.json",
-                unacceptableLicenseTest: licenseType => {
-                    // Note: This list requires approval from legal. Likely more licenses may also be added
-                    return !allowedLicenses.includes(licenseType);
-                },
-                modulesDirectories: [
-                    path.resolve(__dirname, "../../node_modules"),
-                    path.resolve(__dirname, "../../modules/client-framework/node_modules"),
-                    path.resolve(__dirname, "../../modules/mobius/node_modules"),
-                    path.resolve(__dirname, "../../modules/shell/node_modules"),
-                ],
-                renderLicenses: modules => {
-                    console.log(`Licenses discovered: ${modules.length}`);
-                    const mapped = modules
-                        .sort((left, right) => {
-                            return left.name < right.name ? -1 : 1;
-                        })
-                        .map(module => new PackageInformation(module));
-
-                    return JSON.stringify(mapped);
-                },
+            new RemovePlugin({
+                watch: removePluginOptions, // npm run start uses watch
+                before: removePluginOptions, // npm run build uses before
             }),
+            new BlueprintReplacementPlugin(blueprint),
             new webpack.DefinePlugin({
                 BUILD_DATE: new Date().getTime(),
                 BLUEPRINT_NAME: JSON.stringify(blueprint.replace("blueprints/", "")),

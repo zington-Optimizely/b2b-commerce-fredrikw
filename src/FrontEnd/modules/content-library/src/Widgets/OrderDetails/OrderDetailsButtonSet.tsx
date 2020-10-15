@@ -256,7 +256,12 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
             button: (
                 <>
                     {!isReordering && (
-                        <Button {...styles.reorderButton} onClick={onClickReorder} disabled={isReordering}>
+                        <Button
+                            {...styles.reorderButton}
+                            onClick={onClickReorder}
+                            disabled={isReordering}
+                            data-test-selector="orderDetailsReorderButton"
+                        >
                             {translate("Reorder")}
                         </Button>
                     )}

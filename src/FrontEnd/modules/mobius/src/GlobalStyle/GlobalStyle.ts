@@ -1,8 +1,8 @@
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { ExtendedTheme } from "@insite/mobius/ThemeProvider";
+import get from "@insite/mobius/utilities/get";
+import getProp from "@insite/mobius/utilities/getProp";
 import styled, { createGlobalStyle, GlobalStyleComponent } from "styled-components";
-import { BaseTheme } from "../globals/baseTheme";
-import { ExtendedTheme } from "../ThemeProvider";
-import get from "../utilities/get";
-import getProp from "../utilities/getProp";
 
 export interface GlobalStyleProps {}
 

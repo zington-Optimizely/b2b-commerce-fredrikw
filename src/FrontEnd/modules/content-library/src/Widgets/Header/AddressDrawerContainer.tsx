@@ -1,7 +1,8 @@
+import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getIsPunchOutSession, getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -17,13 +18,15 @@ const mapStateToProps = (state: ApplicationState) => {
     return {
         isAuthenticated: getSession(state).isAuthenticated,
         fulfillmentMethod: state.components.addressDrawer.fulfillmentMethod,
+        isPunchOutSession: getIsPunchOutSession(state),
     };
 };
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasShellContext;
 
 interface AddressDrawerContainerStyles {
     drawerContainer?: GridContainerProps;
+    punchOutAddressGridItem?: GridItemProps;
     fulfillmentMethodGridItem?: GridItemProps;
     addressesGridItem?: GridItemProps;
     addressesGridItemAnonymousUser?: GridItemProps;
@@ -49,6 +52,9 @@ export const addressDrawerContainerStyles: AddressDrawerContainerStyles = {
                 )}
             `,
         ],
+    },
+    punchOutAddressGridItem: {
+        width: 12,
     },
     fulfillmentMethodGridItem: {
         css: css`
@@ -90,35 +96,46 @@ export const addressDrawerContainerStyles: AddressDrawerContainerStyles = {
 
 const styles = addressDrawerContainerStyles;
 
-const AddressDrawerContainer = ({ id, isAuthenticated, fulfillmentMethod }: Props) => {
+const AddressDrawerContainer = ({ id, isAuthenticated, fulfillmentMethod, isPunchOutSession, shellContext }: Props) => {
     return (
-        <GridContainer {...styles.drawerContainer}>
-            <GridItem {...styles.fulfillmentMethodGridItem}>
-                <Zone zoneName="FulfillmentMethod" contentId={id} />
-            </GridItem>
-            <GridItem
-                {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
-                    ? styles.addressesGridItemAnonymousUser
-                    : styles.addressesGridItem)}
-            >
-                <Zone zoneName="Addresses" contentId={id} />
-            </GridItem>
-            <GridItem
-                {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
-                    ? styles.pickUpAddressGridItemAnonymousUser
-                    : styles.pickUpAddressGridItem)}
-            >
-                <Zone zoneName="PickUpAddress" contentId={id} />
-            </GridItem>
-            <GridItem {...styles.applyButtonGridItem}>
-                <Zone zoneName="ApplyButton" contentId={id} />
-            </GridItem>
-        </GridContainer>
+        <>
+            {(isPunchOutSession || shellContext.isEditing) && (
+                <GridContainer {...styles.drawerContainer}>
+                    <GridItem {...styles.punchOutAddressGridItem}>
+                        <Zone zoneName="PunchOutAddress" contentId={id} />
+                    </GridItem>
+                </GridContainer>
+            )}
+            {(!isPunchOutSession || shellContext.isEditing) && (
+                <GridContainer {...styles.drawerContainer}>
+                    <GridItem {...styles.fulfillmentMethodGridItem}>
+                        <Zone zoneName="FulfillmentMethod" contentId={id} />
+                    </GridItem>
+                    <GridItem
+                        {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
+                            ? styles.addressesGridItemAnonymousUser
+                            : styles.addressesGridItem)}
+                    >
+                        <Zone zoneName="Addresses" contentId={id} />
+                    </GridItem>
+                    <GridItem
+                        {...(!isAuthenticated && fulfillmentMethod === FulfillmentMethod.PickUp
+                            ? styles.pickUpAddressGridItemAnonymousUser
+                            : styles.pickUpAddressGridItem)}
+                    >
+                        <Zone zoneName="PickUpAddress" contentId={id} />
+                    </GridItem>
+                    <GridItem {...styles.applyButtonGridItem}>
+                        <Zone zoneName="ApplyButton" contentId={id} />
+                    </GridItem>
+                </GridContainer>
+            )}
+        </>
     );
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(AddressDrawerContainer),
+    component: connect(mapStateToProps)(withIsInShell(AddressDrawerContainer)),
     definition: {
         group: "Header",
     },

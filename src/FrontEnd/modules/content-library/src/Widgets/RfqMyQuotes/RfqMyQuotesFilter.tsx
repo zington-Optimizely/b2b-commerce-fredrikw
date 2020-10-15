@@ -65,7 +65,13 @@ export interface RfqMyQuotesFilterStyles {
     customerSelect?: SelectProps;
     quoteNumberGridItem?: GridItemProps;
     quoteNumberText?: TextFieldProps;
+    /**
+     * @deprecated Was moved to RfqMyQuotesHeader widget. Use rfqMyQuotesHeaderStyles.statusFilterGridItem property.
+     */
     statusGridItem?: GridItemProps;
+    /**
+     * @deprecated Was moved to RfqMyQuotesHeader widget. Use rfqMyQuotesHeaderStyles.statusSelect property.
+     */
     statusSelect?: SelectProps;
     userGridItem?: GridItemProps;
     userSelect?: SelectProps;
@@ -129,8 +135,7 @@ export const rfqMyQuotesFilterStyles: RfqMyQuotesFilterStyles = {
         },
     },
     customerGridItem: { width: [12, 12, 6, 6, 4] },
-    quoteNumberGridItem: { width: [12, 12, 3, 3, 2] },
-    statusGridItem: { width: [12, 12, 3, 3, 2] },
+    quoteNumberGridItem: { width: [12, 12, 6, 6, 4] },
     userGridItem: { width: [12, 12, 6, 6, 4] },
     salesRepGridItem: { width: [12, 12, 6, 6, 4] },
     appliedFiltersContainer: { css: horizontalStyles },
@@ -218,11 +223,6 @@ class RfqMyQuotesFilter extends Component<Props, State> {
         this.updateParameterAfterTimeout();
     };
 
-    statusChangeHandler = (status: string) => {
-        this.setState({ status });
-        this.props.updateSearchFields({ statuses: status ? [status] : undefined });
-    };
-
     convertDateToString = (date?: Date) => {
         return date ? new Date(date.getTime() - tzOffset).toISOString().split("T")[0] : "";
     };
@@ -278,21 +278,6 @@ class RfqMyQuotesFilter extends Component<Props, State> {
         }
 
         return this.props.quotesDataView.salespersonList.find(o => o.salespersonNumber === salesRepNumber)?.name || "";
-    };
-
-    getStatusLabel = (status: string) => {
-        switch (status) {
-            case "QuoteCreated":
-                return translate("Created");
-            case "QuoteRequested":
-                return translate("Requested");
-            case "QuoteProposed":
-                return translate("Proposed");
-            case "QuoteRejected":
-                return translate("Rejected");
-            default:
-                return translate("Unknown");
-        }
     };
 
     render() {
@@ -362,16 +347,6 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                             }}
                         >
                             {translate("Quote #: {0}", this.props.getQuotesParameter.quoteNumber)}
-                        </Tag>
-                    )}
-                    {this.props.getQuotesParameter.statuses && this.props.getQuotesParameter.statuses.length > 0 && (
-                        <Tag
-                            {...styles.appliedFilterTag}
-                            onDelete={() => {
-                                this.statusChangeHandler("");
-                            }}
-                        >
-                            {translate("Status: {0}", this.getStatusLabel(this.props.getQuotesParameter.statuses[0]))}
                         </Tag>
                     )}
                     {this.props.getQuotesParameter.userId && (
@@ -489,20 +464,6 @@ class RfqMyQuotesFilter extends Component<Props, State> {
                         onChange={event => this.quoteNumberChangeHandler(event.target.value)}
                         data-test-selector="rfqMyQuotes_quoteNumberFilter"
                     />
-                </GridItem>
-                <GridItem {...styles.statusGridItem}>
-                    <Select
-                        {...styles.statusSelect}
-                        label={translate("Status")}
-                        value={this.state.status}
-                        onChange={event => this.statusChangeHandler(event.target.value)}
-                    >
-                        <option value="">{translate("Select")}</option>
-                        <option value="QuoteCreated">{this.getStatusLabel("QuoteCreated")}</option>
-                        <option value="QuoteRequested">{this.getStatusLabel("QuoteRequested")}</option>
-                        <option value="QuoteRejected">{this.getStatusLabel("QuoteRejected")}</option>
-                        <option value="QuoteProposed">{this.getStatusLabel("QuoteProposed")}</option>
-                    </Select>
                 </GridItem>
                 {this.props.session.isSalesPerson && (
                     <>

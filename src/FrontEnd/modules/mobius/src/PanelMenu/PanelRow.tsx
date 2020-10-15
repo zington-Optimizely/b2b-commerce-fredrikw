@@ -1,13 +1,13 @@
+import Clickable, { ClickableProps } from "@insite/mobius/Clickable";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import getContrastColor from "@insite/mobius/utilities/getContrastColor";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import React from "react";
 import styled, { ThemeConsumer } from "styled-components";
-import Clickable, { ClickableProps } from "../Clickable";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconMemo, IconPresentationProps } from "../Icon";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import getContrastColor from "../utilities/getContrastColor";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import resolveColor from "../utilities/resolveColor";
 
 export type PanelRowPresentationProps = {
     /** The background color of the panel.

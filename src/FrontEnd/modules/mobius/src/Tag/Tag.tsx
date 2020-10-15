@@ -1,18 +1,18 @@
+import Button, { ButtonIcon } from "@insite/mobius/Button";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { IconProps } from "@insite/mobius/Icon";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import getContrastColor from "@insite/mobius/utilities/getContrastColor";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import omitSingle from "@insite/mobius/utilities/omitSingle";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
+import safeColor from "@insite/mobius/utilities/safeColor";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
-import Button, { ButtonIcon } from "../Button";
-import { BaseTheme } from "../globals/baseTheme";
-import { IconProps } from "../Icon";
-import Typography, { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import getContrastColor from "../utilities/getContrastColor";
-import InjectableCss, { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import omitSingle from "../utilities/omitSingle";
-import resolveColor from "../utilities/resolveColor";
-import safeColor from "../utilities/safeColor";
-import VisuallyHidden from "../VisuallyHidden";
 
 export interface TagPresentationProps {
     /** Props to be passed into the inner Icon component.

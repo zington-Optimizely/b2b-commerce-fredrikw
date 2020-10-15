@@ -120,6 +120,7 @@ export const rawRequest = async (
     headers: Dictionary<string> = {},
     body?: string,
     isStatusOkay: (status: number) => boolean = status => status >= 200 && status < 300,
+    cache: RequestInit["cache"] = "no-cache",
 ) => {
     let url = endpoint;
 
@@ -140,6 +141,7 @@ export const rawRequest = async (
     const requestInit: RequestInit = {
         method,
         headers,
+        cache,
     };
 
     if (body) {
@@ -162,8 +164,15 @@ export const rawRequest = async (
     return response;
 };
 
-export async function request<T>(endpoint: string, method: string, headers: Dictionary<string> = {}, body?: string) {
-    const response = await rawRequest(endpoint, method, headers, body);
+export async function request<T>(
+    endpoint: string,
+    method: string,
+    headers: Dictionary<string> = {},
+    body?: string,
+    isStatusOkay?: (status: number) => boolean,
+    cache: RequestInit["cache"] = "no-cache",
+) {
+    const response = await rawRequest(endpoint, method, headers, body, isStatusOkay, cache);
 
     try {
         return (await response.json()) as Promise<T>;

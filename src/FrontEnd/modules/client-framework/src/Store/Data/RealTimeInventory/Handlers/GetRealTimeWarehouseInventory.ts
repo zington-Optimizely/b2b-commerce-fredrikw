@@ -1,4 +1,4 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunnerForOldOnComplete, Handler } from "@insite/client-framework/HandlerCreator";
 import {
     getProductRealTimeInventory,
     GetProductRealTimeInventoryApiV2Parameter,
@@ -12,6 +12,7 @@ interface Result {
 
 type HandlerType = Handler<
     GetProductRealTimeInventoryApiV2Parameter & {
+        /** This is a legacy onComplete, it will only fire if the Handler CallOnComplete is hit */
         onComplete: (result: Result) => void;
         unitOfMeasure: string;
     },
@@ -55,5 +56,5 @@ export const CallOnComplete: HandlerType = props => {
 
 export const chain = [PopulateApiParameter, RequestDataFromApi, FindWarehouseData, CallOnComplete];
 
-const getRealTimeWarehouseInventory = createHandlerChainRunner(chain, "GetRealTimeWarehouseInventory");
+const getRealTimeWarehouseInventory = createHandlerChainRunnerForOldOnComplete(chain, "GetRealTimeWarehouseInventory");
 export default getRealTimeWarehouseInventory;

@@ -6,6 +6,7 @@ import ContentMode, {
 import { getCookie, removeCookie } from "@insite/client-framework/Common/Cookies";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { adminAccessTokenName } from "@insite/shell/Store/BearerToken";
@@ -28,10 +29,16 @@ const initialState: ShellContextState = {
     contentMode: getStoredContentMode(),
     homePageId: emptyGuid,
     mobileHomePageId: emptyGuid,
+    settings: {} as SettingsModel,
 };
 
 function getStoredContentMode() {
     let contentMode = "Viewing";
+    // we can't retrieve a cookie when the state is initialized during SSR but we don't support SSR for the shell so we don't need to.
+    if (IS_SERVER_SIDE) {
+        return contentMode as ContentMode;
+    }
+
     const storedContentMode = getCookie(contentModeCookieName);
     if (
         storedContentMode &&
@@ -57,6 +64,7 @@ const reducer = {
             | "homePageId"
             | "mobileHomePageId"
             | "enableMobileCms"
+            | "settings"
         >,
     ) => {
         draft.languages = action.languages;
@@ -70,6 +78,7 @@ const reducer = {
         draft.homePageId = action.homePageId;
         draft.mobileHomePageId = action.mobileHomePageId;
         draft.enableMobileCms = action.enableMobileCms;
+        draft.settings = action.settings;
 
         const languagesById: ShellContextState["languagesById"] = {};
         const personasById: ShellContextState["personasById"] = {};

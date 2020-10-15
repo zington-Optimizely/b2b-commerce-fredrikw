@@ -1,4 +1,4 @@
-import { ComponentThemeProps } from "../globals/baseTheme";
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 
 const SelectPresentationPropsDefault: ComponentThemeProps["select"]["defaultProps"] = {
     iconProps: { src: "ChevronDown" },

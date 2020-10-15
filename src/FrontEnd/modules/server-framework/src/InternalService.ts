@@ -4,6 +4,8 @@ import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { request } from "@insite/client-framework/Services/ApiService";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
+import FormData from "form-data";
+import { ReadStream } from "fs";
 
 const internalContentUrl = "/api/internal/content/";
 
@@ -16,6 +18,36 @@ export const getSiteGenerationData = () =>
     }>(`${internalContentUrl}siteGenerationData`, "GET");
 
 export async function saveInitialPages(pages: PageModel[]) {
+    const tokenData = await getAccessToken();
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenData.access_token}`,
+    };
+
+    return request<PageModel[]>(`${internalContentUrl}saveInitialPages`, "POST", headers, JSON.stringify(pages));
+}
+
+export async function saveTranslations(stream: ReadStream) {
+    const tokenData = await getAccessToken();
+    const userHeaders = {
+        Authorization: `Bearer ${tokenData.access_token}`,
+    };
+
+    const formData = new FormData();
+
+    formData.append("file", stream);
+
+    return fetch(`${internalContentUrl}ImportTranslations`, {
+        headers: formData.getHeaders(userHeaders),
+        method: "POST",
+        // RequestInit and FormData are not the same shape,
+        // so TypeScript complains. Using `any` to more or less
+        // ignore TypeScript and just let the JavaScript work.
+        body: formData as any,
+    });
+}
+
+async function getAccessToken() {
     const data = new URLSearchParams();
     data.append("grant_type", "client_credentials");
     data.append("scope", "isc_admin_api");
@@ -55,14 +87,7 @@ export async function saveInitialPages(pages: PageModel[]) {
         );
     }
 
-    const tokenData = await (response.json() as Promise<{
+    return response.json() as Promise<{
         readonly access_token: string;
-    }>);
-
-    const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tokenData.access_token}`,
-    };
-
-    return request<PageModel[]>(`${internalContentUrl}saveInitialPages`, "POST", headers, JSON.stringify(pages));
+    }>;
 }

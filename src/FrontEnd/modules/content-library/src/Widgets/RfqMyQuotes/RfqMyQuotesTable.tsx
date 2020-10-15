@@ -25,7 +25,6 @@ const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
     quotesDataView: getQuotesDataView(state, state.pages.rfqMyQuotes.getQuotesParameter),
     rfqQuoteDetailsPageUrl: getPageLinkByPageType(state, "RfqQuoteDetailsPage")?.url,
-    rfqJobQuoteDetailsPageUrl: getPageLinkByPageType(state, "RfqJobQuoteDetailsPage")?.url,
     language: state.context.session.language,
 });
 
@@ -43,6 +42,8 @@ export interface RfqMyQuotesTableStyles {
     dataTableBody?: DataTableBodyProps;
     dataTableRow?: DataTableRowProps;
     quoteNumberHeader?: DataTableHeaderProps;
+    typeHeader?: DataTableHeaderProps;
+    statusHeader?: DataTableHeaderProps;
     orderDateHeader?: DataTableHeaderProps;
     expirationDateHeader?: DataTableHeaderProps;
     salesRepHeader?: DataTableHeaderProps;
@@ -51,6 +52,7 @@ export interface RfqMyQuotesTableStyles {
     shipToHeader?: DataTableHeaderProps;
     quoteNumberCell?: DataTableCellProps;
     quoteLink?: LinkPresentationProps;
+    typeCell?: DataTableCellProps;
     statusCell?: DataTableCellProps;
     orderDateCell?: DataTableCellProps;
     expirationDateCell?: DataTableCellProps;
@@ -110,13 +112,7 @@ export const rfqMyQuotesTableStyles: RfqMyQuotesTableStyles = {
 
 const styles = rfqMyQuotesTableStyles;
 
-const RfqMyQuotesTable = ({
-    session,
-    quotesDataView,
-    rfqQuoteDetailsPageUrl,
-    rfqJobQuoteDetailsPageUrl,
-    language,
-}: Props) => {
+const RfqMyQuotesTable = ({ session, quotesDataView, rfqQuoteDetailsPageUrl, language }: Props) => {
     const quotes = quotesDataView.value;
     if (!quotes) {
         return (
@@ -137,7 +133,7 @@ const RfqMyQuotesTable = ({
     const rows = quotes.map(quote => ({
         id: quote.id,
         quoteNumber: quote.quoteNumber,
-        isJobQuote: quote.isJobQuote,
+        type: quote.typeDisplay,
         status: quote.statusDisplay,
         orderDate: quote.orderDate ? getLocalizedDateTime({ dateTime: new Date(quote.orderDate), language }) : "",
         expirationDate: quote.expirationDate
@@ -156,7 +152,10 @@ const RfqMyQuotesTable = ({
                     <DataTableHeader {...styles.quoteNumberHeader} title={translate("Quote Number")}>
                         {translate("Quote #")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.customerHeader}>
+                    <DataTableHeader tight {...styles.typeHeader}>
+                        {translate("Type")}
+                    </DataTableHeader>
+                    <DataTableHeader tight {...styles.statusHeader}>
                         {translate("Status")}
                     </DataTableHeader>
                     <DataTableHeader tight {...styles.orderDateHeader}>
@@ -189,7 +188,7 @@ const RfqMyQuotesTable = ({
                         ({
                             id,
                             quoteNumber,
-                            isJobQuote,
+                            type,
                             status,
                             orderDate,
                             expirationDate,
@@ -212,6 +211,7 @@ const RfqMyQuotesTable = ({
                                         {quoteNumber}
                                     </Link>
                                 </DataTableCell>
+                                <DataTableCell {...styles.typeCell}>{type}</DataTableCell>
                                 <DataTableCell {...styles.statusCell}>{status}</DataTableCell>
                                 <DataTableCell {...styles.orderDateCell}>{orderDate}</DataTableCell>
                                 <DataTableCell {...styles.expirationDateCell}>{expirationDate}</DataTableCell>

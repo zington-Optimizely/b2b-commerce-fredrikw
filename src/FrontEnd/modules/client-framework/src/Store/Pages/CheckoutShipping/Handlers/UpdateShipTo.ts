@@ -2,10 +2,13 @@ import { updateContext } from "@insite/client-framework/Context";
 import {
     ApiHandlerNoApiParameter,
     createHandlerChainRunner,
+    HasOnSuccess,
     makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
+import { updateCart as updateCartApi } from "@insite/client-framework/Services/CartService";
 import { createShipTo, updateShipTo as updateShipToApi } from "@insite/client-framework/Services/CustomersService";
 import { updateSession } from "@insite/client-framework/Services/SessionService";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
@@ -16,7 +19,7 @@ type HandlerType = ApiHandlerNoApiParameter<
     {
         billToId: string;
         shipTo: ShipToModel;
-    },
+    } & HasOnSuccess<boolean>,
     ShipToModel
 >;
 
@@ -40,7 +43,9 @@ export const AddOrUpdateShipTo: HandlerType = async props => {
 };
 
 export const UpdateContext: HandlerType = props => {
-    if (props.apiResult) {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (!cartId && props.apiResult) {
         updateContext({
             billToId: props.parameter.billToId,
             shipToId: props.apiResult.id,
@@ -49,7 +54,9 @@ export const UpdateContext: HandlerType = props => {
 };
 
 export const UpdateSession: HandlerType = async props => {
-    if (props.apiResult) {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (!cartId && props.apiResult) {
         await updateSession({
             session: {
                 billToId: props.parameter.billToId,
@@ -60,13 +67,27 @@ export const UpdateSession: HandlerType = async props => {
     }
 };
 
-export const LoadCart: HandlerType = props => {
+export const UpdateCart: HandlerType = async props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    if (cartId && props.apiResult) {
+        const cart = getCartState(state, cartId).value!;
+        await updateCartApi({
+            cart: {
+                ...cart,
+                shipToId: props.apiResult.id,
+            },
+        });
+    }
+};
+
+export const LoadCart: HandlerType = async props => {
     const state = props.getState();
     const { cartId } = state.pages.checkoutShipping;
     if (cartId) {
         props.dispatch(loadCart({ cartId }));
     } else {
-        props.dispatch(loadCurrentCart());
+        await makeHandlerChainAwaitable(loadCurrentCart)({ OnSuccess: () => {} })(props.dispatch, props.getState);
     }
 };
 
@@ -98,13 +119,23 @@ export const DispatchSetLastSelectedShipTo: HandlerType = props => {
     });
 };
 
+export const ExecuteOnSuccessCallback: HandlerType = props => {
+    const state = props.getState();
+    const { cartId } = state.pages.checkoutShipping;
+    const cart = cartId ? getCartState(state, cartId).value : getCurrentCartState(state).value;
+    const hasCartlines = (cart?.cartLines?.length || 0) > 0;
+    props.parameter.onSuccess?.(hasCartlines);
+};
+
 const chain = [
     AddOrUpdateShipTo,
     UpdateContext,
     UpdateSession,
+    UpdateCart,
     LoadCart,
     DispatchCompleteUpdateShipTo,
     DispatchSetLastSelectedShipTo,
+    ExecuteOnSuccessCallback,
 ];
 
 const updateShipTo = createHandlerChainRunner(chain, "UpdateShipTo");

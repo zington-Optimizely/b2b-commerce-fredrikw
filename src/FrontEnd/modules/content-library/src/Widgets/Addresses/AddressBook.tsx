@@ -208,7 +208,7 @@ const AddressBook: React.FC<Props> = ({
             <StyledWrapper {...styles.centeringWrapper}>
                 <Typography {...styles.noAddressesText}>
                     {getShipTosParameter.filter
-                        ? siteMessage("Addresses_NoResultsMessage")
+                        ? siteMessage("Addresses_NoResultsFound")
                         : siteMessage("Addresses_NoAddressesFound")}
                 </Typography>
             </StyledWrapper>

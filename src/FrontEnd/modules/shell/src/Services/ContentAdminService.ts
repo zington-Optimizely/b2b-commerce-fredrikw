@@ -1,5 +1,6 @@
 import ContentMode from "@insite/client-framework/Common/ContentMode";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
@@ -72,6 +73,7 @@ export const getShellContext = () =>
         adminClientSecret: string;
         permissions: PermissionsModel;
         enableMobileCms: boolean;
+        settings: SettingsModel;
     }>("shellcontext");
 
 export const updateShellContext = (languageId: string, personaId: string, deviceType: DeviceType) =>
@@ -138,6 +140,7 @@ export type PublishableContentContextModel = ContentContextModel & {
     publishOn: string;
     futurePublishOn: string;
     rollbackOn: string;
+    isWaitingForApproval: boolean;
 };
 
 export type PagePublishInfoModel = {
@@ -216,6 +219,7 @@ export interface PageStateModel {
     attributes: PageStateModelAttribute[];
     type: string;
     futurePublishOn: string;
+    isWaitingForApproval: boolean;
     variantName: string;
     isDefaultVariant: boolean;
     isShared: boolean;

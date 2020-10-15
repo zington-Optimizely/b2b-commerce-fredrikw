@@ -1,13 +1,13 @@
 import { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import DataTableContext from "@insite/mobius/DataTable/DataTableContext";
+import { IconPresentationProps } from "@insite/mobius/Icon";
+import { TypographyPresentationProps } from "@insite/mobius/Typography";
+import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
+import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import { IconPresentationProps } from "../Icon";
-import { TypographyPresentationProps } from "../Typography";
-import applyPropBuilder from "../utilities/applyPropBuilder";
-import { StyledProp } from "../utilities/InjectableCss";
-import injectCss from "../utilities/injectCss";
-import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
-import DataTableContext from "./DataTableContext";
 
 export enum SortOrderOptions {
     ascending = "ascending",

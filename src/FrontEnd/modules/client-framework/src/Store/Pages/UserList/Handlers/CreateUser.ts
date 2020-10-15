@@ -3,6 +3,7 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
 import { addAccount, AddAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
@@ -46,9 +47,13 @@ export const CallAddAccount: HandlerType = async props => {
     }
 };
 
-export const SendActivationEmail: HandlerType = props => {
+export const SendActivationEmail: HandlerType = async props => {
     if (props.apiResult.successful) {
-        sendActivationEmail({ userName: props.apiResult.result.userName })(props.dispatch, props.getState);
+        const awaitableSendActivationEmail = makeHandlerChainAwaitable(sendActivationEmail);
+        await awaitableSendActivationEmail({ userName: props.apiResult.result.userName })(
+            props.dispatch,
+            props.getState,
+        );
     }
 };
 

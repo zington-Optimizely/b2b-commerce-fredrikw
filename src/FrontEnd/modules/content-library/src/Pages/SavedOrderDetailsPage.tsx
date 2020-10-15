@@ -1,0 +1,97 @@
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { CartContext } from "@insite/client-framework/Components/CartContext";
+import Zone from "@insite/client-framework/Components/Zone";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import displayOrder from "@insite/client-framework/Store/Pages/SavedOrderDetails/Handlers/DisplayOrder";
+import PageModule from "@insite/client-framework/Types/PageModule";
+import PageProps from "@insite/client-framework/Types/PageProps";
+import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Page from "@insite/mobius/Page";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import React, { FC, useEffect } from "react";
+import { connect, ResolveThunks } from "react-redux";
+
+const mapStateToProps = (state: ApplicationState) => {
+    const location = getLocation(state);
+    let cartId;
+    if (location && location.search) {
+        const parsedQuery = parseQueryString<{ cartId: string }>(location.search);
+        cartId = parsedQuery.cartId;
+    }
+
+    const savedOrderState = getCartState(state, cartId);
+
+    return {
+        cartId,
+        savedCartState: savedOrderState,
+        billToState: getBillToState(state, savedOrderState?.value?.billToId),
+        shipToState: getShipToState(state, savedOrderState?.value?.shipToId),
+        allowMultipleWishLists: getSettingsCollection(state).wishListSettings.allowMultipleWishLists,
+        savedOrderListPageLink: getPageLinkByPageType(state, "SavedOrderListPage")?.url,
+    };
+};
+
+const mapDispatchToProps = {
+    displayOrder,
+};
+
+type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
+
+const SavedOrderDetailsPage: FC<Props> = ({
+    id,
+    cartId,
+    savedCartState,
+    displayOrder,
+    billToState,
+    shipToState,
+    allowMultipleWishLists,
+    history,
+    savedOrderListPageLink,
+}) => {
+    useEffect(() => {
+        if (cartId) {
+            displayOrder({
+                cartId,
+                onError: () => {
+                    history.push(savedOrderListPageLink!);
+                },
+            });
+        }
+    }, [cartId]);
+
+    const savedOrder = savedCartState.value
+        ? {
+              ...savedCartState.value,
+              billTo: billToState.value,
+              shipTo: shipToState.value,
+          }
+        : undefined;
+
+    return (
+        <Page>
+            <CartContext.Provider value={savedOrder}>
+                <Zone contentId={id} zoneName="Content" />
+                {allowMultipleWishLists && <AddToListModal />}
+            </CartContext.Provider>
+        </Page>
+    );
+};
+
+const pageModule: PageModule = {
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(SavedOrderDetailsPage)),
+    definition: {
+        hasEditableUrlSegment: true,
+        hasEditableTitle: true,
+        pageType: "System",
+    },
+};
+
+export default pageModule;
+
+export const SavedOrderDetailsPageContext = "SavedOrderDetailsPage";

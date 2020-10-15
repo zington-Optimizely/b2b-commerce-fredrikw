@@ -1,4 +1,4 @@
-import { ComponentThemeProps } from "../globals/baseTheme";
+import { ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 
 const ButtonPresentationPropsDefault: ComponentThemeProps["button"]["defaultProps"] = {
     hoverMode: "darken",

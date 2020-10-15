@@ -30,6 +30,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     quoteState: getQuoteState(state, state.pages.rfqQuoteDetails.quoteId),
     rfqMyQuotesPageUrl: getPageLinkByPageType(state, "RfqMyQuotesPage")?.url,
     checkoutShippingPageUrl: getPageLinkByPageType(state, "CheckoutShippingPage")?.url,
+    rfqJobQuotesPageUrl: getPageLinkByPageType(state, "RfqJobQuotesPage")?.url,
     cartState: getCurrentCartState(state),
 });
 
@@ -125,6 +126,7 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
     history,
     rfqMyQuotesPageUrl,
     checkoutShippingPageUrl,
+    rfqJobQuotesPageUrl,
     cartState,
     deleteQuote,
     submitQuote,
@@ -193,6 +195,7 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
                 quote,
                 onSuccess: () => {
                     toasterContext.addToast({ body: "Quote accepted", messageType: "success" });
+                    redirectToJobQuotes();
                 },
             });
         } else if (cartState.value?.lineCount === 0) {
@@ -211,6 +214,12 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
     const redirectToCheckout = () => {
         if (checkoutShippingPageUrl) {
             history.push(`${checkoutShippingPageUrl}?cartId=${quote.id}`);
+        }
+    };
+
+    const redirectToJobQuotes = () => {
+        if (rfqJobQuotesPageUrl) {
+            history.push(rfqJobQuotesPageUrl);
         }
     };
 

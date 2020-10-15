@@ -17,7 +17,7 @@ import { getPageState } from "@insite/shell/Services/ContentAdminService";
 import { cancelEditingItem, doneEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled from "styled-components";
