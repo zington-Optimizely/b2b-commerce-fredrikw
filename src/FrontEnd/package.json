@@ -12,7 +12,7 @@
     "create-blueprint": "node ./scripts/createBlueprint",
     "eslint": "eslint . --ext .ts,.tsx",
     "eslint:fix": "npm run eslint -- --fix",
-    "eslint:blueprint": "eslint ./modules/blueprints --ext .ts,.tsx -c ./.eslintrc-blueprint.js",
+    "eslint:blueprint": "eslint ./modules/blueprints --ext .ts,.tsx -c ./.eslintrc-blueprint.js --no-eslintrc",
     "eslint:blueprint:fix": "npm run eslint:blueprint -- --fix",
     "lint:css": "ECHO use npm run stylelint",
     "prettier": "prettier --parser typescript ./{config,modules,scripts,tools}/**/*.{ts,tsx,js} --write",

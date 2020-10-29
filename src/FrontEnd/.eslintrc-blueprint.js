@@ -1,7 +1,14 @@
 module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
-    plugins: ["spire"],
+    parserOptions: {
+        ecmaVersion: 6,
+        sourceType: "module",
+        ecmaFeatures: {
+            "jsx": true,
+        }
+    },
+    plugins: ["spire", "react"],
     settings: {
         react: {
             pragma: "React",
