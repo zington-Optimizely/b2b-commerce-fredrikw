@@ -1,4 +1,5 @@
 import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Common/BasicSelectors";
+import useRecursiveTimeout from "@insite/client-framework/Common/Hooks/useRecursiveTimeout";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -17,7 +18,7 @@ import { HasHistory, History, withHistory } from "@insite/mobius/utilities/Histo
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { useEmblaCarousel } from "embla-carousel/react";
 import parse from "html-react-parser";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -213,44 +214,46 @@ const onClick = (history: History, link: string | undefined) => {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
 
-const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyles }) => {
+const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
     const [styles] = useState(() => mergeToNew(slideshowStyles, extendedStyles));
 
-    const [emblaRef, embla] = useEmblaCarousel({
-        align: "start",
-        loop: true,
-    });
-
-    const [canScrollPrev, setCanScrollPrev] = useState(false);
-    const [canScrollNext, setCanScrollNext] = useState(false);
+    const [emblaRef, embla] = useEmblaCarousel();
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const setCanScroll = () => {
-        setCanScrollPrev(!!embla && embla.canScrollPrev());
-        setCanScrollNext(!!embla && embla.canScrollNext());
-    };
 
     useEffect(() => {
         if (!embla) {
             return;
         }
 
-        embla.on("init", setCanScroll);
         embla.on("select", () => {
             setSelectedIndex(embla.selectedScrollSnap());
-            setCanScroll();
         });
     }, [embla]);
 
-    useEffect(() => {
+    const scrollNext = useCallback(() => {
         if (!embla) {
             return;
         }
 
-        const interval = setInterval(() => {
-            embla.scrollNext();
-        }, fields.autoplay * 1000);
-        return () => clearInterval(interval);
-    }, [fields.autoplay, embla]);
+        embla.scrollNext();
+    }, [embla]);
+
+    useRecursiveTimeout(scrollNext, fields.autoplay * 1000);
+
+    useEffect(() => {
+        if (!embla || !fields.slides || fields.slides.length === 0) {
+            return;
+        }
+
+        embla.reInit({
+            align: "start",
+            loop: true,
+        });
+    }, [embla, fields.slides]);
+
+    if (!fields.slides || fields.slides.length === 0) {
+        return null;
+    }
 
     let heightStyles: string;
     switch (fields.height) {
@@ -274,18 +277,14 @@ const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyl
         <StyledWrapper {...styles.slideshowWrapper}>
             {fields.showArrows && fields.slides.length > 1 && (
                 <StyledWrapper {...styles.prevArrowWrapper}>
-                    <Button
-                        {...styles.prevArrowButton}
-                        onClick={() => embla && embla.scrollPrev()}
-                        disabled={!canScrollPrev}
-                    >
+                    <Button {...styles.prevArrowButton} onClick={() => embla && embla.scrollPrev()}>
                         <ButtonIcon {...styles.iconProps} src={ChevronLeft} />
                     </Button>
                 </StyledWrapper>
             )}
             <StyledWrapper {...styles.carouselContainer} ref={emblaRef}>
                 <StyledWrapper {...styles.slideContainerWrapper}>
-                    {fields.slides?.map((slide, index) => {
+                    {fields.slides.map((slide, index) => {
                         const buttonLink = buttonLinks[index];
 
                         let responsiveImageBehaviorStyles;
@@ -367,11 +366,13 @@ const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyl
             </StyledWrapper>
             {fields.slideIndicator && (
                 <StyledWrapper {...styles.dotsContainerWrapper}>
-                    {fields.slides?.map((slide, snapIndex) => {
+                    {fields.slides.map((_, i) => {
                         const dotColorStyles =
-                            snapIndex === selectedIndex
-                                ? `background: white;
-                           &:hover{ background: white; }`
+                            i === selectedIndex
+                                ? `
+                                    background: white;
+                                    &:hover { background: white; }
+                                `
                                 : "";
                         const dotButtonStyles = {
                             css: css`
@@ -380,23 +381,13 @@ const Slideshow: React.FC<Props> = ({ fields, buttonLinks, history, extendedStyl
                             `,
                         };
                         // eslint-disable-next-line react/no-array-index-key
-                        return (
-                            <Button
-                                {...dotButtonStyles}
-                                onClick={() => embla && embla.scrollTo(snapIndex)}
-                                key={snapIndex}
-                            ></Button>
-                        );
+                        return <Button key={i} {...dotButtonStyles} onClick={() => embla && embla.scrollTo(i)} />;
                     })}
                 </StyledWrapper>
             )}
             {fields.showArrows && fields.slides.length > 1 && (
                 <StyledWrapper {...styles.nextArrowWrapper}>
-                    <Button
-                        {...styles.nextArrowButton}
-                        onClick={() => embla && embla.scrollNext()}
-                        disabled={!canScrollNext}
-                    >
+                    <Button {...styles.nextArrowButton} onClick={() => embla && embla.scrollNext()}>
                         <ButtonIcon {...styles.iconProps} src={ChevronRight} />
                     </Button>
                 </StyledWrapper>
