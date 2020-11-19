@@ -1,4 +1,5 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
 import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
@@ -17,6 +18,7 @@ interface OwnProps extends WidgetProps {}
 const mapStateToProps = (state: ApplicationState) => ({
     loaded: !!getProductListDataView(state).value,
     stockedItemsOnly: state.pages.productList.productFilters.stockedItemsOnly,
+    displayFacetsForStockedItems: getSettingsCollection(state).productSettings.displayFacetsForStockedItems,
 });
 
 const mapDispatchToProps = {
@@ -37,8 +39,9 @@ const ProductListStockedItemsFilter: FC<Props> = ({
     loaded,
     addProductFilters,
     removeProductFilters,
+    displayFacetsForStockedItems,
 }) => {
-    if (!loaded) {
+    if (!loaded || !displayFacetsForStockedItems) {
         return null;
     }
 

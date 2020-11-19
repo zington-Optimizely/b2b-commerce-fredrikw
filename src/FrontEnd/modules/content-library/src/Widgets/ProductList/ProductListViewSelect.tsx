@@ -1,7 +1,6 @@
 import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setView from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetView";
 import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import { ProductListViewType } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
@@ -21,7 +20,7 @@ interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     loaded: !!getProductListDataView(state).value,
-    view: state.pages.productList.view || getSettingsCollection(state).productSettings.defaultViewType,
+    view: state.pages.productList.view,
 });
 
 const mapDispatchToProps = {

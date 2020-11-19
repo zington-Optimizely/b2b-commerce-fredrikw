@@ -94,6 +94,12 @@ export const AddStockedItemsFilter: HandlerType = props => {
     }
 };
 
+export const AddPreviouslyPurchasedFilter: HandlerType = props => {
+    if (props.parameter.previouslyPurchasedProducts !== undefined) {
+        props.result.previouslyPurchasedProducts = props.parameter.previouslyPurchasedProducts;
+    }
+};
+
 export const DispatchSetProductFilters: HandlerType = props => {
     props.dispatch({
         type: "Pages/ProductList/SetProductFilters",

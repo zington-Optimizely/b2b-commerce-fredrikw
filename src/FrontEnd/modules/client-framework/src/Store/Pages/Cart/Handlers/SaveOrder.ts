@@ -51,6 +51,12 @@ export const UpdateCart: HandlerType = async props => {
     }
 };
 
+export const DispatchCartsReset: HandlerType = props => {
+    props.dispatch({
+        type: "Data/Carts/Reset",
+    });
+};
+
 export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());
 };
@@ -69,6 +75,7 @@ export const chain = [
     DispatchBeginRemoveCart,
     PopulateApiParameter,
     UpdateCart,
+    DispatchCartsReset,
     LoadCart,
     DispatchCompleteSavingOrder,
     ExecuteOnSuccessCallback,

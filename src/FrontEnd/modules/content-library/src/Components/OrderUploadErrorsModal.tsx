@@ -19,7 +19,7 @@ import DataTableRow, { DataTableRowProps } from "@insite/mobius/DataTable/DataTa
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import * as React from "react";
+import React, { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -148,6 +148,7 @@ const OrderUploadErrorsModal: React.FC<Props> = ({
     uploadLimitExceeded,
     setErrorsModalIsOpen,
     cleanupUploadData,
+    setIsBadFile,
     setUploadLimitExceeded,
     setContinueUpload,
     descriptionText,
@@ -157,6 +158,7 @@ const OrderUploadErrorsModal: React.FC<Props> = ({
     extendedStyles,
 }) => {
     const [styles] = React.useState(() => mergeToNew(orderUploadErrorsModalStyles, extendedStyles));
+    const [uploadCanceled, setUploadCanceled] = useState(false);
 
     const closeModal = () => {
         setErrorsModalIsOpen({ errorsModalIsOpen: false });
@@ -165,11 +167,15 @@ const OrderUploadErrorsModal: React.FC<Props> = ({
     const modalOnAfterCloseHandler = () => {
         setIsBadFile({ isBadFile: false });
         setUploadLimitExceeded({ uploadLimitExceeded: false });
+        if (uploadCanceled) {
+            cleanupUploadData();
+            setUploadCanceled(false);
+        }
     };
 
     const cancelUploadClickHandler = () => {
         setErrorsModalIsOpen({ errorsModalIsOpen: false });
-        cleanupUploadData();
+        setUploadCanceled(true);
     };
 
     const continueUploadClickHandler = () => {

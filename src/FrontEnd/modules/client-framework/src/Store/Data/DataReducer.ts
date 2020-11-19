@@ -21,6 +21,7 @@ import PaymentProfilesReducer from "@insite/client-framework/Store/Data/PaymentP
 import ProductsReducer from "@insite/client-framework/Store/Data/Products/ProductsReducer";
 import PromotionsReducer from "@insite/client-framework/Store/Data/Promotions/PromotionsReducer";
 import QuotesReducer from "@insite/client-framework/Store/Data/Quotes/QuotesReducer";
+import RequisitionsReducer from "@insite/client-framework/Store/Data/Requisitions/RequisitionsReducer";
 import ShipTosReducer from "@insite/client-framework/Store/Data/ShipTos/ShipTosReducer";
 import WarehousesReducer from "@insite/client-framework/Store/Data/Warehouses/WarehousesReducer";
 import WishListLinesReducer from "@insite/client-framework/Store/Data/WishListLines/WishListLinesReducer";
@@ -51,6 +52,7 @@ const dataReducers = {
     products: ProductsReducer,
     promotions: PromotionsReducer,
     quotes: QuotesReducer,
+    requisitions: RequisitionsReducer,
     shipTos: ShipTosReducer,
     warehouses: WarehousesReducer,
     wishLists: WishListsReducer,

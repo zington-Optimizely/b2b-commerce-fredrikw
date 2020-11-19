@@ -54,6 +54,8 @@ export const canSubmitForApprovalOrder = (cart: Cart | undefined) => cart && car
 export const canSubmitForQuote = (cart: Cart | undefined) =>
     cart && cart.canRequestQuote && !cart.isAwaitingApproval && !isCartEmpty(cart);
 
+export const canSubmitRequisition = (cart: Cart | undefined) => cart && cart.canRequisition && !isCartEmpty(cart);
+
 export const canApplyPromotionsToCart = (cart: Cart | undefined) =>
     cart && !cart.paymentOptions?.isPayPal && cart.type !== "Quote" && cart.type !== "Job";
 

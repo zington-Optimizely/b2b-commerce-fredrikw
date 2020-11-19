@@ -54,6 +54,7 @@ export interface InvoiceHistoryTableStyles {
     termsHeader?: DataTableHeaderProps;
     dueDateHeader?: DataTableHeaderProps;
     shipToHeader?: DataTableHeaderProps;
+    poNumberHeader?: DataTableHeaderProps;
     statusHeader?: DataTableHeaderProps;
     totalHeader?: DataTableHeaderProps;
     currentBalanceHeader?: DataTableHeaderProps;
@@ -62,6 +63,7 @@ export interface InvoiceHistoryTableStyles {
     termsCell?: DataTableCellBaseProps;
     dueDateCell?: DataTableCellBaseProps;
     shipToCell?: DataTableCellBaseProps;
+    poNumberCell?: DataTableCellBaseProps;
     statusCell?: DataTableCellBaseProps;
     totalCell?: DataTableCellBaseProps;
     currentBalanceCell?: DataTableCellBaseProps;
@@ -172,6 +174,7 @@ const InvoiceHistoryTable = (props: Props) => {
                   })
                 : "",
             shipTo: `${invoice.stCompanyName} ${invoice.btAddress1} ${invoice.btAddress2} ${invoice.shipToCity} ${invoice.shipToState}`,
+            customerPO: invoice.customerPO,
             status: invoice.status,
             total: invoice.invoiceTotalDisplay,
             currentBalance: invoice.currentBalanceDisplay,
@@ -224,6 +227,14 @@ const InvoiceHistoryTable = (props: Props) => {
                     </DataTableHeader>
                     <DataTableHeader
                         tight
+                        sorted={sorted("customerPO")}
+                        {...styles.poNumberHeader}
+                        onSortClick={() => headerClick("customerPO")}
+                    >
+                        {translate("PO #")}
+                    </DataTableHeader>
+                    <DataTableHeader
+                        tight
                         sorted={sorted("status")}
                         {...styles.statusHeader}
                         onSortClick={() => headerClick("status")}
@@ -248,30 +259,48 @@ const InvoiceHistoryTable = (props: Props) => {
                     </DataTableHeader>
                 </DataTableHead>
                 <DataTableBody {...styles.dataTableBody}>
-                    {rows.map(({ id, invoiceNumber, date, terms, dueDate, shipTo, status, total, currentBalance }) => (
-                        <DataTableRow key={id} {...styles.dataTableRow} data-test-selector="invoiceHistory_invoiceLine">
-                            <DataTableCell {...styles.invoiceNumberCell}>
-                                <Link
-                                    href={`/MyAccount/Invoices/Details?invoiceNumber=${invoiceNumber}`}
-                                    data-test-selector="invoiceHistory_invoiceLine_number"
-                                >
-                                    {invoiceNumber}
-                                </Link>
-                            </DataTableCell>
-                            <DataTableCell
-                                {...styles.invoiceDateCell}
-                                data-test-selector="invoiceHistory_invoiceLine_date"
+                    {rows.map(
+                        ({
+                            id,
+                            invoiceNumber,
+                            date,
+                            terms,
+                            dueDate,
+                            shipTo,
+                            customerPO,
+                            status,
+                            total,
+                            currentBalance,
+                        }) => (
+                            <DataTableRow
+                                key={id}
+                                {...styles.dataTableRow}
+                                data-test-selector="invoiceHistory_invoiceLine"
                             >
-                                {date}
-                            </DataTableCell>
-                            <DataTableCell {...styles.termsCell}>{terms}</DataTableCell>
-                            <DataTableCell {...styles.dueDateCell}>{dueDate}</DataTableCell>
-                            <DataTableCell {...styles.shipToCell}>{shipTo}</DataTableCell>
-                            <DataTableCell {...styles.statusCell}>{status}</DataTableCell>
-                            <DataTableCell {...styles.totalCell}>{total}</DataTableCell>
-                            <DataTableCell {...styles.currentBalanceCell}>{currentBalance}</DataTableCell>
-                        </DataTableRow>
-                    ))}
+                                <DataTableCell {...styles.invoiceNumberCell}>
+                                    <Link
+                                        href={`/MyAccount/Invoices/Details?invoiceNumber=${invoiceNumber}`}
+                                        data-test-selector="invoiceHistory_invoiceLine_number"
+                                    >
+                                        {invoiceNumber}
+                                    </Link>
+                                </DataTableCell>
+                                <DataTableCell
+                                    {...styles.invoiceDateCell}
+                                    data-test-selector="invoiceHistory_invoiceLine_date"
+                                >
+                                    {date}
+                                </DataTableCell>
+                                <DataTableCell {...styles.termsCell}>{terms}</DataTableCell>
+                                <DataTableCell {...styles.dueDateCell}>{dueDate}</DataTableCell>
+                                <DataTableCell {...styles.shipToCell}>{shipTo}</DataTableCell>
+                                <DataTableCell {...styles.poNumberCell}>{customerPO}</DataTableCell>
+                                <DataTableCell {...styles.statusCell}>{status}</DataTableCell>
+                                <DataTableCell {...styles.totalCell}>{total}</DataTableCell>
+                                <DataTableCell {...styles.currentBalanceCell}>{currentBalance}</DataTableCell>
+                            </DataTableRow>
+                        ),
+                    )}
                 </DataTableBody>
             </DataTable>
         </StyledWrapper>

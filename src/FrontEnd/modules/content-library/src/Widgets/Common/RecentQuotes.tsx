@@ -1,6 +1,6 @@
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSession, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadQuotes from "@insite/client-framework/Store/Data/Quotes/Handlers/LoadQuotes";
 import { getQuotesDataView } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -16,12 +16,17 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    settingsCollection: getSettingsCollection(state),
-    session: state.context.session,
-    quotesDataView: getQuotesDataView(state, recentQuotesParameter),
-    myQuotesPageNavLink: getPageLinkByPageType(state, "RfqMyQuotesPage"),
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const session = getSession(state);
+    const isAuthenticated = session.isAuthenticated && !session.isGuest;
+    return {
+        settingsCollection: getSettingsCollection(state),
+        session,
+        quotesDataView: getQuotesDataView(state, recentQuotesParameter),
+        myQuotesPageNavLink: getPageLinkByPageType(state, "RfqMyQuotesPage"),
+        canViewQuotes: isAuthenticated && (session.userRoles || "").indexOf("Requisitioner") === -1,
+    };
+};
 
 const mapDispatchToProps = {
     loadQuotes,
@@ -50,14 +55,14 @@ const styles = recentQuotesStyles;
 
 class RecentQuotes extends React.Component<Props> {
     componentDidMount() {
-        if (!this.props.quotesDataView.value) {
+        if (this.props.canViewQuotes && !this.props.quotesDataView.value) {
             this.props.loadQuotes(recentQuotesParameter);
         }
     }
 
     render() {
-        const { settingsCollection, session, quotesDataView, myQuotesPageNavLink } = this.props;
-        if (!quotesDataView.value) {
+        const { settingsCollection, session, quotesDataView, myQuotesPageNavLink, canViewQuotes } = this.props;
+        if (!canViewQuotes || !quotesDataView.value) {
             return null;
         }
 

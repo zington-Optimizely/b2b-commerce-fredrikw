@@ -1,6 +1,6 @@
 import { GetOrdersApiParameter } from "@insite/client-framework/Services/OrderService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSession, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadOrders from "@insite/client-framework/Store/Data/Orders/Handlers/LoadOrders";
 import { getOrdersDataView } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -26,11 +26,16 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    ordersDataView: getOrdersDataView(state, recentOrdersParameter),
-    orderHistoryPageLink: getPageLinkByPageType(state, "OrderHistoryPage"),
-    settingsCollection: getSettingsCollection(state),
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const session = getSession(state);
+    const isAuthenticated = session.isAuthenticated && !session.isGuest;
+    return {
+        ordersDataView: getOrdersDataView(state, recentOrdersParameter),
+        orderHistoryPageLink: getPageLinkByPageType(state, "OrderHistoryPage"),
+        settingsCollection: getSettingsCollection(state),
+        canViewOrders: isAuthenticated && (session.userRoles || "").indexOf("Requisitioner") === -1,
+    };
+};
 
 const mapDispatchToProps = {
     loadOrders,
@@ -63,19 +68,18 @@ const styles = recentOrdersStyles;
 class RecentOrders extends React.Component<Props> {
     componentDidMount() {
         recentOrdersParameter.pageSize = this.props.fields.numberOfRecords;
-        if (!this.props.ordersDataView.value) {
+        if (this.props.canViewOrders && !this.props.ordersDataView.value) {
             this.props.loadOrders(recentOrdersParameter);
         }
     }
 
     render() {
-        const { ordersDataView, orderHistoryPageLink, settingsCollection } = this.props;
-
-        const orderHistoryUrl = orderHistoryPageLink ? orderHistoryPageLink.url : undefined;
-
-        if (!ordersDataView.value) {
+        const { ordersDataView, orderHistoryPageLink, settingsCollection, canViewOrders } = this.props;
+        if (!canViewOrders || !ordersDataView.value) {
             return null;
         }
+
+        const orderHistoryUrl = orderHistoryPageLink ? orderHistoryPageLink.url : undefined;
 
         return (
             <CardList extendedStyles={styles.cardList}>

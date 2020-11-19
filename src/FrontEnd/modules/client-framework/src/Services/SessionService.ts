@@ -120,6 +120,11 @@ export async function updateSession(parameter: UpdateSessionApiParameter) {
         body: JSON.stringify(patchedSession),
     });
     const session = await (response.json() as Promise<SessionModel>);
+
+    if (response.status !== 200) {
+        throw session;
+    }
+
     cleanSession(session);
     informShell(session);
     return session;

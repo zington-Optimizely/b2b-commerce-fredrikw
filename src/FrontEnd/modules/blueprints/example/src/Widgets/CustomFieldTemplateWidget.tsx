@@ -1,6 +1,5 @@
-/* This example is not currently supported.
- * This illustrates how to create a widget that will make use of custom field definition templates.
- * field definition templates allow you to control how a field will be edited in the shell.
+/* This illustrates how to create a widget that will make use of custom editor templates.
+ * editor templates allow you to control how a field will be edited in the shell.
  */
 
 import { CustomFieldDefinition } from "@example/CustomFieldDefinition";
@@ -12,18 +11,21 @@ import React from "react";
 
 const enum fields {
     textField = "textField",
+    customTemplateField = "customTemplateField",
 }
 
 interface Props extends WidgetProps {
     fields: {
         [fields.textField]: string;
+        [fields.customTemplateField]: string;
     };
 }
 
 const CustomFieldTemplateWidget: React.FC<Props> = props => {
     return (
         <Typography variant="h4" as="p">
-            {props.fields.textField}
+            <div>{props.fields.textField}</div>
+            <div>{props.fields.customTemplateField}</div>
         </Typography>
     );
 };
@@ -39,12 +41,13 @@ export const definition: WidgetDefinition<CustomFieldDefinition> = {
             fieldType: "General",
         },
         {
-            name: "customTemplateField",
+            name: fields.customTemplateField,
             editorTemplate: "CustomTemplate",
             defaultValue: "",
             fieldType: "General",
             // this property is required because the template is CustomTemplate
-            customProperty: "CustomValue",
+            extraLabel: "Extra Label!",
+            tooltip: "Example Tooltip",
         },
     ],
 };

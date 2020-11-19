@@ -19,6 +19,7 @@ import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -65,6 +66,7 @@ export interface SavedOrderDetailsCartLineStyles {
     productAvailability?: ProductAvailabilityStyles;
     productPriceAndQuantityGridItem?: GridItemProps;
     productPriceAndQuantityContainer?: GridContainerProps;
+    inactiveProductLabel?: TypographyPresentationProps;
     priceGridItem?: GridItemProps;
     quantityGridItem?: GridItemProps;
     extendedUnitNetPriceGridItem?: GridItemProps;
@@ -143,6 +145,9 @@ export const savedOrderDetailsCartLineStyles: SavedOrderDetailsCartLineStyles = 
                 weight: "normal",
             },
         },
+    },
+    inactiveProductLabel: {
+        color: "danger",
     },
     quantityGridItem: {
         width: [2, 2, 2, 1, 1],
@@ -238,6 +243,11 @@ const SavedOrderDetailsCartLine: React.FC<Props> = ({
                                     showSavingsPercent={showSavingsPercent}
                                     extendedStyles={styles.productPrice}
                                 />
+                                {!cartLine.isActive && (
+                                    <Typography {...styles.inactiveProductLabel}>
+                                        {translate("Inactive Product")}
+                                    </Typography>
+                                )}
                             </GridItem>
                             <GridItem {...styles.quantityGridItem}>
                                 <CartLineQuantity

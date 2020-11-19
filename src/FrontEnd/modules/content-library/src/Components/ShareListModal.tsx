@@ -460,9 +460,6 @@ const ShareListModal: React.FC<Props> = ({
         }
 
         setShareListModalIsOpen({ modalIsOpen: false });
-        if (fromManage) {
-            setManageShareListModalIsOpen({ modalIsOpen: true, wishListId: wishList?.id });
-        }
 
         const message =
             shareListOption === "sendCopy"

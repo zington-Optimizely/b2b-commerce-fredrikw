@@ -67,12 +67,12 @@ export const dateRangeStyles: OrderHistoryDateRangeStyles = {
 };
 
 const styles = dateRangeStyles;
-
+const tzOffset = new Date().getTimezoneOffset() * 60000;
 const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = props => {
     const fromDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
         const loadParameter = {
             ...props.parameter,
-            fromDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined,
+            fromDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "",
         };
         props.updateSearchFields(loadParameter);
     };
@@ -80,7 +80,7 @@ const OrderHistorySearchFieldDateRange: React.FunctionComponent<Props> = props =
     const toDateChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
         const loadParameter = {
             ...props.parameter,
-            toDate: selectedDay ? selectedDay.toISOString().split("T")[0] : undefined,
+            toDate: selectedDay ? new Date(selectedDay.getTime() - tzOffset).toISOString().split("T")[0] : "",
         };
         props.updateSearchFields(loadParameter);
     };

@@ -4,7 +4,7 @@ import Button, { ButtonIcon } from "@insite/mobius/Button";
 import CheckboxGroup from "@insite/mobius/CheckboxGroup";
 import Clickable from "@insite/mobius/Clickable";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
-import Typography from "@insite/mobius/Typography";
+import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import get from "@insite/mobius/utilities/get";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import ColorPicker from "@insite/shell/Components/Elements/ColorPicker";
@@ -255,23 +255,20 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
             {exitLinks}
             <SideBarStyle>
                 <form spellCheck={false} onSubmit={event => event.preventDefault()}>
-                    <Typography variant="h2" transform="uppercase">
-                        Site Colors
-                    </Typography>
+                    <Typography {...sectionTitleProps}>Site Colors</Typography>
                     {presets.map(preset => (
-                        <ColorPicker
-                            key={preset.name}
-                            label={preset.displayAs}
-                            id={preset.name}
-                            color={preset.currentValue}
-                            disabled={codeOverridden(`colors.${preset.name}`) || disableEditGlobalStyleGuide}
-                            preventColorReset={preset.preventColorReset}
-                            onChange={color => update(draft => preset.update(draft, colorResultToString(color)))}
-                        />
+                        <ColorPickerWrapper key={preset.name}>
+                            <ColorPicker
+                                label={preset.displayAs}
+                                id={preset.name}
+                                color={preset.currentValue}
+                                disabled={codeOverridden(`colors.${preset.name}`) || disableEditGlobalStyleGuide}
+                                preventColorReset={preset.preventColorReset}
+                                onChange={color => update(draft => preset.update(draft, colorResultToString(color)))}
+                            />
+                        </ColorPickerWrapper>
                     ))}
-                    <Typography variant="h2" transform="uppercase">
-                        Site Typography
-                    </Typography>
+                    <Typography {...sectionTitleProps}>Site Typography</Typography>
                     <Accordion headingLevel={3}>
                         <ElementTypographyConfig
                             element="body"
@@ -363,9 +360,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                             })}
                         </ConfigMenu>
                     </Accordion>
-                    <Typography variant="h2" transform="uppercase">
-                        Components
-                    </Typography>
+                    <Typography {...sectionTitleProps}>Components</Typography>
                     <Accordion headingLevel={3}>
                         <SideBarAccordionSection title="Accordion">
                             {typographyConfig(
@@ -606,13 +601,20 @@ const StyleGuideEditor = connect(mapStateToProps, mapDispatchToProps)(Connectabl
 
 export default StyleGuideEditor;
 
+const ColorPickerWrapper = styled.div`
+    padding: 5px 35px;
+    &:hover {
+        background-color: #d4e0fd;
+    }
+`;
+
 const ResetButton = styled.button`
     height: 35px;
     display: block;
-    border: 1px solid ${(props: ShellThemeProps) => props.theme.typography.body.color};
+    border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.primary.main};
     border-radius: 4px;
     background: transparent;
-    color: ${(props: ShellThemeProps) => props.theme.typography.body.color};
+    color: ${(props: ShellThemeProps) => props.theme.colors.primary.main};
     font-family: ${(props: ShellThemeProps) => props.theme.typography.body.fontFamily};
     font-weight: bold;
     font-size: 14px;
@@ -642,3 +644,13 @@ const ActionBar = styled.div`
         }
     }
 `;
+
+const sectionTitleProps: TypographyProps = {
+    as: "h2",
+    variant: "h5",
+    transform: "uppercase",
+    css: css`
+        margin: 20px 0 0;
+        padding: 0 35px;
+    `,
+};

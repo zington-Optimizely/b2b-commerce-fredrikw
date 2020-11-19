@@ -5,7 +5,6 @@ import updateSearchFields from "@insite/client-framework/Store/Pages/SavedOrderL
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
 import { SavedOrderListPageContext } from "@insite/content-library/Pages/SavedOrderListPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import DatePicker, { DatePickerPresentationProps, DatePickerState } from "@insite/mobius/DatePicker";
@@ -152,16 +151,18 @@ export const styles = savedOrderListFilterStyles;
 const tzOffset = new Date().getTimezoneOffset() * 60000;
 let updateTimeoutId: any;
 const SavedOrderListFilter = ({ isFilterOpen, getCartsApiParameter, updateSearchFields, clearSearch }: Props) => {
-    const [orderTotal, setOrderTotal] = React.useState("");
-    const orderTotalChangeHandler = (total: string) => {
-        setOrderTotal(total);
-        if (typeof updateTimeoutId === "number") {
-            clearTimeout(updateTimeoutId);
+    const [orderSubtotal, setOrderSubtotal] = React.useState("");
+    const [orderSubtotalOperator, setOrderSubtotalOperator] = React.useState("");
+
+    const orderSubtotalChangeHandler = (totalValue: string, totalOperator: string) => {
+        if ((totalValue === "" && totalOperator !== "") || (totalValue !== "" && totalOperator === "")) {
+            return;
         }
 
         updateTimeoutId = setTimeout(() => {
             updateSearchFields({
-                orderTotal: total,
+                orderSubtotal: totalValue,
+                orderSubtotalOperator: totalOperator,
             });
         }, 250);
     };
@@ -178,18 +179,34 @@ const SavedOrderListFilter = ({ isFilterOpen, getCartsApiParameter, updateSearch
         });
     };
 
-    const orderTotalOperatorChangeHandler = (operator: string) => {
-        updateSearchFields({ orderTotalOperator: operator });
+    const orderSubtotalValueChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const total = event.target.value;
+        setOrderSubtotal(total);
+
+        if (typeof updateTimeoutId === "number") {
+            clearTimeout(updateTimeoutId);
+        }
+
+        updateTimeoutId = setTimeout(() => {
+            orderSubtotalChangeHandler(total, orderSubtotalOperator);
+        }, 250);
     };
 
-    const resetOrderTotal = () => {
-        setOrderTotal("");
-        updateSearchFields({ orderTotalOperator: "", orderTotal: "" });
+    const orderSubtotalOperatorChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const operator = event.target.value;
+        setOrderSubtotalOperator(operator);
+
+        orderSubtotalChangeHandler(orderSubtotal, operator);
+    };
+
+    const resetOrderSubtotal = () => {
+        setOrderSubtotal("");
+        updateSearchFields({ orderSubtotalOperator: "", orderSubtotal: "" });
     };
 
     const clearFiltersClickHandler = () => {
         clearSearch();
-        setOrderTotal("");
+        setOrderSubtotal("");
     };
 
     if (!isFilterOpen) {
@@ -215,15 +232,15 @@ const SavedOrderListFilter = ({ isFilterOpen, getCartsApiParameter, updateSearch
                         {`${translate("To")}: ${getCartsApiParameter.toDate}`}
                     </Tag>
                 )}
-                {getCartsApiParameter.orderTotalOperator && getCartsApiParameter.orderTotal && (
+                {getCartsApiParameter.orderSubtotalOperator && getCartsApiParameter.orderSubtotal && (
                     <Tag
                         {...styles.appliedFilterTag}
                         onDelete={() => {
-                            resetOrderTotal();
+                            resetOrderSubtotal();
                         }}
                     >
-                        {`${translate("Order Total")}: ${getCartsApiParameter.orderTotalOperator} ${
-                            getCartsApiParameter.orderTotal
+                        {`${translate("Order Total")}: ${getCartsApiParameter.orderSubtotalOperator} ${
+                            getCartsApiParameter.orderSubtotal
                         }`}
                     </Tag>
                 )}
@@ -247,15 +264,15 @@ const SavedOrderListFilter = ({ isFilterOpen, getCartsApiParameter, updateSearch
             </GridItem>
             <GridItem {...styles.orderTotalGridItem}>
                 <StyledOrderTotalFieldSet {...styles.orderTotalFieldset}>
-                    <VisuallyHidden as="label">{translate("Order Total")}</VisuallyHidden>
+                    <VisuallyHidden as="label">{translate("Order Subtotal")}</VisuallyHidden>
                     <GridContainer {...styles.orderTotalContainer}>
                         <GridItem {...styles.orderTotalOperatorGridItem}>
                             <Select
                                 {...styles.orderTotalOperatorSelect}
-                                label={translate("Order Total")}
-                                value={getCartsApiParameter.orderTotalOperator || ""}
+                                label={translate("Order Subtotal")}
+                                value={orderSubtotalOperator}
                                 data-test-selector="savedOrderList_comparisonMethod"
-                                onChange={event => orderTotalOperatorChangeHandler(event.target.value)}
+                                onChange={orderSubtotalOperatorChangeHandler}
                             >
                                 <option value="">{translate("Select")}</option>
                                 <option key="Greater Than" value="Greater Than">
@@ -272,9 +289,10 @@ const SavedOrderListFilter = ({ isFilterOpen, getCartsApiParameter, updateSearch
                         <GridItem {...styles.orderTotalAmountGridItem}>
                             <TextField
                                 {...styles.orderTotalAmountTextField}
-                                value={orderTotal}
+                                value={orderSubtotal}
+                                type="number"
                                 data-test-selector="savedOrderList_comparisonValue"
-                                onChange={event => orderTotalChangeHandler(event.target.value)}
+                                onChange={orderSubtotalValueChangeHandler}
                             />
                         </GridItem>
                     </GridContainer>

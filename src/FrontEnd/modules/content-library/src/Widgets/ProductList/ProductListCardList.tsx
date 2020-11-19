@@ -1,7 +1,8 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import setView from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetView";
 import { getProductListDataView } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
+import { ProductListViewType } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -21,7 +22,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC, ReactNode } from "react";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
@@ -34,6 +35,7 @@ const enum fields {
     showAttributes = "showAttributes",
     showPrice = "showPrice",
     showAddToList = "showAddToList",
+    productListDefaultView = "productListDefaultView",
 }
 
 interface OwnProps extends WidgetProps {
@@ -47,18 +49,22 @@ interface OwnProps extends WidgetProps {
         [fields.showAttributes]: boolean;
         [fields.showPrice]: boolean;
         [fields.showAddToList]: boolean;
+        [fields.productListDefaultView]: ProductListViewType;
     };
 }
 
-interface OwnProps extends WidgetProps {}
-
-const mapStateToProps = (state: ApplicationState) => ({
+const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     isLoading: state.pages.productList.isLoading,
     productsDataView: getProductListDataView(state),
-    view: state.pages.productList.view || getSettingsCollection(state).productSettings.defaultViewType,
+    // TODO ISC-13448 we no need ProductListSettings DefaultView, besause we use widget property productListDefaultView instead
+    view: state.pages.productList.view || ownProps.fields.productListDefaultView,
 });
 
-type Props = ReturnType<typeof mapStateToProps> & OwnProps;
+const mapDispatchToProps = {
+    setView,
+};
+
+type Props = ReturnType<typeof mapStateToProps> & OwnProps & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface ProductListCardListStyles {
     wrapper?: InjectableCss;
@@ -118,7 +124,7 @@ export const listStyles: ProductListCardListStyles = {
 
 const styles = listStyles;
 
-const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fields }) => {
+const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fields, setView }) => {
     if (isLoading && !productsDataView.value) {
         return (
             <StyledWrapper {...styles.centeringWrapper}>
@@ -126,6 +132,10 @@ const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fie
             </StyledWrapper>
         );
     }
+
+    React.useEffect(() => {
+        setView({ view });
+    }, []);
 
     if (!productsDataView.value) {
         return null;
@@ -188,7 +198,7 @@ const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fie
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(ProductListCardList),
+    component: connect(mapStateToProps, mapDispatchToProps)(ProductListCardList),
     definition: {
         group: "Product List",
         displayName: "Card List",
@@ -265,6 +275,23 @@ const widgetModule: WidgetModule = {
                 defaultValue: true,
                 fieldType: "General",
                 sortOrder: 9,
+            },
+            {
+                name: fields.productListDefaultView,
+                editorTemplate: "RadioButtonsField",
+                defaultValue: "List",
+                fieldType: "General",
+                sortOrder: 10,
+                options: [
+                    {
+                        displayName: "List",
+                        value: "List",
+                    },
+                    {
+                        displayName: "Grid",
+                        value: "Grid",
+                    },
+                ],
             },
         ],
     },

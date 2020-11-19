@@ -57,6 +57,10 @@ export const AddLineToWishList: HandlerType = async props => {
 };
 
 export const ResetWishListData: HandlerType = props => {
+    if (props.result?.errorMessage) {
+        return;
+    }
+
     props.dispatch({
         type: "Data/WishListLines/Reset",
     });

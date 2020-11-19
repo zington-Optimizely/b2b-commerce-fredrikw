@@ -1,4 +1,5 @@
 import { createFromProduct, ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
 import {
     createHandlerChainRunner,
     executeAwaitableHandlerChain,
@@ -8,11 +9,11 @@ import {
     ConfigurationType,
     getProductById,
     GetProductByIdApiV2Parameter,
-    getProductCollectionV2,
     GetProductVariantChildApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadProduct from "@insite/client-framework/Store/Data/Products/Handlers/LoadProduct";
+import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/LoadProducts";
 import loadVariantChild from "@insite/client-framework/Store/Data/Products/Handlers/LoadVariantChild";
 import loadVariantChildren from "@insite/client-framework/Store/Data/Products/Handlers/LoadVariantChildren";
 import {
@@ -20,7 +21,7 @@ import {
     getVariantChildrenDataView,
     hasEnoughInventory,
 } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
-import { ProductModel, RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
+import { ProductModel } from "@insite/client-framework/Types/ApiModels";
 
 interface Parameter {
     variantId?: string;
@@ -86,9 +87,11 @@ export const RequestDataFromApi: HandlerType = async props => {
             }
         }
     } else if (searchTerm) {
-        props.product = (
-            await getProductCollectionV2({ extendedNames: [searchTerm], expand: ["variantTraits"] })
-        )?.products?.[0];
+        props.product = ((await executeAwaitableHandlerChain(
+            loadProducts,
+            { extendedNames: [searchTerm], expand: ["variantTraits"] },
+            props,
+        )) as ProductModel[])[0];
     }
 };
 
@@ -106,12 +109,27 @@ export const LoadInventory: HandlerType = async props => {
     }
     props.productInfo = createFromProduct(product);
 
-    const realTimeInventory: RealTimeInventoryModel = await executeAwaitableHandlerChain(
-        loadRealTimeInventory,
-        { productIds: [product.id] },
-        props,
+    let loadedInventory = false;
+
+    props.dispatch(
+        loadRealTimeInventory({
+            productIds: [product.id],
+            onComplete: realTimeInventoryProps => {
+                if (realTimeInventoryProps.error) {
+                    if (props.productInfo) {
+                        props.productInfo.failedToLoadInventory = true;
+                    }
+                } else if (props.productInfo) {
+                    props.productInfo.inventory = realTimeInventoryProps.apiResult?.realTimeInventoryResults?.find(
+                        o => o.productId === product.id,
+                    );
+                }
+                loadedInventory = true;
+            },
+        }),
     );
-    props.productInfo.inventory = realTimeInventory.realTimeInventoryResults?.find(o => o.productId === product.id);
+
+    await waitFor(() => loadedInventory);
 };
 
 export const RequestVariantChildrenFromApi: HandlerType = async props => {

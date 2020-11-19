@@ -9,6 +9,7 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Typography from "@insite/mobius/Typography";
 import React from "react";
 import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     pageTitle: getCurrentPage(state).fields.title,
@@ -17,7 +18,16 @@ const mapStateToProps = (state: ApplicationState) => ({
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 
 const PageTitle: React.FunctionComponent<Props> = ({ pageTitle }) => (
-    <Typography variant="h2">🐶 {pageTitle}!!</Typography>
+    <Typography
+        variant="h2"
+        as="h1"
+        ellipsis
+        css={css`
+            text-decoration: underline;
+        `}
+    >
+        🐶 {pageTitle}!!
+    </Typography>
 );
 
 const widgetModule: WidgetModule = {

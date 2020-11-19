@@ -2,6 +2,7 @@ import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import Typography from "@insite/mobius/Typography";
 import { getDiagnostics } from "@insite/shell/Services/SpireService";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const About: React.FC = () => {
     const [spireStuff, update] = useState<SafeDictionary<string> | undefined>();
@@ -20,13 +21,12 @@ const About: React.FC = () => {
 
     return (
         <>
-            <Typography variant="h1">About</Typography>
             {spireStuff && (
                 <table>
                     <tbody>
                         {Object.keys(spireStuff).map(key => (
                             <tr key={key}>
-                                <td>{key}</td>
+                                <KeyColumn>{key}</KeyColumn>
                                 <td>{spireStuff[key]}</td>
                             </tr>
                         ))}
@@ -36,5 +36,9 @@ const About: React.FC = () => {
         </>
     );
 };
+
+const KeyColumn = styled.td`
+    padding-right: 10px;
+`;
 
 export default About;

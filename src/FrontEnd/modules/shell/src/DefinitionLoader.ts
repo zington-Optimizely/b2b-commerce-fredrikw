@@ -2,25 +2,15 @@ import { newGuid, splitCamelCase } from "@insite/client-framework/Common/StringH
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { getThePageDefinitions, getTheWidgetDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import logger from "@insite/client-framework/Logger";
-import {
-    ContentItemDefinition,
-    PageDefinition,
-    WidgetDefinition,
-} from "@insite/client-framework/Types/ContentItemDefinitions";
+import { ContentItemDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import { HasType, LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import sortBy from "lodash/sortBy";
 // eslint-disable-next-line spire/fenced-imports
 import {
     commerce_routes as commerceRoutes,
     spire_system_uris as spireSystemUris,
 } from "../../../config/spire_routes.json";
-
-export type LoadedWidgetDefinition = WidgetDefinition & HasType;
-export type LoadedPageDefinition = PageDefinition & HasType;
-
-interface HasType {
-    type: string;
-}
 
 const systemUris = new Set<string>([
     ...commerceRoutes.map(v => v.toLowerCase()),

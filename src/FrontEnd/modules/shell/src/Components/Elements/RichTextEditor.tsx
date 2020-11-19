@@ -482,6 +482,11 @@ const EditorStyles = styled.div<{ sidebar: boolean; siteTheme: BaseTheme; theme:
         .dark-theme.fr-toolbar .fr-btn-grp .fr-command.fr-btn.fr-active:not(.fr-dropdown) svg path {
             fill: ${({ theme }) => theme.colors.primary.main};
         }
+        .fr-command.fr-btn + .fr-dropdown-menu {
+            .fr-dropdown-wrapper {
+                max-height: 150px;
+            }
+        }
     }
     .dark-theme .fr-view blockquote {
         border-left: none;
@@ -493,7 +498,7 @@ const EditorStyles = styled.div<{ sidebar: boolean; siteTheme: BaseTheme; theme:
         color: inherit;
     }
     .fr-box {
-        z-index: 0;
+        z-index: 1;
     }
     .fr-box.fr-code-view .CodeMirror {
         height: 100% !important;

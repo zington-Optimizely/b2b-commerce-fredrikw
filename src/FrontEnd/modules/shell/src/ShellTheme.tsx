@@ -25,7 +25,7 @@ export interface ShellColors extends ThemeColors {
 
 const colors: ShellColors = {
     custom: {
-        mainHeader: "#e5e5e5",
+        mainHeader: "#d4e0fd",
         nonmatchingTreeLinks: "#bbb",
         accentSecondary: "#cccccc",
         futurePublish: "#0072bc",
@@ -34,42 +34,42 @@ const colors: ShellColors = {
         isWaitingForApprovalActive: "#f2d7b8",
     },
     primary: {
-        main: "#78BC21",
-        contrast: "#000000",
+        main: "#1456f1",
+        contrast: "#fff",
     },
     secondary: {
         main: "#6c757d",
-        contrast: "#ffffff",
+        contrast: "#fff",
     },
     common: {
-        background: "#F4F4F4",
+        background: "#fff",
         backgroundContrast: "#4A4A4A",
-        accent: "#ffffff",
+        accent: "#f4f4f4",
         accentContrast: "#4A4A4A",
         border: "#000000",
         disabled: "#888888",
     },
     text: {
-        main: "#000000",
-        disabled: "#888888",
+        main: "#000",
+        disabled: "#888",
         accent: "#9B9B9B",
         link: "#275AA8",
     },
     success: {
         main: "#28a745",
-        contrast: "#ffffff",
+        contrast: "#fff",
     },
     danger: {
         main: "#dc3545",
-        contrast: "#ffffff",
+        contrast: "#fff",
     },
     warning: {
         main: "#ffc107",
-        contrast: "#ffffff",
+        contrast: "#fff",
     },
     info: {
         main: "#17a2b8",
-        contrast: "#ffffff",
+        contrast: "#fff",
     },
 } as const;
 
@@ -86,6 +86,9 @@ const controlStyles = (withPadding: boolean) => css`
 
 const formField = css`
     margin-top: 10px;
+    & .mobiusFileUpload {
+        padding: 0 10px;
+    }
 `;
 
 const buttonStyles: FlattenSimpleInterpolation = css`
@@ -109,11 +112,11 @@ const buttonProps: ButtonPresentationProps = {
 
 const shellTheme = {
     sideBarWidth: "340px",
-    headerHeight: "56px",
+    headerHeight: "40px",
     ...baseTheme,
     colors,
     focus: {
-        color: "#78BC21",
+        color: "#1456f1",
         style: "solid",
         width: "2px",
     },
@@ -130,20 +133,21 @@ const shellTheme = {
             ...buttonProps,
             buttonType: "outline",
             css: css`
+                ${buttonStyles}
                 border-width: 1px;
             `,
         },
     },
     formField: {
         defaultProps: {
-            backgroundColor: "common.accent",
+            backgroundColor: "common.background",
             border: "rounded",
             cssOverrides: {
                 inputSelect: controlStyles(true),
                 formField,
             },
             labelProps: {
-                size: "18px",
+                size: "1rem",
                 transform: "uppercase",
                 weight: "bold",
                 lineHeight: "21px",
@@ -165,33 +169,48 @@ const shellTheme = {
     typography: {
         ...baseTheme.typography,
         body: {
-            fontFamily: '"Roboto Condensed", sans-serif;',
+            fontFamily: "Barlow, sans-serif;",
             color: colors.text.main,
         },
         h1: {
             ...baseTheme.typography.h1,
             color: colors.primary.main,
-            size: "22px",
+            size: "2rem",
             lineHeight: "25px",
             weight: "bold",
         },
         h2: {
             ...baseTheme.typography.h2,
-            size: "18px",
+            size: "1.75rem",
             lineHeight: "21px",
-            weight: "bold",
+            weight: 600,
             css: css`
                 margin: 30px 0 10px;
             `,
         },
         h3: {
             ...baseTheme.typography.h3,
-            size: "18px",
+            size: "1.5rem",
             lineHeight: "21px",
-            weight: 300,
+            weight: 400,
             css: css`
                 margin: 30px 0 10px;
             `,
+        },
+        h4: {
+            ...baseTheme.typography.h4,
+            size: "1.25rem",
+            weight: 600,
+        },
+        h5: {
+            ...baseTheme.typography.h5,
+            size: "1.125rem",
+            weight: 600,
+        },
+        h6: {
+            ...baseTheme.typography.h6,
+            size: "1rem",
+            weight: 400,
         },
         p: {
             ...baseTheme.typography.p,
@@ -221,6 +240,10 @@ const shellTheme = {
                     border-radius: 8px;
                     background-color: ${({ theme }) => theme.colors.common.accent};
                 `,
+            },
+            closeButtonIconProps: {
+                src: "X",
+                size: 24,
             },
             headlineTypographyProps: {
                 color: "common.background",

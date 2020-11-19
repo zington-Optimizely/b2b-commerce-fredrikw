@@ -35,7 +35,7 @@ import ThemeProvider from "@insite/mobius/ThemeProvider";
 import diagnostics from "@insite/server-framework/diagnostics";
 import getTemplate, { getTemplatePaths } from "@insite/server-framework/getTemplate";
 import healthCheck from "@insite/server-framework/healthCheck";
-import Relay from "@insite/server-framework/Relay";
+import { getRelayEndpoints, relayRequest } from "@insite/server-framework/Relay";
 import robots from "@insite/server-framework/Robots";
 import { generateSiteIfNeeded } from "@insite/server-framework/SiteGeneration";
 import { generateTranslations } from "@insite/server-framework/TranslationGeneration";
@@ -68,37 +68,38 @@ const redirectTo = async ({ originalUrl, path }: Request, response: Response) =>
     response.redirect(destination + originalUrl.substring(path.length));
 };
 
+const routes: { path: string | RegExp; handler: any }[] = [];
+
+function addRoute(path: RegExp | string, handler: any) {
+    routes.push({
+        path: typeof path === "string" ? path.toLowerCase() : path,
+        handler,
+    });
+}
+
+addRoute("/.spire/health", healthCheck);
+addRoute("/.spire/diagnostics", diagnostics);
+addRoute("/robots.txt", robots);
+addRoute("/.spire/content/getTemplatePaths", getTemplatePaths);
+addRoute("/.spire/content/getTemplate", getTemplate);
+addRoute(/^\/sitemap.*\.xml/i, relayRequest);
+for (const endpoint of getRelayEndpoints()) {
+    addRoute(new RegExp(`^/${endpoint}(\\/|$)`, "i"), relayRequest);
+}
+addRoute(/^\/redirectTo\//i, redirectTo);
+
 export default function server(request: Request, response: Response, domain: Parameters<typeof setDomain>[0]) {
     setupSSR(request, domain);
 
-    switch (request.path.toLowerCase()) {
-        case "/.spire/health":
-            return healthCheck(request, response);
-        case "/.spire/diagnostics":
-            return diagnostics(request, response);
-        case "/robots.txt":
-            return robots(request, response);
-    }
+    const loweredPath = request.path.toLowerCase();
 
-    if (request.path.toLowerCase().startsWith("/.spire/content/getTemplatePaths".toLowerCase())) {
-        return getTemplatePaths(request, response);
-    }
-
-    if (request.path.toLowerCase().startsWith("/.spire/content/getTemplate".toLowerCase())) {
-        return getTemplate(request, response);
-    }
-
-    let endpoint = request.path.split("/")[1]; // '/blah'.split('/') = ['', 'blah']
-    if (endpoint.match(/^sitemap.*\.xml/i)) {
-        endpoint = "sitemap";
-    }
-    const relayMethod = Relay[endpoint.toLowerCase()];
-    if (relayMethod) {
-        return relayMethod(request, response);
-    }
-
-    if (request.path.toLowerCase().startsWith("/redirectto/")) {
-        return redirectTo(request, response);
+    for (const route of routes) {
+        if (
+            (typeof route.path === "string" && route.path === loweredPath) ||
+            (typeof route.path !== "string" && loweredPath.match(route.path))
+        ) {
+            return route.handler(request, response);
+        }
     }
 
     return pageRenderer(request, response);
@@ -126,7 +127,11 @@ async function pageRenderer(request: Request, response: Response) {
         try {
             await generateSiteIfNeeded();
         } catch (e) {
-            logger.error(`Site generation failed: ${e}`);
+            if (IS_PRODUCTION) {
+                logger.error(`Site generation failed: ${e}`);
+            } else {
+                throw e;
+            }
         }
         checkedForSiteGeneration = true;
     }
@@ -312,10 +317,7 @@ async function pageRenderer(request: Request, response: Response) {
         // Roboto Condensed is used by the CMS
         // Open Sans is used by the default Mobius theme and may be seen in the Style Guide.
         shellFont = (
-            <link
-                href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap"
-                rel="stylesheet"
-            />
+            <link href="https://fonts.googleapis.com/css?family=Barlow:300,400,700&display=swap" rel="stylesheet" />
         );
     }
 
@@ -336,6 +338,7 @@ async function pageRenderer(request: Request, response: Response) {
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
                 <title>{isShellRequest ? "Content Administration" : metadata?.title}</title>
                 {favicon && <link rel="icon" href={favicon} type="image/x-icon" />}
+                <meta property="og:type" content="website" />
                 <meta id="ogTitle" property="og:title" content={metadata?.openGraphTitle} />
                 <meta id="ogImage" property="og:image" content={metadata?.openGraphImage} />
                 <meta id="ogUrl" property="og:url" content={metadata?.openGraphUrl} />

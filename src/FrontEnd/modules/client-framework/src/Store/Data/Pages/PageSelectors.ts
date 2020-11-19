@@ -25,6 +25,11 @@ export function getLocation(state: ApplicationState) {
     return state.data.pages.location;
 }
 
+export function getLocationPathAndQuery(state: ApplicationState) {
+    const { pathname, search } = getLocation(state);
+    return pathname + search;
+}
+
 export function getPageStateByType(state: ApplicationState, type: string) {
     return getById(state.data.pages, state.data.pages.idByType[type]);
 }

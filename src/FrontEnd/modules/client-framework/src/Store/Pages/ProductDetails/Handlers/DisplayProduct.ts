@@ -67,7 +67,21 @@ export const LoadProductIfNeeded: HandlerType = async props => {
             !props.product.variantTraits
         ) {
             // we don't want to wait for this if we already partially have the product, because then we can't show the partially loaded product page
-            props.dispatch(loadProductByPath({ ...props.parameter, addToRecentlyViewed: true }));
+            props.dispatch(
+                loadProductByPath({
+                    ...props.parameter,
+                    addToRecentlyViewed: true,
+                    onComplete: productProps => {
+                        const configuration = productProps?.apiResult?.detail?.configuration;
+                        if (configuration) {
+                            props.dispatch({
+                                type: "Pages/ProductDetails/InitConfigurationSelection",
+                                configuration,
+                            });
+                        }
+                    },
+                }),
+            );
         } else {
             // this is purely so that we can track the recentlyViewed
             getProductByPath({ ...props.parameter, addToRecentlyViewed: true }).then(() => {});
@@ -149,6 +163,7 @@ export const DispatchCompleteLoadProduct: HandlerType = props => {
         productInfosById: props.productInfosById ?? {},
         variantSelection: props.variantSelection ?? {},
         selectedProductId: props.product.id,
+        configuration: props.product.detail?.configuration,
     });
 };
 
@@ -207,7 +222,15 @@ export const LoadRealTimeInventory: HandlerType = props => {
             productIds: [props.product.id, ...(props.variantChildren?.map(o => o.id) ?? [])],
             onComplete: realTimeInventoryProps => {
                 const realTimeInventory = realTimeInventoryProps?.apiResult;
-                if (realTimeInventory) {
+
+                if (realTimeInventoryProps?.error) {
+                    if (props.product) {
+                        props.dispatch({
+                            type: "Pages/ProductDetails/FailedLoadRealTimeInventory",
+                            productId: props.product.id,
+                        });
+                    }
+                } else if (realTimeInventory) {
                     if (realTimeInventory.realTimeInventoryResults && props.variantChildren && props.product) {
                         const discontinued: SafeDictionary<boolean> = {};
                         for (const result of realTimeInventory.realTimeInventoryResults) {

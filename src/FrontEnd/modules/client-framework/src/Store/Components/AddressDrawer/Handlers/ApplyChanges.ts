@@ -24,7 +24,9 @@ export const ChangeCustomerContext: HandlerType = async ({ dispatch, getState, p
         isDefault,
         pickUpWarehouse,
     } = getState().components.addressDrawer;
+
     const awaitableChangeCustomerContext = makeHandlerChainAwaitable(changeCustomerContext);
+
     await awaitableChangeCustomerContext({
         billToId: selectedBillTo?.id,
         shipToId: selectedShipTo?.id,

@@ -3,6 +3,7 @@ import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import styled, { StyledComponent } from "styled-components";
 
 interface StyleProps {
+    active: boolean;
     clickable: boolean;
 }
 
@@ -13,13 +14,15 @@ const ClickerStyle = styled(Clickable)`
     padding-top: 7px;
     text-align: center;
     cursor: ${(props: StyleProps) => (props.clickable ? "pointer" : "default")};
+    background-color: ${(props: StyleProps & ShellThemeProps) =>
+        props.active ? props.theme.colors.primary.main : "transparent"};
     &:disabled {
         cursor: not-allowed;
     }
     &:focus,
     &:hover:not([disabled]) {
         background-color: ${(props: StyleProps & ShellThemeProps) =>
-            props.clickable ? props.theme.colors.custom.mainHeader : "transparent"};
+            props.clickable && !props.active ? props.theme.colors.custom.mainHeader : ""};
     }
 ` as StyledComponent<typeof Clickable, {}, any, never>;
 /**

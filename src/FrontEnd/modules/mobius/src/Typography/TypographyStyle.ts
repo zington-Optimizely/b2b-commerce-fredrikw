@@ -100,7 +100,13 @@ const TypographyStyle = styled.span.attrs<any, { as: any }>((props: any) => ({
     ${({ underline }: TypographyComponentProps) => (underline ? "text-decoration: underline;" : "")}
     ${({ weight }: TypographyComponentProps) => (weight !== undefined ? `font-weight: ${weight};` : "")}
     ${({ fontFamily }: TypographyComponentProps) => (fontFamily !== undefined ? `font-family: ${fontFamily};` : "")}
-    ${({ variantCss }: any) => variantCss || ""}
+
+    /*
+     * Keep the default behavior of merging variantCss and css
+     * by setting the mergeCss value to true. If mergeCss is false,
+     * the override behavior is the same as other css props.
+    */
+    ${({ variantCss, mergeCss = true }: any) => (mergeCss && variantCss) || ""}
     ${({ css }: any) => (css ? css : "")}
 `;
 /* eslint-enable no-unneeded-ternary */

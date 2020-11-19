@@ -100,6 +100,15 @@
     {
       "parentId": "e7fe40cc-040b-46a6-8ea2-69274def5be1",
       "zone": "Content2",
+      "type": "ProductDetails/ProductDetailsKitSectionOptions",
+      "id": "5f533157-80fa-42ab-9660-c4bea306bae9",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+  },
+    {
+      "parentId": "e7fe40cc-040b-46a6-8ea2-69274def5be1",
+      "zone": "Content2",
         "type": "ProductDetails/ProductDetailsAttributes",
         "id": "6d7d074f-83b8-4129-890c-73ea0cb6bc2d",
         "fields": {},
@@ -244,6 +253,15 @@
       "id": "c9b6f06f-bac1-487e-a1e2-604381973517",
       "fields": {},
       "translatableFields": {}
+    },
+    {
+      "parentId": "e7fe40cc-040b-46a6-8ea2-69274def5be1",
+      "zone": "Content3",
+      "type": "ProductDetails/ProductDetailsBundleSectionOptions",
+      "id": "f3d91367-d310-400a-84d6-10c928a32f8e",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
     },
     {
       "parentId": "e7fe40cc-040b-46a6-8ea2-69274def5be1",

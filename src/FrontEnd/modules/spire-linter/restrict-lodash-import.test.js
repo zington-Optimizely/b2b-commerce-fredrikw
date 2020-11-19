@@ -3,12 +3,8 @@ const { getRuleTester } = require("./testHelper");
 const rule = require("./restrict-lodash-import");
 
 getRuleTester().run("restrict-lodash-import", rule, {
-    valid: [
-        getCode("import 'lodash/sortBy';"),
-    ],
-    invalid: [
-        getCode("import 'lodash';", [{ messageId: "usePartialLodashImport" }])
-    ],
+    valid: [getCode("import 'lodash/sortBy';")],
+    invalid: [getCode("import 'lodash';", [{ messageId: "usePartialLodashImport" }])],
 });
 
 function getCode(code, errors) {

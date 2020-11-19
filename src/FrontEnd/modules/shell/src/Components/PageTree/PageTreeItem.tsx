@@ -53,7 +53,7 @@ class PageTreeItem extends React.Component<Props> {
         if (node === flyOutNode) {
             flyOutMenu = (
                 <PageTreeFlyOutActive isActivePage={selectedPageId === node.pageId} onClick={this.handleFlyOutClick}>
-                    <TreeOverflow />
+                    <TreeOverflow color1="#00000087" />
                 </PageTreeFlyOutActive>
             );
         } else if (isEditMode) {
@@ -64,7 +64,7 @@ class PageTreeItem extends React.Component<Props> {
                     title="More Options"
                     data-test-selector={`pageTreeFlyOut_${node.displayName}`}
                 >
-                    <TreeOverflow />
+                    <TreeOverflow color1="#00000087" />
                 </PageTreeFlyout>
             );
         }
@@ -83,7 +83,7 @@ class PageTreeItem extends React.Component<Props> {
                             src={expandIcon}
                             size={20}
                             onClick={this.handleExpandClick}
-                            data-test-selector={`pageTreeFolder_${node.displayName}`}
+                            data-test-selector={`pageTreeExpand_${node.displayName}`}
                         />
                     )}
                     <NodeIcon>
@@ -164,15 +164,12 @@ const PageTreeTitle = styled.h3<{
     ${props => (!props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : "")}
     ${props =>
         props.isActivePage
-            ? css`
-                  background-color: #777;
-                  color: white;
-                  & svg circle {
-                      fill: white;
-                  }
+            ? `
+                  background-color: ${props.theme.colors.primary.main}40;
+                  color: ${props.theme.colors.primary.main};
                   &::before {
                       content: "";
-                      background-color: #777;
+                      background-color: ${props.theme.colors.primary.main}40;
                       position: absolute;
                       height: 100%;
                       width: 22px;
@@ -206,8 +203,11 @@ const PageTreeTitle = styled.h3<{
     &:hover ${PageTreeFlyout} {
         display: block;
     }
-    font-size: 18px;
-    font-weight: 300;
+    font-size: 1rem;
+    font-weight: 700;
+    &:hover {
+        background-color: #d4e0fd;
+    }
 `;
 
 const PageTreePage = styled.li`

@@ -37,7 +37,7 @@ type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
 const OrderHistorySearchForm: React.FunctionComponent<Props> = props => {
     if (!props.filtersOpen) {
-        return null;
+        return <Zone contentId={props.id} zoneName="Content01" />;
     }
 
     return (

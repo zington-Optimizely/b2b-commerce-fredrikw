@@ -6,6 +6,7 @@
     export class AvailabilityByWarehousePopupController {
         static $inject = ["coreService", "availabilityByWarehousePopupService"];
         warehouses: WarehouseDto[] = null;
+        isDataLoaded: boolean;
         selector = "#popup-availability-by-warehouse";
 
         constructor(
@@ -17,11 +18,13 @@
         $onInit(): void {
             this.availabilityByWarehousePopupService.registerDisplayFunction((data) => {
                 this.warehouses = data.warehouses || [];
+                this.isDataLoaded = this.warehouses.length !== 0;
                 this.coreService.displayModal(this.selector);
             });
 
             this.availabilityByWarehousePopupService.registerUpdatePopupDataFunction((data) => {
                 this.warehouses = data.warehouses || [];
+                this.isDataLoaded = true;
             });
         }
     };

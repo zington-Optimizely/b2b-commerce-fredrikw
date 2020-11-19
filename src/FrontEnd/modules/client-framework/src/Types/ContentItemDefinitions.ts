@@ -3,6 +3,7 @@ import { WidgetGroup } from "@insite/client-framework/Types/WidgetGroups";
 
 export interface WidgetDefinition<T = FieldDefinition> extends ContentItemDefinition<T> {
     allowedContexts?: string[];
+    isDeprecated?: true;
     group: WidgetGroup;
     icon?: string;
     isSystem?: boolean;

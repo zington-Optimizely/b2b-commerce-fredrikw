@@ -5,7 +5,13 @@ import OverflowAddPage from "@insite/shell/Components/Icons/OverflowAddPage";
 import OverflowCopyPage from "@insite/shell/Components/Icons/OverflowCopyPage";
 import Trash from "@insite/shell/Components/Icons/Trash";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
-import { getPageDefinition, LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
+import {
+    canAddChildPage,
+    canCopyPage,
+    canDeletePage,
+    canEditPage,
+} from "@insite/shell/Components/PageTree/PageTreeFlyout.Functions";
+import { getPageDefinition } from "@insite/shell/DefinitionLoader";
 import { getPagePublishInfo } from "@insite/shell/Services/ContentAdminService";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import { editPageOptions } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
@@ -158,49 +164,43 @@ class PageTreeFlyOut extends React.Component<Props> {
         const { flyOutNode, permissions, mobileCmsModeActive } = this.props;
         const style = this.getFlyOutStyle();
         const pageDefinition = getPageDefinition(flyOutNode.type);
+        if (!permissions || !pageDefinition) {
+            return null;
+        }
 
         return (
             <PageTreeFlyOutMenu style={style}>
-                {pageDefinition &&
-                    permissions &&
-                    canEditPage(pageDefinition, permissions, flyOutNode) &&
+                {canEditPage(pageDefinition, permissions, flyOutNode) &&
                     flyOutOption(
                         this.handleEditPage,
                         <Edit />,
                         flyOutNode.isRootVariant ? "Edit Shared Fields" : "Edit Page",
                     )}
-                {!mobileCmsModeActive &&
-                    permissions &&
-                    canAddChildPage(pageDefinition, permissions, flyOutNode) &&
-                    flyOutOption(this.handleAddPage, <OverflowAddPage />, "Add Page")}
-                {!mobileCmsModeActive &&
-                    permissions?.canCreateVariant &&
-                    !flyOutNode.isVariant &&
-                    flyOutOption(this.handleCreateVariant, <OverflowCopyPage />, "Create Variant")}
-                {!mobileCmsModeActive &&
-                    permissions?.canCreateVariant &&
-                    flyOutNode.isVariant &&
-                    !flyOutNode.isDefaultVariant &&
-                    flyOutOption(this.handleEditRules, <OverflowCopyPage />, "Edit Rules")}
-                {!mobileCmsModeActive &&
-                    permissions?.canCreateVariant &&
-                    flyOutNode.isVariant &&
-                    !flyOutNode.isDefaultVariant &&
-                    flyOutOption(this.handleMakeDefault, <OverflowCopyPage />, "Make Default")}
-                {!mobileCmsModeActive &&
-                    pageDefinition &&
-                    permissions?.canCopyPage &&
-                    !flyOutNode.isVariant &&
-                    flyOutOption(this.handleCopyPage, <OverflowCopyPage />, "Copy Page")}
-                {!mobileCmsModeActive &&
-                    pageDefinition &&
-                    permissions &&
-                    canDeletePage(pageDefinition, permissions, flyOutNode) &&
-                    flyOutOption(
-                        this.handleDeletePage,
-                        <Trash color1="#9b9b9b" />,
-                        flyOutNode.isRootVariant ? "Delete Variants" : "Delete",
-                    )}
+                {!mobileCmsModeActive && (
+                    <>
+                        {canAddChildPage(pageDefinition, permissions, flyOutNode) &&
+                            flyOutOption(this.handleAddPage, <OverflowAddPage />, "Add Page")}
+                        {permissions.canCreateVariant &&
+                            !flyOutNode.isVariant &&
+                            flyOutOption(this.handleCreateVariant, <OverflowCopyPage />, "Create Variant")}
+                        {permissions.canCreateVariant &&
+                            flyOutNode.isVariant &&
+                            !flyOutNode.isDefaultVariant &&
+                            flyOutOption(this.handleEditRules, <OverflowCopyPage />, "Edit Rules")}
+                        {permissions.canCreateVariant &&
+                            flyOutNode.isVariant &&
+                            !flyOutNode.isDefaultVariant &&
+                            flyOutOption(this.handleMakeDefault, <OverflowCopyPage />, "Make Default")}
+                        {canCopyPage(pageDefinition, permissions, flyOutNode) &&
+                            flyOutOption(this.handleCopyPage, <OverflowCopyPage />, "Copy Page")}
+                        {canDeletePage(pageDefinition, permissions, flyOutNode) &&
+                            flyOutOption(
+                                this.handleDeletePage,
+                                <Trash color1="#9b9b9b" />,
+                                flyOutNode.isRootVariant ? "Delete Variants" : "Delete",
+                            )}
+                    </>
+                )}
             </PageTreeFlyOutMenu>
         );
     }
@@ -226,54 +226,17 @@ export const pageTreeFlyOutMenuHasItems = (
     permissions: PermissionsModel | undefined,
 ): boolean => {
     const pageDefinition = getPageDefinition(flyOutNode.type);
+
     return (
         !!permissions &&
         pageDefinition &&
         (canEditPage(pageDefinition, permissions, flyOutNode) ||
             canAddChildPage(pageDefinition, permissions, flyOutNode) ||
             permissions.canCreateVariant ||
-            permissions.canCopyPage ||
+            canCopyPage(pageDefinition, permissions, flyOutNode) ||
             canDeletePage(pageDefinition, permissions, flyOutNode))
     );
 };
-
-function canAddChildPage(
-    pageDefinition: LoadedPageDefinition,
-    permissions: PermissionsModel,
-    treeNode: TreeNodeModel,
-): boolean {
-    return (
-        permissions.canCreatePage &&
-        treeNode.displayName !== "Header" &&
-        treeNode.displayName !== "Footer" &&
-        !treeNode.isVariant
-    );
-}
-
-function canEditPage(
-    pageDefinition: LoadedPageDefinition,
-    permissions: PermissionsModel,
-    treeNode: TreeNodeModel,
-): boolean {
-    return (
-        (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date()) &&
-        ((permissions.canEditWidget && pageDefinition.pageType === "Content") ||
-            (permissions.canEditSystemWidget && pageDefinition.pageType === "System"))
-    );
-}
-
-function canDeletePage(
-    pageDefinition: LoadedPageDefinition,
-    permissions: PermissionsModel,
-    treeNode: TreeNodeModel,
-): boolean {
-    return (
-        (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date()) &&
-        permissions.canDeletePage &&
-        (pageDefinition.pageType === "Content" || !!treeNode.isVariant || !!treeNode.isRootVariant) &&
-        (treeNode.isVariant ? !treeNode.isDefaultVariant : true)
-    );
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withConfirmation(PageTreeFlyOut)));
 

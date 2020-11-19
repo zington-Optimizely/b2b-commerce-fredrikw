@@ -191,13 +191,13 @@ const ShareEntityButton: React.FC<Props> = ({
                 <Clickable
                     {...styles.clickable}
                     onClick={emailButtonClickHandler}
-                    data-test-selector="invoiceDetails_email"
+                    data-test-selector="shareEntity_email"
                 >
                     {translate("Email")}
                 </Clickable>
             )}
             {variant === "button" && (
-                <Button {...styles.button} onClick={emailButtonClickHandler} data-test-selector="invoiceDetails_email">
+                <Button {...styles.button} onClick={emailButtonClickHandler} data-test-selector="shareEntity_email">
                     {translate("Email")}
                 </Button>
             )}

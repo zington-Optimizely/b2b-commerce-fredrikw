@@ -378,6 +378,8 @@ const MyListsDetailsProductList: React.FC<Props> = ({
                 onEditNotesClick={editNotesClickHandler}
                 useDragHandle={true}
                 lockAxis="y"
+                lockToContainerEdges={true}
+                lockOffset="0%"
                 onSortStart={(_, e) => e.preventDefault()}
                 onSortMove={sortMove}
                 onSortEnd={({ oldIndex, newIndex }) => updateSortOrder(wishListLines[oldIndex], newIndex + 1)}

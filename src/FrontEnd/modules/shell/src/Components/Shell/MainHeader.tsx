@@ -21,12 +21,13 @@ export default MainHeader;
 
 const MainHeaderStyle = styled.div`
     height: ${({ theme }) => theme.headerHeight};
+    background-color: #040a47;
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: -2px;
 `;
 
 const HeaderBarStyle = styled.div`
+    height: ${({ theme }) => theme.headerHeight};
     display: flex;
     flex-grow: 1;
 `;

@@ -23,7 +23,7 @@ interface OwnProps extends WidgetProps {}
 const mapStateToProps = (state: ApplicationState) => {
     const {
         pages: {
-            productList: { productFilters, unfilteredApiParameter },
+            productList: { productFilters, unfilteredApiParameter, filteredApiParameter },
         },
         context: {
             session: { currency },
@@ -32,14 +32,23 @@ const mapStateToProps = (state: ApplicationState) => {
     if (getProductListDataView(state).value) {
         const unfilteredDataView = getProductsDataView(state, unfilteredApiParameter);
         const unfilteredProductCollection = unfilteredDataView.value ? unfilteredDataView : undefined;
+
+        const filteredDataView = getProductsDataView(state, filteredApiParameter);
+        const filteredProductCollection = filteredDataView.value ? filteredDataView : undefined;
+
         return {
             loaded: true,
             stockedItemsOnly: productFilters.stockedItemsOnly,
-            brandFacets: unfilteredProductCollection?.brandFacets,
-            productLineFacets: unfilteredProductCollection?.productLineFacets,
+            previouslyPurchasedProducts: productFilters.previouslyPurchasedProducts,
+            brandFacets: unfilteredProductCollection?.brandFacets || filteredProductCollection?.brandFacets,
+            productLineFacets:
+                unfilteredProductCollection?.productLineFacets || filteredProductCollection?.productLineFacets,
             categoryFacets: unfilteredProductCollection?.categoryFacets,
-            priceFacets: unfilteredProductCollection?.priceRange?.priceFacets,
-            attributeTypeFacets: unfilteredProductCollection?.attributeTypeFacets,
+            priceFacets:
+                unfilteredProductCollection?.priceRange?.priceFacets ||
+                filteredProductCollection?.priceRange?.priceFacets,
+            attributeTypeFacets:
+                unfilteredProductCollection?.attributeTypeFacets || filteredProductCollection?.attributeTypeFacets,
             searchWithinQueries: productFilters.searchWithinQueries,
             selectedBrandIds: productFilters.brandIds,
             selectedProductLineIds: productFilters.productLineIds,
@@ -98,6 +107,7 @@ const styles = filterListStyles;
 const ProductListFilterList: FC<Props> = ({
     loaded,
     stockedItemsOnly,
+    previouslyPurchasedProducts,
     brandFacets,
     productLineFacets,
     priceFacets,
@@ -119,6 +129,10 @@ const ProductListFilterList: FC<Props> = ({
 
     const clickRemoveStockedItemsOnly = () => {
         removeProductFilters({ stockedItemsOnly: false });
+    };
+
+    const clickRemovePreviouslyPurchasedProducts = () => {
+        removeProductFilters({ previouslyPurchasedProducts: false });
     };
 
     const clickRemoveSearchHandler = (search: string) => {
@@ -148,10 +162,11 @@ const ProductListFilterList: FC<Props> = ({
     const anyActiveFilters =
         searchWithinQueries?.length ||
         stockedItemsOnly ||
-        selectedBrandIds?.length ||
-        selectedProductLineIds?.length ||
-        selectedPriceFilters?.length ||
-        selectedAttributeValuesIds?.length ||
+        previouslyPurchasedProducts ||
+        (brandFacets && selectedBrandIds?.length) ||
+        (productLineFacets && selectedProductLineIds?.length) ||
+        (priceFacets && selectedPriceFilters?.length) ||
+        (attributeTypeFacets && selectedAttributeValuesIds?.length) ||
         selectedCategoryId;
 
     return (
@@ -172,6 +187,15 @@ const ProductListFilterList: FC<Props> = ({
                     }}
                 </ProductListPageDataContext.Consumer>
             </StyledWrapper>
+            {previouslyPurchasedProducts && (
+                <Tag
+                    {...styles.filterTag}
+                    onDelete={clickRemovePreviouslyPurchasedProducts}
+                    data-test-selector="previouslyPurchasedProductsFilter"
+                >
+                    {translate("Previously Purchased Only")}
+                </Tag>
+            )}
             {stockedItemsOnly && (
                 <Tag
                     {...styles.filterTag}
@@ -191,26 +215,28 @@ const ProductListFilterList: FC<Props> = ({
                     {translate("Search")}: {s}
                 </Tag>
             ))}
-            {selectedBrandIds?.map(id => (
-                <Tag
-                    key={id}
-                    {...styles.filterTag}
-                    onDelete={() => clickRemoveBrandHandler(id)}
-                    data-test-selector={`brandFilter${id}`}
-                >
-                    {translate("Brand")}: {brandFacets?.find(o => o.id === id)?.name}
-                </Tag>
-            ))}
-            {selectedProductLineIds?.map(id => (
-                <Tag
-                    key={id}
-                    {...styles.filterTag}
-                    onDelete={() => clickRemoveProductLineHandler(id)}
-                    data-test-selector={`productLineFilter${id}`}
-                >
-                    {translate("Product Line")}: {productLineFacets?.find(o => o.id === id)?.name}
-                </Tag>
-            ))}
+            {brandFacets &&
+                selectedBrandIds?.map(id => (
+                    <Tag
+                        key={id}
+                        {...styles.filterTag}
+                        onDelete={() => clickRemoveBrandHandler(id)}
+                        data-test-selector={`brandFilter${id}`}
+                    >
+                        {translate("Brand")}: {brandFacets?.find(o => o.id === id)?.name}
+                    </Tag>
+                ))}
+            {productLineFacets &&
+                selectedProductLineIds?.map(id => (
+                    <Tag
+                        key={id}
+                        {...styles.filterTag}
+                        onDelete={() => clickRemoveProductLineHandler(id)}
+                        data-test-selector={`productLineFilter${id}`}
+                    >
+                        {translate("Product Line")}: {productLineFacets?.find(o => o.id === id)?.name}
+                    </Tag>
+                ))}
             {selectedCategoryId && (
                 <Tag
                     {...styles.filterTag}
@@ -221,39 +247,41 @@ const ProductListFilterList: FC<Props> = ({
                     {categoryFacets?.find(o => o.categoryId === selectedCategoryId)?.shortDescription}
                 </Tag>
             )}
-            {selectedPriceFilters?.map(id => (
-                <Tag
-                    key={id}
-                    {...styles.filterTag}
-                    onDelete={() => clickRemovePriceHandler(id)}
-                    data-test-selector={`priceFilter${id}`}
-                >
-                    {translate("Price")}:{" "}
-                    {formatPriceRangeFacet(
-                        priceFacets?.find(o => o.minimumPrice.toString() === id),
-                        currency,
-                    )}
-                </Tag>
-            ))}
-            {selectedAttributeValuesIds?.map(id => {
-                const attributeTypeFacet = attributeTypeFacets?.find(at =>
-                    at.attributeValueFacets?.find(av => av.attributeValueId === id),
-                );
-                const attributeValueFacet = attributeTypeFacet?.attributeValueFacets?.find(
-                    av => av.attributeValueId === id,
-                );
-
-                return (
+            {priceFacets &&
+                selectedPriceFilters?.map(id => (
                     <Tag
                         key={id}
                         {...styles.filterTag}
-                        onDelete={() => clickRemoveAttributeValueHandler(id)}
-                        data-test-selector={`attributeValueFilter${id}`}
+                        onDelete={() => clickRemovePriceHandler(id)}
+                        data-test-selector={`priceFilter${id}`}
                     >
-                        {attributeTypeFacet?.nameDisplay}: {attributeValueFacet?.valueDisplay}
+                        {translate("Price")}:{" "}
+                        {formatPriceRangeFacet(
+                            priceFacets?.find(o => o.minimumPrice.toString() === id),
+                            currency,
+                        )}
                     </Tag>
-                );
-            })}
+                ))}
+            {attributeTypeFacets &&
+                selectedAttributeValuesIds?.map(id => {
+                    const attributeTypeFacet = attributeTypeFacets?.find(at =>
+                        at.attributeValueFacets?.find(av => av.attributeValueId === id),
+                    );
+                    const attributeValueFacet = attributeTypeFacet?.attributeValueFacets?.find(
+                        av => av.attributeValueId === id,
+                    );
+
+                    return (
+                        <Tag
+                            key={id}
+                            {...styles.filterTag}
+                            onDelete={() => clickRemoveAttributeValueHandler(id)}
+                            data-test-selector={`attributeValueFilter${id}`}
+                        >
+                            {attributeTypeFacet?.nameDisplay}: {attributeValueFacet?.valueDisplay}
+                        </Tag>
+                    );
+                })}
             {anyActiveFilters && (
                 <Link
                     {...styles.clearAllLink}

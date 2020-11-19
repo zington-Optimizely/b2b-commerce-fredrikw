@@ -295,6 +295,7 @@ const FormField: React.ComponentType<FormFieldProps> = ({
                 htmlFor={inputId}
                 id={labelId || null}
                 disabled
+                data-test-selector={`${(otherProps as any)["data-test-selector"]}-label`}
             >
                 {label}
                 {required && !disabled && " *"}

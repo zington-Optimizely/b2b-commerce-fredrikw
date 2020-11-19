@@ -29,6 +29,7 @@ interface Props {
     products?: ProductModel[];
     productInfos?: ProductInfo[];
     pricingLoaded?: true;
+    errorMessage?: string;
 }
 
 type HandlerType = Handler<Parameter, Props>;
@@ -45,7 +46,11 @@ export const LoadProducts: HandlerType = async props => {
         return;
     }
 
-    props.products = await executeAwaitableHandlerChain(loadProducts, parameter, props);
+    try {
+        props.products = await executeAwaitableHandlerChain(loadProducts, parameter, props);
+    } catch (error) {
+        props.errorMessage = error;
+    }
 };
 
 export const LoadExtraProducts: HandlerType = async props => {
@@ -96,6 +101,7 @@ export const DispatchCompleteLoadPurchasedProducts: HandlerType = props => {
         type: "Components/ProductInfoLists/CompleteLoadProductInfoList",
         id: props.parameter.id,
         productInfos: props.productInfos ?? [],
+        errorMessage: props.errorMessage,
     });
 };
 
@@ -143,6 +149,12 @@ export const LoadRealTimeInventory: HandlerType = props => {
                     type: "Components/ProductInfoLists/CompleteLoadRealTimeInventory",
                     id: props.parameter.id,
                     realTimeInventory,
+                });
+            },
+            onError: () => {
+                props.dispatch({
+                    type: "Components/ProductInfoLists/FailedLoadRealTimeInventory",
+                    id: props.parameter.id,
                 });
             },
         }),

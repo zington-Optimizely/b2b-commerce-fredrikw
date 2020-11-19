@@ -135,11 +135,13 @@ const ProductDetailsPrimaryImage: React.FC<Props> = ({
                     useLargeImage={true}
                     extendedStyles={styles.fullPrimaryImage}
                 />
-                <ProductImageCarousel
-                    selectedIndex={selectedImageIndex}
-                    onSelectImage={selectImageHandler}
-                    extendedStyles={styles.imageCarousel}
-                />
+                {product.images && product.images.length > 1 && (
+                    <ProductImageCarousel
+                        selectedIndex={selectedImageIndex}
+                        onSelectImage={selectImageHandler}
+                        extendedStyles={styles.imageCarousel}
+                    />
+                )}
             </Modal>
         </>
     );

@@ -22,7 +22,7 @@ const mapDispatchToProps = {
 
 type Props = ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps> & PageProps;
 
-const MyListListsPage: React.FC<Props> = ({ id, wishListsDataView, loadWishLists }) => {
+const MyListsPage: React.FC<Props> = ({ id, wishListsDataView, loadWishLists }) => {
     React.useEffect(() => {
         // if this is undefined it means someone changed the filters and we haven't loaded the new collection yet
         if (!wishListsDataView.isLoading && !wishListsDataView.value) {
@@ -40,7 +40,7 @@ const MyListListsPage: React.FC<Props> = ({ id, wishListsDataView, loadWishLists
 };
 
 const pageModule: PageModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(MyListListsPage),
+    component: connect(mapStateToProps, mapDispatchToProps)(MyListsPage),
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,

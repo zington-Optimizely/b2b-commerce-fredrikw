@@ -19,6 +19,7 @@ import {
     getDealersDefaultLocation,
 } from "@insite/client-framework/Store/Data/Dealers/DealersSelectors";
 import loadDealers from "@insite/client-framework/Store/Data/Dealers/Handlers/LoadDealers";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import setParameter from "@insite/client-framework/Store/Pages/LocationFinder/Handlers/SetParameter";
 import translate from "@insite/client-framework/Translate";
 import { DealerModel, PaginationModel } from "@insite/client-framework/Types/ApiModels";
@@ -38,6 +39,7 @@ import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import React, { FC } from "react";
@@ -57,9 +59,10 @@ const mapStateToProps = (state: ApplicationState) => ({
     getDealersParameter: state.pages.locationFinder.getDealersParameter,
     dealersDataView: getDealersDataView(state, state.pages.locationFinder.getDealersParameter),
     dealersDefaultLocation: getDealersDefaultLocation(state),
+    dealerDetailsUrl: getPageLinkByPageType(state, "DealerDetailsPage")?.url,
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 export interface LocationFinderStyles {
     container?: GridContainerProps;
@@ -157,6 +160,8 @@ const LocationFinder: FC<Props> = ({
     getDealersParameter,
     loadDealers,
     setParameter,
+    history,
+    dealerDetailsUrl,
 }) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [distanceUnitOfMeasure, setDistanceUnitOfMeasure] = React.useState<DistanceUnitOfMeasure>("Imperial");
@@ -333,7 +338,7 @@ const LocationFinder: FC<Props> = ({
     });
 
     const handleLocationSelected = (dealer: LocationModel) => {
-        setSelectedDealer(dealer as DealerModel);
+        history.push(`${dealerDetailsUrl!}?id=${dealer.id}`);
     };
     const handleBackToResults = () => {
         setSelectedDealer(undefined);
@@ -460,7 +465,7 @@ const LocationFinder: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(LocationFinder),
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(LocationFinder)),
     definition: {
         allowedContexts: [CreateAccountPageContext],
         group: "Location Finder",

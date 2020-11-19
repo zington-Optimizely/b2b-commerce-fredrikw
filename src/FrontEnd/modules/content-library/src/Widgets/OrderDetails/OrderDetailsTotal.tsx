@@ -1,95 +1,118 @@
 import { OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import OrderTotalDisplay, { OrderTotalDisplayStyles } from "@insite/content-library/Components/OrderTotalDisplay";
 import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import getColor from "@insite/mobius/utilities/getColor";
+import { GridContainerProps } from "@insite/mobius/GridContainer";
+import { GridItemProps } from "@insite/mobius/GridItem";
+import { TypographyProps } from "@insite/mobius/Typography";
 import React, { FC, useContext } from "react";
-import { css } from "styled-components";
 
 export interface OrderDetailsTotalStyles {
+    orderTotal?: OrderTotalDisplayStyles;
+
+    /**
+     * @deprecated Use orderTotal.container instead.
+     */
     container?: GridContainerProps;
+    /**
+     * @deprecated Use orderTotal.subtotalLabelGridItem instead.
+     */
     subtotalLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.subtotalLabel instead.
+     */
     subtotalLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.subtotalValueGridItem instead.
+     */
     subtotalValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.subtotalValue instead.
+     */
     subtotalValue?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.discountsLabelGridItem instead.
+     */
     discountsLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.discountsLabel instead.
+     */
     discountsLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.discountsValueGridItem instead.
+     */
     discountsValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.discountsValue instead.
+     */
     discountsValue?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.shippingAndHandlingLabelGridItem instead.
+     */
     shippingAndHandlingLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.shippingAndHandlingLabel instead.
+     */
     shippingAndHandlingLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.shippingAndHandlingValueGridItem instead.
+     */
     shippingAndHandlingValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.shippingAndHandlingValue instead.
+     */
     shippingAndHandlingValue?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.otherChargesLabelGridItem instead.
+     */
     otherChargesLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.otherChargesLabel instead.
+     */
     otherChargesLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.otherChargesValueGridItem instead.
+     */
     otherChargesValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.otherChargesValue instead.
+     */
     otherChargesValue?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.taxLabelGridItem instead.
+     */
     taxLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.taxLabel instead.
+     */
     taxLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.taxValueGridItem instead.
+     */
     taxValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.taxValue instead.
+     */
     taxValue?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.totalLabelGridItem instead.
+     */
     totalLabelGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.totalLabel instead.
+     */
     totalLabel?: TypographyProps;
+    /**
+     * @deprecated Use orderTotal.totalValueGridItem instead.
+     */
     totalValueGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderTotal.totalValue instead.
+     */
     totalValue?: TypographyProps;
 }
 
-export const totalStyles: OrderDetailsTotalStyles = {
-    container: {
-        gap: 10,
-        css: css`
-            background-color: ${getColor("common.accent")};
-            padding: 20px;
-        `,
-    },
-    subtotalLabelGridItem: { width: 6 },
-    subtotalValueGridItem: { width: 6 },
-    subtotalValue: {
-        css: css`
-            margin-left: auto;
-        `,
-    },
-    discountsLabelGridItem: { width: 6 },
-    discountsValueGridItem: { width: 6 },
-    discountsValue: {
-        css: css`
-            margin-left: auto;
-        `,
-    },
-    shippingAndHandlingLabelGridItem: { width: 6 },
-    shippingAndHandlingValueGridItem: { width: 6 },
-    shippingAndHandlingValue: {
-        css: css`
-            margin-left: auto;
-        `,
-    },
-    otherChargesLabelGridItem: { width: 6 },
-    otherChargesValueGridItem: { width: 6 },
-    otherChargesValue: {
-        css: css`
-            margin-left: auto;
-        `,
-    },
-    taxLabelGridItem: { width: 6 },
-    taxValueGridItem: { width: 6 },
-    taxValue: {
-        css: css`
-            margin-left: auto;
-        `,
-    },
-    totalLabelGridItem: { width: 6 },
-    totalLabel: { weight: "bold" },
-    totalValueGridItem: { width: 6 },
-    totalValue: {
-        weight: "bold",
-        css: css`
-            margin-left: auto;
-        `,
-    },
-};
+export const totalStyles: OrderDetailsTotalStyles = {};
 
 const styles = totalStyles;
 
@@ -99,77 +122,7 @@ const OrderDetailsTotal: FC = () => {
         return null;
     }
 
-    return (
-        <GridContainer {...styles.container}>
-            <GridItem {...styles.subtotalLabelGridItem}>
-                <Typography>{translate("Subtotal")}</Typography>
-            </GridItem>
-            <GridItem {...styles.subtotalValueGridItem}>
-                <Typography {...styles.subtotalValue}>{order.orderSubTotalDisplay}</Typography>
-            </GridItem>
-            {order.discountAmount > 0 && (
-                <>
-                    <GridItem {...styles.discountsLabelGridItem}>
-                        <Typography {...styles.discountsLabel}>{translate("Discounts")}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.discountsValueGridItem}>
-                        <Typography {...styles.discountsValue}>{order.orderDiscountAmountDisplay}</Typography>
-                    </GridItem>
-                </>
-            )}
-            {order.shippingCharges + order.handlingCharges > 0 && (
-                <>
-                    <GridItem {...styles.shippingAndHandlingLabelGridItem}>
-                        <Typography {...styles.shippingAndHandlingLabel}>{translate("Shipping & Handling")}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.shippingAndHandlingValueGridItem}>
-                        <Typography {...styles.shippingAndHandlingValue}>{order.shippingAndHandlingDisplay}</Typography>
-                    </GridItem>
-                </>
-            )}
-            {order.otherCharges > 0 && (
-                <>
-                    <GridItem {...styles.otherChargesLabelGridItem}>
-                        <Typography {...styles.otherChargesLabel}>{translate("Other Charges")}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.otherChargesValueGridItem}>
-                        <Typography {...styles.otherChargesValue}>{order.otherChargesDisplay}</Typography>
-                    </GridItem>
-                </>
-            )}
-            {(!order.orderHistoryTaxes || order.orderHistoryTaxes.length === 0) && (
-                <>
-                    <GridItem {...styles.taxLabelGridItem}>
-                        <Typography {...styles.taxLabel}>{translate("Tax")}</Typography>
-                    </GridItem>
-                    <GridItem {...styles.taxValueGridItem}>
-                        <Typography {...styles.taxValue} data-test-selector="orderDetails_totalTaxDisplay">
-                            {order.totalTaxDisplay}
-                        </Typography>
-                    </GridItem>
-                </>
-            )}
-            {order.orderHistoryTaxes &&
-                order.orderHistoryTaxes.map(tax => (
-                    <>
-                        <GridItem {...styles.taxLabelGridItem}>
-                            <Typography>{tax.taxDescription || translate("Tax")}</Typography>
-                        </GridItem>
-                        <GridItem {...styles.taxValueGridItem}>
-                            <Typography {...styles.taxValue}>{tax.taxAmountDisplay}</Typography>
-                        </GridItem>
-                    </>
-                ))}
-            <GridItem {...styles.totalLabelGridItem}>
-                <Typography {...styles.totalLabel}>{translate("Total")}</Typography>
-            </GridItem>
-            <GridItem {...styles.totalValueGridItem}>
-                <Typography {...styles.totalValue} data-test-selector="orderDetail_orderGrandTotalDisplay">
-                    {order.orderGrandTotalDisplay}
-                </Typography>
-            </GridItem>
-        </GridContainer>
-    );
+    return <OrderTotalDisplay order={order} extendedStyles={styles.orderTotal || styles} />;
 };
 
 const widgetModule: WidgetModule = {

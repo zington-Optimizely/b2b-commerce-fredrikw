@@ -6,6 +6,7 @@ import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
 import LogoutWarningModal from "@insite/shell/Components/Modals/LogoutWarningModal";
 import PageEditor from "@insite/shell/Components/PageEditor/PageEditor";
 import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
+import ImportExportModal from "@insite/shell/Components/Shell/ImportExportModal";
 import MainHeader from "@insite/shell/Components/Shell/MainHeader";
 import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
 import StyleGuideEditor from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
@@ -78,6 +79,7 @@ const layout = (
             </MainArea>
             <LogoutWarningModal />
             <ErrorModal />
+            <ImportExportModal />
         </Toaster>
     </FlexWrapper>
 );
@@ -87,7 +89,6 @@ export default layout;
 export const SideBarStyle = styled.div<InjectableCss>`
     width: ${(props: ShellThemeProps) => props.theme.sideBarWidth};
     height: calc(100vh - 55px);
-    padding: 14px 35px 35px;
     overflow: auto;
     ${injectCss}
 `;

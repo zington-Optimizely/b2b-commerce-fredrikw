@@ -5,6 +5,7 @@ import BudgetManagementState from "@insite/client-framework/Store/Pages/BudgetMa
 import CartState from "@insite/client-framework/Store/Pages/Cart/CartState";
 import CheckoutReviewAndSubmitState from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitState";
 import CheckoutShippingState from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingState";
+import DealerDetailsState from "@insite/client-framework/Store/Pages/DealerDetails/DealerDetailsState";
 import InvoiceDetailsState from "@insite/client-framework/Store/Pages/InvoiceDetails/InvoiceDetailsState";
 import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHistory/InvoiceHistoryState";
 import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
@@ -15,11 +16,14 @@ import OrderApprovalListState from "@insite/client-framework/Store/Pages/OrderAp
 import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationState";
 import OrderDetailsState from "@insite/client-framework/Store/Pages/OrderDetails/OrderDetailsState";
 import OrderHistoryState from "@insite/client-framework/Store/Pages/OrderHistory/OrderHistoryState";
+import OrderStatusState from "@insite/client-framework/Store/Pages/OrderStatus/OrderStatusState";
 import OrderUploadState from "@insite/client-framework/Store/Pages/OrderUpload/OrderUploadState";
 import ProductDetailsState from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsState";
 import ProductListState from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import QuickOrderState from "@insite/client-framework/Store/Pages/QuickOrder/QuickOrderState";
 import RequestRmaState from "@insite/client-framework/Store/Pages/RequestRma/RequestRmaState";
+import RequisitionConfirmationState from "@insite/client-framework/Store/Pages/RequisitionConfirmation/RequisitionConfirmationState";
+import RequisitionsState from "@insite/client-framework/Store/Pages/Requisitions/RequisitionsState";
 import RfqConfirmationState from "@insite/client-framework/Store/Pages/RfqConfirmation/RfqConfirmationState";
 import RfqJobQuoteDetailsState from "@insite/client-framework/Store/Pages/RfqJobQuoteDetails/RfqJobQuoteDetailsState";
 import RfqJobQuotesState from "@insite/client-framework/Store/Pages/RfqJobQuotes/RfqJobQuotesState";
@@ -30,6 +34,7 @@ import SavedOrderDetailsState from "@insite/client-framework/Store/Pages/SavedOr
 import SavedOrderListState from "@insite/client-framework/Store/Pages/SavedOrderList/SavedOrderListState";
 import SavedPaymentsState from "@insite/client-framework/Store/Pages/SavedPayments/SavedPaymentsState";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
+import StaticListState from "@insite/client-framework/Store/Pages/StaticList/StaticListState";
 import UserListState from "@insite/client-framework/Store/Pages/UserList/UserListState";
 import UserSetupState from "@insite/client-framework/Store/Pages/UserSetup/UserSetupState";
 
@@ -41,6 +46,7 @@ export default interface PagesState {
     readonly cart: CartState;
     readonly checkoutReviewAndSubmit: CheckoutReviewAndSubmitState;
     readonly checkoutShipping: CheckoutShippingState;
+    readonly dealerDetails: DealerDetailsState;
     readonly invoiceDetails: InvoiceDetailsState;
     readonly invoiceHistory: InvoiceHistoryState;
     readonly locationFinder: LocationFinderState;
@@ -51,11 +57,14 @@ export default interface PagesState {
     readonly orderDetails: OrderDetailsState;
     readonly orderConfirmation: OrderConfirmationState;
     readonly orderHistory: OrderHistoryState;
+    readonly orderStatus: OrderStatusState;
     readonly orderUpload: OrderUploadState;
     readonly productDetails: ProductDetailsState;
     readonly productList: ProductListState;
-    readonly requestRma: RequestRmaState;
     readonly quickOrder: QuickOrderState;
+    readonly requestRma: RequestRmaState;
+    readonly requisitionConfirmation: RequisitionConfirmationState;
+    readonly requisitions: RequisitionsState;
     readonly rfqConfirmation: RfqConfirmationState;
     readonly rfqJobQuotes: RfqJobQuotesState;
     readonly rfqJobQuoteDetails: RfqJobQuoteDetailsState;
@@ -66,6 +75,7 @@ export default interface PagesState {
     readonly savedOrderDetails: SavedOrderDetailsState;
     readonly savedPayments: SavedPaymentsState;
     readonly signIn: SignInState;
+    readonly staticList: StaticListState;
     readonly userList: UserListState;
     readonly userSetup: UserSetupState;
 }

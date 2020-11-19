@@ -4,6 +4,7 @@ import translate from "@insite/client-framework/Translate";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps, GridWidths } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC } from "react";
 import { css } from "styled-components";
 
@@ -12,6 +13,7 @@ interface OwnProps {
     customerProductNumber?: string;
     manufacturerItem?: string;
     showCustomerName?: boolean;
+    showLabel?: boolean;
     showManufacturerItem?: boolean;
     extendedStyles?: ProductPartNumbersStyles;
 }
@@ -81,6 +83,7 @@ const ProductPartNumbers: FC<Props> = ({
     manufacturerItem,
     showCustomerName = true,
     showManufacturerItem = true,
+    showLabel = true,
     extendedStyles,
 }) => {
     const [styles] = React.useState(() => mergeToNew(productPartNumbersStyles, extendedStyles));
@@ -96,18 +99,35 @@ const ProductPartNumbers: FC<Props> = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem width={gridItemWidth as GridWidths} {...styles.erpNumberGridItem}>
-                <Typography {...styles.erpNumberLabelText}>{translate("Part #")}</Typography>
-                <Typography {...styles.erpNumberValueText}>{productNumber}</Typography>
+                {showLabel && <Typography {...styles.erpNumberLabelText}>{translate("Part #")}</Typography>}
+                {!showLabel && (
+                    <VisuallyHidden>
+                        <Typography {...styles.erpNumberLabelText}>{translate("Part #")}</Typography>
+                    </VisuallyHidden>
+                )}
+                <Typography {...styles.erpNumberValueText} data-test-selector="productNumber">
+                    {productNumber}
+                </Typography>
             </GridItem>
             {displayCustomerNumber && (
                 <GridItem width={gridItemWidth as GridWidths} {...styles.customerNameGridItem}>
-                    <Typography {...styles.customerNameLabelText}>{translate("My Part #")}</Typography>
+                    {showLabel && <Typography {...styles.customerNameLabelText}>{translate("My Part #")}</Typography>}
+                    {!showLabel && (
+                        <VisuallyHidden>
+                            <Typography {...styles.customerNameLabelText}>{translate("My Part #")}</Typography>
+                        </VisuallyHidden>
+                    )}
                     <Typography {...styles.customerNameValueText}>{customerProductNumber}</Typography>
                 </GridItem>
             )}
             {displayManufacturerNumber && (
                 <GridItem width={gridItemWidth as GridWidths} {...styles.manufacturerItemGridItem}>
-                    <Typography {...styles.manufacturerItemLabelText}>{translate("MFG #")} </Typography>
+                    {showLabel && <Typography {...styles.manufacturerItemLabelText}>{translate("MFG #")}</Typography>}
+                    {!showLabel && (
+                        <VisuallyHidden>
+                            <Typography {...styles.manufacturerItemLabelText}>{translate("MFG #")} </Typography>
+                        </VisuallyHidden>
+                    )}
                     <Typography {...styles.manufacturerItemValueText}>{manufacturerItem}</Typography>
                 </GridItem>
             )}

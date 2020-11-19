@@ -1,5 +1,5 @@
 import { ApiParameter, get, HasPagingParameters } from "@insite/client-framework/Services/ApiService";
-import { DealerCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { DealerCollectionModel, DealerModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface GetDealersApiParameter extends ApiParameter, HasPagingParameters {
     name: string;
@@ -8,8 +8,16 @@ export interface GetDealersApiParameter extends ApiParameter, HasPagingParameter
     longitude: number;
 }
 
+export interface GetDealerApiParameter extends ApiParameter {
+    id: string;
+}
+
 const dealersUrl = "/api/v1/dealers";
 
 export function getDealers(parameter: GetDealersApiParameter) {
     return get<DealerCollectionModel>(`${dealersUrl}/`, parameter);
+}
+
+export function getDealer(parameter: GetDealerApiParameter) {
+    return get<DealerModel>(`${dealersUrl}/${parameter.id}`);
 }

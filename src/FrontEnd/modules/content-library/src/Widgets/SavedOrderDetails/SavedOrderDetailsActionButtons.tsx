@@ -170,7 +170,7 @@ const SavedOrderDetailsActionButtons = ({
     const deleteClickHandler = () => {
         deleteOrder({
             onSuccess: () => {
-                toaster.addToast({ body: translate("Order #{0} Deleted", cart.orderNumber), messageType: "success" });
+                toaster.addToast({ body: translate("Order Deleted"), messageType: "success" });
                 history.push(savedOrderListPageLink.url);
             },
         });

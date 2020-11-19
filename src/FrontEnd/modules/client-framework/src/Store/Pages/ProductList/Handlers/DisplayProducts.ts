@@ -36,6 +36,7 @@ export interface DisplayProductsResult {
     productFilters: ProductFilters;
     isFiltered: boolean;
     unfilteredApiParameter?: GetProductCollectionApiV2Parameter;
+    filteredApiParameter?: GetProductCollectionApiV2Parameter;
     catalogPage?: CatalogPage;
 }
 
@@ -83,6 +84,7 @@ export const ParseQueryParameter: HandlerType = props => {
         sort,
         includeSuggestions,
         stockedItemsOnly,
+        previouslyPurchasedProducts,
         categoryId,
         brandIds,
         productLineIds,
@@ -106,6 +108,8 @@ export const ParseQueryParameter: HandlerType = props => {
         sort,
         includeSuggestions: includeSuggestions !== undefined ? includeSuggestions === "true" : undefined,
         stockedItemsOnly: stockedItemsOnly !== undefined ? stockedItemsOnly === "true" : undefined,
+        previouslyPurchasedProducts:
+            previouslyPurchasedProducts !== undefined ? previouslyPurchasedProducts === "true" : undefined,
         pageCategoryId: catalogPage?.categoryId,
         pageBrandId: catalogPage?.brandId || undefined,
         pageProductLineId: catalogPage?.productLineId || undefined,
@@ -195,8 +199,10 @@ export const GetUnfilteredProducts: HandlerType = async props => {
     delete unfilteredApiParameter.attributeValueIds;
     delete unfilteredApiParameter.categoryId;
     unfilteredApiParameter.stockedItemsOnly = false;
+    unfilteredApiParameter.previouslyPurchasedProducts = false;
 
     props.result.unfilteredApiParameter = unfilteredApiParameter;
+    props.result.filteredApiParameter = { ...props.apiParameter };
 
     const unfilteredProducts = getProductsDataView(props.getState(), unfilteredApiParameter).value;
 
@@ -299,6 +305,11 @@ export const LoadRealTimeInventory: HandlerType = props => {
                 props.dispatch({
                     type: "Pages/ProductList/CompleteLoadRealTimeInventory",
                     realTimeInventory,
+                });
+            },
+            onError: () => {
+                props.dispatch({
+                    type: "Pages/ProductList/FailedLoadRealTimeInventory",
                 });
             },
         }),

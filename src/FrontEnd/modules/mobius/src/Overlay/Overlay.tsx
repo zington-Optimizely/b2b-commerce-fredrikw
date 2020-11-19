@@ -66,6 +66,8 @@ export type OverlayComponentProps = MobiusStyledComponentProps<
         titleId: number | string;
         /** Id that will be used to describe the content of the overlay. */
         zIndexLevel: keyof ZIndex;
+        /** Defines if the scrim is click through when overlay is open. */
+        enableClickThrough?: boolean;
         /** Function that will be executed after the overlay is opened, can be used to interact with data. */
         onAfterOpen?(event: React.SyntheticEvent | null): void;
         /* Function that will be run after the overlay has closed. */

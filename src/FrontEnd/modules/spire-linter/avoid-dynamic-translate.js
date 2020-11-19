@@ -17,11 +17,11 @@ module.exports = {
             properties: {
                 generateTranslations: {
                     type: "boolean",
-                    default: false
-                }
+                    default: false,
+                },
             },
-            additionalProperties: false
-        }
+            additionalProperties: false,
+        },
     ],
     create(context) {
         const generateTranslations = (context.options[0] || {}).generateTranslations;

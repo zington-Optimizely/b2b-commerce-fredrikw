@@ -3,18 +3,32 @@ const setTimeout = require("timers").setTimeout;
 // this isn't supposed to be needed, but trying to use node's newish --enable-source-maps option wasn't working when running the production server
 const sourceMapSupport = require("source-map-support");
 const cluster = require("cluster");
-const os = require("os");
 const { server, logger, errorHandler } = require("./dist/server");
 
 sourceMapSupport.install();
 
-const { ISC_FRONT_END_PORT, ISC_ENABLE_COMPRESSION, ISC_ENABLE_CLUSTER } = process.env;
+const { ISC_FRONT_END_PORT, ISC_ENABLE_COMPRESSION, ISC_WORKER_COUNT } = process.env;
 let port;
 if (!ISC_FRONT_END_PORT) {
     logger.warn("ISC_FRONT_END_PORT environment variable not found, defaulting to 3000.");
     port = 3000;
 } else {
     port = parseInt(ISC_FRONT_END_PORT, 10);
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(port)) {
+        logger.warn("ISC_FRONT_END_PORT was not a number, defaulting to 3000.");
+        port = 3000;
+    }
+}
+
+let workerCount = 1;
+if (ISC_WORKER_COUNT) {
+    workerCount = parseInt(ISC_WORKER_COUNT, 10);
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(workerCount)) {
+        logger.warn("ISC_WORKER_COUNT was not a number, defaulting to 1.");
+        workerCount = 1;
+    }
 }
 
 const setupExpress = () => {
@@ -79,17 +93,16 @@ const setupExpress = () => {
     require("./start")(options);
 };
 
-if (cluster.isMaster && ISC_ENABLE_CLUSTER) {
-    let count = 0;
-    os.cpus().forEach(() => {
-        count++;
+if (cluster.isMaster && workerCount > 1) {
+    let count = workerCount;
+    for (let x = 0; x < workerCount; x++) {
         cluster.fork().once("listening", () => {
             count--;
-            if (!count) {
+            if (count === 0) {
                 logger.log(`Startup complete, listening on port ${port}.`);
             }
         });
-    });
+    }
 
     cluster.on("disconnect", worker => {
         logger.warn(`Worker ${worker.id} disconnected and has been replaced.`);

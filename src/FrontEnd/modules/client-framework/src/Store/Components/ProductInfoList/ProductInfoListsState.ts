@@ -5,4 +5,5 @@ export default interface ProductInfoListState {
     productInfoListById: SafeDictionary<{
         productInfoByProductId: SafeDictionary<ProductInfo>;
     }>;
+    errorMessageById: SafeDictionary<string>;
 }

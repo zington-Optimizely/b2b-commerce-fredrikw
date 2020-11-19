@@ -42,6 +42,12 @@ export const AddOrUpdateShipTo: HandlerType = async props => {
     })(props.dispatch, props.getState);
 };
 
+export const DispatchShipTosResetDataViews: HandlerType = props => {
+    props.dispatch({
+        type: "Data/ShipTos/ResetDataViews",
+    });
+};
+
 export const UpdateContext: HandlerType = props => {
     const state = props.getState();
     const { cartId } = state.pages.checkoutShipping;
@@ -129,6 +135,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
 
 const chain = [
     AddOrUpdateShipTo,
+    DispatchShipTosResetDataViews,
     UpdateContext,
     UpdateSession,
     UpdateCart,

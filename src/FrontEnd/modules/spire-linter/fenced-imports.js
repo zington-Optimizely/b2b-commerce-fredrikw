@@ -28,6 +28,11 @@ const validClientImports = [
     "whatwg-fetch",
     "xlsx",
 ];
+const validMobiusImports = [
+    ...validClientImports,
+    "enzyme",
+    "jest-styled-components",
+];
 const validServerImports = [
     "connect",
     "express",
@@ -46,17 +51,30 @@ const validServerImports = [
 const validShellImports = ["codemirror", "connected-react-router", "font-awesome", "froala-editor", "history"];
 const allowedModules = {
     blueprints: [validClientImports, ["@insite/content-library", "@insite/client-framework", "@insite/mobius"]],
+    "blueprints-shell": [
+        validClientImports,
+        ["@insite/content-library", "@insite/client-framework", "@insite/mobius", "@insite/shell-public"],
+    ],
     "client-framework": [validClientImports, ["@insite/client-framework", "@insite/mobius"]],
     "content-library": [validClientImports, ["@insite/content-library", "@insite/client-framework", "@insite/mobius"]],
-    mobius: [validClientImports, ["@insite/mobius"]],
+    mobius: [validMobiusImports, ["@insite/mobius"]],
     "server-framework": [
         validServerImports,
         ["@insite/server-framework", "@insite/client-framework", "@insite/mobius", "@insite/shell"],
     ],
-    shell: [validClientImports, validShellImports, ["@insite/shell", "@insite/client-framework", "@insite/mobius"]],
+    shell: [
+        validClientImports,
+        validShellImports,
+        ["@insite/shell", "@insite/client-framework", "@insite/mobius", "@insite/shell-public"],
+    ],
+    "shell-public": [
+        validClientImports,
+        ["@insite/content-library", "@insite/client-framework", "@insite/mobius", "@insite/shell-public"],
+    ],
 };
 
 let blueprints = undefined;
+let blueprintsShell = undefined;
 
 module.exports = {
     meta: {
@@ -154,6 +172,8 @@ module.exports = {
                     ? "@insite/content-library"
                     : theModule === "shell"
                     ? "@insite/shell"
+                    : theModule === "shell-public"
+                    ? "@insite/shell-public"
                     : theModule === "server-framework"
                     ? "@insite/server-framework"
                     : theModule === "mobius"
@@ -197,6 +217,11 @@ module.exports = {
             const blueprintsDirectory = path.resolve(rootDirectory, "modules/blueprints");
             blueprints = getDirectories(blueprintsDirectory).map(o => `@${o}`);
             allowedModules["blueprints"].push(blueprints);
+
+            const blueprintsShellDirectory = path.resolve(rootDirectory, "modules/blueprints-shell");
+            blueprintsShell = getDirectories(blueprintsShellDirectory).map(o => `@${o}`);
+            allowedModules["blueprints-shell"].push(blueprints);
+            allowedModules["blueprints-shell"].push(blueprintsShell);
         }
 
         function getDirectories(source) {

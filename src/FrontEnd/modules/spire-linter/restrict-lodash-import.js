@@ -16,7 +16,9 @@ module.exports = {
             if (importSource === "lodash") {
                 const sourceCode = context.getSourceCode();
 
-                const imports = node.specifiers.map(o => `import ${o.imported.name} from "lodash/${o.imported.name}"`).join("\n");
+                const imports = node.specifiers
+                    .map(o => `import ${o.imported.name} from "lodash/${o.imported.name}"`)
+                    .join("\n");
 
                 const nodeSourceCode = sourceCode.getText(node);
 
@@ -25,10 +27,7 @@ module.exports = {
                     messageId: "usePartialLodashImport",
                     data: { sourceCode: nodeSourceCode },
                     fix: function (fixer) {
-                        return fixer.replaceText(
-                            node,
-                            imports,
-                        );
+                        return fixer.replaceText(node, imports);
                     },
                 });
             }

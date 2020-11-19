@@ -39,6 +39,8 @@ export interface DrawerPresentationProps {
     size?: number;
     /** Defines the position of the drawer in the window. */
     position?: Position;
+    /** Defines if the scrim is click through when isOpen is true. */
+    enableClickThrough?: boolean;
     /** Custom transition styles for each drawer position
      * @themable */
     transitions?: {
@@ -271,6 +273,27 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
         }
     };
 
+    buildScrimClickThrough = () => {
+        const { enableClickThrough, size, position = "left" } = this.props;
+        const isVertical = !isHorizontal(position);
+
+        if (enableClickThrough) {
+            if (isVertical) {
+                const height = `height: ${size}px`;
+                if (position === "top") {
+                    return `${height}; bottom: initial;`;
+                }
+                return `${height}; top: initial;`;
+            }
+            const width = `width: ${size}px`;
+            if (position === "left") {
+                return `${width}; right: initial;`;
+            }
+            return `${width}; left: initial;`;
+        }
+        return "";
+    };
+
     setPosition = (translate: number, options: { mode?: "closing" } = {}) => {
         const { position = "left" } = this.props;
         const { mode = null } = options;
@@ -367,7 +390,16 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
         if (typeof window === "undefined") {
             return null;
         }
-        const { children, draggable, size, headline, position = "left", theme, ...otherProps } = this.props;
+        const {
+            children,
+            draggable,
+            size,
+            enableClickThrough,
+            headline,
+            position = "left",
+            theme,
+            ...otherProps
+        } = this.props;
 
         const { receivedIsOpen, isSwipedOpen, maybeSwiping } = this.state;
 
@@ -401,6 +433,7 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                 cssOverrides={{
                     ...cssOverrides,
                     scrim: css`
+                        ${this.buildScrimClickThrough()}
                         ${cssOverrides.scrim} ${draggable && (isHorizontal(position) ? "width: 0;" : "height: 0;")}
                     `,
                     contentContainer: drawerContainerStyles(cssOverrides.drawerContainer),
@@ -420,6 +453,7 @@ class Drawer extends React.Component<DrawerProps, DrawerState> {
                 persisted={!!draggable}
                 setContentRef={this.setContentRef}
                 setScrimRef={this.setScrimRef}
+                enableClickThrough={enableClickThrough}
             >
                 {draggable && !maybeSwiping && !isSwipedOpen && !receivedIsOpen ? null : (
                     <>

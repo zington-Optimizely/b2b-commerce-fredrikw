@@ -23,6 +23,7 @@ import { PaymentProfilesState } from "@insite/client-framework/Store/Data/Paymen
 import { ProductsState } from "@insite/client-framework/Store/Data/Products/ProductsState";
 import { PromotionsState } from "@insite/client-framework/Store/Data/Promotions/PromotionsState";
 import { QuotesState } from "@insite/client-framework/Store/Data/Quotes/QuotesState";
+import { RequisitionsState } from "@insite/client-framework/Store/Data/Requisitions/RequisitionsState";
 import { ShipTosState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosState";
 import { WarehousesState } from "@insite/client-framework/Store/Data/Warehouses/WarehousesState";
 import { WishListLinesState } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesState";
@@ -64,6 +65,7 @@ export default interface DataState {
     readonly countries: CountriesState;
     readonly dealers: DealersState;
     readonly invoices: InvoicesState;
+    readonly jobQuotes: JobQuotesState;
     readonly messages: MessagesState;
     readonly orderApprovals: OrderApprovalsState;
     readonly orders: OrdersState;
@@ -73,7 +75,7 @@ export default interface DataState {
     readonly products: ProductsState;
     readonly promotions: PromotionsState;
     readonly quotes: QuotesState;
-    readonly jobQuotes: JobQuotesState;
+    readonly requisitions: RequisitionsState;
     readonly shipTos: ShipTosState;
     readonly warehouses: WarehousesState;
     readonly wishLists: WishListsState;

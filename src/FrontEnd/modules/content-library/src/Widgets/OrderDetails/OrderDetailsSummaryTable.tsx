@@ -1,442 +1,228 @@
-import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
-import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
-import addToWishList, {
-    AddToWishListParameter,
-} from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
-import translate from "@insite/client-framework/Translate";
-import { OrderLineModel, OrderModel, WishListSettingsModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import CardContainer from "@insite/content-library/Components/CardContainer";
-import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
-import ProductDescription, { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
-import SmallHeadingAndText from "@insite/content-library/Components/SmallHeadingAndText";
+import OrderLinesList, { OrderLinesListStyles } from "@insite/content-library/Components/OrderLinesList";
+import { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
+import { ProductDescriptionStyles } from "@insite/content-library/Components/ProductDescription";
 import { OrderDetailsPageContext } from "@insite/content-library/Pages/OrderDetailsPage";
-import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
-import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
-import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
-import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
-import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
-import Link, { LinkPresentationProps } from "@insite/mobius/Link";
-import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import { ButtonPresentationProps } from "@insite/mobius/Button";
+import { ClickablePresentationProps } from "@insite/mobius/Clickable";
+import { GridContainerProps } from "@insite/mobius/GridContainer";
+import { GridItemProps } from "@insite/mobius/GridItem";
+import { HiddenProps } from "@insite/mobius/Hidden";
+import { LazyImageProps } from "@insite/mobius/LazyImage";
+import { LinkPresentationProps } from "@insite/mobius/Link";
+import { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
-import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
+import { connect } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     order: getOrderState(state, state.pages.orderDetails.orderNumber),
-    wishListSettings: getSettingsCollection(state).wishListSettings,
 });
 
-const mapDispatchToProps = {
-    setAddToListModalIsOpen,
-    addToWishList,
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 
 export interface OrderLineNotesStyles {
+    /**
+     * @deprecated Use orderLines.orderLineNotes.typographyStyles instead.
+     */
     typographyStyles?: TypographyProps;
+    /**
+     * @deprecated Use orderLines.orderLineNotes.gridItemStyles instead.
+     */
     gridItemStyles?: GridItemProps;
 }
 
 export interface OrderDetailSummaryTableStyles {
+    orderLines?: OrderLinesListStyles;
+
+    /**
+     * @deprecated Use orderLines.gridContainer instead.
+     */
     gridContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.titleText instead.
+     */
     titleText?: TypographyProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardContainer instead.
+     */
     orderLineCardContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardImageGridItem instead.
+     */
     orderLineCardImageGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardImage instead.
+     */
     orderLineCardImage?: LazyImageProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardInfoGridItem instead.
+     */
     orderLineCardInfoGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardInfoGridContainer instead.
+     */
     orderLineCardInfoGridContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardAddToListGridItem instead.
+     */
     orderLineCardAddToListGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardActionsWide instead.
+     */
     orderLineCardActionsWide?: HiddenProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardActionsNarrow instead.
+     */
     orderLineCardActionsNarrow?: HiddenProps;
+    /**
+     * @deprecated Use orderLines.overflowMenu instead.
+     */
     overflowMenu?: OverflowMenuPresentationProps;
+    /**
+     * @deprecated Use orderLines.addToListClickable instead.
+     */
     addToListClickable?: ClickablePresentationProps;
+    /**
+     * @deprecated Use orderLines.orderLineCardAddToListButton instead.
+     */
     orderLineCardAddToListButton?: ButtonPresentationProps;
+    /**
+     * @deprecated Use orderLines.productBrandStyles instead.
+     */
     productBrandStyles?: ProductBrandStyles;
+    /**
+     * @deprecated Use orderLines.productInfoLink instead.
+     */
     productInfoLink?: LinkPresentationProps;
+    /**
+     * @deprecated Use orderLines.productInfoDescription instead.
+     */
     productInfoDescription?: TypographyProps;
+    /**
+     * @deprecated Use orderLines.productInfoSectionOptionsGridItem instead.
+     */
     productInfoSectionOptionsGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoSectionOptionsList instead.
+     */
     productInfoSectionOptionsList?: InjectableCss;
+    /**
+     * @deprecated Use orderLines.productInfoSectionOptionsListItem instead.
+     */
     productInfoSectionOptionsListItem?: InjectableCss;
+    /**
+     * @deprecated Use orderLines.productInfoPartNumbersGridItem instead.
+     */
     productInfoPartNumbersGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoSectionOptionsText instead.
+     */
     productInfoSectionOptionsText?: InjectableCss;
+    /**
+     * @deprecated Use orderLines.productInfoGridItem instead.
+     */
     productInfoGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoGridContainer instead.
+     */
     productInfoGridContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.productInfoBrandDescriptionGridItem instead.
+     */
     productInfoBrandDescriptionGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoBrandDescriptionGridContainer instead.
+     */
     productInfoBrandDescriptionGridContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.productInfoBrandGridItem instead.
+     */
     productInfoBrandGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoDescriptionGridItem instead.
+     */
     productInfoDescriptionGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productDescriptionStyles instead.
+     */
     productDescriptionStyles?: ProductDescriptionStyles;
+    /**
+     * @deprecated Use orderLines.productInfoErpNumberGridItem instead.
+     */
     productInfoErpNumberGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoManufacturerItemGridItem instead.
+     */
     productInfoManufacturerItemGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoCustomerProductGridItem instead.
+     */
     productInfoCustomerProductGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineInfoPromotionGridItem instead.
+     */
     orderLineInfoPromotionGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineInfoPromotionList instead.
+     */
     orderLineInfoPromotionList?: InjectableCss;
+    /**
+     * @deprecated Use orderLines.orderLineInfoPromotionText instead.
+     */
     orderLineInfoPromotionText?: TypographyProps;
+    /**
+     * @deprecated Use orderLines.orderLineInfoGridItem instead.
+     */
     orderLineInfoGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineInfoGridContainer instead.
+     */
     orderLineInfoGridContainer?: GridContainerProps;
+    /**
+     * @deprecated Use orderLines.orderLinePriceGridItem instead.
+     */
     orderLinePriceGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoQtyOrderedGridItem instead.
+     */
     productInfoQtyOrderedGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoQtyShippedGridItem instead.
+     */
     productInfoQtyShippedGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.productInfoSubtotalGridItem instead.
+     */
     productInfoSubtotalGridItem?: GridItemProps;
+    /**
+     * @deprecated Use orderLines.orderLineNotes instead.
+     */
     orderLineNotes?: OrderLineNotesStyles;
+    /**
+     * @deprecated Use orderLines.productInfoTotalsGridItem instead.
+     */
     productInfoTotalsGridItem?: GridItemProps;
 }
 
-export const summaryTableStyles: OrderDetailSummaryTableStyles = {
-    titleText: {
-        variant: "h5",
-        as: "h2",
-        css: css`
-            @media print {
-                font-size: 15px;
-                padding-top: 15px;
-                margin-bottom: 5px;
-            }
-            padding-top: 30px;
-            margin-bottom: 0.5rem;
-        `,
-    },
-    orderLineCardImageGridItem: {
-        width: 2,
-        css: css`
-            @media print {
-                max-height: 83px;
-                max-width: 83px;
-                padding: 0;
-            }
-        `,
-    },
-    orderLineCardInfoGridItem: {
-        width: [8, 8, 7, 8, 8],
-        printWidth: 10,
-    },
-    orderLineCardInfoGridContainer: {
-        gap: 10,
-    },
-    orderLineCardAddToListGridItem: {
-        width: [2, 2, 3, 2, 2],
-        printWidth: 0,
-    },
-    orderLineCardActionsWide: {
-        above: "sm",
-    },
-    orderLineCardActionsNarrow: {
-        below: "md",
-    },
-    productInfoSectionOptionsGridItem: {
-        width: 12,
-    },
-    productInfoPartNumbersGridItem: {
-        width: 12,
-    },
-    productInfoGridItem: {
-        width: [12, 12, 12, 6, 6],
-        printWidth: 6,
-    },
-    productInfoGridContainer: {
-        gap: 5,
-    },
-    productInfoBrandDescriptionGridItem: {
-        width: 12,
-    },
-    productInfoBrandDescriptionGridContainer: {
-        gap: 5,
-    },
-    productInfoBrandGridItem: {
-        width: 12,
-    },
-    productInfoDescriptionGridItem: {
-        width: 12,
-    },
-    productInfoErpNumberGridItem: {
-        width: [6, 6, 4, 6, 6],
-    },
-    productInfoManufacturerItemGridItem: {
-        width: [6, 6, 4, 6, 6],
-    },
-    productInfoCustomerProductGridItem: {
-        width: [12, 12, 4, 12, 12],
-        printWidth: 12,
-    },
-    orderLineInfoPromotionGridItem: {
-        width: 12,
-    },
-    orderLineInfoPromotionText: {
-        size: 12,
-        italic: true,
-    },
-    orderLineInfoGridItem: {
-        width: [12, 12, 12, 6, 6],
-        printWidth: 6,
-    },
-    orderLineInfoGridContainer: {
-        gap: 5,
-    },
-    orderLinePriceGridItem: {
-        width: 12,
-    },
-    productInfoQtyOrderedGridItem: {
-        width: [6, 6, 4, 4, 4],
-        printWidth: 4,
-    },
-    productInfoQtyShippedGridItem: {
-        width: [6, 6, 4, 4, 4],
-        printWidth: 4,
-    },
-    productInfoSubtotalGridItem: {
-        width: [12, 12, 4, 4, 4],
-        printWidth: 4,
-    },
-    orderLineNotes: {
-        gridItemStyles: {
-            width: 12,
-        },
-    },
-    productInfoTotalsGridItem: {
-        width: 12,
-    },
-};
-
-const OrderLineProductInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
-    let sectionOptions: JSX.Element[] = [];
-    if (orderLine.sectionOptions && orderLine.sectionOptions) {
-        sectionOptions = orderLine.sectionOptions.map(option => (
-            <li {...styles.productInfoSectionOptionsListItem} key={option.sectionOptionId.toString()}>
-                <Typography {...styles.productInfoSectionOptionsText}>
-                    {option.sectionName}: {option.optionName}
-                </Typography>
-            </li>
-        ));
-    }
-
-    return (
-        <GridItem {...styles.productInfoGridItem}>
-            <GridContainer {...styles.productInfoGridContainer}>
-                <GridItem {...styles.productInfoBrandDescriptionGridItem}>
-                    <GridContainer {...styles.productInfoBrandDescriptionGridContainer}>
-                        {orderLine.brand && (
-                            <GridItem {...styles.productInfoBrandGridItem}>
-                                <ProductBrand brand={orderLine.brand} extendedStyles={styles.productBrandStyles} />
-                            </GridItem>
-                        )}
-                        <GridItem {...styles.productInfoDescriptionGridItem}>
-                            <ProductDescription product={orderLine} extendedStyles={styles.productDescriptionStyles} />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-                {sectionOptions.length > 0 && (
-                    <GridItem {...styles.productInfoSectionOptionsGridItem}>
-                        <ul {...styles.productInfoSectionOptionsList}>{sectionOptions}</ul>
-                    </GridItem>
-                )}
-                <GridItem {...styles.productInfoPartNumbersGridItem}>
-                    <GridContainer>
-                        <GridItem {...styles.productInfoErpNumberGridItem}>
-                            <SmallHeadingAndText heading="Item #" text={orderLine.productErpNumber} />
-                        </GridItem>
-                        {orderLine.manufacturerItem && (
-                            <GridItem {...styles.productInfoManufacturerItemGridItem}>
-                                <SmallHeadingAndText heading="MFG #" text={orderLine.manufacturerItem} />
-                            </GridItem>
-                        )}
-                        {orderLine.customerProductNumber && (
-                            <GridItem {...styles.productInfoCustomerProductGridItem}>
-                                <SmallHeadingAndText heading="My Part #" text={orderLine.customerProductNumber} />
-                            </GridItem>
-                        )}
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        </GridItem>
-    );
-};
-
-const OrderLineInfo = ({ orderLine, order }: { orderLine: OrderLineModel; order: OrderModel }) => {
-    let promotions: JSX.Element[] = [];
-    if (order.orderPromotions) {
-        promotions = order.orderPromotions
-            .filter(promotion => promotion.orderHistoryLineId === orderLine.id)
-            .map(promotion => (
-                <Typography {...styles.orderLineInfoPromotionText} as="li" key={promotion.id}>
-                    {promotion.name}
-                </Typography>
-            ));
-    }
-
-    return (
-        <GridItem {...styles.orderLineInfoGridItem}>
-            <GridContainer {...styles.orderLineInfoGridContainer}>
-                <GridItem {...styles.orderLinePriceGridItem}>
-                    <SmallHeadingAndText
-                        heading={translate("Price")}
-                        text={
-                            orderLine.unitPriceDisplay +
-                            (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")
-                        }
-                    />
-                </GridItem>
-                {promotions.length > 0 && (
-                    <GridItem {...styles.orderLineInfoPromotionList}>
-                        <ul {...styles.orderLineInfoPromotionList}>{promotions}</ul>
-                    </GridItem>
-                )}
-                <GridItem {...styles.productInfoTotalsGridItem}>
-                    <GridContainer>
-                        <GridItem {...styles.productInfoQtyOrderedGridItem}>
-                            <SmallHeadingAndText heading={translate("Qty Ordered")} text={`${orderLine.qtyOrdered}`} />
-                        </GridItem>
-                        <GridItem {...styles.productInfoQtyShippedGridItem}>
-                            <SmallHeadingAndText heading={translate("Qty Shipped")} text={`${orderLine.qtyShipped}`} />
-                        </GridItem>
-                        <GridItem {...styles.productInfoSubtotalGridItem}>
-                            <SmallHeadingAndText
-                                heading={translate("Subtotal")}
-                                text={orderLine.extendedUnitNetPriceDisplay}
-                            />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
-            </GridContainer>
-        </GridItem>
-    );
-};
-
-const OrderLineNotes = ({
-    orderLine,
-    extendedStyles,
-}: {
-    orderLine: OrderLineModel;
-    extendedStyles?: OrderLineNotesStyles;
-}) => {
-    return orderLine.notes ? (
-        <GridItem {...extendedStyles?.gridItemStyles}>
-            <Typography {...extendedStyles?.typographyStyles}>{orderLine.notes}</Typography>
-        </GridItem>
-    ) : null;
-};
-
-const OrderLineCard = (props: {
-    orderLine: OrderLineModel;
-    order: OrderModel;
-    wishListSettings?: WishListSettingsModel;
-    setAddToListModalIsOpen: (parameter: {
-        productInfos?: Omit<ProductInfo, "productDetailPath">[];
-        modalIsOpen: boolean;
-    }) => void;
-    addToWishList: (parameter: AddToWishListParameter) => void;
-}) => {
-    const { orderLine, order, wishListSettings, setAddToListModalIsOpen, addToWishList } = props;
-    const toasterContext = React.useContext(ToasterContext);
-    const addToListClickHandler = () => {
-        if (!wishListSettings) {
-            return;
-        }
-
-        const productInfo = {
-            productId: orderLine.productId,
-            qtyOrdered: orderLine.qtyOrdered,
-            unitOfMeasure: orderLine.unitOfMeasure,
-        };
-        if (!wishListSettings.allowMultipleWishLists) {
-            addToWishList({
-                productInfos: [productInfo],
-                onSuccess: () => {
-                    toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
-                },
-            });
-            return;
-        }
-
-        setAddToListModalIsOpen({ modalIsOpen: true, productInfos: [productInfo] });
-    };
-
-    return (
-        <GridContainer data-test-selector={`orderLineCard${orderLine.productId}`}>
-            <GridItem {...styles.orderLineCardImageGridItem}>
-                {orderLine.productUri && orderLine.isActiveProduct && (
-                    <Link href={orderLine.productUri}>
-                        <LazyImage {...styles.orderLineCardImage} src={orderLine.mediumImagePath} />
-                    </Link>
-                )}
-            </GridItem>
-            <GridItem {...styles.orderLineCardInfoGridItem}>
-                <GridContainer {...styles.orderLineCardInfoGridContainer}>
-                    <OrderLineProductInfo orderLine={orderLine} />
-                    <OrderLineInfo orderLine={orderLine} order={order} />
-                    <OrderLineNotes extendedStyles={styles.orderLineNotes} orderLine={orderLine} />
-                </GridContainer>
-            </GridItem>
-            <GridItem {...styles.orderLineCardAddToListGridItem}>
-                <Hidden {...styles.orderLineCardActionsWide}>
-                    {orderLine.canAddToWishlist && (
-                        <OverflowMenu position="end" {...styles.overflowMenu}>
-                            <Clickable {...styles.addToListClickable} onClick={addToListClickHandler}>
-                                {translate("Add to List")}
-                            </Clickable>
-                        </OverflowMenu>
-                    )}
-                </Hidden>
-                <Hidden {...styles.orderLineCardActionsNarrow}>
-                    {orderLine.canAddToWishlist && (
-                        <Button {...styles.orderLineCardAddToListButton} onClick={addToListClickHandler}>
-                            {translate("Add to List")}
-                        </Button>
-                    )}
-                </Hidden>
-            </GridItem>
-        </GridContainer>
-    );
-};
+export const summaryTableStyles: OrderDetailSummaryTableStyles = {};
 
 const styles = summaryTableStyles;
 
-const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({
-    order,
-    wishListSettings,
-    setAddToListModalIsOpen,
-    addToWishList,
-}) => {
+const OrderDetailsSummaryTable: React.FunctionComponent<Props> = ({ order }) => {
     if (!order.value || !order.value.orderLines) {
         return null;
     }
 
-    return (
-        <GridContainer {...styles.gridContainer}>
-            <GridItem width={12}>
-                <Typography {...styles.titleText}>{translate("Order Summary")}</Typography>
-            </GridItem>
-            {order.value.orderLines.map(orderLine => (
-                <CardContainer {...styles.orderLineCardContainer} key={orderLine.id}>
-                    <GridItem width={12}>
-                        <OrderLineCard
-                            orderLine={orderLine}
-                            order={order.value!}
-                            wishListSettings={wishListSettings}
-                            setAddToListModalIsOpen={setAddToListModalIsOpen}
-                            addToWishList={addToWishList}
-                        />
-                    </GridItem>
-                </CardContainer>
-            ))}
-        </GridContainer>
-    );
+    return <OrderLinesList order={order.value} extendedStyles={styles.orderLines || styles} />;
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(OrderDetailsSummaryTable),
+    component: connect(mapStateToProps)(OrderDetailsSummaryTable),
     definition: {
         allowedContexts: [OrderDetailsPageContext],
         group: "Order Details",

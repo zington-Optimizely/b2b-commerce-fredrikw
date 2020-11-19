@@ -9,8 +9,8 @@ import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
-import { adminAccessTokenName } from "@insite/shell/Store/BearerToken";
-import { LanguageModel, PersonaModel, ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
+import { adminAccessTokenName } from "@insite/shell/Services/AccessTokenService";
+import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
 import { Draft } from "immer";
 
 const initialState: ShellContextState = {

@@ -370,7 +370,7 @@ module insite.catalog {
             this.getProductData(<IProductCollectionParameters>{
                 categoryId: this.category ? this.category.id : null,
                 pageSize: this.pageSize || (this.products.pagination ? this.products.pagination.pageSize : null),
-                sort: this.sort || this.$localStorage.get("productListSortType", ""),
+                sort: this.sort || this.$localStorage.get("productListSortType", null),
                 page: this.page,
                 attributeValueIds: this.attributeValueIds,
                 brandIds: this.brandIds,
@@ -435,6 +435,7 @@ module insite.catalog {
             // got product data
             if (productCollection.exactMatch && !this.previouslyPurchasedProducts) {
                 this.searchService.addSearchHistory(this.query, this.searchHistoryLimit, this.includeSuggestions.toLowerCase() === "true");
+                this.$location.replace();
                 const productDetailUrl = productCollection.products[0].productDetailUrl;
                 if (productDetailUrl.indexOf("?") !== -1) {
                     this.coreService.redirectToPath(`${productDetailUrl}&criteria=${encodeURIComponent(params.query)}`);
@@ -521,7 +522,7 @@ module insite.catalog {
                 }
             }
 
-            if (!Object.keys(searchParams).filter(o => o !== "pageSize" && o !== "sort").length) {
+            if (!Object.keys(searchParams).filter(o => o !== "pageSize" && o !== "sort" && o !== "criteria").length) {
                 searchParams.pageSize = null;
                 searchParams.sort = null;
             }

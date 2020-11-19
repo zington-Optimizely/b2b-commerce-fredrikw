@@ -1,4 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import getFileExtension from "@insite/client-framework/Common/Utilities/getFileExtension";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import batchLoadProducts from "@insite/client-framework/Store/Components/OrderUpload/Handlers/BatchLoadProducts";
@@ -293,11 +294,6 @@ const OrderUpload: FC<Props> = ({
             uploadProducts();
         }
     }, [continueUpload]);
-
-    const getFileExtension = (fileName: string) => {
-        const splitFileName = fileName.split(".");
-        return splitFileName.length > 0 ? splitFileName[splitFileName.length - 1].toLowerCase() : "";
-    };
 
     const fileChangeHandler = (event: React.ChangeEvent<any>) => {
         const uploadedFile = event.target.files[0];

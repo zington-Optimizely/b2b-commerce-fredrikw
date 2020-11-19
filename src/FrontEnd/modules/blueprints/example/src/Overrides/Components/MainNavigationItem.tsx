@@ -21,17 +21,6 @@ class MainNavigationItem extends React.Component<ThemeProps<BaseTheme> & MainNav
     element = React.createRef<HTMLElement>();
     popover = React.createRef<HTMLUListElement>();
 
-    UNSAFE_componentWillMount(): void {
-        setMainNavigation({
-            close: () => {
-                this.closePopover();
-            },
-            openMenu: (index: number) => {
-                this.openPopover();
-            },
-        });
-    }
-
     closePopover = () => {
         this.popover.current && (this.popover.current! as any).closePopover();
     };

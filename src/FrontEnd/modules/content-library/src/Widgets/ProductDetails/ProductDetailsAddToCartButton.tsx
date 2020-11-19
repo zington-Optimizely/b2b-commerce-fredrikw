@@ -13,7 +13,7 @@ import { css } from "styled-components";
 type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
-    canAddToCart: canAddToCart(state, ownProps.product),
+    canAddToCart: canAddToCart(state, ownProps.product, ownProps.productInfo),
 });
 
 export interface ProductDetailsAddToCartButtonStyles {

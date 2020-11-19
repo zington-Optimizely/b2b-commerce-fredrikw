@@ -9,9 +9,9 @@ import ProductSelection from "@insite/shell/Components/PageEditor/ProductSelecti
 import PublishDropDown from "@insite/shell/Components/PageEditor/PublishDropDown";
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderPublishStatus from "@insite/shell/Components/Shell/HeaderPublishStatus";
-import { LoadedPageDefinition } from "@insite/shell/DefinitionLoader";
+import { LoadedPageDefinition } from "@insite/shell/DefinitionTypes";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
-import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
 import {
     editPageOptions,
     toggleShowGeneratedPageTemplate,
@@ -72,18 +72,18 @@ class Header extends React.Component<Props> {
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
                 <Icon src={Spacer} color="#999" />
-                <Icon src={Calendar} size={20} color="white" />
+                <Icon src={Calendar} size={20} color={shellTheme.colors.text.accent} />
                 <HeaderPublishStatus />
                 {contentMode === "Editing" && (
                     <>
                         <Icon src={Spacer} color="#999" />
                         {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
                             <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
-                                <Icon src={Edit} size={20} color="#fff" />
+                                <Icon src={Edit} size={20} color={shellTheme.colors.text.accent} />
                             </PageHeaderButton>
                         )}
                         <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}>
-                            <DebugMenu color1="#fff" size={16} />
+                            <DebugMenu color1={shellTheme.colors.text.accent} size={16} />
                         </PageHeaderButton>
                     </>
                 )}
@@ -105,19 +105,19 @@ class Header extends React.Component<Props> {
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 const PageHeaderStyle = styled.div`
-    background-color: ${(props: ShellThemeProps) => props.theme.colors.common.accentContrast};
+    background-color: ${(props: ShellThemeProps) => props.theme.colors.common.background};
     height: 48px;
     display: flex;
     align-items: center;
 `;
 
 const PageHeaderTitle = styled.h2`
-    color: ${(props: ShellThemeProps) => props.theme.colors.common.accent};
+    color: ${(props: ShellThemeProps) => props.theme.colors.text.accent};
     align-content: center;
     padding-left: 16px;
     font-size: 18px;
     line-height: 21px;
-    font-weight: 500;
+    font-weight: bold;
 `;
 
 const PageHeaderButton = styled.button<{ active?: boolean }>`
@@ -133,7 +133,7 @@ const PageHeaderButton = styled.button<{ active?: boolean }>`
     position: relative;
     font-family: ${(props: ShellThemeProps) => props.theme.typography.body.fontFamily};
     &:hover {
-        background-color: #000;
+        background-color: #f4f4f4;
     }
 `;
 

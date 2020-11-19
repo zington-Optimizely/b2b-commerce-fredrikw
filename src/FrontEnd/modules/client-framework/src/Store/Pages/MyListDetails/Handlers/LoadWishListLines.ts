@@ -127,14 +127,23 @@ export const LoadRealTimeInventory: HandlerType = props => {
         loadRealTimeInventory({
             productIds: wishListLineIds.map(o => productInfosByWishListLineId[o]!.productId),
             onComplete: realTimeInventoryProps => {
-                realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.forEach(inventory => {
+                if (realTimeInventoryProps?.error) {
                     wishListLineIds.forEach(o => {
                         const productInfo = productInfosByWishListLineId[o]!;
-                        if (productInfo.productId === inventory.productId) {
-                            productInfo.inventory = inventory;
+                        if (productInfo) {
+                            productInfo.failedToLoadInventory = true;
                         }
                     });
-                });
+                } else {
+                    realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.forEach(inventory => {
+                        wishListLineIds.forEach(o => {
+                            const productInfo = productInfosByWishListLineId[o]!;
+                            if (productInfo.productId === inventory.productId) {
+                                productInfo.inventory = inventory;
+                            }
+                        });
+                    });
+                }
 
                 props.inventoryLoaded = true;
             },

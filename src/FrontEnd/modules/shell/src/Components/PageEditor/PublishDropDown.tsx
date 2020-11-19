@@ -110,7 +110,7 @@ const InlinePopUpInnerWrapper = styled.div`
     background: #fff;
     box-shadow: ${props => props.theme.shadows[1]};
     border-radius: 0 0 4px 4px;
-    width: 90px;
+    width: 100px;
     right: 0;
     padding: 3px 10px;
     font-size: 14px;
@@ -125,15 +125,29 @@ const InlinePopUpInnerWrapper = styled.div`
 type HasExpanded = { expanded?: boolean };
 
 const PublishButton = styled(Button)<HasExpanded>`
+    background: ${({ theme }) => theme.colors.common.background};
+    color: ${({ theme }) => theme.colors.primary.main};
     height: 100%;
     padding: 6px 10px;
+
+    &:hover {
+        background-color: #1456f140;
+    }
 `;
 
 const PublishDropDownButton = styled(Button)<HasExpanded>`
-    background: #e3971a;
+    background: ${({ theme }) => theme.colors.common.background};
     border: 0;
     border-radius: ${props => (props.expanded ? "0 4px 0 0" : "0 4px 4px 0")};
     height: 27px;
     margin: 1px 0 1px 0;
     padding: 0 1px;
+    span {
+        svg {
+            color: ${({ theme }) => theme.colors.text.accent};
+        }
+    }
+    &:hover {
+        background: ${({ theme }) => theme.colors.common.background};
+    }
 `;

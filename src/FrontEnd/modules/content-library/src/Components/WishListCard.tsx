@@ -188,7 +188,7 @@ const WishListCard: React.FunctionComponent<Props> = ({
         lastUpdatedDisplay += ` ${translate("by")} ${wishList.updatedByDisplayName}`;
     }
 
-    const canAddToCart = wishList.canAddToCart && wishList.wishListLinesCount && wishList.wishListLinesCount > 0;
+    const canAddToCart = wishList.canAddToCart && !!wishList.wishListLinesCount && wishList.wishListLinesCount > 0;
 
     const [styles] = React.useState(() => mergeToNew(wishListCardStyles, extendedStyles));
 

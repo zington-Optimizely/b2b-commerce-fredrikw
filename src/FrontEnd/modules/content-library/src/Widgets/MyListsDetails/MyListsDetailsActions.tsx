@@ -3,10 +3,14 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setShareListModalIsOpen from "@insite/client-framework/Store/Components/ShareListModal/Handlers/SetShareListModalIsOpen";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
+import {
+    canAddWishListLineToCart,
+    getWishListLinesDataView,
+} from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import addLinesToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddLinesToCart";
@@ -218,7 +222,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         };
     }
 
-    displayToast(message: string) {
+    displayToast(message: React.ReactNode) {
         this.context.addToast({ body: message, messageType: "success" });
     }
 
@@ -228,8 +232,13 @@ class MyListsDetailsActions extends React.Component<Props, State> {
 
     enableAddToCart() {
         const lines = this.props.wishListLinesDataView.value;
-        return this.props.wishList?.canAddToCart && lines && this.allQuantitiesAreValid(lines);
+        return (
+            this.props.wishList?.canAddToCart &&
+            lines?.some(o => canAddWishListLineToCart(o, this.props.productInfosByWishListLineId)) &&
+            this.allQuantitiesAreValid(lines)
+        );
     }
+
     allQuantitiesAreValid(wishListLines: WishListLineModel[]): boolean {
         return wishListLines
             .filter(
@@ -307,8 +316,14 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         }
     };
 
-    onAddToCartSuccess = () => {
-        this.displayToast(this.linesSelected() ? translate("Added to Cart") : translate("List Added to Cart"));
+    onAddToCartSuccess = (apiResult?: CartLineCollectionModel) => {
+        this.displayToast(
+            this.linesSelected()
+                ? translate("Added to Cart")
+                : apiResult?.notAllAddedToCart
+                ? siteMessage("Lists_Items_Not_All_Added_To_Cart")
+                : translate("List Added to Cart"),
+        );
     };
 
     removeSelectedClickHandler = () => {

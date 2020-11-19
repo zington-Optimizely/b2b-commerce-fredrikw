@@ -49,10 +49,14 @@ export const productDetailsImageCarouselStyles: ProductDetailsImageCarouselStyle
 
 const styles = productDetailsImageCarouselStyles;
 
-const ProductDetailsImageCarousel: React.FC<Props> = ({ selectedImageIndex, setSelectedImageIndex }) => {
+const ProductDetailsImageCarousel = ({ product, selectedImageIndex, setSelectedImageIndex }: Props) => {
     const selectImageHandler = (index: number) => {
         setSelectedImageIndex({ index });
     };
+
+    if (!product || !product.images || product.images.length <= 1) {
+        return null;
+    }
 
     return (
         <ProductImageCarousel

@@ -427,9 +427,9 @@ const StyleGuidePreview = connect(mapStateToProps)(ConnectableStyleGuidePreview)
 
 export default StyleGuidePreview;
 
-const fontFamily = '"Roboto Condensed", sans-serif;';
+const fontFamily = "Barlow, sans-serif;";
 const textColor = "#4a4a4a";
-const textHighlight = "#78bc21";
+const textHighlight = "#00000087";
 
 const PreviewH1 = styled.h1`
     font-family: ${fontFamily};
@@ -445,9 +445,7 @@ const PreviewH2 = styled.h2`
     font-weight: bold;
     font-size: 24px;
     line-height: 28px;
-    color: ${(props: ShellThemeProps) => props.theme.colors.common.accent};
-    background: ${textHighlight};
-    padding: 7px 10px 5px 7px;
+    color: ${textHighlight};
     margin: 46px 0 22px;
 `;
 
@@ -464,7 +462,7 @@ const PreviewP = styled.p`
     font-weight: 300;
     font-size: 18px;
     line-height: 21px;
-    color: #9b9b9b;
+    color: ${textHighlight};
     margin-bottom: 33px;
 `;
 

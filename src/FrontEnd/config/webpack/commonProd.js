@@ -26,9 +26,7 @@ module.exports = {
                 // Note: This list requires approval from legal. Likely more licenses may also be added
                 return !allowedLicenses.includes(licenseType);
             },
-            modulesDirectories: [
-                path.resolve(__dirname, "../../node_modules"),
-            ],
+            modulesDirectories: [path.resolve(__dirname, "../../node_modules")],
             renderLicenses: modules => {
                 console.log(`Licenses discovered: ${modules.length}`);
                 const mapped = modules

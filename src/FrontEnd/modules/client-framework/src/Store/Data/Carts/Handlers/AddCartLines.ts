@@ -6,7 +6,7 @@ import { CartLineCollectionModel, CartLineModel } from "@insite/client-framework
 
 type Parameter = {
     productInfos: ProductInfo[];
-} & HasOnSuccess;
+} & HasOnSuccess<CartLineCollectionModel>;
 
 type Props = {
     apiParameter: AddCartLinesApiParameter;
@@ -43,7 +43,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
-    props.parameter.onSuccess?.();
+    props.parameter.onSuccess?.(props.apiResult);
 };
 
 export const chain = [PopulateApiParameter, SendDataToApi, ExecuteOnSuccessCallback];

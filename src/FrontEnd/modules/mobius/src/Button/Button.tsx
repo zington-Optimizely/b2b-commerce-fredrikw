@@ -34,6 +34,12 @@ export interface ButtonPresentationProps {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp<ButtonProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Default presets for hover animation. This setting overrides hoverStyle if present.
      * @themable */
     hoverAnimation?: "grow" | "shrink" | "float";
@@ -143,6 +149,7 @@ const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
         typographyProps,
         theme,
         variant,
+        mergeCss,
         ...otherProps
     } = props as Omit<ButtonProps, "variant"> & Required<Pick<ButtonProps, "variant">> & ButtonContextProps; // Accounts for defaultProps.
     const position = icon?.position;
@@ -152,16 +159,20 @@ const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
     if (variant) {
         variantProps = theme.button[variant];
     }
-    const { applyProp, spreadProps } = applyPropBuilder(props, { component: "button", propKey: variant });
+    const { applyProp, applyStyledProp, spreadProps } = applyPropBuilder(props, {
+        component: "button",
+        propKey: variant,
+    });
     const sizeVariant = applyProp("sizeVariant", "medium") as keyof typeof buttonSizeVariants;
     const size = applyProp("size", null) as number | null;
+    const resolvedMergeCss = mergeCss ?? variantProps.mergeCss;
 
     return (
         <ButtonWrapper
             {...omitMultiple(variantProps, omitKeys)}
             as={forwardAs}
             tabIndex={0}
-            css={applyProp("css")}
+            css={applyStyledProp("css", resolvedMergeCss)}
             _color={applyProp("color", "primary")}
             _shape={applyProp("shape", "rectangle")}
             _sizeVariant={sizeVariant}
@@ -183,6 +194,7 @@ const Button: React.FC<ButtonProps & ButtonContextProps> = props => {
             {typeof children === "string" ? (
                 <Typography
                     size={get(buttonSizeVariants, [sizeVariant, "fontSize"]) || buttonSizeVariants.medium.fontSize}
+                    mergeCss={mergeCss}
                     {...spreadProps("typographyProps")}
                 >
                     {/* Note: if passing an icon into the button, it will only receive button styles

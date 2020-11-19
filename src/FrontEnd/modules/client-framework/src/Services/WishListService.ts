@@ -33,7 +33,7 @@ export interface GetWishListsApiParameter extends ApiParameter, HasPagingParamet
 export interface GetWishListApiParameter extends ApiParameter {
     wishListId: string;
     exclude?: "listLines"[];
-    expand?: ("schedule" | "sharedUsers")[];
+    expand?: ("schedule" | "sharedUsers" | "staticList" | "getAllLines")[];
 }
 
 export interface GetWishListLinesApiParameter extends ApiParameter, HasPagingParameters {

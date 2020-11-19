@@ -1,10 +1,10 @@
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
+import Typography from "@insite/mobius/Typography/Typography";
+import { mount } from "enzyme";
 import "jest-styled-components";
 import React from "react";
 import { css } from "styled-components";
-import { mount } from "enzyme";
-import ThemeProvider from "../ThemeProvider";
-import baseTheme from "../globals/baseTheme";
-import Typography from "./Typography";
 
 const themeGenerator = newProps => ({
     ...baseTheme,
@@ -149,6 +149,124 @@ describe("Typography", () => {
                 expect(root).toHaveStyleRule("text-transform", "uppercase");
                 expect(root).not.toHaveStyleRule("text-transform", "capitalize");
                 expect(root).toHaveStyleRule("font-size", "33px");
+            });
+            test("merges instance and variant css by default", () => {
+                props = {
+                    variant: "p",
+                    css: css`
+                        font-size: 24px;
+                    `,
+                };
+                theme = themeGenerator({
+                    p: {
+                        css: css`
+                            color: blue;
+                        `,
+                    },
+                });
+                const root = wrapper().find(Typography);
+                expect(root).toHaveStyleRule("color", "blue");
+                expect(root).toHaveStyleRule("font-size", "24px");
+            });
+            test("instance css overrides variant css when mergeCss is false", () => {
+                props = {
+                    variant: "p",
+                    css: css`
+                        font-size: 24px;
+                    `,
+                    // This one is a bit odd. By default, Typography already
+                    // merges the prop and variant css and in the proper cascading
+                    // order. You need to explicitly pass false to make the
+                    // css prop act like an override.
+                    mergeCss: false,
+                };
+                theme = themeGenerator({
+                    p: {
+                        css: css`
+                            color: blue;
+                        `,
+                    },
+                });
+                const root = wrapper().find(Typography);
+                expect(root).not.toHaveStyleRule("color", "blue");
+                expect(root).toHaveStyleRule("font-size", "24px");
+            });
+            test("instance css overrides variant css when mergeCss is false, even if variant mergeCss is true", () => {
+                props = {
+                    variant: "p",
+                    css: css`
+                        font-size: 24px;
+                    `,
+                    mergeCss: false,
+                };
+                theme = themeGenerator({
+                    p: {
+                        css: css`
+                            color: blue;
+                        `,
+                        mergeCss: true,
+                    },
+                });
+                const root = wrapper().find(Typography);
+                expect(root).not.toHaveStyleRule("color", "blue");
+                expect(root).toHaveStyleRule("font-size", "24px");
+            });
+        });
+    });
+});
+
+describe("Multiple Typographys", () => {
+    let typography1Props;
+    let typography2Props;
+    let mountedWrapper;
+    let theme;
+    const wrapper = () => {
+        if (!mountedWrapper) {
+            mountedWrapper = mount(
+                <ThemeProvider theme={theme}>
+                    <Typography id="typography1" {...typography1Props} />
+                    <Typography id="typography2" {...typography2Props} />
+                </ThemeProvider>,
+            );
+        }
+        return mountedWrapper;
+    };
+
+    beforeEach(() => {
+        typography1Props = {};
+        typography2Props = {};
+        mountedWrapper = undefined;
+    });
+
+    describe("applies styling based on props and variant", () => {
+        describe("props with variant", () => {
+            test("merges instance and variant css for all instances when variant mergeCss is true", () => {
+                typography1Props = {
+                    variant: "p",
+                    css: css`
+                        font-size: 24px;
+                    `,
+                };
+                typography2Props = {
+                    variant: "p",
+                    css: css`
+                        font-size: 13px;
+                    `,
+                };
+                theme = themeGenerator({
+                    p: {
+                        css: css`
+                            color: blue;
+                        `,
+                        mergeCss: true,
+                    },
+                });
+                const typography1 = wrapper().find("#typography1");
+                const typography2 = wrapper().find("#typography2");
+                expect(typography1).toHaveStyleRule("font-size", "24px");
+                expect(typography1).toHaveStyleRule("color", "blue");
+                expect(typography2).toHaveStyleRule("font-size", "13px");
+                expect(typography2).toHaveStyleRule("color", "blue");
             });
         });
     });

@@ -1,6 +1,7 @@
 import { GetWishListsApiParameter } from "@insite/client-framework/Services/WishListService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -28,10 +29,14 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    recentWishListsDataView: getWishListsDataView(state, recentWishListsParameter),
-    myListsPageNavLink: getPageLinkByPageType(state, "MyListsPage"),
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const session = getSession(state);
+    return {
+        recentWishListsDataView: getWishListsDataView(state, recentWishListsParameter),
+        myListsPageNavLink: getPageLinkByPageType(state, "MyListsPage"),
+        canViewWishLists: (session.isAuthenticated || session.rememberMe) && !session.isGuest,
+    };
+};
 
 let recentWishListsParameter = {
     page: 1,
@@ -73,12 +78,20 @@ const styles = recentWishListsStyles;
 class RecentWishLists extends React.Component<Props> {
     componentDidMount() {
         recentWishListsParameter.pageSize = this.props.fields.numberOfRecords;
-        if (!this.props.recentWishListsDataView.value && !this.props.recentWishListsDataView.isLoading) {
+        if (
+            this.props.canViewWishLists &&
+            !this.props.recentWishListsDataView.value &&
+            !this.props.recentWishListsDataView.isLoading
+        ) {
             this.props.loadWishLists(recentWishListsParameter);
         }
     }
 
     render() {
+        if (!this.props.canViewWishLists) {
+            return null;
+        }
+
         const {
             recentWishListsDataView: { value: recentWishLists },
             myListsPageNavLink,

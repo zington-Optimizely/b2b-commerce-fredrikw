@@ -28,7 +28,7 @@ class ViewPortClicker extends React.Component<Props> {
     render() {
         const { targetMatchesCurrentStageMode, icon, disabled, targetStageMode } = this.props;
         const {
-            colors: { common, primary, text },
+            colors: { common, text },
         } = shellTheme;
 
         let iconColor: string;
@@ -36,13 +36,14 @@ class ViewPortClicker extends React.Component<Props> {
         if (disabled) {
             iconColor = common.disabled;
         } else if (targetMatchesCurrentStageMode) {
-            iconColor = primary.main;
+            iconColor = "white";
         } else {
             iconColor = text.accent;
         }
 
         return (
             <ClickerStyle
+                active={targetMatchesCurrentStageMode}
                 clickable={!targetMatchesCurrentStageMode}
                 onClick={this.onClick}
                 disabled={disabled}

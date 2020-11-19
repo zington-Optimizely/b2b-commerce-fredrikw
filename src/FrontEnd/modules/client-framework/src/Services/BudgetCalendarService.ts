@@ -5,13 +5,15 @@ export interface UpdateBudgetCalendarApiParameter extends ApiParameter {
     budgetCalendar: BudgetCalendarModel;
 }
 
+const budgetCalendarsUri = "/api/v1/budgetcalendars";
+
 export function getBudgetCalendarCollection() {
-    return get<BudgetCalendarCollectionModel>("api/v1/budgetcalendars", {});
+    return get<BudgetCalendarCollectionModel>(budgetCalendarsUri, {});
 }
 
 export function updateBudgetCalendar(parameter: UpdateBudgetCalendarApiParameter) {
     return patch<BudgetCalendarModel>(
-        `api/v1/budgetcalendars/${parameter.budgetCalendar.fiscalYear}`,
+        `${budgetCalendarsUri}/${parameter.budgetCalendar.fiscalYear}`,
         parameter.budgetCalendar,
     );
 }

@@ -80,6 +80,15 @@ export const RemoveStockedItemsFilter: HandlerType = ({ result, parameter: { sto
     }
 };
 
+export const RemovePreviouslyPurchasedFilter: HandlerType = ({
+    result,
+    parameter: { previouslyPurchasedProducts },
+}) => {
+    if (previouslyPurchasedProducts !== undefined) {
+        result.previouslyPurchasedProducts = undefined;
+    }
+};
+
 export const DispatchSetProductFilters: HandlerType = props => {
     props.dispatch({
         type: "Pages/ProductList/SetProductFilters",
@@ -101,6 +110,7 @@ export const chain = [
     RemoveFilterCategory,
     RemoveAttributeValueFilters,
     RemoveStockedItemsFilter,
+    RemovePreviouslyPurchasedFilter,
     DispatchSetProductFilters,
     DispatchSetFilterQuery,
 ];

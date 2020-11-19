@@ -29,15 +29,15 @@ export const UpdateSession: HandlerType = async props => {
     props.apiResult = await updateSession(props.apiParameter);
 };
 
+export const LoadCart: HandlerType = props => {
+    props.dispatch(loadCurrentCart());
+};
+
 export const DispatchCompleteLoadSession: HandlerType = props => {
     props.dispatch({
         type: "Context/CompleteLoadSession",
         session: props.apiResult,
     });
-};
-
-export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
 };
 
 const chain = [PopulateApiParameter, UpdateContext, UpdateSession, LoadCart, DispatchCompleteLoadSession];

@@ -109,6 +109,7 @@
                                         "Insite.Email":  null,
                                         "Insite.Integration.Connector.Acumatica":  null,
                                         "Insite.Integration.Connector.APlus":  null,
+                                        "Insite.Integration.Connector.CloudSuiteDistribution":  null,
                                         "Insite.Integration.Connector.Facts":  null,
                                         "Insite.Integration.Connector.Ifs":  null,
                                         "Insite.Integration.Connector.IfsAurena":  null,
@@ -169,17 +170,6 @@
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "System.Web.Mvc":  "5.2.3.0"
-                                    }
-                  }
-    },
-    {
-        "Name":  "Microsoft.AspNet.OData",
-        "Value":  {
-                      "PackageName":  "Microsoft.AspNet.OData",
-                      "PackageVersion":  "5.8.0",
-                      "PackageFramework":  "net45",
-                      "Libraries":  {
-                                        "System.Web.OData":  "5.8.0.0"
                                     }
                   }
     },
@@ -297,28 +287,6 @@
                   }
     },
     {
-        "Name":  "Microsoft.OData.Core",
-        "Value":  {
-                      "PackageName":  "Microsoft.OData.Core",
-                      "PackageVersion":  "6.15.0",
-                      "PackageFramework":  "portable-net45+win+wpa81",
-                      "Libraries":  {
-                                        "Microsoft.OData.Core":  "6.15.0.0"
-                                    }
-                  }
-    },
-    {
-        "Name":  "Microsoft.OData.Edm",
-        "Value":  {
-                      "PackageName":  "Microsoft.OData.Edm",
-                      "PackageVersion":  "6.15.0",
-                      "PackageFramework":  "portable-net45+win+wpa81",
-                      "Libraries":  {
-                                        "Microsoft.OData.Edm":  "6.15.0.0"
-                                    }
-                  }
-    },
-    {
         "Name":  "Microsoft.Owin",
         "Value":  {
                       "PackageName":  "Microsoft.Owin",
@@ -359,17 +327,6 @@
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "Microsoft.Owin.Security.WsFederation":  "3.1.0.0"
-                                    }
-                  }
-    },
-    {
-        "Name":  "Microsoft.Spatial",
-        "Value":  {
-                      "PackageName":  "Microsoft.Spatial",
-                      "PackageVersion":  "6.15.0",
-                      "PackageFramework":  "portable-net45+win+wpa81",
-                      "Libraries":  {
-                                        "Microsoft.Spatial":  "6.15.0.0"
                                     }
                   }
     },

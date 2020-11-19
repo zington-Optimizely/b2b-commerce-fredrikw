@@ -211,6 +211,7 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
         `,
     },
     assignBudgetInstructionsGridItem: {
+        width: 12,
         css: css`
             padding: 15px;
         `,
@@ -424,7 +425,7 @@ const AssignBudgets: React.FC<Props> = ({
                 </GridItem>
                 <GridItem {...styles.assignBudgetInstructionsGridItem}>
                     <Typography {...styles.assignBudgetInstructionsText}>
-                        {siteMessage("Budget_AssignBudgetsInstructions")}
+                        {siteMessage("Budgets_AssignBudgetsInstructions")}
                     </Typography>
                 </GridItem>
                 <GridItem {...styles.filterGridItem}>

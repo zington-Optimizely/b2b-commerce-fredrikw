@@ -6,8 +6,10 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen, {
     wishListsParameter,
 } from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -32,6 +34,8 @@ const mapStateToProps = (state: ApplicationState) => ({
     modalIsOpen: state.components.addToListModal.isOpen,
     productInfos: state.components.addToListModal.productInfos,
     wishLists: getWishListsDataView(state, wishListsParameter).value,
+    signInUrl: getPageLinkByPageType(state, "SignInPage")?.url,
+    location: getLocation(state),
 });
 
 const mapDispatchToProps = {
@@ -102,6 +106,8 @@ const AddToListModal: React.FC<Props> = ({
     session,
     modalIsOpen,
     wishLists,
+    signInUrl,
+    location,
     setAddToListModalIsOpen,
     addToWishList,
     extendedStyles,
@@ -183,7 +189,10 @@ const AddToListModal: React.FC<Props> = ({
             <div data-test-selector="productAddToListModal">
                 {!isAuthenticated && (
                     <Typography data-test-selector="productAddToListModal_requireSignIn" {...styles.signInMessageText}>
-                        {siteMessage("Lists_Must_Sign_In")}
+                        {siteMessage(
+                            "Lists_Must_Sign_In_Spire",
+                            `${signInUrl}?returnUrl=${encodeURIComponent(location.pathname + location.search)}`,
+                        )}
                     </Typography>
                 )}
                 {isAuthenticated && (

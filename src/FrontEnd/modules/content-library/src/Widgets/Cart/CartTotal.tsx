@@ -5,6 +5,7 @@ import cancelPunchOut from "@insite/client-framework/Store/Context/Handlers/Canc
 import {
     canCheckoutWithCart,
     canSubmitForQuote,
+    canSubmitRequisition,
     getCurrentCartState,
     hasOnlyQuoteRequiredProducts,
     hasQuoteRequiredProducts,
@@ -20,6 +21,7 @@ import {
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import doPunchOutCheckout from "@insite/client-framework/Store/Pages/Cart/Handlers/DoPunchOutCheckout";
+import submitRequisition from "@insite/client-framework/Store/Pages/Cart/Handlers/SubmitRequisition";
 import preloadCheckoutShippingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/PreloadCheckoutShippingData";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -52,9 +54,10 @@ const mapStateToProps = (state: ApplicationState) => {
 
     const cartState = getCurrentCartState(state);
     const cart = cartState.value;
+    const isCartLoading = cartState.isLoading;
 
     return {
-        isLoading: cartState.isLoading,
+        isLoading: isCartLoading,
         cart,
         orderPromotions,
         shippingPromotions,
@@ -62,13 +65,17 @@ const mapStateToProps = (state: ApplicationState) => {
         cartSettings: settingsCollection.cartSettings,
         checkoutShippingPageUrl: getPageLinkByPageType(state, "CheckoutShippingPage")?.url,
         canCheckoutWithCart: canCheckoutWithCart(cart),
-        isCartCheckoutDisabled: !cart || isCartCheckoutDisabled(cart),
+        isCartCheckoutDisabled: isCartLoading || !cart || isCartCheckoutDisabled(cart),
         isCartEmpty: isCartEmpty(cart),
         hasOnlyQuoteRequiredProducts: hasOnlyQuoteRequiredProducts(cart),
         hasQuoteRequiredProducts: hasQuoteRequiredProducts(cart),
         canSubmitForQuote: canSubmitForQuote(cart),
         rfqRequestQuotePageUrl: getPageLinkByPageType(state, "RfqRequestQuotePage")?.url,
         isPunchOutOrder: isPunchOutOrder(cart),
+        canSubmitRequisition: canSubmitRequisition(cart),
+        requisitionConfirmationPageUrl: getPageLinkByPageType(state, "RequisitionConfirmationPage")?.url,
+        isPunchoutButtonDisabled: isCartLoading,
+        isSubmitForQuoteButtonDisabled: isCartLoading,
     };
 };
 
@@ -76,6 +83,7 @@ const mapDispatchToProps = {
     preloadCheckoutShippingData,
     doPunchOutCheckout,
     cancelPunchOut,
+    submitRequisition,
 };
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps> & HasHistory & ResolveThunks<typeof mapDispatchToProps>;
@@ -87,6 +95,7 @@ export interface CartTotalStyles {
     submitQuoteButton?: ButtonPresentationProps;
     saveOrderButton?: ButtonPresentationProps;
     quoteRequiredModal?: ModalPresentationProps;
+    submitRequisitionButton?: ButtonPresentationProps;
 }
 
 export const cartTotalStyles: CartTotalStyles = {
@@ -148,6 +157,15 @@ export const cartTotalStyles: CartTotalStyles = {
             bottom: inherit;
         `,
     },
+    submitRequisitionButton: {
+        css: css`
+            width: 100%;
+            margin-top: 10px;
+            position: inherit;
+            left: inherit;
+            bottom: inherit;
+        `,
+    },
 };
 
 const styles = cartTotalStyles;
@@ -170,8 +188,13 @@ const CartTotal: FC<Props> = ({
     canSubmitForQuote,
     rfqRequestQuotePageUrl,
     isPunchOutOrder,
+    isPunchoutButtonDisabled,
+    isSubmitForQuoteButtonDisabled,
     doPunchOutCheckout,
     cancelPunchOut,
+    canSubmitRequisition,
+    submitRequisition,
+    requisitionConfirmationPageUrl,
 }) => {
     const [quoteRequiredModalIsOpen, setQuoteRequiredModalIsOpen] = useState(false);
     const checkoutHandler = () => {
@@ -207,6 +230,16 @@ const CartTotal: FC<Props> = ({
 
     const submitForQuoteLabel = cart?.isSalesperson ? translate("Create a Quote") : translate("Submit for Quote");
 
+    const submitRequisitionClickHandler = () => {
+        submitRequisition({
+            onSuccess: ({ id }) => {
+                if (requisitionConfirmationPageUrl) {
+                    history.push(`${requisitionConfirmationPageUrl}?cartId=${id}`);
+                }
+            },
+        });
+    };
+
     return (
         <>
             <CartTotalDisplay
@@ -230,7 +263,11 @@ const CartTotal: FC<Props> = ({
                         {cart?.requiresApproval ? translate("Checkout for Approval") : translate("Checkout")}
                     </Button>
                     {isPunchOutOrder && (
-                        <Button {...styles.cancelPunchOutButton} onClick={cancelPunchOutHandler}>
+                        <Button
+                            {...styles.cancelPunchOutButton}
+                            disabled={isPunchoutButtonDisabled}
+                            onClick={cancelPunchOutHandler}
+                        >
                             {translate("Cancel PunchOut")}
                         </Button>
                     )}
@@ -249,6 +286,7 @@ const CartTotal: FC<Props> = ({
             {canSubmitForQuote && (
                 <Button
                     {...styles.submitQuoteButton}
+                    disabled={isSubmitForQuoteButtonDisabled}
                     onClick={submitForQuoteClickHandler}
                     data-test-selector="cartTotal_SubmitQuote"
                 >
@@ -256,6 +294,15 @@ const CartTotal: FC<Props> = ({
                 </Button>
             )}
             <CartSaveOrderButton variant="button" extendedStyles={styles.saveOrderButton} />
+            {canSubmitRequisition && (
+                <Button
+                    {...styles.submitRequisitionButton}
+                    onClick={submitRequisitionClickHandler}
+                    data-test-selector="cartTotal_SubmitRequisition"
+                >
+                    {translate("Submit Requisition")}
+                </Button>
+            )}
         </>
     );
 };

@@ -242,7 +242,8 @@ class AppliedFilter extends React.Component<{
 export default connect(mapStateToProps, mapDispatchToProps)(PageTreeFilters);
 
 const PageTreeFiltersStyle = styled.div`
-    margin: 10px 0;
+    margin: 20px 0;
+    padding: 0 35px;
 `;
 
 const QueryBox = styled.div`
@@ -278,7 +279,7 @@ const QueryBoxInput = styled.input<{ potentialFiltersOpen: boolean }>`
     padding: 4px 16px;
     height: 30px;
     border-radius: ${queryBoxRadius};
-    background-color: ${(props: ShellThemeProps) => props.theme.colors.common.accent};
+    background-color: ${(props: ShellThemeProps) => props.theme.colors.common.background};
     border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.common.border};
     width: 100%;
     ${props => (props.potentialFiltersOpen ? potentialFiltersOpenStyles : "")}

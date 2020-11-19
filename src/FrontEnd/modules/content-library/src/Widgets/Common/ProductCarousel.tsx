@@ -4,7 +4,10 @@ import { HasShellContext, withIsInShell } from "@insite/client-framework/Compone
 import { ProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadCarouselProducts from "@insite/client-framework/Store/Components/ProductCarousel/Handlers/LoadCarouselProducts";
-import { getProductsForProductInfoList } from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListSelectors";
+import {
+    getErrorMessage,
+    getProductsForProductInfoList,
+} from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListSelectors";
 import { BrandStateContext } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -68,6 +71,7 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     products: getProductsForProductInfoList(state, ownProps.id),
+    errorMessage: getErrorMessage(state, ownProps.id),
     pageType: getCurrentPage(state).type,
 });
 
@@ -82,6 +86,7 @@ type Props = OwnProps &
     HasShellContext;
 
 export interface ProductCarouselStyles {
+    errorMessageText?: TypographyPresentationProps;
     titleText?: TypographyPresentationProps;
     skipCarouselButton?: SkipNavStyles;
     mainContainer?: GridContainerProps;
@@ -99,6 +104,12 @@ export interface ProductCarouselStyles {
 }
 
 export const productCarouselStyles: ProductCarouselStyles = {
+    errorMessageText: {
+        color: "danger",
+        css: css`
+            margin-top: 20px;
+        `,
+    },
     titleText: {
         variant: "h2",
         css: css`
@@ -253,6 +264,7 @@ const ProductCarousel: React.FC<Props> = ({
     theme,
     fields,
     products,
+    errorMessage,
     loadCarouselProducts,
     pageType,
     shellContext,
@@ -377,6 +389,14 @@ const ProductCarousel: React.FC<Props> = ({
         });
         setCanScroll();
     }, [embla, slidesToScroll, draggable, products]);
+
+    if (errorMessage && shellContext.isInShell) {
+        return (
+            <Typography {...styles.errorMessageText} as="p">
+                {`Failed to load carousel products. Error: '${errorMessage}'. Please check widget settings.`}
+            </Typography>
+        );
+    }
 
     if (!products || products.length === 0) {
         return null;

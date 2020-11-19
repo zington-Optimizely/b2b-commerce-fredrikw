@@ -10,7 +10,6 @@ import { ColorChangeHandler, SketchPicker } from "react-color";
 import styled, { css, ThemeProps } from "styled-components";
 
 const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & { firstInput?: boolean; disabled?: boolean }>`
-    height: 29px;
     display: flex;
     justify-content: space-between;
     &:hover {
@@ -21,7 +20,6 @@ const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & { firstInput?:
     > span {
         margin: 0;
     }
-    margin-top: ${({ firstInput }) => (firstInput ? 10 : 7)}px;
     cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
@@ -86,7 +84,7 @@ class ColorPicker extends React.Component<ColorPickerProps> {
         return (
             <LabelWithInputAtEnd htmlFor={id} firstInput={firstInput} disabled={disabled}>
                 {label && (
-                    <Typography variant="h3" as="span" className="label">
+                    <Typography variant="h6" as="span" className="label">
                         {label}
                     </Typography>
                 )}

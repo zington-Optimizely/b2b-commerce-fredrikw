@@ -1,13 +1,13 @@
 ﻿<div id="popup-availability-by-warehouse" class="reveal-modal popup-availability-by-warehouse" data-reveal>
     <div class="modal-wrap">
-        <div ng-if="!vm.warehouses.length" class="loader-container">
+        <div ng-if="!vm.warehouses.length && !vm.isDataLoaded" class="loader-container">
             <div class="loader"/>
         </div>
-        <div ng-if="vm.warehouses.length">
+        <div ng-if="vm.warehouses.length || vm.isDataLoaded">
             <h2 id="modalTitle">[% translate 'Warehouse Inventory' %]</h2>
             <div class="pop-content">
                 <div class="row">
-                    <table>
+                    <table ng-if="vm.warehouses.length">
                         <tr>
                             <th>[% translate 'Warehouse' %]</th>
                             <th>[% translate 'QTY' %]</th>
@@ -17,6 +17,7 @@
                             <td ng-class="{ 'outstock': warehouse.qty === 0 }" ng-bind="warehouse.qty"></td>
                         </tr>
                     </table>
+                    <span ng-if="!vm.warehouses.length">[% translate 'No Inventory Available' %]</span>
                 </div>
                 <a class="close-reveal-modal">&#215;</a>
             </div>

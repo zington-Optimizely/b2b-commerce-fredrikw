@@ -1,3 +1,4 @@
+import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -63,6 +64,7 @@ const mapStateToProps = (state: ApplicationState) => {
         breadcrumbLinks: state.components.breadcrumbs.links,
         shouldLoadBrandCategories,
         shouldLoadBrandProductLine,
+        websiteName: state.context.website.name,
     };
 };
 
@@ -75,7 +77,17 @@ const mapDispatchToProps = {
 
 type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<typeof mapStateToProps>;
 
-class BrandDetailsPage extends React.Component<Props> {
+interface State {
+    metadataSetForId?: string;
+}
+
+class BrandDetailsPage extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {};
+    }
+
     private checkState(prevProps?: Props) {
         const {
             brandState,
@@ -111,12 +123,41 @@ class BrandDetailsPage extends React.Component<Props> {
             setBreadcrumbs({ links });
         }
     }
+
     UNSAFE_componentWillMount(): void {
         this.checkState();
+        this.setMetadata();
     }
 
     componentDidUpdate(prevProps: Props) {
         this.checkState(prevProps);
+
+        const { brandState } = this.props;
+        if (brandState.value && brandState.value.id !== this.state.metadataSetForId) {
+            this.setMetadata();
+        }
+    }
+
+    setMetadata() {
+        const {
+            brandState: { value: brand },
+            websiteName,
+            brandPath,
+        } = this.props;
+        if (!brand) {
+            return;
+        }
+
+        setPageMetadata({
+            metaDescription: brand.metaDescription,
+            currentPath: brandPath,
+            title: brand.pageTitle,
+            websiteName,
+        });
+
+        this.setState({
+            metadataSetForId: brand.id,
+        });
     }
 
     render() {

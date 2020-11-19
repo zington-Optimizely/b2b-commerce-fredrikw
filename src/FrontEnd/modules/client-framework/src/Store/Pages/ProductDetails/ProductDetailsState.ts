@@ -8,5 +8,6 @@ export default interface ProductDetailsState {
     lastProductPath?: string;
     variantSelection: SafeDictionary<string>;
     variantSelectionCompleted: boolean;
+    configurationSelection: SafeDictionary<string>;
     configurationCompleted: boolean;
 }

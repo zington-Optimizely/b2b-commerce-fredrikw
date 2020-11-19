@@ -12,6 +12,7 @@ import { Draft } from "immer";
 
 const initialState: ProductInfoListState = {
     productInfoListById: {},
+    errorMessageById: {},
 };
 
 const reducer = {
@@ -21,6 +22,7 @@ const reducer = {
             id: string;
             parameter?: GetProductCollectionApiV2Parameter;
             productInfos: ProductInfo[];
+            errorMessage?: string;
         },
     ) => {
         const productInfoByProductId: SafeDictionary<ProductInfo> = {};
@@ -31,6 +33,7 @@ const reducer = {
         draft.productInfoListById[action.id] = {
             productInfoByProductId,
         };
+        draft.errorMessageById[action.id] = action.errorMessage;
     },
     "Components/ProductInfoLists/UpdateProduct": (
         draft: Draft<ProductInfoListState>,
@@ -80,9 +83,12 @@ const reducer = {
             throw new Error(`There was no productInfoList found for the id ${action.id}`);
         }
 
-        for (const key in Object.keys(productInfoList.productInfoByProductId)) {
-            productInfoList.productInfoByProductId[key]!.failedToLoadPricing = true;
-            delete productInfoList.productInfoByProductId[key]!.pricing;
+        for (const key in productInfoList.productInfoByProductId) {
+            const productInfo = productInfoList.productInfoByProductId[key];
+            if (!productInfo) {
+                continue;
+            }
+            productInfo.failedToLoadPricing = true;
         }
     },
 
@@ -103,6 +109,23 @@ const reducer = {
 
             productInfo.inventory = inventory;
         });
+    },
+    "Components/ProductInfoLists/FailedLoadRealTimeInventory": (
+        draft: Draft<ProductInfoListState>,
+        action: { id: string },
+    ) => {
+        const productInfoList = draft.productInfoListById[action.id];
+        if (!productInfoList) {
+            throw new Error(`There was no productInfoList found for the id ${action.id}`);
+        }
+
+        for (const key in productInfoList.productInfoByProductId) {
+            const productInfo = productInfoList.productInfoByProductId[key];
+            if (!productInfo) {
+                continue;
+            }
+            productInfo.failedToLoadInventory = true;
+        }
     },
 };
 

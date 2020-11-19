@@ -22,6 +22,7 @@ import { LinkPresentationProps } from "@insite/mobius/Link";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import HistoryContext, { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -54,7 +55,8 @@ const mapDispatchToProps = {
 type Props = ReturnType<typeof mapStateToProps> &
     OwnProps &
     ResolveThunks<typeof mapDispatchToProps> &
-    HasToasterContext;
+    HasToasterContext &
+    HasHistory;
 
 export interface OrderHistoryTableStyles {
     container?: InjectableCss;
@@ -179,11 +181,11 @@ class OrderHistoryTable extends React.Component<Props> {
             return;
         }
         this.props.toaster.addToast({
-            children: (
-                <>
+            body: (
+                <HistoryContext.Provider value={{ history: this.props.history }}>
                     <OrderDetailPageTypeLink title={orderNumber} orderNumber={linkOrderNumber} />
                     &nbsp;{translate("added to cart")}
-                </>
+                </HistoryContext.Provider>
             ),
             messageType: "success",
             timeoutLength: 6000,
@@ -340,7 +342,7 @@ class OrderHistoryTable extends React.Component<Props> {
 }
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(withToaster(OrderHistoryTable)),
+    component: connect(mapStateToProps, mapDispatchToProps)(withToaster(withHistory(OrderHistoryTable))),
     definition: {
         group: "Order History",
         displayName: "Search Results Table",

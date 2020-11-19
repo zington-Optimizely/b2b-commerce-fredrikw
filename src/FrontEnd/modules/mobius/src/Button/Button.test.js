@@ -1,22 +1,30 @@
+import Button from "@insite/mobius/Button/Button";
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import Icon from "@insite/mobius/Icon";
+import CreditCard from "@insite/mobius/Icons/CreditCard";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
+import Typography from "@insite/mobius/Typography";
+import DisablerContext from "@insite/mobius/utilities/DisablerContext";
+import { mount } from "enzyme";
 import "jest-styled-components";
 import React from "react";
-import { mount } from "enzyme";
-import ThemeProvider from "../ThemeProvider";
-import Button from "./Button";
-import Typography from "../Typography";
-import Icon from "../Icon";
-import CreditCard from "../Icons/CreditCard";
-import DisablerContext from "../utilities/DisablerContext";
+import { css } from "styled-components";
+
+const themeGenerator = newProps => ({
+    ...baseTheme,
+    button: { ...baseTheme.button, ...newProps },
+});
 
 describe("Button", () => {
     let props;
     let buttonText;
     let mountedWrapper;
     let disablerValue;
+    let theme;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
-                <ThemeProvider>
+                <ThemeProvider theme={theme}>
                     <DisablerContext.Provider value={disablerValue}>
                         <Button {...props}>{buttonText}</Button>
                     </DisablerContext.Provider>
@@ -29,6 +37,7 @@ describe("Button", () => {
     beforeEach(() => {
         props = {};
         mountedWrapper = undefined;
+        theme = { ...baseTheme };
     });
 
     test("renders the button text", () => {
@@ -81,6 +90,80 @@ describe("Button", () => {
         });
     });
 
+    describe("applies styling based on props and variant", () => {
+        describe("props with variant", () => {
+            test("instance css overrides variant css by default", () => {
+                buttonText = "hi there";
+                props = {
+                    variant: "primary",
+                    css: css`
+                        font-weight: 500;
+                        padding: 5px;
+                    `,
+                };
+                theme = themeGenerator({
+                    primary: {
+                        css: css`
+                            border-radius: 2px;
+                            font-weight: 700;
+                        `,
+                    },
+                });
+                const root = wrapper().find("button");
+                expect(root).not.toHaveStyleRule("border-radius", "2px");
+                expect(root).toHaveStyleRule("padding", "5px");
+                expect(root).toHaveStyleRule("font-weight", "500");
+            });
+            test("instance css overrides variant css when instance mergeCss is false, even if variant mergeCss is true", () => {
+                buttonText = "hi there";
+                props = {
+                    variant: "primary",
+                    css: css`
+                        font-weight: 500;
+                        padding: 5px;
+                    `,
+                    mergeCss: false,
+                };
+                theme = themeGenerator({
+                    primary: {
+                        css: css`
+                            border-radius: 2px;
+                            font-weight: 700;
+                        `,
+                        mergeCss: true,
+                    },
+                });
+                const root = wrapper().find("button");
+                expect(root).not.toHaveStyleRule("border-radius", "2px");
+                expect(root).toHaveStyleRule("padding", "5px");
+                expect(root).toHaveStyleRule("font-weight", "500");
+            });
+            test("merges instance and variant css when mergeCss is true", () => {
+                buttonText = "hi there";
+                props = {
+                    css: css`
+                        font-weight: 500;
+                        padding: 5px;
+                    `,
+                    mergeCss: true,
+                };
+                theme = themeGenerator({
+                    primary: {
+                        css: css`
+                            border-radius: 2px;
+                            font-weight: 700;
+                        `,
+                    },
+                });
+                const root = wrapper().find("button");
+                console.log(root);
+                expect(root).toHaveStyleRule("border-radius", "2px");
+                expect(root).toHaveStyleRule("padding", "5px");
+                expect(root).toHaveStyleRule("font-weight", "500");
+            });
+        });
+    });
+
     describe("applies shapes theme styles based on variant prop", () => {
         test("rectangle", () => {
             buttonText = "hi there";
@@ -119,6 +202,68 @@ describe("Button", () => {
             buttonText = "hi there";
             disablerValue = { disable: false };
             expect(wrapper().find("button").prop("disabled")).toBe(false);
+        });
+    });
+});
+
+describe("Multiple Buttons", () => {
+    let button1Props;
+    let button2Props;
+    let mountedWrapper;
+    let theme;
+    const wrapper = () => {
+        if (!mountedWrapper) {
+            mountedWrapper = mount(
+                <ThemeProvider theme={theme}>
+                    <Button id="button1" {...button1Props}>
+                        Button 1
+                    </Button>
+                    <Button id="button2" {...button2Props}>
+                        Button 2
+                    </Button>
+                </ThemeProvider>,
+            );
+        }
+        return mountedWrapper;
+    };
+
+    beforeEach(() => {
+        button1Props = {};
+        button2Props = {};
+        mountedWrapper = undefined;
+        theme = { ...baseTheme };
+    });
+
+    describe("applies styling based on props and variant", () => {
+        describe("props with variant", () => {
+            test("merges prop and variant css when variant mergeCss is true", () => {
+                button1Props = {
+                    variant: "primary",
+                    css: css`
+                        color: purple;
+                    `,
+                };
+                button2Props = {
+                    variant: "primary",
+                    css: css`
+                        color: cyan;
+                    `,
+                };
+                theme = themeGenerator({
+                    primary: {
+                        css: css`
+                            border-radius: 2px;
+                        `,
+                        mergeCss: true,
+                    },
+                });
+                const button1 = wrapper().find("#button1");
+                const button2 = wrapper().find("#button2");
+                expect(button1).toHaveStyleRule("border-radius", "2px");
+                expect(button1).toHaveStyleRule("color", "purple");
+                expect(button2).toHaveStyleRule("border-radius", "2px");
+                expect(button2).toHaveStyleRule("color", "cyan");
+            });
         });
     });
 });

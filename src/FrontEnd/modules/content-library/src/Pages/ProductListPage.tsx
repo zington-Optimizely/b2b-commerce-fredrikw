@@ -17,6 +17,7 @@ import translate from "@insite/client-framework/Translate";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import ProductCompareFlyOut from "@insite/content-library/Components/ProductCompareFlyOut";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import * as React from "react";
@@ -36,6 +37,7 @@ const mapStateToProps = (state: ApplicationState) => {
     const productsDataView = getProductsDataView(state, parameter);
     return {
         stockedItemsOnly: productFilters.stockedItemsOnly,
+        previouslyPurchasedProducts: productFilters.previouslyPurchasedProducts,
         query: productFilters.query,
         productsDataView,
         firstProductDetailPath: productsDataView.value
@@ -223,6 +225,7 @@ class ProductListPage extends React.Component<Props> {
                     <ProductListPageDataContext.Provider value={{ ref: this.afterFilters }}>
                         <Zone contentId={this.props.id} zoneName="Content" />
                         <AddToListModal />
+                        <ProductCompareFlyOut />
                     </ProductListPageDataContext.Provider>
                 </CategoryContext.Provider>
             </Page>

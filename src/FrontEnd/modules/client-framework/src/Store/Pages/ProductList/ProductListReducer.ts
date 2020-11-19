@@ -36,6 +36,7 @@ const reducer = {
         draft.isLoading = false;
 
         draft.unfilteredApiParameter = action.result.unfilteredApiParameter;
+        draft.filteredApiParameter = action.result.filteredApiParameter;
 
         if (action.result.productFilters) {
             draft.productFilters = action.result.productFilters;
@@ -104,12 +105,28 @@ const reducer = {
         draft: Draft<ProductListState>,
         action: { realTimeInventory: RealTimeInventoryModel },
     ) => {
-        action.realTimeInventory.realTimeInventoryResults?.forEach((inventory: ProductInventoryDto) => {
+        action.realTimeInventory?.realTimeInventoryResults?.forEach((inventory: ProductInventoryDto) => {
             const productInfo = draft.productInfosByProductId[inventory.productId];
             if (productInfo) {
                 productInfo.inventory = inventory;
             }
         });
+    },
+    "Pages/ProductList/FailedLoadRealTimeInventory": (
+        draft: Draft<ProductListState>,
+        action: { productId?: string },
+    ) => {
+        if (action.productId) {
+            const productInfo = draft.productInfosByProductId[action.productId];
+            if (productInfo) {
+                productInfo.failedToLoadInventory = true;
+            }
+            return;
+        }
+
+        for (const productId in draft.productInfosByProductId) {
+            draft.productInfosByProductId[productId]!.failedToLoadInventory = true;
+        }
     },
     "Pages/ProductList/ClearProducts": (draft: Draft<ProductListState>) => {
         draft.lastParameter = undefined;

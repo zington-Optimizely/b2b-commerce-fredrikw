@@ -627,6 +627,8 @@ declare module Insite.Brands.WebApi.V1.ApiModels {
 		featuredImageAltText: string;
 		topSellerProducts: Insite.Catalog.Services.Dtos.ProductDto[];
 		htmlContent: string;
+		pageTitle: string;
+		metaDescription: string;
 	}
 	interface BrandCollectionModel extends Insite.Core.WebApi.BaseModel {
 		pagination: Insite.Core.WebApi.PaginationModel;

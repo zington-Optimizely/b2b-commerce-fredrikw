@@ -16,7 +16,7 @@ import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
-import styled, { css, withTheme } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 
 export interface ToastPresentationProps {
     /** Props that will be passed to the typography body component if the `body` is a string.
@@ -72,10 +72,12 @@ export type ToastProps = ToastComponentProps & ToastPresentationProps;
 
 type ToastStyleProps = {
     transitionState: TransitionStatus;
+    transitionLength: number;
     messageType: ToastProps["messageType"];
-};
+} & ThemeProps<BaseTheme> &
+    InjectableCss;
 
-const ToastStyle = styled.div<any>`
+const ToastStyle = styled.div<ToastStyleProps>`
     ${({ transitionState, theme }) => {
         const liveMargin = breakpointMediaQueries(
             theme,
@@ -132,8 +134,7 @@ const ToastStyle = styled.div<any>`
     max-width: 100%;
     box-shadow: ${getProp("theme.shadows.3")};
     background: ${getColor("common.background")};
-    border-color: ${({ messageType, theme }: { messageType: ToastProps["messageType"]; theme: BaseTheme }) =>
-        resolveColor(messageType, theme)};
+    border-color: ${({ messageType, theme }: ToastStyleProps) => resolveColor(messageType, theme)};
     border-style: none none none solid;
     border-width: 0 0 0 10px;
     ${injectCss}
@@ -195,13 +196,11 @@ const Toast: React.FC<{ toastId: number; in?: boolean } & ToastProps> = ({
                 exit: transitionLength,
             }}
         >
-            {state => (
+            {transitionState => (
                 <ToastStyle
-                    transitionState={state}
                     css={cssOverrides.toast}
-                    {...{ transitionLength, messageType }}
+                    {...{ transitionState, transitionLength, messageType }}
                     data-test-selector={`toast${messageType}`}
-                    {...otherProps}
                 >
                     <ToastBody css={cssOverrides.toastBody} data-id="toast-body">
                         <IconMemo

@@ -9,8 +9,10 @@ import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import clearProducts from "@insite/client-framework/Store/Pages/QuickOrder/Handlers/ClearProducts";
 import translate from "@insite/client-framework/Translate";
+import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductAddedToCartMessage from "@insite/content-library/Components/ProductAddedToCartMessage";
 import { QuickOrderPageContext } from "@insite/content-library/Pages/QuickOrderPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Clickable from "@insite/mobius/Clickable";
@@ -181,9 +183,16 @@ const QuickOrderActions: FC<Props> = ({
     };
 
     const addAllToCartClickHandler = async () => {
-        await addCartLines({ productInfos });
+        const reversedList = [...productInfos].reverse();
+        const cartLinesCollection = (await addCartLines({ productInfos: reversedList })) as CartLineCollectionModel;
+
         if (showAddToCartConfirmationDialog) {
-            toasterContext.addToast({ body: siteMessage("Cart_AllProductsAddedToCart"), messageType: "success" });
+            const isQtyAdjusted = cartLinesCollection.cartLines?.some(cartLine => cartLine.isQtyAdjusted) ?? false;
+
+            toasterContext.addToast({
+                body: <ProductAddedToCartMessage isQtyAdjusted={isQtyAdjusted} multipleProducts={true} />,
+                messageType: "success",
+            });
         }
         clearProducts();
         cartPageLink && history.push(cartPageLink.url);

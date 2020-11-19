@@ -7,6 +7,7 @@ export interface ProductInfo {
     pricing?: ProductPriceDto;
     inventory?: ProductInventoryDto;
     failedToLoadPricing?: true;
+    failedToLoadInventory?: true;
     productDetailPath: string;
 }
 

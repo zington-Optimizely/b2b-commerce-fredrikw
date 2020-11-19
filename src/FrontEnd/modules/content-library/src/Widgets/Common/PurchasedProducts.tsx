@@ -1,6 +1,7 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getProductsForProductInfoList } from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListSelectors";
 import loadPurchasedProducts from "@insite/client-framework/Store/Components/PurchasedProducts/Handlers/LoadPurchasedProducts";
+import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -42,9 +43,14 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
-    products: getProductsForProductInfoList(state, ownProps.id),
-});
+const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
+    const session = getSession(state);
+    const isAuthenticated = (session.isAuthenticated || session.rememberMe) && !session.isGuest;
+    return {
+        products: getProductsForProductInfoList(state, ownProps.id),
+        canViewPurchasedProducts: isAuthenticated,
+    };
+};
 
 const mapDispatchToProps = {
     loadPurchasedProducts,
@@ -135,12 +141,14 @@ const TitleWrapper = styled.div<{ position: string }>`
     justify-content: ${({ position }) => getJustifyContent(position)};
 `;
 
-const PurchasedProducts: React.FC<Props> = ({ id, fields, products, loadPurchasedProducts }) => {
+const PurchasedProducts = ({ id, fields, products, canViewPurchasedProducts, loadPurchasedProducts }: Props) => {
     React.useEffect(() => {
-        loadPurchasedProducts({ widgetId: id, purchaseType: fields.purchaseType });
+        if (canViewPurchasedProducts) {
+            loadPurchasedProducts({ widgetId: id, purchaseType: fields.purchaseType });
+        }
     }, [fields.purchaseType]);
 
-    if (!products || products.length === 0) {
+    if (!canViewPurchasedProducts || !products || products.length === 0) {
         return null;
     }
 

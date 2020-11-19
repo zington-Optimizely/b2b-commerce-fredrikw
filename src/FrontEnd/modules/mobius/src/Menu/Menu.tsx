@@ -60,6 +60,8 @@ type MenuComponentProps = MobiusStyledComponentProps<
         menuTrigger: React.ReactElement;
         /** Width of the menu and submenus in pixels. */
         width?: number;
+        /** Allows forcing the state of this menu to be open */
+        isOpen?: true;
     }
 >;
 
@@ -85,10 +87,16 @@ const MenuStyle = styled.ul<
     ${injectCss}
 `;
 
-const MenuWrapper = styled.nav<{ isOpen: boolean } & InjectableCss>`
+const MenuWrapper = styled.nav<{ canBeOpen: boolean; isOpen?: true } & InjectableCss>`
     position: relative; /* stylelint-disable */
-    ${({ isOpen }) =>
-        isOpen &&
+        ${({ isOpen }) =>
+            isOpen &&
+            `& > ${MenuStyle} {
+                display: block;
+            }
+    `}
+    ${({ canBeOpen }) =>
+        canBeOpen &&
         `
     &:focus-within > ${MenuStyle}  /* stylelint-enable */ {
         display: block;
@@ -141,7 +149,7 @@ const MenuItemText = styled(Typography as any)<{ hasChildren?: boolean }>`
 const trigger = React.createRef<HTMLElement>();
 
 interface MenuState {
-    isOpen: boolean;
+    canBeOpen: boolean;
 }
 
 /**
@@ -154,17 +162,17 @@ class Menu extends React.Component<MenuProps, MenuState> {
     };
 
     state: MenuState = {
-        isOpen: true,
+        canBeOpen: true,
     };
 
     closeMenu = () => {
-        this.setState({ isOpen: false }, () =>
+        this.setState({ canBeOpen: false }, () =>
             setTimeout(() => {
                 // The make the all browsers act the same on item click.
                 if (document.activeElement instanceof HTMLElement) {
                     document.activeElement.blur();
                 }
-                this.setState({ isOpen: true });
+                this.setState({ canBeOpen: true });
             }, 100),
         );
     };
@@ -173,7 +181,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
         return (
             <ThemeConsumer>
                 {theme => {
-                    const { menuItems, menuTrigger, ...otherProps } = this.props;
+                    const { menuItems, menuTrigger, isOpen, ...otherProps } = this.props;
                     const { applyProp, spreadProps } = applyPropBuilder(
                         { ...otherProps, theme },
                         { component: "menu" },
@@ -224,7 +232,8 @@ class Menu extends React.Component<MenuProps, MenuState> {
                     return (
                         <>
                             <MenuWrapper
-                                isOpen={this.state.isOpen}
+                                canBeOpen={this.state.canBeOpen}
+                                isOpen={isOpen}
                                 css={cssOverrides?.wrapper}
                                 {...{ "aria-labelledby": descriptionId }}
                                 {...otherProps}

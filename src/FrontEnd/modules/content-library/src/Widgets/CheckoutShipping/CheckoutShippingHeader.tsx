@@ -46,8 +46,8 @@ export const pageHeaderStyles: CheckoutShippingHeaderStyles = {
                 breakpointMediaQueries(theme, [
                     css`
                         position: fixed;
-                        left: 0px;
-                        bottom: 0px;
+                        left: 0;
+                        bottom: 0;
                         width: 100%;
                         z-index: 1;
                     `,

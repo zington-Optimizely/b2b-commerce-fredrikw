@@ -48,6 +48,7 @@ const reducer = {
         action: { shipTo: ShipToModel },
     ) => {
         draft.lastSelectedShippingAddress = action.shipTo;
+        draft.useBillingAddress = false;
     },
     "Pages/CheckoutShipping/SetNotes": (draft: Draft<CheckoutShippingState>, action: { notes: string }) => {
         draft.editedCartNotes = action.notes;

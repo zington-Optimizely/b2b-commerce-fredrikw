@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
+const fs = require("fs");
 const updateFile = require("./updateFile");
 
 function doWork(isDevBuild, blueprint) {
@@ -13,9 +14,15 @@ export * from \"./src/StartServer\";
 `,
     );
 
+    const shellBlueprint = blueprint.replace("blueprints", "blueprints-shell");
+    const shellBlueprintExists = fs.existsSync(
+        path.resolve(__dirname, `../../modules/${shellBlueprint}/src/Start.tsx`),
+    );
+    const shellBlueprintImport = shellBlueprintExists ? `\nimport \"../${shellBlueprint}/src/Start\";` : "";
+
     updateFile(
         path.resolve(__dirname, "../../modules/shell/Entry.ts"),
-        `/* eslint-disable */
+        `/* eslint-disable */${shellBlueprintImport}
 import \"../${blueprint}/src/Start\";
 import \"@insite/shell/ClientApp\";
 `,

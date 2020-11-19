@@ -79,9 +79,15 @@ export const GetInventory: HandlerType = async props => {
             productIds: [productId],
             onComplete: realTimeInventoryProps => {
                 loadedInventory = true;
-                props.productInfo.inventory = realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.find(
-                    o => o.productId === productId,
-                );
+                if (realTimeInventoryProps.error) {
+                    if (props.productInfo) {
+                        props.productInfo.failedToLoadInventory = true;
+                    }
+                } else {
+                    props.productInfo.inventory = realTimeInventoryProps?.apiResult?.realTimeInventoryResults?.find(
+                        o => o.productId === productId,
+                    );
+                }
             },
         }),
     );

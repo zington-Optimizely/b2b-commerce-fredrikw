@@ -3,6 +3,7 @@ FROM registry.cloud.insitehq.net/spire/build-base:${COMMERCE_VERSION} as build
 
 WORKDIR /app
 COPY . ./modules/blueprints/
+COPY . ./modules/blueprints-shell/
 
 RUN ["npm", "run", "eslint:blueprint"]
 
@@ -32,7 +33,5 @@ COPY --from=build  /app/startProduction.js ./
 COPY --from=build  /app/start.js ./
 
 ENV ISC_ENABLE_COMPRESSION=true
-
-ENV ISC_ENABLE_CLUSTER=true
 
 CMD ["node", "./startProduction.js"]

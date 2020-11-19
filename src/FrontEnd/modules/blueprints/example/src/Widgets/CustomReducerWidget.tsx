@@ -10,6 +10,7 @@ import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button from "@insite/mobius/Button";
 import React from "react";
 import { connect, DispatchProp } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: CustomState) => ({
     immerCount: state.customReducerUsingImmer.total,
@@ -20,7 +21,19 @@ type Props = WidgetProps & ReturnType<typeof mapStateToProps> & DispatchProp<Cus
 
 const CustomReducerWidget: React.FC<Props> = ({ dispatch, immerCount, traditionalCount }) => (
     <>
-        <Button onClick={() => dispatch({ type: "Custom/Immer/Add", amount: 1 })}>{`Immer ${immerCount}`}</Button>
+        <Button
+            css={css`
+                border-radius: 10px;
+            `}
+            typographyProps={{
+                css: css`
+                    text-decoration: underline;
+                `,
+                variant: "p",
+            }}
+            mergeCss
+            onClick={() => dispatch({ type: "Custom/Immer/Add", amount: 1 })}
+        >{`Immer ${immerCount}`}</Button>
         <Button onClick={() => dispatch({ type: "Custom/Traditional/Add", amount: 1 })}>
             {`Traditional ${traditionalCount}`}
         </Button>

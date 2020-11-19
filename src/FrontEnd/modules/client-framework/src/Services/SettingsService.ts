@@ -28,13 +28,20 @@ export interface TokenExConfig {
     authenticationKey: string;
 }
 
+export const enum StorefrontAccess {
+    NoSignInRequired = "NoSignInRequired",
+    SignInRequiredToBrowse = "SignInRequiredToBrowse",
+    SignInRequiredToAddToCart = "SignInRequiredToAddToCart",
+    SignInRequiredToAddToCartOrSeePrices = "SignInRequiredToAddToCartOrSeePrices",
+}
+
 export function getSettings(parameter: GetSettingsApiParameter) {
     return get<SettingsModel>("/api/v1/settings/", parameter);
 }
 
 export function getTokenExConfig(parameter: GetTokenExConfigApiParameter = {}) {
     parameter.origin = parameter.origin ?? window.location.origin;
-    return get<TokenExConfig>("api/v1/tokenexconfig", parameter);
+    return get<TokenExConfig>("/api/v1/tokenexconfig", parameter);
 }
 
 export interface SettingsModel extends BaseModel {
@@ -60,4 +67,6 @@ export interface SearchSettingsModel extends BaseModel {
     autocompleteEnabled: boolean;
     searchHistoryEnabled: boolean;
     searchHistoryLimit: number;
+    enableBoostingByPurchaseHistory: boolean;
+    allowFilteringForPreviouslyPurchasedProducts: boolean;
 }

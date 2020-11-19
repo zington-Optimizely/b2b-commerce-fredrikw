@@ -1,5 +1,6 @@
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import validatePassword from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -20,12 +21,16 @@ import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {}
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+
+const mapDispatchToProps = {
+    validatePassword,
+};
 
 const mapStateToProps = (state: ApplicationState) => ({
     accountSettings: getSettingsCollection(state).accountSettings,
@@ -123,6 +128,7 @@ const ChangePasswordView: FC<Props> = props => {
     const [showValidation, setShowValidation] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [showPasswords, setShowPasswords] = React.useState(false);
+    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState<React.ReactNode>("");
 
     const {
         passwordMinimumLength,
@@ -137,10 +143,17 @@ const ChangePasswordView: FC<Props> = props => {
     };
 
     const newPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
-        setNewPassword(event.currentTarget.value);
-        setError(
-            !(confirmNewPassword && event.currentTarget.value && event.currentTarget.value === confirmNewPassword),
-        );
+        const newPassword = event.currentTarget.value;
+
+        props.validatePassword({
+            password: newPassword,
+            onComplete: errorMessage => {
+                setPasswordErrorMessage(errorMessage);
+            },
+        });
+
+        setNewPassword(newPassword);
+        setError(!(confirmNewPassword && newPassword && newPassword === confirmNewPassword));
     };
 
     const confirmNewPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
@@ -202,6 +215,7 @@ const ChangePasswordView: FC<Props> = props => {
                         type={showPasswords ? "text" : "password"}
                         label={translate("New Password")}
                         onInput={newPasswordChangeHandler}
+                        error={showValidation && passwordErrorMessage}
                         autoComplete="new-password"
                     />
                 </GridItem>
@@ -242,7 +256,7 @@ const ChangePasswordView: FC<Props> = props => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(ChangePasswordView),
+    component: connect(mapStateToProps, mapDispatchToProps)(ChangePasswordView),
     definition: {
         allowedContexts: [ChangePasswordPageContext],
         group: "Change Password",

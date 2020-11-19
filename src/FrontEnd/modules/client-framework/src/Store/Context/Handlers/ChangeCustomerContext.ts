@@ -4,7 +4,6 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
-    makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
 import { Cart } from "@insite/client-framework/Services/CartService";
 import {
@@ -18,7 +17,7 @@ import {
 import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getLocation, getLocationPathAndQuery } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { BillToModel, ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -165,7 +164,7 @@ export const NavigateToReturnUrl: HandlerType = props => {
     const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
     const checkoutReviewAndSubmitUrl = getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage")?.url;
     const cartUrl = getPageLinkByPageType(state, "CartPage")?.url;
-    let returnUrl: string | undefined = props.parameter.returnUrl || getLocation(state).pathname;
+    let returnUrl: string | undefined = props.parameter.returnUrl || getLocationPathAndQuery(state);
 
     const { canCheckOut, canBypassCheckoutAddress } = props.cart;
     if (session.dashboardIsHomepage) {

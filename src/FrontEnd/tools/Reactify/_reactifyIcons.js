@@ -8,7 +8,9 @@ const sourcePath = "./Optimized";
 const destinationPath = "../../modules/shell/src/Components/Icons";
 
 const { execSync } = require("child_process");
-execSync(`rmdir /Q/S Optimized`);
+if (fse.existsSync("Optimized")) {
+    execSync(`rmdir /Q/S Optimized`);
+}
 execSync(`svgo -f ./Assets ${sourcePath} --pretty --multipass`);
 
 const foundFiles = [];

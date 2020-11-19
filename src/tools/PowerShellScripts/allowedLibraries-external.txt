@@ -9,13 +9,10 @@ Microsoft.Azure.KeyVault.Core
 Microsoft.Azure.Storage.Blob
 Microsoft.Azure.Storage.Common
 Microsoft.CSharp
-Microsoft.OData.Core
-Microsoft.OData.Edm
 Microsoft.Owin
 Microsoft.Owin.Security
 Microsoft.Owin.Security.OAuth
 Microsoft.Owin.Security.WsFederation
-Microsoft.Spatial
 Microsoft.SqlServer.Types
 Microsoft.Web.Infrastructure
 mscorlib
@@ -56,7 +53,6 @@ System.Web.Http.Owin
 System.Web.Http.WebHost
 System.Web.Mobile
 System.Web.Mvc
-System.Web.OData
 System.Web.Optimization
 System.Web.Razor
 System.Web.Services

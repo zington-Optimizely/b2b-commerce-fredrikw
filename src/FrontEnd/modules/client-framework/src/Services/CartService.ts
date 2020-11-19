@@ -16,6 +16,7 @@ import {
     CartLineCollectionModel,
     CartLineModel,
     CartModel,
+    PaginationModel,
     PromotionCollectionModel,
     PromotionModel,
     ShipToModel,
@@ -51,6 +52,8 @@ export interface GetCartsApiParameter extends ApiParameter, HasPagingParameters 
     toDate?: string;
     orderTotalOperator?: string;
     orderTotal?: string;
+    orderSubtotalOperator?: string;
+    orderSubtotal?: string;
 }
 
 export interface UpdateCartApiParameter extends ApiParameter {
@@ -96,17 +99,23 @@ export interface AddCartPromotionApiParameter extends ApiParameter {
     promotionCode: string;
 }
 
-const cartsUrl = "api/v1/carts";
+const cartsUrl = "/api/v1/carts";
 
 export type Cart = Omit<CartModel, "billTo" | "shipTo"> & {
     billToId?: string;
     shipToId?: string;
+    collectionShipToLabel?: string;
 };
 
 export type CartResult = {
     cart: Cart;
     billTo?: BillToModel;
     shipTo?: ShipToModel;
+};
+
+export type CartCollectionResult = {
+    carts?: Cart[];
+    pagination: PaginationModel | null;
 };
 
 export async function getCart(parameter: GetCartApiParameter) {
@@ -117,13 +126,12 @@ export async function getCart(parameter: GetCartApiParameter) {
     return cartResult;
 }
 
-export async function getCarts(parameter: GetCartsApiParameter): Promise<ServiceResult<CartCollectionModel>> {
+export async function getCarts(parameter: GetCartsApiParameter): Promise<ServiceResult<CartCollectionResult>> {
     try {
         const carts = await get<CartCollectionModel>(cartsUrl, parameter);
-        cleanCarts(carts);
         return {
             successful: true,
-            result: carts,
+            result: cleanCarts(carts),
         };
     } catch (error) {
         if (isApiError(error) && error.status === 400) {
@@ -136,10 +144,22 @@ export async function getCarts(parameter: GetCartsApiParameter): Promise<Service
     }
 }
 
-function cleanCarts(cartCollection: CartCollectionModel) {
+function cleanCarts(cartCollection: CartCollectionModel): CartCollectionResult {
+    const cartCollectionResult = {
+        pagination: cartCollection.pagination,
+        carts: [],
+    } as CartCollectionResult;
+
     cartCollection.carts?.forEach(cart => {
-        cart.orderDate = cart.orderDate && new Date(cart.orderDate);
+        delete cart.cartLines;
+        cartCollectionResult.carts!.push({
+            ...cart,
+            orderDate: cart.orderDate && new Date(cart.orderDate),
+            collectionShipToLabel: cart.shipToLabel,
+        });
     });
+
+    return cartCollectionResult;
 }
 
 export async function updateCart(parameter: UpdateCartApiParameter) {

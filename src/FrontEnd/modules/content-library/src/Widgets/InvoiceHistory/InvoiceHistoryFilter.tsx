@@ -23,9 +23,30 @@ import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
+const enum fields {
+    showShipTo = "showShipTo",
+    showInvoiceNumber = "showInvoiceNumber",
+    showOrderNumber = "showOrderNumber",
+    showPoNumber = "showPoNumber",
+    showDateRange = "showDateRange",
+    showStatus = "showStatus",
+}
+
+interface OwnProps extends WidgetProps {
+    fields: {
+        [fields.showShipTo]: boolean;
+        [fields.showInvoiceNumber]: boolean;
+        [fields.showOrderNumber]: boolean;
+        [fields.showPoNumber]: boolean;
+        [fields.showDateRange]: boolean;
+        [fields.showStatus]: boolean;
+    };
+}
+
 interface State {
     invoiceNumber: string;
     orderNumber: string;
+    poNumber: string;
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -41,7 +62,7 @@ const mapDispatchToProps = {
     clearSearch,
 };
 
-type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface InvoiceHistoryFilterStyles {
     container?: GridContainerProps;
@@ -53,6 +74,8 @@ export interface InvoiceHistoryFilterStyles {
     invoiceNumberText?: TextFieldProps;
     orderNumberGridItem?: GridItemProps;
     orderNumberText?: TextFieldProps;
+    poNumberGridItem?: GridItemProps;
+    poNumberText?: TextFieldProps;
     fromGridItem?: GridItemProps;
     fromDate?: DatePickerPresentationProps;
     toGridItem?: GridItemProps;
@@ -84,13 +107,14 @@ export const filterStyles: InvoiceHistoryFilterStyles = {
             margin: 0;
         `,
     },
-    shipToGridItem: { width: [12, 12, 5, 5, 4] },
-    invoiceNumberGridItem: { width: [12, 12, 3, 3, 2] },
-    orderNumberGridItem: { width: [12, 12, 3, 3, 2] },
-    fromGridItem: { width: [6, 6, 3, 2, 2] },
+    shipToGridItem: { width: [12, 12, 6, 6, 4] },
+    invoiceNumberGridItem: { width: [12, 12, 3, 3, 3] },
+    orderNumberGridItem: { width: [12, 12, 3, 3, 3] },
+    poNumberGridItem: { width: [12, 12, 3, 3, 2] },
+    fromGridItem: { width: [6, 6, 3, 3, 2] },
     toGridItem: { width: [6, 6, 3, 3, 2] },
     onlyOpenGridItem: {
-        width: [12, 12, 4, 4, 4],
+        width: 12,
         align: "bottom",
         css: css`
             padding-top: 0;
@@ -141,12 +165,13 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
         this.state = {
             invoiceNumber: this.getValue(props, "invoiceNumber"),
             orderNumber: this.getValue(props, "orderNumber"),
+            poNumber: this.getValue(props, "poNumber"),
         };
     }
 
     updateTimeoutId: number | undefined;
 
-    getValue = (props: Props, key: "orderNumber" | "invoiceNumber"): string => {
+    getValue = (props: Props, key: "orderNumber" | "invoiceNumber" | "poNumber"): string => {
         let value = props.getInvoicesParameter[key] as string;
         if (!value) {
             value = "";
@@ -165,15 +190,19 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
         const currentOrderNumber = this.getValue(this.props, "orderNumber");
         const previousInvoiceNumber = this.getValue(prevProps, "invoiceNumber");
         const currentInvoiceNumber = this.getValue(this.props, "invoiceNumber");
+        const previousPoNumber = this.getValue(prevProps, "poNumber");
+        const currentPoNumber = this.getValue(this.props, "poNumber");
 
         if (
             (previousOrderNumber !== currentOrderNumber && currentOrderNumber !== this.state.orderNumber) ||
+            (previousPoNumber !== currentPoNumber && currentPoNumber !== this.state.poNumber) ||
             (previousInvoiceNumber !== currentInvoiceNumber && currentInvoiceNumber !== this.state.invoiceNumber)
         ) {
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState({
                 invoiceNumber: currentInvoiceNumber,
                 orderNumber: currentOrderNumber,
+                poNumber: currentOrderNumber,
             });
         }
     }
@@ -187,6 +216,7 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
             this.props.updateSearchFields({
                 invoiceNumber: this.state.invoiceNumber,
                 orderNumber: this.state.orderNumber,
+                poNumber: this.state.poNumber,
             });
         }, 250);
     };
@@ -206,6 +236,14 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
     orderNumberChangeHandler = (orderNumber: string) => {
         this.setState({
             orderNumber,
+        });
+
+        this.updateParameterAfterTimeout();
+    };
+
+    poNumberChangeHandler = (poNumber: string) => {
+        this.setState({
+            poNumber,
         });
 
         this.updateParameterAfterTimeout();
@@ -266,6 +304,16 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                             {`${translate("Order #")}: ${this.props.getInvoicesParameter.orderNumber}`}
                         </Tag>
                     )}
+                    {this.props.getInvoicesParameter.poNumber && (
+                        <Tag
+                            {...styles.appliedFilterTag}
+                            onDelete={() => {
+                                this.poNumberChangeHandler("");
+                            }}
+                        >
+                            {`${translate("PO #")}: ${this.props.getInvoicesParameter.poNumber}`}
+                        </Tag>
+                    )}
                     {this.props.getInvoicesParameter.fromDate && (
                         <Tag
                             {...styles.appliedFilterTag}
@@ -314,74 +362,96 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
                 <GridItem {...styles.headingItem}>
                     <Typography {...styles.heading}>{translate("Filter")}</Typography>
                 </GridItem>
-                <GridItem {...styles.shipToGridItem}>
-                    <Select
-                        {...styles.shipToSelect}
-                        label={translate("Ship To")}
-                        value={this.props.getInvoicesParameter.customerSequence}
-                        onChange={event => this.shipToChangeHandler(event.target.value)}
-                    >
-                        {shipToOptions.map(shipTo => (
-                            <option key={shipTo.customerSequence} value={shipTo.customerSequence}>
-                                {shipTo.label}
-                            </option>
-                        ))}
-                    </Select>
-                </GridItem>
-                <GridItem {...styles.invoiceNumberGridItem}>
-                    <TextField
-                        {...styles.invoiceNumberText}
-                        value={this.state.invoiceNumber}
-                        label={translate("Invoice #")}
-                        onChange={event => this.invoiceNumberChangeHandler(event.target.value)}
-                        data-test-selector="invoiceHistory_invoiceNumberFilter"
-                    />
-                </GridItem>
-                <GridItem {...styles.orderNumberGridItem}>
-                    <TextField
-                        {...styles.orderNumberText}
-                        value={this.state.orderNumber}
-                        label={translate("Order #")}
-                        onChange={event => this.orderNumberChangeHandler(event.target.value)}
-                    />
-                </GridItem>
-                <GridItem {...styles.fromGridItem} data-test-selector="invoiceHistory_fromDateFilter">
-                    <DatePicker
-                        {...styles.fromDate}
-                        label={translate("From")}
-                        selectedDay={fromDate}
-                        onDayChange={this.fromDateChangeHandler}
-                        dateTimePickerProps={{
-                            clearIcon: null,
-                            maxDate: toDate,
-                            ...styles.fromDate?.dateTimePickerProps,
-                        }}
-                    />
-                </GridItem>
-                <GridItem {...styles.toGridItem} data-test-selector="invoiceHistory_toDateFilter">
-                    <DatePicker
-                        {...styles.toDate}
-                        label={translate("To")}
-                        selectedDay={toDate}
-                        onDayChange={this.toDateChangeHandler}
-                        dateTimePickerProps={{
-                            clearIcon: null,
-                            minDate: fromDate,
-                            ...styles.toDate?.dateTimePickerProps,
-                        }}
-                    />
-                </GridItem>
-                <GridItem {...styles.onlyOpenGridItem}>
-                    <Checkbox
-                        {...styles.onlyOpenCheckbox}
-                        checked={this.props.getInvoicesParameter.showOpenOnly}
-                        onChange={(_, value) => {
-                            this.showOpenOnlyChangeHandler(value);
-                        }}
-                    >
-                        {translate("Show only open invoices")}
-                    </Checkbox>
-                </GridItem>
+                {this.props.fields.showShipTo && (
+                    <GridItem {...styles.shipToGridItem}>
+                        <Select
+                            {...styles.shipToSelect}
+                            label={translate("Ship To")}
+                            value={this.props.getInvoicesParameter.customerSequence}
+                            onChange={event => this.shipToChangeHandler(event.target.value)}
+                        >
+                            {shipToOptions.map(shipTo => (
+                                <option key={shipTo.customerSequence} value={shipTo.customerSequence}>
+                                    {shipTo.label}
+                                </option>
+                            ))}
+                        </Select>
+                    </GridItem>
+                )}
+                {this.props.fields.showInvoiceNumber && (
+                    <GridItem {...styles.invoiceNumberGridItem}>
+                        <TextField
+                            {...styles.invoiceNumberText}
+                            value={this.state.invoiceNumber}
+                            label={translate("Invoice #")}
+                            onChange={event => this.invoiceNumberChangeHandler(event.target.value)}
+                            data-test-selector="invoiceHistory_invoiceNumberFilter"
+                        />
+                    </GridItem>
+                )}
+                {this.props.fields.showOrderNumber && (
+                    <GridItem {...styles.orderNumberGridItem}>
+                        <TextField
+                            {...styles.orderNumberText}
+                            value={this.state.orderNumber}
+                            label={translate("Order #")}
+                            onChange={event => this.orderNumberChangeHandler(event.target.value)}
+                        />
+                    </GridItem>
+                )}
+                {this.props.fields.showPoNumber && (
+                    <GridItem {...styles.poNumberGridItem}>
+                        <TextField
+                            {...styles.poNumberText}
+                            value={this.state.poNumber}
+                            label={translate("PO #")}
+                            onChange={event => this.poNumberChangeHandler(event.target.value)}
+                        />
+                    </GridItem>
+                )}
+                {this.props.fields.showDateRange && (
+                    <>
+                        <GridItem {...styles.fromGridItem} data-test-selector="invoiceHistory_fromDateFilter">
+                            <DatePicker
+                                {...styles.fromDate}
+                                label={translate("From")}
+                                selectedDay={fromDate}
+                                onDayChange={this.fromDateChangeHandler}
+                                dateTimePickerProps={{
+                                    clearIcon: null,
+                                    maxDate: toDate,
+                                    ...styles.fromDate?.dateTimePickerProps,
+                                }}
+                            />
+                        </GridItem>
+                        <GridItem {...styles.toGridItem} data-test-selector="invoiceHistory_toDateFilter">
+                            <DatePicker
+                                {...styles.toDate}
+                                label={translate("To")}
+                                selectedDay={toDate}
+                                onDayChange={this.toDateChangeHandler}
+                                dateTimePickerProps={{
+                                    clearIcon: null,
+                                    minDate: fromDate,
+                                    ...styles.toDate?.dateTimePickerProps,
+                                }}
+                            />
+                        </GridItem>
+                    </>
+                )}
+                {this.props.fields.showStatus && (
+                    <GridItem {...styles.onlyOpenGridItem}>
+                        <Checkbox
+                            {...styles.onlyOpenCheckbox}
+                            checked={this.props.getInvoicesParameter.showOpenOnly}
+                            onChange={(_, value) => {
+                                this.showOpenOnlyChangeHandler(value);
+                            }}
+                        >
+                            {translate("Show only open invoices")}
+                        </Checkbox>
+                    </GridItem>
+                )}
                 <GridItem {...styles.buttonsItem}>
                     <Button
                         {...styles.clearFiltersButton}
@@ -402,6 +472,56 @@ const widgetModule: WidgetModule = {
         group: "Invoice History",
         displayName: "Search Results Filter",
         allowedContexts: [InvoiceHistoryPageContext],
+        fieldDefinitions: [
+            {
+                name: fields.showShipTo,
+                displayName: "Ship to Address",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 1,
+            },
+            {
+                name: fields.showInvoiceNumber,
+                displayName: "Invoice #",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 2,
+            },
+            {
+                name: fields.showOrderNumber,
+                displayName: "Order #",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 3,
+            },
+            {
+                name: fields.showPoNumber,
+                displayName: "PO #",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 4,
+            },
+            {
+                name: fields.showDateRange,
+                displayName: "Date Range",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 5,
+            },
+            {
+                name: fields.showStatus,
+                displayName: "Status",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                fieldType: "General",
+                sortOrder: 6,
+            },
+        ],
     },
 };
 

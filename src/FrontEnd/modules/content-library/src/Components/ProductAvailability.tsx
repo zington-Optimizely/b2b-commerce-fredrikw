@@ -1,6 +1,7 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import getRealTimeWarehouseInventory from "@insite/client-framework/Store/Data/RealTimeInventory/Handlers/GetRealTimeWarehouseInventory";
@@ -41,6 +42,7 @@ interface OwnProps {
     unitOfMeasure: string;
     trackInventory: boolean;
     isProductDetailsPage?: boolean;
+    failedToLoadInventory?: boolean;
     extendedStyles?: ProductAvailabilityStyles;
 }
 
@@ -61,6 +63,7 @@ export interface ProductAvailabilityStyles {
     inventoryMessage?: InjectableCss;
     messageText?: TypographyPresentationProps;
     realTimeText?: TypographyPresentationProps;
+    errorWrapper?: InjectableCss;
     errorText?: TypographyPresentationProps;
     availabilityByWarehouseLink?: LinkPresentationProps;
     availabilityByWarehouseModal?: ModalPresentationProps;
@@ -141,10 +144,7 @@ export const productAvailabilityStyles: ProductAvailabilityStyles = {
         `,
     },
     errorText: {
-        css: css`
-            width: 100%;
-            word-wrap: break-word;
-        `,
+        weight: "bold",
     },
 };
 
@@ -217,6 +217,7 @@ const ProductAvailability: FC<Props> = ({
     productSettings,
     isProductDetailsPage,
     getRealTimeWarehouseInventory,
+    failedToLoadInventory,
     extendedStyles,
 }) => {
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
@@ -245,6 +246,14 @@ const ProductAvailability: FC<Props> = ({
     const iconSrc = getAvailabilityIcon(availability);
 
     const [styles] = React.useState(() => mergeToNew(productAvailabilityStyles, extendedStyles));
+
+    if (failedToLoadInventory) {
+        return (
+            <StyledWrapper {...styles.errorWrapper}>
+                <Typography {...styles.errorText}>{siteMessage("RealTimeInventory_InventoryLoadFailed ")}</Typography>
+            </StyledWrapper>
+        );
+    }
 
     let inventoryTextComponent = <Typography {...styles.realTimeText} />;
     if (availability && availability.message) {

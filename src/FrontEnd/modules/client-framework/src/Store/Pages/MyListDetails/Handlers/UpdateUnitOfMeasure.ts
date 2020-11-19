@@ -1,22 +1,12 @@
-import {
-    createHandlerChainRunner,
-    Handler,
-    HasOnSuccess,
-    makeHandlerChainAwaitable,
-} from "@insite/client-framework/HandlerCreator";
+import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
+import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { updateWishListLine as updateWishListLineApi } from "@insite/client-framework/Services/WishListService";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
-import {
-    ProductInventoryDto,
-    ProductPriceDto,
-    RealTimeInventoryModel,
-    RealTimePricingModel,
-    WishListLineModel,
-} from "@insite/client-framework/Types/ApiModels";
+import { ProductInventoryDto, ProductPriceDto, WishListLineModel } from "@insite/client-framework/Types/ApiModels";
 
 interface Parameter extends HasOnSuccess {
     wishListLineId: string;
@@ -29,6 +19,8 @@ interface Props {
     apiResult: WishListLineModel;
     pricing?: ProductPriceDto;
     inventory?: ProductInventoryDto;
+    failedToLoadPricing?: true;
+    failedToLoadInventory?: true;
 }
 
 type HandlerType = Handler<Parameter, Props>;
@@ -80,22 +72,31 @@ export const UpdatePrice: HandlerType = async props => {
         return;
     }
 
-    const awaitableLoadRealTimePricing = makeHandlerChainAwaitable<
-        Parameters<typeof loadRealTimePricing>[0],
-        RealTimePricingModel
-    >(loadRealTimePricing);
+    let loadedPricing = false;
+    props.dispatch(
+        loadRealTimePricing({
+            productPriceParameters: [
+                {
+                    productId: props.apiResult.productId,
+                    unitOfMeasure: props.apiResult.unitOfMeasure,
+                    qtyOrdered: props.apiResult.qtyOrdered,
+                },
+            ],
+            onComplete: realTimePricingProps => {
+                if (realTimePricingProps.apiResult) {
+                    props.pricing = realTimePricingProps.apiResult.realTimePricingResults?.find(
+                        o => o.productId === props.apiResult.productId,
+                    );
+                } else if (realTimePricingProps.error) {
+                    props.failedToLoadPricing = true;
+                }
 
-    const parameter = {
-        productPriceParameters: [
-            {
-                productId: props.apiResult.productId,
-                unitOfMeasure: props.apiResult.unitOfMeasure,
-                qtyOrdered: props.apiResult.qtyOrdered,
+                loadedPricing = true;
             },
-        ],
-    };
-    const realTimePricingModel = await awaitableLoadRealTimePricing(parameter)(props.dispatch, props.getState);
-    props.pricing = realTimePricingModel.realTimePricingResults?.find(o => o.productId === props.apiResult.productId);
+        }),
+    );
+
+    await waitFor(() => loadedPricing);
 };
 
 export const UpdateInventory: HandlerType = async props => {
@@ -103,18 +104,25 @@ export const UpdateInventory: HandlerType = async props => {
         return;
     }
 
-    const awaitableLoadRealTimeInventory = makeHandlerChainAwaitable<
-        Parameters<typeof loadRealTimeInventory>[0],
-        RealTimeInventoryModel
-    >(loadRealTimeInventory);
+    let loadedInventory = false;
 
-    const realTimeInventoryModel = await awaitableLoadRealTimeInventory({ productIds: [props.apiResult.productId] })(
-        props.dispatch,
-        props.getState,
+    props.dispatch(
+        loadRealTimeInventory({
+            productIds: [props.apiResult.productId],
+            onComplete: realTimeInventoryProps => {
+                if (realTimeInventoryProps.error) {
+                    props.failedToLoadInventory = true;
+                } else {
+                    props.inventory = realTimeInventoryProps.apiResult?.realTimeInventoryResults?.find(
+                        o => o.productId === props.apiResult.productId,
+                    );
+                }
+                loadedInventory = true;
+            },
+        }),
     );
-    props.inventory = realTimeInventoryModel.realTimeInventoryResults?.find(
-        o => o.productId === props.apiResult.productId,
-    );
+
+    await waitFor(() => loadedInventory);
 };
 
 export const DispatchUpdateWishListLine: HandlerType = props => {
@@ -128,6 +136,8 @@ export const DispatchUpdateWishListLine: HandlerType = props => {
         unitOfMeasure: props.apiResult.unitOfMeasure,
         pricing: props.pricing,
         inventory: props.inventory,
+        failedToLoadPricing: props.failedToLoadPricing,
+        failedToLoadInventory: props.failedToLoadInventory,
     });
 
     props.dispatch({

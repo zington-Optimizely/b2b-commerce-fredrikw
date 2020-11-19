@@ -14,7 +14,7 @@ const ProductContextAvailability = ({
     isProductDetailsPage,
     extendedStyles,
 }: HasProduct & OwnProps) => {
-    const { inventory, unitOfMeasure } = productInfo;
+    const { inventory, unitOfMeasure, failedToLoadInventory } = productInfo;
 
     const availability =
         inventory?.inventoryAvailabilityDtos?.find(
@@ -32,6 +32,7 @@ const ProductContextAvailability = ({
             availability={availability}
             unitOfMeasure={unitOfMeasure}
             isProductDetailsPage={isProductDetailsPage}
+            failedToLoadInventory={failedToLoadInventory}
             extendedStyles={extendedStyles}
         />
     );

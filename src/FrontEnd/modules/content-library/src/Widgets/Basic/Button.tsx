@@ -27,17 +27,19 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => getLink(state, ownProps.fields.link);
+const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
+    link: getLink(state, ownProps.fields.link),
+});
 
-const onClick = (history: History, link: string) => {
-    if (link) {
-        history.push(link);
+const onClick = (history: History, url?: string) => {
+    if (url) {
+        history.push(url);
     }
 };
 
 type Props = HasHistory & OwnProps & ReturnType<typeof mapStateToProps>;
 
-const CmsButton: React.FunctionComponent<Props> = ({ fields, history, url }: Props) => {
+const CmsButton = ({ fields, history, link }: Props) => {
     const wrapperStyles = {
         css: css`
             width: 100%;
@@ -48,7 +50,7 @@ const CmsButton: React.FunctionComponent<Props> = ({ fields, history, url }: Pro
 
     return (
         <StyledWrapper {...wrapperStyles}>
-            <Button variant={fields.variant} onClick={() => onClick(history, url)}>
+            <Button variant={fields.variant} onClick={() => onClick(history, link?.url)}>
                 {fields.label}
             </Button>
         </StyledWrapper>

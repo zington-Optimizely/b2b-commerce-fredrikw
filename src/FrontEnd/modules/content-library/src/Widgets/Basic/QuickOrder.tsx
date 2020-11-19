@@ -6,8 +6,10 @@ import { getSettingsCollection } from "@insite/client-framework/Store/Context/Co
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
 import translate from "@insite/client-framework/Translate";
+import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ProductAddedToCartMessage from "@insite/content-library/Components/ProductAddedToCartMessage";
 import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -27,6 +29,7 @@ const mapStateToProps = (state: ApplicationState) => {
         showAddToCartConfirmationDialog: settingsCollection.productSettings.showAddToCartConfirmationDialog,
         orderUploadPageNavLink: getPageLinkByPageType(state, "OrderUploadPage"),
         quickOrderPageNavLink: getPageLinkByPageType(state, "QuickOrderPage"),
+        allowQuickOrder: settingsCollection.orderSettings.allowQuickOrder,
     };
 };
 
@@ -117,21 +120,29 @@ const QuickOrder: FC<Props> = ({
     quickOrderPageNavLink,
     toaster,
     addToCart,
+    allowQuickOrder,
 }) => {
     const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
 
+    if (!allowQuickOrder) {
+        return null;
+    }
+
     const addProductToCart = async (productInfo: ProductInfo) => {
-        await addToCart({
+        const cartline = (await addToCart({
             productId: productInfo.productId,
             qtyOrdered: productInfo.qtyOrdered,
             unitOfMeasure: productInfo.unitOfMeasure,
             onError: () => {
                 setErrorMessage(siteMessage("Product_NotFound"));
             },
-        });
+        })) as CartLineModel;
 
         if (showAddToCartConfirmationDialog) {
-            toaster.addToast({ body: siteMessage("Cart_ProductAddedToCart"), messageType: "success" });
+            toaster.addToast({
+                body: <ProductAddedToCartMessage isQtyAdjusted={cartline.isQtyAdjusted} multipleProducts={false} />,
+                messageType: "success",
+            });
         }
     };
 

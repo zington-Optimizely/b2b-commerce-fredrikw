@@ -24,11 +24,13 @@ import { css } from "styled-components";
 
 const enum fields {
     showImages = "showImages",
+    showOnlyTopLevelCategories = "showOnlyTopLevelCategories",
 }
 
 interface OwnProps extends WidgetProps {
     fields: {
         [fields.showImages]: boolean;
+        [fields.showOnlyTopLevelCategories]: boolean;
     };
 }
 
@@ -129,7 +131,7 @@ class CategoryList extends React.Component<Props> {
     render() {
         const {
             categoriesDataView,
-            fields: { showImages },
+            fields: { showImages, showOnlyTopLevelCategories },
         } = this.props;
         if (categoriesDataView.isLoading) {
             return (
@@ -162,18 +164,22 @@ class CategoryList extends React.Component<Props> {
                                     <Typography {...styles.categoryName}>{category.shortDescription}</Typography>
                                 </Link>
                             </GridItem>
-                            {category.subCategoryIds &&
-                                category.subCategoryIds.slice(0, 4).map(subCategoryId => (
-                                    <GridItem key={subCategoryId} {...styles.subCategoryNameLinkItem}>
-                                        <SubCategoryLink categoryId={subCategoryId} />
-                                    </GridItem>
-                                ))}
-                            {category.subCategoryIds && category.subCategoryIds.length > 4 && (
-                                <GridItem {...styles.viewMoreLinkItem}>
-                                    <Link href={category.path} {...styles.viewMoreLink}>
-                                        {translate("View More")}
-                                    </Link>
-                                </GridItem>
+                            {!showOnlyTopLevelCategories && (
+                                <>
+                                    {category.subCategoryIds &&
+                                        category.subCategoryIds.slice(0, 4).map(subCategoryId => (
+                                            <GridItem key={subCategoryId} {...styles.subCategoryNameLinkItem}>
+                                                <SubCategoryLink categoryId={subCategoryId} />
+                                            </GridItem>
+                                        ))}
+                                    {category.subCategoryIds && category.subCategoryIds.length > 4 && (
+                                        <GridItem {...styles.viewMoreLinkItem}>
+                                            <Link href={category.path} {...styles.viewMoreLink}>
+                                                {translate("View More")}
+                                            </Link>
+                                        </GridItem>
+                                    )}
+                                </>
                             )}
                         </GridContainer>
                     </GridItem>
@@ -214,6 +220,14 @@ const widgetModule: WidgetModule = {
                 defaultValue: true,
                 fieldType: "General",
                 sortOrder: 1,
+            },
+            {
+                name: fields.showOnlyTopLevelCategories,
+                displayName: "Show only top-level categories",
+                editorTemplate: "CheckboxField",
+                defaultValue: false,
+                fieldType: "General",
+                sortOrder: 2,
             },
         ],
     },

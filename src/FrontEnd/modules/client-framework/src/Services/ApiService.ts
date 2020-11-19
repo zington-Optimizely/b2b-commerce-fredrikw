@@ -118,12 +118,10 @@ export const rawRequest = async (
     endpoint: string,
     method = "GET",
     headers: Dictionary<string> = {},
-    body?: string,
+    body?: string | FormData,
     isStatusOkay: (status: number) => boolean = status => status >= 200 && status < 300,
     cache: RequestInit["cache"] = "no-cache",
 ) => {
-    let url = endpoint;
-
     if (isAdminEndpoint(endpoint)) {
         if (IS_SERVER_SIDE) {
             logger.warn(
@@ -132,10 +130,6 @@ export const rawRequest = async (
         } else {
             headers["Authorization"] = `Bearer ${window.localStorage.getItem("admin-accessToken")}`;
         }
-    }
-
-    if (IS_SERVER_SIDE) {
-        url = `${process.env.ISC_API_URL}${url.startsWith("/") ? url : `/${url}`}`;
     }
 
     const requestInit: RequestInit = {
@@ -148,7 +142,7 @@ export const rawRequest = async (
         requestInit.body = body;
     }
 
-    const response = await fetch(url, requestInit);
+    const response = await fetch(endpoint, requestInit);
     if (!isStatusOkay(response.status)) {
         let message: string;
         let errorJson: any;
@@ -158,7 +152,7 @@ export const rawRequest = async (
         } else {
             message = await response.text();
         }
-        throw new ApiError(url, response, message, errorJson);
+        throw new ApiError(endpoint, response, message, errorJson);
     }
 
     return response;
@@ -167,8 +161,8 @@ export const rawRequest = async (
 export async function request<T>(
     endpoint: string,
     method: string,
-    headers: Dictionary<string> = {},
-    body?: string,
+    headers: Dictionary<string> = { "X-Requested-With": "XMLHttpRequest" },
+    body?: string | FormData,
     isStatusOkay?: (status: number) => boolean,
     cache: RequestInit["cache"] = "no-cache",
 ) {

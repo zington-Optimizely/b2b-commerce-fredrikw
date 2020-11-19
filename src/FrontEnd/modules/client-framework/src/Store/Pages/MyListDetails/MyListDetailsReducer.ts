@@ -121,6 +121,8 @@ const reducer = {
             unitOfMeasure: string;
             pricing?: ProductPriceDto;
             inventory?: ProductInventoryDto;
+            failedToLoadPricing?: true;
+            failedToLoadInventory?: true;
         },
     ) => {
         const productInfo = draft.productInfosByWishListLineId[action.wishListLineId];
@@ -131,6 +133,8 @@ const reducer = {
         productInfo.unitOfMeasure = action.unitOfMeasure;
         productInfo.pricing = action.pricing;
         productInfo.inventory = action.inventory;
+        productInfo.failedToLoadInventory = action.failedToLoadInventory;
+        productInfo.failedToLoadPricing = action.failedToLoadPricing;
     },
 };
 

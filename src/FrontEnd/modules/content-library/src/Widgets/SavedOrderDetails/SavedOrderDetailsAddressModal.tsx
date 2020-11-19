@@ -222,7 +222,8 @@ const SavedOrderDetailsAddressModal: React.FC<Props> = ({
     const [styles] = React.useState(() => mergeToNew(savedOrderDetailsAddressModalStyles, extendedStyles));
     const [useCustomerFrom, setUseCustomerFrom] = React.useState(addressType.order);
 
-    const modalCloseHandler = () => {
+    const modalCloseHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
         onClose();
     };
 

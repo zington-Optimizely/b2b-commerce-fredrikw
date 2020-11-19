@@ -4,6 +4,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentUserIsGuest, getIsPunchOutSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import cancelPunchOut from "@insite/client-framework/Store/Context/Handlers/CancelPunchOut";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -32,6 +33,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     signInUrl: getPageLinkByPageType(state, "SignInPage")?.url,
     currentUserIsGuest: getCurrentUserIsGuest(state),
     isPunchOutSession: getIsPunchOutSession(state),
+    currentLocation: getLocation(state),
 });
 
 const mapDispatchToProps = {
@@ -100,6 +102,7 @@ const HeaderSignIn: FC<Props> = ({
     myAccountPageLink,
     signInUrl,
     isPunchOutSession,
+    currentLocation,
 }) => {
     const showIcon = fields.visibilityState === "both" || fields.visibilityState === "icon";
     const showLabel = fields.visibilityState === "both" || fields.visibilityState === "label";
@@ -114,7 +117,7 @@ const HeaderSignIn: FC<Props> = ({
                 logger.warn("No url was found for SignInPage, defaulting to /SignIn");
                 history.push("/MyAccount/SignIn");
             } else {
-                history.push(signInUrl);
+                history.push(`${signInUrl}?returnUrl=${currentLocation.pathname}${currentLocation.search}`);
             }
         }
     };

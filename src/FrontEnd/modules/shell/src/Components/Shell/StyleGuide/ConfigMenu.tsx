@@ -12,7 +12,6 @@ type Props = {
 };
 
 const MenuHeader = styled.div`
-    background: ${getColor("common.accentContrast")};
     height: 60px;
     padding: 18px 30px;
 `;
@@ -29,9 +28,16 @@ class ConfigMenu extends React.Component<Props> {
         return (
             <Popover
                 xPosition="start"
+                wrapperProps={{
+                    css: css`
+                        padding: 0 35px;
+                        &:hover {
+                            background-color: #d4e0fd;
+                        }
+                    `,
+                }}
                 contentBodyProps={{
                     css: css`
-                        background: #eee;
                         border-radius: 8px;
                     `,
                     _height: "1200px",
@@ -43,16 +49,15 @@ class ConfigMenu extends React.Component<Props> {
                     <Clickable
                         style={{ width: "100%" }}
                         css={css`
-                            ${this.props.insideForm && "margin-top: 10px;"}
                             &:hover {
                                 color: ${({ theme }) => theme.colors.primary.main};
                             }
                         `}
                     >
                         <Typography
-                            variant="h3"
+                            variant="h6"
                             css={css`
-                                margin: 9.5px 0 9.5px 0;
+                                margin: 7px 0;
                             `}
                         >
                             {this.props.title}
@@ -68,7 +73,6 @@ class ConfigMenu extends React.Component<Props> {
                         size={20}
                         weight={500}
                         as="h2"
-                        color="common.accent"
                         css={css`
                             margin: 0;
                         `}

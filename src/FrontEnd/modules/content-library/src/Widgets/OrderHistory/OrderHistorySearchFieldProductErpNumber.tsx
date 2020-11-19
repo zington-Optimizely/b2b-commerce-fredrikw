@@ -23,6 +23,7 @@ const OrderHistorySearchFieldProductErpNumber: React.FunctionComponent<WidgetPro
 const widgetModule: WidgetModule = {
     component: OrderHistorySearchFieldProductErpNumber,
     definition: {
+        isDeprecated: true,
         group: "Order History",
         displayName: "Product ERP Number",
         allowedContexts: [OrderHistoryPageContext],

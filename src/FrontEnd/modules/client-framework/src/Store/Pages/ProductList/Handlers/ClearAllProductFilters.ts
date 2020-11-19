@@ -12,6 +12,7 @@ export const GetCurrentFilters: HandlerType = props => {
 export const RemoveAllFilters: HandlerType = props => {
     props.result.searchWithinQueries = undefined;
     props.result.stockedItemsOnly = undefined;
+    props.result.previouslyPurchasedProducts = undefined;
     props.result.brandIds = undefined;
     props.result.productLineIds = undefined;
     props.result.categoryId = undefined;

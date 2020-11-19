@@ -11,12 +11,7 @@ const fs = require("fs");
 const path = require("path");
 
 if (!fs.existsSync("./config/settings.js")) {
-    fs.copyFileSync(path.resolve(__dirname, "./config/settings-base.js"), "./config/settings.js", error => {
-        if (error) {
-            throw error;
-        }
-        console.log("settings-base.js was copied to settings.js");
-    });
+    fs.copyFileSync(path.resolve(__dirname, "./config/settings-base.js"), "./config/settings.js");
 }
 
 const settings = require("./config/settings");

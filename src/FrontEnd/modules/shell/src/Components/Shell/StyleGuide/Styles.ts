@@ -36,7 +36,7 @@ const defaultConfigCheckboxStyles: Partial<CheckboxProps> & CheckboxPresentation
     variant: "toggle",
     typographyProps: {
         weight: 300,
-        size: 18,
+        size: "1rem",
         css: css`
             text-transform: initial;
             text-align: left;

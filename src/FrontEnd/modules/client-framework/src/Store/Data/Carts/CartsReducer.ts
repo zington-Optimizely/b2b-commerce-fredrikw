@@ -1,6 +1,6 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
-import { Cart, GetCartsApiParameter } from "@insite/client-framework/Services/CartService";
+import { Cart, CartCollectionResult, GetCartsApiParameter } from "@insite/client-framework/Services/CartService";
 import { CartsState } from "@insite/client-framework/Store/Data/Carts/CartsState";
 import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { CartCollectionModel } from "@insite/client-framework/Types/ApiModels";
@@ -10,6 +10,7 @@ const initialState: CartsState = {
     isLoading: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -44,13 +45,20 @@ const reducer = {
         draft.dataViews = {};
     },
 
+    "Data/Carts/FailedToLoadCart": (draft: Draft<CartsState>, action: { cartId: string; status: number }) => {
+        delete draft.isLoading[action.cartId];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.cartId] = action.status;
+        }
+    },
+
     "Data/Carts/BeginLoadCarts": (draft: Draft<CartsState>, action: { parameter: GetCartsApiParameter }) => {
         setDataViewLoading(draft, action.parameter);
     },
 
     "Data/Carts/CompleteLoadCarts": (
         draft: Draft<CartsState>,
-        action: { parameter: GetCartsApiParameter; collection: CartCollectionModel },
+        action: { parameter: GetCartsApiParameter; collection: CartCollectionResult },
     ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.carts!);
     },

@@ -1,8 +1,8 @@
 import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
-import { ContentItemFieldProps } from "@insite/shell/Components/ItemEditor/FieldsEditor";
+import { EditorTemplateProps } from "@insite/shell-public/EditorTemplateProps";
 import * as React from "react";
 
-const MissingField: React.FC<ContentItemFieldProps<string, ChildFieldDefinition>> = ({
+const MissingField: React.FC<EditorTemplateProps<string, ChildFieldDefinition>> = ({
     fieldDefinition: { editorTemplate, name },
 }) => (
     <span>

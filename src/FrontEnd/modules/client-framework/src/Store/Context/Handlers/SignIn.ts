@@ -1,7 +1,12 @@
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
-import { createSession, Session } from "@insite/client-framework/Services/SessionService";
+import { updateCart } from "@insite/client-framework/Services/CartService";
+import { createSession, deleteSession, Session } from "@insite/client-framework/Services/SessionService";
+import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { Draft } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 
 type HandlerType = ApiHandler<
     SignInParameter,
@@ -25,6 +30,32 @@ export interface SignInResult {
     readonly expires_in: number;
     readonly error_description: string;
 }
+
+export const UnassignCartFromGuest: HandlerType = async props => {
+    const { value: cart } = getCurrentCartState(props.getState());
+    const currentUserIsGuest = getCurrentUserIsGuest(props.getState());
+    if (!currentUserIsGuest) {
+        return;
+    }
+    if (!cart) {
+        throw new Error("The cart is not loaded. Try reloading the page.");
+    }
+
+    if (cart.lineCount > 0) {
+        const cartClone = cloneDeep(cart) as Draft<typeof cart>;
+        cartClone.unassignCart = true;
+        await updateCart({ cart: cartClone });
+    }
+};
+
+export const SignOutGuest: HandlerType = async props => {
+    const currentUserIsGuest = getCurrentUserIsGuest(props.getState());
+    if (!currentUserIsGuest) {
+        return;
+    }
+
+    await deleteSession();
+};
 
 export const RequestAccessToken: HandlerType = async props => {
     const data = new URLSearchParams();
@@ -118,6 +149,8 @@ export const NavigateToReturnUrl: HandlerType = props => {
 };
 
 export const chain = [
+    UnassignCartFromGuest,
+    SignOutGuest,
     RequestAccessToken,
     RequestSession,
     DispatchCompleteSignIn,

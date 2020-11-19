@@ -143,7 +143,7 @@ const ChangePasswordActions: FC<Props> = ({
         }
 
         const errorMessage = validatePassword(newPassword, accountSettings);
-        if (error) {
+        if (errorMessage) {
             toasterContext.addToast({
                 body: errorMessage,
                 messageType: "danger",

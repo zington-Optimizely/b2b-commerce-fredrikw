@@ -26,7 +26,7 @@ const OrderDetailsTitle: React.FC = () => {
     }
 
     return (
-        <Typography {...styles.titleText}>
+        <Typography {...styles.titleText} data-test-selector="orderDetails_orderNumber">
             {order.erpOrderNumber
                 ? `${translate("Order #")}${order.erpOrderNumber}`
                 : `${translate("Web Order #")}${order.webOrderNumber}`}

@@ -72,7 +72,7 @@ const Style = styled.div`
 const ContentWrapper = styled.div<{ backgroundColor: string; padding: number }>`
     ${({ backgroundColor }) => (backgroundColor ? `background-color: ${backgroundColor};` : null)};
     ${({ padding }) => (padding ? `padding: ${padding}px;` : null)};
-    & > *:first-child {
+    & > *:last-child {
         margin: 0;
     }
 `;

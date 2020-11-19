@@ -7,9 +7,8 @@ import updateSearchFields from "@insite/client-framework/Store/Pages/OrderApprov
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import SortingHeaderLabel, { SortingHeaderLabelStyles } from "@insite/content-library/Components/SortingHeaderLabel";
 import { OrderApprovalListPageContext } from "@insite/content-library/Pages/OrderApprovalListPage";
-import DataTable, { DataTableProps } from "@insite/mobius/DataTable";
+import DataTable, { DataTableProps, SortOrderOptions } from "@insite/mobius/DataTable";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
 import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
 import { DataTableCellBaseProps } from "@insite/mobius/DataTable/DataTableCellBase";
@@ -48,7 +47,6 @@ export interface OrderApprovalListTableStyles {
     dataTableBody?: DataTableBodyProps;
     dataTableRow?: DataTableRowProps;
     orderNumberHeader?: DataTableHeaderProps;
-    sortingHeaderLabel?: SortingHeaderLabelStyles;
     orderDateHeader?: DataTableHeaderProps;
     shipToLabelHeader?: DataTableHeaderProps;
     approverReasonHeader?: DataTableHeaderProps;
@@ -122,6 +120,16 @@ const OrderApprovalListTable = (props: Props) => {
         );
     }
 
+    const sorted = (sortField: string) => {
+        let sorted: boolean | string = false;
+        if (props.getOrderApprovalsParameter.sort === sortField) {
+            sorted = "ascending";
+        } else if (props.getOrderApprovalsParameter.sort === `${sortField} DESC`) {
+            sorted = "descending";
+        }
+        return sorted as SortOrderOptions;
+    };
+
     const rows = orderApprovalsDataView.value.map(orderApproval => {
         return {
             id: orderApproval.id,
@@ -142,50 +150,45 @@ const OrderApprovalListTable = (props: Props) => {
         <StyledWrapper {...styles.container}>
             <DataTable {...styles.dataTable}>
                 <DataTableHead {...styles.dataTableHead}>
-                    <DataTableHeader tight {...styles.orderNumberHeader}>
-                        <SortingHeaderLabel
-                            label={translate("Order #")}
-                            sortField="orderNumber"
-                            sortParameter={props.getOrderApprovalsParameter.sort}
-                            onHeaderClick={headerClick}
-                            extendedStyles={styles.sortingHeaderLabel}
-                        />
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("orderNumber")}
+                        onSortClick={() => headerClick("orderNumber")}
+                        {...styles.orderNumberHeader}
+                    >
+                        {translate("Order #")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.orderDateHeader}>
-                        <SortingHeaderLabel
-                            label={translate("Order Date")}
-                            sortField="orderDate"
-                            sortParameter={props.getOrderApprovalsParameter.sort}
-                            onHeaderClick={headerClick}
-                            extendedStyles={styles.sortingHeaderLabel}
-                        />
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("orderDate")}
+                        onSortClick={() => headerClick("orderDate")}
+                        {...styles.orderDateHeader}
+                    >
+                        {translate("Order Date")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.shipToLabelHeader}>
-                        <SortingHeaderLabel
-                            label={translate("Ship To / Pick Up")}
-                            sortField="customerSequence"
-                            sortParameter={props.getOrderApprovalsParameter.sort}
-                            onHeaderClick={headerClick}
-                            extendedStyles={styles.sortingHeaderLabel}
-                        />
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("customerSequence")}
+                        onSortClick={() => headerClick("customerSequence")}
+                        {...styles.shipToLabelHeader}
+                    >
+                        {translate("Ship To / Pick Up")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.approverReasonHeader}>
-                        <SortingHeaderLabel
-                            label={translate("Approval Reason")}
-                            sortField="approverMessage"
-                            sortParameter={props.getOrderApprovalsParameter.sort}
-                            onHeaderClick={headerClick}
-                            extendedStyles={styles.sortingHeaderLabel}
-                        />
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("approverMessage")}
+                        onSortClick={() => headerClick("approverMessage")}
+                        {...styles.approverReasonHeader}
+                    >
+                        {translate("Approval Reason")}
                     </DataTableHeader>
-                    <DataTableHeader tight {...styles.totalHeader}>
-                        <SortingHeaderLabel
-                            label={translate("Order Total")}
-                            sortField="orderGrandTotal"
-                            sortParameter={props.getOrderApprovalsParameter.sort}
-                            onHeaderClick={headerClick}
-                            extendedStyles={styles.sortingHeaderLabel}
-                        />
+                    <DataTableHeader
+                        tight
+                        sorted={sorted("orderGrandTotal")}
+                        onSortClick={() => headerClick("orderGrandTotal")}
+                        {...styles.totalHeader}
+                    >
+                        {translate("Order Total")}
                     </DataTableHeader>
                 </DataTableHead>
                 <DataTableBody {...styles.dataTableBody}>

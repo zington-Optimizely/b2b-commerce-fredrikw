@@ -1,6 +1,7 @@
 import "@example/Store/Reducers";
 import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-framework/Configuration"; // Importing nothing to trigger the side effects, which in this case adds custom reducers.
 import { setPostStyleGuideTheme, setPreStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
+import { css } from "styled-components";
 
 // load all widgets. Without this they won't be included in the bundle
 const widgets = require.context("./Widgets", true, /\.tsx$/);
@@ -54,11 +55,24 @@ setPostStyleGuideTheme({
             lineHeight: 1.2,
             transform: "uppercase",
         },
+        h2: {
+            css: css`
+                color: red;
+            `,
+        },
+        p: {
+            css: css`
+                color: pink;
+            `,
+        },
     },
     link: { defaultProps: { icon: { iconProps: { color: "secondary", size: 48 } } } },
     button: {
         primary: {
             color: "primary",
+            css: css`
+                border: 2px solid lime;
+            `,
             hoverMode: "lighten",
             sizeVariant: "medium",
         },
@@ -67,6 +81,15 @@ setPostStyleGuideTheme({
         defaultProps: {
             border: "underline",
             backgroundColor: "common.accent",
+        },
+    },
+    dataTable: {
+        defaultProps: {
+            cssOverrides: {
+                table: css`
+                    border: 2px solid cyan;
+                `,
+            },
         },
     },
 });

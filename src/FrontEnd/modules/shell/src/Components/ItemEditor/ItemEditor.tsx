@@ -7,12 +7,8 @@ import Scrim from "@insite/mobius/Overlay/Scrim";
 import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import {
-    getPageDefinition,
-    getWidgetDefinition,
-    LoadedPageDefinition,
-    LoadedWidgetDefinition,
-} from "@insite/shell/DefinitionLoader";
+import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
 import { cancelEditingItem, doneEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
@@ -262,41 +258,3 @@ class ItemEditor extends React.Component<Props, State> {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ItemEditor);
-
-export interface ContentItemFieldProps<TFieldValue, TFieldDefinition extends FieldDefinition> {
-    fieldDefinition: TFieldDefinition;
-    item: ItemProps;
-    fieldValue: TFieldValue;
-    updateField: (fieldName: string, value: TFieldValue) => void;
-}
-
-type ContentItemFieldComponent = React.ComponentType<ContentItemFieldProps<any, FieldDefinition>>;
-
-const ErrorMessage = styled.span`
-    color: red;
-`;
-
-const TabsStyle = styled.ul`
-    border: 1px solid #ccc;
-    display: flex;
-    border-radius: 3px;
-    height: 35px;
-    align-items: center;
-
-    li {
-        background: linear-gradient(180deg, #fff 0%, #eaeaea 100%);
-        flex-grow: 1;
-        text-align: center;
-        border-left: 1px solid #ccc;
-        font-size: 18px;
-        line-height: 21px;
-        font-weight: 300;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    li:first-child {
-        border-left: none;
-    }
-`;

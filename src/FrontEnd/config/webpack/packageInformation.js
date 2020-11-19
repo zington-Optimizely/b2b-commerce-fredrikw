@@ -9,5 +9,5 @@ module.exports = {
             this.LicenseUrl = module.packageJson.repository ? module.packageJson.repository.url : null;
             this.LicenseType = module.licenseId;
         }
-    }
+    },
 };

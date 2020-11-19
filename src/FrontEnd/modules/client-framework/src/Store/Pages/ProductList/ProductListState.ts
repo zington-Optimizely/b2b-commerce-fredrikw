@@ -10,6 +10,7 @@ export interface ProductFilters extends HasPagingParameters {
     query?: string;
     includeSuggestions?: boolean;
     stockedItemsOnly?: boolean;
+    previouslyPurchasedProducts?: boolean;
     searchWithinQueries?: string[];
     brandIds?: string[];
     productLineIds?: string[];
@@ -29,6 +30,7 @@ export default interface ProductListState {
     lastParameter?: GetProductCollectionApiV2Parameter;
     productInfosByProductId: SafeDictionary<ProductInfo>;
     unfilteredApiParameter?: GetProductCollectionApiV2Parameter;
+    filteredApiParameter?: GetProductCollectionApiV2Parameter;
     productFilters: ProductFilters;
     filterQuery?: string;
     isSearchPage?: boolean;

@@ -17,6 +17,10 @@ export enum SortOrderOptions {
 }
 
 export interface DataTableCssOverrides {
+    /**
+     * @deprecated
+     * Use the `css` property on the `DataTable` component instead.
+     */
     table?: StyledProp<DataTableProps>;
     body?: StyledProp<DataTableProps>;
     cell?: StyledProp<DataTableProps>;
@@ -30,6 +34,14 @@ export interface DataTablePresentationProps {
     /** CSS string or styled-components function to be injected into component and children.
      * @themable */
     cssOverrides?: DataTableCssOverrides;
+    /** CSS string or styled-components function to be injected into this component. */
+    css?: StyledProp<DataTableProps>;
+    /**
+     * Indicates how the `css` property is combined with the default `css` property from the theme.
+     * If true, the default css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the default css in the theme.
+     */
+    mergeCss?: boolean;
     /** Props that will be passed to the typography within the header cells.
      * @themable */
     headerTypographyProps?: TypographyPresentationProps;
@@ -67,14 +79,19 @@ const DataTableStyle = styled.table`
     ${injectCss}
 `;
 
-const DataTable: React.FC<DataTableProps> = ({ sortOrder, ...otherProps }) => {
-    const { spreadProps } = applyPropBuilder(otherProps, { component: "dataTable" });
+const DataTable: React.FC<DataTableProps> = ({ sortOrder, mergeCss, css, ...otherProps }) => {
+    const { applyStyledProp, spreadProps } = applyPropBuilder(
+        { ...otherProps, css: otherProps.cssOverrides?.table || css },
+        { component: "dataTable" },
+    );
+    const { theme } = otherProps;
     const cssOverrides = spreadProps("cssOverrides");
     const headerTypographyProps = spreadProps("headerTypographyProps");
     const cellTypographyProps = spreadProps("cellTypographyProps");
     const sortIconProps = spreadProps("sortIconProps");
     const sortIconSources = spreadProps("sortIconSources");
     const sortClickableProps = spreadProps("sortClickableProps");
+    const resolvedMergeCss = mergeCss ?? theme?.dataTable.defaultProps?.mergeCss;
     return (
         <DataTableContext.Provider
             value={{
@@ -87,7 +104,7 @@ const DataTable: React.FC<DataTableProps> = ({ sortOrder, ...otherProps }) => {
                 sortOrder,
             }}
         >
-            <DataTableStyle css={cssOverrides.table} {...otherProps} />
+            <DataTableStyle css={applyStyledProp("css", resolvedMergeCss)} {...otherProps} />
         </DataTableContext.Provider>
     );
 };

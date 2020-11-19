@@ -12,7 +12,7 @@ export interface UpdateBudgetApiParameter extends ApiParameter {
     budget: BudgetModel;
 }
 
-const budgetUri = "api/v1/budgets";
+const budgetUri = "/api/v1/budgets";
 
 export function getBudget(parameter: GetBudgetApiParameter) {
     return get<BudgetModel>(`${budgetUri}/${parameter.fiscalYear}`, parameter);

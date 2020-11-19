@@ -7,7 +7,6 @@ import updateSearchFields from "@insite/client-framework/Store/Pages/SavedOrderL
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import SortingHeaderLabel, { SortingHeaderLabelStyles } from "@insite/content-library/Components/SortingHeaderLabel";
 import { SavedOrderListPageContext } from "@insite/content-library/Pages/SavedOrderListPage";
 import DataTable, { DataTableProps, SortOrderOptions } from "@insite/mobius/DataTable";
 import DataTableBody, { DataTableBodyProps } from "@insite/mobius/DataTable/DataTableBody";
@@ -146,7 +145,7 @@ const SavedOrderListTable = ({
                       language,
                   })
                 : "",
-            shipToLabel: savedOrder.shipToLabel,
+            shipToLabel: savedOrder.collectionShipToLabel ?? savedOrder.shipToLabel,
             subtotal: savedOrder.orderSubTotalDisplay,
         };
     });

@@ -328,26 +328,24 @@ export const fetch: typeof window.fetch = (input, init) => {
         throw new Error("`setUrl` must be called before server-side fetch can be used.");
     }
 
-    let preparedInput: typeof input;
+    let preparedInput: typeof input = input;
+    let requestUrl: string;
     let sendCookies = false;
-    if (typeof input === "string") {
-        if (!input.toLowerCase().startsWith("http")) {
-            sendCookies = true;
-            preparedInput = url.origin + input;
-        } else {
-            if (input.toLowerCase().startsWith(process.env.ISC_API_URL!.toLowerCase())) {
-                sendCookies = true;
-            }
-            preparedInput = input;
+    if (typeof preparedInput === "string") {
+        if (!preparedInput.toLowerCase().startsWith("http")) {
+            preparedInput =
+                process.env.ISC_API_URL + (preparedInput.startsWith("/") ? preparedInput : `/${preparedInput}`);
         }
-    } else if (!input.url.toLowerCase().startsWith("http")) {
-        sendCookies = true;
-        preparedInput = { ...input, url: url.origin + input.url };
+        requestUrl = preparedInput;
     } else {
-        if (input.url.toLowerCase().startsWith(process.env.ISC_API_URL!.toLowerCase())) {
-            sendCookies = true;
+        if (!preparedInput.url.toLowerCase().startsWith("http")) {
+            preparedInput = { ...preparedInput, url: process.env.ISC_API_URL + preparedInput.url };
         }
-        preparedInput = input;
+        requestUrl = preparedInput.url;
+    }
+
+    if (requestUrl.toLowerCase().startsWith(process.env.ISC_API_URL!.toLowerCase())) {
+        sendCookies = true;
     }
 
     let preparedInit = init;

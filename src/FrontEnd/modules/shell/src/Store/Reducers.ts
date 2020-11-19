@@ -2,6 +2,7 @@ import CategoriesReducer from "@insite/client-framework/Store/Data/Categories/Ca
 import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 import ErrorModalReducer from "@insite/shell/Store/ErrorModal/ErrorModalReducer";
+import ImportExportModalReducer from "@insite/shell/Store/ImportExportModal/ImportExportModalReducer";
 import LogoutWarningModalReducer from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalReducer";
 import PageEditorReducer from "@insite/shell/Store/PageEditor/PageEditorReducer";
 import PageTreeReducer from "@insite/shell/Store/PageTree/PageTreeReducer";
@@ -22,6 +23,7 @@ export type DataReducers = typeof dataReducers;
 export const reducers = {
     data: dataReducer,
     errorModal: ErrorModalReducer,
+    importExportModal: ImportExportModalReducer,
     links: LinksReducer,
     logoutWarningModal: LogoutWarningModalReducer,
     pageEditor: PageEditorReducer,

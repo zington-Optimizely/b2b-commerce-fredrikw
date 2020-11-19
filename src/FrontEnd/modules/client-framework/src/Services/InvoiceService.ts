@@ -55,6 +55,7 @@ export function updateInvoice(parameter: UpdateInvoiceApiParameter) {
 }
 
 function cleanInvoice(invoice: InvoiceModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
+    invoice.id = invoice.invoiceNumber;
     if (doesNotHaveExpand(parameter, "invoiceLines")) {
         delete invoice.invoiceLines;
     }

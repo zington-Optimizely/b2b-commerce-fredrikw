@@ -73,6 +73,8 @@ const IconWrapper = styled.span<IconWrapperProps>`
  */
 
 class Icon extends React.Component<IconProps> {
+    unmounted?: boolean;
+
     state = {
         IconSrc: undefined,
         iconState: undefined,
@@ -89,9 +91,15 @@ class Icon extends React.Component<IconProps> {
             const Icon = await import(
                 /* webpackChunkName: "icons", webpackMode: "lazy-once" */ `../Icons/${this.props.src}`
             );
-            this.setState({ IconSrc: Icon.default, iconState: "loaded" });
+            if (!this.unmounted) {
+                this.setState({ IconSrc: Icon.default, iconState: "loaded" });
+            }
         });
     };
+
+    componentWillUnmount() {
+        this.unmounted = true;
+    }
 
     render() {
         return (

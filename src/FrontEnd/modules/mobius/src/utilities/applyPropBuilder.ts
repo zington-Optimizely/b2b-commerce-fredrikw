@@ -37,10 +37,21 @@ const applyPropBuilder = <Props extends Partial<ThemeProps<BaseTheme>>>(
      * Function that provides the appropriate value for the property.
      * @param {string} name Name of the component prop (theme defaultProps key) being accessed.
      * @param {string} [fallback] Fallback value of the prop.
+     * @param {true|undefined} mergeCss If true and the property name is "css", returns the category default, component default, and instance css prop values as an array, otherwise returns the appropriate value for the named property.
      * @return {string|undefined} End value of the prop based on prop/theme specificity rules.
      */
     const applyProp = <T>(name: keyof Props, fallback?: T) =>
-        props?.[name] || componentDefaultProps?.[name] || categoryDefaultProps?.[name] || fallback || undefined;
+        props[name] || componentDefaultProps?.[name] || categoryDefaultProps?.[name] || fallback || undefined;
+
+    /**
+     * Function that provides the appropriate value for the property for use in cases where the property extends StyledProp.
+     * @param {string} name Name of the component prop (theme defaultProps key) being accessed. The value of the property for this property name should extend StyledProp.
+     * @param {true|undefined} merge If true, returns the category default, component default, and instance prop values as an array (in that order), otherwise returns the appropriate value for the named property.
+     */
+    // It would be ideal to limit the "name" argument to only properties
+    // of type Props whose value is of type StyledProp<Props>.
+    const applyStyledProp = (name: keyof Props, merge?: boolean) =>
+        merge ? [categoryDefaultProps?.[name], componentDefaultProps?.[name], props[name]] : applyProp(name);
 
     /**
      * Function that provides the appropriate value for the property for use in cases where the property is an object.
@@ -53,7 +64,7 @@ const applyPropBuilder = <Props extends Partial<ThemeProps<BaseTheme>>>(
         ...props[name],
     });
 
-    return { applyProp, spreadProps };
+    return { applyProp, applyStyledProp, spreadProps };
 };
 
 export default applyPropBuilder;

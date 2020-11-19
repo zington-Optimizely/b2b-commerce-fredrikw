@@ -55,6 +55,7 @@ export interface GetProductCollectionApiV2Parameter extends GetProductApiV2Param
     includeSuggestions?: boolean;
     applyPersonalization?: boolean;
     stockedItemsOnly?: boolean;
+    previouslyPurchasedProducts?: boolean;
     cartId?: string;
     extendedNames?: string[];
 }

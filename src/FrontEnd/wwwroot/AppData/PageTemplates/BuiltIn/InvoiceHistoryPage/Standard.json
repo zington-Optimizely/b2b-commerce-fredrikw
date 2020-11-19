@@ -21,8 +21,16 @@
             "parentId": "e1fe51a5-82ea-41e4-ac30-0d5ec5a26974",
             "type": "InvoiceHistory/InvoiceHistoryFilter",
             "zone": "Content",
-            "fields": {},
-            "translatableFields": {}
+            "generalFields": {
+                "showStatus": true,
+                "showDateRange": true,
+                "showOrderNumber": true,
+                "showPoNumber": true,
+                "showInvoiceNumber": true,
+                "showShipTo": true
+            },
+            "translatableFields": {},
+            "contextualFields": {}
         },
         {
             "id": "95b92b05-e129-490e-a28c-560caa53f24f",

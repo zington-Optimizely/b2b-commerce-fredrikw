@@ -11,7 +11,7 @@ const options = {
         const fs = require("fs");
         const originalReaddirSync = fs.readdirSync;
         fs.readdirSync = jest.fn(function () {
-            if (arguments[0].replace(/\\/g, "/") === `${root}/app/modules/blueprints`) {
+            if (arguments[0].replace(/\\/g, "/").startsWith(`${root}/app/modules/blueprints`)) {
                 return [
                     {
                         isDirectory: () => true,
@@ -31,6 +31,7 @@ const options = {
 getRuleTester(options).run("fenced-imports", rule, {
     valid: [
         getCode("import '@insite/client-framework/File';", "client-framework"),
+        getCode("import '@insite/shell-public/File';", "shell-public"),
         getCode("import 'react';", "client-framework"),
         getCode("import 'express';", "server-framework"),
         getCode("import './File';", "shell"),

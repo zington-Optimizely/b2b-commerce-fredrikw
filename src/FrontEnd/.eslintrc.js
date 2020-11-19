@@ -39,7 +39,7 @@ module.exports = {
         "arrow-body-style": "off", // Should be "error"; unnecessary complexity.
         "arrow-parens": "off", // Should be customized; we generally don't use unnecessary parentheses in our C# arrow functions.
         "consistent-return": "off", // Should be "off"; handled nicely by TypeScript.
-        curly: ["error", "all"],
+        curly: ["warn", "all"],
         "default-case": "off", // Should be "off"; a switch with no default is well-understood and handled correctly by TypeScript.
         "dot-notation": "off", // Should be "error"; unnecessary complexity.
         "func-names": "off", // Should be configured for our needs.
@@ -87,12 +87,14 @@ module.exports = {
         "no-underscore-dangle": "off", // Should be "error"; bad naming pattern.  May occasionally need to be suppressed for 3rd party APIs.
         "no-unused-expressions": "off", // Doesn't support `?.` (at the time this comment was written); @typescript-eslint/no-unused-expressions works.
         "no-useless-escape": "off", // Should be "error"; unnecessary syntax.
+        "no-var": "warn",
+        "one-var": "warn",
         "object-curly-newline": "off", // Should be "off" unless it can be customized to our preferences.
         "object-property-newline": "off", // Should be "error"; questionable formatting.
         "operator-assignment": "off", // Should be "error"; unnecessary syntax.  Might occasionally be suppressed in edge cases.
         "operator-linebreak": "off", // should be ["error", "before"] but conflicts with prettier
         "ordered-imports/ordered-imports": [
-            "error",
+            "warn",
             {
                 "declaration-ordering": ["source", "case-insensitive"],
                 "specifier-ordering": "case-insensitive",
@@ -100,7 +102,7 @@ module.exports = {
         ],
         "padded-blocks": "off", // Should be "error"; waste.
         "prefer-destructuring": "off", // Should be "error"; destructuring is break-even-or-better than direct access for minification.
-        "prettier/prettier": "error",
+        "prettier/prettier": "warn",
         "react/no-danger": "error",
         "react/button-has-type": "off", // Debatable, probably "off" is fine as it should be well-understood what happens with an implicit type.
         "react/destructuring-assignment": "off", // Should be "error";  destructuring is break-even-or-better than direct access for minification.
@@ -134,6 +136,7 @@ module.exports = {
         "spire/avoid-dynamic-translate": "error",
         "spire/export-styles": "error",
         "spire/fenced-imports": ["error", { failRelativeImports: true }],
-        "spire/restrict-lodash-import": "error",
+        "spire/restrict-lodash-import": "warn",
+        "vars-on-top": "off", // Conflicts with the general ban on `var`.
     },
 };

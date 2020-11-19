@@ -6,7 +6,7 @@ import Smartphone from "@insite/mobius/Icons/Smartphone";
 import Tablet from "@insite/mobius/Icons/Tablet";
 import ContentModeClicker from "@insite/shell/Components/Shell/ContentModeClicker";
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
-import LogOutClicker from "@insite/shell/Components/Shell/LogOutClicker";
+import HeaderGear from "@insite/shell/Components/Shell/HeaderGear";
 import ViewPortClicker from "@insite/shell/Components/Shell/ViewPortClicker";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
@@ -48,7 +48,7 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive }) => {
                 </>
             )}
             <Icon src={Spacer} color="#999" />
-            <LogOutClicker />
+            <HeaderGear />
         </SwitcherStyle>
     );
 };
@@ -57,7 +57,7 @@ const SwitcherStyle = styled.div`
     margin-left: 5px;
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    margin-right: 30px;
 `;
 
 const StyledA = styled.a`

@@ -10,7 +10,8 @@ import TextField from "@insite/mobius/TextField";
 import shellIconsObject from "@insite/shell/Components/Icons/CompatibleIcons/shellIcons";
 import Search from "@insite/shell/Components/Icons/Search";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { getWidgetDefinition, getWidgetDefinitions, LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { getWidgetDefinition, getWidgetDefinitions } from "@insite/shell/DefinitionLoader";
+import { LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import { editWidget, hideAddWidgetModal, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
@@ -34,6 +35,10 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     const widgetsByGroup: Dictionary<LoadedWidgetDefinition[]> = {};
 
     for (const widgetDefinition of getWidgetDefinitions()) {
+        if (widgetDefinition.isDeprecated) {
+            continue;
+        }
+
         if (widgetDefinition.allowedContexts && widgetDefinition.allowedContexts.indexOf(pageType) < 0) {
             continue;
         }

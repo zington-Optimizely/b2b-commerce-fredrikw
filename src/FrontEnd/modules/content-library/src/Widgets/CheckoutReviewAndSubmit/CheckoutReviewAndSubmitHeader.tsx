@@ -74,8 +74,8 @@ export const checkoutReviewAndSubmitHeaderStyles: CheckoutReviewAndSubmitHeaderS
                 breakpointMediaQueries(theme, [
                     css`
                         position: fixed;
-                        left: 0px;
-                        bottom: 0px;
+                        left: 0;
+                        bottom: 0;
                         width: 100%;
                         background: ${getColor("common.background")({ theme })};
                         justify-content: center;

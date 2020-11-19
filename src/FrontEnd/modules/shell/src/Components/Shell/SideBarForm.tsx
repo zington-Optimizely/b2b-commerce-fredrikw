@@ -32,9 +32,9 @@ class SideBarForm extends React.Component<Props> {
         return (
             <OverlayStyle data-scroll-container="true">
                 <Wrapper>
-                    <Typography variant="h1" data-test-selector={`sideBarName_${this.props.name}`}>
+                    <SideBarName variant="h1" data-test-selector={`sideBarName_${this.props.name}`}>
                         {this.props.title}
-                    </Typography>
+                    </SideBarName>
                     <SideBarFormContext.Provider value={{ registerOnSave: this.registerOnSave }}>
                         {this.props.children}
                     </SideBarFormContext.Provider>
@@ -105,5 +105,9 @@ export const OverlayStyle = styled.div`
 `;
 
 const Wrapper = styled.div`
-    padding: 85px 35px 95px;
+    padding: 35px 35px 95px;
+`;
+
+const SideBarName = styled(Typography)`
+    font-size: 1.25rem;
 `;

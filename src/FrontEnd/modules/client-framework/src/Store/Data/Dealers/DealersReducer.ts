@@ -1,8 +1,8 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { GetDealersApiParameter } from "@insite/client-framework/Services/DealerService";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { DealersDataView, DealersState } from "@insite/client-framework/Store/Data/Dealers/DealersState";
-import { DealerCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { DealerCollectionModel, DealerModel } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
 const initialState: DealersState = {
@@ -46,6 +46,15 @@ const reducer = {
                 dataView.distanceUnitOfMeasure = action.collection.distanceUnitOfMeasure;
             },
         );
+    },
+
+    "Data/Dealers/BeginLoadDealer": (draft: Draft<DealersState>, action: { id: string }) => {
+        draft.isLoading[action.id] = true;
+    },
+
+    "Data/Dealers/CompleteLoadDealer": (draft: Draft<DealersState>, action: { model: DealerModel }) => {
+        delete draft.isLoading[action.model.id];
+        assignById(draft, action.model);
     },
 
     "Data/Dealers/Reset": () => {

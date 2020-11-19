@@ -64,7 +64,7 @@ export interface ApplyAccountShipToCollectionApiParameter extends ApiParameter {
     shipToCollection: AccountShipToModel[];
 }
 
-const accountsUrl = "api/v1/accounts";
+const accountsUrl = "/api/v1/accounts";
 const paymentProfilesUrl = `${accountsUrl}/current/paymentprofiles`;
 
 export async function getAccounts(parameter: GetAccountsApiParameter) {

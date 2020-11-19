@@ -8,7 +8,7 @@ import { CartLineCollectionModel } from "@insite/client-framework/Types/ApiModel
 
 type Parameter = {
     apiParameter: AddWishListToCartApiParameter;
-} & HasOnSuccess;
+} & HasOnSuccess<CartLineCollectionModel>;
 
 type Props = {
     apiParameter: AddWishListToCartApiParameter;
@@ -42,7 +42,7 @@ export const LoadCart: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
-    props.parameter.onSuccess?.();
+    props.parameter.onSuccess?.(props.apiResult);
 };
 
 export const chain = [

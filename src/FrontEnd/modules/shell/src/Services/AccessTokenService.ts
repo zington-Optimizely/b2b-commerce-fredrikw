@@ -1,5 +1,4 @@
 import { getShellContext } from "@insite/shell/Services/ContentAdminService";
-import { adminAccessTokenName } from "@insite/shell/Store/BearerToken";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { Dispatch } from "react";
 
@@ -112,3 +111,13 @@ export const trackUserEvents = async (storeDispatch: typeof dispatch) => {
     document.addEventListener("mousedown", setLastActiveTime);
     document.addEventListener("ontouchstart", setLastActiveTime);
 };
+
+export const getAccessTokenFromLocalStorage = () => {
+    if (typeof localStorage === "undefined") {
+        return null; // Server-side
+    }
+
+    return localStorage.getItem(adminAccessTokenName);
+};
+
+export const adminAccessTokenName = "admin-accessToken";

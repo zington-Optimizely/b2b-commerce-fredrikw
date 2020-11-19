@@ -121,7 +121,5 @@ ARG BUILD_INFO=None
 # Valid values for compression are `true` and `false, with `true` (the default) indicating to compress HTTP content.
 ENV ISC_ENABLE_COMPRESSION=true
 
-ENV ISC_ENABLE_CLUSTER=true
-
 USER node
 CMD ["node", "./startProduction.js"]

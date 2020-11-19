@@ -11,3 +11,7 @@ export function getProductsForProductInfoList(state: ApplicationState, id: strin
 export function getProductInfoFromList(state: ApplicationState, id: string, productId: string) {
     return state.components.productInfoLists.productInfoListById[id]?.productInfoByProductId[productId];
 }
+
+export function getErrorMessage(state: ApplicationState, id: string): string | undefined {
+    return state.components.productInfoLists.errorMessageById[id];
+}

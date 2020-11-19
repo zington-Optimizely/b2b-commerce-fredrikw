@@ -367,6 +367,8 @@ export interface BrandModel extends BaseModel {
     name: string;
     productListPagePath: string;
     topSellerProducts: ProductDto[] | null;
+    pageTitle: string;
+    metaDescription: string;
 }
 
 export interface BrandProductLineCollectionModel extends BaseModel {
@@ -711,6 +713,7 @@ export interface ConfigSectionOptionDto {
     price: number;
     productId: string | null;
     productName: string;
+    quantity: number;
     sectionName: string;
     sectionOptionId: string;
     selected: boolean;
@@ -1440,6 +1443,7 @@ export interface SectionOptionModel {
     name: string;
     price: number;
     productId: string | null;
+    quantity: number;
     selected: boolean;
     sortOrder: number;
 }
@@ -1636,6 +1640,16 @@ export interface ShareEntityModel extends BaseModel {
     entityName: string;
     message: string;
     subject: string;
+}
+
+export interface ContactUsModel extends BaseModel {
+    emailAddress: string;
+    emailTo: string;
+    firstName: string;
+    lastName: string;
+    message: string;
+    phoneNumber: string;
+    topic: string;
 }
 
 export interface TellAFriendModel extends BaseModel {
@@ -2599,16 +2613,17 @@ export interface WebsiteModel extends BaseModel {
     isRestricted: boolean;
     languages: LanguageCollectionModel | null;
     languagesUri: string;
-    websiteFavicon: string;
     mobilePrimaryColor: string;
     mobilePrivacyPolicyUrl: string;
     mobileTermsOfUseUrl: string;
     name: string;
     states: StateCollectionModel | null;
     statesUri: string;
+    websiteFavicon: string;
 }
 
 export interface WebsiteSettingsModel extends BaseModel {
+    cmsType: "Classic" | "Spire" | null;
     defaultPageSize: number;
     enableCookiePrivacyPolicyPopup: boolean;
     enableDynamicRecommendations: boolean;

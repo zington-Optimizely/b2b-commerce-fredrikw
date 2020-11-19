@@ -12,6 +12,12 @@ export interface TypographyPresentationProps {
     color?: string;
     /** CSS string or styled-components function to be injected into this component. */
     css?: StyledProp<TypographyProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Sets the `title` attribute to the innerText of the component and shows an ellipsis when text overflows. */
     ellipsis?: boolean;
     /** Prioritized list of font family names or generic family names for the component. Passed to `font-family` in css.  */

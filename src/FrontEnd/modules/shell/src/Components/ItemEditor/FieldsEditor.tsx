@@ -4,7 +4,8 @@ import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefini
 import { TabDefinition } from "@insite/client-framework/Types/TabDefinition";
 import Tab, { TabProps } from "@insite/mobius/Tab";
 import TabGroup from "@insite/mobius/TabGroup";
-import { getEditorTemplate } from "@insite/shell/Components/ItemEditor/ContentItemFieldTemplateLoader";
+import { setEditorTemplatesHotUpdate } from "@insite/shell-public/EditorTemplatesLoader";
+import { getEditorTemplate } from "@insite/shell/Components/ItemEditor/EditorTemplatesLoader";
 import { validateField, validateItem } from "@insite/shell/Services/ItemValidation";
 import sortBy from "lodash/sortBy";
 import * as React from "react";
@@ -40,6 +41,11 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
             this.props.updateHasValidationErrors(hasValidationErrors);
             return hasValidationErrors;
         });
+
+        if (module.hot) {
+            this.forceUpdate = this.forceUpdate.bind(this);
+            setEditorTemplatesHotUpdate(this.forceUpdate);
+        }
     }
 
     updateField = (fieldName: string, value: readonly HasFields[]) => {
@@ -107,7 +113,7 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
                         key={fieldDefinition.name + fieldDefinition.sortOrder}
                         name={fieldDefinition.name}
                     >
-                        {getEditorTemplate(fieldDefinition, editorProps, () => this.forceUpdate())}
+                        {getEditorTemplate(fieldDefinition, editorProps)}
                         <ErrorMessage data-test-selector={`controlFor_${fieldDefinition.name}_error`}>
                             {this.state.validationErrors[fieldDefinition.name]}
                         </ErrorMessage>
@@ -138,13 +144,6 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
             </>
         );
     }
-}
-
-export interface ContentItemFieldProps<TFieldValue, TFieldDefinition extends ChildFieldDefinition> {
-    fieldDefinition: TFieldDefinition;
-    fieldValue: TFieldValue;
-    item: HasFields;
-    updateField: (fieldName: string, value: TFieldValue) => void;
 }
 
 const ErrorMessage = styled.span`

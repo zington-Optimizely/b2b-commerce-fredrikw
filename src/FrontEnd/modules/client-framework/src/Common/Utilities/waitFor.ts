@@ -13,6 +13,6 @@ async function waitFor(isDone: () => boolean, waitTimeInMilliseconds = 30000, in
     return false;
 }
 
-const wait = (milliseconds: number) => new Promise(result => setTimeout(result, milliseconds));
+export const wait = (milliseconds: number) => new Promise(result => setTimeout(result, milliseconds));
 
 export default waitFor;

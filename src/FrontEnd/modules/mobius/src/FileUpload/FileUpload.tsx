@@ -142,10 +142,10 @@ const UploadFunctionality = styled.input`
 const UploadAppearance = styled.input`
     &&&& {
         /* specificity override */
-        padding: 0;
+        padding: 0 60px 0 0;
         border: none;
         background: none;
-        width: auto;
+        width: 100%;
     }
 `;
 

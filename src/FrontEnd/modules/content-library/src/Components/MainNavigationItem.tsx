@@ -11,26 +11,26 @@ import Popover from "@insite/mobius/Popover";
 import * as React from "react";
 import { ThemeProps, withTheme } from "styled-components";
 
-interface MainNavigationItemProps {
+interface OwnProps {
     link: MappedLink;
     index: number;
     styles: MainNavigationStyles;
     container: React.RefObject<HTMLElement>;
+    isOpen: boolean;
 }
 
-class MainNavigationItem extends React.Component<ThemeProps<BaseTheme> & MainNavigationItemProps> {
+type Props = ThemeProps<BaseTheme> & OwnProps;
+
+class MainNavigationItem extends React.Component<Props> {
     element = React.createRef<HTMLElement>();
     popover = React.createRef<HTMLUListElement>();
 
-    UNSAFE_componentWillMount(): void {
-        setMainNavigation({
-            close: () => {
-                this.closePopover();
-            },
-            openMenu: (index: number) => {
-                this.openPopover();
-            },
-        });
+    componentDidUpdate(prevProps: Readonly<Props>) {
+        if (this.props.isOpen && !prevProps.isOpen) {
+            this.openPopover();
+        } else if (!this.props.isOpen && prevProps.isOpen) {
+            this.closePopover();
+        }
     }
 
     closePopover = () => {
@@ -46,6 +46,7 @@ class MainNavigationItem extends React.Component<ThemeProps<BaseTheme> & MainNav
             styles,
             link,
             index,
+            isOpen,
             theme: {
                 breakpoints: { maxWidths },
             },
@@ -87,6 +88,8 @@ class MainNavigationItem extends React.Component<ThemeProps<BaseTheme> & MainNav
             }
             menuItem = (
                 <Menu
+                    data-test-selector={`mainNavigationItem_${index}`}
+                    isOpen={isOpen || undefined}
                     descriptionId={`${link.title}_${index}`}
                     menuItems={link.children}
                     menuTrigger={menuLink}
@@ -129,6 +132,7 @@ class MainNavigationItem extends React.Component<ThemeProps<BaseTheme> & MainNav
                     insideRefs={[this.element]}
                 >
                     <GridContainer
+                        data-test-selector={`mainNavigationItem_${index}`}
                         {...styles.megaMenuGridContainer}
                         offsetProps={{ ...styles.megaMenuGridContainer?.offsetProps, as: "ul" }}
                     >

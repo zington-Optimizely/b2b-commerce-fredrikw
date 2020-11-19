@@ -34,20 +34,21 @@ class ContentModeClicker extends React.Component<Props> {
     render() {
         const { targetMatchesCurrentContentMode, icon, targetContentMode, disabled } = this.props;
         const {
-            colors: { common, primary, text },
+            colors: { common, text },
         } = shellTheme;
         let iconColor: string;
 
         if (disabled) {
             iconColor = common.disabled;
         } else if (targetMatchesCurrentContentMode) {
-            iconColor = primary.main;
+            iconColor = "white";
         } else {
             iconColor = text.accent;
         }
 
         return (
             <ClickerStyle
+                active={targetMatchesCurrentContentMode}
                 clickable
                 onClick={this.onClick}
                 data-test-selector={`contentModeClicker_${targetContentMode}`}

@@ -1,5 +1,10 @@
 import throwErrorIfTesting from "@insite/client-framework/Common/ThrowErrorIfTesting";
-import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandler,
+    createHandlerChainRunner,
+    HasOnSuccess,
+    makeHandlerChainAwaitable,
+} from "@insite/client-framework/HandlerCreator";
 import { AddProductApiParameter, addProductWithResult } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
@@ -8,7 +13,7 @@ import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 type AddToCartParameter = {
     onError?: (error: string) => void;
 } & AddProductApiParameter &
-    HasOnSuccess;
+    HasOnSuccess<CartLineModel>;
 
 type HandlerType = ApiHandler<AddToCartParameter, CartLineModel>;
 
@@ -40,8 +45,9 @@ export const DispatchCompleteAddingProductToCart: HandlerType = props => {
     });
 };
 
-export const LoadCart: HandlerType = props => {
-    props.dispatch(loadCurrentCart());
+export const LoadCart: HandlerType = async props => {
+    const awaitableLoadCurrentCart = makeHandlerChainAwaitable(loadCurrentCart);
+    await awaitableLoadCurrentCart({})(props.dispatch, props.getState);
 };
 
 export const LoadPromotions: HandlerType = props => {
@@ -49,16 +55,16 @@ export const LoadPromotions: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
-    props.parameter.onSuccess?.();
+    props.parameter.onSuccess?.(props.apiResult);
 };
 
 export const chain = [
     PopulateApiParameter,
     DispatchBeginAddingProductToCart,
     SendDataToApi,
-    DispatchCompleteAddingProductToCart,
     LoadCart,
     LoadPromotions,
+    DispatchCompleteAddingProductToCart,
     ExecuteOnSuccessCallback,
 ];
 

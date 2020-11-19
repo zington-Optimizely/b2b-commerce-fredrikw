@@ -102,6 +102,9 @@ const LazyImageStyle = styled.div<Pick<State, "error" | "imageShouldFade" | "loa
  * into view.
  */
 class LazyImage extends React.Component<LazyImageProps, State> {
+    image?: HTMLImageElement;
+    fadeInTimeout?: number;
+
     state: State = {
         loaded: false,
         error: false,
@@ -111,9 +114,9 @@ class LazyImage extends React.Component<LazyImageProps, State> {
     };
 
     loadImage = () => {
-        const image = new Image();
-        if (this.props.src) image.src = this.props.src;
-        image.onload = () => {
+        this.image = new Image();
+        if (this.props.src) this.image.src = this.props.src;
+        this.image.onload = () => {
             this.setState(
                 currentState => ({
                     // fade if image takes more than 100ms to load (i.e. not cached)
@@ -124,7 +127,7 @@ class LazyImage extends React.Component<LazyImageProps, State> {
                 this.props.onLoad,
             );
         };
-        image.onerror = () => {
+        this.image.onerror = () => {
             this.setState(
                 {
                     loaded: true,
@@ -138,7 +141,7 @@ class LazyImage extends React.Component<LazyImageProps, State> {
     reloadImage() {
         this.setState({ startTime: Date.now() });
         this.loadImage();
-        setTimeout(() => {
+        this.fadeInTimeout = setTimeout(() => {
             this.setState({ showPlaceholder: true });
         }, fadeInThreshold);
     }
@@ -151,6 +154,14 @@ class LazyImage extends React.Component<LazyImageProps, State> {
         if (this.props.src !== prevProps.src) {
             this.reloadImage();
         }
+    }
+
+    componentWillUnmount() {
+        if (!this.image) return;
+
+        this.image.onload = () => {};
+        delete this.image;
+        clearTimeout(this.fadeInTimeout);
     }
 
     render() {

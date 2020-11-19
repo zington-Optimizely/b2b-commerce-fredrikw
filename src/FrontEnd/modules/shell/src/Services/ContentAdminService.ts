@@ -128,6 +128,19 @@ export const switchContentMode = (contentMode: ContentMode) => post("switchConte
 
 export const saveTheme = (theme: Partial<BaseTheme>) => postVoid("saveTheme", theme);
 
+export const exportContent = (onlyPublished: boolean) => post<string>(`exportContent?onlyPublished=${onlyPublished}`);
+
+export const importContent = (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return baseRequestJson<{ success: boolean; errorMessage: string }>(
+        "/admin/websites/importSpireContent",
+        "POST",
+        {},
+        formData,
+    );
+};
+
 export type ContentContextModel = {
     languageId: string;
     personaId: string;

@@ -1,8 +1,10 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { isConfigurationCompleted } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import ProductDetailsState from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsState";
 import {
+    ConfigurationModel,
     ProductInventoryDto,
     ProductPriceDto,
     RealTimeInventoryModel,
@@ -14,6 +16,7 @@ const initialState: ProductDetailsState = {
     selectedImageIndex: 0,
     variantSelection: {},
     variantSelectionCompleted: false,
+    configurationSelection: {},
     configurationCompleted: false,
 };
 
@@ -27,12 +30,30 @@ const reducer = {
             productInfosById: SafeDictionary<ProductInfo>;
             variantSelection: SafeDictionary<string>;
             selectedProductId: string;
+            configuration?: ConfigurationModel | null;
         },
     ) => {
         draft.selectedProductId = action.selectedProductId;
         draft.productInfosById = action.productInfosById;
         draft.selectedImageIndex = 0;
         draft.variantSelection = action.variantSelection;
+        initConfigurationSelection(draft, action.configuration);
+    },
+    "Pages/ProductDetails/InitConfigurationSelection": (
+        draft: Draft<ProductDetailsState>,
+        action: { configuration?: ConfigurationModel | null },
+    ) => {
+        initConfigurationSelection(draft, action.configuration);
+    },
+    "Pages/ProductDetails/UpdateConfigurationSelection": (
+        draft: Draft<ProductDetailsState>,
+        action: {
+            configurationSelection: SafeDictionary<string>;
+            configurationCompleted: boolean;
+        },
+    ) => {
+        draft.configurationSelection = action.configurationSelection;
+        draft.configurationCompleted = action.configurationCompleted;
     },
     "Pages/ProductDetails/UpdateVariantSelection": (
         draft: Draft<ProductDetailsState>,
@@ -102,6 +123,22 @@ const reducer = {
             }
         });
     },
+    "Pages/ProductDetails/FailedLoadRealTimeInventory": (
+        draft: Draft<ProductDetailsState>,
+        action: { productId: string },
+    ) => {
+        const productInfo = draft.productInfosById![action.productId];
+        if (productInfo) {
+            productInfo.failedToLoadInventory = true;
+        }
+    },
+};
+
+const initConfigurationSelection = (draft: Draft<ProductDetailsState>, configuration?: ConfigurationModel | null) => {
+    configuration?.configSections?.forEach(configSection => {
+        draft.configurationSelection[configSection.id] = configSection.sectionOptions?.find(o => o.selected)?.id;
+    });
+    draft.configurationCompleted = isConfigurationCompleted(draft.configurationSelection);
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

@@ -1,3 +1,5 @@
+import { getAccessTokenFromLocalStorage } from "@insite/shell/Services/AccessTokenService";
+
 const b64DecodeUnicode = (str: string) =>
     decodeURIComponent(
         atob(str)
@@ -34,13 +36,8 @@ type InsiteToken = Omit<RawInsiteToken, "auth_time" | "exp" | "nbf"> &
         nbf: Date;
     }>;
 
-const parseFromLocalStorage = (name: string, returnExpiredTokens?: true) => {
-    if (typeof localStorage === "undefined") {
-        return null; // Server-side
-    }
-
-    const { [name]: accessToken } = localStorage;
-
+export const parseAdminTokenFromLocalStorage = (returnExpiredTokens?: true) => {
+    const accessToken = getAccessTokenFromLocalStorage();
     if (!accessToken) {
         return null;
     }
@@ -65,8 +62,3 @@ const parseFromLocalStorage = (name: string, returnExpiredTokens?: true) => {
         return null;
     }
 };
-
-export const adminAccessTokenName = "admin-accessToken";
-
-export const parseAdminTokenFromLocalStorage = (returnExpiredTokens?: true) =>
-    parseFromLocalStorage(adminAccessTokenName, returnExpiredTokens);

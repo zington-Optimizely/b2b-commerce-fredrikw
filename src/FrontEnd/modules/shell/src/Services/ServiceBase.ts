@@ -27,7 +27,12 @@ export function post<T = void>(endpoint: string, model?: Parameters<typeof JSON[
 export const postVoid = (endpoint: string, model?: any) =>
     requestVoid(endpoint, "POST", { "Content-Type": "application/json" }, model ? JSON.stringify(model) : undefined);
 
-export function requestJson<T>(endpoint: string, method: string, headers: Dictionary<string> = {}, body?: string) {
+export function requestJson<T>(
+    endpoint: string,
+    method: string,
+    headers: Dictionary<string> = {},
+    body?: string | FormData,
+) {
     return new Promise<T>(resolve => {
         request<T>(`${endpoint}`, method, headers, body).then(resolve).catch(showErrorModal);
     });

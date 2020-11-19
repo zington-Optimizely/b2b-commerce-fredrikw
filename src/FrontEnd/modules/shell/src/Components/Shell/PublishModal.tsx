@@ -295,99 +295,105 @@ const PublishModal: React.FC<Props> = ({
             </MessageContainer>
             {!nothingToPublish && !hasFewPagesForApproval && !hasFailedToPublishPages && (
                 <>
-                    <PublishableContextTable cellSpacing={0}>
-                        <thead>
-                            <tr>
-                                <th>
-                                    <Checkbox
-                                        data-test-selector="publishModal_selectAll"
-                                        {...styles.selectAllCheckbox}
-                                        disabled={isEditingExistingPublish}
-                                        checked={selectAll}
-                                        onChange={selectAllChangeHandler}
-                                    ></Checkbox>
-                                </th>
-                                <th>Page</th>
-                                <th>Language</th>
-                                <th>Device</th>
-                                <th>Customer Segment</th>
-                                <th>Edited By</th>
-                                <th>Edited On</th>
-                                <th>Compare</th>
-                                {isBulkPublish && <th>Notes</th>}
-                            </tr>
-                        </thead>
-                        <tbody data-test-selector="publishModal_contextsAvailableToPublish">
-                            {pagePublishInfosState?.value?.map((pagePublishInfo, index) => {
-                                const {
-                                    languageId,
-                                    personaId,
-                                    deviceType,
-                                    modifiedBy,
-                                    modifiedOn,
-                                    pageId,
-                                    name,
-                                } = pagePublishInfo;
-                                const contextString = getContextualId(
-                                    languageId,
-                                    deviceType,
-                                    personaId,
-                                    isBulkPublish ? pageId : "",
-                                );
-                                const testSelector = `publishContextRow${index}`;
-                                return (
-                                    <tr key={contextString} data-test-selector={testSelector}>
-                                        <td>
-                                            <Checkbox
-                                                data-test-selector={`${testSelector}_check`}
-                                                checked={pagePublishInfoIsSelected[index] || isEditingExistingPublish}
-                                                disabled={isEditingExistingPublish}
-                                                onChange={(_, value) => {
-                                                    setIsSelected(index, value);
-                                                }}
-                                            />
-                                        </td>
-                                        <td data-test-selector={`${testSelector}_title`}>
-                                            <NameStyle>
-                                                {isBulkPublish ? name : title} <BadgeDefault />
-                                            </NameStyle>
-                                        </td>
-                                        <td data-test-selector={`${testSelector}_language`}>
-                                            {!languageId ? "All" : languagesById[languageId]?.description ?? languageId}
-                                        </td>
-                                        <td data-test-selector={`${testSelector}_device`}>{deviceType || "All"}</td>
-                                        <td data-test-selector={`${testSelector}_persona`}>
-                                            {!personaId ? "All" : personasById[personaId]?.name ?? personaId}
-                                        </td>
-                                        <td data-test-selector={`${testSelector}_modifiedBy`}>{modifiedBy}</td>
-                                        <td data-test-selector={`${testSelector}_modifiedOn`}>
-                                            {new Date(modifiedOn).toLocaleString()}
-                                        </td>
-                                        <td>
-                                            <ButtonInTable
-                                                data-test-selector={`${contextString}_compareButton`}
-                                                variant="tertiary"
-                                                disabled // TODO ISC-11132
-                                            >
-                                                Compare
-                                            </ButtonInTable>
-                                        </td>
-                                        {isBulkPublish && (
+                    <PublishableContextTableWrapper>
+                        <PublishableContextTable cellSpacing={0}>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <Checkbox
+                                            data-test-selector="publishModal_selectAll"
+                                            {...styles.selectAllCheckbox}
+                                            disabled={isEditingExistingPublish}
+                                            checked={selectAll}
+                                            onChange={selectAllChangeHandler}
+                                        ></Checkbox>
+                                    </th>
+                                    <th>Page</th>
+                                    <th>Language</th>
+                                    <th>Device</th>
+                                    <th>Customer Segment</th>
+                                    <th>Edited By</th>
+                                    <th>Edited On</th>
+                                    <th>Compare</th>
+                                    {isBulkPublish && <th>Notes</th>}
+                                </tr>
+                            </thead>
+                            <tbody data-test-selector="publishModal_contextsAvailableToPublish">
+                                {pagePublishInfosState?.value?.map((pagePublishInfo, index) => {
+                                    const {
+                                        languageId,
+                                        personaId,
+                                        deviceType,
+                                        modifiedBy,
+                                        modifiedOn,
+                                        pageId,
+                                        name,
+                                    } = pagePublishInfo;
+                                    const contextString = getContextualId(
+                                        languageId,
+                                        deviceType,
+                                        personaId,
+                                        isBulkPublish ? pageId : "",
+                                    );
+                                    const testSelector = `publishContextRow${index}`;
+                                    return (
+                                        <tr key={contextString} data-test-selector={testSelector}>
+                                            <td>
+                                                <Checkbox
+                                                    data-test-selector={`${testSelector}_check`}
+                                                    checked={
+                                                        pagePublishInfoIsSelected[index] || isEditingExistingPublish
+                                                    }
+                                                    disabled={isEditingExistingPublish}
+                                                    onChange={(_, value) => {
+                                                        setIsSelected(index, value);
+                                                    }}
+                                                />
+                                            </td>
+                                            <td data-test-selector={`${testSelector}_title`}>
+                                                <NameStyle>
+                                                    {isBulkPublish ? name : title} <BadgeDefault />
+                                                </NameStyle>
+                                            </td>
+                                            <td data-test-selector={`${testSelector}_language`}>
+                                                {!languageId
+                                                    ? "All"
+                                                    : languagesById[languageId]?.description ?? languageId}
+                                            </td>
+                                            <td data-test-selector={`${testSelector}_device`}>{deviceType || "All"}</td>
+                                            <td data-test-selector={`${testSelector}_persona`}>
+                                                {!personaId ? "All" : personasById[personaId]?.name ?? personaId}
+                                            </td>
+                                            <td data-test-selector={`${testSelector}_modifiedBy`}>{modifiedBy}</td>
+                                            <td data-test-selector={`${testSelector}_modifiedOn`}>
+                                                {new Date(modifiedOn).toLocaleString()}
+                                            </td>
                                             <td>
                                                 <ButtonInTable
-                                                    data-test-selector={`${contextString}_addNotesButton`}
+                                                    data-test-selector={`${contextString}_compareButton`}
                                                     variant="tertiary"
-                                                    disabled // TODO ISC-12159
+                                                    disabled // TODO ISC-11132
                                                 >
-                                                    Add Notes
+                                                    Compare
                                                 </ButtonInTable>
                                             </td>
-                                        )}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </PublishableContextTable>
+                                            {isBulkPublish && (
+                                                <td>
+                                                    <ButtonInTable
+                                                        data-test-selector={`${contextString}_addNotesButton`}
+                                                        variant="tertiary"
+                                                        disabled // TODO ISC-12159
+                                                    >
+                                                        Add Notes
+                                                    </ButtonInTable>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </PublishableContextTable>
+                    </PublishableContextTableWrapper>
                     <PublishLaterContainer>
                         <div>
                             <Checkbox checked={publishImmediately} onChange={togglePublishInTheFuture}>
@@ -483,10 +489,7 @@ const MessageContainer = styled.div`
 
 const PublishableContextTable = styled.table`
     width: 100%;
-    margin-bottom: 30px;
     display: table;
-    max-height: 450px;
-    overflow-y: auto;
 
     th {
         background: ${getColor("common.backgroundContrast")};
@@ -525,6 +528,12 @@ const PublishableContextTable = styled.table`
     }
 `;
 
+const PublishableContextTableWrapper = styled.div`
+    margin-bottom: 30px;
+    max-height: 450px;
+    overflow-y: auto;
+`;
+
 const ButtonInTable = styled(Button)`
     padding: 1px 4px 0;
     height: 20px;
@@ -555,7 +564,6 @@ const PublishCancelButtonContainer = styled.div`
 const CancelButton = styled(Button)`
     margin-top: 20px;
     margin-right: 10px;
-    height: 32px;
 `;
 
 const NameStyle = styled.div`

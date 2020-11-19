@@ -7,7 +7,15 @@ import ChangeCustomerSelectCustomerContainer, {
 } from "@insite/content-library/Widgets/ChangeCustomer/ChangeCustomerSelectCustomerContainer";
 import React, { FC, useState } from "react";
 
-interface Props extends WidgetProps {}
+enum fields {
+    defaultCustomerChangedMessage = "defaultCustomerChangedMessage",
+}
+
+interface Props extends WidgetProps {
+    fields: {
+        [fields.defaultCustomerChangedMessage]: string;
+    };
+}
 
 export interface ChangeCustomerSelectCustomerStyles {
     container?: ChangeCustomerSelectCustomerContainerStyles;
@@ -17,7 +25,7 @@ export const changeCustomerSelectCustomerStyles: ChangeCustomerSelectCustomerSty
 
 const styles = changeCustomerSelectCustomerStyles;
 
-const ChangeCustomerSelectCustomer: FC<Props> = _ => {
+const ChangeCustomerSelectCustomer: FC<Props> = ({ fields }) => {
     const [billTosParameter, setBillTosParameter] = useState<GetBillTosApiParameter>({
         page: 1,
         pageSize: 20,
@@ -36,6 +44,7 @@ const ChangeCustomerSelectCustomer: FC<Props> = _ => {
             setBillTosParameter={setBillTosParameter}
             shipTosParameter={shipTosParameter}
             setShipTosParameter={setShipTosParameter}
+            defaultCustomerChangedMessage={fields.defaultCustomerChangedMessage}
         />
     );
 };
@@ -45,6 +54,16 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Change Customer",
         allowedContexts: [ChangeCustomerPageContext],
+        fieldDefinitions: [
+            {
+                defaultValue:
+                    "If you would like to change your defaults in the future, please visit your Account Settings page.",
+                displayName: "Default Customer Changed Message",
+                editorTemplate: "TextField",
+                fieldType: "Translatable",
+                name: fields.defaultCustomerChangedMessage,
+            },
+        ],
     },
 };
 

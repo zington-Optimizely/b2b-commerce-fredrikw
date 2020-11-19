@@ -1,8 +1,10 @@
+import isApiError from "@insite/client-framework/Common/isApiError";
 import caseInsensitiveSort from "@insite/client-framework/Common/Utilities/caseInsensitiveSort";
 import {
     createHandlerChainRunner,
     executeAwaitableHandlerChain,
     Handler,
+    HasOnException,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import {
@@ -16,7 +18,8 @@ import { ProductCollectionModel, ProductModel } from "@insite/client-framework/T
 import sortBy from "lodash/sortBy";
 
 type Parameter = (GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter) &
-    HasOnSuccess<ProductModel[]>;
+    HasOnSuccess<ProductModel[]> &
+    HasOnException<string>;
 type Props = {
     apiParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
     apiResult: ProductCollectionModel;
@@ -32,15 +35,24 @@ export const DispatchBeginLoadProducts: HandlerType = props => {
 };
 
 export const PopulateApiParameter: HandlerType = props => {
-    const { onSuccess, ...parameter } = props.parameter;
+    const { onSuccess, onException, ...parameter } = props.parameter;
     props.apiParameter = parameter;
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    if ("relationship" in props.apiParameter) {
-        props.apiResult = await getRelatedProductsCollectionV2(props.apiParameter);
-    } else {
-        props.apiResult = await getProductCollectionV2(props.apiParameter);
+    try {
+        if ("relationship" in props.apiParameter) {
+            props.apiResult = await getRelatedProductsCollectionV2(props.apiParameter);
+        } else {
+            props.apiResult = await getProductCollectionV2(props.apiParameter);
+        }
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            props.parameter.onException?.(error.errorJson.message);
+            return false;
+        }
+
+        throw error;
     }
 };
 

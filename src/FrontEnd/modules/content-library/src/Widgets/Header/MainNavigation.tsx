@@ -1,9 +1,10 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { setMainNavigation } from "@insite/client-framework/Components/ShellHoleConnect";
 import Logger from "@insite/client-framework/Logger";
-import { Category } from "@insite/client-framework/Services/CategoryService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import {
     getCategoriesDataView,
     getCategoryDepthLoaded,
@@ -30,7 +31,6 @@ import X from "@insite/mobius/Icons/X";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import { MenuPresentationProps } from "@insite/mobius/Menu";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import { returnFocus } from "@insite/mobius/Overlay/helpers/focusManager";
 import { PopoverPresentationProps, PositionStyle } from "@insite/mobius/Popover";
 import { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -128,6 +128,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
         links: mappedLinks,
         quickOrderLink: getPageLinkByPageType(state, "QuickOrderPage"),
         categoryIdsToLoad,
+        allowQuickOrder: getSettingsCollection(state).orderSettings.allowQuickOrder,
     };
 };
 
@@ -145,6 +146,10 @@ const setupCategoryLink = (
     overrideTitle: string,
 ) => {
     let mappedLink: MappedLink | undefined;
+
+    if (!value) {
+        return;
+    }
 
     const depthLoaded = getCategoryDepthLoaded(state, value);
     const subCategoryIds = state.data.categories.parentCategoryIdToChildrenIds[value];
@@ -429,6 +434,19 @@ class MainNavigation extends React.Component<Props, State> {
 
     UNSAFE_componentWillMount(): void {
         this.loadCategoriesIfNeeded();
+
+        setMainNavigation({
+            close: () => {
+                this.setState({
+                    selectedLinkIndex: undefined,
+                });
+            },
+            openMenu: (index: number) => {
+                this.setState({
+                    selectedLinkIndex: index,
+                });
+            },
+        });
     }
 
     componentDidUpdate(prevProps: Readonly<Props>): void {
@@ -482,15 +500,11 @@ class MainNavigation extends React.Component<Props, State> {
             quickOrderLink,
             fields: { showQuickOrder },
             id,
+            allowQuickOrder,
         } = this.props;
         const { selectedLinkIndex } = this.state;
-        let selectedLink =
-            typeof selectedLinkIndex !== "undefined" && links.length > selectedLinkIndex
-                ? links[selectedLinkIndex]
-                : null;
-        if (selectedLink && selectedLink.childrenType !== "MegaMenu") {
-            selectedLink = null;
-        }
+
+        const showQuickOrderLink = showQuickOrder && allowQuickOrder;
 
         return (
             <>
@@ -498,7 +512,7 @@ class MainNavigation extends React.Component<Props, State> {
                     <Hidden above="md" {...styles.mobileMenuWrapper}>
                         <NavigationDrawer
                             links={links}
-                            showQuickOrder={showQuickOrder}
+                            showQuickOrder={showQuickOrderLink}
                             quickOrderLink={quickOrderLink}
                         />
                     </Hidden>
@@ -520,11 +534,12 @@ class MainNavigation extends React.Component<Props, State> {
                                         link={link}
                                         styles={styles}
                                         container={this.container}
+                                        isOpen={index === selectedLinkIndex}
                                     />
                                 </StyledWrapper>
                             );
                         })}
-                        {showQuickOrder && quickOrderLink && (
+                        {showQuickOrderLink && quickOrderLink && (
                             <StyledWrapper {...styles.itemWrapper}>
                                 <StyledWrapper {...styles.quickOrderItemWrapper}>
                                     <Link
@@ -602,7 +617,7 @@ const mainNavigation: WidgetModule = {
                         }
                         const categoryState = getCategoryState(state, value);
                         if (!categoryState.value) {
-                            if (!categoryState.isLoading) {
+                            if (!categoryState.isLoading && value) {
                                 return dispatch => {
                                     dispatch(
                                         loadCategory({

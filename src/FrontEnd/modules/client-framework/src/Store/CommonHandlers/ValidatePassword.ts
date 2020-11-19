@@ -7,7 +7,7 @@ const digitRegExp = /[0-9]/;
 const lowerRegExp = /[a-z]/;
 const upperRegExp = /[A-Z]/;
 const specialRegExp = /\W/;
-const passwordRequiredFieldMessage = siteMessage("CreateNewAccountInfo_Password_Required");
+
 export const numberPasswordLengthMessage = translate("Password must include at least one number");
 export const lowerCasePasswordLengthMessage = translate("Password must include at least one lowercase character");
 export const upperCasePasswordLengthMessage = translate("Password must include at least one uppercase character");
@@ -26,6 +26,7 @@ type HandlerType = Handler<
 
 export const ValidatePassword: HandlerType = props => {
     let errorMessage: React.ReactNode = "";
+    const passwordRequiredFieldMessage = siteMessage("CreateNewAccountInfo_Password_Required");
     const password = props.parameter.password;
     const settings = getSettingsCollection(props.getState()).accountSettings;
     const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(

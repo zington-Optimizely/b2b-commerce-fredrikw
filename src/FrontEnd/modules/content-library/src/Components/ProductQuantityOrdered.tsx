@@ -20,7 +20,7 @@ interface OwnProps extends TextFieldProps {
 const mapStateToProps = (state: ApplicationState, props: HasProductContext) => {
     return {
         productSettings: getSettingsCollection(state).productSettings,
-        canAddToCart: canAddToCart(state, props.productContext.product),
+        canAddToCart: canAddToCart(state, props.productContext.product, props.productContext.productInfo),
         hasEnoughInventory: hasEnoughInventory(state, props.productContext),
     };
 };

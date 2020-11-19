@@ -1,20 +1,17 @@
 import {
-    ApiHandler,
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
-    Handler,
     HasOnError,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
-import { getCarts, GetCartsApiParameter } from "@insite/client-framework/Services/CartService";
-import { CartCollectionModel } from "@insite/client-framework/Types/ApiModels";
+import { CartCollectionResult, getCarts, GetCartsApiParameter } from "@insite/client-framework/Services/CartService";
 
 type GetCartsParameter = {
     apiParameter: GetCartsApiParameter;
 } & HasOnSuccess &
     HasOnError<string>;
 
-type HandlerType = ApiHandlerDiscreteParameter<GetCartsParameter, GetCartsApiParameter, CartCollectionModel>;
+type HandlerType = ApiHandlerDiscreteParameter<GetCartsParameter, GetCartsApiParameter, CartCollectionResult>;
 
 export const DispatchBeginLoadOrders: HandlerType = props => {
     props.dispatch({

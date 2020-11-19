@@ -224,6 +224,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(PageTree);
 
 const pagesH2 = css`
     position: relative;
+    font-size: 1.125rem;
+    margin-top: 20px;
 `;
 
 const TreeIcon = styled.div`
@@ -256,4 +258,5 @@ const CollapseTreeStyle = styled.div`
 
 const PageTreeStyle = styled.div`
     overflow: visible;
+    padding: 0 35px;
 `;

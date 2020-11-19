@@ -6,7 +6,7 @@ import {
 } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
-import { LoadedWidgetDefinition } from "@insite/shell/DefinitionLoader";
+import { LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { setDefaultFieldValues } from "@insite/shell/Services/PageCreation";
 import { LanguageModel } from "@insite/shell/Store/ShellContext/ShellContextState";
 

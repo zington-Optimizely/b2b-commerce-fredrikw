@@ -2,6 +2,7 @@ import { CategoriesState } from "@insite/client-framework/Store/Data/Categories/
 import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import LinksState from "@insite/client-framework/Store/Links/LinksState";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
+import { ImportExportModalState } from "@insite/shell/Store/ImportExportModal/ImportExportModalState";
 import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalState";
 import { PageEditorState } from "@insite/shell/Store/PageEditor/PageEditorState";
 import { PageTreeState } from "@insite/shell/Store/PageTree/PageTreeState";
@@ -17,6 +18,7 @@ export default interface ShellState {
     readonly errorModal: ErrorModalState;
     readonly links: LinksState;
     readonly logoutWarningModal: LogoutWarningModalState;
+    readonly importExportModal: ImportExportModalState;
     readonly pageEditor: PageEditorState;
     readonly pageTree: PageTreeState;
     readonly publishModal: PublishModalState;

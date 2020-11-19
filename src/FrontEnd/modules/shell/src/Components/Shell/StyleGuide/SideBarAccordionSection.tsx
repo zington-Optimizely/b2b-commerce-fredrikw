@@ -14,7 +14,7 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
         <AccordionSection
             title={title}
             titleTypographyProps={{
-                variant: "h3",
+                variant: "h6",
                 css: css`
                     margin-bottom: 0;
                     margin-top: 0;
@@ -22,9 +22,10 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
             }}
             headerProps={{
                 css: css<AccordionSectionHeaderProps>`
-                    background: transparent;
-                    margin: ${inPopover ? "30px" : 0} -${paddingValue}px 0;
+                    background-color: transparent;
+                    margin: ${inPopover ? "30px" : 0} -${inPopover ? paddingValue : 0}px 0;
                     &:hover {
+                        background-color: #d4e0fd;
                         button {
                             span {
                                 ${({ expanded, theme }) => !expanded && `color: ${theme.colors.primary.main};`}
@@ -32,20 +33,18 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
                         }
                     }
                     button {
-                        padding: 9.5px ${paddingValue}px;
+                        padding: 7px ${paddingValue}px;
                         border: 0;
-                        background: ${({ expanded, theme }) =>
-                            expanded ? theme.colors.common.accentContrast : "transparent"};
+                        background-color: transparent;
                         > span {
                             color: ${({ expanded, theme }) =>
-                                expanded ? theme.colors.common.accent : theme.colors.text.main};
-                            font-weight: ${({ expanded }) => (expanded ? "bold" : 300)};
+                                expanded ? theme.colors.common.accentContrast : theme.colors.text.main};
+                            font-weight: 400;
                         }
                         &:focus {
                             border: 0;
-                            background: ${({ expanded, theme }) =>
-                                expanded ? theme.colors.common.accentContrast : "rgba(0, 0, 0, 0.3)"};
-                            padding: 9.5px ${paddingValue}px;
+                            background-color: transparent;
+                            padding: 7px ${paddingValue}px;
                             > span {
                                 color: ${({ expanded, theme }) =>
                                     expanded ? theme.colors.primary.main : theme.colors.text.main};
@@ -55,7 +54,7 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
                     ${/* sc-selector */ AccordionSectionPanel} + & button {
                         &:focus {
                             border: 0;
-                            padding: 9.5px ${paddingValue}px;
+                            padding: 7px ${paddingValue}px;
                         }
                     }
                 `,
@@ -63,11 +62,9 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
             panelProps={{
                 css: css`
                     border: 0;
-                    padding: 9.5px ${paddingValue}px 19.5px;
-                    background-color: ${({ theme }) =>
-                        inPopover ? theme.colors.common.background : theme.colors.common.accent};
-                    box-shadow: inset 0 1px 6px 0 rgba(0, 0, 0, 0.04);
-                    margin: 0 -${paddingValue}px;
+                    padding: 0 ${paddingValue}px 0;
+                    background-color: transparent;
+                    margin: 0;
                 `,
             }}
         >

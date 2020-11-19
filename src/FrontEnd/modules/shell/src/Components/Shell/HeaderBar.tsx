@@ -37,7 +37,8 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 interface State {}
 
-const textMain = shellTheme.colors.text.main;
+const primaryContrast = shellTheme.colors.primary.contrast;
+const commonDisabled = shellTheme.colors.common.disabled;
 
 class HeaderBar extends React.Component<Props, State> {
     UNSAFE_componentWillMount(): void {
@@ -90,7 +91,7 @@ class HeaderBar extends React.Component<Props, State> {
 
         return (
             <HeaderBarStyle data-test-selector="headerBar">
-                <Icon src={Globe} size={20} />
+                <Icon src={Globe} size={20} color="#ffffff87" />
                 <SelectWrapper>
                     <select
                         onChange={this.onLanguageChange}
@@ -104,11 +105,11 @@ class HeaderBar extends React.Component<Props, State> {
                             </option>
                         ))}
                     </select>
-                    <ArrowDown color1={textMain} height={7} />
+                    <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
                 </SelectWrapper>
                 {hasDeviceSpecificContent && (
                     <>
-                        <Icon src={Monitor} size={20} />
+                        <Icon src={Monitor} size={20} color="#ffffff87" />
                         <SelectWrapper>
                             <select onChange={this.onDeviceTypeChange} value={currentDeviceType} disabled={disabled}>
                                 {deviceTypes.map(deviceType => (
@@ -117,13 +118,13 @@ class HeaderBar extends React.Component<Props, State> {
                                     </option>
                                 ))}
                             </select>
-                            <ArrowDown color1={textMain} height={7} />
+                            <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
                         </SelectWrapper>
                     </>
                 )}
                 {hasPersonaSpecificContent && (
                     <>
-                        <Icon src={Users} size={20} />
+                        <Icon src={Users} size={20} color="#ffffff87" />
                         <SelectWrapper>
                             <select
                                 onChange={this.onPersonaChange}
@@ -137,7 +138,7 @@ class HeaderBar extends React.Component<Props, State> {
                                     </option>
                                 ))}
                             </select>
-                            <ArrowDown color1={textMain} height={7} />
+                            <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
                         </SelectWrapper>
                     </>
                 )}
@@ -169,14 +170,18 @@ const SelectWrapper = styled.div`
         background-color: transparent;
         border: none;
         font-size: 14px;
-        color: ${getColor("text.main")};
+        color: ${getColor("primary.contrast")};
         appearance: none;
         padding-right: 20px;
         cursor: pointer;
         font-weight: bold;
 
-        option:disabled {
-            font-style: italic;
+        option {
+            color: ${getColor("text.main")};
+
+            &:disabled {
+                font-style: italic;
+            }
         }
 
         &:disabled {

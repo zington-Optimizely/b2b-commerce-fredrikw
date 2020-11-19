@@ -84,16 +84,18 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
     setContentRef = () => this.props.setContentRef && this.props.setContentRef(this.contentRef);
 
     beforeOpen() {
-        const { appElement } = this.props;
-        ariaHiddenInstances += 1;
-        ariaAppHider.hide(appElement as HTMLElement);
+        const { appElement, enableClickThrough } = this.props;
+        if (!enableClickThrough) {
+            ariaHiddenInstances += 1;
+            ariaAppHider.hide(appElement as HTMLElement);
+        }
     }
 
     afterClose = (event: React.SyntheticEvent | null) => {
-        const { appElement } = this.props;
+        const { appElement, enableClickThrough } = this.props;
 
         // Reset aria-hidden attribute if all overlay content elements have been removed
-        if (ariaHiddenInstances > 0) {
+        if (!enableClickThrough && ariaHiddenInstances > 0) {
             ariaHiddenInstances -= 1;
 
             if (ariaHiddenInstances === 0) {

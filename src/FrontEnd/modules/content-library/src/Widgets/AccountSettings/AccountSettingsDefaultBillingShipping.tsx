@@ -264,12 +264,21 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                                     onChangeHandler={event => {
                                         defaultFulfillmentChangeHandler(event, props);
                                     }}
+                                    data-test-selector="accountSettings_fulfillmentMethod"
                                     {...styles.defaultFulfillmentMethodRadioGroup}
                                 >
-                                    <Radio value={FulfillmentMethod.Ship} {...styles.defaultFulfillmentMethodRadio}>
+                                    <Radio
+                                        data-test-selector="fulfillmentMethod_ship"
+                                        value={FulfillmentMethod.Ship}
+                                        {...styles.defaultFulfillmentMethodRadio}
+                                    >
                                         {translate("Ship")}
                                     </Radio>
-                                    <Radio value={FulfillmentMethod.PickUp} {...styles.defaultFulfillmentMethodRadio}>
+                                    <Radio
+                                        data-test-selector="fulfillmentMethod_pickUp"
+                                        value={FulfillmentMethod.PickUp}
+                                        {...styles.defaultFulfillmentMethodRadio}
+                                    >
                                         {translate("Pick Up")}
                                     </Radio>
                                 </RadioGroup>

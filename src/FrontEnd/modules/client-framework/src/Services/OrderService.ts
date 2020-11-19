@@ -106,7 +106,7 @@ export async function addRma(parameter: AddRmaApiParameter): Promise<ServiceResu
 
 function cleanOrder(orderModel: OrderModel, parameter?: { expand?: string[]; additionalExpands?: string[] }) {
     orderModel.orderDate = new Date(orderModel.orderDate);
-
+    orderModel.id = orderModel.erpOrderNumber || orderModel.webOrderNumber;
     if (doesNotHaveExpand(parameter, "orderLines")) {
         delete orderModel.orderLines;
     }

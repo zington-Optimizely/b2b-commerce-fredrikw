@@ -141,6 +141,15 @@
       "contextualFields": {}
     },
     {
+      "id": "0c4ba9fd-9232-4dba-974f-56481102e5d0",
+      "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
+      "type": "ProductList/ProductListPreviouslyPurchasedFilter",
+      "zone": "Content",
+      "generalFields": {},
+      "translatableFields": {},
+      "contextualFields": {}
+    },
+    {
       "id": "e46d0982-3319-4ec9-a2b7-9b11cc829491",
       "parentId": "f0a11640-9756-41b4-a88c-51546e7968bc",
       "type": "ProductList/ProductListStockedItemsFilter",

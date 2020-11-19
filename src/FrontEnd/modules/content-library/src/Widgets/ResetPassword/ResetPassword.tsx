@@ -207,7 +207,7 @@ const ResetPassword: FC<Props> = ({
     };
 
     const validateSubmitEnabled = () => {
-        return !(passwordErrorMessage || confirmPasswordErrorMessage);
+        return !(passwordErrorMessage || confirmPasswordErrorMessage) && password && confirmPassword;
     };
 
     const passwordChangeHandler = (newPassword: string) => {
@@ -230,6 +230,8 @@ const ResetPassword: FC<Props> = ({
         if (!isSubmitted) {
             setIsSubmitted(true);
         }
+
+        passwordChangeHandler(password);
 
         if (!userName || !resetToken || !validateSubmitEnabled()) {
             return;

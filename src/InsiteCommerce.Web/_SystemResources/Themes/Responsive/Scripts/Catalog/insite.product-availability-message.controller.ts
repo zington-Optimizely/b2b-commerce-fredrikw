@@ -54,16 +54,19 @@
 
         protected getProductRealTimeInventoryCompleted(realTimeInventory: RealTimeInventoryModel, productId: string, unitOfMeasure: string): void {
             var realTimeInventoryResult = realTimeInventory.realTimeInventoryResults.find(o => o.productId === productId);
+            var warehouses = [];
             if (realTimeInventoryResult) {
                 var inventoryWarehousesDto = realTimeInventoryResult.inventoryWarehousesDtos.find(o => o.unitOfMeasure === unitOfMeasure)
                     || realTimeInventoryResult.inventoryWarehousesDtos[0];
 
                 if (inventoryWarehousesDto) {
-                    this.availabilityByWarehousePopupService.updatePopupData({
-                        warehouses: inventoryWarehousesDto.warehouseDtos
-                    });
+                    warehouses = inventoryWarehousesDto.warehouseDtos;
                 }
             }
+
+            this.availabilityByWarehousePopupService.updatePopupData({
+                warehouses: warehouses
+            });
         }
 
         protected getProductRealTimeInventoryFailed(error: any): void {
