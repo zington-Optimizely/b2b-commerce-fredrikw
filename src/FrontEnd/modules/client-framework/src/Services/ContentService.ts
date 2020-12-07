@@ -55,6 +55,7 @@ export interface RetrievePageResult {
     page?: PageModel;
     statusCode: number;
     redirectTo?: string;
+    authorizationFailed?: boolean;
 }
 
 export interface BasicLanguageModel {

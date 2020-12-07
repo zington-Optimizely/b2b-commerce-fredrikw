@@ -169,9 +169,12 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
 
             setStatusCode(result.statusCode);
             if (result.redirectTo) {
+                const session = getState().context?.session;
+                const isAuthenticated = session && (session.isAuthenticated || session.rememberMe) && !session.isGuest;
                 if (IS_SERVER_SIDE) {
                     redirectTo(result.redirectTo);
-                } else if (result.redirectTo.startsWith("http")) {
+                } else if (result.redirectTo.startsWith("http") || (result.authorizationFailed && isAuthenticated)) {
+                    // authorizationFailed may mean auth session timed out - do a full refresh to update the header etc
                     window.location.href = result.redirectTo;
                 } else if (history) {
                     history.push(result.redirectTo);
