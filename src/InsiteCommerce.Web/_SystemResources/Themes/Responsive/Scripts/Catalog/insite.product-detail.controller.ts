@@ -201,8 +201,11 @@ module insite.catalog {
                 const priceProducts = [this.product];
                 if (this.product.styledProducts != null && this.product.styledProducts.length > 0) {
                     this.product.styledProducts.forEach((s) => {
-                        (s as any).id = s.productId;
-                        priceProducts.push(s as any);
+                        const priceProduct = <ProductDto>{
+                            id: s.productId,
+                            selectedUnitOfMeasure: s.unitOfMeasure
+                        };
+                        priceProducts.push(priceProduct);
                     });
                 }
 
@@ -237,8 +240,11 @@ module insite.catalog {
                 const inventoryProducts = [this.product];
                 if (this.product.styledProducts != null && this.product.styledProducts.length > 0) {
                     this.product.styledProducts.forEach((s) => {
-                        (s as any).id = s.productId;
-                        inventoryProducts.push(s as any);
+                        const inventoryProduct = <ProductDto>{
+                            id: s.productId,
+                            selectedUnitOfMeasure: s.unitOfMeasure
+                        };
+                        inventoryProducts.push(inventoryProduct);
                     });
                 }
 
