@@ -1,6 +1,7 @@
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
-import { updateCart } from "@insite/client-framework/Services/CartService";
+import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
+import { getCart, GetCartApiParameter, updateCart } from "@insite/client-framework/Services/CartService";
 import { createSession, deleteSession, Session } from "@insite/client-framework/Services/SessionService";
 import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
@@ -30,6 +31,12 @@ export interface SignInResult {
     readonly expires_in: number;
     readonly error_description: string;
 }
+
+export const DispatchBeginSignIn: HandlerType = props => {
+    props.dispatch({
+        type: "Context/BeginSignIn",
+    });
+};
 
 export const UnassignCartFromGuest: HandlerType = async props => {
     const { value: cart } = getCurrentCartState(props.getState());
@@ -131,24 +138,52 @@ export const RedirectToChangeCustomer: HandlerType = props => {
 
     if (props.authenticatedSession.redirectToChangeCustomerPageOnSignIn) {
         const homePageUrl = getPageLinkByPageType(props.getState(), "HomePage")?.url;
+        const dashboardPageUrl = getPageLinkByPageType(props.getState(), "MyAccountPage")?.url;
         const changeCustomerPageUrl = getPageLinkByPageType(props.getState(), "ChangeCustomerPage")?.url;
         if (homePageUrl && changeCustomerPageUrl) {
             const shouldAddReturnUrl = props.parameter.returnUrl && props.parameter.returnUrl !== homePageUrl;
+            const returnUrl = shouldAddReturnUrl
+                ? props.parameter.returnUrl
+                : props.authenticatedSession?.dashboardIsHomepage
+                ? dashboardPageUrl!
+                : undefined;
+
             window.location.href =
-                changeCustomerPageUrl +
-                (shouldAddReturnUrl && props.parameter.returnUrl
-                    ? `?returnUrl=${encodeURIComponent(props.parameter.returnUrl)}`
-                    : "");
+                changeCustomerPageUrl + (returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : "");
             return false;
         }
     }
 };
 
-export const NavigateToReturnUrl: HandlerType = props => {
-    window.location.href = props.parameter.returnUrl ? props.parameter.returnUrl : "/";
+export const NavigateToReturnUrl: HandlerType = async props => {
+    const state = props.getState();
+    let returnUrl = props.parameter.returnUrl;
+    const dashboardPageUrl = getPageLinkByPageType(props.getState(), "MyAccountPage")?.url;
+    const defaultUrl = props.authenticatedSession?.dashboardIsHomepage && dashboardPageUrl ? dashboardPageUrl : "/";
+    const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
+
+    if (returnUrl?.toLowerCase() === checkoutShippingUrl?.toLowerCase()) {
+        const cartResult = await getCart({
+            cartId: API_URL_CURRENT_FRAGMENT,
+            expand: ["cartLines", "hiddenproducts"],
+        } as GetCartApiParameter);
+
+        const { canCheckOut, canBypassCheckoutAddress } = cartResult.cart;
+        const checkoutReviewAndSubmitUrl = getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage")?.url;
+        const cartUrl = getPageLinkByPageType(state, "CartPage")?.url;
+
+        if (!canCheckOut || props.authenticatedSession?.isRestrictedProductExistInCart) {
+            returnUrl = cartUrl;
+        } else if (canBypassCheckoutAddress) {
+            returnUrl = checkoutReviewAndSubmitUrl;
+        }
+    }
+
+    window.location.href = returnUrl || defaultUrl;
 };
 
 export const chain = [
+    DispatchBeginSignIn,
     UnassignCartFromGuest,
     SignOutGuest,
     RequestAccessToken,

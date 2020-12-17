@@ -337,14 +337,14 @@ const OrderLineInfo = ({
                         <GridItem {...styles.productInfoQtyOrderedGridItem}>
                             <SmallHeadingAndText
                                 {...styles.productInfoQtyOrderedHeadingAndText}
-                                heading={translate("Qty Ordered")}
+                                heading={translate("QTY Ordered")}
                                 text={`${orderLine.qtyOrdered}`}
                             />
                         </GridItem>
                         <GridItem {...styles.productInfoQtyShippedGridItem}>
                             <SmallHeadingAndText
                                 {...styles.productInfoQtyShippedHeadingAndText}
-                                heading={translate("Qty Shipped")}
+                                heading={translate("QTY Shipped")}
                                 text={`${orderLine.qtyShipped}`}
                             />
                         </GridItem>

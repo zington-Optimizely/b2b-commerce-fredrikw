@@ -3,6 +3,7 @@
  */
 
 import { CustomFieldDefinition } from "@example/CustomFieldDefinition";
+import translate from "@insite/client-framework/Translate";
 import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -26,6 +27,7 @@ const CustomFieldTemplateWidget: React.FC<Props> = props => {
         <Typography variant="h4" as="p">
             <div>{props.fields.textField}</div>
             <div>{props.fields.customTemplateField}</div>
+            <div>{translate("example foobar")}</div>
         </Typography>
     );
 };

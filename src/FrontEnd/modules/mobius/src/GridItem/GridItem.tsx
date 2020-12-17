@@ -49,25 +49,35 @@ const gridItemWidthStyle = (x: GridWidths) => {
     `;
 };
 
-const GridItemStyle = styled.div<any>`
+const GridItemStyle = styled.div<GridItemProps & { gap: number; _width: GridItemProps["width"] }>`
     overflow: visible;
     display: flex;
     flex-direction: row;
     padding: ${({ gap }) => gap / 2}px;
-    align-items: ${({ align }: { align: keyof typeof alignments }) => alignments[align ?? "top"]};
+    align-items: ${({ align }) => alignments[align ?? "top"]};
     ${({ _width, theme }) => {
         if (Array.isArray(_width)) {
             const rules = _width.map(gridItemWidthStyle);
             return breakpointMediaQueries(theme, rules);
         }
-        return gridItemWidthStyle(_width);
+        return gridItemWidthStyle(_width as GridWidths);
     }}
-    ${({ printWidth }) => {
-        return css`
-            @media print {
-                ${gridItemWidthStyle(printWidth)}
-            }
-        `;
+    ${({ _width, printWidth }) => {
+        let w;
+        if (printWidth) {
+            w = printWidth;
+        } else if (Array.isArray(_width)) {
+            w = _width[_width.length - 1];
+        } else {
+            w = _width;
+        }
+        return w && w > 0
+            ? css`
+                  @media print {
+                      width: ${gridWidth(w)};
+                  }
+              `
+            : "";
     }}
     ${injectCss}
 `;

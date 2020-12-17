@@ -3,7 +3,15 @@ import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionC
 import { ToastContextData } from "@insite/mobius/Toast/ToasterContext";
 import { PublishPageSelection } from "@insite/shell/Components/Shell/PublishModal";
 import { closeSiteHole, sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import { getPageBulkPublishInfo, getPagePublishInfo, publishPages } from "@insite/shell/Services/ContentAdminService";
+import {
+    getPageBulkPublishInfo,
+    getPagePublishInfo,
+    getPublishedPageVersions,
+    PageVersionInfoModel,
+    publishPages,
+    restorePageVersion,
+} from "@insite/shell/Services/ContentAdminService";
+import { PublishModalState } from "@insite/shell/Store/PublishModal/PublishModalState";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
@@ -184,7 +192,7 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
         const previousIds = state.publishModal.failedToPublishPageIds
             ? cloneDeep(state.publishModal.failedToPublishPageIds)
             : {};
-        publishResult.ErrorInfos.forEach(o => {
+        publishResult.errorInfos.forEach(o => {
             previousIds[o.pageId] = true;
         });
         dispatch({
@@ -196,10 +204,7 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
 
     dispatch(loadPublishInfo(getCurrentPageForShell(state).id));
 
-    dispatch({
-        type: "PublishModal/SetShowModal",
-        showModal: false,
-    });
+    dispatch(closePublishModal());
 
     for (const page of pagesToPublish) {
         dispatch({
@@ -239,4 +244,41 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
         type: "Data/Pages/Reset",
     });
     dispatch(loadPage({ pathname: `/Content/Page/${currentPage.id}`, search: "" } as Location));
+};
+
+export const configureComparison = (compareVersions?: PublishModalState["compareVersions"]): AnyShellAction => ({
+    type: "PublishModal/ConfigureComparison",
+    compareVersions,
+});
+
+export const loadPublishedPageVersions = (pageId: string): ShellThunkAction => async dispatch => {
+    dispatch({
+        type: "PublishModal/BeginLoadingPublishedPageVersions",
+    });
+
+    const pageVersions = await getPublishedPageVersions(pageId);
+    dispatch({
+        type: "PublishModal/CompleteLoadingPublishedPageVersions",
+        pageVersions,
+    });
+};
+
+export const restoreVersion = (
+    pageVersion: PageVersionInfoModel,
+    pageId: string,
+): ShellThunkAction => async dispatch => {
+    const result = await restorePageVersion(pageVersion.versionId);
+    if (result.success) {
+        dispatch({
+            type: "PublishModal/CompletePageVersionRestore",
+            pageVersion,
+        });
+
+        // we need to get the model selection dropdowns to reload so they retrigger selecting product/category/brand
+        dispatch({
+            type: "Data/Pages/Reset",
+        });
+
+        dispatch(loadPage({ pathname: `/Content/Page/${pageId}`, search: "" } as Location));
+    }
 };

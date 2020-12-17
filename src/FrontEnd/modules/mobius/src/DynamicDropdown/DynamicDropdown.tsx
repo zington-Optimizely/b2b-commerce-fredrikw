@@ -29,7 +29,7 @@ export interface DynamicDropdownPresentationProps
     extends Omit<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> {
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable */
-    cssOverrides?: Pick<FormFieldPresentationProps<DynamicDropdownComponentProps>, "cssOverrides"> & {
+    cssOverrides?: FormFieldPresentationProps<DynamicDropdownComponentProps>["cssOverrides"] & {
         dropdownWrapper?: StyledProp<DynamicDropdownComponentProps>;
         list?: StyledProp<ContentBodyProps>;
         /** Specific style options for loading row, if not provided, falls back on 'option'. */

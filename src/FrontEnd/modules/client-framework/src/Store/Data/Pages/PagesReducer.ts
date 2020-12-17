@@ -1,20 +1,23 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { Location } from "@insite/client-framework/Components/SpireRouter";
+import { GetPagesByParentApiParameter, PagesCollectionModel } from "@insite/client-framework/Services/ContentService";
+import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { nullPage, PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import {
     createContextualIds,
     getContextualId,
     prepareFields,
 } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
+import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
+import LinksState from "@insite/client-framework/Store/Links/LinksState";
+import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PageProps, { ItemProps, PageModel } from "@insite/client-framework/Types/PageProps";
-import { Draft } from "immer";
-
-import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { Location } from "@insite/client-framework/Components/SpireRouter";
-import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
-import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { Draft } from "immer";
 
 const initialState: PagesState = {
     isLoading: {},
@@ -22,7 +25,7 @@ const initialState: PagesState = {
         [emptyGuid]: nullPage,
     },
     widgetIdsByPageId: {},
-    widgetIdsByParentIdAndZone: {},
+    widgetIdsByPageIdParentIdAndZone: {},
     widgetsById: {},
     idByType: {},
     idByPath: {},
@@ -31,6 +34,7 @@ const initialState: PagesState = {
         search: "",
         state: "",
     },
+    dataViews: {},
 };
 
 interface SetPageIsLoaded {
@@ -39,7 +43,9 @@ interface SetPageIsLoaded {
     page: PageModel;
 }
 
-interface LoadPageCompleteAction extends SetPageIsLoaded {
+type LoadPageCompleteAction = SetPageIsLoaded & HasContext;
+
+interface HasContext {
     currentLanguageId: string;
     defaultLanguageId: string;
     currentPersonaIds: string[];
@@ -48,6 +54,45 @@ interface LoadPageCompleteAction extends SetPageIsLoaded {
 }
 
 const reducer = {
+    "Data/Pages/BeginLoadPages": (draft: Draft<PagesState>, action: { parameter: GetPagesByParentApiParameter }) => {
+        setDataViewLoading(draft, action.parameter);
+    },
+
+    "Data/Pages/CompleteLoadPages": (
+        draft: Draft<PagesState>,
+        action: {
+            parameter: GetPagesByParentApiParameter;
+            collection: PagesCollectionModel;
+            links: LinksState;
+        } & HasContext,
+    ) => {
+        const {
+            parameter,
+            collection,
+            currentLanguageId,
+            defaultLanguageId,
+            currentPersonaIds,
+            defaultPersonaId,
+            currentDeviceType,
+            links,
+        } = action;
+
+        const contextualIds = createContextualIds(
+            currentLanguageId,
+            defaultLanguageId,
+            currentDeviceType,
+            currentPersonaIds,
+            defaultPersonaId,
+        );
+
+        for (const page of collection.pages) {
+            const path = getPageLinkByNodeId({ links }, page.nodeId)?.url;
+            finishLoadPage(draft, page, path, action, contextualIds);
+        }
+
+        setDataViewLoaded(draft, parameter, collection, collection => collection.pages as PageProps[]);
+    },
+
     "Data/Pages/BeginLoadPage": (draft: Draft<PagesState>, action: { key: string }) => {
         draft.isLoading[action.key] = true;
     },
@@ -63,6 +108,7 @@ const reducer = {
             path,
             pageType,
         } = action;
+
         if (path) {
             draft.isLoading[path] = false;
         }
@@ -89,49 +135,7 @@ const reducer = {
             defaultPersonaId,
         );
 
-        prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
-        const { fields } = page;
-        if (fields) {
-            fields["variantName"] = page.variantName;
-        }
-
-        draft.widgetIdsByPageId[page.id] = [];
-        draft.widgetIdsByParentIdAndZone[page.id] = {};
-
-        draft.byId[page.id] = page;
-        draft.idByType[page.type] = page.id;
-        if (path) {
-            draft.idByPath[path.toLowerCase()] = action.page.id;
-        }
-
-        const { widgets } = page;
-        delete page.widgets;
-
-        if (!widgets) {
-            return;
-        }
-
-        for (const widgetItem of widgets) {
-            prepareFields(widgetItem, currentLanguageId, defaultLanguageId, contextualIds);
-            draft.widgetIdsByParentIdAndZone[widgetItem.id] = {};
-        }
-
-        for (const widgetItem of widgets) {
-            draft.widgetsById[widgetItem.id] = widgetItem;
-            draft.widgetIdsByPageId[page.id].push(widgetItem.id);
-            const parentId = widgetItem.parentId;
-            const zone = widgetItem.zone;
-
-            if (typeof draft.widgetIdsByParentIdAndZone[parentId] === "undefined") {
-                draft.widgetIdsByParentIdAndZone[parentId] = {};
-            }
-
-            if (typeof draft.widgetIdsByParentIdAndZone[parentId][zone] === "undefined") {
-                draft.widgetIdsByParentIdAndZone[parentId][zone] = [];
-            }
-
-            draft.widgetIdsByParentIdAndZone[parentId][zone].push(widgetItem.id);
-        }
+        finishLoadPage(draft, page, path, action, contextualIds);
     },
 
     "Data/Pages/SetPageIsLoaded": (draft: Draft<PagesState>, { path, pageType, page }: SetPageIsLoaded) => {
@@ -155,6 +159,10 @@ const reducer = {
         };
     },
 
+    "Data/Pages/ResetDataViews": (draft: Draft<PagesState>) => {
+        draft.dataViews = {};
+    },
+
     "Data/Pages/MoveWidgetTo": (
         draft: Draft<PagesState>,
         action: {
@@ -162,6 +170,7 @@ const reducer = {
             parentId: string;
             zoneName: string;
             index: number;
+            pageId: string;
         },
     ) => {
         const widget = draft.widgetsById[action.id];
@@ -173,21 +182,20 @@ const reducer = {
 
         draft.widgetsById[action.id] = widget;
 
-        const oldLocation = draft.widgetIdsByParentIdAndZone[oldParentId][oldZone];
+        const pageContent = draft.widgetIdsByPageIdParentIdAndZone[action.pageId];
+        const oldLocation = pageContent[oldParentId][oldZone];
         const oldIndex = oldLocation.indexOf(widget.id);
         oldLocation.splice(oldIndex, 1);
 
-        const widgetIdsByParentIdAndZone = draft.widgetIdsByParentIdAndZone;
-
-        if (typeof widgetIdsByParentIdAndZone[widget.parentId] === "undefined") {
-            widgetIdsByParentIdAndZone[widget.parentId] = {};
+        if (typeof pageContent[widget.parentId] === "undefined") {
+            pageContent[widget.parentId] = {};
         }
 
-        if (typeof widgetIdsByParentIdAndZone[widget.parentId][widget.zone] === "undefined") {
-            widgetIdsByParentIdAndZone[widget.parentId][widget.zone] = [];
+        if (typeof pageContent[widget.parentId][widget.zone] === "undefined") {
+            pageContent[widget.parentId][widget.zone] = [];
         }
 
-        widgetIdsByParentIdAndZone[widget.parentId][widget.zone].splice(action.index, 0, widget.id);
+        pageContent[widget.parentId][widget.zone].splice(action.index, 0, widget.id);
 
         draft.draggingWidgetId = undefined;
     },
@@ -220,17 +228,17 @@ const reducer = {
 
         widgetIdsByPageId[pageId].push(id);
 
-        const widgetIdsByParentIdAndZone = draft.widgetIdsByParentIdAndZone;
+        const pageContent = draft.widgetIdsByPageIdParentIdAndZone[pageId];
 
-        if (typeof widgetIdsByParentIdAndZone[parentId] === "undefined") {
-            widgetIdsByParentIdAndZone[parentId] = {};
+        if (typeof pageContent[parentId] === "undefined") {
+            pageContent[parentId] = {};
         }
 
-        if (typeof widgetIdsByParentIdAndZone[parentId][zone] === "undefined") {
-            widgetIdsByParentIdAndZone[parentId][zone] = [];
+        if (typeof pageContent[parentId][zone] === "undefined") {
+            pageContent[parentId][zone] = [];
         }
 
-        widgetIdsByParentIdAndZone[parentId][zone].splice(index, 0, id);
+        pageContent[parentId][zone].splice(index, 0, id);
     },
 
     "Data/Pages/UpdateField": (draft: Draft<PagesState>, action: UpdateFieldParameter) => {
@@ -320,11 +328,11 @@ const reducer = {
         prepareFields(contentItemModel, languageId, defaultLanguageId, contextualIds);
     },
 
-    "Data/Pages/RemoveWidget": (draft: Draft<PagesState>, action: { id: string }) => {
+    "Data/Pages/RemoveWidget": (draft: Draft<PagesState>, action: { id: string; pageId: string }) => {
         const widget = draft.widgetsById[action.id];
         delete draft.widgetsById[action.id];
 
-        const oldLocation = draft.widgetIdsByParentIdAndZone[widget.parentId][widget.zone];
+        const oldLocation = draft.widgetIdsByPageIdParentIdAndZone[action.pageId][widget.parentId][widget.zone];
         const oldIndex = oldLocation.indexOf(widget.id);
         oldLocation.splice(oldIndex, 1);
     },
@@ -372,5 +380,61 @@ const reducer = {
         draft.pageDefinitionsByType = action.pageDefinitionsByType;
     },
 };
+
+function finishLoadPage(
+    draft: Draft<PagesState>,
+    page: PageModel,
+    path: string | undefined,
+    action: HasContext,
+    contextualIds: string[],
+) {
+    const { currentLanguageId, defaultLanguageId } = action;
+
+    prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
+    const { fields } = page;
+    if (fields) {
+        fields["variantName"] = page.variantName;
+    }
+
+    draft.widgetIdsByPageId[page.id] = [];
+    draft.widgetIdsByPageIdParentIdAndZone[page.id] = {};
+    const pageContent = draft.widgetIdsByPageIdParentIdAndZone[page.id];
+    pageContent[page.id] = {};
+
+    draft.byId[page.id] = page;
+    draft.idByType[page.type] = page.id;
+    if (path) {
+        draft.idByPath[path.toLowerCase()] = page.id;
+    }
+
+    const { widgets } = page;
+    delete page.widgets;
+
+    if (!widgets) {
+        return;
+    }
+
+    for (const widgetItem of widgets) {
+        prepareFields(widgetItem, currentLanguageId, defaultLanguageId, contextualIds);
+        pageContent[widgetItem.id] = {};
+    }
+
+    for (const widgetItem of widgets) {
+        draft.widgetsById[widgetItem.id] = widgetItem;
+        draft.widgetIdsByPageId[page.id].push(widgetItem.id);
+        const parentId = widgetItem.parentId;
+        const zone = widgetItem.zone;
+
+        if (typeof pageContent[parentId] === "undefined") {
+            pageContent[parentId] = {};
+        }
+
+        if (typeof pageContent[parentId][zone] === "undefined") {
+            pageContent[parentId][zone] = [];
+        }
+
+        pageContent[parentId][zone].push(widgetItem.id);
+    }
+}
 
 export default createTypedReducerWithImmer(initialState, reducer);

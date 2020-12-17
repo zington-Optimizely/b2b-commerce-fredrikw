@@ -4,7 +4,9 @@ import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter from "@insite/client-framework/Components/SpireRouter";
+import logger from "@insite/client-framework/Logger";
 import "@insite/client-framework/polyfills";
+import { getContentByVersionPath } from "@insite/client-framework/Services/ContentService";
 import { setResolver } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { configureStore } from "@insite/client-framework/Store/ConfigureStore";
@@ -51,16 +53,21 @@ const initialTheme = theWindow.initialTheme;
 function renderApp(renderer: Renderer = render) {
     let WrappingContext: React.FC = ({ children }) => <>{children}</>;
     if (!!window && window.parent && window.parent.location.toString().toLowerCase().indexOf("/contentadmin/") > 0) {
-        setCookie(isSiteInShellCookieName, "true");
-        const isEditing = getCookie(contentModeCookieName) === "Editing";
+        logger.debug("CMS shell detected.");
+        if (window.location.pathname.startsWith(getContentByVersionPath)) {
+            logger.debug("Suppressing shell wrapper due to GetContentByVersion request.");
+        } else {
+            setCookie(isSiteInShellCookieName, "true");
+            const isEditing = getCookie(contentModeCookieName) === "Editing";
 
-        const ShellWrappingContext: React.FC = ({ children }) => (
-            <ShellContext.Provider value={{ isEditing, isCurrentPage: true, isInShell: true }}>
-                {children}
-            </ShellContext.Provider>
-        );
+            const ShellWrappingContext: React.FC = ({ children }) => (
+                <ShellContext.Provider value={{ isEditing, isCurrentPage: true, isInShell: true }}>
+                    {children}
+                </ShellContext.Provider>
+            );
 
-        WrappingContext = ShellWrappingContext;
+            WrappingContext = ShellWrappingContext;
+        }
     } else if (getCookie(isSiteInShellCookieName)) {
         if (window.location.pathname === "/") {
             // TODO ISC-12274 get rid of this to see if the problem exists

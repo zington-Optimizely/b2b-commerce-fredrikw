@@ -26,9 +26,12 @@ const mapStateToProps = (state: ApplicationState) => {
         invoiceNumber = parsedQuery.invoiceNumber;
     }
 
+    const isInvoiceNumberStoredInState = state.pages.invoiceDetails.invoiceNumber === invoiceNumber;
+
     return {
         invoiceNumber,
         invoiceState: getInvoiceState(state, invoiceNumber),
+        shouldDisplayInvoice: !isInvoiceNumberStoredInState,
         shouldLoadOrderStatusMappings: !getOrderStatusMappingDataView(state).value,
     };
 };
@@ -58,8 +61,11 @@ export const invoiceDetailsPageStyles: InvoiceDetailsPageStyles = {
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 class InvoiceDetailsPage extends React.Component<Props> {
-    componentDidMount(): void {
-        if (this.props.invoiceNumber) {
+    UNSAFE_componentWillMount(): void {
+        // The share entity (for orders) functionality can use this page
+        // to render HTML for PDF generation, so we need to leave this SSR
+        // ability so that functionality works.
+        if (this.props.invoiceNumber && this.props.shouldDisplayInvoice) {
             this.props.displayInvoice({ invoiceNumber: this.props.invoiceNumber });
         }
     }

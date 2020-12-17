@@ -1,5 +1,6 @@
 import { ButtonVariants } from "@insite/mobius/Button";
 import { PaginationProps } from "@insite/mobius/Pagination/Pagination";
+import convertToNumberIfString from "@insite/mobius/utilities/convertToNumberIfString";
 import get from "@insite/mobius/utilities/get";
 import getProp from "@insite/mobius/utilities/getProp";
 import { css, Interpolation } from "styled-components";
@@ -23,9 +24,11 @@ const buttonDisplayProps = (
     const {
         onChangePage,
         createHref,
-        currentPage,
+        currentPage: possibleStringCurrentPage,
         theme: { translate },
     } = props;
+    const currentPage = convertToNumberIfString(possibleStringCurrentPage);
+
     const { variant, css: buttonCss, ...otherButtonProps } = buttonProps;
 
     const baseCss = css`

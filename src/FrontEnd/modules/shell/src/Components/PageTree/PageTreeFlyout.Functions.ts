@@ -54,3 +54,11 @@ export function canCopyPage(
         pageDefinition.pageType === "Content"
     );
 }
+
+export function canEditLayout(permissions: PermissionsModel): boolean {
+    return permissions.canEditWidget;
+}
+
+export function canDeleteLayout(permissions: PermissionsModel): boolean {
+    return permissions.canDeletePage;
+}

@@ -19,6 +19,7 @@
                                         "Microsoft.CSharp":  null,
                                         "mscorlib":  null,
                                         "System":  null,
+                                        "System.ComponentModel.Composition":  null,
                                         "System.ComponentModel.DataAnnotations":  null,
                                         "System.Configuration":  null,
                                         "System.Core":  null,
@@ -28,7 +29,6 @@
                                         "System.EnterpriseServices":  null,
                                         "System.IdentityModel":  null,
                                         "System.Net":  null,
-                                        "System.Net.Http":  null,
                                         "System.Runtime.Caching":  null,
                                         "System.Runtime.Serialization":  null,
                                         "System.ServiceModel":  null,
@@ -199,10 +199,10 @@
         "Name":  "Microsoft.AspNet.WebApi.Core",
         "Value":  {
                       "PackageName":  "Microsoft.AspNet.WebApi.Core",
-                      "PackageVersion":  "5.2.3",
+                      "PackageVersion":  "5.2.7",
                       "PackageFramework":  "net45",
                       "Libraries":  {
-                                        "System.Web.Http":  "5.2.3.0"
+                                        "System.Web.Http":  "5.2.7.0"
                                     }
                   }
     },
@@ -287,6 +287,28 @@
                   }
     },
     {
+        "Name":  "Microsoft.Graph",
+        "Value":  {
+                      "PackageName":  "Microsoft.Graph",
+                      "PackageVersion":  "3.21.0",
+                      "PackageFramework":  "net461",
+                      "Libraries":  {
+                                        "Microsoft.Graph":  "3.21.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.Graph.Core",
+        "Value":  {
+                      "PackageName":  "Microsoft.Graph.Core",
+                      "PackageVersion":  "1.23.0",
+                      "PackageFramework":  "net45",
+                      "Libraries":  {
+                                        "Microsoft.Graph.Core":  "1.23.0.0"
+                                    }
+                  }
+    },    
+    {
         "Name":  "Microsoft.Owin",
         "Value":  {
                       "PackageName":  "Microsoft.Owin",
@@ -367,7 +389,7 @@
         "Name":  "Newtonsoft.Json",
         "Value":  {
                       "PackageName":  "Newtonsoft.Json",
-                      "PackageVersion":  "12.0.2",
+                      "PackageVersion":  "12.0.3",
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "Newtonsoft.Json":  "12.0.0.0"
@@ -452,13 +474,24 @@
                   }
     },
     {
-        "Name":  "System.Net.Http.Formatting.Extension",
+        "Name":  "Microsoft.AspNet.WebApi.Client",
         "Value":  {
-                      "PackageName":  "System.Net.Http.Formatting.Extension",
-                      "PackageVersion":  "5.2.3.0",
-                      "PackageFramework":  null,
+                      "PackageName":  "Microsoft.AspNet.WebApi.Client",
+                      "PackageVersion": "5.2.7",
+                      "PackageFramework": "net45",
                       "Libraries":  {
-                                        "System.Net.Http.Formatting":  "5.2.3.0"
+                                        "System.Net.Http.Formatting":  "5.2.7.0"
+                                    }
+                  }
+    },
+    {
+        "Name": "System.Net.Http",
+        "Value":  {
+                      "PackageName": "System.Net.Http",
+                      "PackageVersion": "4.3.4",
+                      "PackageFramework": "net46",
+                      "Libraries":  {
+                                        "System.Net.Http": "4.1.1.3"
                                     }
                   }
     },

@@ -1,14 +1,14 @@
+import Button from "@insite/mobius/Button";
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import Icon from "@insite/mobius/Icon";
+import Mail from "@insite/mobius/Icons/Mail";
+import Tab from "@insite/mobius/Tab";
+import TabGroup from "@insite/mobius/TabGroup/TabGroup";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
+import Typography from "@insite/mobius/Typography";
+import { mount } from "enzyme";
 import "jest-styled-components";
 import React from "react";
-import { mount } from "enzyme";
-import ThemeProvider from "../ThemeProvider";
-import TabGroup from "./TabGroup";
-import Tab from "../Tab";
-import Typography from "../Typography";
-import baseTheme from "../globals/baseTheme";
-import Button from "../Button";
-import Icon from "../Icon";
-import Mail from "../Icons/Mail";
 
 const tabGenerator = (title, children) => (
     <Tab tabKey={title} key={title} headline={title}>
@@ -28,12 +28,15 @@ describe("TabGroup", () => {
     let tabs;
     let theme;
     let mountedWrapper;
-    const wrapper = () => {
+    const wrapper = document => {
         if (!mountedWrapper) {
+            const options = document ? { attachTo: document.body } : undefined;
+
             mountedWrapper = mount(
                 <ThemeProvider theme={theme}>
                     <TabGroup {...props}>{tabs}</TabGroup>
                 </ThemeProvider>,
+                options,
             );
         }
         return mountedWrapper;
@@ -83,8 +86,12 @@ describe("TabGroup", () => {
             .find('[data-id="tabContent"]')
             .children()
             .forEach(a => {
-                if (a.props().hidden) expect(a).toHaveStyleRule("display", "none");
-                if (!a.props().hidden) expect(a).not.toHaveStyleRule("display", "none");
+                if (a.props().hidden) {
+                    expect(a).toHaveStyleRule("display", "none");
+                }
+                if (!a.props().hidden) {
+                    expect(a).not.toHaveStyleRule("display", "none");
+                }
             });
     });
 
@@ -96,7 +103,9 @@ describe("TabGroup", () => {
             .find('[data-id="tabContent"]')
             .children()
             .forEach(a => {
-                if (a.props()["data-title"] === current) expect(a).not.toHaveStyleRule("display", "none");
+                if (a.props()["data-title"] === current) {
+                    expect(a).not.toHaveStyleRule("display", "none");
+                }
             });
     });
 
@@ -179,13 +188,15 @@ describe("TabGroup", () => {
         });
         test("focuses content on down arrow", () => {
             tabs = baseTabs;
-            const root = wrapper();
+            const root = wrapper(document);
             root.find('[data-id="tabGroup"]').first().simulate("keyDown", {
                 keyCode: 40,
                 which: 40,
                 key: "down arrow",
             });
+
             const elem = root.find('[data-id="tabContent"]').getDOMNode();
+
             expect(document.activeElement).toEqual(elem);
         });
     });

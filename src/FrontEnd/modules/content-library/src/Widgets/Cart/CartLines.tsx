@@ -85,6 +85,10 @@ interface CartLinesHeaderStyles {
     condensedViewCheckbox?: CheckboxPresentationProps;
     overflowMenu?: OverflowMenuPresentationProps;
     removeAllLink?: LinkPresentationProps;
+    mainSection?: InjectableCss;
+    warningIcon?: IconPresentationProps;
+    warningSection?: InjectableCss;
+    warningText?: InjectableCss;
 }
 
 export const cartLinesStyles: CartLinesStyles = {
@@ -110,8 +114,6 @@ export const cartLinesStyles: CartLinesStyles = {
     },
     headerWrapper: {
         css: css`
-            display: flex;
-            align-items: center;
             border-bottom: 1px solid ${getColor("common.border")};
             padding-bottom: 10px;
         `,
@@ -139,6 +141,28 @@ export const cartLinesStyles: CartLinesStyles = {
         removeAllLink: {
             css: css`
                 margin-left: 24px;
+            `,
+        },
+        mainSection: {
+            css: css`
+                display: flex;
+                align-items: center;
+                padding-bottom: 5px;
+            `,
+        },
+        warningIcon: {
+            src: "AlertCircle",
+            color: "danger.main",
+            css: css`
+                margin-right: 10px;
+            `,
+        },
+        warningSection: {
+            css: css`
+                display: flex;
+                align-items: center;
+                border: 2px solid ${getColor("danger.main")};
+                padding: 15px 10px;
             `,
         },
     },
@@ -207,6 +231,7 @@ const CartLines: FC<Props> = ({
 
     const { productSettings } = settingsCollection;
     const { value: promotions } = promotionsDataView;
+    const productsCannotBePurchased = cartLines.some(o => o.isRestricted || !o.isActive);
 
     const cartLinesDisplay = cartLines.map(cartLine => {
         const matchingPromotions = promotions ? promotions.filter(promo => promo.orderLineId === cartLine.id) : [];
@@ -246,6 +271,7 @@ const CartLines: FC<Props> = ({
             <CartLinesHeader
                 totalItemCount={cartLines!.length}
                 isCondensed={isCondensed}
+                productsCannotBePurchased={productsCannotBePurchased}
                 onIsCondensedChange={isCondensedChangeHandler}
                 onRemoveAllClick={removeAllClickHandler}
             />
@@ -258,6 +284,7 @@ const CartLines: FC<Props> = ({
 interface CartLinesHeaderProps {
     totalItemCount: number;
     isCondensed: boolean;
+    productsCannotBePurchased?: boolean;
     onIsCondensedChange: CheckboxProps["onChange"];
     onRemoveAllClick: () => void;
 }
@@ -265,6 +292,7 @@ interface CartLinesHeaderProps {
 const CartLinesHeader: FC<CartLinesHeaderProps> = ({
     totalItemCount,
     isCondensed,
+    productsCannotBePurchased,
     onIsCondensedChange,
     onRemoveAllClick,
 }) => {
@@ -272,31 +300,41 @@ const CartLinesHeader: FC<CartLinesHeaderProps> = ({
 
     return (
         <StyledSection {...styles.headerWrapper} id="cartHeader">
-            <Typography {...headerStyles.itemCountText}>{`${totalItemCount} ${translate("Items")}`}</Typography>
-            <CheckboxGroup {...headerStyles.condensedViewCheckboxGroup}>
-                <Checkbox
-                    checked={isCondensed}
-                    onChange={onIsCondensedChange}
-                    data-test-selector="cartlineHeader_condensedCheckbox"
-                    {...headerStyles.condensedViewCheckbox}
-                >
-                    {translate("Condensed View")}
-                </Checkbox>
-            </CheckboxGroup>
-            <Hidden above="md">
-                <OverflowMenu position="end" {...headerStyles.overflowMenu}>
-                    <Clickable onClick={onRemoveAllClick}>{translate("Remove All")}</Clickable>
-                </OverflowMenu>
-            </Hidden>
-            <Hidden below="lg">
-                <Link
-                    onClick={onRemoveAllClick}
-                    {...headerStyles.removeAllLink}
-                    data-test-selector="cartlineHeader_removeAll"
-                >
-                    {translate("Remove All")}
-                </Link>
-            </Hidden>
+            <StyledSection {...headerStyles.mainSection}>
+                <Typography {...headerStyles.itemCountText}>{`${totalItemCount} ${translate("Items")}`}</Typography>
+                <CheckboxGroup {...headerStyles.condensedViewCheckboxGroup}>
+                    <Checkbox
+                        checked={isCondensed}
+                        onChange={onIsCondensedChange}
+                        data-test-selector="cartlineHeader_condensedCheckbox"
+                        {...headerStyles.condensedViewCheckbox}
+                    >
+                        {translate("Condensed View")}
+                    </Checkbox>
+                </CheckboxGroup>
+                <Hidden above="md">
+                    <OverflowMenu position="end" {...headerStyles.overflowMenu}>
+                        <Clickable onClick={onRemoveAllClick}>{translate("Remove All")}</Clickable>
+                    </OverflowMenu>
+                </Hidden>
+                <Hidden below="lg">
+                    <Link
+                        onClick={onRemoveAllClick}
+                        {...headerStyles.removeAllLink}
+                        data-test-selector="cartlineHeader_removeAll"
+                    >
+                        {translate("Remove All")}
+                    </Link>
+                </Hidden>
+            </StyledSection>
+            {productsCannotBePurchased && (
+                <StyledSection {...headerStyles.warningSection}>
+                    <Icon {...headerStyles.warningIcon}></Icon>
+                    <Typography {...headerStyles.warningText}>
+                        {siteMessage("Cart_ProductsCannotBePurchased")}
+                    </Typography>
+                </StyledSection>
+            )}
         </StyledSection>
     );
 };

@@ -19,14 +19,26 @@ export interface OwnProps {
     requireRows?: boolean;
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
-    widgets: getWidgetsByIdAndZone(state, ownProps.contentId, ownProps.zoneName),
-    draggingWidgetId: state.data.pages.draggingWidgetId,
-    permissions: state.context.permissions,
-    canChangePage: state.context.canChangePage,
-    currentPageType: getCurrentPage(state).type,
-    pageDefinitionsByType: state.data.pages.pageDefinitionsByType,
-});
+const mapStateToProps = (state: ApplicationState, ownProps: OwnProps & HasShellContext) => {
+    const currentPage = getCurrentPage(state);
+    let pageId = currentPage.id;
+
+    if (ownProps.shellContext.pageId) {
+        pageId = ownProps.shellContext.pageId;
+    }
+
+    return {
+        widgets: getWidgetsByIdAndZone(state, ownProps.contentId, ownProps.zoneName, pageId),
+        draggingWidgetId: state.data.pages.draggingWidgetId,
+        permissions: state.context.permissions,
+        canChangePage: state.context.canChangePage,
+        currentPageType: currentPage.type,
+        pageDefinitionsByType: state.data.pages.pageDefinitionsByType,
+        createdUsingLayout: !!currentPage.layoutPageId,
+        isLayoutPage: currentPage.type === "Layout",
+        pageId,
+    };
+};
 
 const mapDispatchToProps = {
     moveWidgetTo,
@@ -39,7 +51,7 @@ export type Props = ReturnType<typeof mapStateToProps> &
 
 class Zone extends React.Component<Props> {
     private dropWidget = (event: React.DragEvent<HTMLElement>) => {
-        const { contentId, draggingWidgetId, zoneName } = this.props;
+        const { contentId, draggingWidgetId, zoneName, pageId } = this.props;
 
         if (draggingWidgetId) {
             dropWidgetOnZone(event, index => {
@@ -49,8 +61,9 @@ class Zone extends React.Component<Props> {
                     parentId: contentId,
                     zoneName,
                     index,
+                    pageId,
                 });
-                this.props.moveWidgetTo(draggingWidgetId, contentId, zoneName, index);
+                this.props.moveWidgetTo(draggingWidgetId, contentId, zoneName, index, pageId);
             });
         }
     };
@@ -88,11 +101,14 @@ class Zone extends React.Component<Props> {
             widgets,
             draggingWidgetId,
             zoneName,
-            shellContext: { isEditing, isCurrentPage },
+            shellContext: { isEditing, isCurrentPage, layoutEditableZone },
             permissions,
             canChangePage,
             currentPageType,
             pageDefinitionsByType,
+            createdUsingLayout,
+            pageId,
+            isLayoutPage,
         } = this.props;
 
         if (!contentId) {
@@ -107,11 +123,18 @@ class Zone extends React.Component<Props> {
                 ) : null
             ) : (
                 widgets.map(widget => (
-                    <WidgetRenderer key={widget.id} id={widget.id} type={widget.type} fixed={!!fixed} />
+                    <WidgetRenderer
+                        key={widget.id}
+                        id={widget.id}
+                        type={widget.type}
+                        fixed={!!fixed}
+                        isLayout={!!widget.isLayout && !isLayoutPage}
+                        pageId={pageId}
+                    />
                 ))
             );
 
-        if (isEditing && isCurrentPage) {
+        if (isEditing && isCurrentPage && (!createdUsingLayout || layoutEditableZone)) {
             return (
                 <ZoneStyle
                     data-contentid={contentId}
@@ -141,7 +164,7 @@ class Zone extends React.Component<Props> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withIsInShell(Zone));
+export default withIsInShell(connect(mapStateToProps, mapDispatchToProps)(Zone));
 
 const Wrapper = styled.div`
     width: 100%;

@@ -181,7 +181,7 @@ const OrderLineInfo = ({ orderLine }: { orderLine: OrderLineModel }) => {
                     />
                 </GridItem>
                 <GridItem {...styles.productInfoQtyOrderedGridItem}>
-                    <SmallHeadingAndText heading={translate("Qty")} text={`${orderLine.qtyOrdered}`} />
+                    <SmallHeadingAndText heading={translate("QTY")} text={`${orderLine.qtyOrdered}`} />
                 </GridItem>
                 <GridItem {...styles.productInfoSubtotalGridItem}>
                     <SmallHeadingAndText heading={translate("Subtotal")} text={orderLine.extendedUnitNetPriceDisplay} />

@@ -91,7 +91,7 @@ const CheckoutShippingFulfillmentMethodSelector = ({
                         value={FulfillmentMethod.Ship}
                         data-test-selector="fulfillmentMethod_ship"
                     >
-                        {translate("Ship to address")}
+                        {translate("Ship to Address")}
                     </Radio>
                     <Radio
                         {...styles.pickUpRadio}

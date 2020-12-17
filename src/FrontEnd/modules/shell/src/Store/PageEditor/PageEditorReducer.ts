@@ -19,11 +19,15 @@ const initialState: PageEditorState = {
 };
 
 const reducer = {
-    "PageEditor/CompleteSavePage": (
-        draft: Draft<PageEditorState>,
-        { savePageResponse }: { savePageResponse: SavePageResponseModel },
-    ) => {
-        draft.savePageResponse = savePageResponse;
+    "PageEditor/LayoutUpdated": (draft: Draft<PageEditorState>, { id }: { id: string }) => {
+        if (!draft.updatedLayoutIds) {
+            draft.updatedLayoutIds = {};
+        }
+        draft.updatedLayoutIds[id] = true;
+    },
+
+    "PageEditor/LayoutUpdatedReset": (draft: Draft<PageEditorState>) => {
+        delete draft.updatedLayoutIds;
     },
 
     "PageEditor/ToggleShowGeneratedPageTemplate": (draft: Draft<PageEditorState>) => {

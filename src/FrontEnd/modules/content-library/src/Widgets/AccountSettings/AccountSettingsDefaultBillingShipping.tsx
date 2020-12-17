@@ -2,8 +2,9 @@ import { FulfillmentMethod } from "@insite/client-framework/Services/SessionServ
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
+import { getBillTosDataView, getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
+import loadBillTos from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTos";
 import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
 import { getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import updateAccountSettings from "@insite/client-framework/Store/Pages/AccountSettings/Handlers/UpdateAccountSettings";
@@ -24,16 +25,15 @@ import RadioGroup, { RadioGroupComponentProps } from "@insite/mobius/RadioGroup"
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import FieldSetPresentationProps, { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { ChangeEvent, FC } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
     loadBillTo,
     loadShipTo,
+    loadBillTos,
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -46,9 +46,10 @@ const mapStateToProps = (state: ApplicationState) => ({
     selectedShipToId: state.pages.accountSettings.selectedShipToId,
     useDefaultCustomer: state.pages.accountSettings.useDefaultCustomer,
     session: state.context.session,
+    billTosDataView: getBillTosDataView(state, { expand: ["shipTos", "excludeOneTime"] }),
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface AccountSettingsDefaultBillingShippingStyles {
     customerSelectorGridContainer?: GridContainerProps;
@@ -165,33 +166,27 @@ export const accountSettingsDefaultBillingShippingStyles: AccountSettingsDefault
 };
 
 const styles = accountSettingsDefaultBillingShippingStyles;
-let warehouseAddressWrapperStyle: GridItemProps | undefined;
 
-const defaultShippingChangeHandler = (event: ChangeEvent<HTMLInputElement>, props: Props) => {
-    props.updateAccountSettings({ useDefaultCustomer: event.currentTarget.value.toLowerCase() === "true" });
-};
+const AccountSettingsDefaultBillingShipping = ({
+    account,
+    shipToState,
+    billToState,
+    session,
+    enableWarehousePickup,
+    requireSelectCustomerOnSignIn,
+    loadBillTo,
+    loadShipTo,
+    selectedBillToId,
+    selectedShipToId,
+    useDefaultCustomer,
+    billTosDataView,
+    loadBillTos,
+    updateAccountSettings,
+}: Props) => {
+    if (!billTosDataView.value && !billTosDataView.isLoading) {
+        loadBillTos({ expand: ["shipTos", "excludeOneTime"] });
+    }
 
-const defaultFulfillmentChangeHandler = (event: ChangeEvent<HTMLInputElement>, props: Props) => {
-    props.updateAccountSettings({ fulfillmentMethod: event.currentTarget.value });
-};
-
-const defaultWarehouseChangeHandler = (warehouse: WarehouseModel, props: Props) => {
-    props.updateAccountSettings({ defaultWarehouse: warehouse });
-};
-
-const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
-    const {
-        account,
-        shipToState,
-        billToState,
-        session,
-        enableWarehousePickup,
-        requireSelectCustomerOnSignIn,
-        loadBillTo,
-        loadShipTo,
-        selectedBillToId,
-        selectedShipToId,
-    } = props;
     if (!billToState.value && !billToState.isLoading && selectedBillToId) {
         loadBillTo({ billToId: selectedBillToId });
     }
@@ -200,27 +195,38 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
         loadShipTo({ shipToId: selectedShipToId, billToId: selectedBillToId });
     }
 
-    const billTo = billToState ? billToState.value : undefined;
-    const shipTo = shipToState ? shipToState.value : undefined;
+    const defaultShippingChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        updateAccountSettings({ useDefaultCustomer: event.currentTarget.value.toLowerCase() === "true" });
+    };
 
-    const [isFirstRender, setIsFirstRender] = React.useState(true);
-    let useDefaultCustomer = props.useDefaultCustomer;
+    const defaultFulfillmentChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        updateAccountSettings({ fulfillmentMethod: event.currentTarget.value });
+    };
 
-    if (!account || requireSelectCustomerOnSignIn) {
+    const defaultWarehouseChangeHandler = (warehouse: WarehouseModel) => {
+        updateAccountSettings({ defaultWarehouse: warehouse });
+    };
+
+    if (!billTosDataView.value || !account || requireSelectCustomerOnSignIn) {
         return null;
+    }
+
+    if (!enableWarehousePickup && billTosDataView.value.length === 1) {
+        const existsShipTos = billTosDataView.value[0].shipTos?.filter(o => !o.isNew);
+        if (!existsShipTos || existsShipTos.length <= 1) {
+            return null;
+        }
     }
 
     const pickUpWarehouse = account.defaultWarehouse || session.pickUpWarehouse;
 
-    if (account.defaultFulfillmentMethod === FulfillmentMethod.PickUp) {
-        if (pickUpWarehouse && enableWarehousePickup && isFirstRender) {
-            useDefaultCustomer = true;
-            setIsFirstRender(false);
-        }
-        warehouseAddressWrapperStyle = styles.warehouseAddressWrapper;
-    } else {
-        warehouseAddressWrapperStyle = styles.customerSelectorGridItem;
-    }
+    const warehouseAddressWrapperStyle =
+        account.defaultFulfillmentMethod === FulfillmentMethod.PickUp
+            ? styles.warehouseAddressWrapper
+            : styles.customerSelectorGridItem;
+
+    const billTo = billToState ? billToState.value : undefined;
+    const shipTo = shipToState ? shipToState.value : undefined;
 
     return (
         <>
@@ -230,9 +236,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                 <GridItem {...styles.defaultShippingRadioGridItem}>
                     <RadioGroup
                         value={useDefaultCustomer.toString()}
-                        onChangeHandler={event => {
-                            defaultShippingChangeHandler(event, props);
-                        }}
+                        onChangeHandler={defaultShippingChangeHandler}
                         {...styles.defaultShippingRadioGroup}
                     >
                         <Radio
@@ -261,9 +265,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                                 <Typography {...styles.headingText}>{translate("Fulfillment Method")}</Typography>
                                 <RadioGroup
                                     value={account.defaultFulfillmentMethod || session.fulfillmentMethod}
-                                    onChangeHandler={event => {
-                                        defaultFulfillmentChangeHandler(event, props);
-                                    }}
+                                    onChangeHandler={defaultFulfillmentChangeHandler}
                                     data-test-selector="accountSettings_fulfillmentMethod"
                                     {...styles.defaultFulfillmentMethodRadioGroup}
                                 >
@@ -286,10 +288,7 @@ const AccountSettingsDefaultBillingShipping: FC<Props> = props => {
                         )}
                         {account.defaultFulfillmentMethod === FulfillmentMethod.PickUp && pickUpWarehouse && (
                             <GridItem {...warehouseAddressWrapperStyle}>
-                                <PickUpLocation
-                                    warehouse={pickUpWarehouse}
-                                    onChange={warehouse => defaultWarehouseChangeHandler(warehouse, props)}
-                                />
+                                <PickUpLocation warehouse={pickUpWarehouse} onChange={defaultWarehouseChangeHandler} />
                             </GridItem>
                         )}
                         <GridItem {...warehouseAddressWrapperStyle}>
@@ -311,9 +310,9 @@ interface PickUpLocationProps {
     onChange: (address: WarehouseModel) => void;
 }
 
-const PickUpLocation: FC<PickUpLocationProps> = ({ warehouse, onChange }) => {
+const PickUpLocation = ({ warehouse, onChange }: PickUpLocationProps) => {
     const componentStyles = styles.pickUpLocation || {};
-    const [isFindLocationOpen, setIsFindLocationOpen] = React.useState(false);
+    const [isFindLocationOpen, setIsFindLocationOpen] = useState(false);
     const handleOpenFindLocation = () => {
         setIsFindLocationOpen(true);
     };
@@ -350,7 +349,7 @@ interface WarehouseAddressInfoDisplayProps {
     warehouse: WarehouseModel;
 }
 
-const WarehouseAddressInfoDisplay: FC<WarehouseAddressInfoDisplayProps> = ({ warehouse }) => {
+const WarehouseAddressInfoDisplay = ({ warehouse }: WarehouseAddressInfoDisplayProps) => {
     const componentStyles =
         styles.pickUpLocation && styles.pickUpLocation.warehouseAddress ? styles.pickUpLocation.warehouseAddress : {};
 
@@ -374,6 +373,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
+        displayName: "Default Billing & Shipping",
     },
 };
 

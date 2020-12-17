@@ -56,7 +56,7 @@ const OrderApprovalDetailsHeader = ({ cart }: Props) => {
         <GridContainer {...styles.headerGridContainer}>
             <GridItem {...styles.titleGridItem}>
                 <Typography {...styles.title}>
-                    <span aria-hidden>{translate("Order # ")}</span>
+                    <span aria-hidden>{translate("Order #")}&nbsp;</span>
                     <VisuallyHidden>{translate("Order Number")}</VisuallyHidden>
                     <Typography {...styles.orderNumberText} data-test-selector="orderApprovalDetails_orderNumber">
                         {cart.orderNumber}

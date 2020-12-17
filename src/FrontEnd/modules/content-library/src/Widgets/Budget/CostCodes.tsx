@@ -303,7 +303,7 @@ const CostCodes: React.FC<Props> = ({ displayedWidgetName, billToState, setDispl
                                     {translate("Description")}
                                 </DataTableHeader>
                                 <DataTableHeader {...styles.dataTableHeaders}>
-                                    <VisuallyHidden>{translate("remove")}</VisuallyHidden>
+                                    <VisuallyHidden>{translate("Remove")}</VisuallyHidden>
                                 </DataTableHeader>
                             </DataTableHead>
                             <DataTableBody {...styles.dataTableBody}>

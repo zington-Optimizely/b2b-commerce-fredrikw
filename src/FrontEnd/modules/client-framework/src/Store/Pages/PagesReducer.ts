@@ -3,6 +3,7 @@ import AddressesReducer from "@insite/client-framework/Store/Pages/Addresses/Add
 import BrandsReducer from "@insite/client-framework/Store/Pages/Brands/BrandsReducer";
 import BudgetManagementReducer from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementReducer";
 import CartReducer from "@insite/client-framework/Store/Pages/Cart/CartReducer";
+import CartReminderUnsubscribeReducer from "@insite/client-framework/Store/Pages/CartReminderUnsubscribe/CartReminderUnsubscribeReducer";
 import CheckoutReviewAndSubmitReducer from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitReducer";
 import CheckoutShippingReducer from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingReducer";
 import DealerDetailsReducer from "@insite/client-framework/Store/Pages/DealerDetails/DealerDetailsReducer";
@@ -11,6 +12,7 @@ import InvoiceHistoryReducer from "@insite/client-framework/Store/Pages/InvoiceH
 import LocationFinderReducer from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderReducer";
 import MyListDetailsReducer from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsReducer";
 import MyListsReducer from "@insite/client-framework/Store/Pages/MyLists/MyListsReducer";
+import NewsListReducer from "@insite/client-framework/Store/Pages/NewsList/NewsListReducer";
 import OrderApprovalDetailsReducer from "@insite/client-framework/Store/Pages/OrderApprovalDetails/OrderApprovalDetailsReducer";
 import OrderApprovalListReducer from "@insite/client-framework/Store/Pages/OrderApprovalList/OrderApprovalListReducer";
 import OrderConfirmationReducer from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationReducer";
@@ -45,6 +47,7 @@ const reducers = {
     brands: BrandsReducer,
     budgetManagement: BudgetManagementReducer,
     cart: CartReducer,
+    cartReminderUnsubscribe: CartReminderUnsubscribeReducer,
     checkoutReviewAndSubmit: CheckoutReviewAndSubmitReducer,
     checkoutShipping: CheckoutShippingReducer,
     dealerDetails: DealerDetailsReducer,
@@ -53,6 +56,7 @@ const reducers = {
     locationFinder: LocationFinderReducer,
     myLists: MyListsReducer,
     myListDetails: MyListDetailsReducer,
+    newsList: NewsListReducer,
     orderApprovalList: OrderApprovalListReducer,
     orderApprovalDetails: OrderApprovalDetailsReducer,
     orderDetails: OrderDetailsReducer,

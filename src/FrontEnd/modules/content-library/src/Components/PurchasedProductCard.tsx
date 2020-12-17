@@ -91,7 +91,6 @@ export const purchasedProductCardStyles: PurchasedProductCardStyles = {
         gap: 0,
         css: css`
             padding: 10px 0;
-            min-width: 320px; /* prevent overlap with second column */
             border-bottom: 1px solid ${getColor("common.border")};
         `,
     },

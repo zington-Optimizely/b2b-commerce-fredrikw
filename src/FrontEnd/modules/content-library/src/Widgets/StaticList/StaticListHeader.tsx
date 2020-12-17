@@ -263,7 +263,7 @@ const StaticListHeader = ({
                             disabled={!allQtysIsValid}
                             onClick={addListToCartClickHandler}
                         >
-                            {translate("Add List To Cart")}
+                            {translate("Add List to Cart")}
                         </Button>
                     </GridItem>
                 )}

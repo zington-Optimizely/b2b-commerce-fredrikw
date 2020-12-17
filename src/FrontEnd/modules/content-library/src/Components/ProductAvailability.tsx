@@ -32,7 +32,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import safeColor from "@insite/mobius/utilities/safeColor";
-import React, { FC } from "react";
+import React, { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
@@ -160,41 +160,40 @@ const InventoryMessage = styled.div<{ color: string }>`
 `;
 
 const getAvailabilityColor = (availability?: AvailabilityDto) => {
-    let color = "success";
-    if (!availability) {
-        return color;
+    const availabilityType = availability?.messageType;
+    if (availabilityType === AvailabilityMessageType.OutOfStock) {
+        return "danger";
     }
 
-    const availabilityType = availability.messageType;
-    if (availabilityType === AvailabilityMessageType.OutOfStock) {
-        color = "danger";
-    } else if (availabilityType === AvailabilityMessageType.LowStock) {
-        color = "warning";
+    if (availabilityType === AvailabilityMessageType.LowStock) {
+        return "warning";
     }
-    return color;
+
+    return "success";
 };
 
 const getAvailabilityIcon = (availability?: AvailabilityDto) => {
-    let iconSrc = Check;
-    if (!availability) {
-        return iconSrc;
+    const availabilityType = availability?.messageType;
+    if (availabilityType === AvailabilityMessageType.OutOfStock) {
+        return X;
     }
 
-    const availabilityType = availability.messageType;
-    if (availabilityType === AvailabilityMessageType.OutOfStock) {
-        iconSrc = X;
-    } else if (availabilityType === AvailabilityMessageType.LowStock) {
-        iconSrc = AlertTriangle;
+    if (availabilityType === AvailabilityMessageType.LowStock) {
+        return AlertTriangle;
     }
-    return iconSrc;
+
+    return Check;
 };
 
 const showLink = (
+    availability: AvailabilityDto | undefined,
     trackInventory: boolean,
     productSettings: ProductSettingsModel,
     isProductDetailsPage?: boolean,
 ): boolean => {
     if (
+        !availability ||
+        availability.messageType === AvailabilityMessageType.NoMessage ||
         !trackInventory ||
         !productSettings.showInventoryAvailability ||
         !productSettings.displayInventoryPerWarehouse
@@ -209,7 +208,7 @@ const showLink = (
     return !!isProductDetailsPage;
 };
 
-const ProductAvailability: FC<Props> = ({
+const ProductAvailability = ({
     productId,
     availability,
     unitOfMeasure,
@@ -219,11 +218,11 @@ const ProductAvailability: FC<Props> = ({
     getRealTimeWarehouseInventory,
     failedToLoadInventory,
     extendedStyles,
-}) => {
-    const [modalIsOpen, setModalIsOpen] = React.useState(false);
-    const [warehouses, setWarehouses] = React.useState<WarehouseDto[] | undefined>(undefined);
-    const [errorMessage, setErrorMessage] = React.useState("");
-    const [isLoading, setIsLoading] = React.useState(false);
+}: Props) => {
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [warehouses, setWarehouses] = useState<WarehouseDto[] | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const modalCloseHandler = () => {
         setModalIsOpen(false);
     };
@@ -245,7 +244,7 @@ const ProductAvailability: FC<Props> = ({
     const color = getAvailabilityColor(availability);
     const iconSrc = getAvailabilityIcon(availability);
 
-    const [styles] = React.useState(() => mergeToNew(productAvailabilityStyles, extendedStyles));
+    const [styles] = useState(() => mergeToNew(productAvailabilityStyles, extendedStyles));
 
     if (failedToLoadInventory) {
         return (
@@ -256,7 +255,7 @@ const ProductAvailability: FC<Props> = ({
     }
 
     let inventoryTextComponent = <Typography {...styles.realTimeText} />;
-    if (availability && availability.message) {
+    if (availability && availability.messageType !== AvailabilityMessageType.NoMessage) {
         inventoryTextComponent = (
             <InventoryMessage color={color} {...styles.inventoryMessage}>
                 <Icon color={color} src={iconSrc} />
@@ -272,7 +271,7 @@ const ProductAvailability: FC<Props> = ({
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.messageGridItem}>{inventoryTextComponent}</GridItem>
-            {showLink(trackInventory, productSettings, isProductDetailsPage) && (
+            {showLink(availability, trackInventory, productSettings, isProductDetailsPage) && (
                 <GridItem {...styles.availabilityByWarehouseLinkGridItem}>
                     <Link
                         {...styles.availabilityByWarehouseLink}
@@ -306,7 +305,7 @@ const ProductAvailability: FC<Props> = ({
                                                 {translate("Warehouse")}
                                             </DataTableHeader>
                                             <DataTableHeader {...styles.availabilityByWarehouseTableHeader}>
-                                                {translate("Qty")}
+                                                {translate("QTY")}
                                             </DataTableHeader>
                                         </DataTableHead>
                                         <DataTableBody {...styles.availabilityByWarehouseTableBody}>

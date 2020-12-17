@@ -14,6 +14,7 @@ import {
     endDraggingWidget,
     removeWidget,
     replaceItem,
+    resetPageDataViews,
     setPageDefinitions,
     updateField,
     UpdateFieldParameter,
@@ -51,6 +52,7 @@ const mapDispatchToProps = {
     loadPageLinks,
     setCMSPermissions,
     setPageDefinitions,
+    resetPageDataViews,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -84,11 +86,11 @@ class ShellHoleProvider extends React.Component<Props> {
                 cleanupAfterDragging();
                 this.props.endDraggingWidget();
             },
-            AddWidget: ({ widget, sortOrder }: { widget: WidgetProps; sortOrder: number }) => {
-                this.props.addWidget(widget, sortOrder, props.page.id);
+            AddWidget: ({ widget, sortOrder, pageId }: { widget: WidgetProps; sortOrder: number; pageId: string }) => {
+                this.props.addWidget(widget, sortOrder, pageId);
             },
-            RemoveWidget: ({ id }: { id: string }) => {
-                this.props.removeWidget(id);
+            RemoveWidget: ({ id, pageId }: { id: string; pageId: string }) => {
+                this.props.removeWidget(id, pageId);
             },
             ReplaceItem: ({ item }: { item: ItemProps }) => {
                 this.props.replaceItem(item);
@@ -116,6 +118,9 @@ class ShellHoleProvider extends React.Component<Props> {
             },
             ReloadPageLinks: () => {
                 this.props.loadPageLinks();
+            },
+            ResetPageDataViews: () => {
+                this.props.resetPageDataViews();
             },
             CMSPermissions: ({
                 permissions,

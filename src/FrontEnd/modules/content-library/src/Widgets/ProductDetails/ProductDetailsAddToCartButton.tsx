@@ -1,6 +1,5 @@
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { canAddToCart } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductAddToCartButton from "@insite/content-library/Components/ProductAddToCartButton";
@@ -13,7 +12,9 @@ import { css } from "styled-components";
 type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
-    canAddToCart: canAddToCart(state, ownProps.product, ownProps.productInfo),
+    configurationSelection: state.pages.productDetails.configurationSelection,
+    configurationCompleted: state.pages.productDetails.configurationCompleted,
+    variantSelectionCompleted: state.pages.productDetails.variantSelectionCompleted,
 });
 
 export interface ProductDetailsAddToCartButtonStyles {
@@ -30,12 +31,20 @@ export const addToCartButtonStyles: ProductDetailsAddToCartButtonStyles = {
 
 const styles = addToCartButtonStyles;
 
-const ProductDetailsAddToCartButton: React.FC<Props> = ({ canAddToCart }) => {
-    if (!canAddToCart) {
-        return null;
-    }
-
-    return <ProductAddToCartButton extendedStyles={styles.button} data-test-selector="addProductToCart" />;
+const ProductDetailsAddToCartButton = ({
+    configurationSelection,
+    configurationCompleted,
+    variantSelectionCompleted,
+}: Props) => {
+    return (
+        <ProductAddToCartButton
+            configurationSelection={configurationSelection}
+            configurationCompleted={configurationCompleted}
+            variantSelectionCompleted={variantSelectionCompleted}
+            extendedStyles={styles.button}
+            data-test-selector="addProductToCart"
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

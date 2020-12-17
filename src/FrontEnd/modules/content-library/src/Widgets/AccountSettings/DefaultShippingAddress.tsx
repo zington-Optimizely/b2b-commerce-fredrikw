@@ -13,6 +13,7 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -69,14 +70,14 @@ export const defaultShippingAddressStyles: DefaultShippingAddressStyles = {
     addressInfoDisplayGridItem: { width: 12 },
 };
 
-const DefaultShippingAddress: React.FunctionComponent<Props> = ({
+const DefaultShippingAddress = ({
     currentShipTo,
     currentBillTo,
     updateAccountSettings,
     extendedStyles,
     isPickUp,
-}) => {
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+}: Props) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const editClickHandler = () => {
         setIsModalOpen(true);
@@ -92,7 +93,7 @@ const DefaultShippingAddress: React.FunctionComponent<Props> = ({
 
     const modalCloseHandler = () => setIsModalOpen(false);
 
-    const [styles] = React.useState(() => mergeToNew(defaultShippingAddressStyles, extendedStyles));
+    const [styles] = useState(() => mergeToNew(defaultShippingAddressStyles, extendedStyles));
 
     return (
         <GridContainer {...styles.gridContainer}>

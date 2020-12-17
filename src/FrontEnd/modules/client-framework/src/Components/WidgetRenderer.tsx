@@ -20,6 +20,8 @@ interface OwnProps {
     id: string;
     type: string;
     fixed: boolean;
+    isLayout: boolean;
+    pageId: string;
 }
 
 interface State {
@@ -102,11 +104,12 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
             type: "ConfirmWidgetDeletion",
             id: this.props.id,
             widgetType: this.props.widget.type,
+            pageId: this.props.pageId,
         });
     };
 
     dragHandleMouseDown = () => {
-        if (this.props.fixed || !this.canMoveWidget()) {
+        if (this.props.fixed || this.props.isLayout || !this.canMoveWidget()) {
             return;
         }
         this.widgetHover.current!.setAttribute("draggable", "true");
@@ -187,7 +190,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
     };
 
     render() {
-        const { type, widget, draggingWidgetId, shellContext, fixed } = this.props;
+        const { type, widget, draggingWidgetId, shellContext, fixed, isLayout } = this.props;
 
         const { isEditing, isCurrentPage, isInShell } = shellContext;
 
@@ -206,7 +209,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
 
         const widgetElement = createWidgetElement(type, widget);
 
-        if (isInShell && isEditing && isCurrentPage) {
+        if (isInShell && isEditing && isCurrentPage && !isLayout) {
             // this extra div appears necessary to make sure data-widget shows up if the server renders the wrong version of isInShell
             return (
                 <div data-widget={type}>

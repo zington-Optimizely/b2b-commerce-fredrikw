@@ -216,7 +216,7 @@ const ProductCarouselProduct: React.FC<Props> = ({
                     <GridContainer {...styles.addToCartContainer}>
                         <GridItem {...styles.qtyGridItem}>
                             <VisuallyHidden as="label" htmlFor={`${carouselId}-qty`} id={`${carouselId}-qty-label`}>
-                                {translate("QTY_quantity")}
+                                {translate("QTY")}
                             </VisuallyHidden>
                             <ProductQuantityOrdered
                                 labelOverride=""

@@ -127,7 +127,7 @@ const OrderStatusHeader: FC<Props> = ({ order, isReordering, showAddToCartConfir
                     return;
                 }
                 toaster.addToast({
-                    body: `${order.webOrderNumber || order.erpOrderNumber} ${translate("added to cart")}`,
+                    body: `${order.webOrderNumber || order.erpOrderNumber} ${translate("Added to Cart")}`,
                     messageType: "success",
                     timeoutLength: 6000,
                 });

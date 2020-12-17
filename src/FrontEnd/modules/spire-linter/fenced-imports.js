@@ -45,6 +45,7 @@ const validServerImports = [
     "react",
     "set-cookie-parser",
     "styled-components",
+    "qs",
     "util",
     "winston",
 ];
@@ -60,7 +61,7 @@ const allowedModules = {
     mobius: [validMobiusImports, ["@insite/mobius"]],
     "server-framework": [
         validServerImports,
-        ["@insite/server-framework", "@insite/client-framework", "@insite/mobius", "@insite/shell"],
+        ["@insite/server-framework", "@insite/client-framework", "@insite/content-library", "@insite/mobius", "@insite/shell"],
     ],
     shell: [
         validClientImports,

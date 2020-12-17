@@ -19,7 +19,7 @@ import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import MobiusPage from "@insite/mobius/Page";
 import * as React from "react";
 
-const Page: React.FunctionComponent<PageProps> = ({ id }) => (
+const Page = ({ id }: PageProps) => (
     <MobiusPage>
         <Zone contentId={id} zoneName="Content" requireRows />
         <AddToListModal />

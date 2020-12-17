@@ -269,7 +269,7 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteL
                                     {...styles.quantityTextField}
                                     type="number"
                                     min={1}
-                                    label={translate("QTY_quantity")}
+                                    label={translate("QTY")}
                                     value={qtyOrdered}
                                     disabled={quoteLine.isPromotionItem || quote.isJobQuote}
                                     onChange={qtyOrderedChangeHandler}

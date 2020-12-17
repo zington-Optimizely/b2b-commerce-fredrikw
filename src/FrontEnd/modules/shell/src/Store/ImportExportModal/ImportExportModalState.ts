@@ -5,4 +5,5 @@ export interface ImportExportModalState {
     taskInProgress?: true;
     confirmingImport?: true;
     errorMessage?: string;
+    showRestoreModal?: boolean;
 }

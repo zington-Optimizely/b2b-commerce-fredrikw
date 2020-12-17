@@ -1,3 +1,4 @@
+'protobuf-net'
 Antlr3.Runtime
 BouncyCastle.Crypto
 Elasticsearch.Net
@@ -9,6 +10,8 @@ Microsoft.Azure.KeyVault.Core
 Microsoft.Azure.Storage.Blob
 Microsoft.Azure.Storage.Common
 Microsoft.CSharp
+Microsoft.Graph
+Microsoft.Graph.Core
 Microsoft.Owin
 Microsoft.Owin.Security
 Microsoft.Owin.Security.OAuth
@@ -20,10 +23,10 @@ NEST
 Newtonsoft.Json
 Owin
 PgpCore
-'protobuf-net'
 Renci.SshNet
 Schema.NET
 System
+System.ComponentModel.Composition
 System.ComponentModel.DataAnnotations
 System.Configuration
 System.Core

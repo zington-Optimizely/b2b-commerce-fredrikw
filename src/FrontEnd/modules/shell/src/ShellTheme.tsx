@@ -42,7 +42,7 @@ const colors: ShellColors = {
         contrast: "#fff",
     },
     common: {
-        background: "#fff",
+        background: "#FBFBFB",
         backgroundContrast: "#4A4A4A",
         accent: "#f4f4f4",
         accentContrast: "#4A4A4A",

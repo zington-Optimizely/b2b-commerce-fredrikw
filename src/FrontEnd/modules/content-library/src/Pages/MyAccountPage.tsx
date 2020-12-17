@@ -4,16 +4,16 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 
-const myAccountPage = (props: PageProps) => {
+const MyAccountPage = ({ id }: PageProps) => {
     return (
         <Page data-test-selector="myAccount">
-            <Zone contentId={props.id} zoneName="Content"></Zone>
+            <Zone contentId={id} zoneName="Content"></Zone>
         </Page>
     );
 };
 
 const pageModule: PageModule = {
-    component: myAccountPage,
+    component: MyAccountPage,
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,

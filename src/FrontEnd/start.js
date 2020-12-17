@@ -33,6 +33,7 @@ module.exports = function startServer(options) {
     app.all("/identity*", rawParser);
     app.all("/admin*", rawParser);
     app.all("/ckfinder*", rawParser);
+    app.post("/.spire/shareEntity", bodyParser.json());
 
     app.use((request, response, next) => {
         // required for siteGeneration

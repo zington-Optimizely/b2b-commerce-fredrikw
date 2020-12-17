@@ -90,7 +90,7 @@ const RequisitionsRequisitionLinesTable = ({ requisitionId, requisitionState, lo
             <StyledWrapper {...styles.wrapper} data-test-selector="requisitionLines">
                 <DataTable {...styles.table}>
                     <DataTableHead {...styles.head}>
-                        <DataTableHeader {...styles.qtyOrderedHeader}>{translate("QTY_quantity")}</DataTableHeader>
+                        <DataTableHeader {...styles.qtyOrderedHeader}>{translate("QTY")}</DataTableHeader>
                         <DataTableHeader {...styles.dateHeader}>{translate("Date")}</DataTableHeader>
                         <DataTableHeader {...styles.costCodeHeader}>{translate("Cost Code")}</DataTableHeader>
                         <DataTableHeader {...styles.firstNameHeader}>{translate("First Name")}</DataTableHeader>

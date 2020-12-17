@@ -9,7 +9,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import * as React from "react";
+import React, { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -80,10 +80,11 @@ export const ContactFormContext = React.createContext<ContextType>({
     validators: {},
 });
 
-const ContactForm: React.FC<Props> = ({ id, fields, submitContactForm, clearForm }) => {
+const ContactForm = ({ id, fields, submitContactForm, clearForm }: Props) => {
     const { emailRecipients, submitButtonText, successMessage } = fields;
-    const [validators] = React.useState<{ [key: string]: Validator | undefined }>({});
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [validators] = useState<{ [key: string]: Validator | undefined }>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -96,9 +97,13 @@ const ContactForm: React.FC<Props> = ({ id, fields, submitContactForm, clearForm
         });
         const results = widgetValidators.map(v => v());
         if (results.every(o => o)) {
+            setIsSubmitting(true);
             submitContactForm({
                 emailRecipients,
-                onSuccess: () => setIsModalOpen(true),
+                onSuccess: () => {
+                    setIsModalOpen(true);
+                    setIsSubmitting(false);
+                },
             });
         }
     };
@@ -116,7 +121,7 @@ const ContactForm: React.FC<Props> = ({ id, fields, submitContactForm, clearForm
                 <ContactFormContext.Provider value={{ validators }}>
                     <form id="contactForm" onSubmit={handleFormSubmit} noValidate>
                         <Zone contentId={id} zoneName="Content" />
-                        <Button {...styles.submitButton} type="submit">
+                        <Button {...styles.submitButton} type="submit" disabled={isSubmitting}>
                             {submitButtonText}
                         </Button>
                         <Modal

@@ -72,18 +72,18 @@ class Header extends React.Component<Props> {
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
                 <Icon src={Spacer} color="#999" />
-                <Icon src={Calendar} size={20} color={shellTheme.colors.text.accent} />
+                <Icon src={Calendar} size={20} color={shellTheme.colors.text.main} />
                 <HeaderPublishStatus />
                 {contentMode === "Editing" && (
                     <>
                         <Icon src={Spacer} color="#999" />
                         {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
                             <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
-                                <Icon src={Edit} size={20} color={shellTheme.colors.text.accent} />
+                                <Icon src={Edit} size={20} color={shellTheme.colors.text.main} />
                             </PageHeaderButton>
                         )}
                         <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}>
-                            <DebugMenu color1={shellTheme.colors.text.accent} size={16} />
+                            <DebugMenu color1={shellTheme.colors.text.main} size={16} />
                         </PageHeaderButton>
                     </>
                 )}
@@ -109,10 +109,11 @@ const PageHeaderStyle = styled.div`
     height: 48px;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid #dedede;
 `;
 
 const PageHeaderTitle = styled.h2`
-    color: ${(props: ShellThemeProps) => props.theme.colors.text.accent};
+    color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
     align-content: center;
     padding-left: 16px;
     font-size: 18px;

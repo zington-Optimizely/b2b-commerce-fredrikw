@@ -171,8 +171,8 @@ describe("OverflowMenu", () => {
                     },
                 };
                 const root = wrapper().find(Button);
-                expect(root).toHaveStyleRule("height", "48px");
-                expect(root).not.toHaveStyleRule("height", "40px");
+                expect(root).toHaveStyleRule("min-height", "48px");
+                expect(root).not.toHaveStyleRule("min-height", "40px");
                 expect(root).toHaveStyleRule("border-radius", ".5em");
             });
         });

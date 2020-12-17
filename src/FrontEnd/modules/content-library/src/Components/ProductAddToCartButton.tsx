@@ -1,26 +1,27 @@
 /* eslint-disable spire/export-styles */
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
-import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
-import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { hasEnoughInventory } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import { canAddToCart, hasEnoughInventory } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import addToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddToCart";
-import { canAddToCart } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import translate from "@insite/client-framework/Translate";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import ProductAddedToCartMessage from "@insite/content-library/Components/ProductAddedToCartMessage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps {
     labelOverride?: string;
     extendedStyles?: ButtonPresentationProps;
+    notes?: string;
+    configurationSelection?: SafeDictionary<string>;
+    configurationCompleted?: boolean;
+    variantSelectionCompleted?: boolean;
 }
 
 type Props = OwnProps &
@@ -28,10 +29,16 @@ type Props = OwnProps &
     ResolveThunks<typeof mapDispatchToProps> &
     HasProductContext;
 
-const mapStateToProps = (state: ApplicationState, props: HasProductContext) => {
+const mapStateToProps = (state: ApplicationState, props: OwnProps & HasProductContext) => {
     return {
         productSettings: getSettingsCollection(state).productSettings,
-        canAddToCart: canAddToCart(state, props.productContext.product, props.productContext.productInfo),
+        canAddToCart: canAddToCart(
+            state,
+            props.productContext.product,
+            props.productContext.productInfo,
+            props.configurationCompleted,
+            props.variantSelectionCompleted,
+        ),
         hasEnoughInventory: hasEnoughInventory(state, props.productContext),
         addingProductToCart: state.context.addingProductToCart,
     };
@@ -43,10 +50,10 @@ const mapDispatchToProps = {
 
 export const productAddToCartButtonStyles: ButtonPresentationProps = {};
 
-const ProductAddToCartButton: React.FC<Props> = ({
+const ProductAddToCartButton = ({
     productContext: {
-        product,
-        productInfo: { qtyOrdered, unitOfMeasure, inventory },
+        product: { id: productId },
+        productInfo: { qtyOrdered, unitOfMeasure },
     },
     productSettings,
     hasEnoughInventory,
@@ -55,20 +62,32 @@ const ProductAddToCartButton: React.FC<Props> = ({
     canAddToCart,
     labelOverride,
     extendedStyles,
+    notes,
+    configurationSelection,
+    configurationCompleted,
+    variantSelectionCompleted,
     ...otherProps
-}) => {
-    const toasterContext = React.useContext(ToasterContext);
-    const [styles] = React.useState(() => mergeToNew(productAddToCartButtonStyles, extendedStyles));
+}: Props) => {
+    const toasterContext = useContext(ToasterContext);
+    const [styles] = useState(() => mergeToNew(productAddToCartButtonStyles, extendedStyles));
 
     if (!productSettings.canAddToCart || !hasEnoughInventory || !canAddToCart) {
         return null;
     }
 
     const addToCartClickHandler = async () => {
+        const sectionOptions =
+            configurationSelection && Object.values(configurationSelection).length > 0
+                ? Object.values(configurationSelection)
+                      .filter(sectionOptionId => !!sectionOptionId)
+                      .map(sectionOptionId => ({ sectionOptionId }))
+                : undefined;
         const cartline = (await addToCart({
-            productId: product.id.toString(),
+            productId,
             qtyOrdered,
             unitOfMeasure,
+            notes,
+            sectionOptions,
         })) as CartLineModel;
 
         if (productSettings.showAddToCartConfirmationDialog) {

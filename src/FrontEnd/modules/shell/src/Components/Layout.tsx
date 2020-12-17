@@ -9,6 +9,8 @@ import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
 import ImportExportModal from "@insite/shell/Components/Shell/ImportExportModal";
 import MainHeader from "@insite/shell/Components/Shell/MainHeader";
 import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
+import PublishComparer from "@insite/shell/Components/Shell/PublishComparer";
+import RestoreContentModal from "@insite/shell/Components/Shell/RestoreContentModal";
 import StyleGuideEditor from "@insite/shell/Components/Shell/StyleGuide/StyleGuideEditor";
 import StyleGuidePreview from "@insite/shell/Components/Shell/StyleGuide/StyleGuidePreview";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
@@ -47,6 +49,7 @@ const SideBarArea = styled.div`
     width: ${(props: ShellThemeProps) => props.theme.sideBarWidth};
     overflow: hidden;
     position: relative;
+    border-right: 1px solid #dedede;
 `;
 
 const MainArea = styled.div`
@@ -79,7 +82,9 @@ const layout = (
             </MainArea>
             <LogoutWarningModal />
             <ErrorModal />
+            <PublishComparer />
             <ImportExportModal />
+            <RestoreContentModal />
         </Toaster>
     </FlexWrapper>
 );

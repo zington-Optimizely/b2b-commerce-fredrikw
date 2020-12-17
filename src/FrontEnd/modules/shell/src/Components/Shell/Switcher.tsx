@@ -1,3 +1,4 @@
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
 import Edit2 from "@insite/mobius/Icons/Edit2";
 import Eye from "@insite/mobius/Icons/Eye";
@@ -8,18 +9,38 @@ import ContentModeClicker from "@insite/shell/Components/Shell/ContentModeClicke
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderGear from "@insite/shell/Components/Shell/HeaderGear";
 import ViewPortClicker from "@insite/shell/Components/Shell/ViewPortClicker";
+import {
+    configureComparison,
+    loadPublishedPageVersions,
+    restoreVersion,
+} from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
+import { changeStageMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
-import { connect } from "react-redux";
+import { connect, ResolveThunks } from "react-redux";
 import styled from "styled-components";
 
-const mapStateToProps = ({ shellContext: { mobileCmsModeActive } }: ShellState) => ({
+const mapStateToProps = ({ shellContext: { mobileCmsModeActive, stageMode } }: ShellState) => ({
     mobileCmsModeActive,
+    stageMode,
 });
 
-type Props = { disabled?: boolean } & ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = {
+    changeStageMode,
+};
 
-const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive }) => {
+type Props = { disabled?: boolean } & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+
+const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive, stageMode, changeStageMode }) => {
+    const clicker = (targetStageMode: DeviceType) => (
+        <ViewPortClicker
+            targetStageMode={targetStageMode}
+            disabled={disabled}
+            currentStageMode={stageMode}
+            changeStageMode={changeStageMode}
+        />
+    );
+
     return (
         <SwitcherStyle>
             {mobileCmsModeActive && (
@@ -41,9 +62,9 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive }) => {
                 <>
                     <Icon src={Spacer} color="#999" />
                     <div data-test-selector="preview_switcher">
-                        <ViewPortClicker targetStageMode="Phone" icon={Smartphone} disabled={disabled} />
-                        <ViewPortClicker targetStageMode="Tablet" icon={Tablet} disabled={disabled} />
-                        <ViewPortClicker targetStageMode="Desktop" icon={Monitor} disabled={disabled} />
+                        {clicker("Phone")}
+                        {clicker("Tablet")}
+                        {clicker("Desktop")}
                     </div>
                 </>
             )}
@@ -66,4 +87,4 @@ const StyledA = styled.a`
     font-size: ${({ theme }) => theme.modal.defaultProps.headlineTypographyProps.size};
 `;
 
-export default connect(mapStateToProps)(Switcher);
+export default connect(mapStateToProps, mapDispatchToProps)(Switcher);

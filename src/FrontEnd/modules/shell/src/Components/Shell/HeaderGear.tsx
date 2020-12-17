@@ -4,7 +4,10 @@ import OverflowMenu from "@insite/mobius/OverflowMenu";
 import getColor from "@insite/mobius/utilities/getColor";
 import About from "@insite/shell/Components/Shell/About";
 import shellTheme from "@insite/shell/ShellTheme";
-import { showImportExportModal } from "@insite/shell/Store/ImportExportModal/ImportExportModalActionCreators";
+import {
+    showImportExportModal,
+    showRestoreContentModal,
+} from "@insite/shell/Store/ImportExportModal/ImportExportModalActionCreators";
 import { logOut, toggleMobileCmsMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
@@ -24,6 +27,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = {
     logOut,
     showImportExportModal,
+    showRestoreContentModal,
     toggleMobileCmsMode,
 };
 
@@ -51,6 +55,7 @@ const HeaderGear = ({
     toggleMobileCmsMode,
     logOut,
     showImportExportModal,
+    showRestoreContentModal,
 }: Props) => {
     const [showAbout, setShowAbout] = React.useState(false);
 
@@ -87,8 +92,11 @@ const HeaderGear = ({
                         {mobileCmsModeActive ? "Switch to Desktop CMS" : "Switch to Mobile CMS"}
                     </Clickable>
                 )}
-                <Clickable data-test-selector="shellSettings_logOut" onClick={showImportExportModal}>
+                <Clickable data-test-selector="shellSettings_showImportExportModal" onClick={showImportExportModal}>
                     Import/Export Content
+                </Clickable>
+                <Clickable data-test-selector="shellSettings_showRestoreContentModal" onClick={showRestoreContentModal}>
+                    Restore Content
                 </Clickable>
                 <Clickable data-test-selector="shellSettings_logOut" onClick={logOut}>
                     Log Out

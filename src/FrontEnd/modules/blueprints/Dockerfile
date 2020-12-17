@@ -1,9 +1,8 @@
-ARG COMMERCE_VERSION=5.0.0.61655
+ARG COMMERCE_VERSION=5.0.7.1650
 FROM registry.cloud.insitehq.net/spire/build-base:${COMMERCE_VERSION} as build
 
 WORKDIR /app
 COPY . ./modules/blueprints/
-COPY . ./modules/blueprints-shell/
 
 RUN ["npm", "run", "eslint:blueprint"]
 

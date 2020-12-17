@@ -3,7 +3,12 @@ import { Request, Response } from "express";
 
 const robots = async (request: Request, response: Response) => {
     const disallowText = "User-Agent: *\nDisallow: /\n";
-    const getPageResponse = await fetch(`${process.env.ISC_API_URL}/api/v2/content/pageByType?type=robotstxtpage`);
+    const headers = {
+        "x-forwarded-host": request.get("host")!,
+    };
+    const getPageResponse = await fetch(`${process.env.ISC_API_URL}/api/v2/content/pageByType?type=robotstxtpage`, {
+        headers,
+    });
     const json = await getPageResponse.json();
 
     const { status } = getPageResponse;

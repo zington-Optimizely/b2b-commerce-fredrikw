@@ -62,7 +62,7 @@ const RfqMyQuotesTypeSelector: FC<Props> = ({ jobQuoteEnabled, history, jobQuote
         <StyledWrapper {...styles.wrapper}>
             <RadioGroup
                 {...styles.quoteTypeRadioGroup}
-                label={<VisuallyHidden>{translate("quote type")}</VisuallyHidden>}
+                label={<VisuallyHidden>{translate("Quote Type")}</VisuallyHidden>}
                 value="quote"
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="myQuotesTypeRadio"

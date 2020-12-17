@@ -10,7 +10,7 @@ import displayOrder from "@insite/client-framework/Store/Pages/OrderApprovalDeta
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
-import React, { FC, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -35,14 +35,14 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const OrderApprovalDetailsPage: FC<Props> = ({
+const OrderApprovalDetailsPage = ({
     id,
     cartId,
     orderApprovalsState,
     displayOrder,
     shouldLoadAccount,
     loadCurrentAccount,
-}) => {
+}: Props) => {
     useEffect(() => {
         if (cartId) {
             displayOrder({ cartId });

@@ -101,14 +101,14 @@ export const LoadRealTimeInventory: HandlerType = props => {
         return;
     }
 
-    const configuration: { [productId: string]: string[] } = {};
+    const configurations: { [productId: string]: string[] } = {};
     const configurationIds = Object.values(props.configurationSelection).filter(o => !!o) as string[];
-    configuration[productId] = configurationIds;
+    configurations[productId] = configurationIds;
 
     props.dispatch(
         loadRealTimeInventory({
             productIds: [productId],
-            configuration,
+            configurations,
             onComplete: realTimeInventoryProps => {
                 const realTimeInventory = realTimeInventoryProps?.apiResult;
                 if (realTimeInventory) {

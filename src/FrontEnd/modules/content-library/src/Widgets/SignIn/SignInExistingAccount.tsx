@@ -1,6 +1,6 @@
+import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -22,7 +22,8 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import Typography, { TypographyProps } from "@insite/mobius/Typography/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import React, { FC } from "react";
+import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import React, { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -36,18 +37,14 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
-
-const mapStateToProps = (state: ApplicationState) => ({
-    isSigningIn: state.context.isSigningIn,
-    session: state.context.session,
-});
+type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
 
 const mapDispatchToProps = {
     signIn,
 };
 
 export interface SignInExistingAccountStyles {
+    form?: InjectableCss;
     rememberMeCheckbox?: CheckboxProps;
     rememberMeCheckboxGroup?: CheckboxGroupComponentProps;
     userNameTextField?: TextFieldProps;
@@ -130,16 +127,17 @@ export const signInExistingAccountStyles: SignInExistingAccountStyles = {
  */
 export const signInExistingAccount = signInExistingAccountStyles;
 const styles = signInExistingAccountStyles;
+const StyledForm = getStyledWrapper("form");
 
-const SignInExistingAccount: FC<Props> = props => {
-    const [rememberMe, setRememberMe] = React.useState(false);
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [userName, setUserName] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [isSignInClicked, setIsSignInClicked] = React.useState(false);
-    const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = React.useState(false);
-    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("");
+const SignInExistingAccount = ({ signIn, fields }: Props) => {
+    const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
+    const [isSignInClicked, setIsSignInClicked] = useState(false);
+    const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const signInHandler = (newPassword?: string) => {
         const pass = newPassword || password;
@@ -152,7 +150,7 @@ const SignInExistingAccount: FC<Props> = props => {
         const returnUrl = queryParams.returnUrl?.toString();
         setErrorMessage("");
 
-        props.signIn({
+        signIn({
             userName,
             password: pass,
             rememberMe,
@@ -168,10 +166,9 @@ const SignInExistingAccount: FC<Props> = props => {
         });
     };
 
-    const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
-            signInHandler();
-        }
+    const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        signInHandler();
     };
 
     const onResetPasswordClose = () => {
@@ -195,89 +192,95 @@ const SignInExistingAccount: FC<Props> = props => {
     return (
         <>
             <Typography {...styles.signInExistingAccountTitle}>{translate("Already have an account?")}</Typography>
-            <GridContainer {...styles.signInGridContainer}>
-                <GridItem {...styles.userNameGridItem}>
-                    <TextField
-                        id="userName"
-                        {...styles.userNameTextField}
-                        label={translate("User Name")}
-                        onChange={e => setUserName(e.currentTarget.value)}
-                        value={userName}
-                        error={userErrorMessage}
-                        autoComplete="username"
-                        data-test-selector="signIn_userName"
-                    />
-                </GridItem>
-                <GridItem {...styles.passwordGridItem}>
-                    <TextField
-                        id="password"
-                        {...styles.passwordTextField}
-                        label={translate("Password")}
-                        onChange={e => setPassword(e.currentTarget.value)}
-                        onKeyPress={onKeyPress}
-                        value={password}
-                        error={passwordErrorMessage}
-                        iconProps={{ ...styles.icon, src: showPassword ? EyeOff : Eye }}
-                        iconClickableProps={{
-                            onClick: () => {
-                                setShowPassword(!showPassword);
-                            },
-                        }}
-                        autoComplete="current-password"
-                        data-test-selector="signIn_password"
-                        type={showPassword ? "text" : "password"}
-                    />
-                </GridItem>
-                <GridItem {...styles.rememberMeGridItem}>
-                    <CheckboxGroup {...styles.rememberMeCheckboxGroup}>
-                        <Checkbox
-                            uid="rememberMe"
-                            {...styles.rememberMeCheckbox}
-                            checked={rememberMe}
-                            onChange={(e, value) => setRememberMe(value)}
-                        >
-                            {translate("Remember Me")}
-                        </Checkbox>
-                    </CheckboxGroup>
-                </GridItem>
-                <GridItem {...styles.forgotPasswordGridItem}>
-                    <Link {...styles.forgotPasswordLink} onClick={() => setIsResetPasswordModalOpen(true)}>
-                        {translate("Forgot Password")}
-                    </Link>
-                    <Modal
-                        headline={translate("Reset Password")}
-                        {...styles.resetPasswordModal}
-                        isOpen={isResetPasswordModalOpen}
-                        handleClose={() => onResetPasswordClose()}
-                    >
-                        <SignInResetPasswordForm onClose={() => onResetPasswordClose()} />
-                    </Modal>
-                </GridItem>
-                <GridItem {...styles.signInButtonGridItem}>
-                    <Button {...styles.signInButton} onClick={() => signInHandler()} data-test-selector="signIn_submit">
-                        {translate("Sign In")}
-                    </Button>
-                    <Modal
-                        headline={translate("Change Password")}
-                        {...styles.changePasswordModal}
-                        isOpen={isChangePasswordModalOpen}
-                        handleClose={onChangePasswordClose}
-                    >
-                        <SignInChangePasswordForm
-                            enteredUserName={userName}
-                            enteredPassword={password}
-                            instructionsText={props.fields.changePasswordInstructions}
-                            onPasswordChanged={onPasswordChanged}
+            <StyledForm {...styles.form} onSubmit={submitHandler} noValidate>
+                <GridContainer {...styles.signInGridContainer}>
+                    <GridItem {...styles.userNameGridItem}>
+                        <TextField
+                            id="userName"
+                            {...styles.userNameTextField}
+                            label={translate("User Name")}
+                            onChange={e => setUserName(e.currentTarget.value)}
+                            value={userName}
+                            error={userErrorMessage}
+                            autoComplete="username"
+                            data-test-selector="signIn_userName"
                         />
-                    </Modal>
-                </GridItem>
-            </GridContainer>
+                    </GridItem>
+                    <GridItem {...styles.passwordGridItem}>
+                        <TextField
+                            id="password"
+                            {...styles.passwordTextField}
+                            label={translate("Password")}
+                            onChange={e => setPassword(e.currentTarget.value)}
+                            value={password}
+                            error={passwordErrorMessage}
+                            iconProps={{ ...styles.icon, src: showPassword ? EyeOff : Eye }}
+                            iconClickableProps={{
+                                onClick: () => {
+                                    setShowPassword(!showPassword);
+                                },
+                                type: "button",
+                            }}
+                            autoComplete="current-password"
+                            data-test-selector="signIn_password"
+                            type={showPassword ? "text" : "password"}
+                        />
+                    </GridItem>
+                    <GridItem {...styles.rememberMeGridItem}>
+                        <CheckboxGroup {...styles.rememberMeCheckboxGroup}>
+                            <Checkbox
+                                uid="rememberMe"
+                                {...styles.rememberMeCheckbox}
+                                checked={rememberMe}
+                                onChange={(e, value) => setRememberMe(value)}
+                            >
+                                {translate("Remember Me")}
+                            </Checkbox>
+                        </CheckboxGroup>
+                    </GridItem>
+                    <GridItem {...styles.forgotPasswordGridItem}>
+                        <Link
+                            {...styles.forgotPasswordLink}
+                            type="button"
+                            onClick={() => setIsResetPasswordModalOpen(true)}
+                        >
+                            {translate("Forgot Password")}
+                        </Link>
+                        <Modal
+                            headline={translate("Reset Password")}
+                            {...styles.resetPasswordModal}
+                            isOpen={isResetPasswordModalOpen}
+                            handleClose={() => onResetPasswordClose()}
+                        >
+                            <SignInResetPasswordForm onClose={() => onResetPasswordClose()} />
+                        </Modal>
+                    </GridItem>
+                    <GridItem {...styles.signInButtonGridItem}>
+                        <Button {...styles.signInButton} type="submit" data-test-selector="signIn_submit">
+                            {translate("Sign In")}
+                        </Button>
+                        <Modal
+                            headline={translate("Change Password")}
+                            {...styles.changePasswordModal}
+                            isOpen={isChangePasswordModalOpen}
+                            handleClose={onChangePasswordClose}
+                        >
+                            <SignInChangePasswordForm
+                                enteredUserName={userName}
+                                enteredPassword={password}
+                                instructionsText={fields.changePasswordInstructions}
+                                onPasswordChanged={onPasswordChanged}
+                            />
+                        </Modal>
+                    </GridItem>
+                </GridContainer>
+            </StyledForm>
         </>
     );
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(SignInExistingAccount),
+    component: connect(null, mapDispatchToProps)(SignInExistingAccount),
     definition: {
         allowedContexts: [SignInPageContext],
         group: "Sign In",

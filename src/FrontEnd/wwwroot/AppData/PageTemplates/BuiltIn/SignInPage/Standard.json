@@ -53,6 +53,14 @@
             },
             "translatableFields": {},
             "contextualFields": {}
+        },
+        {
+            "id": "f930054b-a922-4a6c-a927-2c952d447172",
+            "parentId": "114f1eee-8f06-4796-bcce-c25693cf244f",
+            "type": "SignIn/SignInExternalProviders",
+            "zone": "Content",
+            "translatableFields": {},
+            "contextualFields": {}
         }
     ]
 }

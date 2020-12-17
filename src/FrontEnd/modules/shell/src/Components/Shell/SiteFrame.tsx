@@ -14,7 +14,12 @@ import { HasConfirmationContext, withConfirmation } from "@insite/shell/Componen
 import { sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageDefinitions } from "@insite/shell/DefinitionLoader";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
-import { displayAddWidgetModal, editWidget, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import {
+    displayAddWidgetModal,
+    editWidget,
+    reloadPage,
+    savePage,
+} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -39,6 +44,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     nodesByParentId: state.pageTree.treeNodesByParentId,
     headerNodesByParentId: state.pageTree.headerTreeNodesByParentId,
     footerNodesByParentId: state.pageTree.footerTreeNodesByParentId,
+    updatedLayoutIds: state.pageEditor.updatedLayoutIds,
 });
 
 const mapDispatchToProps = {
@@ -49,6 +55,7 @@ const mapDispatchToProps = {
     savePage,
     removeWidget,
     changeContext,
+    reloadPage,
 };
 
 type Props = ReturnType<typeof mapStateToProps> &
@@ -164,7 +171,7 @@ class SiteFrame extends React.Component<Props, State> {
         bubbleEvent("mousedown");
 
         setSiteFrame(iframe, {
-            LoadPageComplete: (data: { pageId: string; parentId: string }) => {
+            LoadPageComplete: (data: { pageId: string; parentId: string; layoutPageId: string | undefined }) => {
                 const url = `/ContentAdmin/Page/${data.pageId}`;
                 this.framePageId = data.pageId;
                 this.props.history.push(url);
@@ -192,9 +199,13 @@ class SiteFrame extends React.Component<Props, State> {
                     type: "PageDefinitions",
                     pageDefinitionsByType,
                 });
+
+                if (data.layoutPageId && this.props.updatedLayoutIds?.[data.layoutPageId]) {
+                    this.props.reloadPage(data.pageId);
+                }
             },
-            MoveWidgetTo: (data: { id: string; parentId: string; zoneName: string; index: number }) => {
-                this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index);
+            MoveWidgetTo: (data: { id: string; parentId: string; zoneName: string; index: number; pageId: string }) => {
+                this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index, data.pageId);
                 this.props.savePage();
             },
             AddWidget: (data: { widget: WidgetProps; index: number; pageId: string }) => {
@@ -210,7 +221,7 @@ class SiteFrame extends React.Component<Props, State> {
             EditWidget: (data: { id: string }) => {
                 this.props.editWidget(data.id);
             },
-            ConfirmWidgetDeletion: (data: { id: string; widgetType: string }) => {
+            ConfirmWidgetDeletion: (data: { id: string; widgetType: string; pageId: string }) => {
                 this.props.confirmation.display({
                     message: "Are you sure you want to delete this widget?",
                     title: `Delete ${data.widgetType}`,
@@ -218,8 +229,9 @@ class SiteFrame extends React.Component<Props, State> {
                         sendToSite({
                             type: "RemoveWidget",
                             id: data.id,
+                            pageId: data.pageId,
                         });
-                        this.props.removeWidget(data.id);
+                        this.props.removeWidget(data.id, data.pageId);
                         this.props.savePage();
                     },
                 });

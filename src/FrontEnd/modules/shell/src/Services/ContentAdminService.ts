@@ -41,6 +41,10 @@ export type SavePageResponseModel = {
     duplicatesFound?: true;
 };
 
+export type DeletePageResponseModel = {
+    layoutInUse?: true;
+};
+
 export const savePage = (page: PageModel, isVariant: boolean) =>
     post<SavePageResponseModel>(`savePage?isVariant=${isVariant}`, page);
 
@@ -49,7 +53,7 @@ export const addPage = (page: PageModel, isVariant: boolean) =>
 
 export const makeDefaultVariant = (pageId: string) => post("makeDefaultVariant", pageId);
 
-export const deletePage = (nodeId: string) => requestJson(`deletePage/${nodeId}`, "POST");
+export const deletePage = (nodeId: string) => post<DeletePageResponseModel>(`deletePage/${nodeId}`);
 
 export const deleteVariant = (nodeId: string, pageId: string) =>
     requestJson(`deleteVariant/${nodeId}/page/${pageId}`, "POST");
@@ -103,6 +107,12 @@ export const getPageBulkPublishInfo = async () => {
     return result;
 };
 
+export const getPublishedPageVersions = (pageId: string) =>
+    get<PageVersionInfoModel[]>("getPublishedPageVersions", { pageId });
+
+export const restorePageVersion = (pageVersionId: string) =>
+    post<RestorePageVersionModel>("restorePageVersion", pageVersionId);
+
 function cleanPagePublishInfoModel(model: PagePublishInfoModel, result?: PagePublishInfo[]) {
     const realResult = result ?? [];
 
@@ -111,6 +121,8 @@ function cleanPagePublishInfoModel(model: PagePublishInfoModel, result?: PagePub
             ...o,
             pageId: model.pageId,
             name: model.name,
+            unpublished: model.unpublished,
+            published: model.published,
         });
     });
 
@@ -141,6 +153,9 @@ export const importContent = (file: File) => {
     );
 };
 
+export const restoreContent = () =>
+    baseRequestJson<{ success: boolean; errorMessage: string }>("/admin/websites/restoreSpireContent", "POST");
+
 export type ContentContextModel = {
     languageId: string;
     personaId: string;
@@ -156,17 +171,31 @@ export type PublishableContentContextModel = ContentContextModel & {
     isWaitingForApproval: boolean;
 };
 
+export type PageVersionInfoModel = {
+    versionId: string;
+    modifiedOn: string;
+    publishOn: string;
+    modifiedBy: string;
+};
+
 export type PagePublishInfoModel = {
     pageId: string;
     name: string;
     unpublishedContexts: PublishableContentContextModel[];
+    unpublished?: Omit<PageVersionInfoModel, "publishOn">;
+    published?: PageVersionInfoModel;
 };
 
-export type PagePublishInfo = PublishableContentContextModel & { pageId: string; name: string };
+export type RestorePageVersionModel = {
+    success: boolean;
+};
+
+export type PagePublishInfo = PublishableContentContextModel &
+    Pick<PagePublishInfoModel, "pageId" | "name" | "unpublished" | "published">;
 
 export type PublishResultModel = {
     success: boolean;
-    ErrorInfos: PublishPageErrorInfo[];
+    errorInfos: PublishPageErrorInfo[];
 };
 
 export type PublishPageErrorInfo = {
@@ -236,6 +265,7 @@ export interface PageStateModel {
     variantName: string;
     isDefaultVariant: boolean;
     isShared: boolean;
+    allowedForPageType: string;
 }
 
 export type PageStateModelAttribute = "NonMatching";

@@ -20,6 +20,9 @@ const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & { firstInput?:
     > span {
         margin: 0;
     }
+    > nav {
+        margin-top: 8px;
+    }
     cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 

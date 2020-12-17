@@ -27,10 +27,15 @@ const mapStateToProps = (state: ApplicationState) => {
         orderNumber = parsedQuery.orderNumber;
     }
 
+    const orderState = getOrderState(state, orderNumber);
+    const orderStatusMappingDataView = getOrderStatusMappingDataView(state);
+    const isOrderNumberStoredInState = state.pages.orderDetails.orderNumber === orderNumber;
+
     return {
         orderNumber,
-        orderState: getOrderState(state, orderNumber),
-        shouldLoadOrderStatusMappings: !getOrderStatusMappingDataView(state).value,
+        orderState,
+        shouldDisplayOrder: !isOrderNumberStoredInState,
+        shouldLoadOrderStatusMappings: !orderStatusMappingDataView.value && !orderStatusMappingDataView.isLoading,
     };
 };
 
@@ -60,11 +65,14 @@ export const orderDetailsPageStyles: OrderDetailsPageStyles = {
 type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<typeof mapStateToProps>;
 
 class OrderDetailsPage extends React.Component<Props> {
-    componentDidMount(): void {
+    UNSAFE_componentWillMount() {
+        // The share entity (for orders) functionality can use this page
+        // to render HTML for PDF generation, so we need to leave this SSR
+        // ability so that functionality works.
         if (this.props.shouldLoadOrderStatusMappings) {
             this.props.loadOrderStatusMappings();
         }
-        if (this.props.orderNumber) {
+        if (this.props.orderNumber && this.props.shouldDisplayOrder) {
             this.props.displayOrder({ orderNumber: this.props.orderNumber });
         }
     }

@@ -77,6 +77,7 @@ export interface Option<TValue> {
 
 export interface TextFieldDefinition extends BaseFieldDefinition<"TextField"> {
     placeholder?: string;
+    maxLength?: number;
 }
 
 export interface HorizontalRuleDefinition extends BaseFieldDefinition<"HorizontalRule"> {}
@@ -103,6 +104,8 @@ export interface ColumnAlignmentDefinition extends BaseFieldDefinition<"ColumnAl
 
 export type ColumnAlignment = "top" | "middle" | "bottom";
 
+export interface DateTimeFieldDefinition extends BaseFieldDefinition<"DateTimeField", Date | null> {}
+
 export interface LinkFieldValue {
     type: "Url" | "Page" | "Category";
     value: string;
@@ -121,8 +124,10 @@ export interface BaseFieldDefinition<TEditorTemplate extends string, TValue = st
     regularExpression?: RegExp;
     tab?: TabDefinition;
     sortOrder?: number;
-    /** An optional validation function that returns a string describing an error, or null if no error. */
+    /* An optional validation function that returns a string describing an error, or null if no error. */
     validate?: (value: TValue, item: HasFields) => string | null;
+    /* Used to validate dependent fields after current field change */
+    dependentFields?: string[];
 }
 
 type FieldDefinition =
@@ -146,7 +151,8 @@ type FieldDefinition =
     | SelectBrandsFieldDefinition
     | CategoriesFieldDefinition
     | ColumnsDefinition
-    | ColumnAlignmentDefinition;
+    | ColumnAlignmentDefinition
+    | DateTimeFieldDefinition;
 // eslint-disable-next-line semi-style
 
 /** A modification of the standard `FieldDefinition` where field type is removed, covered by a parent field. */
@@ -171,7 +177,8 @@ export type ChildFieldDefinition =  // Omit<FieldDefinition, "fieldType"> would 
     | Omit<SelectBrandsFieldDefinition, "fieldType">
     | Omit<CategoriesFieldDefinition, "fieldType">
     | Omit<ColumnsDefinition, "fieldType">
-    | Omit<ColumnAlignmentDefinition, "fieldType">;
+    | Omit<ColumnAlignmentDefinition, "fieldType">
+    | Omit<DateTimeFieldDefinition, "fieldType">;
 // eslint-disable-next-line semi-style
 
 export default FieldDefinition;

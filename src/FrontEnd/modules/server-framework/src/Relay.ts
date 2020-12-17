@@ -2,7 +2,7 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import logger from "@insite/client-framework/Logger";
 import { Request, Response } from "express";
 // eslint-disable-next-line spire/fenced-imports
-import { commerce_routes as commerceRoutes } from "../../../config/spire_routes.json";
+import spireRoutes from "../../../config/spire_routes.json";
 
 interface ApiMethod {
     (request: Request, response: Response): Promise<void>;
@@ -49,6 +49,8 @@ export async function relayRequest(request: Request, response: Response) {
 
         headers[prop] = singleValue;
     }
+
+    headers["x-forwarded-host"] = request.get("host")!;
 
     const url = `${ISC_API_URL}${request.originalUrl}`;
     logger.info(`Relaying ${request.method} ${request.originalUrl} to ${url}.`);
@@ -98,5 +100,5 @@ export async function relayRequest(request: Request, response: Response) {
 }
 
 export function getRelayEndpoints() {
-    return commerceRoutes;
+    return spireRoutes.commerce_routes;
 }

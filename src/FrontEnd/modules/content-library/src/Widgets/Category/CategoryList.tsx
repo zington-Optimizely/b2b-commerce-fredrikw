@@ -1,3 +1,4 @@
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import {
@@ -10,7 +11,6 @@ import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CategoryListPageContext } from "@insite/content-library/Pages/CategoryListPage";
 import { HomePageContext } from "@insite/content-library/Pages/HomePage";
-import Clickable from "@insite/mobius/Clickable/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
@@ -36,6 +36,7 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     categoriesDataView: getCategoriesDataView(state),
+    parentCategoryIds: state.data.categories.parentCategoryIdToChildrenIds[emptyGuid],
 });
 
 const mapDispatchToProps = {
@@ -131,6 +132,7 @@ class CategoryList extends React.Component<Props> {
     render() {
         const {
             categoriesDataView,
+            parentCategoryIds,
             fields: { showImages, showOnlyTopLevelCategories },
         } = this.props;
         if (categoriesDataView.isLoading) {
@@ -145,9 +147,14 @@ class CategoryList extends React.Component<Props> {
             return null;
         }
 
+        const categories =
+            showOnlyTopLevelCategories && parentCategoryIds
+                ? categoriesDataView.value.filter(o => parentCategoryIds.indexOf(o.id) > -1)
+                : categoriesDataView.value;
+
         return (
             <GridContainer {...styles.container}>
-                {categoriesDataView.value.map(category => (
+                {categories.map(category => (
                     <GridItem key={category.id.toString()} {...styles.categoryItem}>
                         <GridContainer {...styles.innerContainer}>
                             {showImages && (

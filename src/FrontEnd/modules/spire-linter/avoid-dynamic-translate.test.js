@@ -15,6 +15,7 @@ getRuleTester().run("avoid-dynamic-translate", rule, {
         getCode("import { BudgetPeriodType } from 'BudgetManagementReducer'; translate(BudgetPeriodType.Monthly)", [
             { messageId: "avoid" },
         ]),
+        getCode("translate('Hello'); translate('HELLO');", [{ messageId: "unsupportedCasing" }]),
     ],
 });
 

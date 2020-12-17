@@ -1,4 +1,5 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import Button from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
@@ -12,6 +13,7 @@ import BadgeDefault from "@insite/shell/Components/Icons/BadgeDefault";
 import { ContentContextModel } from "@insite/shell/Services/ContentAdminService";
 import {
     closePublishModal,
+    configureComparison,
     loadAllPagePublishInfo,
     publish,
     setIsSelected,
@@ -28,7 +30,7 @@ import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
-        shellContext: { languagesById, personasById, permissions },
+        shellContext: { languagesById, personasById, permissions, stageMode, currentLanguageId },
         publishModal: {
             showModal,
             publishInTheFuture,
@@ -58,6 +60,8 @@ const mapStateToProps = (state: ShellState) => {
         failedToPublishPageIds,
         isBulkPublish,
         pagePublishInfoIsSelected,
+        stageMode,
+        currentLanguageId,
     };
 };
 
@@ -70,6 +74,8 @@ const mapDispatchToProps = {
     setRollbackOn,
     setIsSelected,
     setIsSelectedForAll,
+    configureComparison,
+    changeContext,
 };
 
 export interface PublishPageSelection {
@@ -195,6 +201,9 @@ const PublishModal: React.FC<Props> = ({
     pagePublishInfoIsSelected,
     setIsSelected,
     setIsSelectedForAll,
+    configureComparison,
+    stageMode,
+    currentLanguageId,
 }) => {
     const [selectAll, setSelectAll] = React.useState<boolean | "indeterminate">(true);
     const toasterContext = React.useContext(ToasterContext);
@@ -256,6 +265,12 @@ const PublishModal: React.FC<Props> = ({
         setSelectAll(value);
     };
 
+    const removeFuturePublishClickHandler = () => {
+        setPublishOn(undefined);
+        setRollbackOn(undefined);
+        publish(toasterContext);
+    };
+
     const size =
         nothingToPublish || hasFewPagesForApproval || hasFailedToPublishPages ? 350 : isBulkPublish ? 980 : undefined;
 
@@ -281,7 +296,7 @@ const PublishModal: React.FC<Props> = ({
                         Publication of selected page(s) has failed. Would you like to skip these pages and continue
                         publishing?
                         <ul>
-                            {pagePublishInfosState?.value?.map(({ pageId, name }) => {
+                            {pagePublishInfosState.value?.map(({ pageId, name }) => {
                                 return failedToPublishPageIds?.[pageId] ? <li key={pageId}>{name}</li> : null;
                             })}
                         </ul>
@@ -328,6 +343,8 @@ const PublishModal: React.FC<Props> = ({
                                         modifiedOn,
                                         pageId,
                                         name,
+                                        unpublished,
+                                        published,
                                     } = pagePublishInfo;
                                     const contextString = getContextualId(
                                         languageId,
@@ -370,9 +387,19 @@ const PublishModal: React.FC<Props> = ({
                                             </td>
                                             <td>
                                                 <ButtonInTable
-                                                    data-test-selector={`${contextString}_compareButton`}
+                                                    data-test-selector={`${testSelector}_compareButton`}
                                                     variant="tertiary"
-                                                    disabled // TODO ISC-11132
+                                                    onClick={() => {
+                                                        configureComparison({
+                                                            unpublished,
+                                                            published,
+                                                            languageId: languageId ?? currentLanguageId,
+                                                            personaId,
+                                                            deviceType,
+                                                            stageMode,
+                                                            pageId,
+                                                        });
+                                                    }}
                                                 >
                                                     Compare
                                                 </ButtonInTable>
@@ -446,6 +473,15 @@ const PublishModal: React.FC<Props> = ({
                 <CancelButton variant="tertiary" onClick={closePublishModal}>
                     Cancel
                 </CancelButton>
+                {isEditingExistingPublish && !publishImmediately && (
+                    <RemoveFuturePublishButton
+                        variant="secondary"
+                        data-test-selector="publishModal_removeFuturePublish"
+                        onClick={removeFuturePublishClickHandler}
+                    >
+                        Remove Future Publish
+                    </RemoveFuturePublishButton>
+                )}
                 {!nothingToPublish && (
                     <Button
                         variant="primary"
@@ -454,8 +490,8 @@ const PublishModal: React.FC<Props> = ({
                             !pagePublishInfosState.value ||
                             !!nothingToPublish ||
                             hasFewPagesForApproval ||
-                            (pagePublishInfoIsSelected.every(o => !o) && !isEditingExistingPublish) ||
-                            (!publishImmediately && !publishOn && !isEditingExistingPublish) ||
+                            pagePublishInfoIsSelected.every(o => !o) ||
+                            (!publishImmediately && !publishOn) ||
                             allPagesSkipped
                         }
                         onClick={() => publish(toasterContext)}
@@ -562,6 +598,11 @@ const PublishCancelButtonContainer = styled.div`
 `;
 
 const CancelButton = styled(Button)`
+    margin-top: 20px;
+    margin-right: 10px;
+`;
+
+const RemoveFuturePublishButton = styled(Button)`
     margin-top: 20px;
     margin-right: 10px;
 `;

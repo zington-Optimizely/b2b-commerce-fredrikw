@@ -183,7 +183,7 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                                     </GridItem>
                                     <GridItem {...styles.mgfItem}>
                                         <SmallHeadingAndText
-                                            heading={translate("MGF #")}
+                                            heading={translate("MFG #")}
                                             text={invoiceLine.manufacturerItem}
                                             extendedStyles={styles.mgfStyles}
                                         />
@@ -213,7 +213,7 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                             </GridItem>
                             <GridItem {...styles.qtyItem}>
                                 <SmallHeadingAndText
-                                    heading={translate("Qty Invoiced")}
+                                    heading={translate("QTY Invoiced")}
                                     text={invoiceLine.qtyInvoiced}
                                     extendedStyles={styles.qtyStyles}
                                 />

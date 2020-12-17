@@ -212,21 +212,21 @@ const RfqJobQuoteDetailsProductCard = ({
                         <GridContainer {...styles.quantitiesContainer}>
                             <GridItem {...styles.jobQuantityGridItem}>
                                 <SmallHeadingAndText
-                                    heading={translate("Job Qty")}
+                                    heading={translate("Job QTY")}
                                     text={jobQuoteLine.qtyOrdered!}
                                     extendedStyles={styles.jobQuantityHeadingAndText}
                                 />
                             </GridItem>
                             <GridItem {...styles.purchasedQuantityGridItem}>
                                 <SmallHeadingAndText
-                                    heading={translate("Purchased Qty")}
+                                    heading={translate("Purchased QTY")}
                                     text={jobQuoteLine.qtySold}
                                     extendedStyles={styles.purchasedQuantityHeadingAndText}
                                 />
                             </GridItem>
                             <GridItem {...styles.quantityRemainingGridItem}>
                                 <SmallHeadingAndText
-                                    heading={translate("Qty Remaining")}
+                                    heading={translate("QTY Remaining")}
                                     text={qtyRemaining}
                                     extendedStyles={styles.quantityRemainingHeadingAndText}
                                 />
@@ -238,7 +238,7 @@ const RfqJobQuoteDetailsProductCard = ({
                                         type="number"
                                         min={0}
                                         max={qtyRemaining}
-                                        label={translate("Order Qty")}
+                                        label={translate("Order QTY")}
                                         value={localOrderQuantity}
                                         disabled={qtyRemaining <= 0}
                                         error={qtyOrdered > qtyRemaining ? exceedsQtyRemainingError : undefined}

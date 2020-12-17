@@ -12,11 +12,9 @@ import Link from "@insite/mobius/Link";
 import { LinkPresentationProps } from "@insite/mobius/Link/Link";
 import TextField from "@insite/mobius/TextField";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import React, { FC } from "react";
+import React, { ChangeEvent } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
@@ -29,7 +27,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     changePasswordUrl: getPageLinkByPageType(state, "ChangePasswordPage")?.url,
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface AccountSettingsUserInformationStyles {
     userInformationTitle: TypographyProps;
@@ -54,16 +52,20 @@ export const userInformationStyles: AccountSettingsUserInformationStyles = {
 const styles = userInformationStyles;
 const password = "*************";
 
-const AccountSettingsUserInformation: FC<Props> = props => {
-    const { editingAccount, useEmailAsUserName, changePasswordUrl, emailErrorMessage } = props;
-
+const AccountSettingsUserInformation = ({
+    editingAccount,
+    useEmailAsUserName,
+    changePasswordUrl,
+    emailErrorMessage,
+    updateAccountSettings,
+}: Props) => {
     if (!editingAccount) {
         return null;
     }
 
     const fullName = `${editingAccount.firstName} ${editingAccount.lastName}`;
-    const emailChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.updateAccountSettings({ email: event.currentTarget.value });
+    const emailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        updateAccountSettings({ email: event.currentTarget.value });
     };
 
     const label = (
@@ -116,6 +118,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
+        displayName: "User Information",
     },
 };
 

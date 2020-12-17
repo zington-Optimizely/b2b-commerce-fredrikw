@@ -260,7 +260,7 @@ const ProductCarouselProductCondensed = ({
                                         htmlFor={`${carouselId}-qty`}
                                         id={`${carouselId}-qty-label`}
                                     >
-                                        {translate("QTY_quantity")}
+                                        {translate("QTY")}
                                     </VisuallyHidden>
                                     <ProductQuantityOrdered
                                         labelOverride=""

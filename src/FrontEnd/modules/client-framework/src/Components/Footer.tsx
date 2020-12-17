@@ -1,4 +1,5 @@
 import { createPageElement } from "@insite/client-framework/Components/ContentItemStore";
+import { HasShellContext, ShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getFooter } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -13,7 +14,7 @@ const mapDispatchToProps = {
     loadPageByType,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext;
 
 class Footer extends React.Component<Props> {
     UNSAFE_componentWillMount() {
@@ -24,13 +25,20 @@ class Footer extends React.Component<Props> {
     }
 
     render() {
-        const { footer } = this.props;
+        const {
+            footer,
+            shellContext: { isInShell },
+        } = this.props;
         if (footer.id === "") {
             return null;
         }
 
-        return createPageElement(footer.type, footer);
+        return (
+            <ShellContext.Provider value={{ isInShell, pageId: footer.id }}>
+                {createPageElement(footer.type, footer)}
+            </ShellContext.Provider>
+        );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Footer);
+export default connect(mapStateToProps, mapDispatchToProps)(withIsInShell(Footer));

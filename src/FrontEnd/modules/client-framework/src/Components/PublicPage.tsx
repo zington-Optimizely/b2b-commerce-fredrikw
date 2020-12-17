@@ -8,13 +8,13 @@ import ErrorModal from "@insite/client-framework/Components/ErrorModal";
 import Footer from "@insite/client-framework/Components/Footer";
 import Header from "@insite/client-framework/Components/Header";
 import { HasShellContext, ShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
-import PageBreadcrumbs from "@insite/client-framework/Components/PageBreadcrumbs";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { getDisplayErrorPage, getErrorStatusCode, redirectTo } from "@insite/client-framework/ServerSideRendering";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
-import Page from "@insite/mobius/Page";
+// eslint-disable-next-line spire/fenced-imports
+import PageLayout from "@insite/content-library/PageLayout";
 import * as React from "react";
 import { connect } from "react-redux";
 
@@ -39,6 +39,7 @@ class PublicPage extends React.Component<Props> {
             type: "LoadPageComplete",
             pageId: this.props.page.id,
             parentId: this.props.page.parentId,
+            layoutPageId: this.props.page.layoutPageId,
         });
     }
 
@@ -93,30 +94,26 @@ class PublicPage extends React.Component<Props> {
                 return <>{content}</>;
         }
 
-        /** Mobile pages only need the content. */
-        const enablePeripheralContent = !type.startsWith("Mobile/");
-
-        return (
-            <div data-test-selector={`page_${type}`}>
-                {enablePeripheralContent && !hideHeader && (
-                    <ShellContext.Provider value={{ isInShell }}>
-                        <Header />
-                    </ShellContext.Provider>
-                )}
-                {enablePeripheralContent && !hideBreadcrumbs && (
-                    <Page as="div">
-                        <PageBreadcrumbs />
-                    </Page>
-                )}
+        const pageContent = (
+            <>
                 {content}
                 <ErrorModal />
-                {enablePeripheralContent && !hideFooter && (
-                    <ShellContext.Provider value={{ isInShell }}>
-                        <Footer />
-                    </ShellContext.Provider>
-                )}
-            </div>
+            </>
         );
+
+        const result = type.startsWith("Mobile/") ? (
+            pageContent
+        ) : (
+            <PageLayout
+                showHeader={!hideHeader}
+                header={<Header />}
+                pageContent={pageContent}
+                showBreadcrumbs={!hideBreadcrumbs}
+                showFooter={!hideFooter}
+                footer={<Footer />}
+            />
+        );
+        return <div data-test-selector={`page_${type}`}>{result}</div>;
     }
 
     render() {

@@ -8,8 +8,13 @@ const validatePageTemplates = require("./validatePageTemplates");
 require("./setupTsconfigPathsFile");
 const webpack = require("webpack");
 const RemovePlugin = require("remove-files-webpack-plugin");
+const semver = require("semver");
 
-exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
+if (semver.lt(process.version, "12.12.0")) {
+    throw new Error("Spire requires node 12.12+ to function properly.");
+}
+
+exports.setupCommonConfig = (isDevBuild, env, target = "ES2017") => {
     let blueprint = env && env.BLUEPRINT && `blueprints/${env.BLUEPRINT}`;
     if (!blueprint) {
         if (isDevBuild) {
@@ -48,6 +53,7 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
         resolve: {
             extensions: [".tsx", ".ts", ".jsx", ".js"],
             plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.base.json" })],
+            fallback:  { "url": require.resolve("url-polyfill") },
         },
         plugins: [
             new RemovePlugin({
@@ -67,8 +73,8 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES5") => {
             modules: false,
             entrypoints: false,
             performance: false,
-            warningsFilter: [/Critical dependency: the request of a dependency is an expression/],
         },
+        ignoreWarnings: [/Critical dependency: the request of a dependency is an expression/],
         performance: {
             hints: false,
         },

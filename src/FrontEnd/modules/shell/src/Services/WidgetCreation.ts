@@ -29,6 +29,7 @@ export function setupWidgetModel(
         generalFields: {},
         translatableFields: {},
         contextualFields: {},
+        isLayout: false,
     };
 
     const contextualDeviceType = language.hasDeviceSpecificContent ? deviceType : "Desktop";

@@ -110,7 +110,7 @@ const CheckoutReviewAndSubmitPromotionCode: FC<Props> = ({
                     disabled={isApplyButtonDisabled || promotionCode.length === 0}
                     data-test-selector="applyPromotionCodeButton"
                 >
-                    {translate("Apply_promotion")}
+                    {translate("Apply Promotion")}
                 </Button>
             </StyledForm>
         </>

@@ -1,3 +1,4 @@
+import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -7,21 +8,25 @@ interface OwnProps {
     readonly id: string;
 }
 
-const mapStateToProps = ({
-    data: {
-        pages: { widgetsById, widgetIdsByParentIdAndZone },
-    },
-}: ShellState) => {
+const mapStateToProps = (state: ShellState) => {
+    const {
+        data: {
+            pages: { widgetsById, widgetIdsByPageIdParentIdAndZone },
+        },
+    } = state;
+
+    const page = getCurrentPageForShell(state);
+
     return {
-        widgetIdsByParentIdAndZone,
+        pageContent: widgetIdsByPageIdParentIdAndZone[page.id],
         widgetsById,
     };
 };
 
 type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
-const WidgetTree: React.FC<Props> = ({ widgetIdsByParentIdAndZone, id, widgetsById }) => {
-    const zones = widgetIdsByParentIdAndZone[id];
+const WidgetTree: React.FC<Props> = ({ pageContent, id, widgetsById }) => {
+    const zones = pageContent[id];
 
     if (!zones) {
         return null;
@@ -36,11 +41,7 @@ const WidgetTree: React.FC<Props> = ({ widgetIdsByParentIdAndZone, id, widgetsBy
                         {zones[zoneName].map(id => (
                             <li key={id}>
                                 {widgetsById[id].type}
-                                <WidgetTree
-                                    id={id}
-                                    widgetsById={widgetsById}
-                                    widgetIdsByParentIdAndZone={widgetIdsByParentIdAndZone}
-                                />
+                                <WidgetTree id={id} widgetsById={widgetsById} pageContent={pageContent} />
                             </li>
                         ))}
                     </ChildrenStyle>

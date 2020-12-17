@@ -166,7 +166,7 @@ const AssignShipToAddressModal = ({
     return (
         <Modal
             {...styles.modal}
-            headline={translate("Assign Ship to Address")}
+            headline={translate("Assign Ship To Address")}
             isOpen={isModalOpen}
             handleClose={closeModalHandler}
             data-test-selector="assignShiptoAddressModal"

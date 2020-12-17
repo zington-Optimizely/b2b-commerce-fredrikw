@@ -4,6 +4,8 @@ interface Shell {
     isEditing?: boolean;
     isCurrentPage?: boolean;
     isInShell?: boolean;
+    layoutEditableZone?: true;
+    pageId?: string;
 }
 
 export interface HasShellContext {

@@ -45,7 +45,7 @@ const CartLineQuantity: FC<Props> = ({
     extendedStyles,
 }) => {
     const localOnQtyOrderedChange = (value: string) => {
-        const inputQty = Number.parseInt(value, 10);
+        const inputQty = parseFloat(value);
         if (Number.isNaN(inputQty)) {
             return;
         }
@@ -66,7 +66,7 @@ const CartLineQuantity: FC<Props> = ({
                 {...styles.editableQuantityTextField}
                 type="number"
                 min={0}
-                label={label || translate("QTY_quantity")}
+                label={label || translate("QTY")}
                 value={value}
                 disabled={!cart.canModifyOrder || cartLine.isPromotionItem || cart.type === "Job"}
                 onChange={changeHandler}
@@ -80,7 +80,7 @@ const CartLineQuantity: FC<Props> = ({
     return (
         <SmallHeadingAndText
             {...styles.readOnlyQuantityText}
-            heading={label || translate("QTY_quantity")}
+            heading={label || translate("QTY")}
             text={cartLine.qtyOrdered!}
         />
     );

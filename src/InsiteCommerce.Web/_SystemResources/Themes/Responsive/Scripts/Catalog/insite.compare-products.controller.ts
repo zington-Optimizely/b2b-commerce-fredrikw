@@ -52,6 +52,12 @@ module insite.catalog {
             const productsToCompare = this.compareProductsService.getProductIds();
             const expand = ["styledproducts", "attributes", "pricing", "brand"];
 
+           if (!productsToCompare.length) {
+                this.productsToCompare = [];
+                this.ready = true;
+                return;
+            }
+
             const parameter: IProductCollectionParameters = { productIds: productsToCompare };
             this.productService.getProducts(parameter, expand).then(
                 (productCollection: ProductCollectionModel) => { this.getProductsCompleted(productCollection); },

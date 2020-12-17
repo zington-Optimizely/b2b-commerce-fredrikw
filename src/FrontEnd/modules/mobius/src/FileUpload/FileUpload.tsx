@@ -24,10 +24,6 @@ import { Transition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import styled, { AnyStyledComponent, css, ThemeConsumer } from "styled-components";
 
-interface FileUploadCssOverrides extends Pick<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
-    appearanceTransition?: StyledProp<any>;
-}
-
 export interface FileUploadPresentationProps
     extends Omit<FormFieldPresentationProps<FileUploadComponentProps>, "cssOverrides"> {
     /** Props to be passed into the file upload's Button component.
@@ -44,7 +40,9 @@ export interface FileUploadPresentationProps
     transitionLength?: keyof ThemeTransitionDuration;
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable */
-    cssOverrides?: FileUploadCssOverrides;
+    cssOverrides?: FormFieldPresentationProps<FileUploadComponentProps>["cssOverrides"] & {
+        appearanceTransition?: StyledProp<any>;
+    };
 }
 
 type FileUploadComponentProps = MobiusStyledComponentProps<

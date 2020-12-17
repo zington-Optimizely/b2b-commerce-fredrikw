@@ -1,6 +1,7 @@
 /* eslint-disable spire/export-styles */
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import isDate from "lodash/isDate";
 import React, { FC } from "react";
 import { connect } from "react-redux";
 
@@ -24,10 +25,15 @@ const LocalizedDateTime: FC<Props> = ({ dateTime, language, options }) => {
         return null;
     }
 
+    let dt = dateTime;
+    if (!isDate(dt)) {
+        dt = new Date(dt);
+    }
+
     return (
         <>
             {getLocalizedDateTime({
-                dateTime,
+                dateTime: dt,
                 language,
                 options,
             })}

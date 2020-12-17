@@ -196,7 +196,7 @@ const SavedOrderDetailsActionButtons = ({
     const printLabel = translate("Print");
     const deleteLabel = translate("Delete Order");
     const placeLabel = translate("Place Order");
-    const addToListLabel = translate("Add All To List");
+    const addToListLabel = translate("Add All to List");
 
     return (
         <>

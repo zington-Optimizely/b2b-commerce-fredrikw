@@ -23,6 +23,8 @@ export type BreadcrumbsProps = MobiusStyledComponentProps<
     }
 >;
 
+export type BreadcrumbsPresentationProps = Omit<BreadcrumbsProps, "links">;
+
 const Slash = styled(Typography as any).attrs({ children: "/" })`
     margin: 0 10px;
 `;

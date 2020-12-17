@@ -1,8 +1,18 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 
-export const getWidgetsByIdAndZone = (state: ApplicationState, id: string, zoneName: string): WidgetProps[] => {
-    const widgetIdsUnderParentId = state.data.pages.widgetIdsByParentIdAndZone[id];
+export const getWidgetsByIdAndZone = (
+    state: ApplicationState,
+    id: string,
+    zoneName: string,
+    pageId: string,
+): WidgetProps[] => {
+    const pageContent = state.data.pages.widgetIdsByPageIdParentIdAndZone[pageId];
+    if (typeof pageContent === "undefined") {
+        return [];
+    }
+
+    const widgetIdsUnderParentId = pageContent[id];
     if (typeof widgetIdsUnderParentId === "undefined") {
         return [];
     }

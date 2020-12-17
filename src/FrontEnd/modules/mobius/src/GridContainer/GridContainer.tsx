@@ -40,6 +40,7 @@ const GridWrapper = styled.div<GridContainerProps>`
             ),
         );
     }}
+
     @media print {
         max-width: 100%;
     }
@@ -47,12 +48,22 @@ const GridWrapper = styled.div<GridContainerProps>`
         display: flex;
         flex-wrap: wrap;
         width: ${({ gap }) => ((gap as number) > 0 ? `calc(100% + ${gap}px)` : "100%")};
+
+        @media print {
+            display: block;
+        }
     }
     ${GridItemStyle} {
         box-sizing: border-box;
         margin: 0;
         flex-grow: 0;
         flex-shrink: 1;
+
+        @media print {
+            display: inline-block;
+            margin-right: -0.22rem;
+            vertical-align: top;
+        }
     }
     ${injectCss}
 `;

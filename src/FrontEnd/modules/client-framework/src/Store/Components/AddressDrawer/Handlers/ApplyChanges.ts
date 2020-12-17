@@ -5,8 +5,8 @@ import {
     HasOnSuccess,
     makeHandlerChainAwaitable,
 } from "@insite/client-framework/HandlerCreator";
-import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import changeCustomerContext from "@insite/client-framework/Store/Context/Handlers/ChangeCustomerContext";
+import { getLocationPathAndQuery } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 
 type HandlerType = Handler<HasOnSuccess & HasOnError<string>>;
 
@@ -33,6 +33,7 @@ export const ChangeCustomerContext: HandlerType = async ({ dispatch, getState, p
         fulfillmentMethod,
         pickUpWarehouse,
         isDefault,
+        returnUrl: getLocationPathAndQuery(getState()),
         onError: (errorMessage: string) => {
             onError?.(errorMessage);
             dispatch({

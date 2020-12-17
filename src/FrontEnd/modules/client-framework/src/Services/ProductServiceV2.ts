@@ -93,8 +93,13 @@ export interface GetProductRealTimeInventoryApiV2Parameter extends ApiParameter 
 
 export interface GetProductCollectionRealTimeInventoryApiV2Parameter extends ApiParameter {
     productIds: string[];
-    configuration?: { [productId: string]: string[] };
+    configurations?: { [productId: string]: string[] };
     expand?: string[];
+
+    /**
+     * @deprecated Wrong naming, use configurations instead.
+     */
+    configuration?: { [productId: string]: string[] };
 }
 
 export interface GetProductVariantChildrenApiV2Parameter extends GetProductApiV2ParameterBase, HasPagingParameters {
@@ -155,7 +160,7 @@ export async function getProductRealTimeInventory(parameter: GetProductRealTimeI
         expand: parameter.expand,
         productIds: [parameter.productId],
         additionalQueryStringParameters: parameter.additionalQueryStringParameters,
-        configuration: parameter.configuration ? { [parameter.productId]: parameter.configuration } : undefined,
+        configurations: parameter.configuration ? { [parameter.productId]: parameter.configuration } : undefined,
     });
 
     return realTimeInventoryModel.realTimeInventoryResults?.find(o => o.productId === parameter.productId);
@@ -169,7 +174,7 @@ export function getProductCollectionRealTimeInventory(parameter: GetProductColle
 
     return post<GetProductCollectionRealTimeInventoryApiV2Parameter, RealTimeInventoryModel>(`${url}`, {
         productIds: parameter.productIds,
-        configuration: parameter.configuration,
+        configurations: parameter.configurations,
     });
 }
 

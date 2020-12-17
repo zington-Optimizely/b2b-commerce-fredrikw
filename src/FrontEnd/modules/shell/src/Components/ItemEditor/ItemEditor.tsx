@@ -1,7 +1,7 @@
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { removeWidget, replaceItem, updateField } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
-import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
+import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Scrim from "@insite/mobius/Overlay/Scrim";
 import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
@@ -16,15 +16,14 @@ import ShellState from "@insite/shell/Store/ShellState";
 import cloneDeep from "lodash/cloneDeep";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import styled from "styled-components";
 
 interface OwnProps {}
 
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     let item: PageProps | WidgetProps | undefined;
     let definition: LoadedPageDefinition | LoadedWidgetDefinition | undefined;
+    const currentPage = getCurrentPageForShell(state);
     if (state.pageEditor.editingId) {
-        const currentPage = getCurrentPageForShell(state);
         if (state.pageEditor.editingId === currentPage.id) {
             item = currentPage;
             definition = cloneDeep(getPageDefinition(currentPage.type));
@@ -48,6 +47,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
         treeNodesByParentId: state.pageTree.treeNodesByParentId,
         headerTreeNodesByParentId: state.pageTree.headerTreeNodesByParentId,
         footerTreeNodesByParentId: state.pageTree.footerTreeNodesByParentId,
+        pageId: currentPage.id,
     };
 };
 
@@ -110,13 +110,21 @@ class ItemEditor extends React.Component<Props, State> {
     };
 
     cancelEditingItem = () => {
-        const { itemBeforeEditing, cancelEditingItem, removeItemIfCanceled, removeWidget, replaceItem } = this.props;
+        const {
+            itemBeforeEditing,
+            cancelEditingItem,
+            removeItemIfCanceled,
+            removeWidget,
+            replaceItem,
+            pageId,
+        } = this.props;
         cancelEditingItem();
         if (removeItemIfCanceled) {
-            removeWidget(itemBeforeEditing!.id);
+            removeWidget(itemBeforeEditing!.id, pageId);
             sendToSite({
                 type: "RemoveWidget",
                 id: itemBeforeEditing!.id,
+                pageId,
             });
         } else {
             replaceItem(itemBeforeEditing!);
@@ -225,11 +233,20 @@ class ItemEditor extends React.Component<Props, State> {
             }
         }
 
+        const removeFieldDefinitions = new Set();
+
         if (!isVariant) {
-            for (let i = 0; i < fieldDefinitions.length; ++i) {
-                if (fieldDefinitions[i].name === "variantName") {
+            removeFieldDefinitions.add("variantName");
+        }
+
+        if (!item.fields["layoutPage"]) {
+            removeFieldDefinitions.add("layoutPage");
+        }
+
+        if (removeFieldDefinitions.size) {
+            for (let i = fieldDefinitions.length - 1; i >= 0; --i) {
+                if (removeFieldDefinitions.has(fieldDefinitions[i].name)) {
                     fieldDefinitions.splice(i, 1);
-                    break;
                 }
             }
         }

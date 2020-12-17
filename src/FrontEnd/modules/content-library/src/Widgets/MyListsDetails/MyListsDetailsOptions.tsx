@@ -25,6 +25,7 @@ import OrderUploadErrorsModal, {
     OrderUploadErrorsModalStyles,
 } from "@insite/content-library/Components/OrderUploadErrorsModal";
 import ProductSelector, { ProductSelectorStyles } from "@insite/content-library/Components/ProductSelector";
+import ProductSelectorVariantModal from "@insite/content-library/Components/ProductSelectorVariantModal";
 import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyListsDetailsPage";
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
@@ -45,7 +46,7 @@ import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQuer
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import debounce from "lodash/debounce";
-import React from "react";
+import React, { ChangeEvent, useCallback, useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -179,23 +180,24 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
     uploadItemsGridItem: {
         width: [12, 12, 12, 2, 2],
         css: css`
-            align-items: center;
-        `,
-    },
-    uploadItemsLink: {
-        css: css`
+            align-items: flex-start;
             ${({ theme }: { theme: BaseTheme }) =>
                 breakpointMediaQueries(theme, [
                     null,
                     null,
                     null,
                     css`
-                        margin-top: 30px;
+                        padding-top: 30px;
                     `,
                     css`
-                        margin-top: 30px;
+                        padding-top: 30px;
                     `,
                 ])}
+        `,
+    },
+    uploadItemsLink: {
+        css: css`
+            margin: 15px 0 0;
         `,
     },
     uploadItemsModal: {
@@ -232,7 +234,7 @@ export const myListsDetailsOptionsStyles: MyListsDetailsOptionsStyles = {
 
 const styles = myListsDetailsOptionsStyles;
 
-const MyListsDetailsOptions: React.FC<Props> = ({
+const MyListsDetailsOptions = ({
     id,
     wishListSettings,
     wishListDataView,
@@ -246,12 +248,12 @@ const MyListsDetailsOptions: React.FC<Props> = ({
     setAllWishListLinesIsSelected,
     addToWishList,
     setEditingSortOrder,
-}) => {
-    const toasterContext = React.useContext(ToasterContext);
-    const [query, setQuery] = React.useState(loadWishListLinesParameter.query);
-    const [addItemsToListIsOpen, setAddItemsToListIsOpen] = React.useState(false);
-    const [uploadItemsModalIsOpen, setUploadItemsModalIsOpen] = React.useState(false);
-    const debouncedSearch = React.useCallback(
+}: Props) => {
+    const toasterContext = useContext(ToasterContext);
+    const [query, setQuery] = useState(loadWishListLinesParameter.query);
+    const [addItemsToListIsOpen, setAddItemsToListIsOpen] = useState(false);
+    const [uploadItemsModalIsOpen, setUploadItemsModalIsOpen] = useState(false);
+    const debouncedSearch = useCallback(
         debounce((query: string) => {
             if (!wishListDataView.value) {
                 return;
@@ -269,7 +271,7 @@ const MyListsDetailsOptions: React.FC<Props> = ({
 
     const wishList = wishListDataView.value;
 
-    const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         const newQuery = event.target.value || "";
         setQuery(newQuery);
         debouncedSearch(newQuery);
@@ -376,11 +378,13 @@ const MyListsDetailsOptions: React.FC<Props> = ({
                         <GridItem {...styles.productSelectorGridItem}>
                             <ProductSelector
                                 selectButtonTitle={translate("Add to List")}
+                                skipInventoryValidation={true}
                                 onSelectProduct={selectProductHandler}
                                 productIsConfigurableMessage={siteMessage("ListUpload_CannotOrderConfigurable")}
                                 productIsUnavailableMessage={siteMessage("Product_NotFound")}
                                 extendedStyles={styles.productSelectorStyles}
                             />
+                            <ProductSelectorVariantModal skipInventoryValidation={true} />
                         </GridItem>
                         <GridItem {...styles.uploadItemsGridItem}>
                             <Link {...styles.uploadItemsLink} onClick={uploadItemsClickHandler}>

@@ -1,4 +1,5 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import logger from "@insite/client-framework/Logger";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { BaseModel } from "@insite/client-framework/Types/ApiModels";
@@ -128,8 +129,14 @@ export const rawRequest = async (
                 `There was an attempt to make a request to the endpoint ${endpoint} during SSR. The shell doesn't currently support SSR.`,
             );
         } else {
-            headers["Authorization"] = `Bearer ${window.localStorage.getItem("admin-accessToken")}`;
+            const accessToken = window.localStorage.getItem("admin-accessToken");
+            if (accessToken) {
+                headers["Authorization"] = `Bearer ${accessToken}`;
+            }
         }
+    } else if (!IS_SERVER_SIDE && window.location.search.indexOf("access_token=") > -1) {
+        const parsedQuery = parseQueryString<{ access_token: string }>(window.location.search);
+        headers["Authorization"] = `Bearer ${parsedQuery.access_token}`;
     }
 
     const requestInit: RequestInit = {

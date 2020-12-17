@@ -205,7 +205,7 @@ const RequisitionsProductListLine = ({
                         </GridItem>
                         <GridItem {...styles.quantityGridItem}>
                             <SmallHeadingAndText
-                                heading={translate("QTY_quantity")}
+                                heading={translate("QTY")}
                                 text={requisition.qtyOrdered!}
                                 extendedStyles={styles.quantityHeadingAndText}
                             />
@@ -225,7 +225,7 @@ const RequisitionsProductListLine = ({
                 <GridItem {...styles.requisitionLinesGridItem}>
                     <Accordion {...styles.requisitionLinesAccordion} headingLevel={3}>
                         <AccordionSection
-                            title={translate("View Requsitions")}
+                            title={translate("View Requisitions")}
                             expanded={isExpanded}
                             onTogglePanel={togglePanelHandler}
                         >

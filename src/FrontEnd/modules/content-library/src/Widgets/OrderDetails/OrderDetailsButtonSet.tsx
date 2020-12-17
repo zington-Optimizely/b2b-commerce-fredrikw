@@ -2,7 +2,8 @@ import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getOrderState } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { getOrderState, OrderStateContext } from "@insite/client-framework/Store/Data/Orders/OrdersSelectors";
+import { getOrderStatusMappingDataView } from "@insite/client-framework/Store/Data/OrderStatusMappings/OrderStatusMappingsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import cancelOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/CancelOrder";
 import reorder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/Reorder";
@@ -24,11 +25,13 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
     buttonsOrder = "buttonsOrder",
+    generateEmailAttachmentFromWebpage = "generateEmailAttachmentFromWebpage",
 }
 
 const enum buttons {
@@ -50,6 +53,7 @@ interface ButtonMapper {
 interface OwnProps extends WidgetProps {
     fields: {
         [fields.buttonsOrder]: ButtonModel[];
+        [fields.generateEmailAttachmentFromWebpage]?: boolean;
     };
 }
 
@@ -193,6 +197,8 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     history,
 }) => {
     const toasterContext = React.useContext(ToasterContext);
+    const resolvedGenerateEmailAttachmentFromWebpage =
+        fields.generateEmailAttachmentFromWebpage === true || fields.generateEmailAttachmentFromWebpage === undefined;
     if (!order) {
         return null;
     }
@@ -221,7 +227,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                                 title={order.webOrderNumber}
                                 orderNumber={order.webOrderNumber || order.erpOrderNumber}
                             />
-                            &nbsp;{translate("added to cart")}
+                            &nbsp;{translate("Added to Cart")}
                         </>
                     ),
                     messageType: "success",
@@ -307,6 +313,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                 entityId={order.webOrderNumber}
                 entityName="Order"
                 extendedStyles={styles.shareEntityButtonStyles}
+                generateAttachmentFromWebpage={resolvedGenerateEmailAttachmentFromWebpage}
             />
         ),
         clickable: (
@@ -315,6 +322,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                 entityName="Order"
                 variant="clickable"
                 extendedStyles={styles.shareEntityButtonStyles}
+                generateAttachmentFromWebpage={resolvedGenerateEmailAttachmentFromWebpage}
             />
         ),
     };
@@ -380,6 +388,7 @@ const widgetModule: WidgetModule = {
     component: connect(mapStateToProps, mapDispatchToProps)(withHistory(OrderDetailsButtonSet)),
     definition: {
         allowedContexts: [OrderDetailsPageContext],
+        displayName: "Order Details Button Set",
         group: "Order Details",
         fieldDefinitions: [
             {
@@ -408,6 +417,14 @@ const widgetModule: WidgetModule = {
                         defaultValue: "",
                     },
                 ],
+            },
+            {
+                name: fields.generateEmailAttachmentFromWebpage,
+                fieldType: "General",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                tooltip:
+                    "If checked, sharing the order generates an email attachment using the Order Details page, rather than a pre-defined PDF file.",
             },
         ],
     },

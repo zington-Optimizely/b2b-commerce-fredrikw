@@ -35,6 +35,7 @@ import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => ({
     theme: state.styleGuide.theme,
+    stageMode: state.shellContext.stageMode,
 });
 
 const generateIconSrc = (theme: BaseTheme, iconPropsPath: string) => {
@@ -62,7 +63,7 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
 
     return (
         <StagePositioner>
-            <Stage>
+            <Stage stageMode={props.stageMode}>
                 <PreviewWrapper>
                     <ThemeProvider theme={theme} translate={translate}>
                         <PreviewH1>Style Guide</PreviewH1>
@@ -423,10 +424,6 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
     );
 };
 
-const StyleGuidePreview = connect(mapStateToProps)(ConnectableStyleGuidePreview);
-
-export default StyleGuidePreview;
-
 const fontFamily = "Barlow, sans-serif;";
 const textColor = "#4a4a4a";
 const textHighlight = "#00000087";
@@ -586,3 +583,7 @@ const ButtonDemoListItem = styled.li`
     display: inline-block;
     margin-right: 10px;
 `;
+
+const StyleGuidePreview = connect(mapStateToProps)(ConnectableStyleGuidePreview);
+
+export default StyleGuidePreview;

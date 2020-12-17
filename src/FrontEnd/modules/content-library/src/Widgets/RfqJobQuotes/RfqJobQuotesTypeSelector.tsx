@@ -56,7 +56,7 @@ const RfqJobQuotesTypeSelector = ({ history, myQuotesPageUrl }: Props) => {
         <StyledWrapper {...styles.wrapper}>
             <RadioGroup
                 {...styles.quoteTypeRadioGroup}
-                label={<VisuallyHidden>{translate("quote type")}</VisuallyHidden>}
+                label={<VisuallyHidden>{translate("Quote Type")}</VisuallyHidden>}
                 value="job"
                 onChangeHandler={quoteTypeChangeHandler}
                 data-test-selector="jobQuotesTypeRadio"

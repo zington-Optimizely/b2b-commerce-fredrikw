@@ -21,6 +21,7 @@ const initialState: PageTreeState = {
     headerTreeNodesByParentId: {},
     footerTreeNodesByParentId: {},
     mobileTreeNodesByParentId: {},
+    layoutTreeNodesByParentId: {},
     displayReorderPages: false,
     homeNodeId: emptyGuid,
     savingReorderPages: false,
@@ -38,6 +39,7 @@ const reducer = {
         draft.headerTreeNodesByParentId = {};
         draft.footerTreeNodesByParentId = {};
         draft.mobileTreeNodesByParentId = {};
+        draft.layoutTreeNodesByParentId = {};
 
         if (draft.appliedTreeFilters.length > 0) {
             draft.expandedNodes = {};
@@ -63,6 +65,12 @@ const reducer = {
                 }
 
                 targetNodes = draft.mobileTreeNodesByParentId[treeNode.parentId];
+            } else if (treeNode.type === "Layout") {
+                if (!draft.layoutTreeNodesByParentId[treeNode.parentId]) {
+                    draft.layoutTreeNodesByParentId[treeNode.parentId] = [];
+                }
+
+                targetNodes = draft.layoutTreeNodesByParentId[treeNode.parentId];
             } else {
                 if (!draft.treeNodesByParentId[treeNode.parentId]) {
                     draft.treeNodesByParentId[treeNode.parentId] = [];
@@ -97,6 +105,7 @@ const reducer = {
                 variantName: pageState.variantName,
                 isDefaultVariant: pageState.isDefaultVariant,
                 isShared: pageState.isShared,
+                allowedForPageType: pageState.allowedForPageType,
             };
 
             const nodes = treeNodesByNodeId[treeNode.nodeId];
@@ -175,8 +184,13 @@ const reducer = {
         draft.expandedNodes = { ...action.expandedNodes };
     },
 
-    "PageTree/OpenAddPage": (draft: Draft<PageTreeState>, action: { parentId: string }) => {
-        draft.addingPageUnderId = action.parentId;
+    "PageTree/OpenAddPage": (
+        draft: Draft<PageTreeState>,
+        action: { parentId?: string; isLayout?: true; parentType: string },
+    ) => {
+        draft.addingPageUnderId = action.parentId || emptyGuid;
+        draft.isLayout = action.isLayout;
+        draft.addingPageUnderType = action.parentType;
     },
 
     "PageTree/OpenCopyPage": (
@@ -245,6 +259,7 @@ const reducer = {
         draft.variantPageId = "";
         draft.variantPageType = "";
         draft.variantPageName = "";
+        draft.isLayout = false;
     },
 
     "PageTree/AddPageComplete": (draft: Draft<PageTreeState>) => {
@@ -255,6 +270,7 @@ const reducer = {
         draft.variantPageId = "";
         draft.variantPageType = "";
         draft.variantPageName = "";
+        draft.isLayout = false;
     },
 
     "PageTree/DeletePageComplete": (draft: Draft<PageTreeState>) => {},

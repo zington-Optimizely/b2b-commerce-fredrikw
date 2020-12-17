@@ -221,6 +221,7 @@ const CartLineCardExpanded: FC<Props> = ({
                     ...cartLine,
                     notes,
                 },
+                shouldNotReloadPromotions: true,
                 onSuccess: () => {
                     toasterContext.addToast({
                         body: translate("Line Notes Updated"),
@@ -283,7 +284,7 @@ const CartLineCardExpanded: FC<Props> = ({
     }
 
     if (!cartLine.isActive) {
-        errorMessages.push(translate("Inactive product"));
+        errorMessages.push(translate("Inactive Product"));
     }
 
     const [styles] = React.useState(() => mergeToNew(cartLineCardExpandedStyles, extendedStyles));

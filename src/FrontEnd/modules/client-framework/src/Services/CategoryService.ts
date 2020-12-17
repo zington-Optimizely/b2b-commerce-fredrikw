@@ -99,6 +99,7 @@ export async function getCategories(parameter: GetCategoriesApiParameter) {
     for (const category of categoryCollectionModel.categories!) {
         categoryIds.push(category.id);
         cleanCategory(category, categoriesById, parameter.maxDepth ?? 2);
+        delete category.htmlContent;
     }
 
     const categoryCollection = {

@@ -15,7 +15,7 @@ export const DispatchSetOrderNumber: HandlerType = props => {
 
 export const DispatchLoadOrderIfNeeded: HandlerType = props => {
     const orderState = getOrderState(props.getState(), props.parameter.orderNumber);
-    if (!orderState.value || !orderState.value.orderLines) {
+    if ((!orderState.value && !orderState.isLoading) || !orderState.value.orderLines) {
         props.dispatch(loadOrderByOrderNumber(props.parameter));
     }
 };

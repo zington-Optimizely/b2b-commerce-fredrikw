@@ -11,6 +11,7 @@ import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 interface UpdateCartLineParameter {
     onSuccess?: () => void;
     cartLine: CartLineModel;
+    shouldNotReloadPromotions?: boolean;
 }
 
 type HandlerType = ApiHandlerDiscreteParameter<UpdateCartLineParameter, UpdateCartLineApiParameter>;
@@ -31,7 +32,9 @@ export const LoadCart: HandlerType = props => {
 };
 
 export const LoadPromotions: HandlerType = props => {
-    props.dispatch(loadCurrentPromotions());
+    if (!props.parameter.shouldNotReloadPromotions) {
+        props.dispatch(loadCurrentPromotions());
+    }
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {

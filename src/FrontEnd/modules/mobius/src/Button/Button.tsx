@@ -102,7 +102,7 @@ type BWT = Pick<ButtonProps, "shadow"> &
 const ButtonWrapper = styled.button<any>`
     cursor: pointer;
     font-family: inherit;
-    height: ${({ _sizeVariant, _size }) => _size || get(buttonSizeVariants, [_sizeVariant, "height"])}px;
+    min-height: ${({ _sizeVariant, _size }) => _size || get(buttonSizeVariants, [_sizeVariant, "height"])}px;
     line-height: 1;
     backface-visibility: hidden;
     transition: all ${getProp("theme.transition.duration.regular")}ms ease-in-out;

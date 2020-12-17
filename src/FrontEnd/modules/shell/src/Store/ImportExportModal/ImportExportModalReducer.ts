@@ -14,6 +14,17 @@ const reducer = {
             showModal: action.showModal,
         };
     },
+    "RestoreContentModal/SetShowModal": (
+        draft: Draft<ImportExportModalState>,
+        action: { showRestoreModal: boolean },
+    ) => {
+        delete draft.errorMessage;
+        delete draft.taskInProgress;
+        draft.showRestoreModal = action.showRestoreModal;
+    },
+    "RestoreContentModal/BeginTask": (draft: Draft<ImportExportModalState>) => {
+        draft.taskInProgress = true;
+    },
     "ImportExportModal/SetTask": (
         draft: Draft<ImportExportModalState>,
         action: Pick<ImportExportModalState, "task">,

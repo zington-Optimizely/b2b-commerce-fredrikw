@@ -212,7 +212,7 @@ const QuickOrderActions: FC<Props> = ({
             )}
             {productsExist && (
                 <Button {...styles.addToListButton} onClick={addToListClickHandler} disabled={!allQtysIsValid}>
-                    {translate("Add To List")}
+                    {translate("Add to List")}
                 </Button>
             )}
         </>
@@ -244,7 +244,7 @@ const QuickOrderActions: FC<Props> = ({
                         )}
                         {productsExist && (
                             <Clickable onClick={addToListClickHandler} disabled={!allQtysIsValid}>
-                                {translate("Add To List")}
+                                {translate("Add to List")}
                             </Clickable>
                         )}
                     </OverflowMenu>

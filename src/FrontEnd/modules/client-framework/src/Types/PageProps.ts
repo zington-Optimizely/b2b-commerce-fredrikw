@@ -7,6 +7,7 @@ export default interface PageProps extends ContentItemModel {
     nodeId: string;
     sortOrder: number;
     variantName?: string;
+    layoutPageId?: string;
 }
 
 /** All the data needed for saving a page, and provided when retrieving. */

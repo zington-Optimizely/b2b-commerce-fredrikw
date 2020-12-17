@@ -86,6 +86,12 @@ export interface AddWishListLinesApiParameter extends ApiParameter {
     lines: PostWishListLineModel[];
 }
 
+export interface AddAllWishListLinesApiParameter extends ApiParameter {
+    wishList: WishListModel;
+    copyFromWishListId: string;
+    changedListLineQuantities?: { [key: string]: number } | null;
+}
+
 export interface UpdateWishListLineApiParameter extends ApiParameter {
     wishListId: string;
     wishListLineId: string;
@@ -184,6 +190,17 @@ export function addWishListLines(parameter: AddWishListLinesApiParameter) {
         parameter.wishList.wishListLinesUri.indexOf("/api/v1"),
     );
     return post(`${wishListLinesUri}/batch`, { wishListLines: parameter.lines });
+}
+
+export function addAllWishListLines(parameter: AddAllWishListLinesApiParameter) {
+    const wishListLinesUri = parameter.wishList.wishListLinesUri.substr(
+        parameter.wishList.wishListLinesUri.indexOf("/api/v1"),
+    );
+    return post(`${wishListLinesUri}/batch/${parameter.copyFromWishListId}`, {
+        changedListLineQuantities: parameter.changedListLineQuantities,
+        wishListLines: [],
+        pagination: null,
+    });
 }
 
 export function updateWishListLine(parameter: UpdateWishListLineApiParameter) {

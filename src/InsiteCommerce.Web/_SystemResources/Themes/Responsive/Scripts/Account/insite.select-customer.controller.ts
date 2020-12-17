@@ -88,7 +88,7 @@
             this.cartUrl = this.$attrs.cartUrl;
 
             this.returnUrl = this.queryString.get("returnUrl");
-            if (!this.returnUrl) {
+            if (!this.returnUrl || this.returnUrl[0] !== "/") {
                 this.returnUrl = this.homePageUrl;
             }
 

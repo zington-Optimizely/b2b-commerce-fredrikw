@@ -7,7 +7,7 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import Page from "@insite/mobius/Page";
-import React, { FC } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -34,8 +34,8 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const OrderStatusPage: FC<Props> = ({ id, orderNumber, sTEmail, sTPostalCode, loadOrder }) => {
-    React.useEffect(() => {
+const OrderStatusPage = ({ id, orderNumber, sTEmail, sTPostalCode, loadOrder }: Props) => {
+    useEffect(() => {
         if (orderNumber && sTEmail && sTPostalCode) {
             loadOrder({
                 orderNumber,

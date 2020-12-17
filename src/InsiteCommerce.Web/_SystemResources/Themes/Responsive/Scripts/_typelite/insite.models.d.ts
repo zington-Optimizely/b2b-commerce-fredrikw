@@ -110,6 +110,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		pickUpWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
 		fulfillmentMethod: string;
 		cartReminderUnsubscribeToken: string;
+		cartReminderUnsubscribeEmail: string;
 	}
 	interface PersonaModel extends Insite.Core.WebApi.BaseModel {
 		id: System.Guid;

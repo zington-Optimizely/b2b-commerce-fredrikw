@@ -3,6 +3,7 @@ import AddressesState from "@insite/client-framework/Store/Pages/Addresses/Addre
 import BrandsState from "@insite/client-framework/Store/Pages/Brands/BrandsState";
 import BudgetManagementState from "@insite/client-framework/Store/Pages/BudgetManagement/BudgetManagementState";
 import CartState from "@insite/client-framework/Store/Pages/Cart/CartState";
+import CartReminderUnsubscribeState from "@insite/client-framework/Store/Pages/CartReminderUnsubscribe/CartReminderUnsubscribeState";
 import CheckoutReviewAndSubmitState from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/CheckoutReviewAndSubmitState";
 import CheckoutShippingState from "@insite/client-framework/Store/Pages/CheckoutShipping/CheckoutShippingState";
 import DealerDetailsState from "@insite/client-framework/Store/Pages/DealerDetails/DealerDetailsState";
@@ -11,6 +12,7 @@ import InvoiceHistoryState from "@insite/client-framework/Store/Pages/InvoiceHis
 import LocationFinderState from "@insite/client-framework/Store/Pages/LocationFinder/LocationFinderState";
 import MyListDetailsState from "@insite/client-framework/Store/Pages/MyListDetails/MyListDetailsState";
 import MyListsState from "@insite/client-framework/Store/Pages/MyLists/MyListsState";
+import NewsListState from "@insite/client-framework/Store/Pages/NewsList/NewsListState";
 import OrderApprovalDetailsState from "@insite/client-framework/Store/Pages/OrderApprovalDetails/OrderApprovalDetailsState";
 import OrderApprovalListState from "@insite/client-framework/Store/Pages/OrderApprovalList/OrderApprovalListState";
 import OrderConfirmationState from "@insite/client-framework/Store/Pages/OrderConfirmation/OrderConfirmationState";
@@ -44,6 +46,7 @@ export default interface PagesState {
     readonly brands: BrandsState;
     readonly budgetManagement: BudgetManagementState;
     readonly cart: CartState;
+    readonly cartReminderUnsubscribe: CartReminderUnsubscribeState;
     readonly checkoutReviewAndSubmit: CheckoutReviewAndSubmitState;
     readonly checkoutShipping: CheckoutShippingState;
     readonly dealerDetails: DealerDetailsState;
@@ -52,6 +55,7 @@ export default interface PagesState {
     readonly locationFinder: LocationFinderState;
     readonly myLists: MyListsState;
     readonly myListDetails: MyListDetailsState;
+    readonly newsList: NewsListState;
     readonly orderApprovalList: OrderApprovalListState;
     readonly orderApprovalDetails: OrderApprovalDetailsState;
     readonly orderDetails: OrderDetailsState;

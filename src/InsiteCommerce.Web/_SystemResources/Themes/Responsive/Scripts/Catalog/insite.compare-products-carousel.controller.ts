@@ -162,6 +162,10 @@
                 this.bottomCarousels = null;
             }
 
+            if (!this.productsToCompare.length) {
+                return;
+            }
+
             $(".top-carousel.isc-carousel").flexslider({
                 animation: "slide",
                 controlNav: false,

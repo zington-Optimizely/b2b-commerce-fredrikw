@@ -173,7 +173,7 @@ const CartLineCardCondensed: FC<Props> = ({
     }
 
     if (!cartLine.isActive) {
-        errorMessages.push(translate("Inactive product"));
+        errorMessages.push(translate("Inactive Product"));
     }
 
     const [styles] = React.useState(() => mergeToNew(cartLineCardCondensedStyles, extendedStyles));

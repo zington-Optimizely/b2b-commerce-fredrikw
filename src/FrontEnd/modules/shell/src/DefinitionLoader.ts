@@ -7,14 +7,11 @@ import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
 import { HasType, LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import sortBy from "lodash/sortBy";
 // eslint-disable-next-line spire/fenced-imports
-import {
-    commerce_routes as commerceRoutes,
-    spire_system_uris as spireSystemUris,
-} from "../../../config/spire_routes.json";
+import spireRoutes from "../../../config/spire_routes.json";
 
 const systemUris = new Set<string>([
-    ...commerceRoutes.map(v => v.toLowerCase()),
-    ...spireSystemUris.map(v => v.toLowerCase()),
+    ...spireRoutes.commerce_routes.map(v => v.toLowerCase()),
+    ...spireRoutes.spire_system_uris.map(v => v.toLowerCase()),
 ]);
 
 let loadedDefinitions = false;
@@ -157,6 +154,16 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
         defaultValue: "",
         fieldType: "General",
         isRequired: true,
+        sortOrder: 0,
+    });
+
+    fieldDefinitions.push({
+        name: "layoutPage",
+        displayName: "Layout Page",
+        editorTemplate: "TextField",
+        defaultValue: "",
+        isEnabled: () => false,
+        fieldType: "General",
         sortOrder: 0,
     });
 

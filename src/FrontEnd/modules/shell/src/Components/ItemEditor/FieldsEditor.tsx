@@ -1,4 +1,5 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import logger from "@insite/client-framework/Logger";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { ChildFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import { TabDefinition } from "@insite/client-framework/Types/TabDefinition";
@@ -53,28 +54,49 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
 
         setTimeout(() => {
             // we need item to be updated before we can validate it
-            const { fieldDefinitions, item } = this.props;
-            const changedDefinitions = fieldDefinitions.filter(o => o.name === fieldName);
-            if (changedDefinitions.length !== 1) {
-                return;
+            this.checkForValidationErrors(fieldName);
+        });
+    };
+
+    checkForValidationErrors = (fieldName: string) => {
+        const { fieldDefinitions, item } = this.props;
+        const newValidationErrors = { ...this.state.validationErrors };
+        let updateState = false;
+
+        const changedDefinitions = fieldDefinitions.filter(o => o.name === fieldName);
+        if (changedDefinitions.length !== 1) {
+            return;
+        }
+
+        let fieldNames = [fieldName];
+        if (changedDefinitions[0].dependentFields) {
+            fieldNames = fieldNames.concat(changedDefinitions[0].dependentFields);
+        }
+
+        for (const name of fieldNames) {
+            const definitions = fieldDefinitions.filter(o => o.name === name);
+            if (definitions.length !== 1) {
+                continue;
             }
 
-            const changedDefinition = changedDefinitions[0];
+            const validationError = validateField(definitions[0], item);
 
-            const validationError = validateField(changedDefinition, item);
-
-            const newValidationErrors = { ...this.state.validationErrors };
+            updateState = true;
             if (!validationError) {
-                delete newValidationErrors[fieldName];
+                delete newValidationErrors[name];
             } else {
-                newValidationErrors[fieldName] = validationError;
+                newValidationErrors[name] = validationError;
             }
+        }
 
-            this.props.updateHasValidationErrors(Object.keys(newValidationErrors).length !== 0);
+        if (!updateState) {
+            return;
+        }
 
-            this.setState({
-                validationErrors: newValidationErrors,
-            });
+        this.props.updateHasValidationErrors(Object.keys(newValidationErrors).length !== 0);
+
+        this.setState({
+            validationErrors: newValidationErrors,
         });
     };
 
@@ -99,6 +121,11 @@ export default class FieldsEditor extends React.Component<OwnProps, State> {
         const renderFields = (tab: TabDefinition) => {
             return fieldsByTab[tab.displayName].map(fieldDefinition => {
                 if (fieldDefinition.isVisible && !fieldDefinition.isVisible(item)) {
+                    if (this.state.validationErrors[fieldDefinition.name]) {
+                        logger.warn(
+                            "Field has validation error and hidden, use dependentFields to prevent such situations",
+                        );
+                    }
                     return null;
                 }
 

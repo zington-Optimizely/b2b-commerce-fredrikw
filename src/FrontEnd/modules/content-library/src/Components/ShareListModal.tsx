@@ -656,7 +656,7 @@ const ShareListModal: React.FC<Props> = ({
                                     onChange={allowEditListChangeHandler}
                                     data-test-selector="allowEditList"
                                 >
-                                    {translate("Allow editing")}
+                                    {translate("Allow Editing")}
                                 </Checkbox>
                             </GridItem>
                         )}

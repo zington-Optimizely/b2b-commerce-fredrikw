@@ -12,7 +12,7 @@ export async function generateTranslations() {
             logResponse(response);
         }
     } catch (error) {
-        logger.error(`Cannot access ${filePath}. Cannot continue with importing translations.`);
+        logger.warn(`Cannot find translations file at ${filePath}. Translations import cannot continue.`);
     }
 }
 

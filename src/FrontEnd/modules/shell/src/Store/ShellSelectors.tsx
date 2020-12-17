@@ -34,11 +34,13 @@ export function getStorablePage(state: ShellState, websiteId: string): PageModel
         websiteId,
     };
 
-    const { widgetIdsByParentIdAndZone, widgetsById } = state.data.pages;
+    const { widgetIdsByPageIdParentIdAndZone, widgetsById } = state.data.pages;
 
-    for (const parentId in widgetIdsByParentIdAndZone) {
-        for (const zone in widgetIdsByParentIdAndZone[parentId]) {
-            for (const widgetId of widgetIdsByParentIdAndZone[parentId][zone]) {
+    const pageContent = widgetIdsByPageIdParentIdAndZone[page.id];
+
+    for (const parentId in pageContent) {
+        for (const zone in pageContent[parentId]) {
+            for (const widgetId of pageContent[parentId][zone]) {
                 storablePage.widgets.push({ ...widgetsById[widgetId] });
             }
         }

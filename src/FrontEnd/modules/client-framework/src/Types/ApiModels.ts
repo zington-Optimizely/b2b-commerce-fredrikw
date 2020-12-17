@@ -113,6 +113,7 @@ export interface SessionModel extends BaseModel {
     activateAccount: boolean;
     billTo: BillToModel | null;
     cartReminderUnsubscribeToken: string;
+    cartReminderUnsubscribeEmail: string;
     currency: CurrencyModel | null;
     customerWasUpdated: boolean;
     customLandingPage: string;

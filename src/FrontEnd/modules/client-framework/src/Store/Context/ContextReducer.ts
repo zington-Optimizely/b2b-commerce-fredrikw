@@ -1,11 +1,17 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import { getContentByVersionPath } from "@insite/client-framework/Services/ContentService";
 import { Session } from "@insite/client-framework/Services/SessionService";
 import { SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import { Website } from "@insite/client-framework/Services/WebsiteService";
 import ContextState from "@insite/client-framework/Store/Context/ContextState";
+import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
+import { LanguageModel, PersonaModel } from "@insite/client-framework/Types/ApiModels";
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { Draft } from "immer";
 import assign from "lodash/assign";
+import qs from "qs";
 
 const initialState: ContextState = {
     website: {} as Website,
@@ -19,12 +25,31 @@ const initialState: ContextState = {
     isErrorModalOpen: false,
 };
 
+const forcedContext = (() => {
+    if (typeof window === "undefined" || window.location.pathname !== getContentByVersionPath) {
+        return;
+    }
+
+    const forcedContext = parseQueryString<{
+        languageId: string;
+        deviceType?: DeviceType;
+        personaId?: string;
+    }>(window.location.search);
+
+    return forcedContext;
+})();
+
 const reducer = {
     "Context/CompleteLoadWebsite": (draft: Draft<ContextState>, action: { website: Website }) => {
         draft.website = action.website;
         draft.isWebsiteLoaded = true;
     },
     "Context/CompleteLoadSession": (draft: Draft<ContextState>, action: { session: Session }) => {
+        if (forcedContext) {
+            action.session.language = { id: forcedContext.languageId } as LanguageModel;
+            action.session.deviceType = forcedContext.deviceType ?? "";
+            action.session.personas = [{ id: forcedContext.personaId } as PersonaModel];
+        }
         assign(draft.session, action.session);
         draft.isSessionLoaded = true;
     },

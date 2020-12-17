@@ -8,7 +8,6 @@ import {
     ProductInventoryDto,
     ProductPriceDto,
     RealTimeInventoryModel,
-    VariantTraitModel,
 } from "@insite/client-framework/Types/ApiModels";
 import { Draft } from "immer";
 
@@ -135,8 +134,9 @@ const reducer = {
 };
 
 const initConfigurationSelection = (draft: Draft<ProductDetailsState>, configuration?: ConfigurationModel | null) => {
+    draft.configurationSelection = {};
     configuration?.configSections?.forEach(configSection => {
-        draft.configurationSelection[configSection.id] = configSection.sectionOptions?.find(o => o.selected)?.id;
+        draft.configurationSelection[configSection.id] = configSection.sectionOptions?.find(o => o.selected)?.id || "";
     });
     draft.configurationCompleted = isConfigurationCompleted(draft.configurationSelection);
 };

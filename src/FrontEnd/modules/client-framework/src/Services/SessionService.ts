@@ -20,6 +20,7 @@ export interface UpdateSessionWithResultApiParameter extends ApiParameter {
 
 export interface GetSessionApiParameter extends ApiParameter {
     setContextLanguageCode?: string;
+    setContextCurrencyCode?: string;
 }
 
 export interface ForgotPasswordApiParameter extends ApiParameter {
@@ -34,8 +35,8 @@ export interface ResetPasswordApiParameter extends ApiParameter {
 
 export interface CreateSessionApiParameter {
     userName: string;
-    password: string;
-    rememberMe: boolean;
+    password?: string;
+    rememberMe?: boolean;
     returnUrl?: string | undefined;
     isGuest?: boolean;
     accessToken: string;

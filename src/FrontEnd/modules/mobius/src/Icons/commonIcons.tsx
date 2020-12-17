@@ -16,7 +16,8 @@ export function buildIconsObject(foundIcons: RequireContext) {
     return iconObject;
 }
 
-const icons = require.context("./", true, /\.tsx$/);
+// if we don't exclude the current file, we end up with a circular dependency and module loading fails
+const icons = require.context("./", true, /\/(?!commonIcons).+\.tsx$/);
 const iconsObject = buildIconsObject(icons);
 
 export default iconsObject;

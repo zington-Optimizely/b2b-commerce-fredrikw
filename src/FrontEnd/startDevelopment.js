@@ -50,19 +50,22 @@ const stats = {
     entrypoints: false,
     timings: false,
     version: false,
-    warningsFilter: [/Critical dependency: the request of a dependency is an expression/],
 };
+
+const ignoreWarnings = [/Critical dependency: the request of a dependency is an expression/];
 
 const clientCompiler = compiler.compilers.find(compiler => compiler.name === "client");
 const clientWebpackDevMiddleware = webpackDevMiddleware(clientCompiler, {
     publicPath: clientCompiler.options.output.publicPath,
     stats,
+    ignoreWarnings,
 });
 
 const serverCompiler = compiler.compilers.find(compiler => compiler.name === "server");
 const serverWebpackDevMiddleware = webpackDevMiddleware(serverCompiler, {
     stats,
     serverSideRender: true,
+    ignoreWarnings,
 });
 
 let serverHash = "";

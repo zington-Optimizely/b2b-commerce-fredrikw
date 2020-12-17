@@ -4,7 +4,7 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 
-const NotFoundErrorPage: React.FC<PageProps> = ({ id }) => (
+const NotFoundErrorPage = ({ id }: PageProps) => (
     <Page>
         <Zone contentId={id} zoneName="Content" />
     </Page>

@@ -9,7 +9,7 @@ import { ProductDetailsPageContext } from "@insite/content-library/Pages/Product
 import * as React from "react";
 import { connect } from "react-redux";
 
-type OwnProps = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
+type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState) => ({
     configurationCompleted: state.pages.productDetails.configurationCompleted,
@@ -23,17 +23,18 @@ export const availabilityStyles: ProductDetailsAvailabilityStyles = {};
 
 const styles = availabilityStyles;
 
-const ProductDetailsAvailability: React.FC<OwnProps> = ({ product, configurationCompleted }) => {
-    if (
-        !product ||
-        (product.configurationType !== ConfigurationType.None &&
-            product.configurationType !== ConfigurationType.Fixed &&
-            !configurationCompleted)
-    ) {
+const ProductDetailsAvailability = ({ product, configurationCompleted }: Props) => {
+    if (!product) {
         return null;
     }
 
-    return <ProductContextAvailability isProductDetailsPage={true} extendedStyles={styles.availability} />;
+    return (
+        <ProductContextAvailability
+            isProductDetailsPage={true}
+            configurationCompleted={configurationCompleted}
+            extendedStyles={styles.availability}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

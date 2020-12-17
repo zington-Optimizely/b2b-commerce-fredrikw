@@ -20,7 +20,8 @@
             "queryString",
             "accessToken",
             "spinnerService",
-            "$q"
+            "$q",
+            "$attrs"
         ];
 
         constructor(
@@ -32,11 +33,15 @@
             protected queryString: common.IQueryStringService,
             protected accessToken: common.IAccessTokenService,
             protected spinnerService: core.SpinnerService,
-            protected $q: ng.IQService) {
+            protected $q: ng.IQService,
+            protected $attrs: ISelectCustomerControllerAttributes) {
         }
 
         $onInit(): void {
             this.returnUrl = this.queryString.get("returnUrl");
+            if (!this.returnUrl || this.returnUrl[0] !== "/") {
+                this.returnUrl = this.$attrs.homePageUrl;
+            }
 
             this.sessionService.getSession().then(
                 (session: SessionModel) => { this.getSessionCompleted(session); },

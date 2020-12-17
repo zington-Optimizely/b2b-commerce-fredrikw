@@ -381,6 +381,7 @@ export const fetch: typeof window.fetch = (input, init) => {
     preparedInit.referrer = url.href;
     // node-fetch does not currently support setting referrer, we should fall back to looking for this if we can't find a referrer
     preparedHeaders["x-referer"] = url.href;
+    preparedHeaders["x-forwarded-host"] = url.host;
 
     logger.debug(`making request ${JSON.stringify(preparedInput)}`);
 

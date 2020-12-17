@@ -1,6 +1,5 @@
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { canAddToCart } from "@insite/client-framework/Store/Pages/ProductDetails/ProductDetailsSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ProductQuantityOrdered from "@insite/content-library/Components/ProductQuantityOrdered";
@@ -13,7 +12,8 @@ import { css } from "styled-components";
 type Props = WidgetProps & HasProduct & ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: ApplicationState, ownProps: HasProduct) => ({
-    canAddToCart: canAddToCart(state, ownProps.product, ownProps.productInfo),
+    configurationCompleted: state.pages.productDetails.configurationCompleted,
+    variantSelectionCompleted: state.pages.productDetails.variantSelectionCompleted,
 });
 
 export interface ProductDetailsQuantityOrderedStyles {
@@ -32,12 +32,14 @@ export const quantityOrderedStyles: ProductDetailsQuantityOrderedStyles = {
 
 const styles = quantityOrderedStyles;
 
-const ProductDetailsQuantityOrdered: React.FC<Props> = ({ canAddToCart }) => {
-    if (!canAddToCart) {
-        return null;
-    }
-
-    return <ProductQuantityOrdered extendedStyles={styles.quantityOrdered} />;
+const ProductDetailsQuantityOrdered = ({ configurationCompleted, variantSelectionCompleted }: Props) => {
+    return (
+        <ProductQuantityOrdered
+            configurationCompleted={configurationCompleted}
+            variantSelectionCompleted={variantSelectionCompleted}
+            extendedStyles={styles.quantityOrdered}
+        />
+    );
 };
 
 const widgetModule: WidgetModule = {

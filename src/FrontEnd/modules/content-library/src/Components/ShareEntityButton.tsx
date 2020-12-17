@@ -22,6 +22,10 @@ interface OwnProps {
     entityName: "Order" | "Invoice";
     extendedStyles?: ShareEntityButtonStyles;
     variant?: "button" | "clickable";
+    /**
+     * If true, the email attachment will be generated using the entity details web page, rather than a pre-defined PDF file.
+     */
+    generateAttachmentFromWebpage?: boolean;
 }
 
 const mapDispatchToProps = {
@@ -91,6 +95,7 @@ const ShareEntityButton: React.FC<Props> = ({
     extendedStyles,
     shareEntity,
     variant = "button",
+    generateAttachmentFromWebpage,
 }) => {
     if (!entityId) {
         return null;
@@ -182,6 +187,7 @@ const ShareEntityButton: React.FC<Props> = ({
                 setModalIsOpen(false);
                 toasterContext.addToast({ body: siteMessage("Entity_Share_Success"), messageType: "success" });
             },
+            generateAttachmentFromWebpage,
         });
     };
 

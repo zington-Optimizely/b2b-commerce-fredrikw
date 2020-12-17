@@ -13,7 +13,7 @@ import Page from "@insite/mobius/Page";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -52,7 +52,7 @@ export const rfqQuoteDetailsPageStyles: RfqQuoteDetailsPageStyles = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RfqQuoteDetailsPage: FC<Props> = ({ id, quoteId, quoteState, loadQuoteIfNeeded, setExpirationDate }) => {
+const RfqQuoteDetailsPage = ({ id, quoteId, quoteState, loadQuoteIfNeeded, setExpirationDate }: Props) => {
     useEffect(() => {
         if (quoteId && !quoteState.isLoading && !quoteState.errorStatusCode) {
             loadQuoteIfNeeded({ quoteId });

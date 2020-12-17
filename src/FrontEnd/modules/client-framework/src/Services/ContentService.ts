@@ -1,13 +1,21 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { request } from "@insite/client-framework/Services/ApiService";
+import { PaginationModel } from "@insite/client-framework/Types/ApiModels";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+
+/** The URL path for the internal GetContentByVersion feature, used for the publish compare functionality.  */
+export const getContentByVersionPath = "/.spire/GetContentByVersion";
 
 export const getPageByType = (type: string) =>
     get<{ page: PageModel; statusCode: number; redirectTo: string }>("pageByType", { type });
 
 export const getPageByUrl = (url: string, bypassFilters?: boolean) =>
     get<RetrievePageResult>("pageByUrl", { url, bypassFilters });
+
+/** @internal Gets page content for a specific version, used by the content management shell. */
+export const getPageByVersion = (pageVersionId: string) =>
+    request<PageModel>(`/api/internal/contentadmin/getPageByVersion?pageVersionId=${pageVersionId}`, "GET");
 
 export const getPageLinks = () => get<PageLinkModel[]>("pageLinks");
 
@@ -16,6 +24,20 @@ export const getNodeIdForPageName = (pageName: string) => get<string>("getNodeId
 export const getTheme = () => get<BaseTheme>("theme");
 
 export const getPageUrlByType = (type: string) => get<string>("pageUrlByType", { type });
+
+export interface GetPagesByParentApiParameter {
+    page?: number;
+    pageSize?: number;
+    parentNodeId: string;
+}
+
+export interface PagesCollectionModel {
+    pages: PageModel[];
+    pagination: PaginationModel;
+}
+
+export const getPagesByParent = (parameter: { parentNodeId: string }) =>
+    get<PagesCollectionModel>("pagesByParent", parameter);
 
 const contentUrl = "/api/v2/content/";
 

@@ -14,11 +14,9 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import React, { FC } from "react";
+import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
 
 const mapStateToProps = (state: ApplicationState) => ({
     account: state.pages.accountSettings.editingAccount,
@@ -34,7 +32,7 @@ const mapDispatchToProps = {
     setInitialValues,
 };
 
-type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
+type Props = WidgetProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
 export interface AccountSettingsHeaderStyles {
     title: TypographyProps;
@@ -75,18 +73,25 @@ export const headerStyles: AccountSettingsHeaderStyles = {
     },
 };
 
-const updateSettingsHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>, props: Props) => {
-    event.preventDefault();
-    props.saveCurrentAccount();
-};
-
 const styles = headerStyles;
-const AccountSettingsHeader: FC<Props> = props => {
-    const { account, isEmailValid, hasChanges, pageTitle, useDefaultCustomer } = props;
 
+const AccountSettingsHeader = ({
+    account,
+    isEmailValid,
+    hasChanges,
+    pageTitle,
+    useDefaultCustomer,
+    saveCurrentAccount,
+    setInitialValues,
+}: Props) => {
     if (!account) {
         return null;
     }
+
+    const updateSettingsHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        event.preventDefault();
+        saveCurrentAccount();
+    };
 
     const invalidCustomerState = useDefaultCustomer && !account.defaultCustomerId;
     const enableSaveButton = hasChanges && isEmailValid && !invalidCustomerState;
@@ -99,15 +104,13 @@ const AccountSettingsHeader: FC<Props> = props => {
             <GridItem {...styles.buttonSet}>
                 <Hidden {...styles.buttonSetHidden}>
                     {hasChanges && (
-                        <Button {...styles.cancelButton} onClick={props.setInitialValues}>
+                        <Button {...styles.cancelButton} onClick={setInitialValues}>
                             {translate("Cancel")}
                         </Button>
                     )}
                     <Button
                         {...styles.saveButton}
-                        onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                            updateSettingsHandler(event, props)
-                        }
+                        onClick={updateSettingsHandler}
                         disabled={!enableSaveButton}
                         data-test-selector="accountSettings_save"
                     >
@@ -116,14 +119,12 @@ const AccountSettingsHeader: FC<Props> = props => {
                 </Hidden>
                 <Hidden {...styles.menuHidden}>
                     <OverflowMenu position="end" {...styles.overflowMenu}>
-                        <Clickable {...styles.cancelClickable} onClick={props.setInitialValues} disabled={!hasChanges}>
+                        <Clickable {...styles.cancelClickable} onClick={setInitialValues} disabled={!hasChanges}>
                             {translate("Cancel")}
                         </Clickable>
                         <Clickable
                             {...styles.saveClickable}
-                            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                                updateSettingsHandler(event, props)
-                            }
+                            onClick={updateSettingsHandler}
                             disabled={!enableSaveButton}
                         >
                             {translate("Save")}
@@ -140,6 +141,7 @@ const widgetModule: WidgetModule = {
     definition: {
         group: "Account Settings",
         allowedContexts: [AccountSettingsPageContext],
+        displayName: "Header",
     },
 };
 

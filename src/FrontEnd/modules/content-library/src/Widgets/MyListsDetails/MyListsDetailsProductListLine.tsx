@@ -564,7 +564,11 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                     </Hidden>
                 )}
                 <GridItem {...styles.buttonsGridItem}>
-                    <ProductAddToCartButton extendedStyles={styles.addToCartButton} data-test-selector="addToCart" />
+                    <ProductAddToCartButton
+                        notes={wishListLine.notes}
+                        extendedStyles={styles.addToCartButton}
+                        data-test-selector="addToCart"
+                    />
                     {canEditWishList && (
                         <>
                             <Hidden {...styles.deleteLinkHidden}>

@@ -614,7 +614,7 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                             </GridItem>
                             <GridItem {...styles.cardNicknameGridItem}>
                                 <TextField
-                                    label={translate("Card nickname")}
+                                    label={translate("Card Nickname")}
                                     {...styles.cardNicknameTextField}
                                     value={cardNickname}
                                     maxLength={100}
@@ -626,7 +626,7 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                             <GridItem {...styles.cardNumberGridItem}>
                                 {!editingPaymentProfile ? (
                                     <TokenExFrame
-                                        label={translate("Card number")}
+                                        label={translate("Card Number")}
                                         tokenExIFrameContainer={
                                             <>
                                                 <input
@@ -645,7 +645,7 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                                     />
                                 ) : (
                                     <TextField
-                                        label={translate("Card number")}
+                                        label={translate("Card Number")}
                                         {...styles.cardNumberTextField}
                                         disabled
                                         value={editingPaymentProfile?.maskedCardNumber || ""}
@@ -654,7 +654,7 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                             </GridItem>
                             <GridItem {...styles.nameOnCardGridItem}>
                                 <TextField
-                                    label={translate("Name on card")}
+                                    label={translate("Name on Card")}
                                     {...styles.nameOnCardTextField}
                                     required
                                     maxLength={50}

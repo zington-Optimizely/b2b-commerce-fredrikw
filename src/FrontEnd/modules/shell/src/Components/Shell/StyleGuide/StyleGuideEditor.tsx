@@ -597,10 +597,6 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
     );
 };
 
-const StyleGuideEditor = connect(mapStateToProps, mapDispatchToProps)(ConnectableStyleGuideEditor);
-
-export default StyleGuideEditor;
-
 const ColorPickerWrapper = styled.div`
     padding: 5px 35px;
     &:hover {
@@ -654,3 +650,7 @@ const sectionTitleProps: TypographyProps = {
         padding: 0 35px;
     `,
 };
+
+const StyleGuideEditor = connect(mapStateToProps, mapDispatchToProps)(ConnectableStyleGuideEditor);
+
+export default StyleGuideEditor;

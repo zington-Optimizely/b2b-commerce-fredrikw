@@ -1,6 +1,5 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
-import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
@@ -10,6 +9,7 @@ import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/Link
 import displayDealer from "@insite/client-framework/Store/Pages/DealerDetails/Handlers/DisplayDealer";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import { generateLinksFrom } from "@insite/content-library/Components/PageBreadcrumbs";
 import { LinkProps } from "@insite/mobius/Link";
 import Page from "@insite/mobius/Page";
 import cloneDeep from "lodash/cloneDeep";

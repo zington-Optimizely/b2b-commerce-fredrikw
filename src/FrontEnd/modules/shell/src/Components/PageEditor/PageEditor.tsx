@@ -33,6 +33,7 @@ const mapStateToProps = (state: ShellState) => {
         pageDefinition: getPageDefinition(page.type),
         page,
         pageLinks: state.links.pageLinks,
+        stageMode: state.shellContext.stageMode,
     };
 };
 
@@ -85,7 +86,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
     }
 
     render() {
-        const { page, pageDefinition } = this.props;
+        const { page, pageDefinition, stageMode } = this.props;
 
         if (!this.state.id) {
             return null;
@@ -108,7 +109,7 @@ class PageEditor extends React.Component<Props, PageEditorState> {
                 <PageTemplateModal />
                 <Header {...{ page, pageDefinition }} />
                 <PageEditorContainer>
-                    <StyledStage>
+                    <StyledStage stageMode={stageMode}>
                         <SiteFrame pageId={this.state.id} />
                     </StyledStage>
                 </PageEditorContainer>

@@ -97,9 +97,18 @@ export const loadTreeNodes = (): ShellThunkAction => (dispatch: any, getState: (
     );
 };
 
-export const openAddPage = (parentId: string): ShellThunkAction => dispatch => {
+export const openAddPage = (parentId: string, parentType: string): ShellThunkAction => dispatch => {
     dispatch({
         parentId,
+        parentType,
+        type: "PageTree/OpenAddPage",
+    });
+};
+
+export const openAddLayout = (): ShellThunkAction => dispatch => {
+    dispatch({
+        isLayout: true,
+        parentType: "",
         type: "PageTree/OpenAddPage",
     });
 };
@@ -190,10 +199,13 @@ export interface AddPageParameter {
     pageType: string;
     pageName: string;
     parentId: string;
-    copyPageId: string;
+    copyPageId?: string;
     pageTemplate: string;
     isVariant: boolean;
     copyVariantContent: boolean;
+    layoutId: string;
+    allowedForPageType: string;
+    layoutPageName?: string;
     afterSavePage?: (response: SavePageResponseModel) => void;
 }
 
@@ -223,7 +235,7 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
             defaultPersonaId,
         } = getState().shellContext;
 
-        if (parameter.isVariant && !parameter.copyVariantContent) {
+        if ((parameter.isVariant && !parameter.copyVariantContent) || parameter.layoutId) {
             pageModel.widgets = [];
         }
 
@@ -240,12 +252,21 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
             parameter.isVariant,
         );
 
-        const savePageResponse = await addPageApi(pageModel, parameter.isVariant);
+        pageModel.layoutPageId = parameter.layoutId;
+        if (parameter.layoutPageName) {
+            pageModel.generalFields["layoutPage"] = parameter.layoutPageName;
+        }
+        const isLayout = pageModel.type === "Layout";
 
+        if (isLayout) {
+            pageModel.generalFields["allowedForPageType"] = parameter.allowedForPageType;
+        }
+
+        const savePageResponse = await addPageApi(pageModel, parameter.isVariant);
         if (!savePageResponse.duplicatesFound) {
             dispatch(push(`/ContentAdmin/Page/${pageModel.id}`));
 
-            if (parameter.isVariant) {
+            if (parameter.isVariant || isLayout) {
                 // TODO ISC-11025
                 let attempts = 0;
                 while (getCurrentPageForShell(getState()).id !== pageModel.id) {
@@ -271,11 +292,13 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
                             type: "PageTree/AddPageComplete",
                         });
 
-                        dispatch({
-                            pageId: pageModel.id,
-                            isNewVariant: true,
-                            type: "PageTree/OpenRulesEdit",
-                        });
+                        if (parameter.isVariant) {
+                            dispatch({
+                                pageId: pageModel.id,
+                                isNewVariant: true,
+                                type: "PageTree/OpenRulesEdit",
+                            });
+                        }
                     }),
                 );
             } else {
@@ -290,9 +313,10 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
         } else {
             dispatch({
                 type: "ErrorModal/ShowModal",
-                message: parameter.isVariant
-                    ? "A variant with this name already exists."
-                    : "A page with this URL already exists. Please try a different page title or position.",
+                message:
+                    parameter.isVariant || isLayout
+                        ? `A ${isLayout ? "layout" : "variant"} with this name already exists.`
+                        : "A page with this URL already exists. Please try a different page title or position.",
             });
         }
 
@@ -313,7 +337,13 @@ export const deletePage = (nodeId: string, history: History, pageId?: string): S
             if (pageId) {
                 await deleteVariantApi(nodeId, pageId);
             } else {
-                await deletePageApi(nodeId);
+                const response = await deletePageApi(nodeId);
+                if (response.layoutInUse) {
+                    dispatch({
+                        type: "ErrorModal/ShowModal",
+                        message: "This layout is currently being used by a page and may not be deleted.",
+                    });
+                }
             }
 
             dispatch({
@@ -321,6 +351,7 @@ export const deletePage = (nodeId: string, history: History, pageId?: string): S
             });
 
             sendToSite({ type: "ReloadPageLinks" });
+            sendToSite({ type: "ResetPageDataViews" });
 
             dispatch(loadTreeNodes());
 

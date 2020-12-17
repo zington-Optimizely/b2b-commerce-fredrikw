@@ -630,7 +630,7 @@ const widgetModule: WidgetModule = {
             },
             {
                 name: fields.showAddToCart,
-                displayName: "Add To Cart",
+                displayName: "Add to Cart",
                 editorTemplate: "CheckboxField",
                 defaultValue: true,
                 fieldType: "General",
@@ -638,7 +638,7 @@ const widgetModule: WidgetModule = {
             },
             {
                 name: fields.showAddToList,
-                displayName: "Add To List",
+                displayName: "Add to List",
                 editorTemplate: "CheckboxField",
                 defaultValue: true,
                 fieldType: "General",

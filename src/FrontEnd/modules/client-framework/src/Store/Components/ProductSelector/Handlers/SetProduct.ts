@@ -28,6 +28,7 @@ interface Parameter {
     productId?: string;
     searchTerm?: string;
     validateProduct?: boolean;
+    skipInventoryValidation?: boolean;
 }
 
 interface Props {
@@ -158,31 +159,32 @@ export const DispatchUpdateOptions: HandlerType = props => {
     });
 };
 
-export const ValidateProduct: HandlerType = props => {
-    if (!props.parameter.validateProduct || !props.product || !props.productInfo) {
+export const ValidateProduct: HandlerType = ({ parameter, product, productInfo, getState, dispatch }) => {
+    if (!parameter.validateProduct || !product || !productInfo) {
         return;
     }
 
     if (
-        props.product.canConfigure ||
-        (props.product.configurationType !== ConfigurationType.Fixed &&
-            props.product.configurationType !== ConfigurationType.None)
+        product.canConfigure ||
+        (product.configurationType !== ConfigurationType.Fixed && product.configurationType !== ConfigurationType.None)
     ) {
-        props.dispatch({
+        dispatch({
             type: "Components/ProductSelector/SetErrorType",
             errorType: "productIsConfigurable",
         });
     }
 
-    if (props.product.isVariantParent) {
-        props.dispatch({
+    if (product.isVariantParent) {
+        dispatch({
             type: "Components/ProductSelector/OpenVariantModal",
-            productId: props.product.id,
+            productId: product.id,
         });
+
+        return false;
     }
 
-    if (!hasEnoughInventory(props.getState(), { product: props.product, productInfo: props.productInfo })) {
-        props.dispatch({
+    if (!parameter.skipInventoryValidation && !hasEnoughInventory(getState(), { product, productInfo })) {
+        dispatch({
             type: "Components/ProductSelector/SetErrorType",
             errorType: "productIsUnavailable",
         });

@@ -17,15 +17,16 @@ export const wishListsParameter = {
 };
 
 export const LoadLists: HandlerType = async props => {
+    const getWishListsParameter = props.getState().components.addToListModal.getWishListsParameter;
     if (
         props.parameter.modalIsOpen &&
         props.getState().context.session.isAuthenticated &&
-        !getWishListsDataView(props.getState(), wishListsParameter).value
+        !getWishListsDataView(props.getState(), getWishListsParameter).value
     ) {
-        props.dispatch(loadWishLists(wishListsParameter));
+        props.dispatch(loadWishLists(getWishListsParameter));
 
         for (let x = 0; x < 200; x += 1) {
-            if (getWishListsDataView(props.getState(), wishListsParameter).value) {
+            if (getWishListsDataView(props.getState(), getWishListsParameter).value) {
                 break;
             }
             await sleep(50);

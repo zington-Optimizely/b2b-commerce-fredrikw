@@ -2,6 +2,7 @@ import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import sleep from "@insite/client-framework/Common/Sleep";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
 import { autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
+import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { AdminODataApiParameter, getAdminBrands } from "@insite/shell/Services/AdminService";
 import {
@@ -160,12 +161,22 @@ export const savePage = (
             storablePage.variantName = storablePage.generalFields["variantName"];
         }
 
+        if (storablePage.layoutPageId) {
+            storablePage.widgets = storablePage.widgets.filter(o => !o.isLayout);
+        }
         const savePageResponse = await savePageApi(storablePage, !!isVariant);
 
-        dispatch({
-            type: "PageEditor/CompleteSavePage",
-            savePageResponse,
-        });
+        // needed to clean out any child page collections (news list displays child pages). Ideally this would only happen when we add a new page
+        // but if we do it in addPage it happens too soon and the news list will reload the old collection
+        // and we don't have a way to differentiate saving a page vs saving a new page here
+        sendToSite({ type: "ResetPageDataViews" });
+
+        if (storablePage.type === "Layout") {
+            dispatch({
+                type: "PageEditor/LayoutUpdated",
+                id: storablePage.id,
+            });
+        }
 
         dispatch(loadPublishInfo(currentPage.id));
 
@@ -216,6 +227,18 @@ export const editWidget = (id: string, removeIfCanceled?: boolean): ShellThunkAc
         removeIfCanceled,
         item: getState().data.pages.widgetsById[id],
     });
+};
+
+export const reloadPage = (pageId: string): ShellThunkAction => dispatch => {
+    dispatch({
+        type: "PageEditor/LayoutUpdatedReset",
+    });
+
+    dispatch({
+        type: "Data/Pages/Reset",
+    });
+
+    dispatch(loadPage({ pathname: `/Content/Page/${pageId}`, search: "" } as Location));
 };
 
 export const doneEditingItem = (): ShellThunkAction => (dispatch, getState) => {

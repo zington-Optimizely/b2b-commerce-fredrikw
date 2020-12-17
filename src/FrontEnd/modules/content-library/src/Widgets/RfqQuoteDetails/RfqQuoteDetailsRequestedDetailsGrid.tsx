@@ -205,7 +205,7 @@ const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState }: Props) => {
                                 <GridContainer {...styles.quantityAndSubtotalContainer}>
                                     <GridItem {...styles.quantityGridItem}>
                                         <SmallHeadingAndText
-                                            heading={translate("QTY_quantity")}
+                                            heading={translate("QTY")}
                                             text={quoteLine.qtyOrdered || 1}
                                             extendedStyles={styles.quantityHeadingAndText}
                                         />

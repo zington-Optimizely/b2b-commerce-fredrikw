@@ -150,10 +150,16 @@ class AddWidgetModal extends React.Component<Props, State> {
             currentPersonaId,
             defaultPersonaId,
         ) as WidgetProps;
+
+        if (page.type === "Layout") {
+            newWidget.isLayout = true;
+        }
+
         sendToSite({
             type: "AddWidget",
             widget: newWidget,
             sortOrder: addWidgetData.sortOrder,
+            pageId: page.id,
         });
         addWidget(newWidget, addWidgetData.sortOrder, page.id);
         editWidget(newWidget.id, true);
@@ -162,7 +168,7 @@ class AddWidgetModal extends React.Component<Props, State> {
     };
 
     render() {
-        const { groups, widgetsByGroup, addWidgetData } = this.props;
+        const { groups, widgetsByGroup, addWidgetData, page } = this.props;
 
         if (addWidgetData?.addRow && !this.lastAddWidgetData?.addRow) {
             this.addWidget(getWidgetDefinition("Basic/Row"));

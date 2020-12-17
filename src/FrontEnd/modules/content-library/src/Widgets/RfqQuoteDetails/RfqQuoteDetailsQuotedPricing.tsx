@@ -70,7 +70,7 @@ const RfqQuoteDetailsQuotedPricing = ({ quote, quoteLine, extendedStyles }: OwnP
         return (
             <DataTableRow key={qty} {...styles.row}>
                 <DataTableCell {...styles.quantityCell}>
-                    <VisuallyHidden>{translate("Quantity")}</VisuallyHidden>
+                    <VisuallyHidden>{translate("QTY")}</VisuallyHidden>
                     <Typography {...styles.quantityText}>{qty}</Typography>
                 </DataTableCell>
                 <DataTableCell {...styles.priceCell}>

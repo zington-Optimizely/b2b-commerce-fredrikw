@@ -1,6 +1,7 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import Typography from "@insite/mobius/Typography";
 import ClickOutside from "@insite/shell/Components/ClickOutside";
+import Add from "@insite/shell/Components/Icons/Add";
 import Move from "@insite/shell/Components/Icons/Move";
 import SectionCollapse from "@insite/shell/Components/Icons/SectionCollapse";
 import PageTreeFlyOut from "@insite/shell/Components/PageTree/PageTreeFlyOut";
@@ -9,7 +10,7 @@ import MakeDefaultVariantModal from "@insite/shell/Components/Shell/MakeDefaultV
 import VariantRulesModal from "@insite/shell/Components/Shell/VariantRulesModal";
 import {
     loadTreeNodes,
-    openAddPage,
+    openAddLayout,
     openReorderPages,
     setExpandedNodes,
 } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
@@ -34,13 +35,14 @@ const mapStateToProps = (state: ShellState) => ({
     permissions: state.shellContext.permissions,
     mobileCmsModeActive: state.shellContext.mobileCmsModeActive,
     mobileTreeNodesByParentId: state.pageTree.mobileTreeNodesByParentId,
+    layoutTreeNodesByParentId: state.pageTree.layoutTreeNodesByParentId,
 });
 
 const mapDispatchToProps = {
     loadTreeNodes,
-    openAddPage,
     openReorderPages,
     setExpandedNodes,
+    openAddLayout,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
@@ -91,6 +93,10 @@ class PageTree extends ClickOutside<Props, State> {
         setExpandedNodes(nextExpandedNodes);
     };
 
+    private addNewLayout = () => {
+        this.props.openAddLayout();
+    };
+
     private closeFlyOut = () => {
         if (this.state.flyOutNode || this.state.flyOutElement) {
             this.setState({
@@ -102,10 +108,6 @@ class PageTree extends ClickOutside<Props, State> {
 
     private closeAll = () => {
         this.props.setExpandedNodes({});
-    };
-
-    private addRootPage = () => {
-        this.props.openAddPage(this.props.nodesByParentId[emptyGuid][0].nodeId);
     };
 
     private reorderPages = () => {
@@ -126,6 +128,7 @@ class PageTree extends ClickOutside<Props, State> {
             permissions,
             mobileCmsModeActive,
             mobileTreeNodesByParentId,
+            layoutTreeNodesByParentId,
         } = this.props;
         if (mobileCmsModeActive) {
             return (
@@ -157,65 +160,96 @@ class PageTree extends ClickOutside<Props, State> {
         }
 
         return (
-            <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
-                <Typography variant="h2" css={pagesH2}>
-                    Pages
-                    {hasExpandedNodes && (
-                        <CollapseTreeStyle onClick={this.closeAll}>
-                            <SectionCollapse />
-                        </CollapseTreeStyle>
-                    )}
-                    {allowRootAddPage && permissions?.canMovePages && (
-                        <ReorderStyle onClick={this.reorderPages}>
-                            <Move height={19} />
-                        </ReorderStyle>
-                    )}
-                </Typography>
-                <PageTreePages
-                    isEditMode={isEditMode}
-                    selectedPageId={selectedPageId}
-                    parentId={emptyGuid}
-                    nodesByParentId={headerNodesByParentId}
-                    expandedNodes={expandedNodes}
-                    onExpandNode={this.handleExpandPage}
-                    onFlyOutNode={this.handleFlyOutNode}
-                    flyOutNode={flyOutNode}
-                    permissions={permissions}
-                />
-                <PageTreePages
-                    isEditMode={isEditMode}
-                    selectedPageId={selectedPageId}
-                    parentId={emptyGuid}
-                    nodesByParentId={nodesByParentId}
-                    expandedNodes={expandedNodes}
-                    onExpandNode={this.handleExpandPage}
-                    onFlyOutNode={this.handleFlyOutNode}
-                    flyOutNode={flyOutNode}
-                    permissions={permissions}
-                />
-                <PageTreePages
-                    isEditMode={isEditMode}
-                    selectedPageId={selectedPageId}
-                    parentId={emptyGuid}
-                    nodesByParentId={footerNodesByParentId}
-                    expandedNodes={expandedNodes}
-                    onExpandNode={this.handleExpandPage}
-                    onFlyOutNode={this.handleFlyOutNode}
-                    flyOutNode={flyOutNode}
-                    permissions={permissions}
-                />
-
-                {flyOutNode && flyOutElement && (
-                    <PageTreeFlyOut
+            <PageTreeContainerStyle>
+                <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
+                    <Typography variant="h2" css={pagesH2}>
+                        Pages
+                        {hasExpandedNodes && (
+                            <CollapseTreeStyle onClick={this.closeAll}>
+                                <SectionCollapse />
+                            </CollapseTreeStyle>
+                        )}
+                        {allowRootAddPage && permissions?.canMovePages && (
+                            <ReorderStyle onClick={this.reorderPages}>
+                                <Move height={19} />
+                            </ReorderStyle>
+                        )}
+                    </Typography>
+                    <PageTreePages
+                        isEditMode={isEditMode}
+                        selectedPageId={selectedPageId}
+                        parentId={emptyGuid}
+                        nodesByParentId={headerNodesByParentId}
+                        expandedNodes={expandedNodes}
+                        onExpandNode={this.handleExpandPage}
+                        onFlyOutNode={this.handleFlyOutNode}
                         flyOutNode={flyOutNode}
-                        flyOutElement={flyOutElement}
-                        closeFlyOut={this.closeFlyOut}
-                        nodesByParentId={nodesByParentId}
+                        permissions={permissions}
                     />
+                    <PageTreePages
+                        isEditMode={isEditMode}
+                        selectedPageId={selectedPageId}
+                        parentId={emptyGuid}
+                        nodesByParentId={nodesByParentId}
+                        expandedNodes={expandedNodes}
+                        onExpandNode={this.handleExpandPage}
+                        onFlyOutNode={this.handleFlyOutNode}
+                        flyOutNode={flyOutNode}
+                        permissions={permissions}
+                    />
+                    <PageTreePages
+                        isEditMode={isEditMode}
+                        selectedPageId={selectedPageId}
+                        parentId={emptyGuid}
+                        nodesByParentId={footerNodesByParentId}
+                        expandedNodes={expandedNodes}
+                        onExpandNode={this.handleExpandPage}
+                        onFlyOutNode={this.handleFlyOutNode}
+                        flyOutNode={flyOutNode}
+                        permissions={permissions}
+                    />
+
+                    {flyOutNode && flyOutElement && (
+                        <PageTreeFlyOut
+                            flyOutNode={flyOutNode}
+                            flyOutElement={flyOutElement}
+                            closeFlyOut={this.closeFlyOut}
+                            nodesByParentId={nodesByParentId}
+                        />
+                    )}
+                    <MakeDefaultVariantModal />
+                    <VariantRulesModal />
+                </PageTreeStyle>
+                {isEditMode && (
+                    <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
+                        <Typography variant="h2" css={pagesH2}>
+                            Layouts
+                            <PageTreeNewLayout onClick={this.addNewLayout} title="Add New Layout">
+                                <Add />
+                            </PageTreeNewLayout>
+                        </Typography>
+                        <PageTreePages
+                            isEditMode={isEditMode}
+                            selectedPageId={selectedPageId}
+                            parentId={emptyGuid}
+                            nodesByParentId={layoutTreeNodesByParentId}
+                            expandedNodes={expandedNodes}
+                            onExpandNode={this.handleExpandPage}
+                            onFlyOutNode={this.handleFlyOutNode}
+                            flyOutNode={flyOutNode}
+                            permissions={permissions}
+                        />
+                        {flyOutNode && flyOutElement && (
+                            <PageTreeFlyOut
+                                flyOutNode={flyOutNode}
+                                flyOutElement={flyOutElement}
+                                closeFlyOut={this.closeFlyOut}
+                                nodesByParentId={nodesByParentId}
+                            />
+                        )}
+                    </PageTreeStyle>
                 )}
-                <MakeDefaultVariantModal />
-                <VariantRulesModal />
-            </PageTreeStyle>
+            </PageTreeContainerStyle>
         );
     }
 }
@@ -259,4 +293,20 @@ const CollapseTreeStyle = styled.div`
 const PageTreeStyle = styled.div`
     overflow: visible;
     padding: 0 35px;
+`;
+
+const PageTreeNewLayout = styled.button`
+    cursor: pointer;
+    position: absolute;
+    width: 20px;
+    text-align: center;
+    right: 0;
+    top: 0;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+`;
+
+const PageTreeContainerStyle = styled.div`
+    margin-bottom: 40px;
 `;

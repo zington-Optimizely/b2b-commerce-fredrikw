@@ -43,6 +43,8 @@ export interface CartLineCardExpandedStyles {
     productBrand?: ProductBrandStyles;
     productBrandAndDescriptionGridItem?: GridItemProps;
     productDescription?: ProductDescriptionStyles;
+    configurationGridItem?: GridItemProps;
+    configurationOptionText?: TypographyProps;
     productPartNumbersGridItem?: GridItemProps;
     productPartNumbers?: ProductPartNumbersStyles;
     orderLineNotesGridItem?: GridItemProps;
@@ -101,6 +103,12 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
             flex-direction: column;
         `,
         width: 12,
+    },
+    configurationGridItem: {
+        width: 12,
+        css: css`
+            flex-direction: column;
+        `,
     },
     productPartNumbersGridItem: {
         width: 12,
@@ -171,6 +179,15 @@ const CartLineCardExpanded: React.FC<Props> = ({
                                 )}
                                 <ProductDescription product={cartLine} extendedStyles={styles.productDescription} />
                             </GridItem>
+                            {!cartLine.isFixedConfiguration && cartLine.sectionOptions!.length > 0 && (
+                                <GridItem {...styles.configurationGridItem}>
+                                    {cartLine.sectionOptions!.map(option => (
+                                        <Typography {...styles.configurationOptionText} key={option.sectionOptionId}>
+                                            {`${option.sectionName}:${option.optionName}`}
+                                        </Typography>
+                                    ))}
+                                </GridItem>
+                            )}
                             <GridItem {...styles.productPartNumbersGridItem}>
                                 <ProductPartNumbers
                                     productNumber={cartLine.erpNumber}

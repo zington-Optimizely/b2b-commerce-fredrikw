@@ -1,8 +1,6 @@
 import useFilteredVariantTraits from "@insite/client-framework/Common/Hooks/useFilteredVariantTraits";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
-import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import closeVariantModal from "@insite/client-framework/Store/Components/ProductSelector/Handlers/CloseVariantModal";
 import setProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/SetProduct";
@@ -13,17 +11,17 @@ import {
     getVariantChildrenDataView,
 } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
 import translate from "@insite/client-framework/Translate";
-import { VariantTraitModel } from "@insite/client-framework/Types/ApiModels";
 import ProductPrice from "@insite/content-library/Components/ProductPrice";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Select, { SelectProps } from "@insite/mobius/Select";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import * as React from "react";
+import React, { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
+    skipInventoryValidation?: boolean;
     extendedStyles?: ProductSelectorVariantModalStyles;
 }
 
@@ -59,7 +57,7 @@ export interface ProductSelectorVariantModalStyles {
     selectButton?: ButtonPresentationProps;
 }
 
-export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
+export const productSelectorVariantModalStyles: ProductSelectorVariantModalStyles = {
     modal: {
         size: 400,
         cssOverrides: {
@@ -99,7 +97,12 @@ export const quickOrderVariantModalStyles: ProductSelectorVariantModalStyles = {
     },
 };
 
-const ProductSelectorVariantModal: React.FC<Props> = ({
+/**
+ * @deprecated Use productSelectorVariantModalStyles instead.
+ */
+export const quickOrderVariantModalStyles = productSelectorVariantModalStyles;
+
+const ProductSelectorVariantModal = ({
     variantModalIsOpen,
     variantParentProduct,
     variantChildren,
@@ -110,8 +113,9 @@ const ProductSelectorVariantModal: React.FC<Props> = ({
     updateVariantSelection,
     setProduct,
     selectedVariantProductInfo,
-}) => {
-    const [styles] = React.useState(() => mergeToNew(quickOrderVariantModalStyles, extendedStyles));
+    skipInventoryValidation,
+}: Props) => {
+    const [styles] = useState(() => mergeToNew(quickOrderVariantModalStyles, extendedStyles));
 
     if (!variantParentProduct?.variantTraits || !variantChildren) {
         return null;
@@ -130,6 +134,7 @@ const ProductSelectorVariantModal: React.FC<Props> = ({
             productId: variantParentProduct.id,
             variantId: selectedVariant?.id,
             validateProduct: true,
+            skipInventoryValidation,
         });
         closeVariantModal();
     };
@@ -148,15 +153,13 @@ const ProductSelectorVariantModal: React.FC<Props> = ({
             handleClose={closeModalHandler}
         >
             <StyledWrapper {...styles.wrapper}>
-                {filteredVariantTraits.map((variantTrait, index) => (
+                {filteredVariantTraits.map(variantTrait => (
                     <Select
                         {...styles.variantSelect}
                         key={variantTrait.id.toString()}
                         label={variantTrait.nameDisplay}
                         value={variantSelection[variantTrait.id]}
-                        onChange={event => {
-                            variantChangeHandler(event.currentTarget.value, variantTrait.id);
-                        }}
+                        onChange={event => variantChangeHandler(event.currentTarget.value, variantTrait.id)}
                     >
                         <option value="">
                             {variantTrait.unselectedValue

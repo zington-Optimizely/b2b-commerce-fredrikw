@@ -114,6 +114,7 @@ export const actionStyles: MyListsDetailsActionStyles = {
         css: css`
             display: flex;
             flex-wrap: nowrap;
+            align-items: flex-start;
         `,
     },
     wideHidden: {
@@ -417,7 +418,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         const showCopy = wishListSettings.allowMultipleWishLists && showAddToCart;
         const addListToCartButtonText = this.linesSelected()
             ? translate("Add Selected to Cart")
-            : translate("Add List To Cart");
+            : translate("Add List to Cart");
         const scheduleButtonText = wishList.schedule ? translate("Edit Reminder") : translate("Schedule Reminder");
         const showDelete = allowEditingOfWishLists && !wishList.isSharedList;
 

@@ -1,3 +1,4 @@
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { HasShellContext, withIsInShell } from "@insite/client-framework/Components/IsInShell";
 import PublicPage from "@insite/client-framework/Components/PublicPage";
 import ShellHoleConnect from "@insite/client-framework/Components/ShellHoleConnect";
@@ -33,6 +34,8 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasShellContext;
 
+const scrollPositionsKey = "scrollPositions";
+
 class SpireRouter extends React.Component<Props> {
     UNSAFE_componentWillMount() {
         const windowIfDefined = typeof window === "undefined" ? undefined : (window as any);
@@ -59,6 +62,34 @@ class SpireRouter extends React.Component<Props> {
             loadPageLinks();
         }
     }
+
+    componentDidUpdate(prevProps: Props) {
+        if (this.props.location !== prevProps.location) {
+            this.retainScrollPosition(this.props.location.pathname, prevProps.location.pathname);
+            setTimeout(() => this.restoreScrollPosition());
+        }
+    }
+
+    retainScrollPosition = (newPath: string, prevPath: string) => {
+        const scrollPositions: SafeDictionary<number> = {};
+        const scrollPos = JSON.parse(sessionStorage.getItem(scrollPositionsKey) || "{}");
+        if (scrollPos && scrollPos[newPath]) {
+            scrollPositions[newPath] = scrollPos[newPath];
+        }
+
+        scrollPositions[prevPath] = window.scrollY;
+        sessionStorage.setItem(scrollPositionsKey, JSON.stringify(scrollPositions));
+    };
+
+    restoreScrollPosition = () => {
+        const scrollPositions = JSON.parse(sessionStorage.getItem(scrollPositionsKey) || "{}");
+        if (!scrollPositions || !scrollPositions[this.props.location.pathname]) {
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        window.scrollTo(0, scrollPositions[this.props.location.pathname]);
+    };
 
     updateLocation = (url: string, state: unknown, action: (state: unknown, title: string, url: string) => void) => {
         const { pathname, search } = convertToLocation(url);

@@ -3,6 +3,7 @@ import logger from "@insite/client-framework/Logger";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { request } from "@insite/client-framework/Services/ApiService";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { ShareEntityModel } from "@insite/client-framework/Types/ApiModels";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import FormData from "form-data";
 import { ReadStream } from "fs";
@@ -44,6 +45,22 @@ export async function saveTranslations(stream: ReadStream) {
         // so TypeScript complains. Using `any` to more or less
         // ignore TypeScript and just let the JavaScript work.
         body: formData as any,
+    });
+}
+
+type ShareEntityGenerateFromWebpageModel = {
+    html: string;
+} & Omit<ShareEntityModel, "uri" | "properties">;
+
+export async function shareEntityGenerateFromWebpage(model: ShareEntityGenerateFromWebpageModel) {
+    const tokenData = await getAccessToken();
+    const headers = {
+        Authorization: `Bearer ${tokenData.access_token}`,
+    };
+    return fetch(`${internalContentUrl}ShareEntityGenerateFromWebpage`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(model),
     });
 }
 

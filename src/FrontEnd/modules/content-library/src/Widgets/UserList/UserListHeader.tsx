@@ -179,7 +179,7 @@ class UserListHeader extends Component<Props, { query: string; isCreateUserModal
                                 onSubmit={this.searchUsers}
                                 noValidate
                             >
-                                <VisuallyHidden id="userSearch_label">{translate("user search")}</VisuallyHidden>
+                                <VisuallyHidden id="userSearch_label">{translate("User Search")}</VisuallyHidden>
                                 <TextField
                                     {...styles.searchTextField}
                                     labelId="userSearch_label"

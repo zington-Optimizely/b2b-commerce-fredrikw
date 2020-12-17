@@ -1,11 +1,12 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import { ShareOptions } from "@insite/client-framework/Services/WishListService";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
 import translate from "@insite/client-framework/Translate";
-import { WishListModel } from "@insite/client-framework/Types/ApiModels";
+import { CartLineCollectionModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
 import MyListsDetailsPageTypeLink from "@insite/content-library/Components/MyListsDetailsPageTypeLink";
 import WishListSharingStatus, {
     WishListSharingStatusStyles,
@@ -152,7 +153,7 @@ export const wishListCardStyles: WishListCardStyles = {
     },
 };
 
-const WishListCard: React.FunctionComponent<Props> = ({
+const WishListCard = ({
     language,
     allowEditingOfWishLists,
     addingProductToCart,
@@ -166,12 +167,16 @@ const WishListCard: React.FunctionComponent<Props> = ({
 
     const clickAddToCartHandler = (e: any) => {
         e.preventDefault();
-
-        function onAddAllToCartSuccess() {
-            toasterContext.addToast({ body: translate("List added to cart"), messageType: "success" });
-        }
-
         addWishListToCart({ apiParameter: { wishListId: wishList.id }, onSuccess: onAddAllToCartSuccess });
+    };
+
+    const onAddAllToCartSuccess = (result: CartLineCollectionModel) => {
+        toasterContext.addToast({
+            body: result.notAllAddedToCart
+                ? siteMessage("Lists_Items_Not_All_Added_To_Cart")
+                : translate("List Added to Cart"),
+            messageType: "success",
+        });
     };
 
     const updatedOnDisplay = getLocalizedDateTime({
@@ -189,7 +194,9 @@ const WishListCard: React.FunctionComponent<Props> = ({
     }
 
     const canAddToCart = wishList.canAddToCart && !!wishList.wishListLinesCount && wishList.wishListLinesCount > 0;
-
+    const addToCartLabel = translate("Add List to Cart");
+    const deleteLabel = translate("Delete");
+    const leaveLabel = translate("Leave List");
     const [styles] = React.useState(() => mergeToNew(wishListCardStyles, extendedStyles));
 
     return (
@@ -256,24 +263,19 @@ const WishListCard: React.FunctionComponent<Props> = ({
                             disabled={!canAddToCart || addingProductToCart}
                             onClick={clickAddToCartHandler}
                         >
-                            {translate("Add List to Cart")}
+                            {addToCartLabel}
                         </Clickable>
-                        {allowEditingOfWishLists && !wishList.isSharedList && (
-                            <Clickable
-                                {...styles.actionDeleteClickable}
-                                onClick={() => deleteWishList && deleteWishList()}
-                            >
-                                {translate("Delete")}
+                        {allowEditingOfWishLists && !!deleteWishList && !wishList.isSharedList && (
+                            <Clickable {...styles.actionDeleteClickable} onClick={deleteWishList}>
+                                {deleteLabel}
                             </Clickable>
                         )}
                         {allowEditingOfWishLists &&
+                            !!leaveWishList &&
                             wishList.isSharedList &&
                             wishList.shareOption !== ShareOptions.AllCustomerUsers && (
-                                <Clickable
-                                    {...styles.actionLeaveClickable}
-                                    onClick={() => leaveWishList && leaveWishList()}
-                                >
-                                    {translate("Leave List")}
+                                <Clickable {...styles.actionLeaveClickable} onClick={leaveWishList}>
+                                    {leaveLabel}
                                 </Clickable>
                             )}
                     </OverflowMenu>
@@ -285,26 +287,27 @@ const WishListCard: React.FunctionComponent<Props> = ({
                         data-test-selector={`wishListAddToCartButton_${wishList.id}`}
                         onClick={clickAddToCartHandler}
                     >
-                        {translate("Add List to Cart")}
+                        {addToCartLabel}
                     </Button>
-                    {allowEditingOfWishLists && !wishList.isSharedList && (
+                    {allowEditingOfWishLists && !!deleteWishList && !wishList.isSharedList && (
                         <Button
                             {...styles.actionDeleteButton}
-                            onClick={() => deleteWishList && deleteWishList()}
+                            onClick={deleteWishList}
                             data-test-selector={`wishListCardDeleteButton_${wishList.id}`}
                         >
-                            {translate("Delete")}
+                            {deleteLabel}
                         </Button>
                     )}
                     {allowEditingOfWishLists &&
+                        !!leaveWishList &&
                         wishList.isSharedList &&
                         wishList.shareOption !== ShareOptions.AllCustomerUsers && (
                             <Button
                                 {...styles.actionLeaveButton}
-                                onClick={() => leaveWishList && leaveWishList()}
+                                onClick={leaveWishList}
                                 data-test-selector={`wishListCardLeaveButton_${wishList.id}`}
                             >
-                                {translate("Leave List")}
+                                {leaveLabel}
                             </Button>
                         )}
                 </Hidden>

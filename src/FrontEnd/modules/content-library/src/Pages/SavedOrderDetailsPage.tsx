@@ -19,7 +19,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import getColor from "@insite/mobius/utilities/getColor";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -68,7 +68,7 @@ export const savedOrderDetailsPageStyles: SavedOrderDetailsPageStyles = {
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 const styles = savedOrderDetailsPageStyles;
 
-const SavedOrderDetailsPage: FC<Props> = ({
+const SavedOrderDetailsPage = ({
     id,
     cartId,
     savedCartState,
@@ -78,7 +78,7 @@ const SavedOrderDetailsPage: FC<Props> = ({
     allowMultipleWishLists,
     history,
     savedOrderListPageLink,
-}) => {
+}: Props) => {
     useEffect(() => {
         if (cartId) {
             displayOrder({

@@ -6,6 +6,7 @@ import Select, { SelectComponentProps } from "@insite/mobius/Select";
 import Typography from "@insite/mobius/Typography";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
+import convertToNumberIfString from "@insite/mobius/utilities/convertToNumberIfString";
 import { setCookie } from "@insite/mobius/utilities/cookies";
 import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
@@ -160,16 +161,19 @@ const PerPageSelect = styled.span<InjectableCss>`
 const Pagination: React.FC<PaginationProps> = withTheme(props => {
     const {
         createHref,
-        currentPage,
+        currentPage: possibleStringCurrentPage,
         onChangeResultsPerPage,
         onChangePage,
-        resultsPerPage,
+        resultsPerPage: possibleStringResultsPerPage,
         resultsPerPageLabel,
         resultsCount,
         resultsPerPageOptions,
         pageSizeCookie,
         ...otherProps
     } = props;
+
+    const currentPage = convertToNumberIfString(possibleStringCurrentPage);
+    const resultsPerPage = convertToNumberIfString(possibleStringResultsPerPage);
 
     const changeResultsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
         if (pageSizeCookie) {

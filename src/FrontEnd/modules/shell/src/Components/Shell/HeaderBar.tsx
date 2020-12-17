@@ -166,6 +166,8 @@ const HeaderBarStyle = styled.div`
 const SelectWrapper = styled.div`
     position: relative;
     margin: 0 20px 0 6px;
+    height: 100%;
+    display: flex;
     select {
         background-color: transparent;
         border: none;
@@ -191,7 +193,7 @@ const SelectWrapper = styled.div`
     }
     svg {
         position: absolute;
-        top: 8px;
+        top: 17px;
         right: 5px;
         pointer-events: none;
     }

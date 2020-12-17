@@ -8,11 +8,9 @@ import { AccountSettingsPageContext } from "@insite/content-library/Pages/Accoun
 import Checkbox, { CheckboxProps } from "@insite/mobius/Checkbox/Checkbox";
 import CheckboxGroup, { CheckboxGroupComponentProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import React, { FC } from "react";
+import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     updateAccountSettings,
@@ -23,7 +21,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     allowSubscribeToNewsLetter: getSettingsCollection(state).accountSettings.allowSubscribeToNewsLetter,
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface AccountSettingsManageSubscriptionsStyles {
     manageSubscriptionsCheckboxGroup: CheckboxGroupComponentProps;
@@ -48,10 +46,8 @@ export const manageSubscriptionsStyles: AccountSettingsManageSubscriptionsStyles
 
 const styles = manageSubscriptionsStyles;
 
-const AccountSettingsManageSubscriptions: FC<Props> = props => {
-    const { allowSubscribeToNewsLetter, account } = props;
-
-    if (!account) {
+const AccountSettingsManageSubscriptions = ({ allowSubscribeToNewsLetter, account, updateAccountSettings }: Props) => {
+    if (!allowSubscribeToNewsLetter || !account) {
         return null;
     }
 
@@ -61,11 +57,11 @@ const AccountSettingsManageSubscriptions: FC<Props> = props => {
             <CheckboxGroup {...styles.manageSubscriptionsCheckboxGroup}>
                 <Checkbox
                     {...styles.manageSubscriptionsCheckbox}
-                    onChange={(e, value) => props.updateAccountSettings({ isSubscribed: value })}
+                    onChange={(_, value) => updateAccountSettings({ isSubscribed: value })}
                     checked={account.isSubscribed!}
                     data-test-selector="accountSettings_subscribed"
                 >
-                    {translate("Subcribe")}
+                    {translate("Subscribe")}
                 </Checkbox>
             </CheckboxGroup>
         </>
@@ -77,6 +73,7 @@ const widgetModule: WidgetModule = {
     definition: {
         allowedContexts: [AccountSettingsPageContext],
         group: "Account Settings",
+        displayName: "Manage Subscriptions",
     },
 };
 

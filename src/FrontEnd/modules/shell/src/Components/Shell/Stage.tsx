@@ -1,10 +1,38 @@
+import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import getProp from "@insite/mobius/utilities/getProp";
 import DeviceMobile from "@insite/shell/Components/Icons/DeviceMobile";
 import DeviceTablet from "@insite/shell/Components/Icons/DeviceTablet";
-import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
 import styled, { css } from "styled-components";
+
+type Props = { className?: string; stageMode: DeviceType };
+
+const Stage: React.FC<Props> = ({ stageMode, children, className }) => {
+    return (
+        <StageFlexContainer stageMode={stageMode}>
+            <StageWrapper stageMode={stageMode} data-test-selector="stageWrapper">
+                {stageMode === "Phone" && <StyledDeviceMobile />}
+                {stageMode === "Tablet" && <StyledDeviceTablet />}
+                <DeviceContent stageMode={stageMode} className={className}>
+                    {children}
+                </DeviceContent>
+            </StageWrapper>
+        </StageFlexContainer>
+    );
+};
+
+const StyledDeviceMobile = styled(DeviceMobile)`
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+`;
+
+const StyledDeviceTablet = styled(DeviceTablet)`
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+`;
 
 const StageFlexContainer = styled.div<StageProps>`
     ${({ stageMode }) => {
@@ -46,9 +74,7 @@ const StageWrapper = styled.div<StageProps>`
     }}
 `;
 
-const DeviceContent = styled.div<StageProps>`
-    background: #fdfdfd;
-    overflow: auto;
+export const DeviceContent = styled.div<StageProps>`
     ${({ stageMode }) => {
         if (stageMode === "Desktop") {
             return css`
@@ -62,46 +88,12 @@ const DeviceContent = styled.div<StageProps>`
         return css`
             position: absolute;
             z-index: 2;
-            top: ${isMobile ? "58" : "67"}px;
-            left: ${isMobile ? "43" : "54"}px;
+            top: ${isMobile ? "28" : "37"}px;
+            left: ${isMobile ? "13" : "24"}px;
             width: ${isMobile ? "374" : "768"}px;
             height: ${isMobile ? "813" : "1024"}px;
         `;
     }}
 `;
 
-const mapStateToProps = (state: ShellState) => ({
-    stageMode: state.shellContext.stageMode,
-});
-
-type Props = ReturnType<typeof mapStateToProps> & { className?: string };
-
-const StyledDeviceMobile = styled(DeviceMobile)`
-    margin: 30px 0 0 30px;
-    position: absolute;
-    z-index: 3;
-    pointer-events: none;
-`;
-
-const StyledDeviceTablet = styled(DeviceTablet)`
-    margin: 30px 0 0 30px;
-    position: absolute;
-    z-index: 3;
-    pointer-events: none;
-`;
-
-const Stage: React.FC<Props> = ({ stageMode, children, className }) => {
-    return (
-        <StageFlexContainer stageMode={stageMode}>
-            <StageWrapper stageMode={stageMode} data-test-selector="stageWrapper">
-                {stageMode === "Phone" && <StyledDeviceMobile />}
-                {stageMode === "Tablet" && <StyledDeviceTablet />}
-                <DeviceContent stageMode={stageMode} className={className}>
-                    {children}
-                </DeviceContent>
-            </StageWrapper>
-        </StageFlexContainer>
-    );
-};
-
-export default connect(mapStateToProps)(Stage);
+export default Stage;

@@ -19,6 +19,7 @@ import {
     PaginationModel,
     PromotionCollectionModel,
     PromotionModel,
+    SectionOptionDto,
     ShipToModel,
 } from "@insite/client-framework/Types/ApiModels";
 
@@ -92,6 +93,8 @@ export interface AddProductApiParameter extends ApiParameter {
     productId: string;
     qtyOrdered: number;
     unitOfMeasure: string;
+    notes?: string;
+    sectionOptions?: Partial<SectionOptionDto>[];
 }
 
 export interface AddCartPromotionApiParameter extends ApiParameter {
@@ -274,9 +277,11 @@ export function addProduct(parameter: AddProductApiParameter) {
         productId: parameter.productId,
         qtyOrdered: parameter.qtyOrdered,
         unitOfMeasure: parameter.unitOfMeasure,
-    };
+        notes: parameter.notes,
+        sectionOptions: parameter.sectionOptions,
+    } as CartLineModel;
 
-    return post<AddProductApiParameter, CartLineModel>(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
+    return post(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
 }
 
 export async function addProductWithResult(parameter: AddProductApiParameter): Promise<ServiceResult<CartLineModel>> {
@@ -284,13 +289,12 @@ export async function addProductWithResult(parameter: AddProductApiParameter): P
         productId: parameter.productId,
         qtyOrdered: parameter.qtyOrdered,
         unitOfMeasure: parameter.unitOfMeasure,
-    };
+        notes: parameter.notes,
+        sectionOptions: parameter.sectionOptions,
+    } as CartLineModel;
 
     try {
-        const cartLineModel = await post<AddProductApiParameter, CartLineModel>(
-            `${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`,
-            cartLine,
-        );
+        const cartLineModel = await post(`${cartsUrl}/${API_URL_CURRENT_FRAGMENT}/cartlines`, cartLine);
         return {
             successful: true,
             result: cartLineModel,

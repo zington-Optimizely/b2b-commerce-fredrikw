@@ -1,7 +1,7 @@
 import AppThunkAction from "@insite/client-framework/Common/AppThunkAction";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { trackPageChange } from "@insite/client-framework/Common/Utilities/tracking";
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
@@ -15,8 +15,13 @@ import {
 } from "@insite/client-framework/ServerSideRendering";
 import {
     BasicLanguageModel as ActualBasicLanguageModel,
+    getContentByVersionPath,
     getPageByType,
     getPageByUrl,
+    getPageByVersion,
+    getPagesByParent,
+    GetPagesByParentApiParameter,
+    RetrievePageResult,
 } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getPageStateByPath, getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -38,12 +43,19 @@ export const endDraggingWidget = (): AnyAction => ({
     type: "Data/Pages/EndDraggingWidget",
 });
 
-export const moveWidgetTo = (id: string, parentId: string, zoneName: string, index: number): AnyAction => ({
+export const moveWidgetTo = (
+    id: string,
+    parentId: string,
+    zoneName: string,
+    index: number,
+    pageId: string,
+): AnyAction => ({
     type: "Data/Pages/MoveWidgetTo",
     id,
     parentId,
     zoneName,
     index,
+    pageId,
 });
 
 export const addWidget = (widget: WidgetProps, index: number, pageId: string): AnyAction => ({
@@ -58,9 +70,10 @@ export const updateField = (parameter: UpdateFieldParameter): AnyAction => ({
     ...parameter,
 });
 
-export const removeWidget = (id: string): AnyAction => ({
+export const removeWidget = (id: string, pageId: string): AnyAction => ({
     type: "Data/Pages/RemoveWidget",
     id,
+    pageId,
 });
 
 export const replaceItem = (item: ItemProps): AnyAction => ({
@@ -68,19 +81,29 @@ export const replaceItem = (item: ItemProps): AnyAction => ({
     item,
 });
 
+export const resetPageDataViews = (): AnyAction => ({
+    type: "Data/Pages/ResetDataViews",
+});
+
 export const changeContext = (languageId: string, personaId: string, deviceType: DeviceType): AppThunkAction => (
     dispatch,
     getState,
 ) => {
-    const contextData = getContextData(getState());
+    const {
+        currentLanguageId,
+        currentPersonaIds,
+        currentDeviceType,
+        defaultLanguageId,
+        defaultPersonaId,
+    } = getContextData(getState());
 
     dispatch({
         type: "Data/Pages/CompleteChangeContext",
-        languageId,
-        personaId,
-        deviceType,
-        defaultLanguageId: contextData.defaultLanguageId,
-        defaultPersonaId: contextData.defaultPersonaId,
+        languageId: languageId || currentLanguageId,
+        personaId: personaId || currentPersonaIds[0],
+        deviceType: deviceType || currentDeviceType,
+        defaultLanguageId,
+        defaultPersonaId,
     });
 };
 
@@ -105,6 +128,29 @@ export const loadPageByType = (type: string): AppThunkAction => (dispatch, getSt
     );
 };
 
+export const loadPagesForParent = (parameter: GetPagesByParentApiParameter): AppThunkAction => (dispatch, getState) => {
+    const tempParameter = { parentNodeId: parameter.parentNodeId };
+
+    addTask(
+        (async function () {
+            dispatch({
+                type: "Data/Pages/BeginLoadPages",
+                parameter: tempParameter,
+            });
+
+            const pages = await getPagesByParent(tempParameter);
+
+            dispatch({
+                type: "Data/Pages/CompleteLoadPages",
+                parameter: tempParameter,
+                collection: pages,
+                links: getState().links,
+                ...getContextData(getState()),
+            });
+        })(),
+    );
+};
+
 export const loadPage = (location: Location, history?: History, onSuccess?: () => void): AppThunkAction => (
     dispatch,
     getState,
@@ -118,6 +164,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                     type: "LoadPageComplete",
                     pageId: page.id,
                     parentId: page.parentId,
+                    layoutPageId: page.layoutPageId,
                 });
                 dispatch({
                     type: "Data/Pages/SetLocation",
@@ -146,7 +193,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 key: location.pathname,
             });
 
-            let result;
+            let result: RetrievePageResult | undefined;
             const bypassFilters = url.startsWith("/Content/Page/");
 
             try {
@@ -155,6 +202,22 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 if (initialPage && initialPage.result && url === initialPage.url) {
                     result = initialPage.result;
                     clearInitialPage();
+                } else if (location.pathname === getContentByVersionPath) {
+                    if (IS_SERVER_SIDE) {
+                        throw new Error("Server-side rendering is supposed to be disabled for this request.");
+                    }
+                    const pageVersion = await getPageByVersion(
+                        parseQueryString<{ pageVersionId: string }>(location.search).pageVersionId,
+                    );
+                    dispatch({
+                        type: "Data/Pages/CompleteLoadPage",
+                        page: pageVersion,
+                        path: location.pathname,
+                        ...getContextData(getState()),
+                    });
+
+                    finished(pageVersion);
+                    return;
                 } else {
                     result = await getPageByUrl(url, bypassFilters);
                 }

@@ -16,6 +16,7 @@ export interface TreeNodeModel {
     isVariant?: boolean;
     isRootVariant?: boolean;
     isShared?: boolean;
+    allowedForPageType: string;
 }
 
 export interface PageTreeState {
@@ -30,7 +31,9 @@ export interface PageTreeState {
     headerTreeNodesByParentId: Dictionary<TreeNodeModel[]>;
     footerTreeNodesByParentId: Dictionary<TreeNodeModel[]>;
     mobileTreeNodesByParentId: Dictionary<TreeNodeModel[]>;
+    layoutTreeNodesByParentId: Dictionary<TreeNodeModel[]>;
     addingPageUnderId?: string;
+    addingPageUnderType?: string;
     appliedTreeFilters: TreeFilterModel[];
     savingReorderPages: boolean;
     expandedNodes: Dictionary<boolean>;
@@ -44,4 +47,5 @@ export interface PageTreeState {
     makingDefaultPageUnderId?: string;
     variantRulesForPageId?: string;
     isNewVariant?: boolean;
+    isLayout?: boolean;
 }

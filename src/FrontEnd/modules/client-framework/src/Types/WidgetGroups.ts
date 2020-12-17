@@ -28,6 +28,7 @@ const WidgetGroups = [
     "Addresses",
     "My Lists",
     "Cart",
+    "Cart Reminder Unsubscribe",
     "My Lists Details",
     "Account Settings",
     "Checkout - Shipping",
@@ -60,6 +61,8 @@ const WidgetGroups = [
     "Requisition Confirmation",
     "Requisitions",
     "Dealer Details",
+    "News List",
+    "News Page",
 ] as const;
 
 export default WidgetGroups;

@@ -8,7 +8,7 @@ module.exports = {
             "jsx": true,
         }
     },
-    plugins: ["spire", "react"],
+    plugins: ["@typescript-eslint", "spire", "react"],
     settings: {
         react: {
             pragma: "React",
@@ -18,5 +18,20 @@ module.exports = {
     rules: {
         "spire/fenced-imports": ["error", { failRelativeImports: false }],
         "spire/restrict-lodash-import": "error",
+        "spire/avoid-dynamic-translate": [
+            "warn",
+            {
+                generateTranslations: true,
+                ignoreDir: [
+                    "/modules/mobius",
+                    "/modules/mobius-styleguide",
+                    "/modules/server-framework",
+                    "/modules/shell",
+                    "/modules/shell-public",
+                    "/modules/spire-linter",
+                    "/modules/test"
+                ]
+            }
+        ],
     },
 };

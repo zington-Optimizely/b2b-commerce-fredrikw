@@ -131,7 +131,7 @@ const SignInMessage = ({ onClick }: SignInMessageProps) => {
                 margin-top: 1rem;
             `}
         >
-            <Link onClick={onClick}>{translate("Sign in")}</Link>
+            <Link onClick={onClick}>{translate("Sign In")}</Link>
             <Typography> {translate("or enter address during checkout")}</Typography>
         </StyledWrapper>
     );

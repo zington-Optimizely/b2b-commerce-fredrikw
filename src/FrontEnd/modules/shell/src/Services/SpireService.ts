@@ -5,6 +5,8 @@ import { get } from "@insite/shell/Services/ServiceBase";
 
 export const getTemplate = (pageType: string, pageTemplate?: string) =>
     get<PageModel>("/.spire/content/getTemplate", { pageType, pageTemplate });
+
 export const getTemplatePaths = (pageType: string) =>
     get<TemplateInfo[]>("/.spire/content/getTemplatePaths", { pageType });
+
 export const getDiagnostics = () => get<SafeDictionary<string>>("/.spire/diagnostics");

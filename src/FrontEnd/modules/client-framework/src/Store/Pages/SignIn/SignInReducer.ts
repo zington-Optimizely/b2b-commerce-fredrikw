@@ -1,4 +1,5 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
+import { ExternalProviderLinkModel } from "@insite/client-framework/Services/IdentityService";
 import SignInState from "@insite/client-framework/Store/Pages/SignIn/SignInState";
 import { Draft } from "immer";
 
@@ -12,6 +13,12 @@ const reducer = {
     },
     "Pages/SignIn/CompleteSignInAsGuest": (draft: Draft<SignInState>) => {
         draft.isSigningInAsGuest = false;
+    },
+    "Pages/SignIn/CompleteLoadExternalProviders": (
+        draft: Draft<SignInState>,
+        action: { externalProviders?: ExternalProviderLinkModel[] },
+    ) => {
+        draft.externalProviders = action.externalProviders;
     },
 };
 

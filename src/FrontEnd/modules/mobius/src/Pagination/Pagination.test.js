@@ -248,7 +248,7 @@ describe("Pagination", () => {
                         sizeVariant: "large",
                     },
                 };
-                expect(wrapper().find(Button)).toHaveStyleRule("height", "48px");
+                expect(wrapper().find(Button)).toHaveStyleRule("min-height", "48px");
             });
             test("theme with no instance applies theme", () => {
                 theme = themeGenerator({ buttonProps: { shadow: true } });
@@ -263,8 +263,8 @@ describe("Pagination", () => {
                     },
                 };
                 const root = wrapper().find(Button);
-                expect(root).toHaveStyleRule("height", "40px");
-                expect(root).not.toHaveStyleRule("height", "48px");
+                expect(root).toHaveStyleRule("min-height", "40px");
+                expect(root).not.toHaveStyleRule("min-height", "48px");
                 expect(root).toHaveStyleRule("border-radius", "20px");
             });
         });

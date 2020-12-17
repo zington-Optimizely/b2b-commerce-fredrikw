@@ -5,7 +5,7 @@ import CurrentCategory from "@insite/content-library/Components/CurrentCategory"
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 
-const CategoryDetailsPage: React.FC<PageProps> = ({ id }) => (
+const CategoryDetailsPage = ({ id }: PageProps) => (
     <Page>
         <CurrentCategory>
             <Zone contentId={id} zoneName="Content" />

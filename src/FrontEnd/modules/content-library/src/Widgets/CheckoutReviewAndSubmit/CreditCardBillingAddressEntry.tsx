@@ -121,7 +121,7 @@ const CreditCardBillingAddressEntry = ({
                         onChange={onUseBillToChange}
                         data-test-selector="checkoutReviewAndSubmit_useBillingAddress"
                     >
-                        {translate("Use billing address")}
+                        {translate("Use Billing Address")}
                     </Checkbox>
                 </CheckboxGroup>
             </GridItem>

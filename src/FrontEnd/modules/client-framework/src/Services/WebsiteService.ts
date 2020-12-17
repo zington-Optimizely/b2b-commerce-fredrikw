@@ -48,6 +48,7 @@ export const getSiteMessages = (parameter?: GetSiteMessageParameter) =>
 export type GetTranslationDictionariesParameter = ApiParameter & {
     languageCode?: string;
     pageSize: number;
+    source?: string | string[];
 };
 
 export const getTranslationDictionaries = (parameter?: GetTranslationDictionariesParameter) =>

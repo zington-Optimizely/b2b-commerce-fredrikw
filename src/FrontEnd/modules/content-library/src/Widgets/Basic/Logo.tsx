@@ -51,7 +51,7 @@ const Logo: React.FunctionComponent<Props> = ({ fields, extendedStyles }: Props)
     return (
         <StyledWrapper {...styles.wrapper}>
             <Link href="/">
-                <LazyImage src={fields.logoImage} altText={translate("home")} {...styles.image} />
+                <LazyImage src={fields.logoImage} altText={translate("Home")} {...styles.image} />
             </Link>
         </StyledWrapper>
     );

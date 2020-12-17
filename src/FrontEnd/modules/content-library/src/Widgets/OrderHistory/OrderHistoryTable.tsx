@@ -184,7 +184,7 @@ class OrderHistoryTable extends React.Component<Props> {
             body: (
                 <HistoryContext.Provider value={{ history: this.props.history }}>
                     <OrderDetailPageTypeLink title={orderNumber} orderNumber={linkOrderNumber} />
-                    &nbsp;{translate("added to cart")}
+                    &nbsp;{translate("Added to Cart")}
                 </HistoryContext.Provider>
             ),
             messageType: "success",
@@ -283,7 +283,7 @@ class OrderHistoryTable extends React.Component<Props> {
                             {translate("PO #", "customerPO")}
                         </DataTableHeader>
                         {this.props.fields.showReorderProducts && (
-                            <DataTableHeader {...styles.reorderHeader} title={translate("reorder")} />
+                            <DataTableHeader {...styles.reorderHeader} title={translate("Reorder")} />
                         )}
                     </DataTableHead>
                     <DataTableBody data-test-selector="orderHistoryTable_tableBody">

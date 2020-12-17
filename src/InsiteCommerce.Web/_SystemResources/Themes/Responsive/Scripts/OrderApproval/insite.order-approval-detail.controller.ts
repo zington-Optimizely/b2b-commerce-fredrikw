@@ -7,6 +7,7 @@
         cart: CartModel;
         approveOrderErrorMessage: string;
         validationMessage: string;
+        listPageUri: string;
         promotions: PromotionModel[];
 
         static $inject = ["orderApprovalService", "cartService", "accountService", "coreService", "queryString", "promotionService"];
@@ -56,6 +57,10 @@
         }
 
         protected orderApprovalServiceGetCartCompleted(cart: CartModel): void {
+            if (cart.status !== "AwaitingApproval") {
+                this.coreService.redirectToPath(this.listPageUri);
+            }
+
             this.cart = cart;
             this.canApproveOrders();
         }

@@ -1,4 +1,4 @@
-import { ApiParameter, post } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get, post } from "@insite/client-framework/Services/ApiService";
 import { ShareEntityModel, TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 
 const emailsUrl = "/api/v1/email";
@@ -17,6 +17,11 @@ export interface ShareEntityApiParameter extends ApiParameter {
     url: string;
 }
 
+export interface ShareEntityGenerateFromWebpageApiParameter {
+    shareEntityModel: ShareEntityModel;
+    urlPathToLoadForAttachmentHtml: string;
+}
+
 export interface SubmitContactUsFormApiParameter extends ApiParameter {
     topic?: string;
     firstName?: string;
@@ -33,6 +38,10 @@ export function tellAFriend(parameter: TellAFriendApiParameter) {
 
 export function shareEntity(parameter: ShareEntityApiParameter) {
     return post<ShareEntityModel>(parameter.url, parameter.shareEntityModel);
+}
+
+export function shareEntityGenerateFromWebpage(parameter: ShareEntityGenerateFromWebpageApiParameter) {
+    return post<ShareEntityGenerateFromWebpageApiParameter, ShareEntityModel>("/.spire/shareEntity", parameter);
 }
 
 export function subscribeToList(parameter: SubscribeToListApiParameter) {

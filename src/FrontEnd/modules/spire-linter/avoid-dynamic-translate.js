@@ -9,6 +9,7 @@ module.exports = {
         messages: {
             avoid: "Avoid passing dynamic values to translate.",
             avoidUnsupported: "Avoid passing dynamic values to translate (unsupported case)",
+            unsupportedCasing: "Avoid mixing translate value Casing.",
         },
     },
     schema: [
@@ -19,24 +20,28 @@ module.exports = {
                     type: "boolean",
                     default: false,
                 },
+                ignoreDir: {
+                    type: "array",
+                    minItems: 0,
+                },
             },
             additionalProperties: false,
         },
     ],
     create(context) {
         const generateTranslations = (context.options[0] || {}).generateTranslations;
+        const ignoreDir = (context.options[0] || {}).ignoreDir || [];
         const filename = context.getFilename().replace(/\\/g, "/");
-        if (
-            filename.indexOf("/modules/content-library/src/Widgets") === -1 &&
-            filename.indexOf("/modules/content-library/src/Components") === -1 &&
-            filename.indexOf("/modules/content-library/src/Pages") === -1
-        ) {
+        const skip = ignoreDir.some(o => filename.indexOf(o) > -1);
+
+        if (skip) {
             return {};
         }
 
         const writeTranslationsFileIfConfigured = () => {
             if (generateTranslations) {
                 const translationsFilePath = path.resolve("./wwwroot/AppData/translations.csv");
+                fs.mkdirSync("./wwwroot/AppData", { recursive: true });
                 fs.writeFileSync(translationsFilePath, "", { encoding: "utf8" });
                 const data = [...new Set(translations)].filter(o => o).sort(new Intl.Collator("en").compare);
                 fs.appendFileSync(translationsFilePath, data.join("\r\n"), { encoding: "utf8" });
@@ -80,7 +85,12 @@ module.exports = {
                         context.report({ node, messageId: "avoid" });
                     }
                 }
-                if (generateTranslations) {
+
+                if (argument.value && containsStringDifferentByCasing(translations, argument.value)) {
+                    context.report({ node, messageId: "unsupportedCasing" });
+                    return;
+                }
+                else if (argument.value) {
                     translations.push(argument.value);
                 }
             },
@@ -110,6 +120,13 @@ function isLiteral(value) {
 
     // we are probably missing lots of cases here
     return;
+}
+
+function containsStringDifferentByCasing(translations, value) {
+  const foundString = translations.find(
+    (a) => a && a.toLowerCase() === value.toLowerCase()
+  );
+  return !!foundString && value !== foundString;
 }
 
 function findVariable(scope, variableName) {

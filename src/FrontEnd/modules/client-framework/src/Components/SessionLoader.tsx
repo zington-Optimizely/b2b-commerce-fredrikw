@@ -2,6 +2,7 @@ import { getCookie } from "@insite/client-framework/Common/Cookies";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { setErrorHandler } from "@insite/client-framework/HandlerCreator";
+import { createSession } from "@insite/client-framework/Services/SessionService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import handleError from "@insite/client-framework/Store/Context/Handlers/HandleError";
 import loadCurrentWebsite from "@insite/client-framework/Store/Context/Handlers/LoadCurrentWebsite";
@@ -43,7 +44,11 @@ class SessionLoader extends React.Component<Props> {
 
         const props = this.props;
 
-        const parsedQuery = parseQueryString<{ setcontextlanguagecode: string }>(props.location.search);
+        const parsedQuery = parseQueryString<{
+            setcontextlanguagecode: string;
+            setcontextcurrencycode: string;
+            access_token: string;
+        }>(props.location.search);
 
         props.setLocation(props.location);
 
@@ -57,12 +62,20 @@ class SessionLoader extends React.Component<Props> {
         }
 
         if (!props.isSessionLoaded) {
-            if (parsedQuery.setcontextlanguagecode) {
-                props.loadSession({ setContextLanguageCode: parsedQuery.setcontextlanguagecode });
-            } else {
-                props.loadSession();
-            }
+            props.loadSession({
+                setContextLanguageCode: parsedQuery.setcontextlanguagecode,
+                setContextCurrencyCode: parsedQuery.setcontextcurrencycode,
+                onComplete: ({ apiResult }) => {
+                    if (apiResult && parsedQuery.access_token) {
+                        createSession({
+                            userName: apiResult.userName,
+                            accessToken: parsedQuery.access_token,
+                        });
+                    }
+                },
+            });
         }
+
         if (!props.areSettingsLoaded) {
             props.loadSettings();
         }

@@ -178,9 +178,12 @@ const CityStatePostalCode = ({ city, state, postalCode, styles }: CityStatePosta
                 </>
             )}
             {postalCode && (
-                <Typography {...styles.postalCodeText} data-test-selector="addressInfoDisplay_postalCode">
-                    {postalCode}
-                </Typography>
+                <>
+                    {" "}
+                    <Typography {...styles.postalCodeText} data-test-selector="addressInfoDisplay_postalCode">
+                        {postalCode}
+                    </Typography>
+                </>
             )}
         </Typography>
     );

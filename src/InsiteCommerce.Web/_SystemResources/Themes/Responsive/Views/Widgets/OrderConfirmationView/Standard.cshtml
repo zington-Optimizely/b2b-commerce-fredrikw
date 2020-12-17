@@ -69,12 +69,6 @@
                     <span ng-bind="vm.cart.carrier.description"></span>
                     <span ng-bind="vm.cart.shipVia.description"></span>
                 </div>
-                <div class="oc-head" ng-if="vm.cart.creditCardBillingAddress">
-                    <h3>[% translate 'Credit Card Billing Address' %]</h3>
-                </div>
-                <div class="oc-cc-billing-address" ng-if="vm.cart.creditCardBillingAddress">
-                    <isc-address-display address="vm.creditCardBillingAddress" show-email="false"></isc-address-display>
-                </div>
             </div>
             <div ng-show="vm.order.fulfillmentMethod === 'PickUp' && vm.cart.requestedPickupDateDisplay">
                 <div class="oc-head">
@@ -82,6 +76,14 @@
                 </div>
                 <div class="oc-delivery-date">
                     <span id="tst_orderConfirmation_requestedPickupDate" ng-bind="vm.cart.requestedPickupDateDisplay | date:'shortDate'"></span>
+                </div>
+            </div>
+            <div ng-if="vm.cart.creditCardBillingAddress">
+                <div class="oc-head">
+                    <h3>[% translate 'Credit Card Billing Address' %]</h3>
+                </div>
+                <div class="oc-cc-billing-address">
+                    <isc-address-display address="vm.creditCardBillingAddress" show-email="false"></isc-address-display>
                 </div>
             </div>
             <div class="oc-order-notes" ng-if="vm.cart.notes.trim().length > 0">

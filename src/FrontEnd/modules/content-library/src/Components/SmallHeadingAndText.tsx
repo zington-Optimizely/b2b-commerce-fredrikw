@@ -24,6 +24,10 @@ export const smallHeadingAndTextStyles: SmallHeadingAndTextStyles = {
             display: flex;
             flex-direction: column;
             width: 100%;
+
+            @media print {
+                display: block;
+            }
         `,
     },
     heading: {

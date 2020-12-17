@@ -274,7 +274,7 @@ const BrandList: FC<Props> = (props: Props) => {
             </Accordion>
             <StyledWrapper {...styles.buttons}>
                 <Button {...styles.backToTopButton} onClick={handleBackToTop}>
-                    {translate("Back to top")}
+                    {translate("Back to Top")}
                 </Button>
             </StyledWrapper>
         </StyledWrapper>

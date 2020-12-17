@@ -3,9 +3,7 @@ import { Dictionary } from "@insite/client-framework/Common/Types";
 import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { BasicLanguageModel } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import LoadedState from "@insite/client-framework/Types/LoadedState";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
-import { PagePublishInfoModel } from "@insite/shell/Services/ContentAdminService";
 
 export interface LanguageModel extends BasicLanguageModel {
     description: string;

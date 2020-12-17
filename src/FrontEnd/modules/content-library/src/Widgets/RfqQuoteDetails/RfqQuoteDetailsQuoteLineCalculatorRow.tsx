@@ -284,7 +284,7 @@ const RfqQuoteDetailsQuoteLineCalculatorRow = ({
                             onChange={startQtyChangeHandler}
                             onBlur={startQtyBlurHandler}
                         />
-                        <Typography {...styles.toLabelText}>{translate("to")}</Typography>
+                        <Typography {...styles.toLabelText}>{translate("To")}</Typography>
                         <TextField
                             {...styles.endQtyTextField}
                             disabled={index !== quoteLine.pricingRfq!.priceBreaks!.length - 1}

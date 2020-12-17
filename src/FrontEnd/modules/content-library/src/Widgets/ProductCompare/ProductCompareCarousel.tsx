@@ -165,6 +165,7 @@ const ProductCompareCarousel = ({
     removeAllProductsFromCompare,
 }: Props) => {
     const productCompareCarouselId = "product-compare-carousel-id";
+    const [lastProductCount, setLastProductCount] = useState<number>(0);
 
     const [slideDetails, setSlideDetails] = useState<ProductCarouselSlideDetails>({
         products: [],
@@ -181,6 +182,14 @@ const ProductCompareCarousel = ({
     useEffect(() => {
         // Load in products from the ProductCompareService Compare Storage
         if (productIds.length === 0) {
+            if (lastProductCount > 0) {
+                // Navigate back to last page or homepage
+                let url = homePageUrl ?? "";
+                if (returnUrl) {
+                    url = returnUrl;
+                }
+                history.push(url);
+            }
             return;
         }
 
@@ -198,6 +207,7 @@ const ProductCompareCarousel = ({
                 removeProductIdToCompare({ productId }),
             ),
         });
+        setLastProductCount(products.length);
     }, [products]);
 
     const goBack = () => {

@@ -37,13 +37,13 @@ const EnforcementLevelDisplay: React.FunctionComponent<Props> = props => {
             enforcementText = translate("No Enforcement");
             break;
         case "ShipTo":
-            enforcementText = translate("Customer ship to level");
+            enforcementText = translate("Customer Ship To Level");
             break;
         case "Customer":
-            enforcementText = translate("Customer level");
+            enforcementText = translate("Customer Level");
             break;
         case "User":
-            enforcementText = translate("User level");
+            enforcementText = translate("User Level");
             break;
     }
 

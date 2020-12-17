@@ -1,19 +1,24 @@
 /* eslint-disable spire/export-styles */
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { ConfigurationType } from "@insite/client-framework/Services/ProductServiceV2";
 import ProductAvailability, { ProductAvailabilityStyles } from "@insite/content-library/Components/ProductAvailability";
 import React from "react";
 
 interface OwnProps {
     isProductDetailsPage?: boolean;
+    configurationCompleted?: boolean;
     extendedStyles?: ProductAvailabilityStyles;
 }
+
+type Props = OwnProps & HasProduct;
 
 const ProductContextAvailability = ({
     productInfo,
     product,
     isProductDetailsPage,
+    configurationCompleted,
     extendedStyles,
-}: HasProduct & OwnProps) => {
+}: Props) => {
     const { inventory, unitOfMeasure, failedToLoadInventory } = productInfo;
 
     const availability =
@@ -21,7 +26,12 @@ const ProductContextAvailability = ({
             o => o.unitOfMeasure.toLowerCase() === (unitOfMeasure?.toLowerCase() || ""),
         )?.availability || undefined;
 
-    if (product.isVariantParent) {
+    if (
+        product.isVariantParent ||
+        (product.configurationType !== ConfigurationType.None &&
+            product.configurationType !== ConfigurationType.Fixed &&
+            !configurationCompleted)
+    ) {
         return null;
     }
 

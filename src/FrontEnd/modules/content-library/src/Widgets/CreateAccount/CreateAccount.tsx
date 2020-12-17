@@ -1,3 +1,4 @@
+import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import validatePassword, {
@@ -29,11 +30,9 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React, { ReactNode, useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
-
-interface OwnProps extends WidgetProps {}
 
 const mapDispatchToProps = {
     addAccount,
@@ -46,9 +45,10 @@ const mapStateToProps = (state: ApplicationState) => ({
     returnUrl: getCreateAccountReturnUrl(state),
 });
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface CreateAccountStyles {
+    form?: InjectableCss;
     spinner?: LoadingSpinnerProps;
     centeringWrapper?: InjectableCss;
     mainGridContainer?: GridContainerProps;
@@ -181,22 +181,24 @@ const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_
 const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
 const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+const StyledForm = getStyledWrapper("form");
 
-const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accountSettings, returnUrl }) => {
-    const [email, setEmail] = React.useState("");
-    const [userName, setUserName] = React.useState("");
-    const [userNameError, setUserNameError] = React.useState(userNameRequiredFieldMessage);
-    const [errorMessage, setErrorMessage] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState<React.ReactNode>("");
-    const [confirmPassword, setConfirmPassword] = React.useState("");
-    const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState<React.ReactNode>("");
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-    const [isSubscribed, setIsSubscribed] = React.useState(false);
-    const [isSubmitted, setIsSubmitted] = React.useState(false);
-    const [emailError, setEmailError] = React.useState(emailRequiredFieldMessage);
-    const toasterContext = React.useContext(ToasterContext);
+const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, returnUrl }: Props) => {
+    const [email, setEmail] = useState("");
+    const [userName, setUserName] = useState("");
+    const [userNameError, setUserNameError] = useState(userNameRequiredFieldMessage);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState<ReactNode>("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState<ReactNode>("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [emailError, setEmailError] = useState(emailRequiredFieldMessage);
+    const toasterContext = useContext(ToasterContext);
 
     const {
         passwordMinimumLength,
@@ -270,7 +272,8 @@ const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accoun
         }, 500);
     };
 
-    const submitHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (!isSubmitted) {
             setIsSubmitted(true);
         }
@@ -279,6 +282,7 @@ const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accoun
             return;
         }
 
+        setIsSubmitting(true);
         addAccount({
             email,
             userName,
@@ -287,6 +291,7 @@ const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accoun
             onSuccess: onSuccessHandler,
             onError: error => {
                 setErrorMessage(error);
+                setIsSubmitting(false);
             },
         });
     };
@@ -294,122 +299,130 @@ const CreateAccount: FC<Props> = ({ addAccount, signIn, validatePassword, accoun
     const isSubmitEnabled = validateSubmitEnabled();
 
     return (
-        <GridContainer {...styles.mainGridContainer}>
-            <GridItem {...styles.userGridItem}>
-                <GridContainer {...styles.userGridContainer}>
-                    <GridItem {...styles.emailGridItem}>
-                        <TextField
-                            {...styles.emailTextField}
-                            type="email"
-                            label={translate("Email Address")}
-                            onChange={e => emailChangeHandler(e.currentTarget.value)}
-                            value={email}
-                            data-test-selector="createAccount_email"
-                            required
-                            error={isSubmitted && emailError}
-                        />
-                    </GridItem>
-                    <GridItem {...styles.userNameGridItem}>
-                        <TextField
-                            {...styles.userNameTextField}
-                            label={translate("User Name")}
-                            value={userName}
-                            data-test-selector="createAccount_userName"
-                            onChange={e => userChangeHandler(e.currentTarget.value)}
-                            error={isSubmitted && userNameError}
-                            required
-                        />
-                    </GridItem>
-                    <GridItem {...styles.passwordGridItem}>
-                        <TextField
-                            id="password"
-                            {...styles.passwordTextField}
-                            type={showPassword ? undefined : "password"}
-                            label={translate("Password")}
-                            value={password}
-                            onChange={e => passwordChangeHandler(e.currentTarget.value)}
-                            error={isSubmitted && passwordErrorMessage}
-                            iconProps={{ ...styles.passwordIcon, src: showPassword ? EyeOff : Eye }}
-                            iconClickableProps={{
-                                onClick: () => {
-                                    setShowPassword(!showPassword);
-                                },
-                            }}
-                            data-test-selector="createAccount_password"
-                            required
-                        />
-                    </GridItem>
-                    <GridItem {...styles.confirmPasswordGridItem}>
-                        <TextField
-                            id="confirm-password"
-                            {...styles.confirmPasswordTextField}
-                            type={showConfirmPassword ? undefined : "password"}
-                            label={translate("Confirm Password")}
-                            value={confirmPassword}
-                            onChange={e => confirmPasswordChangeHandler(e.currentTarget.value)}
-                            error={isSubmitted && confirmPasswordErrorMessage}
-                            iconProps={{ ...styles.confirmPasswordIcon, src: showConfirmPassword ? EyeOff : Eye }}
-                            iconClickableProps={{
-                                onClick: () => {
-                                    setShowConfirmPassword(!showConfirmPassword);
-                                },
-                            }}
-                            data-test-selector="createAccount_confirmPassword"
-                            required
-                        />
-                    </GridItem>
-                    <GridItem {...styles.subscriptionGridItem}>
-                        <CheckboxGroup>
-                            <Checkbox
-                                onChange={(e, value) => setIsSubscribed(value)}
-                                checked={isSubscribed}
-                                data-test-selector="createAccount_Subscription"
-                            >
-                                {siteMessage("SignIn_Sign_Up_Newsletter")}
-                            </Checkbox>
-                        </CheckboxGroup>
-                    </GridItem>
-                    {errorMessage && (
-                        <GridItem {...styles.submitErrorGridItem}>
-                            <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
+        <StyledForm {...styles.form} onSubmit={submitHandler} noValidate>
+            <GridContainer {...styles.mainGridContainer}>
+                <GridItem {...styles.userGridItem}>
+                    <GridContainer {...styles.userGridContainer}>
+                        <GridItem {...styles.emailGridItem}>
+                            <TextField
+                                {...styles.emailTextField}
+                                type="email"
+                                label={translate("Email Address")}
+                                onChange={e => emailChangeHandler(e.currentTarget.value)}
+                                value={email}
+                                data-test-selector="createAccount_email"
+                                required
+                                error={isSubmitted && emailError}
+                            />
                         </GridItem>
-                    )}
-                    <GridItem {...styles.submitGridItem}>
-                        <Button
-                            {...styles.submitButton}
-                            onClick={submitHandler}
-                            disabled={isSubmitted && !isSubmitEnabled}
-                            data-test-selector="createAccount_createButton"
-                        >
-                            {translate("Create")}
-                        </Button>
-                    </GridItem>
-                </GridContainer>
-            </GridItem>
-            <GridItem {...styles.requirementsGridItem}>
-                <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
-                <GridContainer {...styles.passwordRequirementsGridContainer}>
-                    <GridItem {...styles.passwordRequirementsGridItem}>
-                        {translate("Password must be at least {0} characters long").replace(
-                            "{0}",
-                            passwordMinimumLength.toString(),
+                        <GridItem {...styles.userNameGridItem}>
+                            <TextField
+                                {...styles.userNameTextField}
+                                label={translate("User Name")}
+                                value={userName}
+                                data-test-selector="createAccount_userName"
+                                onChange={e => userChangeHandler(e.currentTarget.value)}
+                                error={isSubmitted && userNameError}
+                                required
+                            />
+                        </GridItem>
+                        <GridItem {...styles.passwordGridItem}>
+                            <TextField
+                                id="password"
+                                {...styles.passwordTextField}
+                                type={showPassword ? undefined : "password"}
+                                label={translate("Password")}
+                                value={password}
+                                onChange={e => passwordChangeHandler(e.currentTarget.value)}
+                                error={isSubmitted && passwordErrorMessage}
+                                iconProps={{ ...styles.passwordIcon, src: showPassword ? EyeOff : Eye }}
+                                iconClickableProps={{
+                                    onClick: () => {
+                                        setShowPassword(!showPassword);
+                                    },
+                                    type: "button",
+                                }}
+                                data-test-selector="createAccount_password"
+                                required
+                            />
+                        </GridItem>
+                        <GridItem {...styles.confirmPasswordGridItem}>
+                            <TextField
+                                id="confirm-password"
+                                {...styles.confirmPasswordTextField}
+                                type={showConfirmPassword ? undefined : "password"}
+                                label={translate("Confirm Password")}
+                                value={confirmPassword}
+                                onChange={e => confirmPasswordChangeHandler(e.currentTarget.value)}
+                                error={isSubmitted && confirmPasswordErrorMessage}
+                                iconProps={{ ...styles.confirmPasswordIcon, src: showConfirmPassword ? EyeOff : Eye }}
+                                iconClickableProps={{
+                                    onClick: () => {
+                                        setShowConfirmPassword(!showConfirmPassword);
+                                    },
+                                    type: "button",
+                                }}
+                                data-test-selector="createAccount_confirmPassword"
+                                required
+                            />
+                        </GridItem>
+                        <GridItem {...styles.subscriptionGridItem}>
+                            <CheckboxGroup>
+                                <Checkbox
+                                    onChange={(e, value) => setIsSubscribed(value)}
+                                    checked={isSubscribed}
+                                    data-test-selector="createAccount_Subscription"
+                                >
+                                    {siteMessage("SignIn_Sign_Up_Newsletter")}
+                                </Checkbox>
+                            </CheckboxGroup>
+                        </GridItem>
+                        {errorMessage && (
+                            <GridItem {...styles.submitErrorGridItem}>
+                                <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
+                            </GridItem>
                         )}
-                    </GridItem>
-                    {passwordRequiresDigit && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
-                    )}
-                    {passwordRequiresLowercase && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
-                    )}
-                    {passwordRequiresUppercase && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
-                    )}
-                    {passwordRequiresSpecialCharacter && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
-                    )}
-                </GridContainer>
-            </GridItem>
-        </GridContainer>
+                        <GridItem {...styles.submitGridItem}>
+                            <Button
+                                {...styles.submitButton}
+                                type="submit"
+                                disabled={isSubmitting || (isSubmitted && !isSubmitEnabled)}
+                                data-test-selector="createAccount_createButton"
+                            >
+                                {translate("Create")}
+                            </Button>
+                        </GridItem>
+                    </GridContainer>
+                </GridItem>
+                <GridItem {...styles.requirementsGridItem}>
+                    <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
+                    <GridContainer {...styles.passwordRequirementsGridContainer}>
+                        <GridItem {...styles.passwordRequirementsGridItem}>
+                            {translate("Password must be at least {0} characters long").replace(
+                                "{0}",
+                                passwordMinimumLength.toString(),
+                            )}
+                        </GridItem>
+                        {passwordRequiresDigit && (
+                            <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                        )}
+                        {passwordRequiresLowercase && (
+                            <GridItem {...styles.passwordRequirementsGridItem}>
+                                {lowerCasePasswordLengthMessage}
+                            </GridItem>
+                        )}
+                        {passwordRequiresUppercase && (
+                            <GridItem {...styles.passwordRequirementsGridItem}>
+                                {upperCasePasswordLengthMessage}
+                            </GridItem>
+                        )}
+                        {passwordRequiresSpecialCharacter && (
+                            <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                        )}
+                    </GridContainer>
+                </GridItem>
+            </GridContainer>
+        </StyledForm>
     );
 };
 

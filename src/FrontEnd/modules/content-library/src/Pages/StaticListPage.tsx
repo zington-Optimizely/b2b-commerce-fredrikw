@@ -1,5 +1,4 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
@@ -9,6 +8,7 @@ import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/StaticLis
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import { generateLinksFrom } from "@insite/content-library/Components/PageBreadcrumbs";
 import Page from "@insite/mobius/Page";
 import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";

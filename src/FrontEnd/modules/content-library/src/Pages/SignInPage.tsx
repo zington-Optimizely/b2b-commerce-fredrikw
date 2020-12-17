@@ -12,9 +12,10 @@ const mapStateToProps = ({
     pages: {
         signIn: { isSigningInAsGuest },
     },
+    context: { isSigningIn },
 }: ApplicationState) => ({
     // This means the loading overlay shows until the browser redirects
-    showLoadingOverlay: isSigningInAsGuest,
+    showLoadingOverlay: isSigningIn || isSigningInAsGuest,
 });
 
 type Props = PageProps & ReturnType<typeof mapStateToProps>;

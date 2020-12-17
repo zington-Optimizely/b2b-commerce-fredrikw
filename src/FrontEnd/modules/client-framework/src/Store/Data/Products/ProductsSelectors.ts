@@ -1,3 +1,4 @@
+import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import {
     GetProductCollectionApiV2Parameter,
@@ -7,6 +8,7 @@ import { FulfillmentMethod } from "@insite/client-framework/Services/SessionServ
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSession, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getById, getDataView } from "@insite/client-framework/Store/Data/DataState";
+import { AvailabilityMessageType, ProductModel } from "@insite/client-framework/Types/ApiModels";
 import cloneDeep from "lodash/cloneDeep";
 
 export function getProductState(state: ApplicationState, id: string | undefined) {
@@ -28,10 +30,34 @@ export function getProductsDataView(
     return getDataView(state.data.products, getProductsParameter);
 }
 
+export function canAddToCart(
+    state: ApplicationState,
+    product: ProductModel,
+    productInfo?: ProductInfo,
+    configurationCompleted?: boolean,
+    variantSelectionCompleted?: boolean,
+) {
+    if (!product) {
+        return false;
+    }
+
+    const { allowBackOrder } = getSettingsCollection(state).productSettings;
+    const availability =
+        productInfo?.inventory?.inventoryAvailabilityDtos?.find(
+            o => o.unitOfMeasure.toLowerCase() === (productInfo?.unitOfMeasure?.toLowerCase() || ""),
+        )?.availability || undefined;
+    return (
+        product.canAddToCart ||
+        ((configurationCompleted || variantSelectionCompleted) &&
+            (allowBackOrder || (availability && availability.messageType !== 2)) &&
+            !product.canConfigure)
+    );
+}
+
 export function hasEnoughInventory(state: ApplicationState, productContext: ProductContextModel) {
     const {
         product,
-        productInfo: { inventory },
+        productInfo: { inventory, unitOfMeasure },
     } = productContext;
     const { fulfillmentMethod } = getSession(state);
     const { productSettings } = getSettingsCollection(state);
@@ -39,12 +65,13 @@ export function hasEnoughInventory(state: ApplicationState, productContext: Prod
         fulfillmentMethod === FulfillmentMethod.PickUp
             ? productSettings.allowBackOrderForPickup
             : productSettings.allowBackOrderForDelivery;
+    const inventoryAvailability = inventory?.inventoryAvailabilityDtos?.find(o => o.unitOfMeasure === unitOfMeasure);
 
     return (
         allowBackOrder ||
         product.isVariantParent ||
         !product.trackInventory ||
-        (inventory && inventory.qtyOnHand && inventory.qtyOnHand > 0)
+        inventoryAvailability?.availability?.messageType !== AvailabilityMessageType.OutOfStock
     );
 }
 
@@ -83,6 +110,7 @@ export function getComputedVariantProduct(
         canonicalUrl: variantProduct.canonicalUrl,
         unitOfMeasures: variantProduct.unitOfMeasures,
         isVariantParent: false,
+        canAddToWishlist: variantProduct.canAddToWishlist,
     });
 
     return {

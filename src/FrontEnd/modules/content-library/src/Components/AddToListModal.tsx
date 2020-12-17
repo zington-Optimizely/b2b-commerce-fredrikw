@@ -3,23 +3,24 @@ import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import setAddToListModalIsOpen, {
-    wishListsParameter,
-} from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
+import updateGetWishListsParameter from "@insite/client-framework/Store/Components/AddToListModal/Handlers/UpdateGetWishListsParameter";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import addToWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/AddToWishList";
+import loadWishLists from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishLists";
 import { getWishListsDataView } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
+import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from "@insite/mobius/DynamicDropdown";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import * as React from "react";
+import debounce from "lodash/debounce";
+import React, { useContext, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -33,7 +34,8 @@ const mapStateToProps = (state: ApplicationState) => ({
     session: state.context.session,
     modalIsOpen: state.components.addToListModal.isOpen,
     productInfos: state.components.addToListModal.productInfos,
-    wishLists: getWishListsDataView(state, wishListsParameter).value,
+    getWishListsParameter: state.components.addToListModal.getWishListsParameter,
+    wishListsDataView: getWishListsDataView(state, state.components.addToListModal.getWishListsParameter),
     signInUrl: getPageLinkByPageType(state, "SignInPage")?.url,
     location: getLocation(state),
 });
@@ -41,13 +43,16 @@ const mapStateToProps = (state: ApplicationState) => ({
 const mapDispatchToProps = {
     setAddToListModalIsOpen,
     addToWishList,
+    updateGetWishListsParameter,
+    loadWishLists,
 };
 
 export interface AddToListModalStyles {
     modal?: ModalPresentationProps;
+    innerWrapper?: InjectableCss;
     signInMessageText?: TypographyProps;
     descriptionText?: TypographyProps;
-    listsSelect?: SelectPresentationProps;
+    listsSelect?: DynamicDropdownPresentationProps;
     newListInput?: TextFieldProps;
     buttonsWrapper?: InjectableCss;
     cancelButton?: ButtonPresentationProps;
@@ -101,35 +106,52 @@ export const addToListModalStyles: AddToListModalStyles = {
 
 const LastUpdatedListIdCookieName = "LastUpdatedListId";
 
-const AddToListModal: React.FC<Props> = ({
+const AddToListModal = ({
     productInfos,
     session,
     modalIsOpen,
-    wishLists,
+    getWishListsParameter,
+    wishListsDataView,
     signInUrl,
     location,
     setAddToListModalIsOpen,
     addToWishList,
+    updateGetWishListsParameter,
+    loadWishLists,
     extendedStyles,
-}) => {
-    const [styles] = React.useState(() => mergeToNew(addToListModalStyles, extendedStyles));
+}: Props) => {
+    const [styles] = useState(() => mergeToNew(addToListModalStyles, extendedStyles));
 
-    const toasterContext = React.useContext(ToasterContext);
+    const toasterContext = useContext(ToasterContext);
 
     const isAuthenticated = session && (session.isAuthenticated || session.rememberMe) && !session.isGuest;
-    const [selectedWishList, setSelectedWishList] = React.useState<WishListModel>();
-    const [newListName, setNewListName] = React.useState("");
-    const [newListNameError, setNewListNameError] = React.useState<React.ReactNode>("");
+    const [selectedWishListId, setSelectedWishListId] = useState("new");
+    const [newListName, setNewListName] = useState("");
+    const [newListNameError, setNewListNameError] = useState<React.ReactNode>("");
+    const [options, setOptions] = useState<OptionObject[]>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!modalIsOpen) {
             return;
         }
 
-        const lastUpdatedListId = getCookie(LastUpdatedListIdCookieName);
-        const lastUpdatedList = wishLists?.find(wishList => wishList.id === lastUpdatedListId);
-        setSelectedWishList(lastUpdatedList);
+        const lastUpdatedListId = getCookie(LastUpdatedListIdCookieName) || "new";
+        setSelectedWishListId(lastUpdatedListId);
     }, [modalIsOpen]);
+
+    useEffect(() => {
+        if (modalIsOpen && !wishListsDataView.value && !wishListsDataView.isLoading) {
+            loadWishLists(getWishListsParameter);
+        }
+    }, [getWishListsParameter]);
+
+    useEffect(() => {
+        if (wishListsDataView.value) {
+            let options: OptionObject[] = [{ optionText: translate("Create New List"), optionValue: "new" }];
+            options = options.concat(wishListsDataView.value.map(o => ({ optionText: o.name, optionValue: o.id })));
+            setOptions(options);
+        }
+    }, [wishListsDataView]);
 
     if (!productInfos) {
         return null;
@@ -141,9 +163,19 @@ const AddToListModal: React.FC<Props> = ({
         setAddToListModalIsOpen({ modalIsOpen: false });
     };
 
-    const listChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedList = wishLists!.find(wishList => wishList.id.toString() === event.target.value);
-        setSelectedWishList(selectedList);
+    const listChangeHandler = (value?: string) => {
+        setSelectedWishListId(value || "new");
+    };
+
+    const debouncedUpdateParameter = debounce((value: string) => {
+        updateGetWishListsParameter({
+            ...getWishListsParameter,
+            query: value || undefined,
+        });
+    }, 200);
+
+    const listsInputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        debouncedUpdateParameter(event.currentTarget.value);
     };
 
     const newListInputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,19 +189,20 @@ const AddToListModal: React.FC<Props> = ({
         e.preventDefault();
         setNewListNameError("");
 
-        if (!selectedWishList && !newListName) {
+        const isNewList = selectedWishListId === "new";
+        if (isNewList && !newListName) {
             setNewListNameError(siteMessage("Lists_Enter_New_Wishlist_Name"));
             return;
         }
 
         addToWishList({
             productInfos,
-            selectedWishList,
+            selectedWishList: isNewList ? undefined : wishListsDataView.value?.find(o => o.id === selectedWishListId),
             newListName,
             onSuccess: (wishList: WishListModel) => {
                 setCookie(LastUpdatedListIdCookieName, wishList.id);
                 setAddToListModalIsOpen({ modalIsOpen: false });
-                setSelectedWishList(wishList);
+                setSelectedWishListId(wishList.id);
                 setNewListName("");
                 toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
             },
@@ -186,7 +219,7 @@ const AddToListModal: React.FC<Props> = ({
             isOpen={modalIsOpen}
             handleClose={modalCloseHandler}
         >
-            <div data-test-selector="productAddToListModal">
+            <StyledWrapper {...styles.innerWrapper} data-test-selector="productAddToListModal">
                 {!isAuthenticated && (
                     <Typography data-test-selector="productAddToListModal_requireSignIn" {...styles.signInMessageText}>
                         {siteMessage(
@@ -196,25 +229,21 @@ const AddToListModal: React.FC<Props> = ({
                     </Typography>
                 )}
                 {isAuthenticated && (
-                    <form>
+                    <>
                         <Typography {...styles.descriptionText}>
-                            {translate("Copy items to a new or existing list.")}
+                            {translate("Add items to a new or existing list.")}
                         </Typography>
-                        <Select
+                        <DynamicDropdown
                             label={translate("Select List")}
-                            value={selectedWishList?.id.toString() || "new"}
-                            onChange={listChangeHandler}
                             {...styles.listsSelect}
+                            isLoading={wishListsDataView.isLoading}
+                            onInputChange={listsInputChangeHandler}
+                            onSelectionChange={listChangeHandler}
+                            selected={selectedWishListId}
+                            options={options}
                             data-test-selector="productAddToListModal_listSelect"
-                        >
-                            <option value="new">{translate("Create New List")}</option>
-                            {wishLists?.map(wishList => (
-                                <option key={wishList.id.toString()} value={wishList.id.toString()}>
-                                    {wishList.name}
-                                </option>
-                            ))}
-                        </Select>
-                        {!selectedWishList && (
+                        />
+                        {selectedWishListId === "new" && (
                             <TextField
                                 label={translate("New List Name")}
                                 value={newListName}
@@ -236,9 +265,9 @@ const AddToListModal: React.FC<Props> = ({
                                 {translate("Add to List")}
                             </Button>
                         </StyledWrapper>
-                    </form>
+                    </>
                 )}
-            </div>
+            </StyledWrapper>
         </Modal>
     );
 };

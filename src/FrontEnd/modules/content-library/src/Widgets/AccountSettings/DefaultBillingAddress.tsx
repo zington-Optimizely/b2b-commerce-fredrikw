@@ -13,6 +13,7 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -67,12 +68,8 @@ export const defaultBillingAddressStyles: DefaultBillingAddressStyles = {
     addressInfoDisplayGridItem: { width: 12 },
 };
 
-const DefaultBillingAddress: React.FunctionComponent<Props> = ({
-    currentBillTo,
-    updateAccountSettings,
-    extendedStyles,
-}) => {
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+const DefaultBillingAddress = ({ currentBillTo, updateAccountSettings, extendedStyles }: Props) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const editClickHandler = () => {
         setIsModalOpen(true);
@@ -91,7 +88,7 @@ const DefaultBillingAddress: React.FunctionComponent<Props> = ({
 
     const modalCloseHandler = () => setIsModalOpen(false);
 
-    const [styles] = React.useState(() => mergeToNew(defaultBillingAddressStyles, extendedStyles));
+    const [styles] = useState(() => mergeToNew(defaultBillingAddressStyles, extendedStyles));
 
     return (
         <GridContainer {...styles.gridContainer}>

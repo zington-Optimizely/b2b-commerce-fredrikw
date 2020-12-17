@@ -79,9 +79,19 @@ export type OverlayProps = OverlayComponentProps & OverlayOwnProps;
 
 const exitDuration = (animationLength: number) => animationLength - 20;
 
-class Overlay extends React.Component<OverlayProps> {
+type State = {
+    /** When true, the environment is client-side and the initial hydration has been completed. */
+    readyForPortal?: true;
+};
+
+class Overlay extends React.Component<OverlayProps, State> {
     private node?: HTMLElement;
     private manager?: OverlayManager | null;
+
+    constructor(props: OverlayProps) {
+        super(props);
+        this.state = {};
+    }
 
     static defaultProps = {
         persisted: false,
@@ -89,6 +99,13 @@ class Overlay extends React.Component<OverlayProps> {
 
     static setAppElement(element: string): void {
         ariaAppHider.setElement(element);
+    }
+
+    componentDidMount() {
+        // `componentDidMount` never runs in server-side rendering, because there is no DOM to mount.
+        // In client-side rendering, `setState` causes the overlay to re-render.
+        // This is a performance win because the server-side-rendered DOM will match the initial client-side hydrated DOM.
+        this.setState({ readyForPortal: true });
     }
 
     componentWillUnmount() {
@@ -113,6 +130,13 @@ class Overlay extends React.Component<OverlayProps> {
     };
 
     render() {
+        if (!this.state.readyForPortal) {
+            // ReactDOM.hydrate doesn't have a mechanism for handling the extra root node created by ReactDOM.createPortal.
+            // So, don't even try.
+            // `readyForPortal` becomes `true` after the component is mounted, preventing the hydration DOM mismatch.
+            return null;
+        }
+
         if (!this.node) {
             this.node = document.createElement("div");
         }

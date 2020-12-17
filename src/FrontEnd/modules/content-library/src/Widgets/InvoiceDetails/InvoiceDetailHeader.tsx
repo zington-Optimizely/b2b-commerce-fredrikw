@@ -2,6 +2,7 @@ import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrint
 import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
+import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import ShareEntityButton, { ShareEntityButtonStyles } from "@insite/content-library/Components/ShareEntityButton";
 import { InvoiceDetailsPageContext } from "@insite/content-library/Pages/InvoiceDetailsPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -13,6 +14,10 @@ import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/Ove
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import React, { FC, useContext } from "react";
 import { css } from "styled-components";
+
+const enum fields {
+    generateEmailAttachmentFromWebpage = "generateEmailAttachmentFromWebpage",
+}
 
 export interface InvoiceDetailHeaderStyles {
     shareEntityButtonStyles?: ShareEntityButtonStyles;
@@ -64,8 +69,10 @@ export const headerStyles: InvoiceDetailHeaderStyles = {
 };
 
 const styles = headerStyles;
-const InvoiceDetailHeader: FC = () => {
+const InvoiceDetailHeader: FC<WidgetProps> = ({ fields }) => {
     const { value: invoice } = useContext(InvoiceStateContext);
+    const resolvedGenerateEmailAttachmentFromWebpage =
+        fields.generateEmailAttachmentFromWebpage === true || fields.generateEmailAttachmentFromWebpage === undefined;
     if (!invoice) {
         return null;
     }
@@ -92,6 +99,7 @@ const InvoiceDetailHeader: FC = () => {
                             variant="clickable"
                             entityName="Invoice"
                             extendedStyles={styles.shareEntityButtonStyles}
+                            generateAttachmentFromWebpage={resolvedGenerateEmailAttachmentFromWebpage}
                         />
                     </OverflowMenu>
                 </Hidden>
@@ -103,6 +111,7 @@ const InvoiceDetailHeader: FC = () => {
                         entityId={invoice.invoiceNumber}
                         entityName="Invoice"
                         extendedStyles={styles.shareEntityButtonStyles}
+                        generateAttachmentFromWebpage={resolvedGenerateEmailAttachmentFromWebpage}
                     />
                 </Hidden>
             </GridItem>
@@ -116,6 +125,16 @@ const widgetModule: WidgetModule = {
         displayName: "Page Header",
         allowedContexts: [InvoiceDetailsPageContext],
         group: "Invoice History",
+        fieldDefinitions: [
+            {
+                name: fields.generateEmailAttachmentFromWebpage,
+                fieldType: "General",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                tooltip:
+                    "If checked, sharing the invoice generates an email attachment using the Invoice Details page, rather than a pre-defined PDF file.",
+            },
+        ],
     },
 };
 

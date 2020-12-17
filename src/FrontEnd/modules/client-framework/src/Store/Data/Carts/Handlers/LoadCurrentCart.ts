@@ -36,6 +36,7 @@ export const SetNeedFullCart: HandlerType = props => {
 };
 
 export const PopulateApiParameter: HandlerType = props => {
+    const pageType = getCurrentPage(props.getState()).type;
     props.apiParameter = {
         cartId: API_URL_CURRENT_FRAGMENT,
         expand: ["validation"],
@@ -53,6 +54,10 @@ export const PopulateApiParameter: HandlerType = props => {
             "carriers",
             "paymentOptions",
         ];
+
+        if (pageType === "CartPage") {
+            props.apiParameter.expand.push("hiddenproducts");
+        }
     }
 };
 

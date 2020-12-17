@@ -1,5 +1,4 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
-import { generateLinksFrom } from "@insite/client-framework/Components/PageBreadcrumbs";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
@@ -10,8 +9,9 @@ import displayOrder from "@insite/client-framework/Store/Pages/OrderDetails/Hand
 import setReturnNotes from "@insite/client-framework/Store/Pages/RequestRma/Handlers/SetReturnNotes";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import { generateLinksFrom } from "@insite/content-library/Components/PageBreadcrumbs";
 import Page from "@insite/mobius/Page";
-import * as React from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -40,7 +40,7 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const RequestRmaPage: React.FC<Props> = ({
+const RequestRmaPage = ({
     id,
     orderNumber,
     orderState,
@@ -51,15 +51,15 @@ const RequestRmaPage: React.FC<Props> = ({
     setReturnNotes,
     displayOrder,
     setBreadcrumbs,
-}) => {
-    React.useEffect(() => {
+}: Props) => {
+    useEffect(() => {
         setReturnNotes({ returnNotes: "" });
         if (orderNumber) {
             displayOrder({ orderNumber });
         }
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!breadcrumbLinks && orderNumber) {
             setPageBreadcrumbs();
         }

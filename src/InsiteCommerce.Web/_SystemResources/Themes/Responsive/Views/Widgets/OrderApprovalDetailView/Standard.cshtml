@@ -1,4 +1,4 @@
-﻿<div ng-controller="OrderApprovalDetailController as vm" ng-cloak>
+﻿<div ng-controller="OrderApprovalDetailController as vm"  ng-init="vm.listPageUri = '[% urlForPage 'OrderApprovalListPage' %]'" ng-cloak>
     <div ng-show="vm.cart">
         <div class="quote-items-note messaging" ng-if="vm.currentCart.canRequestQuote && vm.currentCart.quoteRequiredCount > 0">
             <p>[% siteMessage 'Rfq_Requires_Quote_InCartMessage' %]</p>

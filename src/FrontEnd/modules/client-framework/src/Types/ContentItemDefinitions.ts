@@ -21,4 +21,6 @@ export interface PageDefinition<T = FieldDefinition> extends ContentItemDefiniti
     supportsCategorySelection?: true;
     supportsBrandSelection?: true;
     pageType: "System" | "Content";
+    allowedParents?: string[];
+    allowedChildren?: string[];
 }

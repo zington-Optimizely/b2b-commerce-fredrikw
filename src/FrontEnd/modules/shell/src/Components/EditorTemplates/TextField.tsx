@@ -17,6 +17,7 @@ export default class TextField extends React.Component<EditorTemplateProps<strin
                     type="text"
                     value={this.props.fieldValue}
                     placeholder={this.props.fieldDefinition.placeholder}
+                    maxLength={this.props.fieldDefinition.maxLength}
                     onChange={this.onChange}
                     disabled={
                         this.props.fieldDefinition.isEnabled && !this.props.fieldDefinition.isEnabled(this.props.item)

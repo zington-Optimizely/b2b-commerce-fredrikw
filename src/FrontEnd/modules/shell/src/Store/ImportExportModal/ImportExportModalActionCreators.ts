@@ -2,6 +2,7 @@ import { getAccessTokenFromLocalStorage } from "@insite/shell/Services/AccessTok
 import {
     exportContent as apiExportContent,
     importContent as apiImportContent,
+    restoreContent as apiRestoreContent,
 } from "@insite/shell/Services/ContentAdminService";
 import { ImportExportModalState } from "@insite/shell/Store/ImportExportModal/ImportExportModalState";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
@@ -15,6 +16,16 @@ export const showImportExportModal = (): AnyShellAction => ({
 export const closeImportExportModal = (): AnyShellAction => ({
     type: "ImportExportModal/SetShowModal",
     showModal: false,
+});
+
+export const showRestoreContentModal = (): AnyShellAction => ({
+    type: "RestoreContentModal/SetShowModal",
+    showRestoreModal: true,
+});
+
+export const closeRestoreContentModal = (): AnyShellAction => ({
+    type: "RestoreContentModal/SetShowModal",
+    showRestoreModal: false,
 });
 
 export const setTask = (task: ImportExportModalState["task"]): AnyShellAction => ({
@@ -64,3 +75,20 @@ export const importContent = (file: File): ShellThunkAction => async (dispatch, 
 export const confirmImport = (): AnyShellAction => ({
     type: "ImportExportModal/ConfirmImport",
 });
+
+export const restoreContent = (): ShellThunkAction => async dispatch => {
+    dispatch({
+        type: "RestoreContentModal/BeginTask",
+    });
+
+    const { success, errorMessage } = await apiRestoreContent();
+
+    if (success) {
+        window.location.href = "/ContentAdmin/Page";
+    } else {
+        dispatch({
+            type: "ImportExportModal/SetErrorMessage",
+            errorMessage,
+        });
+    }
+};

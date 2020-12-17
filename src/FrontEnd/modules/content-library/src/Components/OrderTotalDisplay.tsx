@@ -52,35 +52,70 @@ export const orderTotalDisplayStyles: OrderTotalDisplayStyles = {
         `,
     },
     subtotalLabelGridItem: { width: 6 },
-    subtotalValueGridItem: { width: 6 },
+    subtotalValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     subtotalValue: {
         css: css`
             margin-left: auto;
         `,
     },
     discountsLabelGridItem: { width: 6 },
-    discountsValueGridItem: { width: 6 },
+    discountsValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     discountsValue: {
         css: css`
             margin-left: auto;
         `,
     },
     shippingAndHandlingLabelGridItem: { width: 6 },
-    shippingAndHandlingValueGridItem: { width: 6 },
+    shippingAndHandlingValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     shippingAndHandlingValue: {
         css: css`
             margin-left: auto;
         `,
     },
     otherChargesLabelGridItem: { width: 6 },
-    otherChargesValueGridItem: { width: 6 },
+    otherChargesValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     otherChargesValue: {
         css: css`
             margin-left: auto;
         `,
     },
     taxLabelGridItem: { width: 6 },
-    taxValueGridItem: { width: 6 },
+    taxValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     taxValue: {
         css: css`
             margin-left: auto;
@@ -88,7 +123,14 @@ export const orderTotalDisplayStyles: OrderTotalDisplayStyles = {
     },
     totalLabelGridItem: { width: 6 },
     totalLabel: { weight: "bold" },
-    totalValueGridItem: { width: 6 },
+    totalValueGridItem: {
+        css: css`
+            @media print {
+                text-align: right;
+            }
+        `,
+        width: 6,
+    },
     totalValue: {
         weight: "bold",
         css: css`

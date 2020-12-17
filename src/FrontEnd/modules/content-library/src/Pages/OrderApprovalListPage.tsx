@@ -8,7 +8,7 @@ import {
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
-import React, { FC, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -22,12 +22,12 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const OrderApprovalListPage: FC<Props> = ({
+const OrderApprovalListPage = ({
     id,
     getOrderApprovalsParameter,
     orderApprovalsDataView,
     loadOrderApprovals,
-}) => {
+}: Props) => {
     useEffect(() => {
         // if this is undefined it means someone changed the filters and we haven't loaded the new collection yet
         if (!orderApprovalsDataView.value && !orderApprovalsDataView.isLoading) {

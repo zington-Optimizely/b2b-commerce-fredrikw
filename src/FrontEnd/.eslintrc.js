@@ -137,6 +137,23 @@ module.exports = {
         "spire/export-styles": "error",
         "spire/fenced-imports": ["error", { failRelativeImports: true }],
         "spire/restrict-lodash-import": "warn",
+        "spire/avoid-dynamic-translate": [
+            "error",
+            {
+                generateTranslations: true,
+                ignoreDir: [
+                    "/modules/blueprints",
+                    "/modules/blueprints-shell",
+                    "/modules/mobius",
+                    "/modules/mobius-styleguide",
+                    "/modules/server-framework",
+                    "/modules/shell",
+                    "/modules/shell-public",
+                    "/modules/spire-linter",
+                    "/modules/test"
+                ]
+            }
+        ],
         "vars-on-top": "off", // Conflicts with the general ban on `var`.
     },
 };

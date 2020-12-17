@@ -34,7 +34,7 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
-const InvoiceHistoryPage: FC<Props> = ({
+const InvoiceHistoryPage = ({
     settings,
     updateSearchFields,
     loadInvoices,
@@ -43,7 +43,7 @@ const InvoiceHistoryPage: FC<Props> = ({
     history,
     location,
     getInvoicesParameter,
-}) => {
+}: Props) => {
     let firstLoad = false;
     useEffect(() => {
         firstLoad = true;

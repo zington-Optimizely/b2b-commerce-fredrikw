@@ -92,7 +92,8 @@
 
         notesKeyPress(keyEvent: KeyboardEvent, cartLine: CartLineModel): void {
             if (keyEvent.which === 13) {
-                this.updateLine(cartLine, false);
+                (keyEvent.target as any).blur();
+                this.openLineNoteId = "";
             }
         }
 

@@ -4,7 +4,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentUserIsGuest, getIsPunchOutSession } from "@insite/client-framework/Store/Context/ContextSelectors";
 import cancelPunchOut from "@insite/client-framework/Store/Context/Handlers/CancelPunchOut";
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -27,7 +27,7 @@ const enum fields {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    isSigningIn: state.context.isSigningIn,
+    isSignInPage: getCurrentPage(state).type === "SignInPage",
     userName: state.context.session.userName,
     myAccountPageLink: getPageLinkByPageType(state, "MyAccountPage"),
     signInUrl: getPageLinkByPageType(state, "SignInPage")?.url,
@@ -91,9 +91,9 @@ interface OwnProps extends WidgetProps {
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 const styles = headerSignInStyles;
 let icon: React.ComponentType;
-const HeaderSignIn: FC<Props> = ({
+const HeaderSignIn = ({
     userName,
-    isSigningIn,
+    isSignInPage,
     currentUserIsGuest,
     signOut,
     cancelPunchOut,
@@ -103,7 +103,7 @@ const HeaderSignIn: FC<Props> = ({
     signInUrl,
     isPunchOutSession,
     currentLocation,
-}) => {
+}: Props) => {
     const showIcon = fields.visibilityState === "both" || fields.visibilityState === "icon";
     const showLabel = fields.visibilityState === "both" || fields.visibilityState === "label";
 
@@ -112,12 +112,13 @@ const HeaderSignIn: FC<Props> = ({
     }
 
     const onSignInHandler = () => {
-        if (!userName || currentUserIsGuest) {
+        if ((!userName || currentUserIsGuest) && !isSignInPage) {
             if (!signInUrl) {
                 logger.warn("No url was found for SignInPage, defaulting to /SignIn");
                 history.push("/MyAccount/SignIn");
             } else {
-                history.push(`${signInUrl}?returnUrl=${currentLocation.pathname}${currentLocation.search}`);
+                const returnUrl = encodeURIComponent(currentLocation.pathname + currentLocation.search);
+                history.push(`${signInUrl}?returnUrl=${returnUrl}`);
             }
         }
     };
@@ -129,8 +130,6 @@ const HeaderSignIn: FC<Props> = ({
     let signInStatusText = translate("Sign In");
     if (userName && !currentUserIsGuest) {
         signInStatusText = userName;
-    } else if (isSigningIn) {
-        signInStatusText = translate("Signing in...");
     }
 
     return (

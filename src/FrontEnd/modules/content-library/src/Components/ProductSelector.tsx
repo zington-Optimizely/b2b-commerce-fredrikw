@@ -26,16 +26,17 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import debounce from "lodash/debounce";
-import React from "react";
+import React, { ChangeEvent, ReactNode, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
     onSelectProduct: (productInfo: ProductInfo, product: ProductModel) => void;
+    skipInventoryValidation?: boolean;
     selectButtonTitle?: string;
-    productIsConfigurableMessage?: React.ReactNode;
-    productIsUnavailableMessage?: React.ReactNode;
-    customErrorMessage?: React.ReactNode;
+    productIsConfigurableMessage?: ReactNode;
+    productIsUnavailableMessage?: ReactNode;
+    customErrorMessage?: ReactNode;
     extendedStyles?: ProductSelectorStyles;
 }
 
@@ -154,8 +155,9 @@ export const productSelectorStyles: ProductSelectorStyles = {
 
 const ENTER_KEY = 13;
 
-const ProductSelector: React.FC<Props> = ({
+const ProductSelector = ({
     onSelectProduct,
+    skipInventoryValidation,
     selectButtonTitle,
     searchProducts,
     isSearching,
@@ -172,19 +174,19 @@ const ProductSelector: React.FC<Props> = ({
     productIsUnavailableMessage,
     location,
     reset,
-}) => {
-    const [qty, setQty] = React.useState("1");
-    const [errorMessage, setErrorMessage] = React.useState<React.ReactNode>("");
-    const [selectedProductId, setSelectedProductId] = React.useState("");
-    const [options, setOptions] = React.useState<OptionObject[]>([]);
-    const [searchTerm, setSearchTerm] = React.useState("");
-    const [styles] = React.useState(() => mergeToNew(productSelectorStyles, extendedStyles));
+}: Props) => {
+    const [qty, setQty] = useState("1");
+    const [errorMessage, setErrorMessage] = useState<ReactNode>("");
+    const [selectedProductId, setSelectedProductId] = useState("");
+    const [options, setOptions] = useState<OptionObject[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [styles] = useState(() => mergeToNew(productSelectorStyles, extendedStyles));
 
-    React.useEffect(() => {
+    useEffect(() => {
         reset();
     }, [location.pathname]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!searchResults) {
             return;
         }
@@ -207,15 +209,15 @@ const ProductSelector: React.FC<Props> = ({
         setOptions(newOptions);
     }, [searchResults]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setErrorMessage(customErrorMessage);
     }, [customErrorMessage]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setSelectedProductId(selectedProductInfo ? selectedProductInfo.productId : "");
     }, [selectedProductInfo]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         switch (errorType) {
             case "productIsConfigurable":
                 setErrorMessage(productIsConfigurableMessage || translate("Cannot select configurable products"));
@@ -233,9 +235,18 @@ const ProductSelector: React.FC<Props> = ({
         if (searchResults && searchResults.length > 0) {
             const variantParentId = searchResults.find(o => o.id === value)?.styleParentId;
             if (variantParentId) {
-                setProduct({ productId: variantParentId, variantId: value, validateProduct: true });
+                setProduct({
+                    productId: variantParentId,
+                    variantId: value,
+                    validateProduct: true,
+                    skipInventoryValidation,
+                });
             } else {
-                setProduct({ productId: value, validateProduct: true });
+                setProduct({
+                    productId: value,
+                    validateProduct: true,
+                    skipInventoryValidation,
+                });
             }
         }
     };
@@ -244,7 +255,7 @@ const ProductSelector: React.FC<Props> = ({
         searchProducts({ query });
     }, 300);
 
-    const onInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChanged = (event: ChangeEvent<HTMLInputElement>) => {
         setErrorMessage("");
         setSearchTerm(event.target.value);
 
@@ -282,7 +293,7 @@ const ProductSelector: React.FC<Props> = ({
             if (selectedProductInfo) {
                 selectProduct();
             } else if (searchTerm && (!searchResults || searchResults.length === 0)) {
-                setProduct({ searchTerm });
+                setProduct({ searchTerm, skipInventoryValidation });
             }
         }
     };

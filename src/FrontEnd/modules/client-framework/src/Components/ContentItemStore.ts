@@ -18,6 +18,9 @@ interface FoundModule<T extends WidgetModule | PageModule> {
 const widgetComponents: Dictionary<React.ComponentType<HasFields>> = {};
 const widgetDefinitions: Dictionary<WidgetDefinition> = {};
 const pageComponents: Dictionary<React.ComponentType<HasFields>> = {};
+/**
+ * @deprecated Use DefinitionLoader.getPageDefinitions instead.
+ */
 export const pageDefinitions: Dictionary<PageDefinition> = {};
 
 function loadPages(foundItems: RequireContext) {
@@ -186,6 +189,9 @@ export function getTheWidgetDefinitions(): Dictionary<WidgetDefinition> {
     return widgetDefinitions;
 }
 
+/**
+ * @deprecated Use DefinitionLoader.getPageDefinitions instead.
+ */
 export function getThePageDefinitions(): Dictionary<PageDefinition> {
     return pageDefinitions;
 }

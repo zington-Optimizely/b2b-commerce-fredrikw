@@ -5,8 +5,8 @@ import {
     getWishListsDataView,
     getWishListState,
 } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import addAllWishListLines from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddAllWishListLines";
 import addWishList from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishList";
-import addWishListLines from "@insite/client-framework/Store/Pages/MyLists/Handlers/AddWishListLines";
 import translate from "@insite/client-framework/Translate";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
@@ -39,7 +39,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const mapDispatchToProps = {
-    addWishListLines,
+    addAllWishListLines,
     createList: addWishList,
 };
 
@@ -138,15 +138,11 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
     };
 
     private copyWishList(destinationWishList: WishListModel) {
-        if (destinationWishList && this.props.wishListLines) {
-            this.props.addWishListLines({
+        if (destinationWishList && this.props.wishList && this.props.wishListLines) {
+            this.props.addAllWishListLines({
                 apiParameter: {
                     wishList: destinationWishList,
-                    lines: this.props.wishListLines.map(line => ({
-                        productId: line.productId,
-                        qtyOrdered: line.qtyOrdered,
-                        unitOfMeasure: line.unitOfMeasure,
-                    })),
+                    copyFromWishListId: this.props.wishList.id,
                 },
                 onSuccess: this.onCopySuccess,
             });

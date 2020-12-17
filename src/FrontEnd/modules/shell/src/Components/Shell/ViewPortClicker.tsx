@@ -1,23 +1,20 @@
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
+import Monitor from "@insite/mobius/Icons/Monitor";
+import Smartphone from "@insite/mobius/Icons/Smartphone";
+import Tablet from "@insite/mobius/Icons/Tablet";
 import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
 import shellTheme from "@insite/shell/ShellTheme";
-import { changeStageMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
-import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
 
-const mapStateToProps = (state: ShellState, props: OwnProps) => ({
-    targetMatchesCurrentStageMode: state.shellContext.stageMode === props.targetStageMode,
-});
-
-const mapDispatchToProps = {
-    changeStageMode,
+type OwnProps = {
+    targetStageMode: DeviceType;
+    disabled?: boolean;
+    currentStageMode: DeviceType;
+    changeStageMode: (stageMode: DeviceType) => void;
 };
 
-type OwnProps = { targetStageMode: DeviceType; icon: React.FC; disabled?: boolean };
-
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = OwnProps;
 
 class ViewPortClicker extends React.Component<Props> {
     onClick = () => {
@@ -26,7 +23,9 @@ class ViewPortClicker extends React.Component<Props> {
     };
 
     render() {
-        const { targetMatchesCurrentStageMode, icon, disabled, targetStageMode } = this.props;
+        const { currentStageMode, disabled, targetStageMode } = this.props;
+        const targetMatchesCurrentStageMode = currentStageMode === targetStageMode;
+
         const {
             colors: { common, text },
         } = shellTheme;
@@ -40,6 +39,8 @@ class ViewPortClicker extends React.Component<Props> {
         } else {
             iconColor = text.accent;
         }
+
+        const icon = targetStageMode === "Phone" ? Smartphone : targetStageMode === "Tablet" ? Tablet : Monitor;
 
         return (
             <ClickerStyle
@@ -55,4 +56,4 @@ class ViewPortClicker extends React.Component<Props> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewPortClicker);
+export default ViewPortClicker;

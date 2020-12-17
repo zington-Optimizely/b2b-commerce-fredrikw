@@ -351,11 +351,11 @@ const Carousel = ({
         if (window.innerWidth < theme.breakpoints.values[1]) {
             localSlidesToScroll = 1;
         } else if (window.innerWidth < theme.breakpoints.values[2]) {
-            localSlidesToScroll = 2;
+            localSlidesToScroll = 1;
         } else if (window.innerWidth < theme.breakpoints.values[3]) {
-            localSlidesToScroll = 3;
+            localSlidesToScroll = 2;
         } else {
-            localSlidesToScroll = 4;
+            localSlidesToScroll = 3;
         }
         return Math.min(localSlidesToScroll, maxNumberOfColumns);
     }, [maxNumberOfColumns]);
@@ -418,15 +418,30 @@ const Carousel = ({
             align: "start",
             slidesToScroll,
             draggable,
-            loop: slideDetails.slides.length > slidesToScroll,
+            loop: true,
         });
         emblaSecond.reInit({
             align: "start",
             slidesToScroll,
             draggable,
-            loop: slideDetails.slides.length > slidesToScroll,
+            loop: true,
         });
         setCanScroll();
+
+        const onMainSelect = () => {
+            emblaSecond.scrollTo(embla.selectedScrollSnap());
+        };
+        const onSecondSelect = () => {
+            embla.scrollTo(emblaSecond.selectedScrollSnap());
+        };
+
+        embla.on("select", onMainSelect);
+        emblaSecond.on("select", onSecondSelect);
+
+        return () => {
+            embla.off("select", onMainSelect);
+            emblaSecond.off("select", onSecondSelect);
+        };
     }, [embla, emblaSecond, slidesToScroll, draggable, slideDetails]);
 
     const getProductAttributeValue = (product: ProductModel, attribute: AttributeTypeModel) => {
@@ -475,7 +490,6 @@ const Carousel = ({
                             {...styles.prevArrowButton}
                             onClick={() => {
                                 embla && embla.scrollPrev();
-                                emblaSecond && emblaSecond.scrollPrev();
                             }}
                             disabled={!canScrollPrev}
                             data-test-selector="prevBtn"
@@ -568,7 +582,6 @@ const Carousel = ({
                             {...styles.nextArrowButton}
                             onClick={() => {
                                 embla && embla.scrollNext();
-                                emblaSecond && emblaSecond.scrollNext();
                             }}
                             disabled={!canScrollNext}
                             data-test-selector="nextBtn"

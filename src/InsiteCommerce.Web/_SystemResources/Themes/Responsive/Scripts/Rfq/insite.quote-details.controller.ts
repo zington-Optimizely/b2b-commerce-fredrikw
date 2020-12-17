@@ -329,6 +329,7 @@
             }
 
             let expirationDate = new Date(this.quote.expirationDate.toString());
+            expirationDate = new Date(expirationDate.getTime() + expirationDate.getTimezoneOffset() * 60000);
             let currentDate = new Date();
 
             expirationDate.setHours(0, 0, 0, 0);

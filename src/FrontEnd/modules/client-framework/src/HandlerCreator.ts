@@ -235,7 +235,7 @@ export type HasOnException<Result = void> = {
     onException?: (result: Result) => void;
 };
 
-type HasOnComplete<Result = unknown> = {
+export type HasOnComplete<Result = unknown> = {
     onComplete?: (result: Partial<Result>) => void;
 };
 

@@ -1,3 +1,4 @@
+import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { getTemplatePathForPageType, getTemplatePathsForPageType } from "@insite/server-framework/SiteGeneration";
 import { Request, Response } from "express";
 import { readFile } from "fs";
@@ -20,7 +21,13 @@ const getTemplate = async (request: Request, response: Response) => {
         );
     }
 
-    const template = JSON.parse(await readFileAsync(templatePath, "utf8"));
+    const template = JSON.parse(await readFileAsync(templatePath, "utf8")) as PageModel;
+    if (template.type !== pageType) {
+        throw new Error(
+            `The page template at ${templatePath} specified a type of ${template.type} which did not match the requested type of ${pageType}`,
+        );
+    }
+
     response.json(template);
 };
 

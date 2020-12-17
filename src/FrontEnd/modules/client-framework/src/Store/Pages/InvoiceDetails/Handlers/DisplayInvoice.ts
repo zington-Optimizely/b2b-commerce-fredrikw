@@ -15,7 +15,7 @@ export const DispatchSetInvoiceNumber: HandlerType = props => {
 
 export const DispatchLoadInvoiceIfNeeded: HandlerType = props => {
     const invoiceState = getInvoiceState(props.getState(), props.parameter.invoiceNumber);
-    if (!invoiceState.value || !invoiceState.value.invoiceLines) {
+    if ((!invoiceState.value && !invoiceState.isLoading) || !invoiceState.value.invoiceLines) {
         props.dispatch(loadInvoiceByInvoiceNumber(props.parameter));
     }
 };

@@ -1,19 +1,23 @@
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
+    HasOnComplete,
 } from "@insite/client-framework/HandlerCreator";
 import { getSession, GetSessionApiParameter, Session } from "@insite/client-framework/Services/SessionService";
-import { getBillToState, getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
-import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
+import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadCurrentBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadCurrentBillTo";
 import loadCurrentShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadCurrentShipTo";
-import loadShipTo from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTo";
-import { getCurrentShipToState, getShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
+import { getCurrentShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 
-type HandlerType = ApiHandlerDiscreteParameter<{}, GetSessionApiParameter, Session>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    GetSessionApiParameter & HasOnComplete<{ apiResult: Session }>,
+    GetSessionApiParameter,
+    Session
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
-    props.apiParameter = props.parameter;
+    const { onComplete, ...apiParameter } = props.parameter;
+    props.apiParameter = apiParameter;
 };
 
 export const RequestDataFromApi: HandlerType = async props => {

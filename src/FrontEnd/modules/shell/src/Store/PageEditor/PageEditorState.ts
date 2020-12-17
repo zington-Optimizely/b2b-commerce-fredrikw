@@ -61,5 +61,5 @@ export interface PageEditorState {
     /** When true, the page should be presented as the raw script for a page creator. */
     showGeneratedPageTemplate: boolean;
     addWidgetData?: AddWidgetData;
-    savePageResponse?: SavePageResponseModel;
+    updatedLayoutIds?: Dictionary<boolean>;
 }

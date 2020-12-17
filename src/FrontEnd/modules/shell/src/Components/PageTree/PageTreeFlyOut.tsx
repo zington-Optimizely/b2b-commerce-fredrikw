@@ -8,7 +8,9 @@ import { HasConfirmationContext, withConfirmation } from "@insite/shell/Componen
 import {
     canAddChildPage,
     canCopyPage,
+    canDeleteLayout,
     canDeletePage,
+    canEditLayout,
     canEditPage,
 } from "@insite/shell/Components/PageTree/PageTreeFlyout.Functions";
 import { getPageDefinition } from "@insite/shell/DefinitionLoader";
@@ -111,7 +113,7 @@ class PageTreeFlyOut extends React.Component<Props> {
 
     private handleAddPage = () => {
         this.props.closeFlyOut();
-        this.props.openAddPage(this.props.flyOutNode.nodeId);
+        this.props.openAddPage(this.props.flyOutNode.nodeId, this.props.flyOutNode.type);
     };
 
     private handleCopyPage = () => {
@@ -164,6 +166,21 @@ class PageTreeFlyOut extends React.Component<Props> {
         const { flyOutNode, permissions, mobileCmsModeActive } = this.props;
         const style = this.getFlyOutStyle();
         const pageDefinition = getPageDefinition(flyOutNode.type);
+        const isLayout = flyOutNode.type === "Layout";
+
+        if (isLayout) {
+            return (
+                <PageTreeFlyOutMenu style={style}>
+                    {permissions &&
+                        canEditLayout(permissions) &&
+                        flyOutOption(this.handleEditPage, <Edit />, "Edit Layout")}
+                    {permissions &&
+                        canDeleteLayout(permissions) &&
+                        flyOutOption(this.handleDeletePage, <Trash color1="#9b9b9b" />, "Delete Layout")}
+                </PageTreeFlyOutMenu>
+            );
+        }
+
         if (!permissions || !pageDefinition) {
             return null;
         }
@@ -229,12 +246,13 @@ export const pageTreeFlyOutMenuHasItems = (
 
     return (
         !!permissions &&
-        pageDefinition &&
-        (canEditPage(pageDefinition, permissions, flyOutNode) ||
-            canAddChildPage(pageDefinition, permissions, flyOutNode) ||
-            permissions.canCreateVariant ||
-            canCopyPage(pageDefinition, permissions, flyOutNode) ||
-            canDeletePage(pageDefinition, permissions, flyOutNode))
+        ((pageDefinition &&
+            (canEditPage(pageDefinition, permissions, flyOutNode) ||
+                canAddChildPage(pageDefinition, permissions, flyOutNode) ||
+                permissions.canCreateVariant ||
+                canCopyPage(pageDefinition, permissions, flyOutNode) ||
+                canDeletePage(pageDefinition, permissions, flyOutNode))) ||
+            (flyOutNode.type === "Layout" && (canEditLayout(permissions) || canDeleteLayout(permissions))))
     );
 };
 

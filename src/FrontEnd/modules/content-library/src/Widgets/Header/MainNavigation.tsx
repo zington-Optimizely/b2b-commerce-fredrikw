@@ -519,7 +519,7 @@ class MainNavigation extends React.Component<Props, State> {
                     <Hidden above="sm" {...styles.mobileSearchWrapper}>
                         <Button {...styles.mobileSearchButton} onClick={this.mobileSearchButtonClickHandler}>
                             <ButtonIcon src={Search} />
-                            <VisuallyHidden>{translate("search")}</VisuallyHidden>
+                            <VisuallyHidden>{translate("Search")}</VisuallyHidden>
                         </Button>
                     </Hidden>
                 </StyledWrapper>
@@ -701,6 +701,7 @@ const mainNavigation: WidgetModule = {
                         name: "openInNewWindow",
                         editorTemplate: "CheckboxField",
                         defaultValue: false,
+                        isVisible: (item: HasFields) => item.fields.linkType === "Link",
                     },
                 ],
             },

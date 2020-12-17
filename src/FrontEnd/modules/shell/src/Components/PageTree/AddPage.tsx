@@ -1,3 +1,4 @@
+import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { pageDefinitions } from "@insite/client-framework/Components/ContentItemStore";
 import { TemplateInfo } from "@insite/client-framework/Types/SiteGenerationModel";
 import Checkbox from "@insite/mobius/Checkbox";
@@ -6,10 +7,10 @@ import Select from "@insite/mobius/Select";
 import TextField from "@insite/mobius/TextField";
 import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
 import { getPageDefinitions } from "@insite/shell/DefinitionLoader";
-import { LoadedPageDefinition } from "@insite/shell/DefinitionTypes";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
 import { getTemplatePaths } from "@insite/shell/Services/SpireService";
 import { addPage, cancelAddPage } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
+import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -17,19 +18,26 @@ import styled from "styled-components";
 
 interface OwnProps {
     addingPageUnderId: string;
+    addingPageUnderType: string;
     copyDisplayName: string;
     copyType: string;
     copyPageId: string;
     variantType: string;
     variantPageName: string;
     variantPageId: string;
+    isLayout: boolean;
 }
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
+const mapStateToProps = (state: ShellState) => {
     const {
-        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId },
+        pageTree: {
+            treeNodesByParentId,
+            headerTreeNodesByParentId,
+            footerTreeNodesByParentId,
+            layoutTreeNodesByParentId,
+        },
     } = state;
 
     return {
@@ -37,6 +45,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
         treeNodesByParentId,
         headerTreeNodesByParentId,
         footerTreeNodesByParentId,
+        layouts: layoutTreeNodesByParentId[emptyGuid] || [],
     };
 };
 
@@ -44,10 +53,6 @@ const mapDispatchToProps = {
     addPage,
     cancelAddPage,
 };
-
-const pageDefinitionsWithType = Object.keys(pageDefinitions).map(key => {
-    return { ...pageDefinitions[key], type: key };
-});
 
 interface State {
     selectedPageType: string;
@@ -61,6 +66,9 @@ interface State {
     pageTemplateError: string;
     variantNameError: string;
     copyVariantContent: boolean;
+    selectedLayoutId: string;
+    selectedAllowedForPageType: string;
+    allowedForPageTypeError: string;
 }
 
 class AddPage extends React.Component<Props, State> {
@@ -68,7 +76,7 @@ class AddPage extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            selectedPageType: props.copyType || props.variantType,
+            selectedPageType: this.props.isLayout ? "Layout" : props.copyType || props.variantType,
             pageName: props.copyDisplayName || props.variantPageName,
             variantName: "",
             pageTypeError: "",
@@ -79,11 +87,22 @@ class AddPage extends React.Component<Props, State> {
             selectedPageTemplate: "",
             pageTemplateError: "",
             copyVariantContent: false,
+            selectedLayoutId: "",
+            selectedAllowedForPageType: "",
+            allowedForPageTypeError: "",
         };
     }
 
     addPage = () => {
-        const { selectedPageType, selectedPageTemplate, pageName, variantName, copyVariantContent } = this.state;
+        const {
+            selectedPageType,
+            selectedPageTemplate,
+            pageName,
+            variantName,
+            copyVariantContent,
+            selectedLayoutId,
+            selectedAllowedForPageType,
+        } = this.state;
 
         const isVariant = !!this.props.variantPageId;
 
@@ -103,13 +122,18 @@ class AddPage extends React.Component<Props, State> {
         if (isVariant && !variantName) {
             variantNameError = "Variant Name is Required";
         }
+        let allowedForPageTypeError = "";
+        if (this.props.isLayout && !selectedAllowedForPageType) {
+            allowedForPageTypeError = "Allowed for Page Type is Required";
+        }
 
-        if (pageTypeError || pageNameError || pageTemplateError || variantNameError) {
+        if (pageTypeError || pageNameError || pageTemplateError || variantNameError || allowedForPageTypeError) {
             this.setState({
                 pageTypeError,
                 pageNameError,
                 pageTemplateError,
                 variantNameError,
+                allowedForPageTypeError,
             });
             return;
         }
@@ -145,6 +169,11 @@ class AddPage extends React.Component<Props, State> {
             }
         }
 
+        let layoutPageName: string | undefined;
+        if (selectedLayoutId) {
+            layoutPageName = this.props.layouts.find(o => o.pageId === selectedLayoutId)?.displayName;
+        }
+
         this.props.addPage({
             pageType: selectedPageType,
             pageName: isVariant ? variantName : pageName,
@@ -153,6 +182,9 @@ class AddPage extends React.Component<Props, State> {
             pageTemplate: this.state.selectedPageTemplate,
             isVariant,
             copyVariantContent,
+            layoutId: selectedLayoutId,
+            allowedForPageType: selectedAllowedForPageType,
+            layoutPageName,
             afterSavePage: ({ duplicatesFound }) => {
                 if (!duplicatesFound) {
                     return;
@@ -169,6 +201,14 @@ class AddPage extends React.Component<Props, State> {
         this.props.cancelAddPage();
     };
 
+    onAllowedForPageTypeChange = (event: React.FormEvent<HTMLSelectElement>) => {
+        const allowedForPageType = event.currentTarget.value;
+        this.setState({
+            selectedAllowedForPageType: allowedForPageType,
+            allowedForPageTypeError: "",
+        });
+    };
+
     onPageTypeChange = (event: React.FormEvent<HTMLSelectElement>) => {
         const pageType = event.currentTarget.value;
         getTemplatePaths(pageType).then(templates => {
@@ -179,6 +219,13 @@ class AddPage extends React.Component<Props, State> {
                 selectedPageTemplate: templates.length === 1 ? templates[0].fullPath : "",
                 pageTemplateError: "",
             });
+        });
+    };
+
+    onLayoutChange = (event: React.FormEvent<HTMLSelectElement>) => {
+        const layoutId = event.currentTarget.value;
+        this.setState({
+            selectedLayoutId: layoutId,
         });
     };
 
@@ -221,6 +268,37 @@ class AddPage extends React.Component<Props, State> {
             title = "Create Variant";
             name = "CreateVariant";
             saveText = "Save";
+        } else if (this.props.isLayout) {
+            title = "Create Layout";
+            name = "CreateLayout";
+            saveText = "Save";
+        }
+
+        let allowedPagesTypes = this.props.pageDefinitions.filter(o => o.pageType === "Content" && o.type !== "Layout");
+
+        if (this.props.addingPageUnderType) {
+            const currentPageDefinition = this.props.pageDefinitions.find(
+                o => o.type === this.props.addingPageUnderType,
+            );
+            if (currentPageDefinition?.allowedChildren?.length) {
+                allowedPagesTypes = allowedPagesTypes.filter(possibleAllowedPageType =>
+                    currentPageDefinition.allowedChildren!.find(
+                        allowedChild => allowedChild.toLowerCase() === possibleAllowedPageType.type.toLowerCase(),
+                    ),
+                );
+            }
+
+            for (let x = allowedPagesTypes.length - 1; x--; x >= 0) {
+                const possibleAllowedPageType = allowedPagesTypes[x];
+                if (
+                    possibleAllowedPageType.allowedParents &&
+                    !possibleAllowedPageType.allowedParents.find(
+                        o => o.toLowerCase() === this.props.addingPageUnderType,
+                    )
+                ) {
+                    allowedPagesTypes.splice(x, 1);
+                }
+            }
         }
 
         return (
@@ -260,23 +338,58 @@ class AddPage extends React.Component<Props, State> {
                             Copy Content from Default
                         </CopyVariantContentCheckbox>
                     )}
-                    <Select
-                        disabled={!!this.props.copyPageId || !!this.props.variantPageId}
-                        label="Page Type"
-                        name="PageType"
-                        value={this.state.selectedPageType}
-                        onChange={this.onPageTypeChange}
-                        error={this.state.pageTypeError}
-                    >
-                        <option value="">Select Type</option>
-                        {pageDefinitionsWithType
-                            .filter(o => o.pageType === "Content")
-                            .map((pageDefinition: LoadedPageDefinition) => (
+                    {this.props.isLayout && (
+                        <Select
+                            label="Allowed for Page Type"
+                            name="AllowedForPageType"
+                            value={this.state.selectedAllowedForPageType}
+                            onChange={this.onAllowedForPageTypeChange}
+                            error={this.state.allowedForPageTypeError}
+                        >
+                            <option value="">Select Type</option>
+                            {allowedPagesTypes.map(pageDefinition => (
                                 <option key={pageDefinition.type} value={pageDefinition.type}>
                                     {pageDefinition.type}
                                 </option>
                             ))}
-                    </Select>
+                        </Select>
+                    )}
+                    {!this.props.isLayout && (
+                        <>
+                            <Select
+                                disabled={!!this.props.copyPageId || !!this.props.variantPageId}
+                                label="Page Type"
+                                name="PageType"
+                                value={this.state.selectedPageType}
+                                onChange={this.onPageTypeChange}
+                                error={this.state.pageTypeError}
+                            >
+                                <option value="">Select Type</option>
+                                {allowedPagesTypes.map(pageDefinition => (
+                                    <option key={pageDefinition.type} value={pageDefinition.type}>
+                                        {pageDefinition.type}
+                                    </option>
+                                ))}
+                            </Select>
+                            {this.state.selectedPageType && this.props.layouts.length > 0 && (
+                                <Select
+                                    label="Layout"
+                                    name="Layout"
+                                    value={this.state.selectedLayoutId}
+                                    onChange={this.onLayoutChange}
+                                >
+                                    <option value="">Select Layout</option>
+                                    {this.props.layouts
+                                        .filter(o => o.allowedForPageType === this.state.selectedPageType)
+                                        .map((treeNode: TreeNodeModel) => (
+                                            <option key={treeNode.pageId} value={treeNode.pageId}>
+                                                {treeNode.displayName}
+                                            </option>
+                                        ))}
+                                </Select>
+                            )}
+                        </>
+                    )}
                     {this.state.selectedPageType && this.state.templates.length > 1 && (
                         <Select
                             label="Page Template"
@@ -303,23 +416,27 @@ const ConnectedAddPage = connect(mapStateToProps, mapDispatchToProps)(AddPage);
 
 interface WrapperProps {
     addingPageUnderId: string;
+    addingPageUnderType: string;
     copyDisplayName: string;
     copyType: string;
     copyPageId: string;
     variantType: string;
     variantPageName: string;
     variantPageId: string;
+    isLayout: boolean;
 }
 
 const mapWrapperState = (state: ShellState, ownProps: {}): WrapperProps => {
     return {
         addingPageUnderId: state.pageTree.addingPageUnderId || "",
+        addingPageUnderType: state.pageTree.addingPageUnderType || "",
         copyDisplayName: state.pageTree.copyPageDisplayName || "",
         copyType: state.pageTree.copyPageType || "",
         copyPageId: state.pageTree.copyPageId || "",
         variantType: state.pageTree.variantPageType || "",
         variantPageName: state.pageTree.variantPageName || "",
         variantPageId: state.pageTree.variantPageId || "",
+        isLayout: state.pageTree.isLayout || false,
     };
 };
 
@@ -332,12 +449,14 @@ const AddPageWrapper: React.FunctionComponent<WrapperProps> = (props: WrapperPro
     return (
         <ConnectedAddPage
             addingPageUnderId={props.addingPageUnderId}
+            addingPageUnderType={props.addingPageUnderType}
             copyDisplayName={props.copyDisplayName}
             copyType={props.copyType}
             copyPageId={props.copyPageId}
             variantType={props.variantType}
             variantPageName={props.variantPageName}
             variantPageId={props.variantPageId}
+            isLayout={props.isLayout}
         />
     );
 };

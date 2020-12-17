@@ -15,8 +15,7 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import qs from "qs";
-import * as React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -35,7 +34,7 @@ const mapDispatchToProps = {
 
 type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
-const OrderHistoryPage: React.FC<Props> = ({
+const OrderHistoryPage = ({
     settings,
     loadOrders,
     loadOrderStatusMappings,
@@ -46,9 +45,9 @@ const OrderHistoryPage: React.FC<Props> = ({
     history,
     location,
     getOrdersParameter,
-}) => {
+}: Props) => {
     let firstLoad = false;
-    React.useEffect(() => {
+    useEffect(() => {
         firstLoad = true;
         const pageSizeCookie = getCookie("OrderHistory-PageSize");
         const pageSize = pageSizeCookie ? parseInt(pageSizeCookie, 10) : undefined;
@@ -78,7 +77,7 @@ const OrderHistoryPage: React.FC<Props> = ({
         }
     }, [getOrdersParameter]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         // if this is undefined it means someone changed the filters and we haven't loaded the new collection yet
         if (!ordersDataView.value && !ordersDataView.isLoading) {
             loadOrders(getOrdersParameter);
