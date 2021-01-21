@@ -32,6 +32,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		defaultFulfillmentMethod: string;
 		defaultWarehouseId: System.Guid;
 		defaultWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
+		accessToken: string;
 	}
 	interface AccountSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowCreateAccount: boolean;
