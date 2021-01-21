@@ -317,7 +317,7 @@ class NavigationDrawer extends React.Component<NavigationDrawerProps, Navigation
                 <Drawer
                     draggable
                     position="left"
-                    {...(styles.drawer as DrawerProps)}
+                    {...styles.drawer}
                     isOpen={this.props.drawerIsOpen}
                     handleClose={this.closeDrawer}
                     contentLabel="menu drawer"

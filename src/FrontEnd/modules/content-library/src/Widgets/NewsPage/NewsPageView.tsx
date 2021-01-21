@@ -49,7 +49,7 @@ export const newsPageViewStyles: NewsPageViewStyles = {
 
 const styles = newsPageViewStyles;
 
-const component = ({ page }: Props) => {
+const NewsPageView = ({ page }: Props) => {
     if (!page) {
         return null;
     }
@@ -77,7 +77,7 @@ const component = ({ page }: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(component),
+    component: connect(mapStateToProps)(NewsPageView),
     definition: {
         group: "News Page",
         allowedContexts: [NewsPageContext],

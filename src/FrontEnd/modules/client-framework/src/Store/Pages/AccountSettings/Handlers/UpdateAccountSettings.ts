@@ -20,9 +20,6 @@ type HandlerType = Handler<
 
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 
-const requiredFieldMessage = siteMessage("Field_Required", translate("Email Address"));
-const emailFieldMessage = siteMessage("Field_Invalid", translate("Email Address"));
-
 export const ValidateEmail: HandlerType = props => {
     const {
         parameter: { email },
@@ -30,6 +27,9 @@ export const ValidateEmail: HandlerType = props => {
     if (typeof email === "undefined") {
         return;
     }
+
+    const requiredFieldMessage = siteMessage("Field_Required", translate("Email Address"));
+    const emailFieldMessage = siteMessage("Field_Invalid", translate("Email Address"));
 
     const errorMessage = email === "" ? requiredFieldMessage : emailRegexp.test(email) ? "" : emailFieldMessage;
     props.emailErrorMessage = errorMessage as string;

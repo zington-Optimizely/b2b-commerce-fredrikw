@@ -10,6 +10,7 @@
             replace: true,
             restrict: "E",
             scope: {
+                searchPath: "@",
                 isVisibleSearchInput: "="
             },
             templateUrl: "header_productSearch"

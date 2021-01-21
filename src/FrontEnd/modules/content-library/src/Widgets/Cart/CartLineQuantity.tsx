@@ -2,11 +2,13 @@ import useAccessibleSubmit from "@insite/client-framework/Common/Hooks/useAccess
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { isOutOfStock } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import translate from "@insite/client-framework/Translate";
 import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import React, { FC } from "react";
+import { connect } from "react-redux";
 
 interface OwnProps {
     cart: Cart;
@@ -21,7 +23,11 @@ interface OwnProps {
     label?: string;
 }
 
-type Props = OwnProps & HasCartLineContext;
+const mapStateToProps = (state: ApplicationState) => ({
+    isLoading: state.data.carts.isLoading,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasCartLineContext;
 
 export interface CartLineQuantityStyles {
     editableQuantityTextField?: TextFieldPresentationProps;
@@ -41,6 +47,7 @@ const CartLineQuantity: FC<Props> = ({
     cartLine,
     editable = false,
     label,
+    isLoading,
     onQtyOrderedChange = () => {},
     extendedStyles,
 }) => {
@@ -68,7 +75,7 @@ const CartLineQuantity: FC<Props> = ({
                 min={0}
                 label={label || translate("QTY")}
                 value={value}
-                disabled={!cart.canModifyOrder || cartLine.isPromotionItem || cart.type === "Job"}
+                disabled={!cart.canModifyOrder || cartLine.isPromotionItem || cart.type === "Job" || isLoading[cart.id]}
                 onChange={changeHandler}
                 onKeyDown={keyDownHandler}
                 onBlur={blurHandler}
@@ -86,4 +93,4 @@ const CartLineQuantity: FC<Props> = ({
     );
 };
 
-export default withCartLine(CartLineQuantity);
+export default connect(mapStateToProps)(withCartLine(CartLineQuantity));

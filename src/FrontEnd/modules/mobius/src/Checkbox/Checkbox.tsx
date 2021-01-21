@@ -10,7 +10,7 @@ import FieldSetPresentationProps from "@insite/mobius/utilities/fieldSetProps";
 import get from "@insite/mobius/utilities/get";
 import getColor from "@insite/mobius/utilities/getColor";
 import getContrastColor from "@insite/mobius/utilities/getContrastColor";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
@@ -31,6 +31,15 @@ export interface CheckboxPresentationProps
     /** The background color of the indeterminate checkbox.
      * @themable */
     indeterminateColor?: string;
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<CheckboxProps & StyleProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
 }
 
 export interface CheckboxProps extends CheckboxPresentationProps {
@@ -119,9 +128,9 @@ type Props = CheckboxProps & ThemeProps<BaseTheme>;
 
 type State = Required<Pick<Props, "checked" | "uid">>;
 
-const omitList = ["color", "onChange", "id", "sizeVariant"] as (keyof Omit<
+const omitList = ["color", "onChange", "id", "sizeVariant", "css", "mergeCss"] as (keyof Omit<
     Props,
-    "children" | "disabled" | "disable" | "error" | "variant" | "indeterminate"
+    "children" | "disabled" | "disable" | "error" | "variant" | "indeterminate" | "mergeCss" | "css"
 >)[];
 
 class Checkbox extends React.Component<Props & HasDisablerContext, State> {
@@ -167,7 +176,7 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
     };
 
     render() {
-        const { children, disable, disabled, error, variant = "default", ...otherProps } = this.props;
+        const { children, disable, disabled, error, variant = "default", mergeCss, ...otherProps } = this.props;
         const isIndeterminate = this.state.checked === "indeterminate";
 
         return (
@@ -178,10 +187,11 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                     // Because disabled html attribute doesn't accept undefined
                     // eslint-disable-next-line no-unneeded-ternary
                     const isDisabled = disable || disabled ? true : false;
-                    const { applyProp, spreadProps } = applyPropBuilder(
+                    const { applyProp, applyStyledProp, spreadProps } = applyPropBuilder(
                         { sizeVariant, ...this.props },
                         { component: "checkbox", category: "fieldSet" },
                     );
+                    const resolvedMergeCss = mergeCss ?? this.props?.theme?.checkbox?.defaultProps?.mergeCss;
                     const sizeVariantApplied = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
                     const color = applyProp(isIndeterminate ? "indeterminateColor" : "color", "primary");
                     const labelPosition =
@@ -247,10 +257,9 @@ class Checkbox extends React.Component<Props & HasDisablerContext, State> {
                             children !== 0 && !children ? true : null /* ship this attribute if no children */,
                         onKeyUp: this.handleKeyUp,
                     };
-
                     return (
                         <CheckboxStyle
-                            css={applyProp("css")}
+                            css={applyStyledProp("css", resolvedMergeCss)}
                             _color={color}
                             _sizeVariant={sizeVariantApplied}
                             _labelPosition={labelPosition}

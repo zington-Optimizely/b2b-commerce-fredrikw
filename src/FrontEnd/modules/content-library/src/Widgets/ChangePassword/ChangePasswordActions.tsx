@@ -9,7 +9,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
-import React, { FC, useContext } from "react";
+import React, { useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -62,46 +62,45 @@ export const changePasswordActionsStyles: ChangePasswordActionsStyles = {
 
 const styles = changePasswordActionsStyles;
 
-const numberPasswordLengthMessage = translate("Password must include at least one number");
-const lowerCasePasswordLengthMessage = translate("Password must include at least one lowercase character");
-const upperCasePasswordLengthMessage = translate("Password must include at least one uppercase character");
-const specialPasswordLengthMessage = translate("Password must include at least one non alphanumeric character");
 const digitRegExp = /[0-9]/;
 const lowerRegExp = /[a-z]/;
 const upperRegExp = /[A-Z]/;
 const specialRegExp = /\W/;
 
 const validatePassword = (password: string, settings: AccountSettingsModel) => {
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
-        "{0}",
-        settings.passwordMinimumLength.toString(),
-    );
     let passwordError = "";
+    const {
+        passwordMinimumLength,
+        passwordRequiresDigit,
+        passwordRequiresLowercase,
+        passwordRequiresUppercase,
+        passwordRequiresSpecialCharacter,
+    } = settings;
 
-    if (password.length > 0 && password.length < settings.passwordMinimumLength) {
-        passwordError = minimumPasswordLengthMessage;
+    if (password.length > 0 && password.length < passwordMinimumLength) {
+        passwordError = translate("Password must be at least {0} characters long", passwordMinimumLength.toString());
     }
 
-    if (!passwordError && settings.passwordRequiresDigit && !digitRegExp.test(password)) {
-        passwordError = numberPasswordLengthMessage;
+    if (!passwordError && passwordRequiresDigit && !digitRegExp.test(password)) {
+        passwordError = translate("Password must include at least one number");
     }
 
-    if (!passwordError && settings.passwordRequiresLowercase && !lowerRegExp.test(password)) {
-        passwordError = lowerCasePasswordLengthMessage;
+    if (!passwordError && passwordRequiresLowercase && !lowerRegExp.test(password)) {
+        passwordError = translate("Password must include at least one lowercase character");
     }
 
-    if (!passwordError && settings.passwordRequiresUppercase && !upperRegExp.test(password)) {
-        passwordError = upperCasePasswordLengthMessage;
+    if (!passwordError && passwordRequiresUppercase && !upperRegExp.test(password)) {
+        passwordError = translate("Password must include at least one uppercase character");
     }
 
-    if (!passwordError && settings.passwordRequiresSpecialCharacter && !specialRegExp.test(password)) {
-        passwordError = specialPasswordLengthMessage;
+    if (!passwordError && passwordRequiresSpecialCharacter && !specialRegExp.test(password)) {
+        passwordError = translate("Password must include at least one non alphanumeric character");
     }
 
     return passwordError;
 };
 
-const ChangePasswordActions: FC<Props> = ({
+const ChangePasswordActions = ({
     accountSettings,
     accountSettingsPageLink,
     password,
@@ -112,7 +111,7 @@ const ChangePasswordActions: FC<Props> = ({
     setShowValidation,
     updatePassword,
     history,
-}) => {
+}: Props) => {
     const toasterContext = useContext(ToasterContext);
     const onSaveClick = (error?: string) => {
         if (error) {

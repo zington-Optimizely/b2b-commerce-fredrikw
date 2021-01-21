@@ -14,3 +14,7 @@ export function getCategoriesDataView(state: ApplicationState, getCategoriesPara
 export function getCategoryDepthLoaded(state: ApplicationState, categoryId: string) {
     return state.data.categories.categoryDepthLoaded[categoryId];
 }
+
+export function getSubCategoryIds(state: ApplicationState, categoryId: string) {
+    return state.data.categories.parentCategoryIdToChildrenIds[categoryId];
+}

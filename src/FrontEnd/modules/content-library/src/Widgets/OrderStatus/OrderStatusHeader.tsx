@@ -1,6 +1,8 @@
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
+import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import reorder from "@insite/client-framework/Store/Pages/OrderStatus/Handlers/Reorder";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -16,21 +18,45 @@ import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinn
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import React, { FC } from "react";
+import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    order: state.pages.orderStatus.order,
-    isReordering: state.pages.orderStatus.isReordering,
-    showAddToCartConfirmationDialog: getSettingsCollection(state).productSettings.showAddToCartConfirmationDialog,
-});
+const enum fields {
+    generateEmailAttachmentFromWebpage = "generateEmailAttachmentFromWebpage",
+}
+
+interface OwnProps extends WidgetProps {
+    fields: {
+        [fields.generateEmailAttachmentFromWebpage]?: boolean;
+    };
+}
+
+const mapStateToProps = (state: ApplicationState) => {
+    const location = getLocation(state);
+    const parsedQuery = parseQueryString<{
+        ordernumber?: string;
+        stemail?: string;
+        stpostalcode?: string;
+        orderNumber?: string;
+        stEmail?: string;
+        stPostalCode?: string;
+    }>(location.search);
+
+    return {
+        order: state.pages.orderStatus.order,
+        isReordering: state.pages.orderStatus.isReordering,
+        showAddToCartConfirmationDialog: getSettingsCollection(state).productSettings.showAddToCartConfirmationDialog,
+        stEmail: parsedQuery.stEmail ?? parsedQuery.stemail ?? "",
+        stPostalCode: parsedQuery.stPostalCode ?? parsedQuery.stpostalcode ?? "",
+    };
+};
 
 const mapDispatchToProps = {
     reorder,
 };
 
-type Props = WidgetProps &
+type Props = OwnProps &
     ReturnType<typeof mapStateToProps> &
     ResolveThunks<typeof mapDispatchToProps> &
     HasToasterContext;
@@ -108,7 +134,16 @@ export const orderStatusHeaderStyles: OrderStatusHeaderStyles = {
 
 const styles = orderStatusHeaderStyles;
 
-const OrderStatusHeader: FC<Props> = ({ order, isReordering, showAddToCartConfirmationDialog, toaster, reorder }) => {
+const OrderStatusHeader = ({
+    fields,
+    order,
+    isReordering,
+    showAddToCartConfirmationDialog,
+    stEmail,
+    stPostalCode,
+    toaster,
+    reorder,
+}: Props) => {
     if (!order) {
         return null;
     }
@@ -135,6 +170,9 @@ const OrderStatusHeader: FC<Props> = ({ order, isReordering, showAddToCartConfir
         });
     };
 
+    const resolvedGenerateEmailAttachmentFromWebpage =
+        fields.generateEmailAttachmentFromWebpage === true || fields.generateEmailAttachmentFromWebpage === undefined;
+
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.titleGridItem}>
@@ -150,6 +188,8 @@ const OrderStatusHeader: FC<Props> = ({ order, isReordering, showAddToCartConfir
                         entityId={order.webOrderNumber}
                         entityName="Order"
                         extendedStyles={styles.shareEntityButtonStyles}
+                        generateAttachmentFromWebpage={resolvedGenerateEmailAttachmentFromWebpage}
+                        extraProperties={{ stEmail, stPostalCode }}
                     />
                     <Button {...styles.printButton} onClick={onClickPrint}>
                         {translate("Print")}
@@ -162,6 +202,7 @@ const OrderStatusHeader: FC<Props> = ({ order, isReordering, showAddToCartConfir
                             entityName="Order"
                             variant="clickable"
                             extendedStyles={styles.shareEntityButtonStyles}
+                            extraProperties={{ stEmail, stPostalCode }}
                         />
                         <Clickable {...styles.printClickable} onClick={onClickPrint}>
                             {translate("Print")}
@@ -204,6 +245,16 @@ const widgetModule: WidgetModule = {
         group: "Order Status",
         displayName: "Header",
         allowedContexts: [OrderStatusPageContext],
+        fieldDefinitions: [
+            {
+                name: fields.generateEmailAttachmentFromWebpage,
+                fieldType: "General",
+                editorTemplate: "CheckboxField",
+                defaultValue: true,
+                tooltip:
+                    "If checked, sharing the order generates an email attachment using the Order Status page, rather than a pre-defined PDF file.",
+            },
+        ],
     },
 };
 

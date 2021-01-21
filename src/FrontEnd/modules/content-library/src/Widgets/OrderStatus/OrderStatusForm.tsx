@@ -1,23 +1,24 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
-import loadOrder from "@insite/client-framework/Store/Pages/OrderStatus/Handlers/LoadOrder";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { OrderStatusPageContext } from "@insite/content-library/Pages/OrderStatusPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
-import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
+import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import React, { ReactNode, useState } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
-const mapDispatchToProps = {
-    loadOrder,
-};
+const mapStateToProps = (state: ApplicationState) => ({
+    location: getLocation(state),
+});
 
-type Props = WidgetProps & ResolveThunks<typeof mapDispatchToProps> & HasToasterContext;
+type Props = WidgetProps & ReturnType<typeof mapStateToProps> & HasHistory;
 
 export interface OrderStatusFormStyles {
     form?: InjectableCss;
@@ -30,6 +31,10 @@ export const orderStatusFormStyles: OrderStatusFormStyles = {
     form: {
         css: css`
             display: flex;
+
+            @media print {
+                display: none;
+            }
         `,
     },
     orderNumberTextField: {
@@ -58,41 +63,29 @@ export const orderStatusFormStyles: OrderStatusFormStyles = {
 const styles = orderStatusFormStyles;
 const StyledForm = getStyledWrapper("form");
 
-const OrderStatusForm: FC<Props> = ({ toaster, loadOrder }) => {
-    const [orderNumber, setOrderNumber] = React.useState("");
-    const [orderNumberError, setOrderNumberError] = React.useState<React.ReactNode>("");
-    const [emailOrPostalCode, setEmailOrPostalCode] = React.useState("");
-    const [emailOrPostalCodeError, setEmailOrPostalCodeError] = React.useState<React.ReactNode>("");
+const OrderStatusForm = ({ location, history }: Props) => {
+    const [orderNumber, setOrderNumber] = useState("");
+    const [orderNumberError, setOrderNumberError] = useState<ReactNode>("");
+    const [emailOrPostalCode, setEmailOrPostalCode] = useState("");
+    const [emailOrPostalCodeError, setEmailOrPostalCodeError] = useState<ReactNode>("");
 
     const orderNumberChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setOrderNumber(event.target.value);
-        setOrderNumberError(!event.target.value ? siteMessage("OrderStatusLookup_OrderNumberRequired") : "");
+        setOrderNumberError(!event.target.value.trim() ? siteMessage("OrderStatusLookup_OrderNumberRequired") : "");
     };
 
     const emailOrPostalCodeChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmailOrPostalCode(event.target.value);
         setEmailOrPostalCodeError(
-            !event.target.value ? siteMessage("OrderStatusLookup_EmailOrPostalCodeRequired") : "",
+            !event.target.value.trim() ? siteMessage("OrderStatusLookup_EmailOrPostalCodeRequired") : "",
         );
     };
 
     const handleSubmit = (event: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
         event.preventDefault();
-        let sTEmail = "";
-        let sTPostalCode = "";
-        if (emailOrPostalCode.indexOf("@") >= 0) {
-            sTEmail = emailOrPostalCode;
-        } else {
-            sTPostalCode = emailOrPostalCode;
-        }
-        loadOrder({
-            orderNumber,
-            sTEmail,
-            sTPostalCode,
-            onError: (errorMessage: string) => {
-                toaster.addToast({ body: errorMessage, messageType: "danger" });
-            },
-        });
+
+        const paramName = emailOrPostalCode.indexOf("@") >= 0 ? "stEmail" : "stPostalCode";
+        history.push(`${location.pathname}?orderNumber=${orderNumber}&${paramName}=${emailOrPostalCode}`);
     };
 
     return (
@@ -128,7 +121,7 @@ const OrderStatusForm: FC<Props> = ({ toaster, loadOrder }) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(null, mapDispatchToProps)(withToaster(OrderStatusForm)),
+    component: connect(mapStateToProps)(withHistory(OrderStatusForm)),
     definition: {
         group: "Order Status",
         displayName: "Form",

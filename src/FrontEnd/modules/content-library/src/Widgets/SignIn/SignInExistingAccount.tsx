@@ -1,7 +1,10 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
+import { removeAbsoluteUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -37,7 +40,11 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
+const mapStateToProps = (state: ApplicationState) => ({
+    showRememberMe: getSettingsCollection(state).accountSettings.rememberMe,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 const mapDispatchToProps = {
     signIn,
@@ -129,7 +136,7 @@ export const signInExistingAccount = signInExistingAccountStyles;
 const styles = signInExistingAccountStyles;
 const StyledForm = getStyledWrapper("form");
 
-const SignInExistingAccount = ({ signIn, fields }: Props) => {
+const SignInExistingAccount = ({ signIn, fields, showRememberMe }: Props) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [userName, setUserName] = useState("");
@@ -147,7 +154,8 @@ const SignInExistingAccount = ({ signIn, fields }: Props) => {
         }
 
         const queryParams = parseQueryString<{ returnUrl?: string }>(window.location.search);
-        const returnUrl = queryParams.returnUrl?.toString();
+        const returnUrl = removeAbsoluteUrl(queryParams.returnUrl?.toString());
+
         setErrorMessage("");
 
         signIn({
@@ -227,16 +235,18 @@ const SignInExistingAccount = ({ signIn, fields }: Props) => {
                         />
                     </GridItem>
                     <GridItem {...styles.rememberMeGridItem}>
-                        <CheckboxGroup {...styles.rememberMeCheckboxGroup}>
-                            <Checkbox
-                                uid="rememberMe"
-                                {...styles.rememberMeCheckbox}
-                                checked={rememberMe}
-                                onChange={(e, value) => setRememberMe(value)}
-                            >
-                                {translate("Remember Me")}
-                            </Checkbox>
-                        </CheckboxGroup>
+                        {showRememberMe && (
+                            <CheckboxGroup {...styles.rememberMeCheckboxGroup}>
+                                <Checkbox
+                                    uid="rememberMe"
+                                    {...styles.rememberMeCheckbox}
+                                    checked={rememberMe}
+                                    onChange={(e, value) => setRememberMe(value)}
+                                >
+                                    {translate("Remember Me")}
+                                </Checkbox>
+                            </CheckboxGroup>
+                        )}
                     </GridItem>
                     <GridItem {...styles.forgotPasswordGridItem}>
                         <Link
@@ -280,7 +290,7 @@ const SignInExistingAccount = ({ signIn, fields }: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(null, mapDispatchToProps)(SignInExistingAccount),
+    component: connect(mapStateToProps, mapDispatchToProps)(SignInExistingAccount),
     definition: {
         allowedContexts: [SignInPageContext],
         group: "Sign In",

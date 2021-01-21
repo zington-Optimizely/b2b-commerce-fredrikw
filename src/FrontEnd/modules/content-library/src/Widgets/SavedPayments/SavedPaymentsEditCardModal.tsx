@@ -29,7 +29,7 @@ import range from "lodash/range";
 import * as React from "react";
 import { useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
-import { css, ThemeProps, withTheme } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     websiteSettings: getSettingsCollection(state).websiteSettings,
@@ -61,6 +61,7 @@ export interface SavedPaymentsEditCardModalStyles {
     cardNicknameGridItem?: GridItemProps;
     cardNicknameTextField?: TextFieldPresentationProps;
     cardNumberGridItem?: GridItemProps;
+    cardNumberTokenExFrameWrapper?: InjectableCss;
     cardNumberTextField?: TextFieldPresentationProps;
     nameOnCardGridItem?: GridItemProps;
     nameOnCardTextField?: TextFieldPresentationProps;
@@ -205,6 +206,10 @@ const convertTokenExCardType = (cardType: string) => {
 
     return cardType.toUpperCase();
 };
+
+const CardNumberTokenExFrameWrapper = styled.div<InjectableCss>`
+    ${({ css }) => css}
+`;
 
 const SavedPaymentsEditCardModal: React.FC<Props> = ({
     theme,
@@ -628,17 +633,12 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                                     <TokenExFrame
                                         label={translate("Card Number")}
                                         tokenExIFrameContainer={
-                                            <>
-                                                <input
-                                                    disabled
-                                                    style={{ display: isTokenExIframeLoaded ? "none" : "block" }}
-                                                />
-                                                <div
-                                                    id="tokenExCardNumber"
-                                                    style={{ display: !isTokenExIframeLoaded ? "none" : "block" }}
-                                                ></div>
-                                            </>
+                                            <CardNumberTokenExFrameWrapper
+                                                {...styles.cardNumberTokenExFrameWrapper}
+                                                id="tokenExCardNumber"
+                                            />
                                         }
+                                        disabled={!isTokenExIframeLoaded}
                                         required
                                         error={cardNumberError}
                                         data-test-selector="cardNumber"

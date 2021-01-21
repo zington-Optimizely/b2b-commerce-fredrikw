@@ -15,9 +15,9 @@
       "template": "Page/ContactUsPage.json"
     },
     {
-      "urlSegment": "Locations",
+      "urlSegment": "LocationFinder",
       "name": "Locations",
-      "type": "Page",
+      "type": "LocationFinderPage",
       "excludeFromNavigation": true
     }
   ]

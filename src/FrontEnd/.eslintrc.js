@@ -1,3 +1,5 @@
+const path = require("path");
+
 // Run via `node node_modules/eslint/bin/eslint.js . --ext .ts,.tsx`
 // Use an ESLint extension for your IDE of choice to see errors in the editor.
 module.exports = {
@@ -151,7 +153,8 @@ module.exports = {
                     "/modules/shell-public",
                     "/modules/spire-linter",
                     "/modules/test"
-                ]
+                ],
+                translationsLocation: path.resolve(__dirname, "wwwroot/AppData"),
             }
         ],
         "vars-on-top": "off", // Conflicts with the general ban on `var`.

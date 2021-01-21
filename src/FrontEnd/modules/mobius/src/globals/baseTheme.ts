@@ -7,7 +7,7 @@ import { ButtonPresentationProps } from "@insite/mobius/Button";
 import ButtonPresentationPropsDefault from "@insite/mobius/Button/presentationProps";
 import { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
 import CheckboxPresentationPropsDefault from "@insite/mobius/Checkbox/presentationProps";
-import { CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
+import { CheckboxGroupPresentationProps, CheckboxGroupProps } from "@insite/mobius/CheckboxGroup/CheckboxGroup";
 import { ClickableProps } from "@insite/mobius/Clickable";
 import { DataTablePresentationProps } from "@insite/mobius/DataTable";
 import DataTablePresentationPropsDefault from "@insite/mobius/DataTable/presentationProps";
@@ -164,7 +164,7 @@ export interface ComponentThemeProps {
     };
     checkbox: {
         defaultProps?: CheckboxPresentationProps;
-        groupDefaultProps?: FieldSetGroupPresentationProps<CheckboxGroupProps>;
+        groupDefaultProps?: FieldSetGroupPresentationProps<CheckboxGroupProps> & CheckboxGroupPresentationProps;
     };
     clickable: { defaultProps?: { css?: StyledProp<ClickableProps> } };
     dataTable: { defaultProps?: DataTablePresentationProps };

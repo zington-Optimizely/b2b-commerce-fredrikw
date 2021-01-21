@@ -2,18 +2,10 @@ import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
 import Edit2 from "@insite/mobius/Icons/Edit2";
 import Eye from "@insite/mobius/Icons/Eye";
-import Monitor from "@insite/mobius/Icons/Monitor";
-import Smartphone from "@insite/mobius/Icons/Smartphone";
-import Tablet from "@insite/mobius/Icons/Tablet";
 import ContentModeClicker from "@insite/shell/Components/Shell/ContentModeClicker";
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderGear from "@insite/shell/Components/Shell/HeaderGear";
 import ViewPortClicker from "@insite/shell/Components/Shell/ViewPortClicker";
-import {
-    configureComparison,
-    loadPublishedPageVersions,
-    restoreVersion,
-} from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
 import { changeStageMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";

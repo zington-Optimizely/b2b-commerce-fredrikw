@@ -4,12 +4,25 @@ import Typography from "@insite/mobius/Typography";
 import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
+
+export interface RadioGroupPresentationProps {
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<RadioGroupProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
+}
 
 export type RadioGroupComponentProps = MobiusStyledComponentProps<
     "fieldset",
@@ -27,7 +40,9 @@ export type RadioGroupComponentProps = MobiusStyledComponentProps<
     }
 >;
 
-export type RadioGroupProps = FieldSetGroupPresentationProps<RadioGroupComponentProps> & RadioGroupComponentProps;
+export type RadioGroupProps = FieldSetGroupPresentationProps<RadioGroupComponentProps> &
+    RadioGroupComponentProps &
+    RadioGroupPresentationProps;
 
 const RadioGroupStyle = styled.fieldset`
     border: 0;
@@ -68,8 +83,8 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
     };
 
     render() {
-        const { children, error, label, required, ...otherProps } = this.props;
-        const { applyProp, spreadProps } = applyPropBuilder(this.props, {
+        const { children, error, label, mergeCss, required, ...otherProps } = this.props;
+        const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(this.props, {
             component: "radio",
             category: "fieldSet",
             propKey: "groupDefaultProps",
@@ -108,11 +123,13 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
             labelProps.as = "div";
         }
 
+        const resolvedMergeCss = mergeCss ?? this.props?.theme?.radio?.groupDefaultProps?.mergeCss;
+
         return (
             <RadioGroupStyle
-                css={applyProp("css")}
                 {...labelProps}
                 {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
+                css={applyStyledProp("css", resolvedMergeCss)}
             >
                 {renderLabel}
                 <RadioGroupContext.Provider

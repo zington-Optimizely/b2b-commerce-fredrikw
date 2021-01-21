@@ -11,6 +11,7 @@ import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderPublishStatus from "@insite/shell/Components/Shell/HeaderPublishStatus";
 import { LoadedPageDefinition } from "@insite/shell/DefinitionTypes";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { getAutoUpdatedPageTypes } from "@insite/shell/Services/SpireService";
 import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
 import {
     editPageOptions,
@@ -53,7 +54,23 @@ const mapDispatchToProps = {
     editPageOptions,
 };
 
-class Header extends React.Component<Props> {
+interface State {
+    autoUpdatedPageTypes?: string[];
+}
+
+class Header extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {};
+    }
+
+    async componentDidMount() {
+        const { autoUpdatedPageTypes } = await getAutoUpdatedPageTypes();
+        this.setState({
+            autoUpdatedPageTypes,
+        });
+    }
+
     editPageOptions = () => {
         this.props.editPageOptions(this.props.page.id);
     };
@@ -68,6 +85,7 @@ class Header extends React.Component<Props> {
             futurePublishOn,
         } = this.props;
 
+        const autoUpdatedPage = this.state.autoUpdatedPageTypes?.includes(page.type) ?? false;
         return (
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
@@ -92,6 +110,11 @@ class Header extends React.Component<Props> {
                 {pageDefinition?.supportsProductSelection && <ProductSelection />}
                 {pageDefinition?.supportsCategorySelection && <CategorySelection />}
                 {pageDefinition?.supportsBrandSelection && <BrandSelection />}
+                {autoUpdatedPage && contentMode === "Editing" && (
+                    <AutoUpdateWarning>
+                        This page is configured to be auto updated. Any edits made may be overwritten.
+                    </AutoUpdateWarning>
+                )}
                 {contentMode !== "Viewing" && (
                     <PublishDropDownStyle>
                         <PublishDropDown />
@@ -103,6 +126,12 @@ class Header extends React.Component<Props> {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
+
+const AutoUpdateWarning = styled.span`
+    color: ${(props: ShellThemeProps) => props.theme.colors.danger.main};
+    font-weight: bold;
+    margin-left: 8px;
+`;
 
 const PageHeaderStyle = styled.div`
     background-color: ${(props: ShellThemeProps) => props.theme.colors.common.background};
@@ -121,8 +150,8 @@ const PageHeaderTitle = styled.h2`
     font-weight: bold;
 `;
 
-const PageHeaderButton = styled.button<{ active?: boolean }>`
-    background-color: ${props => (props.active ? props.theme.colors.primary.main : "transparent")};
+const PageHeaderButton = styled.button`
+    background-color: transparent;
     border: none;
     height: 100%;
     min-width: 30px;

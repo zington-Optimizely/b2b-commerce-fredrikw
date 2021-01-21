@@ -1,7 +1,6 @@
 import { ButtonProps } from "@insite/mobius/Button";
 import Tab, { TabProps } from "@insite/mobius/Tab";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
-import get from "@insite/mobius/utilities/get";
 import getColor from "@insite/mobius/utilities/getColor";
 import getProp from "@insite/mobius/utilities/getProp";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
@@ -11,11 +10,17 @@ import * as React from "react";
 import styled, { withTheme } from "styled-components";
 
 export interface TabGroupPresentationProps {
+    /**
+     * Indicates how the `css` property is combined with the default `css` property from the theme.
+     * If true, the default css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the default css in the theme.
+     */
+    mergeCss?: boolean;
     /** CSS strings or styled-components functions to be injected into nested components.
      * @themable */
     cssOverrides?: {
-        tabContent?: StyledProp<TabGroupProps>;
         tabGroup?: StyledProp<TabGroupProps>;
+        tabContent?: StyledProp<TabGroupProps>;
         wrapper?: StyledProp<TabGroupProps>;
     };
 }
@@ -156,13 +161,15 @@ class TabGroup extends React.Component<Props, State> {
         const {
             children, // tabs that contain their own content objects
             onTabChange,
+            mergeCss,
             ...otherProps
         } = this.props;
-        const { spreadProps } = applyPropBuilder(this.props as Props, {
+        const { theme } = otherProps;
+        const resolvedMergeCss = mergeCss ?? theme?.tab.groupDefaultProps?.mergeCss;
+        const { applyStyledProp } = applyPropBuilder(this.props as Props, {
             component: "tab",
             propKey: "groupDefaultProps",
         });
-        const cssOverrides = spreadProps("cssOverrides");
 
         const { currentTab } = this.state;
 
@@ -182,7 +189,7 @@ class TabGroup extends React.Component<Props, State> {
                     aria-labelledby={tabKey}
                     key={`content-${tabKey}`}
                     hidden={tabKey !== currentTab}
-                    css={get(cssOverrides, "tabContent")}
+                    css={applyStyledProp(["cssOverrides", "tabContent"], resolvedMergeCss)}
                 >
                     {thisTab.props.children}
                 </TabContent>,
@@ -201,8 +208,12 @@ class TabGroup extends React.Component<Props, State> {
         });
 
         return (
-            <TabGroupWrapper {...otherProps} css={get(cssOverrides, "wrapper")}>
-                <TabGroupStyle data-id="tabGroup" onKeyDown={this.handleKeyDown} css={get(cssOverrides, "tabGroup")}>
+            <TabGroupWrapper {...otherProps} css={applyStyledProp(["cssOverrides", "wrapper"], resolvedMergeCss)}>
+                <TabGroupStyle
+                    data-id="tabGroup"
+                    onKeyDown={this.handleKeyDown}
+                    css={applyStyledProp(["cssOverrides", "tabGroup"], resolvedMergeCss)}
+                >
                     {tabs}
                 </TabGroupStyle>
                 <div tabIndex={-1} style={{ outline: "none" }} ref={this.setContentRef} data-id="tabContent">

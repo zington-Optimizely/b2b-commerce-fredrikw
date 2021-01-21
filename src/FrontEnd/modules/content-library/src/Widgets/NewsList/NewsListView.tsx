@@ -10,6 +10,7 @@ import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data
 import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import updateLoadParameter from "@insite/client-framework/Store/Pages/NewsList/Handlers/UpdateLoadParameter";
 import translate from "@insite/client-framework/Translate";
+import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateTime";
@@ -23,9 +24,10 @@ import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
 import sortBy from "lodash/sortBy";
+import truncate from "lodash/truncate";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
-import styled, { css } from "styled-components";
+import { css } from "styled-components";
 
 const enum fields {
     defaultPageSize = "defaultPageSize",
@@ -62,11 +64,7 @@ const mapDispatchToProps = {
     updateLoadParameter,
 };
 
-type Props = WidgetProps &
-    ReturnType<typeof mapStateToProps> &
-    ResolveThunks<typeof mapDispatchToProps> &
-    OwnProps &
-    HasHistory;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & HasHistory;
 
 export interface NewsListViewStyles {
     titleText?: TypographyProps;
@@ -122,7 +120,7 @@ export const newsListViewStyles: NewsListViewStyles = {
 
 const styles = newsListViewStyles;
 
-class Component extends React.Component<Props> {
+class NewsListView extends React.Component<Props> {
     UNSAFE_componentWillMount() {
         if (!this.props.pages.value && !this.props.pages.isLoading) {
             this.props.loadPagesForParent(this.props.parameter);
@@ -188,8 +186,8 @@ class Component extends React.Component<Props> {
         if (!pages) {
             return null;
         }
-        const totalItems = pages.length;
 
+        const totalItems = pages.length;
         const page = parameter.page ?? 1;
         const pageSize = parameter.pageSize ?? defaultPageSize;
 
@@ -199,7 +197,7 @@ class Component extends React.Component<Props> {
 
         return (
             <StyledWrapper {...styles.listWrapper}>
-                {sortedAndPagedPages.map(page => (
+                {sortedAndPagedPages.map((page: PageProps) => (
                     <StyledWrapper {...styles.newsWrapper} key={page.id}>
                         <Typography variant="h2" {...styles.titleText}>
                             <Link href={links[page.nodeId]?.url}>{page.fields["title"]}</Link>
@@ -219,7 +217,10 @@ class Component extends React.Component<Props> {
                         </StyledWrapper>
                         {(page.fields["newsSummary"] || page.fields["newsContent"]) && (
                             <StyledWrapper {...styles.summaryWrapper}>
-                                {parse(page.fields["newsSummary"] || page.fields["newsContent"], parserOptions)}
+                                {parse(
+                                    page.fields["newsSummary"] || truncate(page.fields["newsContent"], { length: 500 }),
+                                    parserOptions,
+                                )}
                             </StyledWrapper>
                         )}
                         <Link href={links[page.nodeId]?.url} {...styles.readMoreLink}>
@@ -250,7 +251,7 @@ class Component extends React.Component<Props> {
 }
 
 const widgetModule: WidgetModule = {
-    component: withHistory(connect(mapStateToProps, mapDispatchToProps)(Component)),
+    component: withHistory(connect(mapStateToProps, mapDispatchToProps)(NewsListView)),
     definition: {
         group: "News List",
         allowedContexts: [NewsListPageContext],

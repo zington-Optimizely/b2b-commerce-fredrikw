@@ -6,11 +6,15 @@ import { HasShellContext } from "@insite/client-framework/Components/IsInShell";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
-import { getSelectedCategoryPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import {
+    getSelectedCategoryPath,
+    getSettingsCollection,
+} from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesSelectors";
 import { getCategoryState } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import clearAllProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearAllProductFilters";
 import clearProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/ClearProducts";
 import displayProducts from "@insite/client-framework/Store/Pages/ProductList/Handlers/DisplayProducts";
 import translate from "@insite/client-framework/Translate";
@@ -53,10 +57,12 @@ const mapStateToProps = (state: ApplicationState) => {
         pages: state.pages,
         location: getLocation(state),
         category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
+        websiteSettings: getSettingsCollection(state).websiteSettings,
     };
 };
 
 const mapDispatchToProps = {
+    clearAllProductFilters,
     displayProducts,
     setBreadcrumbs,
     clearProducts,
@@ -153,6 +159,9 @@ class ProductListPage extends React.Component<Props> {
         }
 
         if (search !== prevProps.search || this.props.path !== prevProps.path) {
+            if (this.props.path !== prevProps.path) {
+                this.props.clearAllProductFilters();
+            }
             this.loadProducts();
         }
 
@@ -170,7 +179,7 @@ class ProductListPage extends React.Component<Props> {
     }
 
     setMetadata() {
-        const { productListCatalogPage, websiteName, location } = this.props;
+        const { productListCatalogPage, websiteName, location, websiteSettings } = this.props;
         if (!productListCatalogPage) {
             return;
         }
@@ -186,17 +195,20 @@ class ProductListPage extends React.Component<Props> {
             canonicalPath,
         } = productListCatalogPage;
 
-        setPageMetadata({
-            metaDescription,
-            metaKeywords,
-            openGraphImage: openGraphImage || primaryImagePath,
-            openGraphTitle,
-            openGraphUrl,
-            title,
-            currentPath: location.pathname,
-            canonicalPath,
-            websiteName,
-        });
+        setPageMetadata(
+            {
+                metaDescription,
+                metaKeywords,
+                openGraphImage: openGraphImage || primaryImagePath,
+                openGraphTitle,
+                openGraphUrl,
+                title,
+                currentPath: location.pathname,
+                canonicalPath,
+                websiteName,
+            },
+            websiteSettings,
+        );
     }
 
     setProductListBreadcrumbs() {

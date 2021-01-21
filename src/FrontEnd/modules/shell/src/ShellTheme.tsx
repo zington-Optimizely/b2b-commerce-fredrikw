@@ -96,6 +96,9 @@ const buttonStyles: FlattenSimpleInterpolation = css`
     border-radius: 3px;
     border-width: 1px;
     padding: 0 16px;
+    &:disabled {
+        color: #bbb;
+    }
 `;
 
 const buttonProps: ButtonPresentationProps = {

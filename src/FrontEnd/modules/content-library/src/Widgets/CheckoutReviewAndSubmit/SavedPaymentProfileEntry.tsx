@@ -11,6 +11,7 @@ import styled, { css } from "styled-components";
 
 interface OwnProps {
     useTokenExGateway?: boolean;
+    isTokenExIframeLoaded?: boolean;
     securityCode: string;
     onSecurityCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     securityCodeError?: string;
@@ -47,8 +48,15 @@ const SecurityCodeImageWrapper = styled.div<InjectableCss>`
     ${({ css }) => css}
 `;
 
-const SavedPaymentProfileEntry = (props: OwnProps) => {
-    const [styles] = useState(() => mergeToNew(savedPaymentProfileEntryStyles, props.extendedStyles));
+const SavedPaymentProfileEntry = ({
+    useTokenExGateway,
+    isTokenExIframeLoaded,
+    securityCode,
+    onSecurityCodeChange,
+    securityCodeError,
+    extendedStyles,
+}: OwnProps) => {
+    const [styles] = useState(() => mergeToNew(savedPaymentProfileEntryStyles, extendedStyles));
     const [isSecurityCodeModalOpen, setIsSecurityCodeModalOpen] = useState(false);
 
     const handleSecurityCodeHelpLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -63,7 +71,7 @@ const SavedPaymentProfileEntry = (props: OwnProps) => {
 
     return (
         <>
-            {props.useTokenExGateway ? (
+            {useTokenExGateway ? (
                 <TokenExFrame
                     {...styles.tokenExFrame}
                     label={translate("Security Code")}
@@ -71,8 +79,9 @@ const SavedPaymentProfileEntry = (props: OwnProps) => {
                     tokenExIFrameContainer={
                         <TokenExFrameWrapper {...styles.tokenExFrameWrapper} id="ppTokenExSecurityCode" />
                     }
+                    disabled={!isTokenExIframeLoaded}
                     required
-                    error={props.securityCodeError}
+                    error={securityCodeError}
                     data-test-selector="checkoutReviewAndSubmit_securityCode"
                 />
             ) : (
@@ -80,12 +89,12 @@ const SavedPaymentProfileEntry = (props: OwnProps) => {
                     {...styles.text}
                     label={translate("Security Code")}
                     hint={securityCodeHint}
-                    value={props.securityCode}
-                    onChange={props.onSecurityCodeChange}
+                    value={securityCode}
+                    onChange={onSecurityCodeChange}
                     required
                     minLength={3}
                     maxLength={4}
-                    error={props.securityCodeError}
+                    error={securityCodeError}
                     data-test-selector="checkoutReviewAndSubmit_securityCode"
                 />
             )}

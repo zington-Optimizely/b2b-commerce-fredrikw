@@ -563,7 +563,9 @@ const widgetModule: WidgetModule = {
                 max: 20,
                 defaultValue: 10,
                 fieldType: "General",
-                isVisible: item => item.fields[fields.carouselType] === "customersAlsoPurchased",
+                isVisible: item =>
+                    item.fields[fields.carouselType] === "customersAlsoPurchased" ||
+                    item.fields[fields.carouselType] === "topSellers",
                 sortOrder: 5,
             },
             {

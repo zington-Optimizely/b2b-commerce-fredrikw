@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -13,6 +14,7 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     order: state.pages.orderStatus.order,
+    showPoNumber: getSettingsCollection(state).orderSettings.showPoNumber,
 });
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
@@ -54,7 +56,7 @@ export const orderStatusInformationStyles: OrderStatusInformationStyles = {
 
 const styles = orderStatusInformationStyles;
 
-const OrderStatusInformation: FC<Props> = ({ order }) => {
+const OrderStatusInformation: FC<Props> = ({ order, showPoNumber }) => {
     if (!order) {
         return null;
     }
@@ -96,14 +98,16 @@ const OrderStatusInformation: FC<Props> = ({ order }) => {
                     {order.terms}
                 </Typography>
             </StyledWrapper>
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusPO">
-                    {translate("PO")}
-                </Typography>
-                <Typography {...styles.poNumberText} aria-labelledby="orderStatusPO">
-                    {order.customerPO}
-                </Typography>
-            </StyledWrapper>
+            {showPoNumber && (
+                <StyledWrapper {...styles.wrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusPO">
+                        {translate("PO")}
+                    </Typography>
+                    <Typography {...styles.poNumberText} aria-labelledby="orderStatusPO">
+                        {order.customerPO}
+                    </Typography>
+                </StyledWrapper>
+            )}
             <StyledWrapper {...styles.wrapper}>
                 <Typography as="h2" {...styles.titleText} id="orderStatusShippingMethod">
                     {translate("Shipping Method")}

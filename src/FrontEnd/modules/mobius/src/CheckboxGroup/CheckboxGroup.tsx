@@ -5,12 +5,25 @@ import Typography from "@insite/mobius/Typography";
 import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
+
+export interface CheckboxGroupPresentationProps {
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<CheckboxGroupProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
+}
 
 export type CheckboxGroupComponentProps = MobiusStyledComponentProps<
     "fieldset",
@@ -26,9 +39,10 @@ export type CheckboxGroupComponentProps = MobiusStyledComponentProps<
 >;
 
 export type CheckboxGroupProps = FieldSetGroupPresentationProps<CheckboxGroupComponentProps> &
-    CheckboxGroupComponentProps;
+    CheckboxGroupComponentProps &
+    CheckboxGroupPresentationProps;
 
-const CheckboxGroupStyle = styled.fieldset`
+const CheckboxGroupStyle = styled.fieldset<InjectableCss>`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -61,12 +75,13 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
     state = { uid: this.props.uid || uniqueId() };
 
     render() {
-        const { children, error, label, required, ...otherProps } = this.props;
-        const { applyProp, spreadProps } = applyPropBuilder(this.props, {
+        const { children, error, label, required, mergeCss, ...otherProps } = this.props;
+        const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(this.props, {
             component: "checkbox",
             category: "fieldSet",
             propKey: "groupDefaultProps",
         });
+        const resolvedMergeCss = mergeCss ?? this.props?.theme?.checkbox?.groupDefaultProps?.mergeCss;
         const sizeVariant = applyProp("sizeVariant", "default") as Required<
             Pick<CheckboxGroupProps, "sizeVariant">
         >["sizeVariant"];
@@ -107,10 +122,10 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
 
         return (
             <CheckboxGroupStyle
-                css={applyProp("css")}
+                css={applyStyledProp("css", resolvedMergeCss)}
                 role="group"
                 {...labelProps}
-                {...omitMultiple(otherProps, ["uid", "sizeVariant"])}
+                {...omitMultiple(otherProps, ["uid", "sizeVariant", "css"])}
             >
                 {renderLabel}
                 <CheckboxGroupContext.Provider

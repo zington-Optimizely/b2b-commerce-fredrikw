@@ -102,7 +102,7 @@ const wrapper = (props) => `
     padding: 32px;
     background: ${props.theme.colors.text.accent};
 `;
-<TabGroup cssOverrides={{tabContent, tabGroup, wrapper}}>
+<TabGroup cssOverrides={{ tabContent, tabGroup, wrapper}}>
     <Tab headline={<Icon src={Users} color="white" />} tabKey='Users' css={tabCss} typographyProps={{weight: 500}}>
         <Typography as='p'>This component is being styled with override CSS.</Typography>
     </Tab>

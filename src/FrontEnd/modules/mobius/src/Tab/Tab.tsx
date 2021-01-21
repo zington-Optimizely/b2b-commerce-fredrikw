@@ -15,6 +15,12 @@ export interface TabPresentationProps {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp<TabProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Props to be passed down to the Typography component.
      * @themable */
     typographyProps?: object;
@@ -60,8 +66,8 @@ const TabStyle = styled(Button).attrs<TabProps, TabStyleProps>({ role: "presenta
 `;
 
 const Tab = React.forwardRef<React.Component<ButtonProps>, TabProps>(
-    ({ headline, onClick, ...otherProps }: TabProps, ref) => {
-        const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "tab" });
+    ({ headline, onClick, mergeCss, ...otherProps }: TabProps, ref) => {
+        const { spreadProps, applyStyledProp } = applyPropBuilder(otherProps, { component: "tab" });
         const tabHeader =
             typeof headline === "string" ? (
                 <Typography role="tab" {...spreadProps("typographyProps")}>
@@ -70,6 +76,7 @@ const Tab = React.forwardRef<React.Component<ButtonProps>, TabProps>(
             ) : (
                 headline
             );
+        const resolvedMergeCss = mergeCss ?? otherProps.theme?.tab?.defaultProps?.mergeCss;
         return (
             <TabStyle
                 as="li"
@@ -77,7 +84,7 @@ const Tab = React.forwardRef<React.Component<ButtonProps>, TabProps>(
                 tabIndex={otherProps.selected ? 0 : -1}
                 onClick={onClick}
                 ref={ref}
-                css={applyProp("css")}
+                css={applyStyledProp("css", resolvedMergeCss)}
                 headline={headline}
                 {...omitSingle(otherProps, "css")}
             >

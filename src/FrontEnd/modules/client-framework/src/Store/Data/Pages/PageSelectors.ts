@@ -37,5 +37,14 @@ export function getPageStateByType(state: ApplicationState, type: string) {
 export function getReturnUrl(state: ApplicationState) {
     const { search } = getLocation(state);
     const query = parseQueryString<{ returnUrl?: string; returnurl?: string }>(search);
-    return query.returnUrl || query.returnurl;
+    const returnUrl = query.returnUrl || query.returnurl;
+    return removeAbsoluteUrl(returnUrl);
+}
+
+export function removeAbsoluteUrl(returnUrl: string | undefined) {
+    if (returnUrl && (returnUrl[0] !== "/" || returnUrl[1] === "/" || returnUrl[1] === "\\")) {
+        returnUrl = "";
+    }
+
+    return returnUrl;
 }

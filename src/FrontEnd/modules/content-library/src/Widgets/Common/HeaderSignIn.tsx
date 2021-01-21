@@ -155,6 +155,7 @@ const HeaderSignIn = ({
                             min-width: 0;
                         `,
                     }}
+                    data-test-selector="header_accountMenu"
                 />
             )}
             {(!fields.includeAccountMenu || !userName || (userName && currentUserIsGuest)) && (

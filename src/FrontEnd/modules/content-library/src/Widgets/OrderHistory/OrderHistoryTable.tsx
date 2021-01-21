@@ -44,6 +44,7 @@ const mapStateToProps = (state: ApplicationState) => {
         isReordering: state.pages.orderHistory.isReordering,
         showAddToCartConfirmationDialog: getSettingsCollection(state).productSettings.showAddToCartConfirmationDialog,
         language: state.context.session.language,
+        showPoNumber: getSettingsCollection(state).orderSettings.showPoNumber,
     };
 };
 
@@ -274,14 +275,16 @@ class OrderHistoryTable extends React.Component<Props> {
                         >
                             {translate("Ship To / Pick Up", "stCompanyName")}
                         </DataTableHeader>
-                        <DataTableHeader
-                            {...styles.customerPOHeader}
-                            title={translate("Purchase Order Number")}
-                            sorted={this.sorted("customerPO")}
-                            onSortClick={() => this.headerClick("customerPO")}
-                        >
-                            {translate("PO #", "customerPO")}
-                        </DataTableHeader>
+                        {this.props.showPoNumber && (
+                            <DataTableHeader
+                                {...styles.customerPOHeader}
+                                title={translate("Purchase Order Number")}
+                                sorted={this.sorted("customerPO")}
+                                onSortClick={() => this.headerClick("customerPO")}
+                            >
+                                {translate("PO #", "customerPO")}
+                            </DataTableHeader>
+                        )}
                         {this.props.fields.showReorderProducts && (
                             <DataTableHeader {...styles.reorderHeader} title={translate("Reorder")} />
                         )}
@@ -309,7 +312,9 @@ class OrderHistoryTable extends React.Component<Props> {
                                     {status}
                                 </DataTableCell>
                                 <DataTableCell {...styles.shipToCells}>{shipTo}</DataTableCell>
-                                <DataTableCell {...styles.customerPOCells}>{po}</DataTableCell>
+                                {this.props.showPoNumber && (
+                                    <DataTableCell {...styles.customerPOCells}>{po}</DataTableCell>
+                                )}
                                 {this.props.fields.showReorderProducts && (
                                     <DataTableCell {...styles.reorderCells}>
                                         {this.props.isReordering[orderNumber] && (

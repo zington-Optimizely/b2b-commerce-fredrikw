@@ -18,6 +18,7 @@ import styled, { css } from "styled-components";
 interface OwnProps {
     canSaveCard?: boolean;
     useTokenExGateway?: boolean;
+    isTokenExIframeLoaded?: boolean;
     saveCard: boolean;
     onSaveCardChange: (_: React.SyntheticEvent<Element, Event>, value: boolean) => void;
     cardHolderName: string;
@@ -125,6 +126,7 @@ const SecurityCodeImageWrapper = styled.div<InjectableCss>`
 
 const CreditCardDetailsEntry = ({
     useTokenExGateway,
+    isTokenExIframeLoaded,
     extendedStyles,
     canSaveCard,
     saveCard,
@@ -201,8 +203,9 @@ const CreditCardDetailsEntry = ({
                             <CardNumberTokenExFrameWrapper
                                 {...styles.cardNumberTokenExFrameWrapper}
                                 id="tokenExCardNumber"
-                            ></CardNumberTokenExFrameWrapper>
+                            />
                         }
+                        disabled={!isTokenExIframeLoaded}
                         required
                         error={cardNumberError}
                         data-test-selector="checkoutReviewAndSubmit_cardNumber"
@@ -300,6 +303,7 @@ const CreditCardDetailsEntry = ({
                                 id="tokenExSecurityCode"
                             />
                         }
+                        disabled={!isTokenExIframeLoaded}
                         required
                         error={securityCodeError}
                         data-test-selector="checkoutReviewAndSubmit_securityCode"

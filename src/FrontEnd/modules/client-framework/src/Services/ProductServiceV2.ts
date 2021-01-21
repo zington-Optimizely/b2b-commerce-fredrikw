@@ -51,6 +51,7 @@ export interface GetProductCollectionApiV2Parameter extends GetProductApiV2Param
     filter?: ProductFilterTokens;
     topSellersCategoryIds?: string[];
     topSellersPersonaIds?: string[];
+    /** @deprecated Use pageSize instead. */
     topSellersMaxResults?: number;
     includeSuggestions?: boolean;
     applyPersonalization?: boolean;

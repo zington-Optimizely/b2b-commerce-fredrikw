@@ -2,12 +2,7 @@ import { parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import validatePassword, {
-    lowerCasePasswordLengthMessage,
-    numberPasswordLengthMessage,
-    specialPasswordLengthMessage,
-    upperCasePasswordLengthMessage,
-} from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import validatePassword from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import updatePassword from "@insite/client-framework/Store/Context/Handlers/UpdatePassword";
 import translate from "@insite/client-framework/Translate";
@@ -20,7 +15,7 @@ import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterCont
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
-import React, { FC } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -105,7 +100,7 @@ export const signInChangePasswordFormStyles: SignInChangePasswordFormStyles = {
 const styles = signInChangePasswordFormStyles;
 const StyledForm = getStyledWrapper("form");
 
-const SignInChangePasswordForm: FC<Props> = ({
+const SignInChangePasswordForm = ({
     enteredUserName,
     enteredPassword,
     instructionsText,
@@ -114,15 +109,21 @@ const SignInChangePasswordForm: FC<Props> = ({
     onPasswordChanged,
     validatePassword,
     updatePassword,
-}) => {
-    const [userName, setUserName] = React.useState(enteredUserName);
-    const [password, setPassword] = React.useState(enteredPassword);
-    const [newPassword, setNewPassword] = React.useState("");
-    const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState<React.ReactNode>("");
-    const [confirmNewPassword, setConfirmNewPassword] = React.useState("");
-    const [showValidation, setShowValidation] = React.useState(false);
-    const [error, setError] = React.useState(false);
-    const [showPasswords, setShowPasswords] = React.useState(false);
+}: Props) => {
+    const [userName, setUserName] = useState(enteredUserName);
+    const [password, setPassword] = useState(enteredPassword);
+    const [newPassword, setNewPassword] = useState("");
+    const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState<ReactNode>("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const [showValidation, setShowValidation] = useState(false);
+    const [error, setError] = useState(false);
+    const [showPasswords, setShowPasswords] = useState(false);
+
+    useEffect(() => {
+        setError(
+            !!newPasswordErrorMessage || !newPassword || !confirmNewPassword || confirmNewPassword !== newPassword,
+        );
+    }, [newPassword, newPasswordErrorMessage, confirmNewPassword]);
 
     const {
         passwordMinimumLength,
@@ -145,14 +146,6 @@ const SignInChangePasswordForm: FC<Props> = ({
             password: event.currentTarget.value,
             onComplete: errorMessage => {
                 setNewPasswordErrorMessage(errorMessage);
-                setError(
-                    !!errorMessage ||
-                        !(
-                            confirmNewPassword &&
-                            event.currentTarget.value &&
-                            event.currentTarget.value === confirmNewPassword
-                        ),
-                );
             },
         });
         setNewPassword(event.currentTarget.value);
@@ -160,7 +153,6 @@ const SignInChangePasswordForm: FC<Props> = ({
 
     const confirmNewPasswordChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
         setConfirmNewPassword(event.currentTarget.value);
-        setError(!(newPassword && event.currentTarget.value && event.currentTarget.value === newPassword));
     };
 
     const savePasswordClickHandler = (event: React.FormEvent<HTMLFormElement>) => {
@@ -195,18 +187,10 @@ const SignInChangePasswordForm: FC<Props> = ({
         onPasswordChanged(newPassword);
     };
 
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
-        "{0}",
-        passwordMinimumLength.toString(),
-    );
-    let confirmNewPasswordError: React.ReactNode = "";
-
-    if (showValidation) {
-        confirmNewPasswordError =
-            newPassword && confirmNewPassword && newPassword !== confirmNewPassword
-                ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch")
-                : "";
-    }
+    const confirmNewPasswordError =
+        showValidation && newPassword && confirmNewPassword && newPassword !== confirmNewPassword
+            ? siteMessage("CreateNewAccountInfo_PasswordCombination_DoesNotMatch")
+            : "";
 
     return (
         <StyledForm {...styles.form} onSubmit={savePasswordClickHandler} noValidate>
@@ -271,18 +255,28 @@ const SignInChangePasswordForm: FC<Props> = ({
                 {translate("Password Requirements")}
             </Typography>
             <GridContainer {...styles.passwordRequirementsGridContainer}>
-                <GridItem {...styles.passwordRequirementsGridItem}>{minimumPasswordLengthMessage}</GridItem>
+                <GridItem {...styles.passwordRequirementsGridItem}>
+                    {translate("Password must be at least {0} characters long", passwordMinimumLength.toString())}
+                </GridItem>
                 {passwordRequiresDigit && (
-                    <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                    <GridItem {...styles.passwordRequirementsGridItem}>
+                        {translate("Password must include at least one number")}
+                    </GridItem>
                 )}
                 {passwordRequiresLowercase && (
-                    <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
+                    <GridItem {...styles.passwordRequirementsGridItem}>
+                        {translate("Password must include at least one lowercase character")}
+                    </GridItem>
                 )}
                 {passwordRequiresUppercase && (
-                    <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
+                    <GridItem {...styles.passwordRequirementsGridItem}>
+                        {translate("Password must include at least one uppercase character")}
+                    </GridItem>
                 )}
                 {passwordRequiresSpecialCharacter && (
-                    <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                    <GridItem {...styles.passwordRequirementsGridItem}>
+                        {translate("Password must include at least one non alphanumeric character")}
+                    </GridItem>
                 )}
             </GridContainer>
             <Button

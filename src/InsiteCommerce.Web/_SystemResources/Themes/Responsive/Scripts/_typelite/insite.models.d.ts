@@ -32,7 +32,6 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		defaultFulfillmentMethod: string;
 		defaultWarehouseId: System.Guid;
 		defaultWarehouse: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel;
-		accessToken: string;
 	}
 	interface AccountSettingsModel extends Insite.Core.WebApi.BaseModel {
 		allowCreateAccount: boolean;
@@ -327,6 +326,8 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		extendedUnitNetPrice: number;
 		extendedUnitNetPriceDisplay: string;
 		unitOfMeasure: string;
+		vatRate: number;
+		vatAmount: number;
 		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		regularPrice: number;
@@ -952,6 +953,8 @@ declare module Insite.Core.Plugins.Pricing {
 		extendedUnitNetPrice: number;
 		extendedUnitNetPriceDisplay: string;
 		unitOfMeasure: string;
+		vatRate: number;
+		vatAmount: number;
 		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		regularPrice: number;
@@ -1155,6 +1158,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		taxFailureReason: string;
 		failedToGetRealTimeInventory: boolean;
 		unassignCart: boolean;
+		customerVatNumber: string;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;
@@ -1449,6 +1453,7 @@ declare module Insite.Invoice.WebApi.V1.ApiModels {
 		currentBalanceDisplay: string;
 		orderTotalDisplay: string;
 		shipViaDescription: string;
+		customerVatNumber: string;
 	}
 	interface InvoiceLineModel extends Insite.Core.WebApi.BaseModel {
 		id: string;
@@ -1479,6 +1484,8 @@ declare module Insite.Invoice.WebApi.V1.ApiModels {
 		unitPriceDisplay: string;
 		discountAmountDisplay: string;
 		lineTotalDisplay: string;
+		taxRate: number;
+		taxAmount: number;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
 	}
 	interface InvoiceCollectionModel extends Insite.Core.WebApi.BaseModel {
@@ -1610,6 +1617,7 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		showTaxAndShipping: boolean;
 		shipViaDescription: string;
 		fulfillmentMethod: string;
+		customerVatNumber: string;
 	}
 	interface OrderLineModel extends Insite.Core.WebApi.BaseModel {
 		id: string;
@@ -1657,6 +1665,8 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		unitRegularPrice: number;
 		unitCost: number;
 		orderLineOtherCharges: number;
+		taxRate: number;
+		taxAmount: number;
 		returnReason: string;
 		rmaQtyRequested: number;
 		rmaQtyReceived: number;

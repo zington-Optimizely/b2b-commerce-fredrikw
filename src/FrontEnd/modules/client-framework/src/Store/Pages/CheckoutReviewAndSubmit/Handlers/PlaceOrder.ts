@@ -1,6 +1,10 @@
 import formatDateWithTimezone from "@insite/client-framework/Common/Utilities/formatDateWithTimezone";
 import { trackCompletedOrder } from "@insite/client-framework/Common/Utilities/tracking";
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    HasOnError,
+} from "@insite/client-framework/HandlerCreator";
 import {
     Cart,
     CartResult,
@@ -37,7 +41,7 @@ interface PlaceOrderParameter {
 }
 
 type HandlerType = ApiHandlerDiscreteParameter<
-    PlaceOrderParameter,
+    PlaceOrderParameter & HasOnError,
     UpdateCartApiParameter,
     CartResult,
     {
@@ -172,6 +176,7 @@ export const UpdateCart: HandlerType = async props => {
     if (result.successful) {
         props.apiResult = result.result;
     } else {
+        props.parameter.onError?.();
         props.dispatch({
             type: "Pages/CheckoutReviewAndSubmit/SetPlaceOrderErrorMessage",
             errorMessage: result.errorMessage,
@@ -194,7 +199,7 @@ export const ReloadCurrentCart: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
-    props.parameter.onSuccess && props.parameter.onSuccess(props.apiResult.cart.id);
+    props.parameter.onSuccess?.(props.apiResult.cart.id);
 };
 
 export const SendTracking: HandlerType = props => {

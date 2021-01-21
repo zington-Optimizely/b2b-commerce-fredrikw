@@ -1,4 +1,5 @@
 import { getUrl, setServerPageMetadata } from "@insite/client-framework/ServerSideRendering";
+import { WebsiteSettingsModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface PreparedMetadata {
     metaDescription: string;
@@ -22,17 +23,20 @@ export interface Metadata {
     websiteName: string;
 }
 
-export default function setPageMetadata({
-    metaDescription,
-    metaKeywords,
-    openGraphImage,
-    openGraphTitle,
-    openGraphUrl,
-    currentPath,
-    canonicalPath,
-    title,
-    websiteName,
-}: Metadata) {
+export default function setPageMetadata(
+    {
+        metaDescription,
+        metaKeywords,
+        openGraphImage,
+        openGraphTitle,
+        openGraphUrl,
+        currentPath,
+        canonicalPath,
+        title,
+        websiteName,
+    }: Metadata,
+    websiteSettings?: WebsiteSettingsModel,
+) {
     const url: { protocol: string; host: string } = IS_SERVER_SIDE ? getUrl()! : window.location;
     const authority = `${url.protocol}//${url.host}`;
 
@@ -49,7 +53,7 @@ export default function setPageMetadata({
     };
 
     const currentUrl = cleanUrl(currentPath);
-    const actualTitle = websiteName + (title ? ` | ${title}` : "");
+    const actualTitle = generatePageTitle(title || "", websiteName, websiteSettings);
     const ogTitle = openGraphTitle || actualTitle || "";
     const ogImage = cleanUrl(openGraphImage);
     const ogUrl = cleanUrl(openGraphUrl, currentUrl);
@@ -74,4 +78,18 @@ export default function setPageMetadata({
         document.querySelector('meta[name="description"]')?.setAttribute("content", metaDescription || "");
         document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonicalUrl || "");
     }
+}
+
+function generatePageTitle(title: string, websiteName: string, websiteSettings?: WebsiteSettingsModel) {
+    if (!websiteSettings) {
+        return websiteName + (title ? ` | ${title}` : "");
+    }
+
+    if (!websiteSettings.includeSiteNameInPageTitle) {
+        return title;
+    }
+
+    return websiteSettings.siteNameAfterTitle
+        ? `${title}${websiteSettings.pageTitleDelimiter}${websiteName}`
+        : `${websiteName}${websiteSettings.pageTitleDelimiter}${title}`;
 }

@@ -169,7 +169,7 @@ const HeaderShipToAddress: FC<Props> = ({
                 </Clickable>
             </StyledWrapper>
             <Drawer
-                {...(drawerStyles as DrawerProps)}
+                {...drawerStyles}
                 position="top"
                 isOpen={isDrawerOpen}
                 headline={isPunchOutSession ? "" : translate("Change Customer")}

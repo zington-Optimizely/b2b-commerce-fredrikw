@@ -5,7 +5,7 @@ import { ParentProductIdContext } from "@insite/client-framework/Components/Pare
 import { HasProduct, ProductContext, ProductContextModel } from "@insite/client-framework/Components/ProductContext";
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getSelectedProductPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSelectedProductPath, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import {
     getComputedVariantProduct,
@@ -43,6 +43,7 @@ const mapStateToProps = (state: ApplicationState) => {
         websiteName: state.context.website.name,
         page: getCurrentPage(state),
         location,
+        websiteSettings: getSettingsCollection(state).websiteSettings,
     };
 };
 
@@ -85,6 +86,7 @@ class ProductDetailsPage extends React.Component<Props, State> {
             productState: { value: product },
             websiteName,
             location,
+            websiteSettings,
         } = this.props;
         if (!product || !product.content) {
             return;
@@ -99,17 +101,20 @@ class ProductDetailsPage extends React.Component<Props, State> {
             pageTitle,
         } = product.content;
 
-        setPageMetadata({
-            metaDescription,
-            metaKeywords,
-            openGraphImage,
-            openGraphTitle,
-            openGraphUrl,
-            currentPath: location.pathname,
-            canonicalPath: product.canonicalUrl,
-            title: pageTitle || product.productTitle,
-            websiteName,
-        });
+        setPageMetadata(
+            {
+                metaDescription,
+                metaKeywords,
+                openGraphImage,
+                openGraphTitle,
+                openGraphUrl,
+                currentPath: location.pathname,
+                canonicalPath: product.canonicalUrl,
+                title: pageTitle || product.productTitle,
+                websiteName,
+            },
+            websiteSettings,
+        );
 
         this.setState({
             metadataSetForId: product.id,

@@ -1,14 +1,15 @@
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { PagePublishInfo, PageVersionInfoModel } from "@insite/shell/Services/ContentAdminService";
+import {
+    PagePublishInfo,
+    PageVersionInfoModel,
+    PublishedPageVersionsModel,
+} from "@insite/shell/Services/ContentAdminService";
 import { PublishModalState } from "@insite/shell/Store/PublishModal/PublishModalState";
 import { Draft } from "immer";
 
 const initialState: PublishModalState = {
     pagePublishInfosState: {
-        isLoading: false,
-    },
-    publishedPageVersionsState: {
         isLoading: false,
     },
     pagePublishInfoIsSelected: [],
@@ -111,50 +112,6 @@ const reducer = {
 
     "PublishModal/SetIsSelectedForAll": (draft: Draft<PublishModalState>, action: { isSelected: boolean }) => {
         draft.pagePublishInfoIsSelected = draft.pagePublishInfosState.value!.map(() => action.isSelected);
-    },
-
-    "PublishModal/ConfigureComparison": (
-        draft: Draft<PublishModalState>,
-        { compareVersions }: Pick<PublishModalState, "compareVersions">,
-    ) => {
-        if (!compareVersions) {
-            delete draft.compareVersions;
-        } else {
-            draft.compareVersions = compareVersions;
-        }
-    },
-
-    "PublishModal/BeginLoadingPublishedPageVersions": (draft: Draft<PublishModalState>) => {
-        draft.publishedPageVersionsState = {
-            isLoading: true,
-        };
-    },
-
-    "PublishModal/CompleteLoadingPublishedPageVersions": (
-        draft: Draft<PublishModalState>,
-        {
-            pageVersions,
-        }: {
-            pageVersions: PageVersionInfoModel[];
-        },
-    ) => {
-        draft.publishedPageVersionsState = {
-            isLoading: false,
-            value: pageVersions,
-        };
-    },
-
-    "PublishModal/CompletePageVersionRestore": (
-        draft: Draft<PublishModalState>,
-        {
-            pageVersion,
-        }: {
-            pageVersion: PageVersionInfoModel;
-        },
-    ) => {
-        if (draft.compareVersions) {
-            draft.compareVersions.unpublished = pageVersion;
-        }
     },
 };
 

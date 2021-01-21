@@ -4,7 +4,15 @@ import {
     getProductCollectionRealTimeInventory,
     GetProductCollectionRealTimeInventoryApiV2Parameter,
 } from "@insite/client-framework/Services/ProductServiceV2";
-import { RealTimeInventoryModel } from "@insite/client-framework/Types/ApiModels";
+import siteMessage from "@insite/client-framework/SiteMessage";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getProductState } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import {
+    AvailabilityDto,
+    InventoryAvailabilityDto,
+    ProductInventoryDto,
+    RealTimeInventoryModel,
+} from "@insite/client-framework/Types/ApiModels";
 
 type Parameter = GetProductCollectionRealTimeInventoryApiV2Parameter &
     HasOnSuccess<RealTimeInventoryModel> &
@@ -23,7 +31,36 @@ export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = apiParameter;
 };
 
+export const SetEmptyData: HandlerType = props => {
+    if (getSettingsCollection(props.getState()).productSettings.showInventoryAvailability) {
+        return;
+    }
+
+    props.apiResult = {
+        realTimeInventoryResults: props.apiParameter.productIds.map(o => {
+            const uoms = getProductState(props.getState(), o).value?.unitOfMeasures?.map(p => p.unitOfMeasure) ?? [""];
+            return {
+                productId: o,
+                inventoryAvailabilityDtos: uoms?.map(uom => {
+                    return {
+                        availability: {
+                            message: siteMessage("Inventory_SignInForAvailability"),
+                            messageType: 1,
+                            requiresRealTimeInventory: false,
+                        },
+                        unitOfMeasure: uom,
+                    };
+                }),
+            } as ProductInventoryDto;
+        }),
+    } as RealTimeInventoryModel;
+};
+
 export const RequestDataFromApi: HandlerType = async props => {
+    if (!getSettingsCollection(props.getState()).productSettings.showInventoryAvailability) {
+        return;
+    }
+
     try {
         props.apiResult = await getProductCollectionRealTimeInventory(props.apiParameter);
     } catch (error) {
@@ -44,7 +81,13 @@ export const ExecuteOnErrorCallback: HandlerType = props => {
     }
 };
 
-export const chain = [PopulateApiParameter, RequestDataFromApi, ExecuteOnSuccessCallback, ExecuteOnErrorCallback];
+export const chain = [
+    PopulateApiParameter,
+    SetEmptyData,
+    RequestDataFromApi,
+    ExecuteOnSuccessCallback,
+    ExecuteOnErrorCallback,
+];
 
 const loadRealTimeInventory = createHandlerChainRunner(chain, "LoadRealTimeInventory");
 

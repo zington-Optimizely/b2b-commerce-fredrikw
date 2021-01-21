@@ -32,8 +32,15 @@ export const RequestDataFromApi: HandlerType = async props => {
     try {
         props.apiResult = await getProductCollectionRealTimePrices(props.apiParameter);
     } catch (error) {
-        logger.warn(`Failed to load pricing data: ${error}`);
-        props.error = error;
+        if (error.status === 403) {
+            // auth timed out with sign in required for pricing - throw this up as a 401 so DisplayError reloads the site
+            error.status = 401;
+            error.errorJson = { message: "error" };
+            throw error;
+        } else {
+            logger.warn(`Failed to load pricing data: ${error}`);
+            props.error = error;
+        }
     }
 };
 

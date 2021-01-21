@@ -41,7 +41,6 @@ const menuItemStyles = css`
 
 const wrapperStyles = css`
     width: 24px;
-    height: 30px;
 `;
 
 type Props = RouteComponentProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -58,6 +57,13 @@ const HeaderGear = ({
     showRestoreContentModal,
 }: Props) => {
     const [showAbout, setShowAbout] = React.useState(false);
+
+    const clickRedoPageState = () => {
+        window.open(
+            `/api/internal/contentadmin/redoPageState?access_token=${window.localStorage.getItem("admin-accessToken")}`,
+            "_blank",
+        );
+    };
 
     return (
         <>
@@ -103,6 +109,9 @@ const HeaderGear = ({
                 </Clickable>
                 <Clickable data-test-selector="shellSettings_showAbout" onClick={() => setShowAbout(true)}>
                     About
+                </Clickable>
+                <Clickable data-test-selector="shellSettings_redoPageState" onClick={clickRedoPageState}>
+                    Redo Page State
                 </Clickable>
             </OverflowMenu>
             <Modal isOpen={showAbout} headline="About" isCloseable handleClose={() => setShowAbout(false)}>

@@ -1,3 +1,4 @@
+import sleep from "@insite/client-framework/Common/Sleep";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { ToastContextData } from "@insite/mobius/Toast/ToasterContext";
@@ -244,41 +245,4 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
         type: "Data/Pages/Reset",
     });
     dispatch(loadPage({ pathname: `/Content/Page/${currentPage.id}`, search: "" } as Location));
-};
-
-export const configureComparison = (compareVersions?: PublishModalState["compareVersions"]): AnyShellAction => ({
-    type: "PublishModal/ConfigureComparison",
-    compareVersions,
-});
-
-export const loadPublishedPageVersions = (pageId: string): ShellThunkAction => async dispatch => {
-    dispatch({
-        type: "PublishModal/BeginLoadingPublishedPageVersions",
-    });
-
-    const pageVersions = await getPublishedPageVersions(pageId);
-    dispatch({
-        type: "PublishModal/CompleteLoadingPublishedPageVersions",
-        pageVersions,
-    });
-};
-
-export const restoreVersion = (
-    pageVersion: PageVersionInfoModel,
-    pageId: string,
-): ShellThunkAction => async dispatch => {
-    const result = await restorePageVersion(pageVersion.versionId);
-    if (result.success) {
-        dispatch({
-            type: "PublishModal/CompletePageVersionRestore",
-            pageVersion,
-        });
-
-        // we need to get the model selection dropdowns to reload so they retrigger selecting product/category/brand
-        dispatch({
-            type: "Data/Pages/Reset",
-        });
-
-        dispatch(loadPage({ pathname: `/Content/Page/${pageId}`, search: "" } as Location));
-    }
 };

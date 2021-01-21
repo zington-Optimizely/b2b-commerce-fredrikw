@@ -632,6 +632,7 @@ const ActionBar = styled.div`
     padding: 12px 10px 12px 34px;
     display: flex;
     justify-content: space-between;
+    z-index: 1300;
     button:disabled {
         background: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};
         border-color: ${(props: ShellThemeProps) => props.theme.colors.common.backgroundContrast};

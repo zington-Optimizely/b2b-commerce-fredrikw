@@ -40,18 +40,18 @@ export const LoadRecentlyViewed: HandlerType = props => {
         return;
     }
 
-    props.getProductCollectionParameter = { filter: "recentlyViewed" };
+    props.getProductCollectionParameter = { filter: "recentlyViewed", pageSize: 999 };
 };
 
 export const LoadCrossSells: HandlerType = props => {
     const {
-        parameter: { carouselType, numberOfProductsToDisplay },
+        parameter: { carouselType },
     } = props;
     if (carouselType !== "crossSells") {
         return;
     }
 
-    props.getProductCollectionParameter = { filter: "siteCrosssells", pageSize: numberOfProductsToDisplay };
+    props.getProductCollectionParameter = { filter: "siteCrosssells", pageSize: 999 };
 };
 
 export const LoadRelatedProducts: HandlerType = props => {
@@ -62,7 +62,7 @@ export const LoadRelatedProducts: HandlerType = props => {
         return;
     }
 
-    props.getProductCollectionParameter = { productId, relationship: relatedProductType };
+    props.getProductCollectionParameter = { productId, relationship: relatedProductType, pageSize: 999 };
 };
 
 export const LoadCustomersAlsoPurchased: HandlerType = props => {
@@ -154,7 +154,7 @@ export const LoadTopSellers: HandlerType = props => {
     props.getProductCollectionParameter = {
         topSellersCategoryIds,
         topSellersPersonaIds,
-        topSellersMaxResults: numberOfProductsToDisplay,
+        pageSize: numberOfProductsToDisplay,
         brandIds,
         makeBrandUrls: brandIds.length > 0,
         filter: "topSellers",

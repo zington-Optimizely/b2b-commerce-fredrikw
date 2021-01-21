@@ -4,6 +4,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import {
     getCategoriesDataView,
     getCategoryState,
+    getSubCategoryIds,
 } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import translate from "@insite/client-framework/Translate";
@@ -36,7 +37,7 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     categoriesDataView: getCategoriesDataView(state),
-    parentCategoryIds: state.data.categories.parentCategoryIdToChildrenIds[emptyGuid],
+    topLevelCategoryIds: getSubCategoryIds(state, emptyGuid),
 });
 
 const mapDispatchToProps = {
@@ -132,7 +133,7 @@ class CategoryList extends React.Component<Props> {
     render() {
         const {
             categoriesDataView,
-            parentCategoryIds,
+            topLevelCategoryIds,
             fields: { showImages, showOnlyTopLevelCategories },
         } = this.props;
         if (categoriesDataView.isLoading) {
@@ -143,14 +144,11 @@ class CategoryList extends React.Component<Props> {
             );
         }
 
-        if (!categoriesDataView.value) {
+        if (!categoriesDataView.value || !topLevelCategoryIds) {
             return null;
         }
 
-        const categories =
-            showOnlyTopLevelCategories && parentCategoryIds
-                ? categoriesDataView.value.filter(o => parentCategoryIds.indexOf(o.id) > -1)
-                : categoriesDataView.value;
+        const categories = categoriesDataView.value.filter(o => topLevelCategoryIds.indexOf(o.id) > -1);
 
         return (
             <GridContainer {...styles.container}>

@@ -51,6 +51,11 @@ const TokenExFrameWrapper = styled.div<{ _sizeVariant: keyof typeof sizeVariantV
     ${injectCss}
 `;
 
+const HiddenWrapper = styled.div<{ isHidden: boolean }>`
+    display: ${({ isHidden }) => (isHidden ? "none" : "block")};
+    height: inherit;
+`;
+
 /**
  * A component that accepts a tokenExIFrameContainer to style as a visually compliant FormField element.
  * NOTE: accessibility on this component is poor due to limitations on passing values to the framed input.
@@ -86,7 +91,8 @@ const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
             aria-required={!isDisabled && otherProps.required}
             {...inputLabelObj}
         >
-            {isDisabled ? <input disabled /> : tokenExIFrameContainer}
+            {isDisabled ? <input disabled /> : null}
+            <HiddenWrapper isHidden={isDisabled}>{tokenExIFrameContainer}</HiddenWrapper>
             {iconProps ? (
                 <FormFieldIcon
                     {...iconProps}

@@ -38,7 +38,7 @@
     <div role="top-panel">
         <div class="top-slide">
             <div id="searchPanel">
-                <isc-product-search id="narrowSearch"></isc-product-search>
+                <isc-product-search id="narrowSearch" search-path="[[Model.Drop.SearchPath]]"></isc-product-search>
             </div>
             <div id="userPanel">
                 <form>
@@ -212,7 +212,7 @@
                 <div class="header-zone rt">
                     [% zone 'Right' %]
                 </div>
-                <isc-product-search id="wideSearch"></isc-product-search>
+                <isc-product-search id="wideSearch" search-path="[[Model.Drop.SearchPath]]"></isc-product-search>
             </div>
         </div>
         <div class="isc-nav-bar">

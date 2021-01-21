@@ -45,7 +45,7 @@
                             <span class="icon-arw-down-5" ng-click="!vm.noShipToAndCantCreate && vm.openAutocomplete($event, '#shipTo')"></span>
                         </div>
                         <isc-address-edit prefix="st" show-email="false" address="vm.selectedShipTo" countries="vm.countries" address-fields="vm.addressFields.shipToAddressFields"
-                                          is-read-only="vm.isReadOnly" set-state-required-rule="vm.setStateRequiredRule('st', vm.selectedShipTo)"></isc-address-edit>
+                                          is-read-only="vm.isReadOnly || !vm.selectedShipTo" set-state-required-rule="vm.setStateRequiredRule('st', vm.selectedShipTo)"></isc-address-edit>
                     </div>
                 </div>
                 <div ng-if="!vm.editMode">
@@ -60,7 +60,7 @@
         <div class="btns">
             <button id="tst_checkoutAddress_continue" type="button" class="btn primary btn-continue"
                     ng-click="vm.continueCheckout('[% urlForPage 'ReviewAndPayPage' %]', '[% urlForPage 'CartPage' %]')"
-                    ng-disabled="vm.continueCheckoutInProgress">
+                    ng-disabled="vm.continueCheckoutInProgress || !vm.selectedShipTo">
                 [% translate 'Continue' %]
             </button>
         </div>

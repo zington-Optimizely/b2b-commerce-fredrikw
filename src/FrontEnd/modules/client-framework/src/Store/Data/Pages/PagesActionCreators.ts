@@ -183,7 +183,9 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
 
             const currentState = getState();
             const page = getPageStateByPath(currentState, location.pathname);
-            if (page.value) {
+
+            // bypass caching for pages requiring authorization so we don't incorrectly show them if auth has timed out
+            if (page.value && !page.value.requiresAuthorization) {
                 finished(page.value);
                 return;
             }

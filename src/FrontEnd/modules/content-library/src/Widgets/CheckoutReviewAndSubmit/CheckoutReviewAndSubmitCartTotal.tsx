@@ -1,8 +1,11 @@
 import { FulfillmentMethod } from "@insite/client-framework/Services/SessionService";
-import { siteMessageWithCustomParserOptions } from "@insite/client-framework/SiteMessage";
+import siteMessage, { siteMessageWithCustomParserOptions } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSession, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+
 import setFulfillmentMethod from "@insite/client-framework/Store/Context/Handlers/SetFulfillmentMethod";
 import updatePickUpWarehouse from "@insite/client-framework/Store/Context/Handlers/UpdatePickUpWarehouse";
+import { getCurrentBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import {
     canPlaceOrder,
     canSubmitForApprovalOrder,
@@ -16,6 +19,7 @@ import {
     getPromotionsDataView,
     getShippingPromotions,
 } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
+import { getCurrentShipToState } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -51,6 +55,9 @@ const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutReviewAndSubmit;
     const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
     const promotionsDataView = cartId ? getPromotionsDataView(state, cartId) : getCurrentPromotionsDataView(state);
+    const billTo = getCurrentBillToState(state).value;
+    const shipTo = getCurrentShipToState(state).value;
+    const customerSettings = getSettingsCollection(state).customerSettings;
 
     let orderPromotions;
     let shippingPromotions;
@@ -70,6 +77,11 @@ const mapStateToProps = (state: ApplicationState) => {
         showPlaceOrderButton: canPlaceOrder(cartState.value),
         placeOrderErrorMessage: state.pages.checkoutReviewAndSubmit.placeOrderErrorMessage,
         showSubmitForApprovalOrder: canSubmitForApprovalOrder(getCurrentCartState(state).value),
+        canUpdateShipToAddress:
+            billTo?.isGuest ||
+            shipTo?.oneTimeAddress ||
+            customerSettings.allowBillToAddressEdit ||
+            customerSettings.allowShipToAddressEdit,
     };
 };
 
@@ -84,6 +96,10 @@ export interface CheckoutReviewAndSubmitCartTotalStyles {
     availabilityErrorMessageText?: TypographyPresentationProps;
     placeOrderErrorMessageGridItem?: GridItemProps;
     placeOrderErrorMessageText?: TypographyPresentationProps;
+    invalidEditableAddressErrorMessageGridItem?: GridItemProps;
+    invalidEditableAddressErrorMessageText?: TypographyPresentationProps;
+    invalidAddressErrorMessageGridItem?: GridItemProps;
+    invalidAddressErrorMessageText?: TypographyPresentationProps;
     placeOrderButton?: ButtonPresentationProps;
     submitForApprovalButton?: ButtonPresentationProps;
     findLocationModal?: FindLocationModalStyles;
@@ -120,6 +136,22 @@ export const cartTotalStyles: CheckoutReviewAndSubmitCartTotalStyles = {
     },
     placeOrderErrorMessageGridItem: { width: 12 },
     placeOrderErrorMessageText: {
+        color: "danger",
+        css: css`
+            margin-top: 5px;
+            margin-bottom: 15px;
+        `,
+    },
+    invalidEditableAddressErrorMessageGridItem: { width: 12 },
+    invalidEditableAddressErrorMessageText: {
+        color: "danger",
+        css: css`
+            margin-top: 5px;
+            margin-bottom: 15px;
+        `,
+    },
+    invalidAddressErrorMessageGridItem: { width: 12 },
+    invalidAddressErrorMessageText: {
         color: "danger",
         css: css`
             margin-top: 5px;
@@ -185,6 +217,7 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
     updatePickUpWarehouse,
     setFulfillmentMethod,
     showSubmitForApprovalOrder,
+    canUpdateShipToAddress,
 }) => {
     const [isFindLocationOpen, setIsFindLocationOpen] = React.useState(false);
     const openWarehouseSelectionModal = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -311,6 +344,20 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
             {placeOrderErrorMessage && (
                 <GridItem {...styles.placeOrderErrorMessageGridItem}>
                     <Typography {...styles.placeOrderErrorMessageText}>{placeOrderErrorMessage}</Typography>
+                </GridItem>
+            )}
+            {cart?.taxFailureReason === "InvalidAddress" && canUpdateShipToAddress && (
+                <GridItem {...styles.invalidEditableAddressErrorMessageGridItem}>
+                    <Typography {...styles.invalidEditableAddressErrorMessageText}>
+                        {siteMessage("ReviewAndPay_InvalidAddress_CannotCalculateTax_UpdateAddress")}
+                    </Typography>
+                </GridItem>
+            )}
+            {cart?.taxFailureReason === "InvalidAddress" && !canUpdateShipToAddress && (
+                <GridItem {...styles.invalidAddressErrorMessageGridItem}>
+                    <Typography {...styles.invalidAddressErrorMessageText}>
+                        {siteMessage("ReviewAndPay_InvalidAddress_CannotCalculateTax")}
+                    </Typography>
                 </GridItem>
             )}
         </GridContainer>

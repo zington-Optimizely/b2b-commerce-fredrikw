@@ -16,6 +16,7 @@ import { pageRenderer } from "@insite/server-framework/PageRenderer";
 import { getRelayEndpoints, relayRequest } from "@insite/server-framework/Relay";
 import robots from "@insite/server-framework/Robots";
 import { shellRenderer } from "@insite/server-framework/ShellRenderer";
+import { getAutoUpdatedPageTypes } from "@insite/server-framework/SiteGeneration/PageCreators";
 import { Request, Response } from "express";
 import * as React from "react";
 
@@ -74,6 +75,7 @@ function addRoute(path: RegExp | string, handler: RouteHandler) {
     });
 }
 
+addRoute("/.spire/autoUpdatedPageTypes", getAutoUpdatedPageTypes);
 addRoute("/.spire/health", healthCheck);
 addRoute("/.spire/diagnostics", diagnostics);
 addRoute("/robots.txt", robots);

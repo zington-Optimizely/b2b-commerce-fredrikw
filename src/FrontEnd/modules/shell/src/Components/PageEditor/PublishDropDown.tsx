@@ -136,9 +136,8 @@ const PublishButton = styled(Button)<HasExpanded>`
 `;
 
 const PublishDropDownButton = styled(Button)<HasExpanded>`
-    background: ${({ theme }) => theme.colors.common.background};
+    background: transparent;
     border: 0;
-    border-radius: ${props => (props.expanded ? "0 4px 0 0" : "0 4px 4px 0")};
     height: 27px;
     margin: 1px 0 1px 0;
     padding: 0 1px;
@@ -148,6 +147,9 @@ const PublishDropDownButton = styled(Button)<HasExpanded>`
         }
     }
     &:hover {
-        background: ${({ theme }) => theme.colors.common.background};
+        background: transparent;
+    }
+    &:focus {
+        outline: 0;
     }
 `;

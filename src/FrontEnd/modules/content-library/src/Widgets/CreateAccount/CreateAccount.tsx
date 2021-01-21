@@ -1,12 +1,7 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import validatePassword, {
-    lowerCasePasswordLengthMessage,
-    numberPasswordLengthMessage,
-    specialPasswordLengthMessage,
-    upperCasePasswordLengthMessage,
-} from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import validatePassword from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import addAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/AddAccount";
@@ -177,13 +172,14 @@ export const createAccountStyles: CreateAccountStyles = {
 };
 
 const styles = createAccountStyles;
-const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_Required");
-const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
-const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 const StyledForm = getStyledWrapper("form");
 
 const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, returnUrl }: Props) => {
+    const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_Required");
+    const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
+    const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");
+
     const [email, setEmail] = useState("");
     const [userName, setUserName] = useState("");
     const [userNameError, setUserNameError] = useState(userNameRequiredFieldMessage);
@@ -398,26 +394,30 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
                     <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
                     <GridContainer {...styles.passwordRequirementsGridContainer}>
                         <GridItem {...styles.passwordRequirementsGridItem}>
-                            {translate("Password must be at least {0} characters long").replace(
-                                "{0}",
+                            {translate(
+                                "Password must be at least {0} characters long",
                                 passwordMinimumLength.toString(),
                             )}
                         </GridItem>
                         {passwordRequiresDigit && (
-                            <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                            <GridItem {...styles.passwordRequirementsGridItem}>
+                                {translate("Password must include at least one number")}
+                            </GridItem>
                         )}
                         {passwordRequiresLowercase && (
                             <GridItem {...styles.passwordRequirementsGridItem}>
-                                {lowerCasePasswordLengthMessage}
+                                {translate("Password must include at least one lowercase character")}
                             </GridItem>
                         )}
                         {passwordRequiresUppercase && (
                             <GridItem {...styles.passwordRequirementsGridItem}>
-                                {upperCasePasswordLengthMessage}
+                                {translate("Password must include at least one uppercase character")}
                             </GridItem>
                         )}
                         {passwordRequiresSpecialCharacter && (
-                            <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                            <GridItem {...styles.passwordRequirementsGridItem}>
+                                {translate("Password must include at least one non alphanumeric character")}
+                            </GridItem>
                         )}
                     </GridContainer>
                 </GridItem>

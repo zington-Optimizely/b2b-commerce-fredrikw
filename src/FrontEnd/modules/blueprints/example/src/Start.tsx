@@ -92,4 +92,18 @@ setPostStyleGuideTheme({
             },
         },
     },
+    checkbox: {
+        groupDefaultProps: {
+            css: css`
+                background: black;
+                color: yellow;
+            `,
+        },
+        defaultProps: {
+            css: css`
+                background: black;
+                color: yellow;
+            `,
+        },
+    },
 });

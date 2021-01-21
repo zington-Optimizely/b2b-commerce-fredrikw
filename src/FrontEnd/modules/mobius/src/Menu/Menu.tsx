@@ -201,6 +201,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
                                                 width={otherProps.width}
                                                 css={cssOverrides?.menuItem}
                                                 key={item.title}
+                                                data-test-selector="menuItem"
                                             >
                                                 <Clickable
                                                     href={item.url}

@@ -15,6 +15,7 @@ import Page from "@insite/mobius/Page";
 import cloneDeep from "lodash/cloneDeep";
 import React from "react";
 
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -30,6 +31,7 @@ const mapStateToProps = (state: ApplicationState) => {
         breadcrumbLinks: state.components.breadcrumbs.links,
         websiteName: state.context.website.name,
         dealerPath: location.pathname,
+        websiteSettings: getSettingsCollection(state).websiteSettings,
     };
 };
 
@@ -84,16 +86,20 @@ class DealerDetailsPage extends React.Component<Props, State> {
             dealerState: { value: dealer },
             websiteName,
             dealerPath,
+            websiteSettings,
         } = this.props;
         if (!dealer) {
             return;
         }
 
-        setPageMetadata({
-            currentPath: dealerPath,
-            title: dealer.name,
-            websiteName,
-        });
+        setPageMetadata(
+            {
+                currentPath: dealerPath,
+                title: dealer.name,
+                websiteName,
+            },
+            websiteSettings,
+        );
 
         if (isUpdate) {
             this.setState({

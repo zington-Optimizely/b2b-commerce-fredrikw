@@ -20,7 +20,7 @@
         <span class="search-button">
             <span ng-click="vm.openSearchInput()" class="btn search-area" ng-class="{'show-search':vm.isVisibleSearchInput}">
                 <span class="sb-search">
-                    <isc-product-search id="wideSearch" ng-click="$event.stopPropagation();" is-visible-search-input="vm.isVisibleSearchInput"></isc-product-search>
+                    <isc-product-search id="wideSearch" ng-click="$event.stopPropagation();" is-visible-search-input="vm.isVisibleSearchInput" search-path="[[Model.Drop.SearchPath]]"></isc-product-search>
                     <span class="search-label">[% translate 'Search' %]</span>
                 </span>
                 <i ng-cloak class="social foundicon-search search-area-button"></i>
@@ -52,7 +52,7 @@
     <li role="account-menu" ng-cloak ng-show="::((vm.session.isAuthenticated || vm.session.rememberMe) && !vm.session.isGuest)">
         <div class="sn-account">
             <ul>
-                <li class="has-sub">
+                <li class="has-sub" ng-show="vm.session.displayMyAccountMenu">
                     <a href="#" class="btn" id="tst_userNav_userName_button">
                         <span class="cust-name">[% translate 'My Account' %]</span>
                         <i ng-cloak class="social foundicon-sub"></i>
@@ -63,6 +63,9 @@
                             [[SignOutLink]]
                         </li>
                     </ul>
+                </li>
+                <li ng-show="!vm.session.displayMyAccountMenu">
+                    [[SignOutLink]]
                 </li>
             </ul>
         </div>
@@ -103,7 +106,7 @@
     <div role="top-panel">
         <div class="top-slide">
             <div id="searchPanel">
-                <isc-product-search id="narrowSearch"></isc-product-search>
+                <isc-product-search id="narrowSearch" search-path="[[Model.Drop.SearchPath]]"></isc-product-search>
             </div>
             <div id="userPanel">
                 <form>

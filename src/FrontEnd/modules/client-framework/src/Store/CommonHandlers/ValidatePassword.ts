@@ -8,9 +8,13 @@ const lowerRegExp = /[a-z]/;
 const upperRegExp = /[A-Z]/;
 const specialRegExp = /\W/;
 
+/** @deprecated Use direct call of 'translate' inside your component */
 export const numberPasswordLengthMessage = translate("Password must include at least one number");
+/** @deprecated Use direct call of 'translate' inside your component */
 export const lowerCasePasswordLengthMessage = translate("Password must include at least one lowercase character");
+/** @deprecated Use direct call of 'translate' inside your component */
 export const upperCasePasswordLengthMessage = translate("Password must include at least one uppercase character");
+/** @deprecated Use direct call of 'translate' inside your component */
 export const specialPasswordLengthMessage = translate("Password must include at least one non alphanumeric character");
 
 type HandlerType = Handler<
@@ -26,36 +30,37 @@ type HandlerType = Handler<
 
 export const ValidatePassword: HandlerType = props => {
     let errorMessage: React.ReactNode = "";
-    const passwordRequiredFieldMessage = siteMessage("CreateNewAccountInfo_Password_Required");
     const password = props.parameter.password;
-    const settings = getSettingsCollection(props.getState()).accountSettings;
-    const minimumPasswordLengthMessage = translate("Password must be at least {0} characters long").replace(
-        "{0}",
-        settings.passwordMinimumLength.toString(),
-    );
+    const {
+        passwordMinimumLength,
+        passwordRequiresDigit,
+        passwordRequiresLowercase,
+        passwordRequiresUppercase,
+        passwordRequiresSpecialCharacter,
+    } = getSettingsCollection(props.getState()).accountSettings;
 
     if (!password) {
-        errorMessage = passwordRequiredFieldMessage;
+        errorMessage = siteMessage("CreateNewAccountInfo_Password_Required");
     }
 
-    if (!errorMessage && password.length > 0 && password.length < settings.passwordMinimumLength) {
-        errorMessage = minimumPasswordLengthMessage;
+    if (!errorMessage && password.length > 0 && password.length < passwordMinimumLength) {
+        errorMessage = translate("Password must be at least {0} characters long", passwordMinimumLength.toString());
     }
 
-    if (!errorMessage && settings.passwordRequiresDigit && !digitRegExp.test(password)) {
-        errorMessage = numberPasswordLengthMessage;
+    if (!errorMessage && passwordRequiresDigit && !digitRegExp.test(password)) {
+        errorMessage = translate("Password must include at least one number");
     }
 
-    if (!errorMessage && settings.passwordRequiresLowercase && !lowerRegExp.test(password)) {
-        errorMessage = lowerCasePasswordLengthMessage;
+    if (!errorMessage && passwordRequiresLowercase && !lowerRegExp.test(password)) {
+        errorMessage = translate("Password must include at least one lowercase character");
     }
 
-    if (!errorMessage && settings.passwordRequiresUppercase && !upperRegExp.test(password)) {
-        errorMessage = upperCasePasswordLengthMessage;
+    if (!errorMessage && passwordRequiresUppercase && !upperRegExp.test(password)) {
+        errorMessage = translate("Password must include at least one uppercase character");
     }
 
-    if (!errorMessage && settings.passwordRequiresSpecialCharacter && !specialRegExp.test(password)) {
-        errorMessage = specialPasswordLengthMessage;
+    if (!errorMessage && passwordRequiresSpecialCharacter && !specialRegExp.test(password)) {
+        errorMessage = translate("Password must include at least one non alphanumeric character");
     }
 
     props.passwordErrorMessage = errorMessage;

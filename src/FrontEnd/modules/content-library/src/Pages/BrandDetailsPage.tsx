@@ -2,7 +2,7 @@ import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMe
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
-import { getSelectedBrandPath } from "@insite/client-framework/Store/Context/ContextSelectors";
+import { getSelectedBrandPath, getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import {
     BrandCategoriesStateContext,
     BrandProductLinesStateContext,
@@ -65,6 +65,7 @@ const mapStateToProps = (state: ApplicationState) => {
         shouldLoadBrandCategories,
         shouldLoadBrandProductLine,
         websiteName: state.context.website.name,
+        websiteSettings: getSettingsCollection(state).websiteSettings,
     };
 };
 
@@ -143,17 +144,21 @@ class BrandDetailsPage extends React.Component<Props, State> {
             brandState: { value: brand },
             websiteName,
             brandPath,
+            websiteSettings,
         } = this.props;
         if (!brand) {
             return;
         }
 
-        setPageMetadata({
-            metaDescription: brand.metaDescription,
-            currentPath: brandPath,
-            title: brand.pageTitle,
-            websiteName,
-        });
+        setPageMetadata(
+            {
+                metaDescription: brand.metaDescription,
+                currentPath: brandPath,
+                title: brand.pageTitle || brand.name,
+                websiteName,
+            },
+            websiteSettings,
+        );
 
         this.setState({
             metadataSetForId: brand.id,

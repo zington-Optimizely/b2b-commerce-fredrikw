@@ -64,6 +64,8 @@ const omitKeys = [
 ] as (keyof Omit<
     TextFieldProps,
     | "id"
+    | "type"
+    | "onKeyDown"
     | "clickableText"
     | "disabled"
     | "error"
@@ -74,6 +76,10 @@ const omitKeys = [
     | "required"
     | "disable"
 >)[];
+
+const validForNumber = ({ altKey, ctrlKey, key }: React.KeyboardEvent<HTMLInputElement>) => {
+    return altKey || ctrlKey || key.length > 1 || /[0-9\.\,\-\+]/.test(key);
+};
 
 /**
  * TextField is a form element with an optional label, hint text, error message and optional icon.
@@ -87,6 +93,8 @@ const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRe
         <ThemeConsumer>
             {(theme?: BaseTheme) => {
                 const {
+                    type,
+                    onKeyDown,
                     clickableText,
                     disable,
                     disabled,
@@ -129,12 +137,21 @@ const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRe
                     );
                 }
 
+                const internalOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (type === "number" && !validForNumber(event)) {
+                        event.preventDefault();
+                    }
+
+                    onKeyDown?.(event);
+                };
+
                 const textInput = (
                     <>
                         <input
                             ref={ref}
-                            type="text"
+                            type={type || "text"}
                             id={inputId}
+                            onKeyDown={internalOnKeyDownHandler}
                             aria-labelledby={labelId}
                             aria-describedby={hasDescription ? descriptionId : undefined}
                             aria-invalid={error ? !!error : undefined}

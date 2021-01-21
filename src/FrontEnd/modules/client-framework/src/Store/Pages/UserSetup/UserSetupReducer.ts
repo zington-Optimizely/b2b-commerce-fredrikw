@@ -15,6 +15,7 @@ const initialState: UserSetupState = {
 const reducer = {
     "Pages/UserSetup/SetUserId": (draft: Draft<UserSetupState>, action: { userId: string }) => {
         draft.userId = action.userId;
+        draft.editingUser = undefined;
         draft.getAccountShipToCollectionParameter.accountId = action.userId;
     },
     "Pages/UserSetup/SetInitialValues": (draft: Draft<UserSetupState>, action: { user: AccountModel }) => {

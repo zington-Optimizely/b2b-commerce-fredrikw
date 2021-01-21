@@ -19,6 +19,8 @@ export function setupPageModel(
     defaultPersonaId: string,
     websiteId: string,
     isVariant: boolean,
+    nodeId?: string,
+    pageId?: string,
 ) {
     if (!pageModel.fields) {
         pageModel.fields = {};
@@ -37,7 +39,7 @@ export function setupPageModel(
     delete (pageModel as any)["title"];
 
     const guidMap: Dictionary<string> = {};
-    guidMap[pageModel.id] = newGuid();
+    guidMap[pageModel.id] = pageId ?? newGuid();
 
     for (const widget of pageModel.widgets) {
         guidMap[widget.id] = newGuid();
@@ -45,7 +47,7 @@ export function setupPageModel(
 
     pageModel.id = guidMap[pageModel.id];
     if (!isVariant) {
-        pageModel.nodeId = newGuid();
+        pageModel.nodeId = nodeId ?? newGuid();
     }
 
     const contextualId = getContextualId(

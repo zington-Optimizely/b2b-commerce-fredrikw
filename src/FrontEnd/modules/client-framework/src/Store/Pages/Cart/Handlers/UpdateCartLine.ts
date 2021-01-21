@@ -16,6 +16,12 @@ interface UpdateCartLineParameter {
 
 type HandlerType = ApiHandlerDiscreteParameter<UpdateCartLineParameter, UpdateCartLineApiParameter>;
 
+export const DispatchBeginUpdateCartLine: HandlerType = props => {
+    props.dispatch({
+        type: "Pages/Cart/BeginUpdateCartLine",
+    });
+};
+
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = {
         ...props.parameter,
@@ -37,11 +43,25 @@ export const LoadPromotions: HandlerType = props => {
     }
 };
 
+export const DispatchCompleteUpdateCartLine: HandlerType = props => {
+    props.dispatch({
+        type: "Pages/Cart/CompleteUpdateCartLine",
+    });
+};
+
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-export const chain = [PopulateApiParameter, UpdateCartLine, LoadCart, LoadPromotions, ExecuteOnSuccessCallback];
+export const chain = [
+    DispatchBeginUpdateCartLine,
+    PopulateApiParameter,
+    UpdateCartLine,
+    LoadCart,
+    LoadPromotions,
+    DispatchCompleteUpdateCartLine,
+    ExecuteOnSuccessCallback,
+];
 
 const updateCartLine = createHandlerChainRunner(chain, "UpdateCartLine");
 export default updateCartLine;

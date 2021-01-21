@@ -106,6 +106,7 @@ export interface AccountSettingsModel extends BaseModel {
     passwordRequiresSpecialCharacter: boolean;
     passwordRequiresUppercase: boolean;
     requireSelectCustomerOnSignIn: boolean;
+    rememberMe: boolean;
     useEmailAsUserName: boolean;
 }
 
@@ -2631,7 +2632,10 @@ export interface WebsiteSettingsModel extends BaseModel {
     googleMapsApiKey: string;
     googleTrackingAccountId: string;
     googleTrackingTypeComputed: string;
+    includeSiteNameInPageTitle: boolean;
     mobileAppEnabled: boolean;
+    pageTitleDelimiter: string;
+    siteNameAfterTitle: boolean;
     usePaymetricGateway: boolean;
     useTokenExGateway: boolean;
 }

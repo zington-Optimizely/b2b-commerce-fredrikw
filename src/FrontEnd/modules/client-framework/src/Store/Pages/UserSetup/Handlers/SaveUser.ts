@@ -27,12 +27,12 @@ export const PopulateApiParameter: HandlerType = props => {
     }
 
     props.accountSettings = getSettingsCollection(props.getState()).accountSettings;
-    if (props.accountSettings.useEmailAsUserName) {
-        editingUser.userName = editingUser.email;
-    }
 
     props.apiParameter = {
-        account: editingUser,
+        account: {
+            ...editingUser,
+            userName: props.accountSettings.useEmailAsUserName ? editingUser.email : editingUser.userName,
+        },
     };
 };
 

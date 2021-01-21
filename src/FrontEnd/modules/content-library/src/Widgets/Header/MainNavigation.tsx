@@ -9,6 +9,7 @@ import {
     getCategoriesDataView,
     getCategoryDepthLoaded,
     getCategoryState,
+    getSubCategoryIds,
 } from "@insite/client-framework/Store/Data/Categories/CategoriesSelectors";
 import loadCategories from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategories";
 import loadCategory from "@insite/client-framework/Store/Data/Categories/Handlers/LoadCategory";
@@ -135,7 +136,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
 const getParameter = (categoryId: string, maxDepth: number) => ({
     maxDepth,
     startCategoryId: categoryId === emptyGuid ? undefined : categoryId,
-    includeStartCategory: true,
+    includeStartCategory: false,
 });
 
 const setupCategoryLink = (
@@ -152,7 +153,7 @@ const setupCategoryLink = (
     }
 
     const depthLoaded = getCategoryDepthLoaded(state, value);
-    const subCategoryIds = state.data.categories.parentCategoryIdToChildrenIds[value];
+    const subCategoryIds = getSubCategoryIds(state, value);
     if (
         (depthLoaded < maxDepth || !subCategoryIds) &&
         !getCategoriesDataView(state, getParameter(value, maxDepth)).isLoading

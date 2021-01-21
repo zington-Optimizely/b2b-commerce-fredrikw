@@ -11,9 +11,9 @@ import Typography from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import BadgeDefault from "@insite/shell/Components/Icons/BadgeDefault";
 import { ContentContextModel } from "@insite/shell/Services/ContentAdminService";
+import { configureComparison } from "@insite/shell/Store/CompareModal/CompareModalActionCreators";
 import {
     closePublishModal,
-    configureComparison,
     loadAllPagePublishInfo,
     publish,
     setIsSelected,
@@ -30,6 +30,7 @@ import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ShellState) => {
     const {
+        compareModal: { compareVersions },
         shellContext: { languagesById, personasById, permissions, stageMode, currentLanguageId },
         publishModal: {
             showModal,
@@ -47,7 +48,7 @@ const mapStateToProps = (state: ShellState) => {
     const page = getCurrentPageForShell(state);
 
     return {
-        visible: !!showModal,
+        visible: !!showModal && !compareVersions,
         publishImmediately: !publishInTheFuture,
         page,
         pagePublishInfosState,
@@ -330,7 +331,6 @@ const PublishModal: React.FC<Props> = ({
                                     <th>Edited By</th>
                                     <th>Edited On</th>
                                     <th>Compare</th>
-                                    {isBulkPublish && <th>Notes</th>}
                                 </tr>
                             </thead>
                             <tbody data-test-selector="publishModal_contextsAvailableToPublish">
@@ -398,23 +398,13 @@ const PublishModal: React.FC<Props> = ({
                                                             deviceType,
                                                             stageMode,
                                                             pageId,
+                                                            name,
                                                         });
                                                     }}
                                                 >
                                                     Compare
                                                 </ButtonInTable>
                                             </td>
-                                            {isBulkPublish && (
-                                                <td>
-                                                    <ButtonInTable
-                                                        data-test-selector={`${contextString}_addNotesButton`}
-                                                        variant="tertiary"
-                                                        disabled // TODO ISC-12159
-                                                    >
-                                                        Add Notes
-                                                    </ButtonInTable>
-                                                </td>
-                                            )}
                                         </tr>
                                     );
                                 })}

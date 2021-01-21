@@ -596,6 +596,15 @@
                                         </div>
                                     </div>
 
+                                    <div ng-if="vm.productSettings.displayFacetsForStockedItems" class="filter-option-container">
+                                        <select data-mini="true" 
+                                                ng-model="vm.stockedItemsOnly"
+                                                ng-change="vm.toggleStockedItemsOnly()">
+                                            <option ng-value="false">[% translate 'Stocked Items' %]</option>
+                                            <option ng-value="true">[% translate 'Stocked Items Only' %]</option>
+                                        </select>
+                                    </div>
+
                                     <div ng-if="!vm.category && vm.products.categoryFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
                                                 ng-model="vm.filterCategory.categoryId"

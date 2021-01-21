@@ -53,14 +53,6 @@
 
             // all pages are the same state and make requests for the partials on the server
             $stateProvider
-                .state("search", {
-                    url: "/search?criteria&includeSuggestions",
-                    templateUrl: () => "/search"
-                })
-                .state("search_microsite", {
-                    url: "/:microsite/search?criteria&includeSuggestions",
-                    templateUrl: (stateParams: ISearchMicrositeStateParams) => `/${stateParams.microsite}/search`
-                })
                 .state("content", {
                     url: "*path?stateChange&bypassFilters&experimentMode",
                     templateUrl: (stateParams: IContentPageStateParams) => {

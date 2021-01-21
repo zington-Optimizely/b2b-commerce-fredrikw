@@ -25,6 +25,22 @@ const PageStyle = styled.main<Pick<PageProps, "padding" | "fullWidth" | "backgro
     display: block; /* needed for IE */
     margin: 0 auto;
     width: 100%;
+    ${({ theme }) =>
+        breakpointMediaQueries(
+            theme,
+            [
+                css`
+                    overflow: hidden; /* needed for Safari */
+                    position: relative; /* needed for Safari */
+                `,
+                css`
+                    overflow: hidden; /* needed for Safari */
+                    position: relative; /* needed for Safari */
+                `,
+            ],
+            "max",
+        )}
+
     background: ${({ background, theme }) => resolveColor(background, theme)};
     ${({ padding, theme, fullWidth }) => {
         let paddingValue = padding;

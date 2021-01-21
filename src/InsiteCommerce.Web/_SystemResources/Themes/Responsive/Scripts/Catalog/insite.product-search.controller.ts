@@ -30,6 +30,7 @@ module insite.catalog {
         searchData: Array<any> = [];
         isVisibleSearchInput: boolean;
         isOneColumnSearchResult = true;
+        searchPath: string;
 
         static $inject = ["$element", "$filter", "coreService", "searchService", "settingsService", "$state", "queryString", "$scope", "$window"];
 
@@ -425,7 +426,13 @@ module insite.catalog {
                     'event': 'searchResults',
                     'searchQuery': searchTerm,
                     'correctedQuery': null,
-                    'numSearchResults': 1
+                    'numSearchResults': 1,
+                    // Clear/Reset data for this layer
+                    'searchTerm': null,
+                    'product_numSearchResults': null,
+                    'categories_numSearchResults': null,
+                    'content_numSearchResults': null,
+                    'brands_numSearchResults': null,
                 });
             }
         }
@@ -488,7 +495,7 @@ module insite.catalog {
         }
 
         protected redirectToSearchPage(searchTerm: string, includeSuggestions?: boolean): void {
-            let url = `/search?criteria=${encodeURIComponent(searchTerm)}`;
+            let url = `/${this.searchPath}?criteria=${encodeURIComponent(searchTerm)}`;
 
             if (includeSuggestions === false) {
                 url = `${url}&includeSuggestions=false`;

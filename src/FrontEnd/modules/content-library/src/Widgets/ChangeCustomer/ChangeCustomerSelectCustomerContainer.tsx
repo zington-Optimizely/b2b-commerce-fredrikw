@@ -10,7 +10,7 @@ import changeCustomerContext from "@insite/client-framework/Store/Context/Handle
 import { getBillTosDataView } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTos from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTos";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getLocation, removeAbsoluteUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import loadShipTos from "@insite/client-framework/Store/Data/ShipTos/Handlers/LoadShipTos";
 import { getShipTosDataView } from "@insite/client-framework/Store/Data/ShipTos/ShipTosSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -312,7 +312,8 @@ type GetReturnUrlType = (state: ApplicationState) => string;
 const getReturnUrl: GetReturnUrlType = (state: ApplicationState): string => {
     const { search } = getLocation(state);
     const query = parseQueryString<{ returnUrl?: string; returnurl?: string }>(search);
-    return query.returnUrl || query.returnurl || getPageLinkByPageType(state, "HomePage")?.url || "/";
+    const returnUrl = query.returnUrl || query.returnurl;
+    return removeAbsoluteUrl(returnUrl) || getPageLinkByPageType(state, "HomePage")?.url || "/";
 };
 
 export const getCustomerContinueReturnUrl: GetCustomerContinueReturnUrlType = ({

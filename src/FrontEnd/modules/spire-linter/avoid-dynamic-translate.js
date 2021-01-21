@@ -24,13 +24,16 @@ module.exports = {
                     type: "array",
                     minItems: 0,
                 },
+                translationsLocation: {
+                    type: "string",
+                    default: undefined,
+                },
             },
             additionalProperties: false,
         },
     ],
     create(context) {
-        const generateTranslations = (context.options[0] || {}).generateTranslations;
-        const ignoreDir = (context.options[0] || {}).ignoreDir || [];
+        const { generateTranslations, translationsLocation, ignoreDir = [] } = context.options[0] || {};
         const filename = context.getFilename().replace(/\\/g, "/");
         const skip = ignoreDir.some(o => filename.indexOf(o) > -1);
 
@@ -40,8 +43,12 @@ module.exports = {
 
         const writeTranslationsFileIfConfigured = () => {
             if (generateTranslations) {
-                const translationsFilePath = path.resolve("./wwwroot/AppData/translations.csv");
-                fs.mkdirSync("./wwwroot/AppData", { recursive: true });
+                if (!translationsLocation) {
+                    console.warn("translationsLocation was not supplied so translations may not be generated.");
+                    return;
+                }
+                const translationsFilePath = path.resolve(translationsLocation, "translations.csv");
+                fs.mkdirSync(translationsLocation, { recursive: true });
                 fs.writeFileSync(translationsFilePath, "", { encoding: "utf8" });
                 const data = [...new Set(translations)].filter(o => o).sort(new Intl.Collator("en").compare);
                 fs.appendFileSync(translationsFilePath, data.join("\r\n"), { encoding: "utf8" });
@@ -89,8 +96,7 @@ module.exports = {
                 if (argument.value && containsStringDifferentByCasing(translations, argument.value)) {
                     context.report({ node, messageId: "unsupportedCasing" });
                     return;
-                }
-                else if (argument.value) {
+                } else if (argument.value) {
                     translations.push(argument.value);
                 }
             },
@@ -123,10 +129,8 @@ function isLiteral(value) {
 }
 
 function containsStringDifferentByCasing(translations, value) {
-  const foundString = translations.find(
-    (a) => a && a.toLowerCase() === value.toLowerCase()
-  );
-  return !!foundString && value !== foundString;
+    const foundString = translations.find(a => a && a.toLowerCase() === value.toLowerCase());
+    return !!foundString && value !== foundString;
 }
 
 function findVariable(scope, variableName) {

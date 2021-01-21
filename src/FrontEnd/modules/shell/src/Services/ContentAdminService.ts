@@ -71,6 +71,7 @@ export const getShellContext = () =>
         defaultLanguageId: string;
         currentLanguageId: string;
         websiteId: string;
+        cmsType: string;
         homePageId: string;
         mobileHomePageId: string;
         adminClientId: string;
@@ -107,8 +108,11 @@ export const getPageBulkPublishInfo = async () => {
     return result;
 };
 
-export const getPublishedPageVersions = (pageId: string) =>
-    get<PageVersionInfoModel[]>("getPublishedPageVersions", { pageId });
+export const getPublishedPageVersions = (pageId: string, page: number, pageSize: number) =>
+    get<{
+        pageVersions: PageVersionInfoModel[];
+        totalItemCount: number;
+    }>("getPublishedPageVersions", { pageId, page, pageSize });
 
 export const restorePageVersion = (pageVersionId: string) =>
     post<RestorePageVersionModel>("restorePageVersion", pageVersionId);
@@ -184,6 +188,12 @@ export type PagePublishInfoModel = {
     unpublishedContexts: PublishableContentContextModel[];
     unpublished?: Omit<PageVersionInfoModel, "publishOn">;
     published?: PageVersionInfoModel;
+};
+
+export type PublishedPageVersionsModel = {
+    pageVersions: PageVersionInfoModel[];
+    page: number;
+    totalItemCount: number;
 };
 
 export type RestorePageVersionModel = {

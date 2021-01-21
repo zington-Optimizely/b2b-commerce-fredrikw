@@ -28,6 +28,7 @@ const mapStateToProps = (state: ShellState) => ({
     taskInProgress: state.importExportModal.taskInProgress,
     confirmingImport: state.importExportModal.confirmingImport,
     errorMessage: state.importExportModal.errorMessage,
+    cmsType: state.shellContext.cmsType,
 });
 
 const mapDispatchToProps = {
@@ -99,6 +100,7 @@ const ImportExportModal: React.FC<Props> = ({
     confirmingImport,
     importContent,
     errorMessage,
+    cmsType,
 }) => {
     const [file, setFile] = useState<File | null>(null);
 
@@ -137,6 +139,15 @@ const ImportExportModal: React.FC<Props> = ({
     };
 
     const modalContent = () => {
+        if (cmsType !== "Spire") {
+            return (
+                <WarningStyle>
+                    The CMS type for the current website is set to {cmsType}. <br />
+                    Import/Export may only be used if the CMS type is set to Spire.
+                </WarningStyle>
+            );
+        }
+
         if (confirmingImport) {
             return (
                 <>

@@ -46,6 +46,7 @@ export class ModelSelection extends React.Component<Props> {
                     onInputChange={this.searchTextChanged}
                     selected={this.props.selectedValue}
                     options={this.props.options}
+                    filterOption={() => true}
                     hideNoOptionsIfEmptySearch
                     data-test-selector={`modelSelection_${this.props.modelType}_search`}
                 ></DynamicDropdown>

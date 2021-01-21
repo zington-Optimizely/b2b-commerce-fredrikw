@@ -71,7 +71,10 @@ interface DrawerOwnProps {
 
 export type DrawerProps = DrawerPresentationProps &
     DrawerOwnProps &
-    Omit<OverlayComponentProps, "isCloseable" | "closeOnEsc" | "closeOnScrimClick" | "titleId" | "zIndexLevel"> &
+    Omit<
+        OverlayComponentProps,
+        "isCloseable" | "closeOnEsc" | "closeOnScrimClick" | "titleId" | "zIndexLevel" | "cssOverrides"
+    > &
     ThemeProps<BaseTheme>;
 
 type DrawerState = {

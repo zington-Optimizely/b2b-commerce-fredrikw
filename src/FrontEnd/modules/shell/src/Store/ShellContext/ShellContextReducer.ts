@@ -30,6 +30,7 @@ const initialState: ShellContextState = {
     homePageId: emptyGuid,
     mobileHomePageId: emptyGuid,
     settings: {} as SettingsModel,
+    cmsType: "",
 };
 
 function getStoredContentMode() {
@@ -61,6 +62,7 @@ const reducer = {
             | "currentLanguageId"
             | "defaultPersonaId"
             | "websiteId"
+            | "cmsType"
             | "homePageId"
             | "mobileHomePageId"
             | "enableMobileCms"
@@ -75,6 +77,7 @@ const reducer = {
         draft.currentPersonaId = action.defaultPersonaId;
         draft.defaultPersonaId = action.defaultPersonaId;
         draft.websiteId = action.websiteId;
+        draft.cmsType = action.cmsType;
         draft.homePageId = action.homePageId;
         draft.mobileHomePageId = action.mobileHomePageId;
         draft.enableMobileCms = action.enableMobileCms;

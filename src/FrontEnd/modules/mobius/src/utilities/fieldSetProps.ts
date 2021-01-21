@@ -18,6 +18,12 @@ export default interface FieldSetPresentationProps<T> {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp<T>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Props to be passed into the inner Typography component (label).
      * @themable */
     typographyProps?: FieldSetLabelProps;
@@ -27,6 +33,12 @@ export interface FieldSetGroupPresentationProps<T = {}> {
     /** CSS string or styled-components function to be injected into this component.
      * @themable */
     css?: StyledProp<T>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Props to be passed into the label's Typography component.
      * @themable */
     labelProps?: TypographyPresentationProps;

@@ -2,12 +2,7 @@ import parseQueryString from "@insite/client-framework/Common/Utilities/parseQue
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import validatePassword, {
-    lowerCasePasswordLengthMessage,
-    numberPasswordLengthMessage,
-    specialPasswordLengthMessage,
-    upperCasePasswordLengthMessage,
-} from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import validatePassword from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import resetPassword from "@insite/client-framework/Store/Context/Handlers/ResetPassword";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -30,7 +25,7 @@ import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -160,25 +155,25 @@ export const resetPasswordStyles: ResetPasswordStyles = {
 
 const styles = resetPasswordStyles;
 
-const ResetPassword: FC<Props> = ({
+const ResetPassword = ({
     accountSettings,
     signInPageLink,
     location,
     history,
     resetPassword,
     validatePassword,
-}) => {
-    const [userName, setUserName] = React.useState<string | undefined>("");
-    const [isResettingPassword, setIsResettingPassword] = React.useState(true);
-    const [resetToken, setResetToken] = React.useState<string | undefined>("");
-    const [password, setPassword] = React.useState("");
-    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState<React.ReactNode>("");
-    const [confirmPassword, setConfirmPassword] = React.useState("");
-    const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState("");
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-    const [isSubmitted, setIsSubmitted] = React.useState(false);
-    const toasterContext = React.useContext(ToasterContext);
+}: Props) => {
+    const [userName, setUserName] = useState<string | undefined>("");
+    const [isResettingPassword, setIsResettingPassword] = useState(true);
+    const [resetToken, setResetToken] = useState<string | undefined>("");
+    const [password, setPassword] = useState("");
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState<ReactNode>("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const toasterContext = useContext(ToasterContext);
 
     const {
         passwordMinimumLength,
@@ -188,7 +183,7 @@ const ResetPassword: FC<Props> = ({
         passwordRequiresDigit,
     } = accountSettings;
 
-    React.useEffect(() => {
+    useEffect(() => {
         const parsedQuery = parseQueryString<{ userName?: string; resetToken?: string; reset?: string }>(
             location.search,
         );
@@ -320,22 +315,27 @@ const ResetPassword: FC<Props> = ({
                 <Typography {...styles.requirementsTitle}>{translate("Password Requirements")}</Typography>
                 <GridContainer {...styles.passwordRequirementsGridContainer}>
                     <GridItem {...styles.passwordRequirementsGridItem}>
-                        {translate("Password must be at least {0} characters long").replace(
-                            "{0}",
-                            passwordMinimumLength.toString(),
-                        )}
+                        {translate("Password must be at least {0} characters long", passwordMinimumLength.toString())}
                     </GridItem>
                     {passwordRequiresDigit && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{numberPasswordLengthMessage}</GridItem>
+                        <GridItem {...styles.passwordRequirementsGridItem}>
+                            {translate("Password must include at least one number")}
+                        </GridItem>
                     )}
                     {passwordRequiresLowercase && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{lowerCasePasswordLengthMessage}</GridItem>
+                        <GridItem {...styles.passwordRequirementsGridItem}>
+                            {translate("Password must include at least one lowercase character")}
+                        </GridItem>
                     )}
                     {passwordRequiresUppercase && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{upperCasePasswordLengthMessage}</GridItem>
+                        <GridItem {...styles.passwordRequirementsGridItem}>
+                            {translate("Password must include at least one uppercase character")}
+                        </GridItem>
                     )}
                     {passwordRequiresSpecialCharacter && (
-                        <GridItem {...styles.passwordRequirementsGridItem}>{specialPasswordLengthMessage}</GridItem>
+                        <GridItem {...styles.passwordRequirementsGridItem}>
+                            {translate("Password must include at least one non alphanumeric character")}
+                        </GridItem>
                     )}
                 </GridContainer>
             </GridItem>

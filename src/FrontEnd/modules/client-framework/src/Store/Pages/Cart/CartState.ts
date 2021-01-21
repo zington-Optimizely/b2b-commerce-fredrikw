@@ -4,4 +4,5 @@ export default interface CartState {
     isClearingCart: boolean;
     isSavingOrder: boolean;
     isRemovingCartLine: Dictionary<boolean>;
+    isUpdatingCartLine: boolean;
 }

@@ -6,6 +6,7 @@ import ErrorModal from "@insite/shell/Components/Modals/ErrorModal";
 import LogoutWarningModal from "@insite/shell/Components/Modals/LogoutWarningModal";
 import PageEditor from "@insite/shell/Components/PageEditor/PageEditor";
 import PageTreeSideBar from "@insite/shell/Components/PageTree/PageTreeSideBar";
+import CompleteVersionHistoryModal from "@insite/shell/Components/Shell/CompleteVersionHistoryModal";
 import ImportExportModal from "@insite/shell/Components/Shell/ImportExportModal";
 import MainHeader from "@insite/shell/Components/Shell/MainHeader";
 import MainNavigation from "@insite/shell/Components/Shell/MainNavigation";
@@ -85,6 +86,7 @@ const layout = (
             <PublishComparer />
             <ImportExportModal />
             <RestoreContentModal />
+            <CompleteVersionHistoryModal />
         </Toaster>
     </FlexWrapper>
 );

@@ -28,6 +28,7 @@ import Hidden from "@insite/mobius/Hidden";
 import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import ShoppingCart from "@insite/mobius/Icons/ShoppingCart";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
@@ -53,6 +54,8 @@ const mapStateToProps = (state: ApplicationState) => ({
     promotionsDataView: getCurrentPromotionsDataView(state),
     settingsCollection: getSettingsCollection(state),
     isClearingCart: state.pages.cart.isClearingCart,
+    isUpdatingCartLine: state.pages.cart.isUpdatingCartLine,
+    isLoading: state.data.carts.isLoading,
 });
 
 const mapDispatchToProps = {
@@ -65,6 +68,7 @@ type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeo
 
 export interface CartLinesStyles {
     wrapper?: InjectableCss;
+    loadingOverlay?: LoadingOverlayProps;
     centeringWrapper?: InjectableCss;
     spinner?: LoadingSpinnerProps;
     noCartLinesText?: TypographyProps;
@@ -191,14 +195,12 @@ const CartLines: FC<Props> = ({
     clearCurrentCart,
     fields,
     isClearingCart,
+    isUpdatingCartLine,
+    isLoading,
     updateCartLine,
     removeCartLine,
 }) => {
     const [isCondensed, setIsCondensed] = useState(false);
-
-    if (!promotionsDataView.value) {
-        return null;
-    }
 
     if (!cart || !cart.cartLines || isClearingCart) {
         return (
@@ -232,6 +234,7 @@ const CartLines: FC<Props> = ({
     const { productSettings } = settingsCollection;
     const { value: promotions } = promotionsDataView;
     const productsCannotBePurchased = cartLines.some(o => o.isRestricted || !o.isActive);
+    const isLoadingCart = isLoading[cart.id];
 
     const cartLinesDisplay = cartLines.map(cartLine => {
         const matchingPromotions = promotions ? promotions.filter(promo => promo.orderLineId === cartLine.id) : [];
@@ -268,15 +271,20 @@ const CartLines: FC<Props> = ({
 
     return (
         <StyledSection {...styles.wrapper}>
-            <CartLinesHeader
-                totalItemCount={cartLines!.length}
-                isCondensed={isCondensed}
-                productsCannotBePurchased={productsCannotBePurchased}
-                onIsCondensedChange={isCondensedChangeHandler}
-                onRemoveAllClick={removeAllClickHandler}
-            />
-            {cartLinesDisplay}
-            <CartLinesFooter />
+            <LoadingOverlay
+                {...styles.loadingOverlay}
+                loading={isLoadingCart || isUpdatingCartLine || !promotionsDataView.value}
+            >
+                <CartLinesHeader
+                    totalItemCount={cartLines!.length}
+                    isCondensed={isCondensed}
+                    productsCannotBePurchased={productsCannotBePurchased}
+                    onIsCondensedChange={isCondensedChangeHandler}
+                    onRemoveAllClick={removeAllClickHandler}
+                />
+                {cartLinesDisplay}
+                <CartLinesFooter />
+            </LoadingOverlay>
         </StyledSection>
     );
 };

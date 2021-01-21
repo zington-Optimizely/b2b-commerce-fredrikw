@@ -7,7 +7,8 @@ import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import Page from "@insite/mobius/Page";
-import React, { useEffect } from "react";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
+import React from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -23,8 +24,9 @@ const mapStateToProps = (state: ApplicationState) => {
 
     return {
         orderNumber: parsedQuery.orderNumber ?? parsedQuery.ordernumber,
-        sTEmail: parsedQuery.stEmail ?? parsedQuery.stemail,
-        sTPostalCode: parsedQuery.stPostalCode ?? parsedQuery.stpostalcode,
+        sTEmail: parsedQuery.stEmail ?? parsedQuery.stemail ?? "",
+        sTPostalCode: parsedQuery.stPostalCode ?? parsedQuery.stpostalcode ?? "",
+        order: state.pages.orderStatus.order,
     };
 };
 
@@ -32,29 +34,61 @@ const mapDispatchToProps = {
     loadOrder,
 };
 
-type Props = PageProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = PageProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasToasterContext;
 
-const OrderStatusPage = ({ id, orderNumber, sTEmail, sTPostalCode, loadOrder }: Props) => {
-    useEffect(() => {
-        if (orderNumber && sTEmail && sTPostalCode) {
-            loadOrder({
-                orderNumber,
-                sTEmail,
-                sTPostalCode,
-            });
+class OrderStatusPage extends React.Component<Props> {
+    UNSAFE_componentWillMount() {
+        // The share entity (for orders) functionality can use this page
+        // to render HTML for PDF generation, so we need to leave this SSR
+        // ability so that functionality works.
+        this.loadOrderIfNeeded();
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (
+            this.props.orderNumber !== prevProps.orderNumber ||
+            this.props.sTEmail !== prevProps.sTEmail ||
+            this.props.sTPostalCode !== prevProps.sTPostalCode
+        ) {
+            this.loadOrderIfNeeded();
         }
-    });
+    }
 
-    return (
-        <Page>
-            <Zone contentId={id} zoneName="Content" />
-            <AddToListModal />
-        </Page>
-    );
-};
+    loadOrderIfNeeded = () => {
+        const { orderNumber, sTEmail, sTPostalCode, order, loadOrder, toaster } = this.props;
+        if (!orderNumber || (!sTEmail && !sTPostalCode)) {
+            return;
+        }
+
+        if (order && (order.webOrderNumber === orderNumber || order.erpOrderNumber === orderNumber)) {
+            return;
+        }
+
+        loadOrder({
+            orderNumber,
+            sTEmail,
+            sTPostalCode,
+            onError: (errorMessage: string) => {
+                toaster.addToast({ body: errorMessage, messageType: "danger" });
+            },
+        });
+    };
+
+    render() {
+        return (
+            <Page>
+                <Zone contentId={this.props.id} zoneName="Content" />
+                <AddToListModal />
+            </Page>
+        );
+    }
+}
 
 const pageModule: PageModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(OrderStatusPage),
+    component: connect(mapStateToProps, mapDispatchToProps)(withToaster(OrderStatusPage)),
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,

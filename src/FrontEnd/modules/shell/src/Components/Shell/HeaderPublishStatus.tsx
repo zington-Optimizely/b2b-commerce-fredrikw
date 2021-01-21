@@ -80,7 +80,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(HeaderPublishStatus)
 
 const StyledSpan = styled.span`
     width: 72px;
-    background: ${({ theme }) => theme.colors.common.background};
     color: ${({ theme }) => theme.colors.text.main};
     font-family: ${({ theme }) => theme.typography.body.fontFamily};
     font-size: ${({ theme }) => theme.modal.defaultProps.headlineTypographyProps.size};

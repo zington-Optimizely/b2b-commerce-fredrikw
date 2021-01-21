@@ -8,7 +8,7 @@ import { UserSetupPageContext } from "@insite/content-library/Pages/UserSetupPag
 import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -57,6 +57,11 @@ const UserSetupUserInformation = ({
     }
 
     const [email, setEmail] = useState(editingUser.email);
+
+    useEffect(() => {
+        setEmail(editingUser.email);
+    }, [editingUser.email]);
+
     const emailChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
     };

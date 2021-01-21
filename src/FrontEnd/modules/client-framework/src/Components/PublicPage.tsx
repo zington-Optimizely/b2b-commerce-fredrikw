@@ -11,6 +11,7 @@ import { HasShellContext, ShellContext, withIsInShell } from "@insite/client-fra
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import { getDisplayErrorPage, getErrorStatusCode, redirectTo } from "@insite/client-framework/ServerSideRendering";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 // eslint-disable-next-line spire/fenced-imports
@@ -24,6 +25,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     errorPageLink: getPageLinkByPageType(state, "UnhandledErrorPage"),
     pathname: state.data.pages.location.pathname,
     permissionsLoaded: !!state.context.permissions,
+    websiteSettings: getSettingsCollection(state).websiteSettings,
 });
 
 type Props = ReturnType<typeof mapStateToProps> & HasShellContext;
@@ -61,21 +63,24 @@ class PublicPage extends React.Component<Props> {
     }
 
     setMetadata() {
-        const { page, websiteName, pathname } = this.props;
+        const { page, websiteName, pathname, websiteSettings } = this.props;
         if (!page) {
             return;
         }
-        setPageMetadata({
-            metaKeywords: page.fields["metaKeywords"],
-            metaDescription: page.fields["metaDescription"],
-            openGraphUrl: page.fields["openGraphUrl"],
-            openGraphTitle: page.fields["openGraphTitle"],
-            openGraphImage: page.fields["openGraphImage"],
-            title: page.fields["title"],
-            currentPath: pathname,
-            canonicalPath: pathname,
-            websiteName,
-        });
+        setPageMetadata(
+            {
+                metaKeywords: page.fields["metaKeywords"],
+                metaDescription: page.fields["metaDescription"],
+                openGraphUrl: page.fields["openGraphUrl"],
+                openGraphTitle: page.fields["openGraphTitle"],
+                openGraphImage: page.fields["openGraphImage"],
+                title: page.fields["title"],
+                currentPath: pathname,
+                canonicalPath: pathname,
+                websiteName,
+            },
+            websiteSettings,
+        );
     }
 
     wrapContent(content: ReturnType<typeof createPageElement>) {

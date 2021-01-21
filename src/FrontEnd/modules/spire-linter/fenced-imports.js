@@ -35,6 +35,7 @@ const validMobiusImports = [
 ];
 const validServerImports = [
     "connect",
+    "crypto",
     "express",
     "form-data",
     "fs",

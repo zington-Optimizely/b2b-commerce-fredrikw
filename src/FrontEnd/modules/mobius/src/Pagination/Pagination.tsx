@@ -267,22 +267,24 @@ const Pagination: React.FC<PaginationProps> = withTheme(props => {
 
     return (
         <PaginationStyle css={cssOverrides.pagination} {...omitSingle(otherProps, "cssOverrides")}>
-            <PerPageSelect css={cssOverrides.perPageSelect}>
-                <Select
-                    onChange={changeResultsPerPage}
-                    label={resultsPerPageLabel || translate("Results Per Page")}
-                    labelPosition="left"
-                    value={resultsPerPage}
-                    {...spreadProps("selectProps" as any)}
-                    data-test-selector="paginationPerPageSelect"
-                >
-                    {resultsPerPageOptions.map((n: string) => (
-                        <option key={n} value={n}>
-                            {n}
-                        </option>
-                    ))}
-                </Select>
-            </PerPageSelect>
+            {resultsPerPageOptions?.length > 0 && (
+                <PerPageSelect css={cssOverrides.perPageSelect}>
+                    <Select
+                        onChange={changeResultsPerPage}
+                        label={resultsPerPageLabel || translate("Results Per Page")}
+                        labelPosition="left"
+                        value={resultsPerPage}
+                        {...spreadProps("selectProps" as any)}
+                        data-test-selector="paginationPerPageSelect"
+                    >
+                        {resultsPerPageOptions.map((n: string) => (
+                            <option key={n} value={n}>
+                                {n}
+                            </option>
+                        ))}
+                    </Select>
+                </PerPageSelect>
+            )}
             <LinkList
                 role="navigation"
                 aria-label={translate("Pagination navigation")}

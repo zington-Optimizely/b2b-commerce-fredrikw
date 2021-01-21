@@ -28,7 +28,8 @@ const ProductContextAvailability = ({
 
     if (
         product.isVariantParent ||
-        (product.configurationType !== ConfigurationType.None &&
+        (!!product.configurationType &&
+            product.configurationType !== ConfigurationType.None &&
             product.configurationType !== ConfigurationType.Fixed &&
             !configurationCompleted)
     ) {

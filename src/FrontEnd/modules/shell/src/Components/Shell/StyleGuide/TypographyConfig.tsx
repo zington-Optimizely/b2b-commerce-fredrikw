@@ -68,26 +68,6 @@ const TypographyConfig: React.FunctionComponent<
                 disabled={disabled}
                 {...presetHelpers}
             />
-            <TextField
-                label={
-                    codeOverrideProps.weight ? (
-                        <>
-                            <span>Font Weight </span>
-                            <DisabledInCodeTooltip />
-                        </>
-                    ) : (
-                        "Font Weight"
-                    )
-                }
-                value={cssProperties.weight}
-                onChange={event =>
-                    update(draft => {
-                        getCssProperties(draft).weight = event.currentTarget.value as FontWeightProperty;
-                    })
-                }
-                disabled={!!codeOverrideProps.weight || disabled}
-                {...configFormFieldStyles}
-            />
             <CheckboxGroup
                 css={css`
                     margin-top: 10px;

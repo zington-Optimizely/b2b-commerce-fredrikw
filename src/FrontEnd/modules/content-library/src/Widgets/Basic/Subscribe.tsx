@@ -10,7 +10,7 @@ import TextField, { TextFieldPresentationProps } from "@insite/mobius/TextField"
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import parse from "html-react-parser";
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -102,14 +102,15 @@ export const subscribeStyles: SubscribeStyles = {
 const styles = subscribeStyles;
 
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
-const emailRequiredFieldMessage = siteMessage("EmailSubscription_EmailIsRequiredErrorMessage");
-const emailFieldMessage = siteMessage("EmailSubscription_EmailIsInvalidErrorMessage");
 
-const CmsSubscribe: React.FunctionComponent<Props> = ({ fields, subscribe, id }: Props) => {
-    const [email, setEmail] = React.useState("");
-    const [emailError, setEmailError] = React.useState(emailRequiredFieldMessage);
-    const [isSubmitted, setIsSubmitted] = React.useState(false);
-    const toasterContext = React.useContext(ToasterContext);
+const CmsSubscribe = ({ fields, subscribe, id }: Props) => {
+    const emailRequiredFieldMessage = siteMessage("EmailSubscription_EmailIsRequiredErrorMessage");
+    const emailFieldMessage = siteMessage("EmailSubscription_EmailIsInvalidErrorMessage");
+
+    const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState(emailRequiredFieldMessage);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const toasterContext = useContext(ToasterContext);
 
     const onSubscribeClick = () => {
         setIsSubmitted(true);

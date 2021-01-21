@@ -1,5 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import shareEntity from "@insite/client-framework/Store/CommonHandlers/ShareEntity";
 import translate from "@insite/client-framework/Translate";
@@ -13,7 +14,7 @@ import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -26,6 +27,7 @@ interface OwnProps {
      * If true, the email attachment will be generated using the entity details web page, rather than a pre-defined PDF file.
      */
     generateAttachmentFromWebpage?: boolean;
+    extraProperties?: SafeDictionary<string>;
 }
 
 const mapDispatchToProps = {
@@ -89,14 +91,15 @@ export const shareEntityButtonStyles: ShareEntityButtonStyles = {
 
 const invoiceUrl = "/api/v1/invoices/shareinvoice";
 const orderUrl = "/api/v1/orders/shareorder";
-const ShareEntityButton: React.FC<Props> = ({
+const ShareEntityButton = ({
     entityId,
     entityName,
     extendedStyles,
     shareEntity,
     variant = "button",
     generateAttachmentFromWebpage,
-}) => {
+    extraProperties,
+}: Props) => {
     if (!entityId) {
         return null;
     }
@@ -109,15 +112,16 @@ const ShareEntityButton: React.FC<Props> = ({
         url = invoiceUrl;
     }
 
-    const toasterContext = React.useContext(ToasterContext);
-    const [styles] = React.useState(() => mergeToNew(shareEntityButtonStyles, extendedStyles));
-    const [modalIsOpen, setModalIsOpen] = React.useState(false);
-    const [emailTo, setEmailTo] = React.useState("");
-    const [emailToError, setEmailToError] = React.useState("");
-    const [emailFrom, setEmailFrom] = React.useState("");
-    const [emailFromError, setEmailFromError] = React.useState("");
-    const [subject, setSubject] = React.useState("");
-    const [message, setMessage] = React.useState("");
+    const toasterContext = useContext(ToasterContext);
+    const [styles] = useState(() => mergeToNew(shareEntityButtonStyles, extendedStyles));
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [emailTo, setEmailTo] = useState("");
+    const [emailToError, setEmailToError] = useState("");
+    const [emailFrom, setEmailFrom] = useState("");
+    const [emailFromError, setEmailFromError] = useState("");
+    const [subject, setSubject] = useState("");
+    const [message, setMessage] = useState("");
+    const [isSending, setIsSending] = useState(false);
 
     const requiredFieldMessage = translate("This is a required field");
     const emailFieldMessage = translate("Enter a valid email address");
@@ -173,6 +177,7 @@ const ShareEntityButton: React.FC<Props> = ({
             return;
         }
 
+        setIsSending(true);
         shareEntity({
             shareEntityModel: {
                 entityId,
@@ -181,10 +186,12 @@ const ShareEntityButton: React.FC<Props> = ({
                 emailFrom,
                 subject,
                 message,
+                ...extraProperties,
             } as ShareEntityModel,
             url,
             onSuccess: () => {
                 setModalIsOpen(false);
+                setIsSending(false);
                 toasterContext.addToast({ body: siteMessage("Entity_Share_Success"), messageType: "success" });
             },
             generateAttachmentFromWebpage,
@@ -263,6 +270,7 @@ const ShareEntityButton: React.FC<Props> = ({
                     </Button>
                     <Button
                         {...styles.sendButton}
+                        disabled={isSending}
                         onClick={sendButtonClickHandler}
                         data-test-selector="shareEntity_submit"
                     >

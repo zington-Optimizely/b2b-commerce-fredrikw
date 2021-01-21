@@ -490,7 +490,13 @@ module insite.catalog {
                     'event': 'searchResults',
                     'searchQuery': productCollection.originalQuery,
                     'correctedQuery': productCollection.correctedQuery,
-                    'numSearchResults': productCollection.pagination.totalItemCount
+                    'numSearchResults': productCollection.pagination.totalItemCount,
+                    // Clear/Reset data for this layer
+                    'searchTerm': null,
+                    'product_numSearchResults': null,
+                    'categories_numSearchResults': null,
+                    'content_numSearchResults': null,
+                    'brands_numSearchResults': null,
                 });
             }
         }

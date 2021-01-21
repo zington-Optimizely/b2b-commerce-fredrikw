@@ -18,6 +18,12 @@ export const getSiteGenerationData = () =>
         pageTypeToNodeId: SafeDictionary<string>;
     }>(`${internalContentUrl}siteGenerationData`, "GET");
 
+export const getAutoUpdateData = (nodeId: string) =>
+    request<{
+        pageId: string;
+        templateHash: string;
+    } | null>(`${internalContentUrl}autoUpdateData?nodeId=${nodeId}`, "GET");
+
 export async function saveInitialPages(pages: PageModel[]) {
     const tokenData = await getAccessToken();
     const headers = {

@@ -32,13 +32,14 @@ export const getPageLinkByPageType = (state: HasLinksState, pageType: string) =>
 };
 
 export const getLink = (state: ApplicationState, { type, value }: LinkFieldValue) => {
+    const category = type === "Category" ? getCategoryState(state, value).value : null;
     switch (type) {
         case "Page":
             return getPageLinkByNodeId(state, value);
         case "Category":
             return {
-                url: value, // TODO ISC-10781 make this work
-                title: value,
+                url: category?.path,
+                title: category?.shortDescription,
             };
         case "Url":
             return {

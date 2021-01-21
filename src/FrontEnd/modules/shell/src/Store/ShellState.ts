@@ -1,6 +1,7 @@
 import { CategoriesState } from "@insite/client-framework/Store/Data/Categories/CategoriesState";
 import { PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import LinksState from "@insite/client-framework/Store/Links/LinksState";
+import { CompareModalState } from "@insite/shell/Store/CompareModal/CompareModalState";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
 import { ImportExportModalState } from "@insite/shell/Store/ImportExportModal/ImportExportModalState";
 import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalState";
@@ -11,6 +12,7 @@ import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContext
 import { StyleGuideState } from "@insite/shell/Store/StyleGuide/StyleGuideState";
 
 export default interface ShellState {
+    readonly compareModal: CompareModalState;
     readonly data: {
         readonly categories: CategoriesState;
         readonly pages: PagesState;

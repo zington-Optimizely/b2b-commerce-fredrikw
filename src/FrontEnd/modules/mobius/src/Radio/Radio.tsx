@@ -7,13 +7,25 @@ import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/Disab
 import FieldSetPresentationProps from "@insite/mobius/utilities/fieldSetProps";
 import getColor from "@insite/mobius/utilities/getColor";
 import getContrastColor from "@insite/mobius/utilities/getContrastColor";
-import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
+
+export interface RadioPresentationProps {
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<RadioProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
+}
 
 export type RadioComponentProps = MobiusStyledComponentProps<
     "div",
@@ -25,7 +37,7 @@ export type RadioComponentProps = MobiusStyledComponentProps<
     }
 >;
 
-export type RadioProps = RadioComponentProps & FieldSetPresentationProps<RadioComponentProps>;
+export type RadioProps = RadioComponentProps & FieldSetPresentationProps<RadioComponentProps> & RadioPresentationProps;
 
 const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes; _color: string } & InjectableCss>`
     display: block;
@@ -79,12 +91,12 @@ const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes; _color
 `;
 
 const Radio: React.FC<RadioProps & HasDisablerContext> = props => {
-    const { children, disable, disabled, value, ...otherProps } = props;
+    const { children, disable, disabled, mergeCss, value, ...otherProps } = props;
 
     return (
         <RadioGroupContext.Consumer>
             {({ name, onChange, sizeVariant: sizeVariantFromContext, value: radioGroupValue }) => {
-                const { applyProp, spreadProps } = applyPropBuilder(
+                const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(
                     { sizeVariant: sizeVariantFromContext, ...props },
                     { component: "radio", category: "fieldSet" },
                 );
@@ -102,11 +114,12 @@ const Radio: React.FC<RadioProps & HasDisablerContext> = props => {
 
                 const radioValue = (value || (children as string)) ?? "";
                 const id = `${name}-${radioValue.replace(/\W/g, "-")}`;
+                const resolvedMergeCss = mergeCss ?? props.theme?.radio?.defaultProps?.mergeCss;
                 return (
                     <RadioStyle
                         _color={applyProp("color", "primary")}
                         _sizeVariant={sizeVariant}
-                        css={applyProp("css")}
+                        css={applyStyledProp("css", resolvedMergeCss)}
                     >
                         <input
                             type="radio"

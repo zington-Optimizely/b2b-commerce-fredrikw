@@ -23,7 +23,7 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import * as React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -331,13 +331,8 @@ export const shareListModalStyles: ShareListModalStyles = {
 };
 
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
-const yourNameFieldRequiredMessage = siteMessage("Lists_Your_Name_Required") as string;
-const recipientEmailFieldRequiredMessage = siteMessage("Lists_Recipient_Email_Address_Required") as string;
-const recipientEmailFieldInvalidMessage = siteMessage("AddressInfo_EmailAddress_Validation") as string;
-const defaultInviteMessage = translate("I'd like to invite you to my shared list of products.");
-const defaultShareMessage = translate("I'd like to share my list of products with you.");
 
-const ShareListModal: React.FC<Props> = ({
+const ShareListModal = ({
     session,
     modalIsOpen,
     wishList,
@@ -347,21 +342,27 @@ const ShareListModal: React.FC<Props> = ({
     setManageShareListModalIsOpen,
     updateWishList,
     sendWishListCopy,
-}) => {
-    const toasterContext = React.useContext(ToasterContext);
-    const [styles] = React.useState(() => mergeToNew(shareListModalStyles, extendedStyles));
+}: Props) => {
+    const yourNameFieldRequiredMessage = siteMessage("Lists_Your_Name_Required") as string;
+    const recipientEmailFieldRequiredMessage = siteMessage("Lists_Recipient_Email_Address_Required") as string;
+    const recipientEmailFieldInvalidMessage = siteMessage("AddressInfo_EmailAddress_Validation") as string;
+    const defaultInviteMessage = translate("I'd like to invite you to my shared list of products.");
+    const defaultShareMessage = translate("I'd like to share my list of products with you.");
 
-    const [shareListOption, setShareListOption] = React.useState(fromManage ? "shareList" : "sendCopy");
-    const [shareByOption, setShareByOption] = React.useState("shareByEmail");
-    const [allowEditList, setAllowEditList] = React.useState(wishList?.allowEdit || false);
-    const [sendEmailNotification, setSendEmailNotification] = React.useState(false);
-    const [yourName, setYourName] = React.useState(`${session.firstName} ${session.lastName}`);
-    const [yourNameError, setYourNameError] = React.useState("");
-    const [recipientEmailAddress, setRecipientEmailAddress] = React.useState("");
-    const [recipientEmailAddressError, setRecipientEmailAddressError] = React.useState("");
-    const [inviteMessage, setInviteMessage] = React.useState(defaultInviteMessage);
-    const [shareMessage, setShareMessage] = React.useState(defaultShareMessage);
-    const [inProgress, setInProgress] = React.useState(false);
+    const toasterContext = useContext(ToasterContext);
+    const [styles] = useState(() => mergeToNew(shareListModalStyles, extendedStyles));
+
+    const [shareListOption, setShareListOption] = useState(fromManage ? "shareList" : "sendCopy");
+    const [shareByOption, setShareByOption] = useState("shareByEmail");
+    const [allowEditList, setAllowEditList] = useState(wishList?.allowEdit || false);
+    const [sendEmailNotification, setSendEmailNotification] = useState(false);
+    const [yourName, setYourName] = useState(`${session.firstName} ${session.lastName}`);
+    const [yourNameError, setYourNameError] = useState("");
+    const [recipientEmailAddress, setRecipientEmailAddress] = useState("");
+    const [recipientEmailAddressError, setRecipientEmailAddressError] = useState("");
+    const [inviteMessage, setInviteMessage] = useState(defaultInviteMessage);
+    const [shareMessage, setShareMessage] = useState(defaultShareMessage);
+    const [inProgress, setInProgress] = useState(false);
 
     const modalCloseHandler = () => {
         setShareListModalIsOpen({ modalIsOpen: false });
@@ -380,7 +381,7 @@ const ShareListModal: React.FC<Props> = ({
 
     const yourNameChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setYourName(event.target.value);
-        setYourNameError(event.target.value ? "" : yourNameFieldRequiredMessage);
+        setYourNameError(event.target.value.trim() ? "" : yourNameFieldRequiredMessage);
     };
 
     const recipientEmailAddressChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -490,7 +491,7 @@ const ShareListModal: React.FC<Props> = ({
         resetFields();
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         resetFields();
     }, [wishList]);
 

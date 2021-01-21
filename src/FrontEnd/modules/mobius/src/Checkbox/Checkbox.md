@@ -81,7 +81,7 @@ const Typography = require('../Typography').default;
 ```
 
 ### Style Extensibility
-Checkboxes being themed by the fieldSets defaults, as well as checkbox-specific defaults, with some component-specific overrides on top. 
+Checkboxes being themed by the `fieldSets` defaults, as well as `checkbox`-specific defaults, with a component specific override of `css`. These styles can also merge with styles from the theme if you provide `true` to the `mergeCss` property. 
 
 ```jsx
 const CheckboxGroup = require('../CheckboxGroup').default;
@@ -102,6 +102,21 @@ const theme={
         ...globalTheme.checkbox,
         defaultProps: {
             ...globalTheme.checkbox.defaultProps,
+            css: css`
+                border: 2px dashed blue;
+                border-radius: 3px;
+                span[role=checkbox] {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 0px;
+                    svg {
+                        color: #fff;
+                    }
+                }
+            `
             iconProps: {src: "X"},
             typographyProps: {weight: 300},
             indeterminateIconProps: {src: "MoreHorizontal"},
@@ -121,6 +136,9 @@ const theme={
             </Checkbox>
             <Checkbox css={({ theme }) => `margin-left: -5px; border: 1px solid ${theme.colors.primary.main}; padding: 5px`}>
                 Instance custom CSS (using styled-components function)
+            </Checkbox>
+            <Checkbox css={css`border: 3px solid #222`} mergeCss>
+                Custom css that is merged with the theme css. The css property has priority over the theme.
             </Checkbox>
             <Checkbox checked="indeterminate">Indeterminate override in theme</Checkbox>
             <Checkbox checked="indeterminate" indeterminateColor="secondary">Instance indeterminate override</Checkbox>

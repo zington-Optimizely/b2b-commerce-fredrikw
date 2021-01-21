@@ -238,7 +238,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
     };
 
     const onClickRma = (url: string) => {
-        history.push(`${url}?orderNumber=${order.webOrderNumber}`);
+        history.push(`${url}?orderNumber=${order.webOrderNumber || order.erpOrderNumber}`);
     };
 
     const buttonList: ButtonMapper = {};

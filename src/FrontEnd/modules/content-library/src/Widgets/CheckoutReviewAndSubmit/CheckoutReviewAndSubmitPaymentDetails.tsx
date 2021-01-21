@@ -186,10 +186,14 @@ type TokenExCvvOnlyIframeConfig = TokenExIframeConfig & {
 type IFrame = {
     new (containerId: string, config: TokenExPCIIframeConfig | TokenExCvvOnlyIframeConfig): IFrame;
     load: () => void;
-    on: (eventName: "validate" | "tokenize" | "error" | "cardTypeChange", callback: (data: any) => void) => void;
+    on: (
+        eventName: "load" | "validate" | "tokenize" | "error" | "cardTypeChange",
+        callback: (data: any) => void,
+    ) => void;
     remove: () => void;
     validate: () => void;
     tokenize: () => void;
+    reset: () => void;
 };
 
 type TokenEx = {
@@ -289,7 +293,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const [payPalError, setPayPalError] = useState("");
 
     const [showFormErrors, setShowFormErrors] = useState(false);
-    const [isCardNumberTokenized, setIsCardTokenized] = useState(false);
+    const [isCardNumberTokenized, setIsCardNumberTokenized] = useState(false);
+    const [isTokenExIframeLoaded, setIsTokenExIframeLoaded] = useState(false);
 
     // Used in validation of form, since some form elements will not be validated when PayPal is active.
     const [isPayPal, setIsPayPal] = useState(false);
@@ -314,7 +319,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         setCityError("");
         setPostalCodeError("");
         setPayPalError("");
-        setIsCardTokenized(false);
+        setIsCardNumberTokenized(false);
+        setIsTokenExIframeLoaded(false);
     };
 
     useEffect(() => {
@@ -363,6 +369,10 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                     }
 
                     history.push(`${orderConfirmationPageLink.url}?cartId=${cartId}`);
+                },
+                onError: () => {
+                    setIsCardNumberTokenized(false);
+                    tokenExIframe?.reset();
                 },
             });
         }
@@ -433,14 +443,21 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const tokenExConfig = typeof tokenName !== "undefined" ? tokenExConfigs[tokenName] : undefined;
 
     useEffect(() => {
-        if (tokenExConfig) {
-            if (paymentMethodDto?.isPaymentProfile) {
-                setUpTokenExIFrameCvvOnly(tokenExConfig);
-            } else if (paymentMethodDto?.isCreditCard) {
-                setUpTokenExIFrame(tokenExConfig);
-            }
-        }
+        setIsTokenExIframeLoaded(false);
+        setUpTokenEx();
     }, [tokenExConfig]);
+
+    const setUpTokenEx = () => {
+        if (!tokenExConfig || !paymentMethodDto) {
+            return;
+        }
+
+        if (paymentMethodDto.isPaymentProfile) {
+            setUpTokenExIFrameCvvOnly(tokenExConfig);
+        } else if (paymentMethodDto.isCreditCard) {
+            setUpTokenExIFrame(tokenExConfig);
+        }
+    };
 
     const setUpTokenExIFrame = (config: TokenExConfig) => {
         if (tokenExIframe) {
@@ -464,11 +481,12 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
         tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", iframeConfig);
         tokenExIframe.load();
+        tokenExIframe.on("load", _ => setIsTokenExIframeLoaded(true));
         tokenExIframe.on("tokenize", data => {
             setCardNumber(data.token);
             setSecurityCode("CVV");
             setCardType(convertTokenExCardTypeToApiData(data.cardType));
-            setIsCardTokenized(true);
+            setIsCardNumberTokenized(true);
         });
         tokenExIframe.on("cardTypeChange", data => setPossibleCardType(data.possibleCardType));
         tokenExIframe.on("validate", data => {
@@ -522,7 +540,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
         tokenExIframe = new TokenEx.Iframe("ppTokenExSecurityCode", iframeConfig);
         tokenExIframe.load();
-        tokenExIframe.on("tokenize", _ => setIsCardTokenized(true));
+        tokenExIframe.on("load", _ => setIsTokenExIframeLoaded(true));
+        tokenExIframe.on("tokenize", _ => setIsCardNumberTokenized(true));
         tokenExIframe.on("validate", data => {
             if (data.isValid) {
                 setSecurityCodeError("");
@@ -900,27 +919,31 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                 )}
                             </GridItem>
                         )}
-                        <GridItem {...styles.poNumberGridItem}>
-                            <TextField
-                                {...styles.poNumberText}
-                                label={
-                                    <>
-                                        <span aria-hidden>{translate("PO Number")}</span>
-                                        <VisuallyHidden>{translate("Purchase Order Number")}</VisuallyHidden>
-                                    </>
-                                }
-                                value={poNumber}
-                                onChange={handlePONumberChange}
-                                required={cart.requiresPoNumber}
-                                maxLength={50}
-                                error={showFormErrors && poNumberError}
-                                data-test-selector="checkoutReviewAndSubmit_poNumber"
-                            />
-                        </GridItem>
+                        {cart.showPoNumber && (
+                            <GridItem {...styles.poNumberGridItem}>
+                                <TextField
+                                    {...styles.poNumberText}
+                                    label={
+                                        <>
+                                            <span aria-hidden>{translate("PO Number")}</span>
+                                            <VisuallyHidden>{translate("Purchase Order Number")}</VisuallyHidden>
+                                        </>
+                                    }
+                                    value={poNumber}
+                                    onChange={handlePONumberChange}
+                                    required={cart.requiresPoNumber}
+                                    maxLength={50}
+                                    error={showFormErrors && poNumberError}
+                                    data-test-selector="checkoutReviewAndSubmit_poNumber"
+                                />
+                            </GridItem>
+                        )}
+
                         {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired && (
                             <GridItem width={6}>
                                 <SavedPaymentProfileEntry
                                     useTokenExGateway={useTokenExGateway}
+                                    isTokenExIframeLoaded={isTokenExIframeLoaded}
                                     securityCode={securityCode}
                                     onSecurityCodeChange={handleSecurityCodeChange}
                                     securityCodeError={showFormErrors ? securityCodeError : undefined}
@@ -934,6 +957,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                     <CreditCardDetailsEntry
                                         canSaveCard={paymentOptions.canStorePaymentProfile}
                                         useTokenExGateway={useTokenExGateway}
+                                        isTokenExIframeLoaded={isTokenExIframeLoaded}
                                         saveCard={saveCard}
                                         onSaveCardChange={handleSaveCardChange}
                                         cardHolderName={cardHolderName}

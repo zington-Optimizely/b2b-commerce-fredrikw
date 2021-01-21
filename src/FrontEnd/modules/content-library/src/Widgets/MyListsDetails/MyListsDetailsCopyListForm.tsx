@@ -14,7 +14,7 @@ import DynamicDropdown, { DynamicDropdownPresentationProps, OptionObject } from 
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
-import ToasterContext from "@insite/mobius/Toast/ToasterContext";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -40,10 +40,13 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 const mapDispatchToProps = {
     addAllWishListLines,
-    createList: addWishList,
+    addWishList,
 };
 
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps &
+    ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps> &
+    HasToasterContext;
 
 export interface MyListsDetailsCopyListFormStyles {
     container?: GridContainerProps;
@@ -88,9 +91,6 @@ export const copyListFormStyles: MyListsDetailsCopyListFormStyles = {
 const styles = copyListFormStyles;
 
 class MyListsDetailsCopyListForm extends React.Component<Props, State> {
-    static contextType = ToasterContext;
-    context!: React.ContextType<typeof ToasterContext>;
-
     readonly CREATE_ID = "CREATE_ID";
 
     constructor(props: Props) {
@@ -101,84 +101,70 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
         };
     }
 
-    submitHandler = (e: any) => {
+    submitHandler = () => {
         if (this.state.wishListId === this.CREATE_ID) {
             if (this.state.name === "") {
-                this.setState({
-                    nameError: siteMessage("Lists_Enter_New_Wishlist_Name"),
-                });
+                this.setState({ nameError: siteMessage("Lists_Enter_New_Wishlist_Name") });
                 return;
             }
 
-            this.props.createList({
-                apiParameter: { name: this.state.name, description: "" },
+            this.props.addWishList({
+                apiParameter: { name: this.state.name },
                 onSuccess: this.onCreateSuccess,
                 onError: this.onCreateError,
             });
         } else if (this.props.wishLists) {
-            const destinationWishList = this.props.wishLists?.find(w => w.id === this.state.wishListId);
+            const destinationWishList = this.props.wishLists.find(w => w.id === this.state.wishListId);
             if (destinationWishList) {
-                this.setState({
-                    destinationWishList,
-                });
-                this.copyWishList(destinationWishList);
+                this.setState({ destinationWishList });
+                this.copyWishListTo(destinationWishList);
             }
         }
     };
 
     onCreateSuccess = (addedWishList: WishListModel) => {
-        this.setState({
-            destinationWishList: addedWishList,
-        });
-        this.copyWishList(addedWishList);
+        this.setState({ destinationWishList: addedWishList });
+        this.copyWishListTo(addedWishList);
     };
 
     onCreateError = (errorMessage: string) => {
         this.setState({ nameError: errorMessage });
     };
 
-    private copyWishList(destinationWishList: WishListModel) {
+    copyWishListTo = (destinationWishList: WishListModel) => {
         if (destinationWishList && this.props.wishList && this.props.wishListLines) {
             this.props.addAllWishListLines({
                 apiParameter: {
                     wishList: destinationWishList,
                     copyFromWishListId: this.props.wishList.id,
                 },
-                onSuccess: this.onCopySuccess,
+                onSuccess: () => {
+                    this.props.toaster.addToast({
+                        body: translate("Item(s) copied to ") + destinationWishList.name,
+                        messageType: "success",
+                    });
+                },
             });
         }
         this.props.onSubmit(this.state.name, this.state.wishListId as string);
-    }
+    };
 
-    nameChangeHandler = (e: any) => {
+    nameChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
-            name: e.target.value,
+            name: event.target.value,
             nameError: "",
         });
     };
 
-    wishListChangeHandler = (value?: string) => {
-        this.setState({
-            wishListId: value,
-        });
-    };
-
-    onCopySuccess = () => {
-        if (this.state.destinationWishList) {
-            this.context.addToast({
-                body: translate("Item(s) copied to ") + this.state.destinationWishList.name,
-                messageType: "success",
-            });
-        }
+    wishListChangeHandler = (wishListId?: string) => {
+        this.setState({ wishListId });
     };
 
     render() {
         let options: OptionObject[] = [{ optionText: translate("Create New List"), optionValue: this.CREATE_ID }];
         if (this.props.wishLists) {
             const filteredWishLists = this.props.wishLists.filter(o => o.id !== this.props.wishList?.id);
-            options = options.concat(
-                filteredWishLists.map(wishList => ({ optionText: wishList.name, optionValue: wishList.id })),
-            );
+            options = options.concat(filteredWishLists.map(o => ({ optionText: o.name, optionValue: o.id })));
         }
 
         return (
@@ -228,4 +214,4 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyListsDetailsCopyListForm);
+export default connect(mapStateToProps, mapDispatchToProps)(withToaster(MyListsDetailsCopyListForm));

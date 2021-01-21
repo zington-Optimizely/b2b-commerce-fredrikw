@@ -1,6 +1,7 @@
 import CategoriesReducer from "@insite/client-framework/Store/Data/Categories/CategoriesReducer";
 import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
+import CompareModalReducer from "@insite/shell/Store/CompareModal/CompareModalReducer";
 import ErrorModalReducer from "@insite/shell/Store/ErrorModal/ErrorModalReducer";
 import ImportExportModalReducer from "@insite/shell/Store/ImportExportModal/ImportExportModalReducer";
 import LogoutWarningModalReducer from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalReducer";
@@ -21,6 +22,7 @@ const dataReducer = combineReducers(dataReducers as any);
 export type DataReducers = typeof dataReducers;
 
 export const reducers = {
+    compareModal: CompareModalReducer,
     data: dataReducer,
     errorModal: ErrorModalReducer,
     importExportModal: ImportExportModalReducer,

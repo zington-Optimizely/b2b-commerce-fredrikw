@@ -292,7 +292,7 @@ const ProductCompareFlyOut = ({
                     onRemoveAll={handleRemoveAll}
                 />
             }
-            {...(styles.carouselDrawer as DrawerProps)}
+            {...styles.carouselDrawer}
             data-test-selector="productCompareDrawer"
         >
             <StyledWrapper {...styles.carouselDrawerContainer}>

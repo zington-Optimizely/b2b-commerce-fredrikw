@@ -387,7 +387,7 @@ const CartLineCardExpanded: FC<Props> = ({
                                 extendedStyles={styles.productAvailability}
                             />
                         )}
-                        {!hideAddToList && (
+                        {!hideAddToList && cartLine.canAddToWishlist && (
                             <Link {...styles.addToListLink} onClick={addToListClickHandler}>
                                 {translate("Add to List")}
                             </Link>

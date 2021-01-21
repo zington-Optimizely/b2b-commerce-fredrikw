@@ -151,12 +151,6 @@ export const rawRequest = async (
 
     const response = await fetch(endpoint, requestInit);
     if (!isStatusOkay(response.status)) {
-        if (response.status === 401) {
-            // auth session must have timed out - do a full refresh to update the header etc
-            window.location.reload();
-            return response;
-        }
-
         let message: string;
         let errorJson: any;
         if (response.headers.get("Content-Type")?.startsWith("application/json")) {

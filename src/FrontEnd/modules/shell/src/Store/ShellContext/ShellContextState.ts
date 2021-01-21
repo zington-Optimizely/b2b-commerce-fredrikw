@@ -16,6 +16,7 @@ export interface PersonaModel {
 
 export interface ShellContextState {
     websiteId: string;
+    cmsType: string;
     currentLanguageId: string;
     defaultLanguageId: string;
     currentPersonaId: string;

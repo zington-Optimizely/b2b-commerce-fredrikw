@@ -6,6 +6,7 @@ const initialState: CartState = {
     isClearingCart: false,
     isSavingOrder: false,
     isRemovingCartLine: {},
+    isUpdatingCartLine: false,
 };
 
 const reducer = {
@@ -26,6 +27,12 @@ const reducer = {
     },
     "Pages/Cart/CompleteSavingOrder": (draft: Draft<CartState>) => {
         draft.isSavingOrder = false;
+    },
+    "Pages/Cart/BeginUpdateCartLine": (draft: Draft<CartState>) => {
+        draft.isUpdatingCartLine = true;
+    },
+    "Pages/Cart/CompleteUpdateCartLine": (draft: Draft<CartState>) => {
+        draft.isUpdatingCartLine = false;
     },
 };
 
