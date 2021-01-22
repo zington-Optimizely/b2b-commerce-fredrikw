@@ -1,3 +1,5 @@
+import { isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import isApiError from "@insite/client-framework/Common/isApiError";
 import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
@@ -13,6 +15,15 @@ export const DisplayError: HandlerType = props => {
     if (IS_SERVER_SIDE) {
         setDisplayErrorPage(props.parameter.error);
     } else if (isApiError(props.parameter.error) && props.parameter.error.status === 401) {
+        if (getCookie(isSiteInShellCookieName) === "true") {
+            // If we are in the Shell, trigger a modal open with an Unauthorized error
+            props.dispatch({
+                type: "Context/SetErrorModalIsOpenAndUnauthorized",
+                isErrorModalOpen: true,
+                isUnauthorizedError: true,
+            });
+            return;
+        }
         // auth session must have timed out - do a full refresh to update the header etc
         window.location.reload();
     } else {

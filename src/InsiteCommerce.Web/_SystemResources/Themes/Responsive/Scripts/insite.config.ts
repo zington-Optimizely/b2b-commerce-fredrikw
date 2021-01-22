@@ -22,14 +22,9 @@
             protected $urlRouterProvider: angular.ui.IUrlRouterProvider,
             protected $locationProvider: ng.ILocationProvider,
             protected $provide: ng.auto.IProvideService) {
-            const baseUri = $("body").attr("data-webApiRoot");
-            const sirvUrlRegExp = new RegExp("^(https?):\\/\\/(w{3}\\.)?([a-zA-Z0-9][a-zA-Z0-9-_]*\\.)sirv\.com\\/.+$");
-            if (typeof (baseUri) !== "undefined" && baseUri !== "") {
-                $sceDelegateProvider.resourceUrlWhitelist(["self", `${baseUri}/**`, sirvUrlRegExp]);
-                $httpProvider.defaults.withCredentials = true;
-            } else {
-                $sceDelegateProvider.resourceUrlWhitelist(["self", sirvUrlRegExp]);
-            }
+            const searchPath = (core as any).searchPath;
+
+            this.setupResourceWhitelist($httpProvider, $sceDelegateProvider);
 
             // set ASP.NET IsAjaxRequest to 'true'
             $httpProvider.defaults.headers.common = $httpProvider.defaults.headers.common || {};
@@ -50,6 +45,17 @@
                 }
             }, 100);
 
+            if (searchPath !== "") {
+                $stateProvider
+                    .state("search", {
+                        url: `/${searchPath}?criteria&includeSuggestions`,
+                        templateUrl: `/${searchPath}`
+                    })
+                    .state("search_microsite", {
+                        url: `/:microsite/${searchPath}?criteria&includeSuggestions`,
+                        templateUrl: (stateParams: ISearchMicrositeStateParams) => `/${stateParams.microsite}/${searchPath}`
+                    });
+            }
 
             // all pages are the same state and make requests for the partials on the server
             $stateProvider
@@ -75,6 +81,34 @@
                 }
                 $delegate(exception, cause);
             }]);
+        }
+
+        setupResourceWhitelist($httpProvider: ng.IHttpProvider, $sceDelegateProvider: ng.ISCEDelegateProvider) {
+            const baseUri = $("body").attr("data-webApiRoot");
+            const uriHostsForResourceWhitelist = (core as any).uriHostsForResourceWhitelist;
+            const finalizedResourceWhitelist: (string|RegExp)[] = ["self"];
+            const uriWithZeroSubdomainsRegexp = new RegExp("^[a-zA-Z0-9][a-zA-Z0-9-_]*\.[a-zA-Z0-9]+$");
+            const uriWithAtLeastOneSubdomainsRegexp = new RegExp("^(?:[a-zA-Z0-9][a-zA-Z0-9-_]*\.){2}[a-zA-Z0-9]+$");
+
+            if (Array.isArray(uriHostsForResourceWhitelist)) {
+                for (let i = 0; i < uriHostsForResourceWhitelist.length; ++i) {
+                    var resource = uriHostsForResourceWhitelist[i];
+                    if (uriWithZeroSubdomainsRegexp.test(resource)) {
+                        var escapedResource = resource.replace(".", "\\.");
+                        finalizedResourceWhitelist.push(new RegExp(`^(https?):\\/\\/(w{3}\\.)?([a-zA-Z0-9][a-zA-Z0-9-_]*\\.)${escapedResource}\\/.+$`));
+                    } else if (uriWithAtLeastOneSubdomainsRegexp.test(resource)) {
+                        var escapedResource = resource.replace(".", "\\.");
+                        finalizedResourceWhitelist.push(new RegExp(`^(https?):\\/\\/(w{3}\\.)?${escapedResource}\\/.+$`));
+                    }
+                }
+            }
+
+            if (typeof (baseUri) !== "undefined" && baseUri !== "") {
+                finalizedResourceWhitelist.push(`${baseUri}/**`);
+                $httpProvider.defaults.withCredentials = true;
+            }
+
+            $sceDelegateProvider.resourceUrlWhitelist(finalizedResourceWhitelist);
         }
     }
 

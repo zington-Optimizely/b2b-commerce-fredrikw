@@ -634,7 +634,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     };
 
     const validatePaymentMethod = (paymentMethod: string) => {
-        const paymentMethodValid = !paymentMethods || paymentMethods.length === 0 || isNonEmptyString(paymentMethod);
+        const paymentMethodValid =
+            isPayPal || !paymentMethods || paymentMethods.length === 0 || isNonEmptyString(paymentMethod);
         setPaymentMethodError(!paymentMethodValid ? translate("Payment Method is required.") : "");
         return paymentMethodValid;
     };

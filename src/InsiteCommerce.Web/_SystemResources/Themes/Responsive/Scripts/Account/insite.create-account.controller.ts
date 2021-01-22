@@ -39,7 +39,7 @@
 
         $onInit(): void {
             this.returnUrl = this.queryString.get("returnUrl");
-            if (!this.returnUrl || this.returnUrl[0] !== "/") {
+            if (!this.returnUrl || this.coreService.isAbsoluteUrl(this.returnUrl)) {
                 this.returnUrl = this.$attrs.homePageUrl;
             }
 

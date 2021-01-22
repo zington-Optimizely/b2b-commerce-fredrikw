@@ -19,6 +19,7 @@ export default interface ContextState {
     selectedCategoryPath?: string;
     permissions?: PermissionsModel;
     isErrorModalOpen?: boolean;
+    isUnauthorizedError?: boolean;
     canChangePage?: boolean;
     accessToken?: string;
     addingProductToCart?: boolean;

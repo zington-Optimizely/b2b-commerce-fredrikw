@@ -8,6 +8,7 @@ import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import { chevronLeftString } from "@insite/mobius/Icons/ChevronLeft";
 import { chevronRightString } from "@insite/mobius/Icons/ChevronRight";
+import { breakpointMediaQueries } from "@insite/mobius/utilities";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -20,7 +21,7 @@ import uniqueId from "@insite/mobius/utilities/uniqueId";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
 import DateTimePicker, { DateTimePickerProps } from "react-datetime-picker/dist/entry.nostyle";
-import styled, { ThemeProps, withTheme } from "styled-components";
+import styled, { css, ThemeProps, withTheme } from "styled-components";
 
 export interface DatePickerPresentationProps
     extends FormFieldPresentationProps<DatePickerComponentProps>,
@@ -95,6 +96,13 @@ export interface DatePickerState {
     selectedDay?: Date;
     isEmpty: boolean;
     selectedDayDisabled: boolean;
+    mobilePopupDirection?: DatePickerPopupDirection;
+    windowWidth?: number;
+}
+
+enum DatePickerPopupDirection {
+    Right = "Right",
+    Left = "Left",
 }
 
 export type DatePickerProps = DatePickerPresentationProps & DatePickerComponentProps;
@@ -108,7 +116,12 @@ const DatePickerIcon = styled(Icon)<{ _sizeVariant: FormFieldSizeVariant } & The
 `;
 
 const DateTimePickerStyle = styled.div<
-    { _sizeVariant: FormFieldSizeVariant; css?: StyledProp; disabled: boolean } & ThemeProps<BaseTheme>
+    {
+        _sizeVariant: FormFieldSizeVariant;
+        css?: StyledProp;
+        disabled: boolean;
+        mobilePopupDirection?: DatePickerPopupDirection;
+    } & ThemeProps<BaseTheme>
 >`
     button:focus {
         /* outline is added on span for border reasons */
@@ -173,6 +186,7 @@ const DateTimePickerStyle = styled.div<
         &__calendar {
             top: 100% !important;
             z-index: ${getProp("theme.zIndex.datePicker")};
+            width: 100%;
 
             &--closed {
                 display: none;
@@ -181,7 +195,16 @@ const DateTimePickerStyle = styled.div<
     }
     .react-calendar {
         position: absolute;
-        left: 0;
+        ${({ mobilePopupDirection }) =>
+            mobilePopupDirection === DatePickerPopupDirection.Left
+                ? css`
+                      right: 0;
+                      left: unset;
+                  `
+                : css`
+                      left: 0;
+                      right: unset;
+                  `}
         background: ${getColor("common.background")};
         z-index: ${getProp("theme.zIndex.datePicker")};
         margin-top: 2px;
@@ -300,6 +323,7 @@ const DateTimePickerStyle = styled.div<
  * Input component for selecting a single date from an input field and calendar interface.
  */
 class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, DatePickerState> {
+    private readonly datePickerRef = React.createRef<HTMLDivElement>();
     constructor(props: DatePickerProps & HasDisablerContext) {
         super(props);
         this.handleDayChange = this.handleDayChange.bind(this);
@@ -307,6 +331,8 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
             selectedDay: this.props.selectedDay || undefined,
             isEmpty: !this.props.selectedDay,
             selectedDayDisabled: this.isSelectedDayDisabled(this.props.selectedDay, this.props.dateTimePickerProps),
+            mobilePopupDirection: DatePickerPopupDirection.Right,
+            windowWidth: typeof window !== "undefined" ? window.innerWidth : 0,
         };
     }
 
@@ -319,6 +345,18 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                 selectedDayDisabled: this.isSelectedDayDisabled(nextProps.selectedDay, nextProps.dateTimePickerProps),
             });
         }
+    }
+
+    handleResize = () => {
+        this.setState({ windowWidth: window.innerWidth });
+    };
+
+    componentDidMount() {
+        window.addEventListener("resize", this.handleResize, true);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.handleResize);
     }
 
     isSelectedDayDisabled = (value: Date | undefined, dateTimePickerProps?: DateTimePickerProps) => {
@@ -382,11 +420,21 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                 _sizeVariant={sizeVariant}
                 css={datePickerCss}
                 disabled={!!isDisabled}
+                mobilePopupDirection={this.state.mobilePopupDirection}
                 role="group"
                 aria-invalid={selectedDayDisabled || (required && isEmpty) || false}
             >
                 <DateTimePicker
                     value={selectedDay}
+                    onCalendarOpen={() => {
+                        const rect = this.datePickerRef.current!.getBoundingClientRect();
+                        this.setState({
+                            mobilePopupDirection:
+                                rect.right > (this.state.windowWidth ?? 0) / 2
+                                    ? DatePickerPopupDirection.Left
+                                    : DatePickerPopupDirection.Right,
+                        });
+                    }}
                     calendarIcon={
                         <>
                             <DatePickerIcon
@@ -419,7 +467,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
             </DateTimePickerStyle>
         );
         return (
-            <>
+            <div ref={this.datePickerRef}>
                 <FormField
                     descriptionId={descriptionId}
                     formInput={pickerInput}
@@ -432,7 +480,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                     }
                     {...this.props}
                 />
-            </>
+            </div>
         );
     }
 }

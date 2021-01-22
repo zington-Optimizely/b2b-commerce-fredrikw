@@ -247,6 +247,7 @@
 
         checkSelectedShipTo(): void {
             if (this.billToAndShipToAreSameCustomer()) {
+                this.selectedShipTo = this.cart.billTo as any as ShipToModel;
                 this.isReadOnly = true;
             } else {
                 this.isReadOnly = false;

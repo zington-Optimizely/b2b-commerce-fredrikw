@@ -117,8 +117,12 @@ const HeaderSignIn = ({
                 logger.warn("No url was found for SignInPage, defaulting to /SignIn");
                 history.push("/MyAccount/SignIn");
             } else {
-                const returnUrl = encodeURIComponent(currentLocation.pathname + currentLocation.search);
-                history.push(`${signInUrl}?returnUrl=${returnUrl}`);
+                const returnUrl = currentLocation.pathname + currentLocation.search;
+                if (returnUrl === "/") {
+                    history.push(`${signInUrl}`);
+                } else {
+                    history.push(`${signInUrl}?returnUrl=${encodeURIComponent(returnUrl)}`);
+                }
             }
         }
     };

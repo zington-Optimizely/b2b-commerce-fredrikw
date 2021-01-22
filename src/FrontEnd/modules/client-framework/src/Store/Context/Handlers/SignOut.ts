@@ -7,11 +7,11 @@ export const DeleteSession: HandlerType = () => {
     return deleteSession();
 };
 
-export const ReloadPage: HandlerType = () => {
-    window.location.reload();
+export const RedirectToHomePage: HandlerType = () => {
+    window.location.href = "/";
 };
 
-export const chain = [DeleteSession, ReloadPage];
+export const chain = [DeleteSession, RedirectToHomePage];
 
 const signOut = createHandlerChainRunnerOptionalParameter(chain, {}, "SignOut");
 export default signOut;

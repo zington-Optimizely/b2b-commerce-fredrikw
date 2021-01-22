@@ -23,6 +23,7 @@ const initialState: ContextState = {
     tokenExConfigs: {},
     isSigningIn: false,
     isErrorModalOpen: false,
+    isUnauthorizedError: false,
 };
 
 const forcedContext = (() => {
@@ -88,6 +89,14 @@ const reducer = {
     },
     "Context/SetErrorModalIsOpen": (draft: Draft<ContextState>, action: { isErrorModalOpen: boolean }) => {
         draft.isErrorModalOpen = action.isErrorModalOpen;
+        draft.isUnauthorizedError = false;
+    },
+    "Context/SetErrorModalIsOpenAndUnauthorized": (
+        draft: Draft<ContextState>,
+        action: { isErrorModalOpen: boolean; isUnauthorizedError: boolean },
+    ) => {
+        draft.isErrorModalOpen = action.isErrorModalOpen;
+        draft.isUnauthorizedError = action.isUnauthorizedError;
     },
     "Context/BeginAddingProductToCart": (draft: Draft<ContextState>) => {
         draft.addingProductToCart = true;

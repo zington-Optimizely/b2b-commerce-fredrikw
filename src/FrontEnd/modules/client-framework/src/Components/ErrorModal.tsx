@@ -3,6 +3,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import closeErrorModal from "@insite/client-framework/Store/Context/Handlers/CloseErrorModal";
 import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getPageStateByType } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import translate from "@insite/client-framework/Translate";
 import Modal from "@insite/mobius/Modal";
 import * as React from "react";
 import { useEffect } from "react";
@@ -10,6 +11,7 @@ import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
     modalIsOpen: !!state.context.isErrorModalOpen,
+    isUnauthorizedError: !!state.context.isUnauthorizedError,
     errorPage: getPageStateByType(state, "UnhandledErrorModal"),
 });
 
@@ -20,7 +22,13 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const ErrorModal: React.FC<Props> = ({ modalIsOpen, closeErrorModal, errorPage, loadPageByType }) => {
+const ErrorModal: React.FC<Props> = ({
+    modalIsOpen,
+    isUnauthorizedError,
+    closeErrorModal,
+    errorPage,
+    loadPageByType,
+}) => {
     useEffect(() => {
         if (!errorPage.value && !errorPage.isLoading) {
             loadPageByType("UnhandledErrorModal");
@@ -37,6 +45,7 @@ const ErrorModal: React.FC<Props> = ({ modalIsOpen, closeErrorModal, errorPage, 
 
     return (
         <Modal headline={errorPage.value.fields["modalTitle"]} isOpen={modalIsOpen} handleClose={modalCloseHandler}>
+            {isUnauthorizedError && <>{translate("Please sign in with a website user to view this page.")}</>}
             <div data-test-selector="unhandledErrorModal">
                 {createPageElement(errorPage.value.type, errorPage.value)}
             </div>

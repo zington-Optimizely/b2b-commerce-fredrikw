@@ -105,7 +105,9 @@ module.exports = {
         const moduleType = directories[directories.indexOf("modules") + 1];
         const sourceCode = context.getSourceCode();
 
-        setupBlueprints();
+        if (directories.includes("modules")) {
+            setupBlueprints();
+        }
 
         function validImport(node) {
             const importSource = getImportSource(node);

@@ -11,14 +11,15 @@
         changeEmailAddressForm: any;
         changeEmailAddressError = "";
 
-        static $inject = ["accountService", "$localStorage", "settingsService", "coreService", "sessionService"];
+        static $inject = ["accountService", "$localStorage", "settingsService", "coreService", "sessionService", "accessToken"];
 
         constructor(
             protected accountService: account.IAccountService,
             protected $localStorage: common.IWindowStorage,
             protected settingsService: core.ISettingsService,
             protected coreService: core.ICoreService,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected accessToken: common.IAccessTokenService) {
         }
 
         $onInit(): void {
@@ -106,6 +107,9 @@
             this.newAccountEmail = account.email;
 
             if (this.settings.useEmailAsUserName) {
+                if (account.accessToken) {
+                    this.accessToken.set(account.accessToken);
+                }
                 this.updateSession();
             }
         }

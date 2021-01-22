@@ -17,6 +17,7 @@
         pushState(state: any): void;
         getHistoryState(): any;
         isSafari(): boolean;
+        isAbsoluteUrl(url: string): boolean;
     }
 
     export class CoreService implements ICoreService {
@@ -268,6 +269,10 @@
         isSafari(): boolean {
             return navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
                 navigator.userAgent && !navigator.userAgent.match("CriOS");
+        }
+
+        isAbsoluteUrl(url: string): boolean {
+            return url && (url[0] !== "/" || url[1] === "/" || url[1] === "\\");
         }
 
         // history.replaceState has back button issues on Safari so this replaces it there

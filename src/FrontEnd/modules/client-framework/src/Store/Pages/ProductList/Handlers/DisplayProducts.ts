@@ -17,6 +17,7 @@ import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/C
 import loadCatalogPageByPath from "@insite/client-framework/Store/Data/CatalogPages/Handlers/LoadCatalogPageByPath";
 import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/LoadProducts";
 import { getProductsDataView } from "@insite/client-framework/Store/Data/Products/ProductsSelectors";
+import setFilterQuery from "@insite/client-framework/Store/Pages/ProductList/Handlers/SetFilterQuery";
 import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
 import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import { ProductModel } from "@insite/client-framework/Types/ApiModels";
@@ -246,6 +247,10 @@ export const DispatchCompleteLoadProducts: HandlerType = props => {
     });
 };
 
+export const DispatchSetFilterQuery: HandlerType = props => {
+    props.dispatch(setFilterQuery());
+};
+
 export const SendTracking: HandlerType = props => {
     const { search } = props.apiParameter;
 
@@ -329,6 +334,7 @@ export const chain = [
     SetUpProductInfos,
     DispatchUpdateIdByPath,
     DispatchCompleteLoadProducts,
+    DispatchSetFilterQuery,
     SendTracking,
     LoadRealTimePrices,
     LoadRealTimeInventory,

@@ -5,7 +5,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "../../wwwroot/dist"),
         filename: "[name].js",
-        chunkFilename: "[name].chunk.js",
+        chunkFilename: "[name]_[contenthash].chunk.js",
         publicPath: "/dist/",
     },
 };

@@ -50,28 +50,27 @@ const stats = {
     entrypoints: false,
     timings: false,
     version: false,
+    warningsFilter: [/Critical dependency: the request of a dependency is an expression/],
 };
-
-const ignoreWarnings = [/Critical dependency: the request of a dependency is an expression/];
 
 const clientCompiler = compiler.compilers.find(compiler => compiler.name === "client");
 const clientWebpackDevMiddleware = webpackDevMiddleware(clientCompiler, {
     publicPath: clientCompiler.options.output.publicPath,
     stats,
-    ignoreWarnings,
 });
 
 const serverCompiler = compiler.compilers.find(compiler => compiler.name === "server");
 const serverWebpackDevMiddleware = webpackDevMiddleware(serverCompiler, {
     stats,
     serverSideRender: true,
-    ignoreWarnings,
 });
 
 let serverHash = "";
 let server = null;
 
 const Module = require("module");
+
+let serverOutputPath;
 
 const options = {
     setupExtraMiddleware: app => {
@@ -82,14 +81,13 @@ const options = {
     },
     getServer: response => {
         if (serverHash !== response.locals.webpackStats.hash) {
+            if (!serverOutputPath) {
+                serverOutputPath = response.locals.webpackStats.toJson().outputPath;
+            }
+
             const memoryServer = new Module();
-            memoryServer._compile(
-                response.locals.fs.readFileSync(
-                    `${response.locals.webpackStats.toJson().outputPath}/server.js`,
-                    "utf8",
-                ),
-                "",
-            );
+
+            memoryServer._compile(response.locals.fs.readFileSync(`${serverOutputPath}/server.js`, "utf8"), "");
             server = memoryServer.exports.server;
             serverHash = response.locals.webpackStats.hash;
         }

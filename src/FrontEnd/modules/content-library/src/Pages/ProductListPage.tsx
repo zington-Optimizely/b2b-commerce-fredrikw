@@ -119,13 +119,16 @@ class ProductListPage extends React.Component<Props> {
             filterQuery,
             location: { pathname, search },
             firstProductDetailPath,
-            websiteName,
             productListCatalogPage,
         } = this.props;
 
         // handle the query string change requests initiated by the filtering widget setQueryFilter calls
         if (filterQuery !== prevProps.filterQuery) {
-            this.props.history.push(filterQuery ? `${pathname}?${filterQuery}` : pathname);
+            const currentUrl = `${pathname}${search}`;
+            const newUrl = filterQuery ? `${pathname}?${filterQuery}` : pathname;
+            if (newUrl !== currentUrl) {
+                this.props.history.push(newUrl);
+            }
             return;
         }
 

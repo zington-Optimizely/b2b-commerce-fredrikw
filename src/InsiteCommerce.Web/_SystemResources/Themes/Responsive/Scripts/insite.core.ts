@@ -6,6 +6,8 @@
     that.signInUrl = "/RedirectTo/SignInPage";
     that.dateTimeFormat = "";
     that.generalErrorText = "";
+    that.uriHostsForResourceWhitelist = [];
+    that.searchPath = "Search";
 
     that.displayModal = (html, onClose) => {
         const $html = $(html);

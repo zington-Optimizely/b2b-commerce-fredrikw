@@ -53,7 +53,6 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES2017") => {
         resolve: {
             extensions: [".tsx", ".ts", ".jsx", ".js"],
             plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.base.json" })],
-            fallback:  { "url": require.resolve("url-polyfill") },
         },
         plugins: [
             new RemovePlugin({
@@ -73,8 +72,8 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES2017") => {
             modules: false,
             entrypoints: false,
             performance: false,
+            warningsFilter: [/Critical dependency: the request of a dependency is an expression/],
         },
-        ignoreWarnings: [/Critical dependency: the request of a dependency is an expression/],
         performance: {
             hints: false,
         },

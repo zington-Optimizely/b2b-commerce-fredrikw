@@ -100,7 +100,7 @@
             this.orderConfirmationUrl = this.$attrs.orderConfirmationUrl;
 
             this.returnUrl = this.queryString.get("returnUrl");
-            if (!this.returnUrl || this.returnUrl[0] !== "/" || this.returnUrl.indexOf(this.orderConfirmationUrl) !== -1) {
+            if (!this.returnUrl || this.coreService.isAbsoluteUrl(this.returnUrl) || this.returnUrl.indexOf(this.orderConfirmationUrl) !== -1) {
                 this.returnUrl = this.homePageUrl;
             }
 
