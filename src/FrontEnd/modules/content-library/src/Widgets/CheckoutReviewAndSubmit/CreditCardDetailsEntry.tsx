@@ -17,7 +17,10 @@ import styled, { css } from "styled-components";
 
 interface OwnProps {
     canSaveCard?: boolean;
+    /** @deprecated Specify the "TokenEx" value for the `iframe` property instead. */
     useTokenExGateway?: boolean;
+    iframe?: "TokenEx" | "Paymetric";
+    paymetricFrameRef?: React.Ref<HTMLIFrameElement>;
     isTokenExIframeLoaded?: boolean;
     saveCard: boolean;
     onSaveCardChange: (_: React.SyntheticEvent<Element, Event>, value: boolean) => void;
@@ -75,6 +78,8 @@ export interface CreditCardDetailsEntryStyles {
     securityCodeHelpModal?: ModalPresentationProps;
     securityCodeHelpModalImageWrapper?: InjectableCss;
     securityCodeHelpImage?: LazyImageProps;
+    paymetricGridItem?: GridItemProps;
+    paymetricIframe?: InjectableCss;
 }
 
 export const creditCardDetailsEntryStyles: CreditCardDetailsEntryStyles = {
@@ -112,6 +117,14 @@ export const creditCardDetailsEntryStyles: CreditCardDetailsEntryStyles = {
             justify-content: center;
         `,
     },
+    paymetricGridItem: {
+        width: 12,
+    },
+    paymetricIframe: {
+        css: css`
+            width: 100%;
+        `,
+    },
 };
 
 const CardNumberTokenExFrameWrapper = styled.div<InjectableCss>`
@@ -124,8 +137,14 @@ const SecurityCodeImageWrapper = styled.div<InjectableCss>`
     ${({ css }) => css}
 `;
 
+const PaymetricIframe = styled.iframe<InjectableCss>`
+    ${({ css }) => css}
+`;
+
 const CreditCardDetailsEntry = ({
     useTokenExGateway,
+    iframe,
+    paymetricFrameRef,
     isTokenExIframeLoaded,
     extendedStyles,
     canSaveCard,
@@ -166,6 +185,8 @@ const CreditCardDetailsEntry = ({
     const securityCodeLabel = translate("Locate my card's security code");
     const securityCodeHint = <Link onClick={handleSecurityCodeHelpLinkClick}>{securityCodeLabel}</Link>;
 
+    const resolvedShouldUseTokenEx = iframe === "TokenEx" || useTokenExGateway;
+
     return (
         <GridContainer {...styles.creditCardDetailsContainer}>
             <GridItem {...styles.creditCardDetailsHeadingGridItem}>
@@ -182,162 +203,170 @@ const CreditCardDetailsEntry = ({
                     </CheckboxGroup>
                 </GridItem>
             )}
-            <GridItem {...styles.cardHolderNameGridItem}>
-                <TextField
-                    {...styles.cardHolderNameText}
-                    label={translate("Name on Card")}
-                    value={cardHolderName}
-                    onChange={onCardHolderNameChange}
-                    required
-                    maxLength={30}
-                    error={cardHolderNameError}
-                    data-test-selector="checkoutReviewAndSubmit_cardHolderName"
-                />
-            </GridItem>
-            <GridItem {...styles.cardNumberGridItem}>
-                {useTokenExGateway ? (
-                    <TokenExFrame
-                        {...styles.cardNumberTokenExFrame}
-                        label={translate("Card Number")}
-                        tokenExIFrameContainer={
-                            <CardNumberTokenExFrameWrapper
-                                {...styles.cardNumberTokenExFrameWrapper}
-                                id="tokenExCardNumber"
-                            />
-                        }
-                        disabled={!isTokenExIframeLoaded}
-                        required
-                        error={cardNumberError}
-                        data-test-selector="checkoutReviewAndSubmit_cardNumber"
-                    />
-                ) : (
-                    <TextField
-                        {...styles.cardNumberText}
-                        label={translate("Card Number")}
-                        value={cardNumber}
-                        onChange={onCardNumberChange}
-                        required
-                        maxLength={16}
-                        error={cardNumberError}
-                        data-test-selector="checkoutReviewAndSubmit_cardNumber"
-                    />
-                )}
-            </GridItem>
-            <GridItem {...styles.cardTypeGridItem}>
-                {useTokenExGateway ? (
-                    <>
-                        <Typography {...styles.cardTypeTokenExLabel} id="cardTypeTokenEx">
-                            {translate("Card Type")}
-                        </Typography>
-                        <TokenExCardTypeDisplay
-                            {...styles.cardTypeTokenExText}
-                            possibleCardType={possibleCardType}
-                            aria-labelledby="cardTypeTokenEx"
-                        />
-                    </>
-                ) : (
-                    <Select
-                        {...styles.cardTypeSelect}
-                        label={translate("Card Type")}
-                        value={cardType}
-                        onChange={onCardTypeChange}
-                        required
-                        error={cardTypeError}
-                        data-test-selector="checkoutReviewAndSubmit_cardType"
-                    >
-                        <option value="">{translate("Select Card")}</option>
-                        {availableCardTypes.map(ct => (
-                            <option key={ct.value} value={ct.value}>
-                                {ct.key}
-                            </option>
-                        ))}
-                    </Select>
-                )}
-            </GridItem>
-            <GridItem {...styles.expirationDateGridItem}>
-                <GridContainer {...styles.expirationDateContainer}>
-                    <GridItem {...styles.expirationMonthGridItem}>
-                        <Select
-                            {...styles.expirationMonthSelect}
-                            label={translate("Expiration Month")}
-                            value={expirationMonth}
-                            onChange={onExpirationMonthChange}
+            {iframe === "Paymetric" ? (
+                <GridItem {...styles.paymetricGridItem}>
+                    <PaymetricIframe id="paymetricIframe" ref={paymetricFrameRef} {...styles.paymetricIframe} />
+                </GridItem>
+            ) : (
+                <>
+                    <GridItem {...styles.cardHolderNameGridItem}>
+                        <TextField
+                            {...styles.cardHolderNameText}
+                            label={translate("Name on Card")}
+                            value={cardHolderName}
+                            onChange={onCardHolderNameChange}
                             required
-                            error={expirationError}
-                            data-test-selector="checkoutReviewAndSubmit_expirationMonth"
-                        >
-                            {availableMonths.map(month => (
-                                <option key={month.value} value={month.value}>
-                                    {month.key}
-                                </option>
-                            ))}
-                        </Select>
-                    </GridItem>
-                    <GridItem {...styles.expirationYearGridItem}>
-                        <Select
-                            {...styles.expirationYearSelect}
-                            label={translate("Expiration Year")}
-                            value={expirationYear}
-                            onChange={onExpirationYearChange}
-                            required
-                            data-test-selector="checkoutReviewAndSubmit_expirationYear"
-                        >
-                            {availableYears.map(year => (
-                                <option key={year.value} value={year.value}>
-                                    {year.key}
-                                </option>
-                            ))}
-                        </Select>
-                    </GridItem>
-                </GridContainer>
-            </GridItem>
-            <GridItem {...styles.securityCodeGridItem}>
-                {useTokenExGateway ? (
-                    <TokenExFrame
-                        {...styles.securityCodeTokenExFrame}
-                        label={translate("Security Code")}
-                        hint={securityCodeHint}
-                        tokenExIFrameContainer={
-                            <SecurityCodeTokenExFrameWrapper
-                                {...styles.securityCodeTokenExFrameWrapper}
-                                id="tokenExSecurityCode"
-                            />
-                        }
-                        disabled={!isTokenExIframeLoaded}
-                        required
-                        error={securityCodeError}
-                        data-test-selector="checkoutReviewAndSubmit_securityCode"
-                    />
-                ) : (
-                    <TextField
-                        {...styles.securityCodeText}
-                        label={translate("Security Code")}
-                        hint={securityCodeHint}
-                        value={securityCode}
-                        onChange={onSecurityCodeChange}
-                        required
-                        minLength={3}
-                        maxLength={4}
-                        error={securityCodeError}
-                        data-test-selector="checkoutReviewAndSubmit_securityCode"
-                    />
-                )}
-                <Modal
-                    headline={securityCodeLabel}
-                    isOpen={isSecurityCodeModalOpen}
-                    handleClose={handleSecurityCodeModalClose}
-                    {...styles.securityCodeHelpModal}
-                >
-                    <SecurityCodeImageWrapper {...styles.securityCodeHelpModalImageWrapper}>
-                        <LazyImage
-                            src="/images/security_code_sample.jpg"
-                            imgProps={{ width: 660, height: 264 }}
-                            altText={translate("Location of security code on card")}
-                            {...styles.securityCodeHelpImage}
+                            maxLength={30}
+                            error={cardHolderNameError}
+                            data-test-selector="checkoutReviewAndSubmit_cardHolderName"
                         />
-                    </SecurityCodeImageWrapper>
-                </Modal>
-            </GridItem>
+                    </GridItem>
+                    <GridItem {...styles.cardNumberGridItem}>
+                        {resolvedShouldUseTokenEx ? (
+                            <TokenExFrame
+                                {...styles.cardNumberTokenExFrame}
+                                label={translate("Card Number")}
+                                tokenExIFrameContainer={
+                                    <CardNumberTokenExFrameWrapper
+                                        {...styles.cardNumberTokenExFrameWrapper}
+                                        id="tokenExCardNumber"
+                                    />
+                                }
+                                disabled={!isTokenExIframeLoaded}
+                                required
+                                error={cardNumberError}
+                                data-test-selector="checkoutReviewAndSubmit_cardNumber"
+                            />
+                        ) : (
+                            <TextField
+                                {...styles.cardNumberText}
+                                label={translate("Card Number")}
+                                value={cardNumber}
+                                onChange={onCardNumberChange}
+                                required
+                                maxLength={16}
+                                error={cardNumberError}
+                                data-test-selector="checkoutReviewAndSubmit_cardNumber"
+                            />
+                        )}
+                    </GridItem>
+                    <GridItem {...styles.cardTypeGridItem}>
+                        {resolvedShouldUseTokenEx ? (
+                            <>
+                                <Typography {...styles.cardTypeTokenExLabel} id="cardTypeTokenEx">
+                                    {translate("Card Type")}
+                                </Typography>
+                                <TokenExCardTypeDisplay
+                                    {...styles.cardTypeTokenExText}
+                                    possibleCardType={possibleCardType}
+                                    aria-labelledby="cardTypeTokenEx"
+                                />
+                            </>
+                        ) : (
+                            <Select
+                                {...styles.cardTypeSelect}
+                                label={translate("Card Type")}
+                                value={cardType}
+                                onChange={onCardTypeChange}
+                                required
+                                error={cardTypeError}
+                                data-test-selector="checkoutReviewAndSubmit_cardType"
+                            >
+                                <option value="">{translate("Select Card")}</option>
+                                {availableCardTypes.map(ct => (
+                                    <option key={ct.value} value={ct.value}>
+                                        {ct.key}
+                                    </option>
+                                ))}
+                            </Select>
+                        )}
+                    </GridItem>
+                    <GridItem {...styles.expirationDateGridItem}>
+                        <GridContainer {...styles.expirationDateContainer}>
+                            <GridItem {...styles.expirationMonthGridItem}>
+                                <Select
+                                    {...styles.expirationMonthSelect}
+                                    label={translate("Expiration Month")}
+                                    value={expirationMonth}
+                                    onChange={onExpirationMonthChange}
+                                    required
+                                    error={expirationError}
+                                    data-test-selector="checkoutReviewAndSubmit_expirationMonth"
+                                >
+                                    {availableMonths.map(month => (
+                                        <option key={month.value} value={month.value}>
+                                            {month.key}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </GridItem>
+                            <GridItem {...styles.expirationYearGridItem}>
+                                <Select
+                                    {...styles.expirationYearSelect}
+                                    label={translate("Expiration Year")}
+                                    value={expirationYear}
+                                    onChange={onExpirationYearChange}
+                                    required
+                                    data-test-selector="checkoutReviewAndSubmit_expirationYear"
+                                >
+                                    {availableYears.map(year => (
+                                        <option key={year.value} value={year.value}>
+                                            {year.key}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
+                    <GridItem {...styles.securityCodeGridItem}>
+                        {resolvedShouldUseTokenEx ? (
+                            <TokenExFrame
+                                {...styles.securityCodeTokenExFrame}
+                                label={translate("Security Code")}
+                                hint={securityCodeHint}
+                                tokenExIFrameContainer={
+                                    <SecurityCodeTokenExFrameWrapper
+                                        {...styles.securityCodeTokenExFrameWrapper}
+                                        id="tokenExSecurityCode"
+                                    />
+                                }
+                                disabled={!isTokenExIframeLoaded}
+                                required
+                                error={securityCodeError}
+                                data-test-selector="checkoutReviewAndSubmit_securityCode"
+                            />
+                        ) : (
+                            <TextField
+                                {...styles.securityCodeText}
+                                label={translate("Security Code")}
+                                hint={securityCodeHint}
+                                value={securityCode}
+                                onChange={onSecurityCodeChange}
+                                required
+                                minLength={3}
+                                maxLength={4}
+                                error={securityCodeError}
+                                data-test-selector="checkoutReviewAndSubmit_securityCode"
+                            />
+                        )}
+                        <Modal
+                            headline={securityCodeLabel}
+                            isOpen={isSecurityCodeModalOpen}
+                            handleClose={handleSecurityCodeModalClose}
+                            {...styles.securityCodeHelpModal}
+                        >
+                            <SecurityCodeImageWrapper {...styles.securityCodeHelpModalImageWrapper}>
+                                <LazyImage
+                                    src="/images/security_code_sample.jpg"
+                                    imgProps={{ width: 660, height: 264 }}
+                                    altText={translate("Location of security code on card")}
+                                    {...styles.securityCodeHelpImage}
+                                />
+                            </SecurityCodeImageWrapper>
+                        </Modal>
+                    </GridItem>
+                </>
+            )}
         </GridContainer>
     );
 };

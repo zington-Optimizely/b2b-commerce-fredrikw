@@ -2,7 +2,7 @@ import { createTypedReducerWithImmer } from "@insite/client-framework/Common/Cre
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import { getContentByVersionPath } from "@insite/client-framework/Services/ContentService";
 import { Session } from "@insite/client-framework/Services/SessionService";
-import { SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
+import { PaymetricConfig, SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import { Website } from "@insite/client-framework/Services/WebsiteService";
 import ContextState from "@insite/client-framework/Store/Context/ContextState";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
@@ -106,6 +106,12 @@ const reducer = {
     },
     "Context/SetIsPunchOutSessionId": (draft: Draft<ContextState>, action: { punchOutSessionId?: string }) => {
         draft.punchOutSessionId = action.punchOutSessionId;
+    },
+    "Context/CompleteLoadPaymetricConfig": (
+        draft: Draft<ContextState>,
+        action: { paymetricConfig: PaymetricConfig },
+    ) => {
+        draft.paymetricConfig = action.paymetricConfig;
     },
 };
 

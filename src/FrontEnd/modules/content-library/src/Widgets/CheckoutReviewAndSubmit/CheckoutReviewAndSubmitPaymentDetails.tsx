@@ -6,6 +6,7 @@ import { TokenExConfig } from "@insite/client-framework/Services/SettingsService
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import loadPaymetricConfig from "@insite/client-framework/Store/Context/Handlers/LoadPaymetricConfig";
 import loadTokenExConfig from "@insite/client-framework/Store/Context/Handlers/LoadTokenExConfig";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
@@ -14,6 +15,7 @@ import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countri
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import checkoutWithPayPal from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/CheckoutWithPayPal";
+import getPaymetricResponsePacket from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/GetPaymetricResponsePacket";
 import placeOrder from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/PlaceOrder";
 import preloadOrderConfirmationData from "@insite/client-framework/Store/Pages/OrderConfirmation/Handlers/PreloadOrderConfirmationData";
 import translate from "@insite/client-framework/Translate";
@@ -42,19 +44,20 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css, ThemeProps, withTheme } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const { cartId } = state.pages.checkoutReviewAndSubmit;
     const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+    const settingsCollection = getSettingsCollection(state);
     return {
         cartState,
         billToState: getBillToState(state, cartState.value ? cartState.value.billToId : undefined),
         countries: getCurrentCountries(state),
-        websiteSettings: getSettingsCollection(state).websiteSettings,
-        cartSettings: getSettingsCollection(state).cartSettings,
+        websiteSettings: settingsCollection.websiteSettings,
+        cartSettings: settingsCollection.cartSettings,
         tokenExConfigs: state.context.tokenExConfigs,
         orderConfirmationPageLink: getPageLinkByPageType(state, "OrderConfirmationPage"),
         savedPaymentsPageLink: getPageLinkByPageType(state, "SavedPaymentsPage"),
@@ -63,6 +66,8 @@ const mapStateToProps = (state: ApplicationState) => {
         checkoutReviewAndSubmitPageLink: getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage"),
         payPalRedirectUri: state.pages.checkoutReviewAndSubmit.payPalRedirectUri,
         location: getLocation(state),
+        usePaymetricGateway: settingsCollection.websiteSettings.usePaymetricGateway,
+        paymetricConfig: state.context.paymetricConfig,
     };
 };
 
@@ -72,6 +77,8 @@ const mapDispatchToProps = {
     checkoutWithPayPal,
     preloadOrderConfirmationData,
     loadBillTo,
+    loadPaymetricConfig,
+    getPaymetricResponsePacket,
 };
 
 type Props = ReturnType<typeof mapStateToProps> &
@@ -205,6 +212,9 @@ let tokenExIframe: IFrame | undefined;
 
 let tokenExFrameStyleConfig: TokenExIframeStyles;
 
+declare function $XIFrame(options: any): any;
+let paymetricIframe: any;
+
 const isNonEmptyString = (value: string | undefined) => value !== undefined && value.trim() !== "";
 
 const isMonthAndYearBeforeToday = (month: number, year: number) => {
@@ -235,6 +245,27 @@ const convertApiDataToTokenExCardType = (cardType: string) => {
     return loweredCardType;
 };
 
+const convertPaymetricCardType = (cardType: string) => {
+    switch (cardType.toLowerCase()) {
+        case "vi":
+            return "Visa";
+        case "mc":
+            return "MasterCard";
+        case "ax":
+            return "American Express";
+        case "dc":
+            return "Diner's";
+        case "di":
+            return "Discover";
+        case "jc":
+            return "JCB";
+        case "sw":
+            return "Maestro";
+        default:
+            return "unknown";
+    }
+};
+
 const styles = checkoutReviewAndSubmitPaymentDetailsStyles;
 const StyledForm = getStyledWrapper("form");
 const StyledFieldSet = getStyledWrapper("fieldset");
@@ -260,6 +291,10 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     checkoutReviewAndSubmitPageLink,
     location,
     toaster,
+    paymetricConfig,
+    loadPaymetricConfig,
+    usePaymetricGateway,
+    getPaymetricResponsePacket,
 }: Props) => {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [poNumber, setPONumber] = useState("");
@@ -428,11 +463,14 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
     const paymentMethodDto = paymentMethods?.find(method => method.name === paymentMethod);
     const selectedCountry = countries?.find(country => country.id === countryId);
-    const tokenName = paymentMethodDto?.isPaymentProfile
-        ? paymentMethodDto.name
-        : useTokenExGateway && paymentMethodDto?.isCreditCard
-        ? ""
-        : undefined;
+    let tokenName: string | undefined;
+    if (useTokenExGateway) {
+        if (paymentMethodDto?.isPaymentProfile) {
+            tokenName = paymentMethodDto.name;
+        } else if (paymentMethodDto?.isCreditCard) {
+            tokenName = "";
+        }
+    }
 
     useEffect(() => {
         if (typeof tokenName !== "undefined") {
@@ -560,6 +598,42 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             setUpTokenExIFrameCvvOnly(config);
         });
     };
+
+    const paymetricFrameRef = useRef<HTMLIFrameElement>(null);
+    const setupPaymetricIframe = () => {
+        if (!paymetricConfig) {
+            return;
+        }
+        paymetricIframe = $XIFrame({
+            iFrameId: "paymetricIframe",
+            targetUrl: paymetricConfig?.message,
+            autosizewidth: false,
+            autosizeheight: true,
+        });
+        paymetricIframe.onload();
+    };
+    useEffect(() => {
+        if (usePaymetricGateway && paymentMethodDto?.isCreditCard) {
+            loadPaymetricConfig();
+        }
+    }, [usePaymetricGateway, paymentMethod]);
+    useEffect(() => {
+        if (paymetricConfig?.success && paymetricFrameRef.current) {
+            const paymetricScript = document.createElement("script");
+            paymetricScript.src = paymetricConfig.javaScriptUrl;
+            paymetricScript.onload = () => {
+                if (paymetricFrameRef.current) {
+                    paymetricFrameRef.current.setAttribute("src", paymetricConfig.message);
+                    paymetricFrameRef.current.addEventListener("load", setupPaymetricIframe);
+                }
+            };
+            document.body.appendChild(paymetricScript);
+        }
+
+        return () => {
+            paymetricFrameRef.current?.removeEventListener("load", setupPaymetricIframe);
+        };
+    }, [paymetricConfig, paymetricFrameRef]);
 
     const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setPaymentMethod(event.currentTarget.value);
@@ -743,17 +817,75 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         return postalCodeValid;
     };
 
+    const handlePaymetricValidateSuccess = (success: boolean) => {
+        if (success) {
+            paymetricIframe.submit({
+                onSuccess: (msg: string) => {
+                    // The HasPassed is case sensitive, and not standard json.
+                    const message: { data: { HasPassed: boolean } } = JSON.parse(msg);
+                    if (message.data.HasPassed) {
+                        handleSuccessSubmitPaymetricIframe();
+                    }
+                },
+                onError: (msg: string) => {
+                    const message: { data: { Code: number } } = JSON.parse(msg);
+                    // Code = 150 -> Already submitted
+                    if (message.data.Code === 150) {
+                        handleSuccessSubmitPaymetricIframe();
+                    }
+                },
+            });
+        }
+    };
+
+    const handleSuccessSubmitPaymetricIframe = () => {
+        if (!paymetricConfig?.accessToken) {
+            return;
+        }
+
+        getPaymetricResponsePacket({
+            accessToken: paymetricConfig.accessToken,
+            onComplete: result => {
+                if (result.apiResult?.success) {
+                    setCardType(convertPaymetricCardType(result.apiResult.creditCard.cardType));
+                    setExpirationMonth(result.apiResult.creditCard.expirationMonth!);
+                    setExpirationYear(result.apiResult.creditCard.expirationYear!);
+                    setCardNumber(result.apiResult.creditCard.cardNumber!);
+                    setSecurityCode(result.apiResult.creditCard.securityCode!);
+                    setCardHolderName(result.apiResult.creditCard.cardHolderName!);
+                    setIsCardNumberTokenized(true);
+                }
+            },
+        });
+    };
+
     const validateForm = () => {
         const paymentMethodValid = validatePaymentMethod(paymentMethod);
+        const poNumberValid = validatePONumber(poNumber);
         if (isPayPal) {
             return paymentMethodValid;
         }
 
-        if (paymentMethodDto?.isPaymentProfile || (paymentMethodDto?.isCreditCard && useTokenExGateway)) {
+        if (useTokenExGateway && (paymentMethodDto?.isPaymentProfile || paymentMethodDto?.isCreditCard)) {
             tokenExIframe?.validate();
         }
 
-        const poNumberValid = validatePONumber(poNumber);
+        if (usePaymetricGateway && cart && cart.showCreditCard && !cart.requiresApproval) {
+            const isFormValidForPaymetricPayment = paymentMethodValid && poNumberValid;
+            if (!isFormValidForPaymetricPayment) {
+                return false;
+            }
+            if (paymentMethodDto?.isCreditCard && paymetricIframe) {
+                paymetricIframe.validate({
+                    onValidate: (success: boolean) => {
+                        handlePaymetricValidateSuccess(success);
+                    },
+                });
+            } else if (paymentMethodDto?.isPaymentProfile) {
+                return true;
+            }
+        }
+
         const cardHolderNameValid = validateCardHolderName(cardHolderName);
         const cardNumberResult = validateCardNumber(cardNumber);
         const cardTypeValid = validateCardType(cardType);
@@ -791,10 +923,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             return false;
         }
 
-        if (
-            (paymentMethodDto?.isPaymentProfile || (paymentMethodDto?.isCreditCard && useTokenExGateway)) &&
-            !isPayPal
-        ) {
+        if (useTokenExGateway && (paymentMethodDto?.isPaymentProfile || paymentMethodDto?.isCreditCard) && !isPayPal) {
             tokenExIframe?.tokenize();
         } else {
             placeOrder({
@@ -943,7 +1072,9 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                         {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired && (
                             <GridItem width={6}>
                                 <SavedPaymentProfileEntry
-                                    useTokenExGateway={useTokenExGateway}
+                                    iframe={
+                                        useTokenExGateway ? "TokenEx" : usePaymetricGateway ? "Paymetric" : undefined
+                                    }
                                     isTokenExIframeLoaded={isTokenExIframeLoaded}
                                     securityCode={securityCode}
                                     onSecurityCodeChange={handleSecurityCodeChange}
@@ -957,7 +1088,14 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                 <GridItem {...styles.creditCardDetailsGridItem}>
                                     <CreditCardDetailsEntry
                                         canSaveCard={paymentOptions.canStorePaymentProfile}
-                                        useTokenExGateway={useTokenExGateway}
+                                        iframe={
+                                            useTokenExGateway
+                                                ? "TokenEx"
+                                                : usePaymetricGateway
+                                                ? "Paymetric"
+                                                : undefined
+                                        }
+                                        paymetricFrameRef={paymetricFrameRef}
                                         isTokenExIframeLoaded={isTokenExIframeLoaded}
                                         saveCard={saveCard}
                                         onSaveCardChange={handleSaveCardChange}

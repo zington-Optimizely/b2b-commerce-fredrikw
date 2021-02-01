@@ -1,6 +1,6 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { Session } from "@insite/client-framework/Services/SessionService";
-import { SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
+import { PaymetricConfig, SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import { Website } from "@insite/client-framework/Services/WebsiteService";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 
@@ -23,4 +23,5 @@ export default interface ContextState {
     canChangePage?: boolean;
     accessToken?: string;
     addingProductToCart?: boolean;
+    paymetricConfig?: PaymetricConfig;
 }

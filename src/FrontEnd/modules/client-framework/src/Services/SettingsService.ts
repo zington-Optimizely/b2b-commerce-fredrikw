@@ -1,4 +1,4 @@
-import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
+import { ApiParameter, get, post } from "@insite/client-framework/Services/ApiService";
 import {
     AccountSettingsModel,
     BaseModel,
@@ -28,6 +28,13 @@ export interface TokenExConfig {
     authenticationKey: string;
 }
 
+export interface PaymetricConfig {
+    success: boolean;
+    message: string;
+    accessToken: string;
+    javaScriptUrl: string;
+}
+
 export const enum StorefrontAccess {
     NoSignInRequired = "NoSignInRequired",
     SignInRequiredToBrowse = "SignInRequiredToBrowse",
@@ -42,6 +49,10 @@ export function getSettings(parameter: GetSettingsApiParameter) {
 export function getTokenExConfig(parameter: GetTokenExConfigApiParameter = {}) {
     parameter.origin = parameter.origin ?? window.location.origin;
     return get<TokenExConfig>("/api/v1/tokenexconfig", parameter);
+}
+
+export function getPaymetricConfig() {
+    return post<PaymetricConfig>("/api/v1/paymetric/config");
 }
 
 export interface SettingsModel extends BaseModel {

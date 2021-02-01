@@ -16,6 +16,7 @@ import {
     CartLineCollectionModel,
     CartLineModel,
     CartModel,
+    CreditCardDto,
     PaginationModel,
     PromotionCollectionModel,
     PromotionModel,
@@ -100,6 +101,16 @@ export interface AddProductApiParameter extends ApiParameter {
 export interface AddCartPromotionApiParameter extends ApiParameter {
     cartId: string;
     promotionCode: string;
+}
+
+export interface GetPaymetricResponsePacketApiParameter extends ApiParameter {
+    accessToken: string;
+}
+
+export interface PaymetricResponseApiResult {
+    success: boolean;
+    message: string;
+    creditCard: CreditCardDto;
 }
 
 const cartsUrl = "/api/v1/carts";
@@ -350,4 +361,8 @@ export async function addCartPromotion(
         }
         throw error;
     }
+}
+
+export function getPaymetricResponsePacket(parameter: GetPaymetricResponsePacketApiParameter) {
+    return get<PaymetricResponseApiResult>("/api/v1/paymetric/responsepacket", parameter);
 }

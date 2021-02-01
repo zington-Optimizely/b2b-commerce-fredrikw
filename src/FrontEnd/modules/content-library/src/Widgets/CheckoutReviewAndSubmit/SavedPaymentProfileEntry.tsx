@@ -10,7 +10,9 @@ import React, { useState } from "react";
 import styled, { css } from "styled-components";
 
 interface OwnProps {
+    /** @deprecated Specify the "TokenEx" value for the `iframe` property instead. */
     useTokenExGateway?: boolean;
+    iframe?: "TokenEx" | "Paymetric";
     isTokenExIframeLoaded?: boolean;
     securityCode: string;
     onSecurityCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -50,6 +52,7 @@ const SecurityCodeImageWrapper = styled.div<InjectableCss>`
 
 const SavedPaymentProfileEntry = ({
     useTokenExGateway,
+    iframe,
     isTokenExIframeLoaded,
     securityCode,
     onSecurityCodeChange,
@@ -58,6 +61,10 @@ const SavedPaymentProfileEntry = ({
 }: OwnProps) => {
     const [styles] = useState(() => mergeToNew(savedPaymentProfileEntryStyles, extendedStyles));
     const [isSecurityCodeModalOpen, setIsSecurityCodeModalOpen] = useState(false);
+
+    if (iframe === "Paymetric") {
+        return null;
+    }
 
     const handleSecurityCodeHelpLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         event.preventDefault();
@@ -69,9 +76,11 @@ const SavedPaymentProfileEntry = ({
     const securityCodeHelpLabel = translate("Locate my card's security code");
     const securityCodeHint = <Link onClick={handleSecurityCodeHelpLinkClick}>{securityCodeHelpLabel}</Link>;
 
+    const resolvedShouldUseTokenEx = iframe === "TokenEx" || useTokenExGateway;
+
     return (
         <>
-            {useTokenExGateway ? (
+            {resolvedShouldUseTokenEx ? (
                 <TokenExFrame
                     {...styles.tokenExFrame}
                     label={translate("Security Code")}
