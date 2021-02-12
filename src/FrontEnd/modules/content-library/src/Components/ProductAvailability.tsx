@@ -249,7 +249,7 @@ const ProductAvailability = ({
     if (failedToLoadInventory) {
         return (
             <StyledWrapper {...styles.errorWrapper}>
-                <Typography {...styles.errorText}>{siteMessage("RealTimeInventory_InventoryLoadFailed ")}</Typography>
+                <Typography {...styles.errorText}>{siteMessage("RealTimeInventory_InventoryLoadFailed")}</Typography>
             </StyledWrapper>
         );
     }
