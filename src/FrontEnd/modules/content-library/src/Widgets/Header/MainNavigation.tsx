@@ -136,7 +136,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
 const getParameter = (categoryId: string, maxDepth: number) => ({
     maxDepth,
     startCategoryId: categoryId === emptyGuid ? undefined : categoryId,
-    includeStartCategory: false,
+    includeStartCategory: categoryId !== emptyGuid,
 });
 
 const setupCategoryLink = (
@@ -168,7 +168,10 @@ const setupCategoryLink = (
         } else {
             const categoryState = getCategoryState(state, value);
             if (!categoryState.value) {
-                if (!categoryState.isLoading) {
+                if (
+                    !categoryState.isLoading &&
+                    !getCategoriesDataView(state, getParameter(value, maxDepth)).isLoading
+                ) {
                     categoryIdsToLoad[value] = maxDepth;
                 }
                 return;

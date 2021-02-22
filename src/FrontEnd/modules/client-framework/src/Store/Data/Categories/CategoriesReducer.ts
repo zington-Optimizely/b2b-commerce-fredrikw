@@ -32,7 +32,7 @@ const reducer = {
     ) => {
         const { parameter, collection } = action;
         const { parentCategoryIdToChildrenIds, categoryDepthLoaded } = draft;
-        const { maxDepth, startCategoryId } = parameter;
+        const { maxDepth, startCategoryId, includeStartCategory } = parameter;
 
         const loadCategories = (categoryIds: string[] | undefined, parentCategoryId: string, currentDepth: number) => {
             if (!categoryIds) {
@@ -54,8 +54,16 @@ const reducer = {
         if (!startCategoryId) {
             loadCategories(collection.categoryIds, emptyGuid, 0);
         } else {
+            let foundStartCategory = false;
             for (const categoryId of collection.categoryIds) {
                 loadCategories(collection.categoriesById[categoryId]?.subCategoryIds, categoryId, 0);
+                if (categoryId === startCategoryId) {
+                    foundStartCategory = true;
+                }
+            }
+
+            if (includeStartCategory && !foundStartCategory && draft.errorStatusCodeById) {
+                draft.errorStatusCodeById[startCategoryId] = 404;
             }
         }
 
