@@ -20,6 +20,8 @@ interface OwnProps {
     product: ProductContextModel | CartLineModel;
     currencySymbol?: string;
     showLabel?: boolean;
+    showUnitOfMeasure?: boolean;
+    showPack?: boolean;
     showSavings?: boolean;
     showSavingsAmount?: boolean;
     showSavingsPercent?: boolean;
@@ -132,6 +134,8 @@ const ProductPrice: FC<Props> = ({
     currencySymbol,
     canSeePrices,
     showLabel = true,
+    showUnitOfMeasure = true,
+    showPack = true,
     showSavings = false,
     showSavingsAmount = false,
     showSavingsPercent = false,
@@ -215,7 +219,7 @@ const ProductPrice: FC<Props> = ({
                                 {currencySymbol}
                             </Typography>
                         )}
-                        {unitOfMeasure && (
+                        {unitOfMeasure && showUnitOfMeasure && (
                             <Typography
                                 {...priceStyles.unitOfMeasureText}
                                 data-test-selector="productPrice_unitOfMeasureLabel"
@@ -229,7 +233,7 @@ const ProductPrice: FC<Props> = ({
                             {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
                         </Typography>
                     )}
-                    {packDescription && (
+                    {packDescription && showPack && (
                         <StyledWrapper {...styles.packWrapper}>
                             <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
                             <Typography {...styles.packDescriptionText}>{packDescription}</Typography>

@@ -4,6 +4,8 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnError,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import {
     Cart,
@@ -176,6 +178,7 @@ export const UpdateCart: HandlerType = async props => {
     if (result.successful) {
         props.apiResult = result.result;
     } else {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.();
         props.dispatch({
             type: "Pages/CheckoutReviewAndSubmit/SetPlaceOrderErrorMessage",
@@ -199,6 +202,7 @@ export const ReloadCurrentCart: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult.cart.id);
 };
 

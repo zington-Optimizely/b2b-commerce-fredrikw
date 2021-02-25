@@ -1,6 +1,7 @@
 import MissingComponent from "@insite/client-framework/Components/MissingComponent";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
 import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
 import ItemEditor from "@insite/shell/Components/ItemEditor/ItemEditor";
@@ -10,7 +11,6 @@ import SiteFrame from "@insite/shell/Components/Shell/SiteFrame";
 import Stage from "@insite/shell/Components/Shell/Stage";
 import { getPageDefinition } from "@insite/shell/DefinitionLoader";
 import { clearModelSelection } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import { Location } from "history";
 import * as React from "react";
@@ -28,7 +28,7 @@ interface PageEditorState {
 }
 
 const mapStateToProps = (state: ShellState) => {
-    const page = getCurrentPageForShell(state);
+    const page = getCurrentPage(state);
     return {
         pageDefinition: getPageDefinition(page.type),
         page,

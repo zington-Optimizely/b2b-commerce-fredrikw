@@ -1,5 +1,10 @@
 import { trackSearchResultEvent } from "@insite/client-framework/Common/Utilities/tracking";
-import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandler,
+    createHandlerChainRunner,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { AutocompleteApiParameter, autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import { AutocompleteModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -22,6 +27,7 @@ export const SendTracking: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult);
 };
 

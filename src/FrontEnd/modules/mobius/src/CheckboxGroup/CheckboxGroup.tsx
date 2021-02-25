@@ -76,58 +76,43 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
 
     render() {
         const { children, error, label, required, mergeCss, ...otherProps } = this.props;
+
         const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(this.props, {
             component: "checkbox",
             category: "fieldSet",
             propKey: "groupDefaultProps",
         });
-        const resolvedMergeCss = mergeCss ?? this.props?.theme?.checkbox?.groupDefaultProps?.mergeCss;
+
         const sizeVariant = applyProp("sizeVariant", "default") as Required<
             Pick<CheckboxGroupProps, "sizeVariant">
         >["sizeVariant"];
 
-        let renderLabel;
-        const labelProps: { "aria-labelledby"?: string; as?: "div" } = {};
-        if (label === 0 || label) {
-            renderLabel = (
-                <Typography
-                    as="legend"
-                    weight={600}
-                    size={checkboxSizes[sizeVariant].fontSize}
-                    id={this.state.uid}
-                    {...spreadProps("labelProps" as any)}
-                >
-                    {label}
-                    {required && " *"}
-                </Typography>
-            );
-            labelProps["aria-labelledby"] = this.state.uid;
-        } else if (typeof children === "object") {
-            labelProps.as = "div";
-        }
+        const labelProps: { "aria-labelledby"?: string; as?: "div" } = {
+            "aria-labelledby": this.state.uid,
+            as: typeof children === "object" ? "div" : undefined,
+        };
 
-        let renderError;
-        if (error === 0 || error) {
-            renderError = (
-                <Typography
-                    color="danger"
-                    weight={600}
-                    size={checkboxSizes[sizeVariant].fontSize}
-                    {...spreadProps("errorProps" as any)}
-                >
-                    {error}
-                </Typography>
-            );
-        }
+        const resolvedMergeCss = mergeCss ?? this.props?.theme?.checkbox?.groupDefaultProps?.mergeCss;
 
         return (
             <CheckboxGroupStyle
-                css={applyStyledProp("css", resolvedMergeCss)}
-                role="group"
                 {...labelProps}
                 {...omitMultiple(otherProps, ["uid", "sizeVariant", "css"])}
+                css={applyStyledProp("css", resolvedMergeCss)}
+                role="group"
             >
-                {renderLabel}
+                {String(label) && (
+                    <Typography
+                        as="legend"
+                        weight={600}
+                        size={checkboxSizes[sizeVariant].fontSize}
+                        id={this.state.uid}
+                        {...spreadProps("labelProps" as any)}
+                    >
+                        {label}
+                        {required && " *"}
+                    </Typography>
+                )}
                 <CheckboxGroupContext.Provider
                     value={{
                         sizeVariant,
@@ -135,7 +120,16 @@ class CheckboxGroup extends React.Component<CheckboxGroupProps & ThemeProps<Base
                 >
                     {children}
                 </CheckboxGroupContext.Provider>
-                {renderError}
+                {String(error) && (
+                    <Typography
+                        color="danger"
+                        weight={600}
+                        size={checkboxSizes[sizeVariant].fontSize}
+                        {...spreadProps("errorProps" as any)}
+                    >
+                        {error}
+                    </Typography>
+                )}
             </CheckboxGroupStyle>
         );
     }

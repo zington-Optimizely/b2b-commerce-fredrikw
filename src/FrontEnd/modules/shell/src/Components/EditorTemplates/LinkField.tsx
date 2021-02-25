@@ -1,3 +1,4 @@
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -14,7 +15,9 @@ import ClickOutside from "@insite/shell/Components/ClickOutside";
 import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import ArrowRight from "@insite/shell/Components/Icons/ArrowRight";
 import Link from "@insite/shell/Components/Icons/Link";
+import NeverPublishedModal from "@insite/shell/Components/Modals/NeverPublishedModal";
 import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { showNeverPublishedModal } from "@insite/shell/Store/NeverPublishedModal/NeverPublishedModalActionCreators";
 import { loadCategories } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
@@ -62,6 +65,9 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     }
 
     return {
+        neverPublishedNodeIds: state.pageTree.neverPublishedNodeIds,
+        futurePublishNodeIds: state.pageTree.futurePublishNodeIds,
+        draftNodeIds: state.pageTree.draftNodeIds,
         pageLinks: state.links.pageLinks,
         displayValue,
         categories,
@@ -71,6 +77,7 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
 
 const mapDispatchToProps = {
     loadCategories,
+    showNeverPublishedModal,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -111,13 +118,19 @@ class LinkField extends ClickOutside<Props, State> {
 
     clickPage = (event: React.FormEvent<HTMLElement>) => {
         const nodeId = event.currentTarget.closest("[data-id]")!.getAttribute("data-id")!;
-        this.props.updateField(this.props.fieldDefinition.name, {
-            type: "Page",
-            value: nodeId,
-        });
 
         this.setState({
             linkSelectorIsOpen: false,
+        });
+
+        if (this.props.neverPublishedNodeIds[nodeId] && !getCookie("NeverShowLinkWarning")) {
+            this.props.showNeverPublishedModal(this.props.fieldDefinition.name, nodeId);
+            return;
+        }
+
+        this.props.updateField(this.props.fieldDefinition.name, {
+            type: "Page",
+            value: nodeId,
         });
     };
 
@@ -156,7 +169,15 @@ class LinkField extends ClickOutside<Props, State> {
                     const hasChildren = !!page.children;
                     return (
                         <TreeItemStyle key={page.id}>
-                            <TitleStyle data-id={page.id}>
+                            <TitleStyle
+                                data-id={page.id}
+                                isUnpublished={this.props.draftNodeIds[page.id]}
+                                neverPublished={this.props.neverPublishedNodeIds[page.id]}
+                                futurePublish={
+                                    this.props.futurePublishNodeIds[page.id] &&
+                                    this.props.futurePublishNodeIds[page.id] > new Date()
+                                }
+                            >
                                 {hasChildren && (
                                     <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
                                         {isExpanded ? <ArrowDown height={6} /> : <ArrowRight width={6} />}
@@ -340,6 +361,7 @@ class LinkField extends ClickOutside<Props, State> {
                         </TabGroup>
                     </LinkSelectorStyle>
                 )}
+                <NeverPublishedModal updateField={this.props.updateField} />
             </StandardControl>
         );
     }
@@ -399,8 +421,18 @@ const LinkSelectorStyle = styled.div`
     height: 500px;
 `;
 
-const TitleStyle = styled.h3`
+const TitleStyle = styled.h3<{ isUnpublished?: boolean; neverPublished?: boolean; futurePublish?: boolean }>`
     span {
+        ${props =>
+            props.neverPublished || props.isUnpublished || props.futurePublish
+                ? `color: ${
+                      props.neverPublished
+                          ? props.theme.colors.custom.neverPublished
+                          : props.futurePublish
+                          ? props.theme.colors.custom.futurePublish
+                          : props.theme.colors.custom.draftPage
+                  };`
+                : ""}
         cursor: pointer;
         &:hover {
             font-weight: bold;

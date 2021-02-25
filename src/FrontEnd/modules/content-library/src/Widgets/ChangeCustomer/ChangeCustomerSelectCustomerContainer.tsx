@@ -60,6 +60,7 @@ const mapStateToProps = (state: ApplicationState, props: OwnProps) => {
         checkoutShippingUrl: getPageLinkByPageType(state, "CheckoutShippingPage")?.url,
         checkoutReviewAndSubmitUrl: getPageLinkByPageType(state, "CheckoutReviewAndSubmitPage")?.url,
         cartUrl: getPageLinkByPageType(state, "CartPage")?.url,
+        homeUrl: getPageLinkByPageType(state, "HomePage")?.url,
         returnUrl: getReturnUrl(state),
         canSetDefaultCustomer: !requireSelectCustomerOnSignIn && !session.hasDefaultCustomer,
     };
@@ -151,6 +152,7 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
     dashboardUrl,
     checkoutShippingUrl,
     cartUrl,
+    homeUrl,
     checkoutReviewAndSubmitUrl,
     canSetDefaultCustomer,
     defaultCustomerChangedMessage,
@@ -200,7 +202,7 @@ const ChangeCustomerSelectCustomerContainer: FC<Props> = ({
     };
 
     const handleCancelClicked = () => {
-        window.location.href = returnUrl;
+        window.location.href = returnUrl || homeUrl || "/";
     };
 
     useEffect(() => {
@@ -305,6 +307,7 @@ type GetCustomerContinueReturnUrlType = (props: {
     cartUrl?: string;
     canBypassCheckoutAddress: boolean;
     checkoutReviewAndSubmitUrl?: string;
+    homeUrl?: string;
 }) => string;
 
 type GetReturnUrlType = (state: ApplicationState) => string;
@@ -313,7 +316,7 @@ const getReturnUrl: GetReturnUrlType = (state: ApplicationState): string => {
     const { search } = getLocation(state);
     const query = parseQueryString<{ returnUrl?: string; returnurl?: string }>(search);
     const returnUrl = query.returnUrl || query.returnurl;
-    return removeAbsoluteUrl(returnUrl) || getPageLinkByPageType(state, "HomePage")?.url || "/";
+    return removeAbsoluteUrl(returnUrl) || "";
 };
 
 export const getCustomerContinueReturnUrl: GetCustomerContinueReturnUrlType = ({
@@ -324,6 +327,7 @@ export const getCustomerContinueReturnUrl: GetCustomerContinueReturnUrlType = ({
     cartUrl,
     canBypassCheckoutAddress,
     checkoutReviewAndSubmitUrl,
+    homeUrl,
 }) => {
     let returnUrl: string | undefined = "";
     if (session.dashboardIsHomepage) {
@@ -341,7 +345,7 @@ export const getCustomerContinueReturnUrl: GetCustomerContinueReturnUrlType = ({
     }
 
     // This forces the undefined typing to returnUrl or "/"
-    returnUrl = returnUrl || "/";
+    returnUrl = returnUrl || homeUrl || "/";
 
     return returnUrl;
 };

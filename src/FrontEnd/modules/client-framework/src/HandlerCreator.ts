@@ -118,7 +118,7 @@ const runChain = async <Parameter extends HasOnException & HasOnComplete<Props>,
 ) => {
     // An "initial props" parameter would make the props value below correct, but no handlers written so far require it.
     // `as any` needed due to `props` not having any required fields from Props.
-    const props = { parameter, dispatch, getState } as any;
+    const props = { parameter, dispatch, getState, skipOnComplete: false } as any;
     // This approach to handler "chains" doesn't give TypeScript enough info to recognize transitions in values and nullness.
     let x = 0;
     if (!IS_SERVER_SIDE) {
@@ -142,12 +142,16 @@ const runChain = async <Parameter extends HasOnException & HasOnComplete<Props>,
 
             // we want to compare this directly to false so that we don't include void results in the break
             if (result === false) {
+                // checking for onException to detect promise
+                if (props.parameter.onException) {
+                    props.parameter.onSuccess?.();
+                }
                 break;
             }
         } catch (e) {
             props.parameter.onException?.(e);
             if (IS_SERVER_SIDE && !IS_PRODUCTION) {
-                if (callOnComplete) {
+                if (callOnComplete && !props.skipOnComplete) {
                     props.parameter.onComplete?.(props);
                 }
                 throw e;
@@ -158,7 +162,7 @@ const runChain = async <Parameter extends HasOnException & HasOnComplete<Props>,
         x += 1;
     }
 
-    if (callOnComplete) {
+    if (callOnComplete && !props.skipOnComplete) {
         props.parameter.onComplete?.(props);
     }
 
@@ -303,6 +307,18 @@ export function replaceInChain<Parameter, Props>(
     handler: Handler<Parameter, Props>,
 ) {
     splice(chain, replaceHandler, "replaceHandler", index => chain.splice(index, 1, handler));
+}
+
+export function markSkipOnCompleteIfOnSuccessIsSet<Result>(props: { parameter: HasOnSuccess<Result> }) {
+    if (props.parameter.onSuccess) {
+        (props as any).skipOnComplete = true;
+    }
+}
+
+export function markSkipOnCompleteIfOnErrorIsSet<Result>(props: { parameter: HasOnError<Result> }) {
+    if (props.parameter.onError) {
+        (props as any).skipOnComplete = true;
+    }
 }
 
 function splice<Parameter, Props>(

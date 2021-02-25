@@ -61,7 +61,7 @@ const ProductDetailsAttributes: React.FC<Props> = ({ product: { brand, attribute
                     as="p"
                 >
                     <Typography data-test-selector="attributes_item_label" {...styles.attributeTypeLabelText}>
-                        {attributeType.label}&nbsp;:&nbsp;
+                        {attributeType.label || attributeType.name}&nbsp;:&nbsp;
                     </Typography>
                     <span data-test-selector="attributes_item_value">
                         {(attributeType.attributeValues ?? [])

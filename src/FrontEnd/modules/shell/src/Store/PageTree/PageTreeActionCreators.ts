@@ -2,6 +2,8 @@ import sleep from "@insite/client-framework/Common/Sleep";
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { addTask } from "@insite/client-framework/ServerSideRendering";
 import { getPageByUrl } from "@insite/client-framework/Services/ContentService";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { loadPageLinks } from "@insite/client-framework/Store/Links/LinksActionCreators";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import {
@@ -19,12 +21,11 @@ import {
 } from "@insite/shell/Services/ContentAdminService";
 import { setupPageModel } from "@insite/shell/Services/PageCreation";
 import { getTemplate } from "@insite/shell/Services/SpireService";
+import { loadPageIfNeeded } from "@insite/shell/Store/Data/Pages/PagesActionCreators";
+import { showErrorModal } from "@insite/shell/Store/ErrorModal/ErrorModalActionCreator";
 import { editPageOptions, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
-import ShellState from "@insite/shell/Store/ShellState";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
-import { push } from "connected-react-router";
 import { History } from "history";
 
 export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch => {
@@ -56,10 +57,7 @@ export const loadFiltersForQuery = (query: string): ShellThunkAction => dispatch
     );
 };
 
-export const addFilter = (treeFilter: TreeFilterModel): ShellThunkAction => (
-    dispatch: any,
-    getState: () => ShellState,
-) => {
+export const addFilter = (treeFilter: TreeFilterModel): ShellThunkAction => dispatch => {
     dispatch({
         treeFilter,
         type: "PageTree/AddFilter",
@@ -85,7 +83,7 @@ export const clearFilters = (): ShellThunkAction => dispatch => {
     dispatch(loadTreeNodes());
 };
 
-export const loadTreeNodes = (): ShellThunkAction => (dispatch: any, getState: () => ShellState) => {
+export const loadTreeNodes = (): ShellThunkAction => (dispatch, getState) => {
     addTask(
         (async function () {
             const pageStates = await getPageStates(getState().pageTree.appliedTreeFilters);
@@ -157,13 +155,11 @@ export const closeMakeDefaultVariant = (): ShellThunkAction => dispatch => {
     });
 };
 
-export const openRulesEdit = (pageId: string, isNewVariant?: boolean): ShellThunkAction => dispatch => {
-    dispatch({
-        pageId,
-        isNewVariant,
-        type: "PageTree/OpenRulesEdit",
-    });
-};
+export const openRulesEdit = (pageId: string, isNewVariant?: boolean): AnyShellAction => ({
+    type: "PageTree/OpenRulesEdit",
+    pageId,
+    isNewVariant,
+});
 
 export const closeRulesEdit = (): ShellThunkAction => dispatch => {
     dispatch({
@@ -209,10 +205,7 @@ export interface AddPageParameter {
     afterSavePage?: (response: SavePageResponseModel) => void;
 }
 
-export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
-    dispatch: any,
-    getState: () => ShellState,
-) => {
+export const addPage = (parameter: AddPageParameter): ShellThunkAction => (dispatch, getState) => {
     (async () => {
         let pageModel: PageModel;
 
@@ -264,43 +257,29 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
 
         const savePageResponse = await addPageApi(pageModel, parameter.isVariant);
         if (!savePageResponse.duplicatesFound) {
-            dispatch(push(`/ContentAdmin/Page/${pageModel.id}`));
-
             if (parameter.isVariant || isLayout) {
-                // TODO ISC-11025
-                let attempts = 0;
-                while (getCurrentPageForShell(getState()).id !== pageModel.id) {
-                    await sleep(100);
-                    if (++attempts > 50) {
-                        throw new Error(`Page with id ${pageModel.id} has never loaded.`);
-                    }
-                }
+                const finished = () => {
+                    dispatch(
+                        savePage(parameter.isVariant, ({ duplicatesFound }) => {
+                            if (duplicatesFound) {
+                                dispatch(showErrorModal("A variant with this name already exists."));
+                                return;
+                            }
 
-                dispatch(
-                    savePage(true, ({ duplicatesFound }) => {
-                        if (duplicatesFound) {
+                            dispatch(loadTreeNodes());
+
                             dispatch({
-                                type: "ErrorModal/ShowModal",
-                                message: "A variant with this name already exists.",
+                                type: "PageTree/AddPageComplete",
                             });
-                            return;
-                        }
 
-                        dispatch(loadTreeNodes());
+                            if (parameter.isVariant) {
+                                dispatch(openRulesEdit(pageModel.id, true));
+                            }
+                        }),
+                    );
+                };
 
-                        dispatch({
-                            type: "PageTree/AddPageComplete",
-                        });
-
-                        if (parameter.isVariant) {
-                            dispatch({
-                                pageId: pageModel.id,
-                                isNewVariant: true,
-                                type: "PageTree/OpenRulesEdit",
-                            });
-                        }
-                    }),
-                );
+                dispatch(loadPageIfNeeded(pageModel.id, finished));
             } else {
                 dispatch(
                     editPageOptions(pageModel.id, false, true, () => {
@@ -311,13 +290,13 @@ export const addPage = (parameter: AddPageParameter): ShellThunkAction => (
                 );
             }
         } else {
-            dispatch({
-                type: "ErrorModal/ShowModal",
-                message:
+            dispatch(
+                showErrorModal(
                     parameter.isVariant || isLayout
                         ? `A ${isLayout ? "layout" : "variant"} with this name already exists.`
                         : "A page with this URL already exists. Please try a different page title or position.",
-            });
+                ),
+            );
         }
 
         parameter.afterSavePage?.(savePageResponse);
@@ -339,10 +318,7 @@ export const deletePage = (nodeId: string, history: History, pageId?: string): S
             } else {
                 const response = await deletePageApi(nodeId);
                 if (response.layoutInUse) {
-                    dispatch({
-                        type: "ErrorModal/ShowModal",
-                        message: "This layout is currently being used by a page and may not be deleted.",
-                    });
+                    dispatch(showErrorModal("This layout is currently being used by a page and may not be deleted."));
                 }
             }
 
@@ -350,29 +326,31 @@ export const deletePage = (nodeId: string, history: History, pageId?: string): S
                 type: "PageTree/DeletePageComplete",
             });
 
+            dispatch(loadPageLinks());
             sendToSite({ type: "ReloadPageLinks" });
             sendToSite({ type: "ResetPageDataViews" });
 
             dispatch(loadTreeNodes());
 
-            if (nodeId === getCurrentPageForShell(getState()).nodeId) {
+            if (nodeId === getCurrentPage(getState()).nodeId) {
                 history.push(`/ContentAdmin/Page/${getState().shellContext.homePageId}`);
             }
         })(),
     );
 };
 
-export const openReorderPages = (): ShellThunkAction => dispatch => {
+export const openReorderPages = (nodeId?: string): ShellThunkAction => dispatch => {
     addTask(
         (async function () {
             dispatch({
                 type: "PageTree/OpenReorderPages",
             });
 
-            const result = await getReorderingPages();
+            const result = await getReorderingPages(nodeId);
 
             dispatch({
                 ...result,
+                nodeId,
                 type: "PageTree/LoadReorderPagesComplete",
             });
         })(),
@@ -399,10 +377,9 @@ export const saveReorderPages = (pages: PageReorderModel[]): ShellThunkAction =>
                 type: "PageTree/FailedSaveReorderPages",
             });
 
-            dispatch({
-                type: "ErrorModal/ShowModal",
-                message: "A page with this URL already exists. Please try a different page title or position.",
-            });
+            dispatch(
+                showErrorModal("A page with this URL already exists. Please try a different page title or position."),
+            );
             return;
         }
 
@@ -410,6 +387,7 @@ export const saveReorderPages = (pages: PageReorderModel[]): ShellThunkAction =>
             type: "PageTree/CompleteSaveReorderPages",
         });
 
+        dispatch(loadPageLinks());
         sendToSite({ type: "ReloadPageLinks" });
 
         dispatch(loadTreeNodes());

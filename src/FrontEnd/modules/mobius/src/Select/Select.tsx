@@ -9,16 +9,27 @@ import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { IconPresentationProps } from "@insite/mobius/Icon";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
-import { ThemeConsumer } from "styled-components";
+import styled, { ThemeConsumer } from "styled-components";
 
 export interface SelectPresentationProps extends FormFieldPresentationProps<SelectComponentProps> {
     /** The props for icon displaying on the select.
      * @themable */
     iconProps?: IconPresentationProps;
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<SelectProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
 }
 
 export type SelectComponentProps = MobiusStyledComponentProps<
@@ -54,6 +65,9 @@ export type SelectComponentProps = MobiusStyledComponentProps<
 
 export type SelectProps = SelectPresentationProps & SelectComponentProps;
 
+const SelectStyle = styled.select<InjectableCss>`
+    ${injectCss}
+`;
 /**
  * Creates a dropdown with an optional label, hint text and error message. Accepts children to render as options.
  */
@@ -93,7 +107,7 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                     const inputLabelObj =
                         otherProps.label === 0 || otherProps.label ? { "aria-labelledby": labelId } : {};
 
-                    const { spreadProps, applyProp } = applyPropBuilder(
+                    const { spreadProps, applyProp, applyStyledProp } = applyPropBuilder(
                         { theme, ...this.props },
                         { component: "select", category: "formField" },
                     );
@@ -101,9 +115,10 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                     const sizeVariant: FormFieldSizeVariant = applyProp("sizeVariant", "default");
                     const hasDescription = !!error || !!hint;
 
+                    const resolvedMergeCss = this.props.mergeCss ?? theme?.select?.defaultProps?.mergeCss;
                     const selectInput = (
                         <>
-                            <select
+                            <SelectStyle
                                 id={this.state.uid}
                                 aria-describedby={hasDescription ? descriptionId : undefined}
                                 aria-invalid={!!error}
@@ -111,6 +126,7 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                                 aria-labelledby={labelId}
                                 onChange={this.onChangeWithValue}
                                 data-selected-index={this.state.value || ""}
+                                css={applyStyledProp("css", resolvedMergeCss)}
                                 value={this.state.value}
                                 {...{ disabled: isDisabled, required }}
                                 {...inputLabelObj}
@@ -124,10 +140,11 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                                     "theme",
                                     "backgroundColor",
                                     "dispatch",
+                                    "css",
                                 ])}
                             >
                                 {children}
-                            </select>
+                            </SelectStyle>
                             <FormFieldIcon
                                 {...iconProps}
                                 size={sizeVariantValues[sizeVariant].icon}

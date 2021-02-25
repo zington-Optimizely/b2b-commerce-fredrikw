@@ -104,6 +104,11 @@ const ContactForm = ({ id, fields, submitContactForm, clearForm }: Props) => {
                     setIsModalOpen(true);
                     setIsSubmitting(false);
                 },
+                onComplete() {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                },
             });
         }
     };

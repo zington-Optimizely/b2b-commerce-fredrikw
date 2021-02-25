@@ -123,6 +123,13 @@ const CmsSubscribe = ({ fields, subscribe, id }: Props) => {
             onSuccess: () => {
                 toasterContext.addToast({ body: siteMessage("Email_Subscribe_Success"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 

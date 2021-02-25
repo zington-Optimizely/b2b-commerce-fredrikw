@@ -1,13 +1,20 @@
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getById } from "@insite/client-framework/Store/Data/DataState";
-import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
+import { nullPage, PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
+import PageProps, { cleanPage, PageModel } from "@insite/client-framework/Types/PageProps";
 
-export function getCurrentPage(state: ApplicationState) {
+interface HasPagesState {
+    data: {
+        pages: PagesState;
+    };
+}
+
+export function getCurrentPage(state: HasPagesState) {
     return getPageStateByPath(state, state.data.pages.location.pathname).value || nullPage;
 }
 
-export function getPageStateByPath(state: ApplicationState, path: string) {
+export function getPageStateByPath(state: HasPagesState, path: string) {
     const indexOf = path.indexOf("?");
     const realPath = indexOf > -1 ? path.substring(0, indexOf) : path;
     return getById(state.data.pages, realPath, o => state.data.pages.idByPath[o.toLowerCase()] || "");

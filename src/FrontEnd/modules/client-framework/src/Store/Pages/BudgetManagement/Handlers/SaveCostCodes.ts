@@ -2,6 +2,7 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { updateBillTo, UpdateBillToApiParameter } from "@insite/client-framework/Services/CustomersService";
 import { BillToModel, CostCodeModel } from "@insite/client-framework/Types/ApiModels";
@@ -33,6 +34,7 @@ export const CallUpdateBillToApi: HandlerType = async props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.apiResult && props.parameter.onSuccess) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess();
     }
 };

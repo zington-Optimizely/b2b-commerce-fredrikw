@@ -7,9 +7,9 @@ import Page from "@insite/shell/Components/Icons/Page";
 import TreeOverflow from "@insite/shell/Components/Icons/TreeOverflow";
 import { pageTreeFlyOutMenuHasItems } from "@insite/shell/Components/PageTree/PageTreeFlyOut";
 import PageTreePages from "@insite/shell/Components/PageTree/PageTreePages";
+import { loadPageOnSite } from "@insite/shell/Store/Data/Pages/PagesHelpers";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import * as React from "react";
-import { NavLink } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 interface Props {
@@ -22,6 +22,9 @@ interface Props {
     flyOutNode?: TreeNodeModel;
     selectedPageId: string;
     permissions?: PermissionsModel;
+    neverPublishedNodeIds: Dictionary<boolean>;
+    futurePublishNodeIds: Dictionary<Date>;
+    draftNodeIds: Dictionary<boolean>;
 }
 
 class PageTreeItem extends React.Component<Props> {
@@ -31,6 +34,10 @@ class PageTreeItem extends React.Component<Props> {
 
     handleExpandClick = (event: React.MouseEvent<HTMLElement>) => {
         this.props.onExpandNode(this.props.node);
+    };
+
+    navigateToPage = (pageId: string) => {
+        loadPageOnSite(pageId);
     };
 
     render() {
@@ -44,6 +51,9 @@ class PageTreeItem extends React.Component<Props> {
             isEditMode,
             selectedPageId,
             permissions,
+            neverPublishedNodeIds,
+            futurePublishNodeIds,
+            draftNodeIds,
         } = this.props;
 
         const isExpanded = expandedNodes[node.key] && !node.isVariant;
@@ -75,8 +85,15 @@ class PageTreeItem extends React.Component<Props> {
                 <PageTreeTitle
                     {...node}
                     isActivePage={selectedPageId === node.pageId}
-                    isFuturePublish={!!node.futurePublishOn && node.futurePublishOn > new Date()}
+                    isFuturePublish={
+                        futurePublishNodeIds[node.isVariant ? `${node.nodeId}_${node.pageId}` : node.nodeId] >
+                        new Date()
+                    }
                     isWaitingForApproval={node.isWaitingForApproval}
+                    isDraftPage={draftNodeIds[node.isVariant ? `${node.nodeId}_${node.pageId}` : node.nodeId]}
+                    neverPublished={
+                        neverPublishedNodeIds[node.isVariant ? `${node.nodeId}_${node.pageId}` : node.nodeId]
+                    }
                 >
                     {children && !node.isVariant && (
                         <ExpandStyle
@@ -92,13 +109,13 @@ class PageTreeItem extends React.Component<Props> {
                             color1={node.isVariant ? (node.isDefaultVariant ? "#4A90E2" : "#FFA500") : "#D8D8D8"}
                         />
                     </NodeIcon>
-                    <NavLink
-                        to={`/ContentAdmin/Page/${node.pageId}`}
+                    <a
+                        onClick={() => this.navigateToPage(node.pageId)}
                         data-test-selector={`pageTreeLink_${node.displayName}`}
                     >
                         {node.displayName} {node.isVariant && node.variantName ? ` - ${node.variantName}` : ""}
-                    </NavLink>
-                    {pageTreeFlyOutMenuHasItems(node, permissions) && flyOutMenu}
+                    </a>
+                    {pageTreeFlyOutMenuHasItems(futurePublishNodeIds, node, permissions) && flyOutMenu}
                 </PageTreeTitle>
                 {isExpanded && (
                     <PageTreePages
@@ -111,6 +128,9 @@ class PageTreeItem extends React.Component<Props> {
                         onFlyOutNode={onFlyOutNode}
                         flyOutNode={flyOutNode}
                         permissions={permissions}
+                        neverPublishedNodeIds={neverPublishedNodeIds}
+                        futurePublishNodeIds={futurePublishNodeIds}
+                        draftNodeIds={draftNodeIds}
                     />
                 )}
             </PageTreePage>
@@ -160,6 +180,8 @@ const PageTreeTitle = styled.h3<{
     isActivePage: boolean;
     isFuturePublish: boolean;
     isWaitingForApproval: boolean;
+    isDraftPage: boolean;
+    neverPublished: boolean;
 }>`
     ${props => (!props.isMatchingPage ? `color: ${props.theme.colors.custom.nonmatchingTreeLinks};` : "")}
     ${props =>
@@ -181,11 +203,13 @@ const PageTreeTitle = styled.h3<{
               `
             : ""}
     ${props =>
-        props.isFuturePublish
+        props.isFuturePublish || props.isDraftPage
             ? css`
-                  color: ${props.isActivePage
-                      ? props.theme.colors.custom.futurePublishActive
-                      : props.theme.colors.custom.futurePublish};
+                  color: ${props.isFuturePublish
+                      ? props.theme.colors.custom.futurePublish
+                      : props.neverPublished
+                      ? props.theme.colors.custom.neverPublished
+                      : props.theme.colors.custom.draftPage};
               `
             : ""}
     ${props =>

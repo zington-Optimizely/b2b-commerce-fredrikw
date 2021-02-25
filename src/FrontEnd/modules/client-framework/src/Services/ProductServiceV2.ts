@@ -12,24 +12,27 @@ const realTimePricingUrl = "/api/v1/realtimepricing";
 const realTimeInventoryUrl = "/api/v1/realtimeinventory";
 const productsUrl = "/api/v2/products";
 
+export type ProductExpandTokens = (
+    | "detail"
+    | "content"
+    | "images"
+    | "documents"
+    | "specifications"
+    | "properties"
+    | "attributes"
+    | "variantTraits"
+    | "facets"
+    | "warehouses"
+    | "scoreexplanation"
+)[];
+
 export interface GetProductApiV2ParameterBase extends ApiParameter {
-    expand?: (
-        | "detail"
-        | "content"
-        | "images"
-        | "documents"
-        | "specifications"
-        | "properties"
-        | "attributes"
-        | "variantTraits"
-        | "facets"
-        | "warehouses"
-    )[];
+    expand?: ProductExpandTokens;
     additionalExpands?: string[];
     includeAttributes?: ("includeOnProduct" | "comparable" | "facets")[];
 }
 
-type ProductFilterTokens =
+export type ProductFilterTokens =
     | "frequentlyPurchased"
     | "recentlyPurchased"
     | "alsoPurchased"

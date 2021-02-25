@@ -1,6 +1,7 @@
 import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Common/BasicSelectors";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { responsiveStyleRules } from "@insite/client-framework/Common/Utilities/responsive";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
@@ -33,6 +34,16 @@ const enum fields {
     partialOverlayPositioning = "partialOverlayPositioning",
     disableButton = "disableButton",
     contentPadding = "contentPadding",
+    centerTextVertically = "centerTextVertically",
+    responsiveFontSizes = "responsiveFontSizes",
+    customFontSizes = "customFontSizes",
+    h1FontSize = "h1FontSize",
+    h2FontSize = "h2FontSize",
+    h3FontSize = "h3FontSize",
+    h4FontSize = "h4FontSize",
+    h5FontSize = "h5FontSize",
+    h6FontSize = "h6FontSize",
+    normalFontSize = "normalFontSize",
 }
 
 interface OwnProps extends WidgetProps {
@@ -61,6 +72,15 @@ interface OwnProps extends WidgetProps {
         [fields.partialOverlayPositioning]: "top" | "middle" | "bottom";
         [fields.disableButton]: boolean;
         [fields.contentPadding]: number;
+        [fields.centerTextVertically]: boolean;
+        [fields.responsiveFontSizes]: boolean;
+        [fields.customFontSizes]: boolean;
+        [fields.h1FontSize]: number;
+        [fields.h2FontSize]: number;
+        [fields.h3FontSize]: number;
+        [fields.h4FontSize]: number;
+        [fields.h5FontSize]: number;
+        [fields.normalFontSize]: number;
     };
     extendedStyles?: BannerStyles;
 }
@@ -79,6 +99,7 @@ export interface BannerStyles {
     /**
      * @deprecated Use the `bannerButton` property instead.
      */
+    slideCenteringWrapperStyles?: InjectableCss;
     bannerLink?: LinkPresentationProps;
     bannerButton?: ButtonPresentationProps;
 }
@@ -145,6 +166,11 @@ const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }
 
     const [styles] = React.useState(() => mergeToNew(bannerStyles, extendedStyles));
 
+    let fontSizeStyles;
+    if (fields.responsiveFontSizes || fields.customFontSizes) {
+        fontSizeStyles = responsiveStyleRules(fields.responsiveFontSizes, fields.customFontSizes ? fields : undefined);
+    }
+
     const wrapperStyles = {
         css: css`
             ${styles.wrapper?.css || ""}
@@ -152,6 +178,7 @@ const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }
             ${focalPointStyles}
             ${minimumHeightStyles}
             ${overlayPositioningStyles}
+            ${fontSizeStyles}
         `,
     };
 
@@ -160,22 +187,41 @@ const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }
             ${styles.overlayWrapper?.css || ""}
             background-color: ${fields.background === "image" ? fields.imageOverlay : ""};
             padding: ${fields.contentPadding}px;
+            ${
+                fields.centerTextVertically &&
+                `
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;`
+            }
         `,
     };
 
     return (
         <StyledWrapper {...wrapperStyles}>
             <StyledWrapper {...overlayWrapperStyles}>
-                <Typography>{parse(fields.heading, parserOptions)}</Typography>
-                <Typography>{parse(fields.subheading, parserOptions)}</Typography>
-                {!fields.disableButton && (
-                    <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
-                        {fields.buttonLabel || title || url}
-                    </Button>
-                )}
+                <StyledWrapper {...styles.slideCenteringWrapperStyles}>
+                    <Typography>{parse(fields.heading, parserOptions)}</Typography>
+                    <Typography>{parse(fields.subheading, parserOptions)}</Typography>
+                    {!fields.disableButton && (
+                        <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
+                            {fields.buttonLabel || title || url}
+                        </Button>
+                    )}
+                </StyledWrapper>
             </StyledWrapper>
         </StyledWrapper>
     );
+};
+
+const basicTab = {
+    displayName: "Basic",
+    sortOrder: 0,
+};
+
+const settingsTab = {
+    displayName: "Settings",
+    sortOrder: 1,
 };
 
 const banner: WidgetModule = {
@@ -195,6 +241,7 @@ const banner: WidgetModule = {
                 ],
                 defaultValue: "image",
                 hideEmptyOption: true,
+                tab: basicTab,
             },
             {
                 fieldType: "Translatable",
@@ -202,6 +249,7 @@ const banner: WidgetModule = {
                 editorTemplate: "ImagePickerField",
                 defaultValue: "",
                 isVisible: widget => widget.fields.background === "image",
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -210,12 +258,14 @@ const banner: WidgetModule = {
                 editorTemplate: "ColorPickerField",
                 defaultValue: "",
                 isVisible: widget => widget.fields.background === "image",
+                tab: basicTab,
             },
             {
                 fieldType: "General",
                 name: fields.partialOverlay,
                 editorTemplate: "CheckboxField",
                 defaultValue: false,
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -229,6 +279,7 @@ const banner: WidgetModule = {
                 hideEmptyOption: true,
                 defaultValue: "bottom",
                 isVisible: widget => widget.fields.partialOverlay,
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -249,6 +300,7 @@ const banner: WidgetModule = {
                 defaultValue: "center",
                 hideEmptyOption: true,
                 isVisible: widget => widget.fields.background === "image",
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -257,6 +309,7 @@ const banner: WidgetModule = {
                 displayName: "Color",
                 defaultValue: "black",
                 isVisible: widget => widget.fields.background === "color",
+                tab: basicTab,
             },
             {
                 fieldType: "Translatable",
@@ -269,6 +322,7 @@ const banner: WidgetModule = {
                     moreMisc: {},
                     code: {},
                 },
+                tab: basicTab,
             },
             {
                 fieldType: "Translatable",
@@ -281,6 +335,7 @@ const banner: WidgetModule = {
                     moreMisc: {},
                     code: {},
                 },
+                tab: basicTab,
             },
             {
                 fieldType: "Translatable",
@@ -288,6 +343,7 @@ const banner: WidgetModule = {
                 editorTemplate: "TextField",
                 displayName: "Button Label",
                 defaultValue: "",
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -295,6 +351,7 @@ const banner: WidgetModule = {
                 displayName: "Button Link",
                 editorTemplate: "LinkField",
                 defaultValue: { type: "Page", value: "" },
+                tab: basicTab,
             },
             {
                 name: fields.buttonVariant,
@@ -308,6 +365,7 @@ const banner: WidgetModule = {
                 hideEmptyOption: true,
                 defaultValue: "primary",
                 fieldType: "General",
+                tab: basicTab,
             },
             {
                 fieldType: "General",
@@ -322,18 +380,105 @@ const banner: WidgetModule = {
                 ],
                 defaultValue: "1/4 viewport",
                 hideEmptyOption: true,
+                tab: basicTab,
             },
             {
                 fieldType: "General",
                 name: fields.disableButton,
                 editorTemplate: "CheckboxField",
                 defaultValue: false,
+                tab: basicTab,
+            },
+            {
+                name: fields.responsiveFontSizes,
+                editorTemplate: "CheckboxField",
+                fieldType: "General",
+                tab: settingsTab,
+                defaultValue: true,
             },
             {
                 fieldType: "General",
                 name: fields.contentPadding,
                 editorTemplate: "IntegerField",
                 defaultValue: 50,
+                tab: basicTab,
+            },
+            {
+                fieldType: "General",
+                name: "centerTextVertically",
+                editorTemplate: "CheckboxField",
+                defaultValue: false,
+                tab: basicTab,
+            },
+            {
+                name: fields.customFontSizes,
+                editorTemplate: "CheckboxField",
+                fieldType: "General",
+                tab: settingsTab,
+                defaultValue: false,
+            },
+            {
+                name: fields.normalFontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h1FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: 40,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h2FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: 32,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h3FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h4FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h5FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h6FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
             },
         ],
     },

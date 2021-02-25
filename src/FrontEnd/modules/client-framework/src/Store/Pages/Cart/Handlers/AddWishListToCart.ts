@@ -1,4 +1,9 @@
-import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import {
     addWishListToCart as addWishListToCartApi,
     AddWishListToCartApiParameter,
@@ -42,6 +47,7 @@ export const LoadCart: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult);
 };
 

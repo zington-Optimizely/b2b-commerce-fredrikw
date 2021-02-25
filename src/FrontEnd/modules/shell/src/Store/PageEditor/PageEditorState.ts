@@ -58,8 +58,8 @@ export interface PageEditorState {
     selectedProductPath?: string;
     selectedCategoryPath?: string;
     selectedBrandPath?: string;
-    /** When true, the page should be presented as the raw script for a page creator. */
-    showGeneratedPageTemplate: boolean;
+    displayPageTemplateModal: boolean;
+    generatedPageTemplate?: string;
     addWidgetData?: AddWidgetData;
     updatedLayoutIds?: Dictionary<boolean>;
 }

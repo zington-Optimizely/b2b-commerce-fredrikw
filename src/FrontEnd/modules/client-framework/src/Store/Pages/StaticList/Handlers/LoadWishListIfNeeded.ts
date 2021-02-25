@@ -105,6 +105,13 @@ export const LoadRealTimePrices: HandlerType = async props => {
                 }
                 props.pricingLoaded = true;
             },
+            onComplete(realTimePricingProps) {
+                if (realTimePricingProps.apiResult) {
+                    this.onSuccess?.(realTimePricingProps.apiResult);
+                } else if (realTimePricingProps.error) {
+                    this.onError?.(realTimePricingProps.error);
+                }
+            },
         }),
     );
 
@@ -141,6 +148,13 @@ export const LoadRealTimeInventory: HandlerType = props => {
                     productInfosByWishListLineId[wishListLineId]!.failedToLoadInventory = true;
                 }
                 props.inventoryLoaded = true;
+            },
+            onComplete(realTimeInventoryProps) {
+                if (realTimeInventoryProps.apiResult) {
+                    this.onSuccess?.(realTimeInventoryProps.apiResult);
+                } else if (realTimeInventoryProps.error) {
+                    this.onError?.(realTimeInventoryProps.error);
+                }
             },
         }),
     );

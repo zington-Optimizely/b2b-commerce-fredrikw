@@ -61,6 +61,16 @@ const ShoppingCart = require('../Icons/ShoppingCart').default;
     <Icon src={ShoppingCart} color="primary" size={15} style={{ marginLeft: 50 }} />
 </div>
 ```
+### Fully Customizable
+You may customize the Icon and target the child svg, through the `css` property. By default, these custom styles override styles found on the `theme` object. If you would like the theme to be combined with your custom styles, add the property `mergeCss={true}` to the component.
+```jsx
+const ShoppingCart = require('../Icons/ShoppingCart').default;
+const css = require('styled-components').css
+
+<div style={{ display: 'flex', alignItems: 'center' }}>
+    <Icon src={ShoppingCart} color="primary" size={42} css={css`padding: 10px; border-radius: 50%; color: #fff;background: green;`} />
+</div>
+```
 
 ### Load icon from URL
 ```jsx

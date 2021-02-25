@@ -329,6 +329,11 @@ class OrderHistoryTable extends React.Component<Props> {
                                                         orderNumber,
                                                         onSuccess: () =>
                                                             this.onReorderSuccess(orderNumber, linkOrderNumber),
+                                                        onComplete(resultProps) {
+                                                            if (resultProps.apiResult) {
+                                                                this.onSuccess?.();
+                                                            }
+                                                        },
                                                     })
                                                 }
                                             >

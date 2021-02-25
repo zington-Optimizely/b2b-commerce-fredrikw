@@ -1,4 +1,9 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { addAccount as addAccountApi, AddAccountApiParameter } from "@insite/client-framework/Services/AccountService";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { updateCart } from "@insite/client-framework/Services/CartService";
@@ -64,12 +69,14 @@ export const AddAccount: HandlerType = async props => {
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (!props.apiResult.successful) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.apiResult.errorMessage!);
     }
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.apiResult.successful) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.();
     }
 };

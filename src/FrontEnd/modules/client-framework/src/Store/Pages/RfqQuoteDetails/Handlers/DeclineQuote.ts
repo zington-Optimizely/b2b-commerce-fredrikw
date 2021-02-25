@@ -3,6 +3,7 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { updateQuote as updateQuoteApi, UpdateQuoteApiParameter } from "@insite/client-framework/Services/QuoteService";
 import { QuoteModel } from "@insite/client-framework/Types/ApiModels";
@@ -42,6 +43,7 @@ export const DispatchCompleteLoadQuote: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

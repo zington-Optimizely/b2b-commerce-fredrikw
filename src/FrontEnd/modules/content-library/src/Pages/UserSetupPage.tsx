@@ -79,6 +79,13 @@ class UserSetupPage extends Component<Props> {
             onError: (errorMessage: string) => {
                 this.props.toaster.addToast({ body: errorMessage, messageType: "danger" });
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult?.successful) {
+                    this.onSuccess?.();
+                } else if (resultProps.apiResult?.errorMessage) {
+                    this.onError?.(resultProps.apiResult.errorMessage);
+                }
+            },
         });
     };
 

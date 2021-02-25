@@ -216,6 +216,9 @@ export const FormFieldStyle = styled.div<FormFieldStyleProps>`
                     &:not(:disabled) {
                         ${borderByState(props, "error")}
                     }
+                    &:not(:disabled):focus {
+                        ${borderByState(props, "focus")}
+                    }
                 `;
             }
             return `

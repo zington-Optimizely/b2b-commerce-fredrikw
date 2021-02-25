@@ -1,4 +1,11 @@
-import { createHandlerChainRunner, Handler, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnError,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import logger from "@insite/client-framework/Logger";
 import {
     GetProductCollectionRealTimePriceApiV2Parameter,
@@ -46,12 +53,14 @@ export const RequestDataFromApi: HandlerType = async props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.error) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.(props.apiResult);
     }
 };
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.error) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.error);
     }
 };

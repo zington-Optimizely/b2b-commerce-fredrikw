@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "npm": "~6.11.3"
+  },
   "scripts": {
     "@comment build": "Optionally pass a blueprint name. IE npm run build example",
     "build": "npm-run-all \"build:server {1}\" \"build:client {1}\" --",

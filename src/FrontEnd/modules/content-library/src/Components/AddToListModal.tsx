@@ -209,6 +209,17 @@ const AddToListModal = ({
             onError: errorMessage => {
                 setNewListNameError(errorMessage);
             },
+            onComplete(wishListProps) {
+                if (wishListProps?.result?.wishList) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(wishListProps?.result?.wishList);
+                } else if (wishListProps?.result?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(wishListProps?.result?.errorMessage);
+                }
+            },
         });
     };
 

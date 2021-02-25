@@ -5,7 +5,6 @@
 ///<reference path= "../../Froalaeditor.d.ts" />
 import { rawRequest } from "@insite/client-framework/Services/ApiService";
 import { getTheme } from "@insite/client-framework/Services/ContentService";
-import { theme as defaultTheme } from "@insite/client-framework/Theme";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import Modal from "@insite/mobius/Modal";
@@ -292,6 +291,16 @@ class RichTextEditor extends React.Component<Props, State> {
                 key: "vYA6mB5B4E3E4C3C7dNSWXf1h1MDb1CF1PLPFf1C1EESFKVlA3C11A8B6D2B4F3G2C3F3",
                 theme: "dark",
                 attribution: false,
+                paragraphFormat: {
+                    N: "Normal",
+                    H1: "Heading 1",
+                    H2: "Heading 2",
+                    H3: "Heading 3",
+                    H4: "Heading 4",
+                    H5: "Heading 5",
+                    H6: "Heading 6",
+                    PRE: "Code",
+                },
                 paragraphFormatSelection: !sidebar,
                 paragraphMultipleStyles: false,
                 pastePlain: true,
@@ -303,17 +312,8 @@ class RichTextEditor extends React.Component<Props, State> {
                 height: 400,
                 colorsStep: 5,
                 videoInsertButtons: ["videoBack", "|", "videoByURL", "videoEmbed"],
-                htmlAllowedStyleProps: [
-                    "font-family",
-                    "font-size",
-                    "background",
-                    "color",
-                    "width",
-                    "text-align",
-                    "vertical-align",
-                    "background-color",
-                    "list-style-type",
-                ],
+                htmlRemoveTags: ["script"],
+                htmlExecuteScripts: false,
             };
             const config = this.props.extendedConfig
                 ? this.extendConfig(baseConfig, this.props.extendedConfig)

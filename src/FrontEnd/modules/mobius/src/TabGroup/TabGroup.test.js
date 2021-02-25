@@ -1,7 +1,6 @@
 import Button from "@insite/mobius/Button";
 import baseTheme from "@insite/mobius/globals/baseTheme";
 import Icon from "@insite/mobius/Icon";
-import Mail from "@insite/mobius/Icons/Mail";
 import Tab from "@insite/mobius/Tab";
 import TabGroup from "@insite/mobius/TabGroup/TabGroup";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
@@ -51,7 +50,7 @@ describe("TabGroup", () => {
     test("renders each child tab passed to it", () => {
         tabs = baseTabs;
         tabs.push(
-            <Tab headline={<Icon src={Mail} />} tabKey="Mail" key="Mail">
+            <Tab headline={<Icon src="Mail" />} tabKey="Mail" key="Mail">
                 {typeText("Mail lobby")}
             </Tab>,
         );

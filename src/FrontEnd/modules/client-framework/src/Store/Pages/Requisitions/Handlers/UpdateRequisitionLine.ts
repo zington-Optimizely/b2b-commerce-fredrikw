@@ -1,4 +1,9 @@
-import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { updateRequisitionLine as updateRequisitionLineApi } from "@insite/client-framework/Services/RequisitionService";
 import { RequisitionLineModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -43,6 +48,7 @@ export const DispatchCompleteUpdateRequisitionLine: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

@@ -18,19 +18,23 @@
 
 # To test/run the customer blueprint process
 # Ensure you are using Linux container mode
-# Build runtime-base image - do this once with a version number like 1.0.0.0
+# Replace 1.0.0.0 with a proper version number if you desire
+
+# Build runtime-base image - do this once for a given version number
 # BASH
-#   DOCKER_BUILDKIT=1 && docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
+#   DOCKER_BUILDKIT=1 && docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:1.0.0.0
 # Powershell
-#   $env:DOCKER_BUILDKIT=1; docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:{version}
-# To build the build-base image - do this each time you change base code, but you can use a version number like 1.0.0.0
+#   $env:DOCKER_BUILDKIT=1; docker build --pull --target=runtime-base . -t registry.cloud.insitehq.net/spire/runtime-base:1.0.0.0
+
+# To build the build-base image - do this each time you change base code
 # BASH
-#   DOCKER_BUILDKIT=1 && docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
+#   DOCKER_BUILDKIT=1 && docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:1.0.0.0
 # Powershell
-#   $env:DOCKER_BUILDKIT=1; docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:{version}
-# Run the actual blueprints docker file - this must execute from within the blueprints directory
-#   cd modules\blueprints
-#   docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example --build-arg COMMERCE_VERSION={version} -t spire-blueprint
+#   $env:DOCKER_BUILDKIT=1; docker build --pull --memory 4g --target=build-base . -t registry.cloud.insitehq.net/spire/build-base:1.0.0.0
+
+# Run the actual blueprints docker file - this must execute from within the modules directory
+#   cd modules
+#   docker build . -f .\Dockerfile --build-arg BLUEPRINT=blueprints/example --build-arg BLUEPRINT_NAME=example --build-arg COMMERCE_VERSION=1.0.0.0 -t spire-blueprint
 #   docker run --rm -p 3000:3000 -e "ISC_API_URL=http://host.docker.internal" spire-blueprint
 ARG BUILD_BASE="build-base"
 

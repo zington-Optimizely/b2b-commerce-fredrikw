@@ -159,7 +159,12 @@ export const NavigateToReturnUrl: HandlerType = async props => {
     const state = props.getState();
     let returnUrl = props.parameter.returnUrl;
     const dashboardPageUrl = getPageLinkByPageType(props.getState(), "MyAccountPage")?.url;
-    const defaultUrl = props.authenticatedSession?.dashboardIsHomepage && dashboardPageUrl ? dashboardPageUrl : "/";
+    const defaultUrl =
+        props.authenticatedSession?.dashboardIsHomepage && dashboardPageUrl
+            ? dashboardPageUrl
+            : props.authenticatedSession?.customLandingPage
+            ? props.authenticatedSession.customLandingPage
+            : "/";
     const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
 
     if (returnUrl?.toLowerCase() === checkoutShippingUrl?.toLowerCase()) {

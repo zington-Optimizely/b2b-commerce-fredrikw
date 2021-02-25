@@ -39,6 +39,7 @@ export interface ProductListProductInformationStyles {
     availabilityStyles?: ProductAvailabilityStyles;
     attributesGridItem?: GridItemProps;
     attributes?: ProductAttributesStyles;
+    searchScoreDataGridItem?: GridItemProps;
 }
 
 export const productInformationStyles: ProductListProductInformationStyles = {
@@ -71,6 +72,9 @@ export const productInformationStyles: ProductListProductInformationStyles = {
         width: 12,
     },
     attributesGridItem: {
+        width: 12,
+    },
+    searchScoreDataGridItem: {
         width: 12,
     },
 };

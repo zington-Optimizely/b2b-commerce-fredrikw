@@ -18,6 +18,12 @@ export interface ClickableComponentProps {
     onClick?: React.EventHandler<React.MouseEvent>;
     /** Disables automatic SPA transition. */
     spaOptOut?: true;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
 }
 
 export type ClickableButtonProps = MobiusStyledComponentProps<
@@ -42,7 +48,7 @@ export type ClickableLinkProps = MobiusStyledComponentProps<
 
 export type ClickableProps = ClickableButtonProps | ClickableLinkProps;
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
     background: transparent;
     border: none;
     cursor: pointer;
@@ -74,15 +80,28 @@ const StyledButton = styled.button`
  * In order to provide SPA routing, Clickable must be wrapped in a `HistoryContext.Provider`.
  */
 const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(
-    ({ children, className, disabled, disable, href, onClick, spaOptOut, stopPropagation, target, ...otherProps }) => (
+    ({
+        children,
+        className,
+        disabled,
+        disable,
+        href,
+        mergeCss,
+        onClick,
+        spaOptOut,
+        stopPropagation,
+        target,
+        ...otherProps
+    }) => (
         <HistoryContext.Consumer>
             {({ history }) => {
                 if (!children) {
                     return null;
                 }
-                const { applyProp } = applyPropBuilder(otherProps, { component: "clickable" });
+                const { applyStyledProp } = applyPropBuilder(otherProps, { component: "clickable" });
                 const onClickIsFunction = typeof onClick === "function";
                 const isRelativeLink = isRelativeUrl(href);
+                const resolvedMergeCss = mergeCss ?? otherProps?.theme?.clickable?.defaultProps?.mergeCss;
 
                 const forwardProps: {
                     as?: "a" | "button" | "span";
@@ -128,10 +147,10 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(
                 return (
                     <StyledButton
                         className={className}
-                        css={applyProp("css")}
                         target={target}
                         {...forwardProps}
                         {...otherProps}
+                        css={applyStyledProp("css", resolvedMergeCss)}
                         // Because disabled doesn't accept undefined
                         // eslint-disable-next-line no-unneeded-ternary
                         disabled={disable || disabled ? true : false}
@@ -144,11 +163,5 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(
     ),
 );
 
-Clickable.defaultProps = {
-    stopPropagation: false,
-};
-
 /** @component */
 export default withDisabler(Clickable);
-
-export { StyledButton };

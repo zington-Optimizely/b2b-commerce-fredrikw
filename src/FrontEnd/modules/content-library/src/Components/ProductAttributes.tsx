@@ -70,7 +70,7 @@ const ProductAttributes: FC<Props> = ({ product: { attributeTypes }, maximumNumb
                             {...styles.attributeTypeText}
                             data-test-selector={`attributeType${attributeType.id}`}
                         >
-                            {attributeType.label}
+                            {attributeType.label || attributeType.name}
                         </Typography>
                     </GridItem>
                     <GridItem

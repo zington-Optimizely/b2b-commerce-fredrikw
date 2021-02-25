@@ -7,6 +7,7 @@ import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
 import {
+    getSearchDataModeActive,
     getSelectedCategoryPath,
     getSettingsCollection,
 } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -58,6 +59,7 @@ const mapStateToProps = (state: ApplicationState) => {
         location: getLocation(state),
         category: getCategoryState(state, catalogPage?.categoryIdWithBrandId ?? catalogPage?.categoryId).value,
         websiteSettings: getSettingsCollection(state).websiteSettings,
+        searchDataModeActive: getSearchDataModeActive(state),
     };
 };
 
@@ -120,6 +122,7 @@ class ProductListPage extends React.Component<Props> {
             location: { pathname, search },
             firstProductDetailPath,
             productListCatalogPage,
+            searchDataModeActive,
         } = this.props;
 
         // handle the query string change requests initiated by the filtering widget setQueryFilter calls
@@ -172,12 +175,21 @@ class ProductListPage extends React.Component<Props> {
             this.setMetadata();
             trackPageChange();
             this.setProductListBreadcrumbs();
+        } else if (this.props.isSearchPage) {
+            // For pages that do not have a productListCatalogPage, mainly the Search Page
+            this.setMetadataTitle(translate("Search Results"));
+            trackPageChange();
         }
 
         if (productListCatalogPage) {
             if (this.props.isSearchPage && this.props.query !== prevProps.query) {
                 this.setSearchBreadcrumbs();
             }
+        }
+
+        if (searchDataModeActive !== prevProps.searchDataModeActive) {
+            // refresh the search results when search data mode has been toggled in the cms shell
+            this.loadProducts();
         }
     }
 
@@ -208,6 +220,19 @@ class ProductListPage extends React.Component<Props> {
                 title,
                 currentPath: location.pathname,
                 canonicalPath,
+                websiteName,
+            },
+            websiteSettings,
+        );
+    }
+
+    setMetadataTitle(title: string) {
+        const { websiteName, location, websiteSettings } = this.props;
+
+        setPageMetadata(
+            {
+                title,
+                currentPath: location.pathname,
                 websiteName,
             },
             websiteSettings,

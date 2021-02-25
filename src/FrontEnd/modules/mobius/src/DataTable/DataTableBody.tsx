@@ -21,11 +21,11 @@ const DataTableBody: React.FC<DataTableBodyProps> = ({ css: bodyCss = "", ...oth
     <DataTableContext.Consumer>
         {({ _cssOverrides }) => (
             <DataTableBodyStyle
+                {...otherProps}
                 css={css`
                     ${_cssOverrides.body || ""}
                     ${bodyCss}
                 `}
-                {...otherProps}
             />
         )}
     </DataTableContext.Consumer>

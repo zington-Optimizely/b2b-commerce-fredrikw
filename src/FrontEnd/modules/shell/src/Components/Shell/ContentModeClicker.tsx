@@ -15,7 +15,7 @@ const mapDispatchToProps = {
     setContentMode,
 };
 
-type OwnProps = { targetContentMode: ContentMode; icon: React.FC; disabled?: boolean };
+type OwnProps = { targetContentMode: ContentMode; icon: React.FC | string; disabled?: boolean };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 

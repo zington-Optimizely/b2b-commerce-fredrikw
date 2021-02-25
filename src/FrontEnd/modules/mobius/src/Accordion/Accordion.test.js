@@ -2,7 +2,7 @@ import "jest-styled-components";
 import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
-import Accordion from "./Accordion";
+import Accordion, { AccordionStyle } from "./Accordion";
 import AccordionSection from "../AccordionSection";
 
 describe("Accordion", () => {
@@ -30,6 +30,14 @@ describe("Accordion", () => {
 
     test("renders as a dl by default", () => {
         const root = wrapper().find(Accordion).getDOMNode();
-        expect(root instanceof HTMLDListElement).toBe(true);
+        expect(root).toBeInstanceOf(HTMLDListElement);
+    });
+    test("Header prop of 1", () => {
+        expect(wrapper().find(Accordion).props().headingLevel).toEqual(1);
+    });
+
+    test("AccordionStyle component styles", () => {
+        const accordionStyleComponent = wrapper().find(AccordionStyle);
+        expect(accordionStyleComponent).toHaveStyleRule("margin", "0");
     });
 });

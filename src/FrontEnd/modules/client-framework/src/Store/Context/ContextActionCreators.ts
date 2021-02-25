@@ -21,3 +21,8 @@ export const setCMSPermissions = (permissions: PermissionsModel, canChangePage: 
     permissions,
     canChangePage,
 });
+
+export const setSearchDataModeActive = (active: boolean): AnyAction => ({
+    type: "Context/SetSearchDataModeActive",
+    isSearchDataModeActive: active,
+});

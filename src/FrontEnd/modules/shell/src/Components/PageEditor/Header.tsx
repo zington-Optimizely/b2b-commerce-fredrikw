@@ -1,7 +1,5 @@
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Icon from "@insite/mobius/Icon";
-import Calendar from "@insite/mobius/Icons/Calendar";
-import Edit from "@insite/mobius/Icons/Edit";
 import DebugMenu from "@insite/shell/Components/Icons/DebugMenu";
 import BrandSelection from "@insite/shell/Components/PageEditor/BrandSelection";
 import CategorySelection from "@insite/shell/Components/PageEditor/CategorySelection";
@@ -10,13 +8,10 @@ import PublishDropDown from "@insite/shell/Components/PageEditor/PublishDropDown
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderPublishStatus from "@insite/shell/Components/Shell/HeaderPublishStatus";
 import { LoadedPageDefinition } from "@insite/shell/DefinitionTypes";
-import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { getPageState, getPageStateFromDictionaries } from "@insite/shell/Services/ContentAdminService";
 import { getAutoUpdatedPageTypes } from "@insite/shell/Services/SpireService";
 import shellTheme, { ShellThemeProps } from "@insite/shell/ShellTheme";
-import {
-    editPageOptions,
-    toggleShowGeneratedPageTemplate,
-} from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
+import { editPageOptions, openPageTemplateModal } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
@@ -32,24 +27,35 @@ type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispat
 
 const mapStateToProps = (state: ShellState, { page }: OwnProps) => {
     const {
-        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId },
+        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId, futurePublishNodeIds },
         shellContext: { contentMode, permissions },
     } = state;
 
-    return {
-        contentMode,
-        permissions,
-        futurePublishOn: getPageState(
+    const pageState =
+        getPageState(
             page.id,
             treeNodesByParentId[page.parentId],
             headerTreeNodesByParentId[page.parentId],
             footerTreeNodesByParentId[page.parentId],
-        )?.futurePublishOn,
+        ) ||
+        getPageStateFromDictionaries(
+            page.id,
+            treeNodesByParentId,
+            headerTreeNodesByParentId,
+            footerTreeNodesByParentId,
+        );
+
+    return {
+        contentMode,
+        permissions,
+        futurePublishOn:
+            pageState &&
+            futurePublishNodeIds[pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId],
     };
 };
 
 const mapDispatchToProps = {
-    toggleShowGeneratedPageTemplate,
+    openPageTemplateModal,
     setContentMode,
     editPageOptions,
 };
@@ -76,31 +82,24 @@ class Header extends React.Component<Props, State> {
     };
 
     render() {
-        const {
-            page,
-            pageDefinition,
-            toggleShowGeneratedPageTemplate,
-            contentMode,
-            permissions,
-            futurePublishOn,
-        } = this.props;
+        const { page, pageDefinition, openPageTemplateModal, contentMode, permissions, futurePublishOn } = this.props;
 
         const autoUpdatedPage = this.state.autoUpdatedPageTypes?.includes(page.type) ?? false;
         return (
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
                 <Icon src={Spacer} color="#999" />
-                <Icon src={Calendar} size={20} color={shellTheme.colors.text.main} />
+                <Icon src="Calendar" size={20} color={shellTheme.colors.text.main} />
                 <HeaderPublishStatus />
                 {contentMode === "Editing" && (
                     <>
                         <Icon src={Spacer} color="#999" />
                         {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
                             <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
-                                <Icon src={Edit} size={20} color={shellTheme.colors.text.main} />
+                                <Icon src="Edit" size={20} color={shellTheme.colors.text.main} />
                             </PageHeaderButton>
                         )}
-                        <PageHeaderButton onClick={toggleShowGeneratedPageTemplate}>
+                        <PageHeaderButton onClick={openPageTemplateModal}>
                             <DebugMenu color1={shellTheme.colors.text.main} size={16} />
                         </PageHeaderButton>
                     </>

@@ -1,4 +1,8 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import {
     addAllWishListLines as addAllWishListLinesApi,
     AddAllWishListLinesApiParameter,
@@ -33,6 +37,7 @@ export const ResetWishListData: HandlerType = props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.apiResult.error) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.();
     }
 };

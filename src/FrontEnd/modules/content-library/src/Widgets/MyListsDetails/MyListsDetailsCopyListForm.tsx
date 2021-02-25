@@ -112,6 +112,13 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                 apiParameter: { name: this.state.name },
                 onSuccess: this.onCreateSuccess,
                 onError: this.onCreateError,
+                onComplete(resultProps) {
+                    if (resultProps.result?.wishListModel) {
+                        this.onSuccess?.(resultProps.result?.wishListModel);
+                    } else if (resultProps.result?.errorMessage) {
+                        this.onError?.(resultProps.result.errorMessage);
+                    }
+                },
             });
         } else if (this.props.wishLists) {
             const destinationWishList = this.props.wishLists.find(w => w.id === this.state.wishListId);
@@ -143,6 +150,11 @@ class MyListsDetailsCopyListForm extends React.Component<Props, State> {
                         body: translate("Item(s) copied to ") + destinationWishList.name,
                         messageType: "success",
                     });
+                },
+                onComplete(resultProps) {
+                    if (!resultProps?.apiResult?.error) {
+                        this.onSuccess?.();
+                    }
                 },
             });
         }

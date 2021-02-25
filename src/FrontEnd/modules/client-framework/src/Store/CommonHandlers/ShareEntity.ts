@@ -1,4 +1,8 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import {
     shareEntity as shareEntityApi,
     ShareEntityApiParameter,
@@ -38,6 +42,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

@@ -114,6 +114,17 @@ const RequestRmaButtons: FC<Props> = ({
             onError: (errorMessage: string) => {
                 toaster.addToast({ body: errorMessage, messageType: "danger" });
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult?.successful) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(resultProps.apiResult.result);
+                } else if (resultProps.apiResult?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(resultProps.apiResult.errorMessage);
+                }
+            },
         });
     };
 

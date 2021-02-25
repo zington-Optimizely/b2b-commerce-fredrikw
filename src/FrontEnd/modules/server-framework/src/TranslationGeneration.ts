@@ -8,15 +8,15 @@ export async function generateTranslations() {
     try {
         await promises.access(filePath, constants.F_OK);
         const response = await saveTranslations(createReadStream(filePath, { encoding: "utf8" }));
-        if (response.status !== 200) {
-            logResponse(response);
+        if (!response.ok) {
+            logErrorResponse(response);
         }
     } catch (error) {
-        logger.warn(`Cannot find translations file at ${filePath}. Translations import cannot continue.`);
+        logger.warn(error);
     }
 }
 
-async function logResponse(response: Response) {
+async function logErrorResponse(response: Response) {
     const bodyJson = await response.json();
     logger.error("There was a problem saving the translations.");
     logger.error(response.statusText);

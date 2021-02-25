@@ -4,6 +4,7 @@ import {
     createHandlerChainRunner,
     HasOnSuccess,
     makeHandlerChainAwaitable,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { AddProductApiParameter, addProductWithResult } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
@@ -55,6 +56,7 @@ export const LoadPromotions: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult);
 };
 

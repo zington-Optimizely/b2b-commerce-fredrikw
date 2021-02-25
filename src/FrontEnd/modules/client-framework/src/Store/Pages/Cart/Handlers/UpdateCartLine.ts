@@ -1,4 +1,8 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import {
     updateCartLine as updateCartLineApi,
@@ -50,6 +54,7 @@ export const DispatchCompleteUpdateCartLine: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

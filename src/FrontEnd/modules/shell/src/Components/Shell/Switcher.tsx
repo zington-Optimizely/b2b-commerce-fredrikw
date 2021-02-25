@@ -1,7 +1,5 @@
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
-import Edit2 from "@insite/mobius/Icons/Edit2";
-import Eye from "@insite/mobius/Icons/Eye";
 import ContentModeClicker from "@insite/shell/Components/Shell/ContentModeClicker";
 import { Spacer } from "@insite/shell/Components/Shell/HeaderBar";
 import HeaderGear from "@insite/shell/Components/Shell/HeaderGear";
@@ -47,8 +45,8 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive, stageMode, c
                 </>
             )}
             <div>
-                <ContentModeClicker targetContentMode="Editing" icon={Edit2} disabled={disabled} />
-                <ContentModeClicker targetContentMode="Previewing" icon={Eye} disabled={disabled} />
+                <ContentModeClicker targetContentMode="Editing" icon="Edit2" disabled={disabled} />
+                <ContentModeClicker targetContentMode="Previewing" icon="Eye" disabled={disabled} />
             </div>
             {!mobileCmsModeActive && (
                 <>

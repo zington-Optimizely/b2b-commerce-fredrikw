@@ -2,6 +2,7 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { submitContactUsForm, SubmitContactUsFormApiParameter } from "@insite/client-framework/Services/EmailService";
 
@@ -29,6 +30,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

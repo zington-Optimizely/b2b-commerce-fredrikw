@@ -1,9 +1,9 @@
 import { getAccessTokenFromLocalStorage } from "@insite/shell/Services/AccessTokenService";
+import { exportContent as apiExportContent } from "@insite/shell/Services/ContentAdminService";
 import {
-    exportContent as apiExportContent,
     importContent as apiImportContent,
     restoreContent as apiRestoreContent,
-} from "@insite/shell/Services/ContentAdminService";
+} from "@insite/shell/Services/WebsitesService";
 import { ImportExportModalState } from "@insite/shell/Store/ImportExportModal/ImportExportModalState";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";

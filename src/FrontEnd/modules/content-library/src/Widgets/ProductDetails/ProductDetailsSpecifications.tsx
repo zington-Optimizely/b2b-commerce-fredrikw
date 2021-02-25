@@ -124,7 +124,9 @@ const ProductDetailsSpecifications: React.FC<Props> = ({
             {attributeTypes &&
                 attributeTypes.map(attributeType => (
                     <StyledWrapper {...styles.attributeTypeWrapper} key={attributeType.id.toString()}>
-                        <Typography {...styles.attributeTypeLabelText}>{attributeType.label}:&nbsp;</Typography>
+                        <Typography {...styles.attributeTypeLabelText}>
+                            {attributeType.label || attributeType.name}:&nbsp;
+                        </Typography>
                         <Typography {...styles.attributeTypeValuesText}>
                             {attributeType
                                 .attributeValues!.map(attributeValue => attributeValue.valueDisplay)

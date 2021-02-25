@@ -3,6 +3,8 @@ import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-frame
 import { setPostStyleGuideTheme, setPreStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
 import { css } from "styled-components";
 
+import ShoppingCart from "@insite/mobius/Icons/ShoppingCart";
+
 // load all widgets. Without this they won't be included in the bundle
 const widgets = require.context("./Widgets", true, /\.tsx$/);
 const onHotWidgetReplace = addWidgetsFromContext(widgets);
@@ -36,6 +38,13 @@ setPreStyleGuideTheme({
         h2: {
             weight: 26,
             transform: "lowercase",
+        },
+    },
+    toast: {
+        defaultProps: {
+            iconSrcByMessage: {
+                success: ShoppingCart,
+            },
         },
     },
 });
@@ -92,6 +101,25 @@ setPostStyleGuideTheme({
             },
         },
     },
+    breadcrumbs: {
+        defaultProps: {
+            css: css`
+                font-style: italic;
+                text-decoration: underline;
+            `,
+        },
+    },
+    clickable: {
+        defaultProps: {
+            css: css`
+                background: #ececec;
+                border-radius: 3px;
+                padding: 5px;
+                margin: 4px;
+                border: 1px solid #eee;
+            `,
+        },
+    },
     checkbox: {
         groupDefaultProps: {
             css: css`
@@ -103,6 +131,19 @@ setPostStyleGuideTheme({
             css: css`
                 background: black;
                 color: yellow;
+            `,
+        },
+    },
+    icon: {
+        defaultProps: {
+            css: css`
+                display: flex;
+                justify-content: center;
+                color: violet;
+                height: 50px;
+                width: 50px;
+                background: #222;
+                border-radius: 3px;
             `,
         },
     },

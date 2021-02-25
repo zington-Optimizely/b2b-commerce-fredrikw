@@ -1,3 +1,4 @@
+import { isMobileAppCookieName } from "@insite/client-framework/Common/ContentMode";
 import { Request, Response } from "express";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -22,5 +23,8 @@ const renderedShell = `<!DOCTYPE html>${renderToStaticMarkup(
 // our code requires these to be async right now
 // eslint-disable-next-line require-await
 export const shellRenderer = async (request: Request, response: Response) => {
+    if (request.query?.isMobileApp !== undefined) {
+        response.cookie(isMobileAppCookieName, request.query?.isMobileApp);
+    }
     response.send(renderedShell);
 };

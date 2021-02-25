@@ -444,6 +444,13 @@ const ConfigureBudget: React.FC<Props> = ({
                 },
                 updateBudgetCalendarApiParameter: { budgetCalendar: { ...budgetCalendar, budgetPeriods: dates } },
                 onSuccess: onSaveSuccess,
+                onComplete(resultProps) {
+                    if (!resultProps.hadError) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.();
+                    }
+                },
             });
         }
     };

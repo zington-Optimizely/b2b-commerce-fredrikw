@@ -2,6 +2,8 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import { addRma as addRmaApi, AddRmaApiParameter } from "@insite/client-framework/Services/OrderService";
@@ -48,15 +50,17 @@ export const CallAddRmaApi: HandlerType = async props => {
     props.apiResult = await addRmaApi(props.apiParameter);
 };
 
-export const ExecuteOnSuccessCallback: HandlerType = ({ parameter: { onSuccess }, apiResult }) => {
-    if (apiResult.successful) {
-        onSuccess?.(apiResult.result);
+export const ExecuteOnSuccessCallback: HandlerType = props => {
+    if (props.apiResult.successful) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
+        props.parameter.onSuccess?.(props.apiResult.result);
     }
 };
 
-export const ExecuteOnErrorCallback: HandlerType = ({ parameter: { onError }, apiResult }) => {
-    if (!apiResult.successful) {
-        onError?.(apiResult.errorMessage);
+export const ExecuteOnErrorCallback: HandlerType = props => {
+    if (!props.apiResult.successful) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
+        props.parameter.onError?.(props.apiResult.errorMessage);
     }
 };
 

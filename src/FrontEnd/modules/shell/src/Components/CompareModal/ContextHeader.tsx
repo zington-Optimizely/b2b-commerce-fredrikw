@@ -1,9 +1,6 @@
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Button from "@insite/mobius/Button/Button";
 import Icon from "@insite/mobius/Icon";
-import Globe from "@insite/mobius/Icons/Globe";
-import Monitor from "@insite/mobius/Icons/Monitor";
-import Users from "@insite/mobius/Icons/Users";
 import Typography from "@insite/mobius/Typography";
 import FullWidth from "@insite/shell/Components/Icons/FullWidth";
 import SplitScreen from "@insite/shell/Components/Icons/SplitScreen";
@@ -95,7 +92,7 @@ class ContextHeader extends React.Component<Props> {
             <ContextHeaderStyle>
                 <ContextSelects>
                     <TitleStyle variant="h3">Comparing: {name}</TitleStyle>
-                    <Icon src={Globe} size={20} color="#000" />
+                    <Icon src="Globe" size={20} color="#000" />
                     <select
                         onChange={this.onLanguageChange}
                         data-test-selector="publishCompareModal_languageSelect"
@@ -109,7 +106,7 @@ class ContextHeader extends React.Component<Props> {
                     </select>
                     {hasDeviceSpecificContent && (
                         <>
-                            <Icon src={Monitor} size={20} color="#000" />
+                            <Icon src="Monitor" size={20} color="#000" />
                             <select
                                 onChange={this.onDeviceTypeChange}
                                 value={deviceType}
@@ -125,7 +122,7 @@ class ContextHeader extends React.Component<Props> {
                     )}
                     {hasPersonaSpecificContent && (
                         <>
-                            <Icon src={Users} size={20} color="#000" />
+                            <Icon src="Users" size={20} color="#000" />
                             <select
                                 onChange={this.onPersonaChange}
                                 data-test-selector="publishCompareModal_personaSelect"

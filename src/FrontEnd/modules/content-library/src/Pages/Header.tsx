@@ -10,7 +10,7 @@ import PageProps from "@insite/client-framework/Types/PageProps";
 import SkipNav, { SkipNavStyles } from "@insite/content-library/Components/SkipNav";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import Link from "@insite/mobius/Link";
-import Page from "@insite/mobius/Page";
+import Page, { PageProps as MobiusPageProps } from "@insite/mobius/Page";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
@@ -38,12 +38,16 @@ type Props = PageProps &
     HasHistory;
 
 export interface HeaderStyles {
+    page?: MobiusPageProps;
     container?: InjectableCss;
     skipToContent?: SkipNavStyles;
     websiteName?: InjectableCss;
 }
 
 export const headerStyles: HeaderStyles = {
+    page: {
+        fullWidth: [true, true, false, false, false],
+    },
     container: {
         css: css`
             background-color: ${getColor("secondary.main")};
@@ -115,7 +119,7 @@ const Header = ({ id, siteName, session, toaster, history, myAccountPageUrl, dis
     return (
         <>
             {siteName && <Typography {...styles.websiteName}>{siteName}</Typography>}
-            <Page as="header" fullWidth={[true, true, false, false, false]}>
+            <Page as="header" {...styles.page}>
                 <SkipNav
                     extendedStyles={styles.skipToContent}
                     text={translate("Skip to main content")}

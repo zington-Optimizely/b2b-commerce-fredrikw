@@ -1,4 +1,8 @@
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { updateWishListSchedule as updateWishListScheduleApi } from "@insite/client-framework/Services/WishListService";
 import loadWishList from "@insite/client-framework/Store/Data/WishLists/Handlers/LoadWishList";
 import { WishListEmailScheduleModel, WishListModel } from "@insite/client-framework/Types/ApiModels";
@@ -31,6 +35,7 @@ export const ResetWishListsData: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

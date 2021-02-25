@@ -1,14 +1,17 @@
+import { Dictionary } from "@insite/client-framework/Common/Types";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { LoadedPageDefinition } from "@insite/shell/DefinitionTypes";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 
 export function canDeletePage(
+    futurePublishNodeIds: Dictionary<Date>,
     pageDefinition: LoadedPageDefinition,
     permissions: PermissionsModel,
     treeNode: TreeNodeModel,
 ) {
+    const key = treeNode.isVariant ? `${treeNode.nodeId}_${treeNode.pageId}` : treeNode.nodeId;
     return (
-        (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date()) &&
+        (!futurePublishNodeIds[key] || futurePublishNodeIds[key] <= new Date()) &&
         permissions.canDeletePage &&
         (pageDefinition.pageType === "Content" || !!treeNode.isVariant || !!treeNode.isRootVariant) &&
         (treeNode.isVariant ? !treeNode.isDefaultVariant : true)
@@ -16,12 +19,14 @@ export function canDeletePage(
 }
 
 export function canEditPage(
+    futurePublishNodeIds: Dictionary<Date>,
     pageDefinition: LoadedPageDefinition,
     permissions: PermissionsModel,
     treeNode: TreeNodeModel,
 ) {
+    const key = treeNode.isVariant ? `${treeNode.nodeId}_${treeNode.pageId}` : treeNode.nodeId;
     return (
-        (!treeNode.futurePublishOn || treeNode.futurePublishOn <= new Date()) &&
+        (!futurePublishNodeIds[key] || futurePublishNodeIds[key] <= new Date()) &&
         ((permissions.canEditWidget && pageDefinition.pageType === "Content") ||
             (permissions.canEditSystemWidget && pageDefinition.pageType === "System"))
     );

@@ -1,6 +1,5 @@
-import { getById } from "@insite/client-framework/Store/Data/DataState";
-import { nullPage } from "@insite/client-framework/Store/Data/Pages/PagesState";
-import { cleanPage, PageModel } from "@insite/client-framework/Types/PageProps";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import PageProps, { cleanPage, PageModel } from "@insite/client-framework/Types/PageProps";
 import ShellState from "@insite/shell/Store/ShellState";
 import { ColorResult } from "react-color";
 
@@ -15,28 +14,21 @@ export const colorResultToString = (color: ColorResult): undefined | string => {
     return returnValue;
 };
 
-export function getCurrentPageForShell(state: ShellState) {
-    return getPageStateByPath(state, state.data.pages.location.pathname).value || nullPage;
-}
-
-function getPageStateByPath(state: ShellState, path: string) {
-    const indexOf = path.indexOf("?");
-    const realPath = (indexOf > -1 ? path.substring(0, indexOf) : path).toLowerCase();
-    return getById(state.data.pages, realPath, o => state.data.pages.idByPath[o] || "");
-}
-
-export function getStorablePage(state: ShellState, websiteId: string): PageModel {
-    const page = getCurrentPageForShell(state);
-
+export function getStorablePage(
+    state: ShellState,
+    websiteId: string,
+    page?: PageProps,
+    shouldCleanPage = true,
+): PageModel {
     const storablePage: PageModel = {
-        ...page,
+        ...(page ?? getCurrentPage(state)),
         widgets: [],
         websiteId,
     };
 
     const { widgetIdsByPageIdParentIdAndZone, widgetsById } = state.data.pages;
 
-    const pageContent = widgetIdsByPageIdParentIdAndZone[page.id];
+    const pageContent = widgetIdsByPageIdParentIdAndZone[storablePage.id];
 
     for (const parentId in pageContent) {
         for (const zone in pageContent[parentId]) {
@@ -46,7 +38,9 @@ export function getStorablePage(state: ShellState, websiteId: string): PageModel
         }
     }
 
-    cleanPage(storablePage);
+    if (shouldCleanPage) {
+        cleanPage(storablePage);
+    }
 
     return storablePage;
 }

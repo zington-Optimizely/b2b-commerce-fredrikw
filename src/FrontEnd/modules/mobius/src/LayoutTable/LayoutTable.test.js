@@ -27,4 +27,10 @@ describe("LayoutTable", () => {
         const root = wrapper().find(LayoutTable).getDOMNode();
         expect(root instanceof HTMLDivElement).toBe(true);
     });
+
+    test("Props passed to component", () => {
+        const root = wrapper().find(LayoutTable);
+        expect(root.props().cellsPerGroup).toBe(0);
+        expect(root.props().numberOfGroups).toBe(0);
+    });
 });

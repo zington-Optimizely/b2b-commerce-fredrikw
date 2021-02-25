@@ -24,6 +24,7 @@ const initialState: ContextState = {
     isSigningIn: false,
     isErrorModalOpen: false,
     isUnauthorizedError: false,
+    isSearchDataModeActive: false,
 };
 
 const forcedContext = (() => {
@@ -106,6 +107,9 @@ const reducer = {
     },
     "Context/SetIsPunchOutSessionId": (draft: Draft<ContextState>, action: { punchOutSessionId?: string }) => {
         draft.punchOutSessionId = action.punchOutSessionId;
+    },
+    "Context/SetSearchDataModeActive": (draft: Draft<ContextState>, action: { isSearchDataModeActive: boolean }) => {
+        draft.isSearchDataModeActive = action.isSearchDataModeActive;
     },
     "Context/CompleteLoadPaymetricConfig": (
         draft: Draft<ContextState>,

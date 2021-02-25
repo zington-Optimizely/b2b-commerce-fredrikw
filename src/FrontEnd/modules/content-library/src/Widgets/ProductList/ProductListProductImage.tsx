@@ -1,3 +1,4 @@
+import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasProductContext, withProductContext } from "@insite/client-framework/Components/ProductContext";
 import siteMessage from "@insite/client-framework/SiteMessage";
@@ -14,13 +15,14 @@ import ProductImage, { ProductImageStyles } from "@insite/content-library/Compon
 import Checkbox, { CheckboxPresentationProps } from "@insite/mobius/Checkbox";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
     showImage: boolean;
     showCompare: boolean;
+    extendedStyles?: ProductListProductImageStyles;
 }
 
 const mapStateToProps = (state: ApplicationState, props: HasProductContext) => ({
@@ -71,8 +73,6 @@ export const productImageStyles: ProductListProductImageStyles = {
     },
 };
 
-const styles = productImageStyles;
-
 const ProductListProductImage: FC<Props> = ({
     productContext,
     showImage,
@@ -80,10 +80,12 @@ const ProductListProductImage: FC<Props> = ({
     isProductCompareFull,
     settingsCollection,
     productCompareChecked,
+    extendedStyles,
     addProductToCompare,
     removeProductFromCompare,
 }) => {
     const toasterContext = React.useContext(ToasterContext);
+    const [styles] = useState(() => mergeToNew(productImageStyles, extendedStyles));
 
     const handleChanged = (_: React.SyntheticEvent, value: boolean) => {
         if (value && isProductCompareFull) {

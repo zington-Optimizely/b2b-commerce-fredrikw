@@ -23,5 +23,6 @@ export default interface ContextState {
     canChangePage?: boolean;
     accessToken?: string;
     addingProductToCart?: boolean;
+    isSearchDataModeActive: boolean;
     paymetricConfig?: PaymetricConfig;
 }

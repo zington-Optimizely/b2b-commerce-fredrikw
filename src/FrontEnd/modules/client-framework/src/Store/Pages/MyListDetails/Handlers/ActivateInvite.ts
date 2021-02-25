@@ -4,6 +4,8 @@ import {
     HandlerWithResult,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { activateInvite as activateInviteApi } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
@@ -40,12 +42,14 @@ export const ResetWishListsData: HandlerType = props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.result.wishList) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.(props.result.wishList);
     }
 };
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.result.errorMessage) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.result.errorMessage);
     }
 };

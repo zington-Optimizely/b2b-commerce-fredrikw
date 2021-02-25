@@ -31,7 +31,21 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    props.apiResult = await getCategories(props.apiParameter);
+    try {
+        props.apiResult = await getCategories(props.apiParameter);
+    } catch (error) {
+        if (error?.status === 404) {
+            if (props.apiParameter.startCategoryId) {
+                props.dispatch({
+                    type: "Data/Categories/FailedToLoadCategory",
+                    categoryId: props.apiParameter.startCategoryId,
+                    status: error.status,
+                });
+            }
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadCategories: HandlerType = props => {

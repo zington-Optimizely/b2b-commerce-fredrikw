@@ -1,25 +1,41 @@
 {
-    "nodeId": "0cd97514-ce99-45c3-bb22-d2da18b414d5",
+    "nodeId": "91cf5670-9b5f-48c4-9b56-0e72f6ac8ba5",
     "name": "Footer",
     "type": "Footer",
     "parentId": "00000000-0000-0000-0000-000000000000",
     "sortOrder": 0,
     "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
+    "variantName": null,
+    "layoutPageId": null,
+    "templateHash": "4359d807212f45cf212d1cc9cee78972ca8b67c405fa516a419774122befd8af",
+    "requiresAuthorization": false,
+    "id": "2875f56a-00c6-4c95-b0a6-f50f4687e205",
+    "generalFields": {
+        "horizontalRule": "",
+        "tags": [],
+        "hideBreadcrumbs": false,
+        "variantName": "",
+        "layoutPage": ""
+    },
+    "translatableFields": {},
+    "contextualFields": {},
     "widgets": [
         {
-            "parentId": "da8f4d54-24ee-400d-b4ff-108573a62c4e",
+            "parentId": "2875f56a-00c6-4c95-b0a6-f50f4687e205",
             "type": "Footer/FooterContainer",
             "zone": "Content",
-            "id": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "isLayout": false,
+            "id": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/LinkList",
             "zone": "LinkList1",
-            "id": "9f37ce92-01ca-4064-8471-e175b3fe75df",
+            "isLayout": false,
+            "id": "9e95035d-12f7-4916-9fda-9450c73cbdaa",
             "generalFields": {
                 "direction": "vertical",
                 "alignment": "left",
@@ -37,10 +53,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/LinkList",
             "zone": "LinkList2",
-            "id": "d1c85f35-a3ad-4d82-a5c2-cf5a6e01ec0b",
+            "isLayout": false,
+            "id": "cccf0002-f8dd-499e-a62b-0742fa849204",
             "generalFields": {
                 "direction": "vertical",
                 "alignment": "left",
@@ -58,10 +75,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/LinkList",
             "zone": "LinkList3",
-            "id": "1a9099fe-cb04-4f04-8b3e-b7633c29e19a",
+            "isLayout": false,
+            "id": "7c173331-1449-4746-b701-eb69991969a4",
             "generalFields": {
                 "direction": "vertical",
                 "alignment": "left",
@@ -79,10 +97,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/LinkList",
             "zone": "LinkList4",
-            "id": "791e0f7b-9005-45fd-9db9-fb13d44d8373",
+            "isLayout": false,
+            "id": "85a7724e-fbd0-4754-b4c1-96b4609ad8ef",
             "generalFields": {
                 "direction": "vertical",
                 "alignment": "left",
@@ -100,10 +119,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/Subscribe",
             "zone": "Subscribe",
-            "id": "23b3f565-f7bd-497d-a9f6-b0297482bf13",
+            "isLayout": false,
+            "id": "8b67f2c8-6397-4533-85ab-b45760e16e51",
             "generalFields": {},
             "translatableFields": {
                 "alignment": {
@@ -128,10 +148,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/SocialLinks",
             "zone": "SocialLinks",
-            "id": "112980a6-34db-4655-a972-325f8d8076b2",
+            "isLayout": false,
+            "id": "3c26ad66-ba8c-48e6-bc78-de417db874fa",
             "generalFields": {
                 "direction": "horizontal",
                 "alignment": "left",
@@ -149,10 +170,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/LinkList",
             "zone": "SiteMapLinks",
-            "id": "a68946dd-a545-4eee-98a2-8edc8d56bb3c",
+            "isLayout": false,
+            "id": "8012a29b-898b-4e4b-b57f-186ed374eedb",
             "generalFields": {
                 "direction": "horizontal",
                 "alignment": "center",
@@ -165,7 +187,7 @@
                         "fields": {
                             "destination": {
                                 "type": "Page",
-                                "value": "nodeIdForType('HomePage')"
+                                "value": "nodeIdFor('Home')"
                             },
                             "openInNewWindow": false
                         }
@@ -174,7 +196,7 @@
                         "fields": {
                             "destination": {
                                 "type": "Page",
-                                "value": "nodeIdForType('MyAccountPage')"
+                                "value": "nodeIdFor('MyAccount')"
                             },
                             "openInNewWindow": false
                         }
@@ -198,11 +220,15 @@
             "contextualFields": {}
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/RichContent",
             "zone": "RichContent",
-            "id": "4dea4edf-00e0-4e1c-ba24-a8d5263a1335",
-            "generalFields": {},
+            "isLayout": false,
+            "id": "ca959c16-fd9e-4be3-be69-9a382ca844dd",
+            "generalFields": {
+                "backgroundColor": "",
+                "padding": 0
+            },
             "translatableFields": {},
             "contextualFields": {
                 "content": {
@@ -211,10 +237,11 @@
             }
         },
         {
-            "parentId": "e3b72be3-0677-4bb9-a38a-2a2619958924",
-            "zone": "Logo",
+            "parentId": "d97a15bd-d838-4a98-bd08-90955c482d7c",
             "type": "Basic/Logo",
-            "id": "0c704f98-2348-4a83-b102-7d7b55e8bcf9",
+            "zone": "Logo",
+            "isLayout": false,
+            "id": "8b940796-7fe3-42ae-9f1a-d744726d5b8c",
             "generalFields": {
                 "isMobileSpecific": false
             },
@@ -228,13 +255,5 @@
             },
             "contextualFields": {}
         }
-    ],
-    "id": "da8f4d54-24ee-400d-b4ff-108573a62c4e",
-    "generalFields": {
-        "horizontalRule": "",
-        "tags": [],
-        "hideBreadcrumbs": false
-    },
-    "translatableFields": {},
-    "contextualFields": {}
+    ]
 }

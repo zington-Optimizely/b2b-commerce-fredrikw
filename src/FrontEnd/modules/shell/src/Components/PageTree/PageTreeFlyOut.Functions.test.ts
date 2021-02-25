@@ -79,7 +79,7 @@ function callCanDeletePage(
     treeNode: TreeNodeModel | undefined = undefined,
     permissionValue = true,
 ) {
-    return canDeletePage(withPageType(pageType), withCanDeletePage(permissionValue), treeNode ?? withTreeNode({}));
+    return canDeletePage({}, withPageType(pageType), withCanDeletePage(permissionValue), treeNode ?? withTreeNode({}));
 }
 
 function callCanCopyPage(

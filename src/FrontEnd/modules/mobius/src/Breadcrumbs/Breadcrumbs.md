@@ -1,7 +1,7 @@
-### Example
+### Example, including custom CSS
 
 ```jsx
-const style = { marginTop: '1rem' };
+const css = require('styled-components').css
 
 const links = [{
     children: 'Home',
@@ -18,7 +18,7 @@ const links = [{
 
 <>
     <Breadcrumbs links={links.slice(0, 2)} />
-    <Breadcrumbs links={links.slice(0, 3)} style={style} />
-    <Breadcrumbs links={links} style={style} />
+    <Breadcrumbs links={links.slice(0, 3)} css={css` margin-top: 1rem;`} />
+    <Breadcrumbs links={links} css={css` margin-top: 1rem;`} />
 </>
 ```

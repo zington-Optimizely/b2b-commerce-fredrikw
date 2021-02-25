@@ -91,59 +91,51 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
         });
         const sizeVariant = applyProp("sizeVariant", "default") as keyof typeof checkboxSizes;
 
-        let renderLabel;
-        if (label === 0 || label) {
-            renderLabel = (
-                <Typography
-                    as="legend"
-                    weight={600}
-                    size={checkboxSizes[sizeVariant].fontSize}
-                    {...spreadProps("labelProps" as any)}
-                >
-                    {label}
-                    {required && " *"}
-                </Typography>
-            );
-        }
-
-        let renderError;
         const labelProps: { as?: "div" } = {};
-        if (error === 0 || error) {
-            renderError = (
-                <Typography
-                    color="danger"
-                    weight={600}
-                    size={checkboxSizes[sizeVariant].fontSize}
-                    {...spreadProps("errorProps" as any)}
-                >
-                    {error}
-                </Typography>
-            );
-        } else if (typeof children === "object") {
+        if (typeof children === "object") {
             labelProps.as = "div";
         }
 
         const resolvedMergeCss = mergeCss ?? this.props?.theme?.radio?.groupDefaultProps?.mergeCss;
 
         return (
-            <RadioGroupStyle
-                {...labelProps}
-                {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
-                css={applyStyledProp("css", resolvedMergeCss)}
+            <RadioGroupContext.Provider
+                value={{
+                    name: this.state.name,
+                    value: this.state.value,
+                    sizeVariant,
+                    onChange: this.handleChange,
+                }}
             >
-                {renderLabel}
-                <RadioGroupContext.Provider
-                    value={{
-                        name: this.state.name,
-                        value: this.state.value,
-                        sizeVariant,
-                        onChange: this.handleChange,
-                    }}
+                <RadioGroupStyle
+                    {...labelProps}
+                    {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
+                    css={applyStyledProp("css", resolvedMergeCss)}
                 >
+                    {String(label) && (
+                        <Typography
+                            {...spreadProps("labelProps")}
+                            as="legend"
+                            weight={600}
+                            size={checkboxSizes[sizeVariant].fontSize}
+                        >
+                            {label}
+                            {required && " *"}
+                        </Typography>
+                    )}
                     {children}
-                </RadioGroupContext.Provider>
-                {renderError}
-            </RadioGroupStyle>
+                    {String(error) && (
+                        <Typography
+                            {...spreadProps("errorProps")}
+                            color="danger"
+                            weight={600}
+                            size={checkboxSizes[sizeVariant].fontSize}
+                        >
+                            {error}
+                        </Typography>
+                    )}
+                </RadioGroupStyle>
+            </RadioGroupContext.Provider>
         );
     }
 }

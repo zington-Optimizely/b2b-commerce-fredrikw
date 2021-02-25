@@ -154,6 +154,11 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
                 toasterContext.addToast({ body: "Quote deleted", messageType: "success" });
                 redirectToMyQuotes();
             },
+            onComplete() {
+                // "this" is targeting the object being created, not the parent SFC
+                // eslint-disable-next-line react/no-this-in-sfc
+                this.onSuccess?.();
+            },
         });
     };
 
@@ -176,6 +181,13 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
                 toasterContext.addToast({ body: "Quote submitted", messageType: "success" });
                 redirectToMyQuotes();
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 
@@ -185,6 +197,13 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
             onSuccess: () => {
                 toasterContext.addToast({ body: "Quote declined", messageType: "success" });
                 redirectToMyQuotes();
+            },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
             },
         });
     };
@@ -196,6 +215,13 @@ const RfqQuoteDetailsHeader: FC<Props> = ({
                 onSuccess: () => {
                     toasterContext.addToast({ body: "Quote accepted", messageType: "success" });
                     redirectToJobQuotes();
+                },
+                onComplete(resultProps) {
+                    if (resultProps.apiResult) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.();
+                    }
                 },
             });
         } else if (cartState.value?.lineCount === 0) {

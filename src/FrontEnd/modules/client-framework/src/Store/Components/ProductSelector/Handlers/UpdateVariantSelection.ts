@@ -99,6 +99,13 @@ export const SetProductInfo: HandlerType = async props => {
                     productInfo!.failedToLoadPricing = true;
                     resolve();
                 },
+                onComplete(realTimePricingProps) {
+                    if (realTimePricingProps.apiResult) {
+                        this.onSuccess?.(realTimePricingProps.apiResult);
+                    } else if (realTimePricingProps.error) {
+                        this.onError?.(realTimePricingProps.error);
+                    }
+                },
             }),
         );
     });

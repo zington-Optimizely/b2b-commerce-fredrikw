@@ -1,4 +1,8 @@
-import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandlerDiscreteParameter,
+    createHandlerChainRunner,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { tellAFriend, TellAFriendApiParameter } from "@insite/client-framework/Services/EmailService";
 import { ProductModel, TellAFriendModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -36,6 +40,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

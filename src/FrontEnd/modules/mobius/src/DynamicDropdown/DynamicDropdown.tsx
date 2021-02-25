@@ -44,6 +44,12 @@ export interface DynamicDropdownPresentationProps
     /** Props to be passed into the inner Icon component.
      * @themable */
     iconProps?: IconPresentationProps;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Text for empty input field.
      * @themable */
     placeholder?: string;
@@ -170,10 +176,12 @@ const Option = styled.div<OptionProps>`
             color: ${text};
             ${!disabled &&
             !noHover &&
-            `&:hover {
-                background: ${hover};
-                color: ${get(theme, "colors.common.backgroundContrast")};
-            }`}
+            css`
+                &:hover {
+                    background: ${hover};
+                    color: ${get(theme, "colors.common.backgroundContrast")};
+                }
+            `}
             ${disabled ? "cursor: not-allowed;" : "cursor: pointer;"}
         `;
     }}
@@ -212,6 +220,7 @@ const listCssBuilder = (additionalCss: StyledProp<ContentBodyProps>, sizeVariant
  */
 class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisablerContext, DynamicDropdownState> {
     private spreadProps: Function;
+    private applyStyledProp: Function;
     private sizeVariant: FormFieldSizeVariant;
 
     static defaultProps: Partial<DynamicDropdownProps> = {
@@ -222,10 +231,11 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
 
     constructor(props: DynamicDropdownProps & HasDisablerContext) {
         super(props);
-        const { applyProp, spreadProps } = applyPropBuilder(props, {
+        const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(props, {
             component: "dynamicDropdown",
             category: "formField",
         });
+        this.applyStyledProp = applyStyledProp;
         this.spreadProps = spreadProps;
         this.sizeVariant = applyProp("sizeVariant", "default");
         this.state = {
@@ -272,6 +282,8 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                         const { disabled, optionText } = option;
                         const optionValue = option.optionValue || optionText;
                         const searchString = option.searchString || optionText;
+                        const resolvedMergeCss =
+                            this.props.mergeCss ?? this.props?.theme?.dynamicDropdown?.defaultProps?.mergeCss;
 
                         if (
                             this.props.filterOption &&
@@ -290,7 +302,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                             selected,
                             value: optionValue,
                             _sizeVariant: this.sizeVariant,
-                            css: this.spreadProps("cssOverrides").option,
+                            css: this.applyStyledProp(["cssOverrides", "option"], resolvedMergeCss),
                             onClick: disabled ? undefined : () => this.clickToSelect(optionValue),
                         };
                         if (isFocused) {
@@ -478,16 +490,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
         } = this.props;
         const { isOpen, focusedOption, uid, typedInput, renderOptions, selected } = this.state;
 
-        const {
-            dropdownWrapper,
-            loading,
-            list,
-            moreOption: moreOptionCss,
-            noOptions,
-            option,
-            selectedText,
-            ..._cssOverrides
-        } = this.spreadProps("cssOverrides");
+        const _cssOverrides = this.spreadProps("cssOverrides");
 
         // Because disabled html attribute doesn't accept undefined
         // eslint-disable-next-line no-unneeded-ternary
@@ -497,10 +500,14 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
         const labelId = `${uid}-label`;
         const inputLabelObj = otherProps.label === 0 || otherProps.label ? { "aria-labelledby": labelId } : {};
         const hasDescription = error || hint;
+        const resolvedMergeCss = this.props.mergeCss ?? this.props?.theme?.dynamicDropdown?.defaultProps?.mergeCss;
 
         let renderList: JSX.Element[] = [
             <Option
-                css={noOptions || option}
+                css={
+                    this.applyStyledProp(["cssOverrides", "noOptions"], resolvedMergeCss) ||
+                    this.applyStyledProp(["cssOverrides", "option"], resolvedMergeCss)
+                }
                 noHover
                 _sizeVariant={this.sizeVariant}
                 data-id="no-options"
@@ -512,7 +519,16 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
         ];
         if (isLoading) {
             renderList = [
-                <Option css={loading || option} noHover _sizeVariant={this.sizeVariant} key="loading" value="loading">
+                <Option
+                    css={
+                        this.applyStyledProp(["cssOverrides", "loading"], resolvedMergeCss) ||
+                        this.applyStyledProp(["cssOverrides", "option"], resolvedMergeCss)
+                    }
+                    noHover
+                    _sizeVariant={this.sizeVariant}
+                    key="loading"
+                    value="loading"
+                >
                     <LoadingSpinner
                         size={sizeVariantValues[this.sizeVariant].icon}
                         color="text.disabled"
@@ -560,7 +576,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 {typedInput ? null : (
                     <SelectedText
                         _sizeVariant={this.sizeVariant}
-                        css={selectedText}
+                        css={this.applyStyledProp(["cssOverrides", "selectedText"], resolvedMergeCss)}
                         data-test-selector={`${(otherProps as any)["data-test-selector"]}-selectedText`}
                     >
                         {selectedString}
@@ -594,7 +610,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                         "aria-owns": uid,
                         "aria-haspopup": "listbox",
                         "aria-expanded": isOpen,
-                        css: dropdownWrapper,
+                        css: this.applyStyledProp(["cssOverrides", "dropdownWrapper"], resolvedMergeCss),
                         ref: this.input,
                         _width: "unset",
                         _height: "unset",
@@ -606,7 +622,10 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                         id: listboxId,
                         role: "listbox",
                         "aria-labelledby": labelId,
-                        css: listCssBuilder(list, this.sizeVariant) as any,
+                        css: listCssBuilder(
+                            this.applyStyledProp(["cssOverrides", "list"], resolvedMergeCss),
+                            this.sizeVariant,
+                        ) as any,
                         width: 400,
                     } as ContentBodyProps
                 }
@@ -616,7 +635,10 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 {!isLoading && moreOption ? (
                     <Option
                         key="more"
-                        css={moreOptionCss || option}
+                        css={
+                            this.applyStyledProp(["cssOverrides", "moreOption"], resolvedMergeCss) ||
+                            this.applyStyledProp(["cssOverrides", "option"], resolvedMergeCss)
+                        }
                         noHover
                         _sizeVariant={this.sizeVariant}
                         value="more options"

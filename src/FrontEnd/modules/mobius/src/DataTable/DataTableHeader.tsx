@@ -154,16 +154,16 @@ const DataTableHeader: React.FC<DataTableHeaderProps> = ({
             );
             return (
                 <DataTableHeaderStyle
+                    {...omitMultiple(otherProps, ["sortIconProps", "sortIconSources", "sortClickableProps"])}
                     aria-sort={sorted}
                     css={css`
                         ${_cssOverrides.header || ""}
                         ${headerCss}
                     `}
                     title={title}
-                    {...omitMultiple(otherProps, ["sortIconProps", "sortIconSources", "sortClickableProps"])}
                 >
                     {sortable ? (
-                        <Clickable onClick={onSortClick} {...sortClickableProps} {...otherProps.sortClickableProps}>
+                        <Clickable {...sortClickableProps} {...otherProps.sortClickableProps} onClick={onSortClick}>
                             {cellContents}
                         </Clickable>
                     ) : (

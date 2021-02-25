@@ -42,6 +42,13 @@ export const LoadRealTimePricing: HandlerType = props => {
                     id: props.parameter.id,
                 });
             },
+            onComplete(realTimePricingProps) {
+                if (realTimePricingProps.apiResult) {
+                    this.onSuccess?.(realTimePricingProps.apiResult);
+                } else if (realTimePricingProps.error) {
+                    this.onError?.(realTimePricingProps.error);
+                }
+            },
         }),
     );
 };

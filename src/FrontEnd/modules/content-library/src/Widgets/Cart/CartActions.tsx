@@ -120,6 +120,15 @@ const CartActions: FC<Props> = ({
                 onSuccess: () => {
                     toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
                 },
+                onComplete(resultProps) {
+                    if (resultProps.result?.wishList) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.(resultProps.result.wishList);
+                    } else if (resultProps.result?.errorMessage) {
+                        toasterContext.addToast({ body: resultProps.result.errorMessage, messageType: "danger" });
+                    }
+                },
             });
             return;
         }

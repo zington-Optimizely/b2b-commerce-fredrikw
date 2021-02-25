@@ -1,20 +1,11 @@
-import sleep from "@insite/client-framework/Common/Sleep";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { loadPage } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { ToastContextData } from "@insite/mobius/Toast/ToasterContext";
 import { PublishPageSelection } from "@insite/shell/Components/Shell/PublishModal";
 import { closeSiteHole, sendToSite } from "@insite/shell/Components/Shell/SiteHole";
-import {
-    getPageBulkPublishInfo,
-    getPagePublishInfo,
-    getPublishedPageVersions,
-    PageVersionInfoModel,
-    publishPages,
-    restorePageVersion,
-} from "@insite/shell/Services/ContentAdminService";
-import { PublishModalState } from "@insite/shell/Store/PublishModal/PublishModalState";
+import { getPageBulkPublishInfo, getPagePublishInfo, publishPages } from "@insite/shell/Services/ContentAdminService";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import { Location } from "history";
 import cloneDeep from "lodash/cloneDeep";
@@ -70,6 +61,12 @@ export const loadPublishInfo = (pageId: string): ShellThunkAction => async (disp
     });
 
     const pagePublishInfo = await getPagePublishInfo(pageId);
+
+    dispatch({
+        type: "PageTree/UpdatePageStateisDraftPage",
+        pageId,
+        isDraftPage: pagePublishInfo.length !== 0,
+    });
 
     dispatch({
         type: "PublishModal/CompleteLoadingPublishInfo",
@@ -135,7 +132,7 @@ export const loadAllPagePublishInfo = (pageId: string): ShellThunkAction => asyn
 
 export const publish = (toasterContext: ToastContextData): ShellThunkAction => async (dispatch, getState) => {
     const state = getState();
-    const currentPage = getCurrentPageForShell(state);
+    const currentPage = getCurrentPage(state);
     const {
         shellContext: { permissions },
         publishModal: {
@@ -203,7 +200,7 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
         return;
     }
 
-    dispatch(loadPublishInfo(getCurrentPageForShell(state).id));
+    dispatch(loadPublishInfo(getCurrentPage(state).id));
 
     dispatch(closePublishModal());
 
@@ -214,6 +211,7 @@ export const publish = (toasterContext: ToastContextData): ShellThunkAction => a
             parentId: page.parentId,
             publishOn: publishOn && rollbackOn && rollbackOn > publishOn ? rollbackOn : publishOn || rollbackOn,
             isWaitingForApproval: !permissions?.canPublishContent,
+            publishInTheFuture: !!publishInTheFuture,
         });
     }
 

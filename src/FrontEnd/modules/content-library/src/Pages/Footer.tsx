@@ -1,11 +1,18 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import Page from "@insite/mobius/Page";
+import Page, { PageProps as MobiusPageProps } from "@insite/mobius/Page";
 import * as React from "react";
 
+export interface FooterStyles {
+    page?: MobiusPageProps;
+}
+
+export const footerStyles: FooterStyles = {};
+const styles = footerStyles;
+
 const Footer = ({ id }: PageProps) => (
-    <Page as="footer">
+    <Page as="footer" {...styles.page}>
         <Zone contentId={id} zoneName="Content" />
     </Page>
 );

@@ -2,14 +2,12 @@ import { HasShellContext, withIsInShell } from "@insite/client-framework/Compone
 import { sendToShell } from "@insite/client-framework/Components/ShellHole";
 import WidgetRenderer from "@insite/client-framework/Components/WidgetRenderer";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { moveWidgetTo } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getWidgetsByIdAndZone } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
 import { dragLeaveZone, dragWidgetOverZone, dropWidgetOnZone } from "@insite/client-framework/WidgetReordering";
 import Icon from "@insite/mobius/Icon";
-import PlusCircle from "@insite/mobius/Icons/PlusCircle";
 import * as React from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { connect } from "react-redux";
 import styled from "styled-components";
 
 export interface OwnProps {
@@ -40,14 +38,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps & HasShellC
     };
 };
 
-const mapDispatchToProps = {
-    moveWidgetTo,
-};
-
-export type Props = ReturnType<typeof mapStateToProps> &
-    ResolveThunks<typeof mapDispatchToProps> &
-    OwnProps &
-    HasShellContext;
+export type Props = ReturnType<typeof mapStateToProps> & OwnProps & HasShellContext;
 
 class Zone extends React.Component<Props> {
     private dropWidget = (event: React.DragEvent<HTMLElement>) => {
@@ -63,7 +54,6 @@ class Zone extends React.Component<Props> {
                     index,
                     pageId,
                 });
-                this.props.moveWidgetTo(draggingWidgetId, contentId, zoneName, index, pageId);
             });
         }
     };
@@ -151,7 +141,7 @@ class Zone extends React.Component<Props> {
                                 (permissions?.canAddSystemWidget && pageDefinition?.pageType === "System")) && (
                                 <AddContainer fullHeight={widgets.length === 0}>
                                     <AddButton onClick={this.add} data-test-selector={`shell_addWidget_${zoneName}`}>
-                                        <Icon src={PlusCircle} size={26} color="#4A4A4A" />
+                                        <Icon src="PlusCircle" size={26} color="#4A4A4A" />
                                     </AddButton>
                                 </AddContainer>
                             )}
@@ -164,7 +154,7 @@ class Zone extends React.Component<Props> {
     }
 }
 
-export default withIsInShell(connect(mapStateToProps, mapDispatchToProps)(Zone));
+export default withIsInShell(connect(mapStateToProps)(Zone));
 
 const Wrapper = styled.div`
     width: 100%;

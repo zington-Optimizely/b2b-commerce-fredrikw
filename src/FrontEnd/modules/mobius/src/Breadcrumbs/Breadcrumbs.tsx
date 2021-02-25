@@ -16,6 +16,12 @@ export type BreadcrumbsProps = MobiusStyledComponentProps<
         /** An array of link props */
         links?: LinkProps[];
         /**
+         * Indicates how the `css` property is combined with the variant `css` property from the theme.
+         * If true, the variant css is applied first and then the component css is applied after causing
+         * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+         */
+        mergeCss?: boolean;
+        /**
          * Optional props to be passed down to all Link and Typography components.
          * Can be overriden by individual typographyProps in the links array.
          * @themable */
@@ -25,20 +31,21 @@ export type BreadcrumbsProps = MobiusStyledComponentProps<
 
 export type BreadcrumbsPresentationProps = Omit<BreadcrumbsProps, "links">;
 
-const Slash = styled(Typography as any).attrs({ children: "/" })`
+export const Slash = styled(Typography as any).attrs({ children: "/" })`
     margin: 0 10px;
 `;
 
-const StyledNav = styled.nav.attrs({ "aria-label": "breadcrumbs" })`
+export const StyledNav = styled.nav.attrs({ "aria-label": "breadcrumbs" })`
     display: flex;
     flex-direction: row;
     align-items: center;
     ${injectCss}
 `;
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = withTheme(({ links, ...otherProps }) => {
-    const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "breadcrumbs" });
+const Breadcrumbs: React.FC<BreadcrumbsProps> = withTheme(({ links, mergeCss, ...otherProps }) => {
+    const { spreadProps, applyStyledProp } = applyPropBuilder(otherProps, { component: "breadcrumbs" });
     const typographyProps = spreadProps("typographyProps");
+    const resolvedMergeCss = mergeCss ?? otherProps?.theme?.breadcrumbs?.defaultProps?.mergeCss;
     // return null if `links` is an empty empty object, collection, map, or set.
     if (!links || links.length === 0) {
         return null;
@@ -52,7 +59,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = withTheme(({ links, ...otherProp
         const key = typeof children === "string" ? children : index;
         if (index === links.length - 1) {
             return (
-                <Typography {...typographyProps} aria-current="page" key={key}>
+                <Typography mergeCss={resolvedMergeCss} {...typographyProps} aria-current="page" key={key}>
                     {children}
                 </Typography>
             );
@@ -70,17 +77,11 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = withTheme(({ links, ...otherProp
     }
 
     return (
-        <StyledNav {...otherProps} css={applyProp("css")}>
+        <StyledNav {...otherProps} css={applyStyledProp("css", resolvedMergeCss)}>
             {children}
         </StyledNav>
     );
 });
 
-Breadcrumbs.defaultProps = {
-    links: [],
-};
-
 /** @component */
 export default Breadcrumbs;
-
-export { Slash, StyledNav };

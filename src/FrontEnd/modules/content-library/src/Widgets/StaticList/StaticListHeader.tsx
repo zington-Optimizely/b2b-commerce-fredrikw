@@ -203,6 +203,17 @@ const StaticListHeader = ({
             onError: errorMessage => {
                 setListNameError(errorMessage);
             },
+            onComplete(resultProps) {
+                if (resultProps.result?.wishList) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(resultProps.result.wishList);
+                } else if (resultProps.result?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(resultProps.result.errorMessage);
+                }
+            },
         });
     };
 
@@ -225,6 +236,13 @@ const StaticListHeader = ({
                         body: <ProductAddedToCartMessage isQtyAdjusted={isQtyAdjusted} multipleProducts={true} />,
                         messageType: "success",
                     });
+                }
+            },
+            onComplete(resultProps) {
+                if (resultProps.apiResult?.cartLines) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(resultProps.apiResult);
                 }
             },
         });

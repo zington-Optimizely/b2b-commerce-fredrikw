@@ -38,5 +38,8 @@ export interface ShellContextState {
     enableMobileCms?: boolean;
 
     /** When true, the CMS is controlling the UI for the mobile app instead of the website. */
-    mobileCmsModeActive?: true;
+    mobileCmsModeActive: boolean;
+
+    /** When true, the product list shows search score data. */
+    searchDataModeActive: boolean;
 }

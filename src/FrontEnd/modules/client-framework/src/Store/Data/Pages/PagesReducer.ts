@@ -4,22 +4,16 @@ import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { Location } from "@insite/client-framework/Components/SpireRouter";
 import { GetPagesByParentApiParameter, PagesCollectionModel } from "@insite/client-framework/Services/ContentService";
 import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
-import { UpdateFieldParameter } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { nullPage, PagesState } from "@insite/client-framework/Store/Data/Pages/PagesState";
-import {
-    createContextualIds,
-    getContextualId,
-    prepareFields,
-} from "@insite/client-framework/Store/Data/Pages/PrepareFields";
+import { createContextualIds, prepareFields } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import LinksState from "@insite/client-framework/Store/Links/LinksState";
 import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
-import PageProps, { ItemProps, PageModel } from "@insite/client-framework/Types/PageProps";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import PageProps, { PageModel } from "@insite/client-framework/Types/PageProps";
 import { Draft } from "immer";
 
-const initialState: PagesState = {
+export const initialState: PagesState = {
     isLoading: {},
     byId: {
         [emptyGuid]: nullPage,
@@ -53,7 +47,7 @@ interface HasContext {
     currentDeviceType: DeviceType;
 }
 
-const reducer = {
+export const reducer = {
     "Data/Pages/BeginLoadPages": (draft: Draft<PagesState>, action: { parameter: GetPagesByParentApiParameter }) => {
         setDataViewLoading(draft, action.parameter);
     },
@@ -95,6 +89,10 @@ const reducer = {
 
     "Data/Pages/BeginLoadPage": (draft: Draft<PagesState>, action: { key: string }) => {
         draft.isLoading[action.key] = true;
+    },
+
+    "Data/Pages/UpdatePage": (draft: Draft<PagesState>, action: { page: PageModel }) => {
+        finishLoadPage(draft, action.page, undefined, undefined, []);
     },
 
     "Data/Pages/CompleteLoadPage": (draft: Draft<PagesState>, action: LoadPageCompleteAction) => {
@@ -163,186 +161,12 @@ const reducer = {
         draft.dataViews = {};
     },
 
-    "Data/Pages/MoveWidgetTo": (
-        draft: Draft<PagesState>,
-        action: {
-            id: string;
-            parentId: string;
-            zoneName: string;
-            index: number;
-            pageId: string;
-        },
-    ) => {
-        const widget = draft.widgetsById[action.id];
-        const oldParentId = widget.parentId;
-        const oldZone = widget.zone;
-
-        widget.parentId = action.parentId;
-        widget.zone = action.zoneName;
-
-        draft.widgetsById[action.id] = widget;
-
-        const pageContent = draft.widgetIdsByPageIdParentIdAndZone[action.pageId];
-        const oldLocation = pageContent[oldParentId][oldZone];
-        const oldIndex = oldLocation.indexOf(widget.id);
-        oldLocation.splice(oldIndex, 1);
-
-        if (typeof pageContent[widget.parentId] === "undefined") {
-            pageContent[widget.parentId] = {};
-        }
-
-        if (typeof pageContent[widget.parentId][widget.zone] === "undefined") {
-            pageContent[widget.parentId][widget.zone] = [];
-        }
-
-        pageContent[widget.parentId][widget.zone].splice(action.index, 0, widget.id);
-
-        draft.draggingWidgetId = undefined;
-    },
-
     "Data/Pages/BeginDraggingWidget": (draft: Draft<PagesState>, action: { id: string }) => {
         draft.draggingWidgetId = action.id;
     },
 
     "Data/Pages/EndDraggingWidget": (draft: Draft<PagesState>) => {
         draft.draggingWidgetId = undefined;
-    },
-
-    "Data/Pages/AddWidget": (
-        draft: Draft<PagesState>,
-        action: {
-            widget: WidgetProps;
-            index: number;
-            pageId: string;
-        },
-    ) => {
-        const { widget, index, pageId } = action;
-        const { id, parentId, zone } = widget;
-        const { widgetsById } = draft;
-        widgetsById[widget.id] = widget;
-
-        const widgetIdsByPageId = draft.widgetIdsByPageId;
-        if (!widgetIdsByPageId[pageId]) {
-            widgetIdsByPageId[pageId] = [];
-        }
-
-        widgetIdsByPageId[pageId].push(id);
-
-        const pageContent = draft.widgetIdsByPageIdParentIdAndZone[pageId];
-
-        if (typeof pageContent[parentId] === "undefined") {
-            pageContent[parentId] = {};
-        }
-
-        if (typeof pageContent[parentId][zone] === "undefined") {
-            pageContent[parentId][zone] = [];
-        }
-
-        pageContent[parentId][zone].splice(index, 0, id);
-    },
-
-    "Data/Pages/UpdateField": (draft: Draft<PagesState>, action: UpdateFieldParameter) => {
-        const {
-            fieldName,
-            id,
-            value,
-            fieldType,
-            language,
-            defaultLanguageId,
-            personaId,
-            defaultPersonaId,
-            deviceType,
-        } = action;
-        const { id: languageId } = language;
-
-        const contentItemModel = draft.byId[id] || draft.widgetsById[id];
-
-        let { generalFields, translatableFields, contextualFields } = contentItemModel;
-        if (!translatableFields) {
-            translatableFields = contentItemModel.translatableFields = {};
-        }
-        if (!contextualFields) {
-            contextualFields = contentItemModel.contextualFields = {};
-        }
-        if (!generalFields) {
-            generalFields = contentItemModel.generalFields = {};
-        }
-
-        if (fieldType === "Translatable") {
-            let translatableField = translatableFields[fieldName];
-            if (!translatableField) {
-                translatableField = translatableFields[fieldName] = {};
-            }
-            if (!translatableField[languageId]) {
-                translatableField[languageId] = {};
-            }
-
-            translatableField[languageId] = value;
-            if (contextualFields[action.fieldName]) {
-                delete contextualFields[action.fieldName];
-            }
-            if (generalFields[action.fieldName]) {
-                delete generalFields[action.fieldName];
-            }
-        } else if (fieldType === "Contextual") {
-            let contextualField = contextualFields[fieldName];
-            if (!contextualField) {
-                contextualField = contextualFields[fieldName] = {};
-            }
-
-            const contextualId = getContextualId(
-                language.id,
-                language.hasDeviceSpecificContent ? deviceType : "Desktop",
-                language.hasPersonaSpecificContent ? personaId : defaultPersonaId,
-            );
-            if (!contextualField[contextualId]) {
-                contextualField[contextualId] = {};
-            }
-
-            contextualField[contextualId] = value;
-
-            if (translatableFields[action.fieldName]) {
-                delete translatableFields[action.fieldName];
-            }
-            if (generalFields[action.fieldName]) {
-                delete generalFields[action.fieldName];
-            }
-        } else {
-            generalFields[action.fieldName] = action.value;
-            if (translatableFields[action.fieldName]) {
-                delete translatableFields[action.fieldName];
-            }
-            if (contextualFields[action.fieldName]) {
-                delete contextualFields[action.fieldName];
-            }
-        }
-
-        const contextualIds = createContextualIds(
-            languageId,
-            defaultLanguageId,
-            deviceType,
-            [personaId],
-            defaultPersonaId,
-        );
-
-        prepareFields(contentItemModel, languageId, defaultLanguageId, contextualIds);
-    },
-
-    "Data/Pages/RemoveWidget": (draft: Draft<PagesState>, action: { id: string; pageId: string }) => {
-        const widget = draft.widgetsById[action.id];
-        delete draft.widgetsById[action.id];
-
-        const oldLocation = draft.widgetIdsByPageIdParentIdAndZone[action.pageId][widget.parentId][widget.zone];
-        const oldIndex = oldLocation.indexOf(widget.id);
-        oldLocation.splice(oldIndex, 1);
-    },
-
-    "Data/Pages/ReplaceItem": (draft: Draft<PagesState>, action: { item: ItemProps }) => {
-        if (draft.byId[action.item.id]) {
-            draft.byId[action.item.id] = action.item as PageProps;
-        } else {
-            draft.widgetsById[action.item.id] = action.item as WidgetProps;
-        }
     },
 
     "Data/Pages/CompleteChangeContext": (
@@ -385,12 +209,15 @@ function finishLoadPage(
     draft: Draft<PagesState>,
     page: PageModel,
     path: string | undefined,
-    action: HasContext,
+    action: HasContext | undefined,
     contextualIds: string[],
 ) {
-    const { currentLanguageId, defaultLanguageId } = action;
+    const { currentLanguageId, defaultLanguageId } = action ?? {};
 
-    prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
+    if (currentLanguageId && defaultLanguageId) {
+        prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
+    }
+
     const { fields } = page;
     if (fields) {
         fields["variantName"] = page.variantName;
@@ -415,7 +242,9 @@ function finishLoadPage(
     }
 
     for (const widgetItem of widgets) {
-        prepareFields(widgetItem, currentLanguageId, defaultLanguageId, contextualIds);
+        if (currentLanguageId && defaultLanguageId) {
+            prepareFields(widgetItem, currentLanguageId, defaultLanguageId, contextualIds);
+        }
         pageContent[widgetItem.id] = {};
     }
 

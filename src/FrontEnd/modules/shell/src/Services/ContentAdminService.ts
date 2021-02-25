@@ -5,6 +5,7 @@ import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { PageModel } from "@insite/client-framework/Types/PageProps";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
+import { convertToContentAdminEndpoint } from "@insite/shell/Services/ConvertToContentAdminEndpoints";
 import {
     get as baseGet,
     post as basePost,
@@ -15,16 +16,10 @@ import { SelectBrandModel, SelectCategoryModel } from "@insite/shell/Store/PageE
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import { LanguageModel, PersonaModel } from "@insite/shell/Store/ShellContext/ShellContextState";
 
-const convertToContentAdminEndpoint = <Arguments extends Array<unknown>, Result>(
-    fn: (endpoint: string, ...args: Arguments) => Result,
-) => {
-    return (endpoint: string, ...args: Arguments): Result => fn(`/api/internal/contentadmin/${endpoint}`, ...args);
-};
-
-const get = convertToContentAdminEndpoint(baseGet);
-const post = convertToContentAdminEndpoint(basePost);
-const postVoid = convertToContentAdminEndpoint(basePostVoid);
-const requestJson = convertToContentAdminEndpoint(baseRequestJson);
+export const get = convertToContentAdminEndpoint(baseGet, "contentAdmin");
+export const post = convertToContentAdminEndpoint(basePost, "contentAdmin");
+export const postVoid = convertToContentAdminEndpoint(basePostVoid, "contentAdmin");
+export const requestJson = convertToContentAdminEndpoint(baseRequestJson, "contentAdmin");
 
 export const getPageStates = (filters: TreeFilterModel[]) =>
     requestJson<PageStateModel[]>(
@@ -88,11 +83,11 @@ export const updateShellContext = (languageId: string, personaId: string, device
         )}&deviceType=${encodeURIComponent(deviceType)}`,
     );
 
-export const getReorderingPages = () =>
+export const getReorderingPages = (nodeId?: string) =>
     get<{
-        homeNodeId: string;
+        rootNodeId: string;
         pageReorderingModels: PageReorderModel[];
-    }>("reorderingPages");
+    }>("reorderingPages", { nodeId });
 
 export const saveReorderPages = (pages: PageReorderModel[]) => post<SavePageResponseModel>("saveReorderPages", pages);
 
@@ -145,20 +140,6 @@ export const switchContentMode = (contentMode: ContentMode) => post("switchConte
 export const saveTheme = (theme: Partial<BaseTheme>) => postVoid("saveTheme", theme);
 
 export const exportContent = (onlyPublished: boolean) => post<string>(`exportContent?onlyPublished=${onlyPublished}`);
-
-export const importContent = (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    return baseRequestJson<{ success: boolean; errorMessage: string }>(
-        "/admin/websites/importSpireContent",
-        "POST",
-        {},
-        formData,
-    );
-};
-
-export const restoreContent = () =>
-    baseRequestJson<{ success: boolean; errorMessage: string }>("/admin/websites/restoreSpireContent", "POST");
 
 export type ContentContextModel = {
     languageId: string;
@@ -276,6 +257,8 @@ export interface PageStateModel {
     isDefaultVariant: boolean;
     isShared: boolean;
     allowedForPageType: string;
+    isDraftPage: boolean;
+    neverPublished: boolean;
 }
 
 export type PageStateModelAttribute = "NonMatching";
@@ -285,4 +268,7 @@ export interface PageReorderModel {
     parentId: string;
     name: string;
     sortOrder: number;
+    pageId?: string;
+    variantName?: string;
+    isVariant: boolean;
 }

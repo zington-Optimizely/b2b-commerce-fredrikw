@@ -15,7 +15,7 @@ import {
 import { Draft } from "immer";
 
 const initialState: PageEditorState = {
-    showGeneratedPageTemplate: false,
+    displayPageTemplateModal: false,
 };
 
 const reducer = {
@@ -30,8 +30,17 @@ const reducer = {
         delete draft.updatedLayoutIds;
     },
 
-    "PageEditor/ToggleShowGeneratedPageTemplate": (draft: Draft<PageEditorState>) => {
-        draft.showGeneratedPageTemplate = !draft.showGeneratedPageTemplate;
+    "PageEditor/OpenPageTemplateModal": (
+        draft: Draft<PageEditorState>,
+        { generatedPageTemplate }: { generatedPageTemplate: string },
+    ) => {
+        draft.displayPageTemplateModal = true;
+        draft.generatedPageTemplate = generatedPageTemplate;
+    },
+
+    "PageEditor/ClosePageTemplateModel": (draft: Draft<PageEditorState>) => {
+        draft.displayPageTemplateModal = false;
+        draft.generatedPageTemplate = undefined;
     },
 
     "PageEditor/EditItem": (

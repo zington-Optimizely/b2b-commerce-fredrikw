@@ -1,4 +1,9 @@
-import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { updateQuoteLine as updateQuoteLineApi } from "@insite/client-framework/Services/QuoteService";
 import loadQuoteIfNeeded from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/LoadQuoteIfNeeded";
 import { QuoteLineModel } from "@insite/client-framework/Types/ApiModels";
@@ -32,6 +37,7 @@ export const ResetQuotesData: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

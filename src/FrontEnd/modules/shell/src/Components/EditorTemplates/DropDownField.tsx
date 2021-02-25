@@ -1,9 +1,9 @@
 import logger from "@insite/client-framework/Logger";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { DropDownFieldDefinition, Option } from "@insite/client-framework/Types/FieldDefinition";
 import Select from "@insite/mobius/Select";
 import StandardControl from "@insite/shell-public/Components/StandardControl";
 import { EditorTemplateProps } from "@insite/shell-public/EditorTemplateProps";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -13,7 +13,7 @@ interface State {
 }
 
 const mapStateToProps = (state: ShellState) => {
-    const page = getCurrentPageForShell(state);
+    const page = getCurrentPage(state);
     return {
         page,
         settings: state.shellContext.settings,

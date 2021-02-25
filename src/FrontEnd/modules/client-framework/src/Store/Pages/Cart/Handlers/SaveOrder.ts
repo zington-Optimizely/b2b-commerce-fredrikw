@@ -3,6 +3,7 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import {
     CartResult,
@@ -68,6 +69,7 @@ export const DispatchCompleteSavingOrder: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult.cart.id);
 };
 

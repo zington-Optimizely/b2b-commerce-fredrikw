@@ -3,6 +3,7 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import {
     getSession,
@@ -49,6 +50,7 @@ export const ReloadData: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

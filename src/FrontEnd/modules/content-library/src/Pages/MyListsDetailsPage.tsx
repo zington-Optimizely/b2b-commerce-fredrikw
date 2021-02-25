@@ -88,6 +88,13 @@ class MyListsDetailsPage extends React.Component<Props, State> {
                 onError: () => {
                     this.setState({ inviteIsNotAvailable: true });
                 },
+                onComplete(wishListProps) {
+                    if (wishListProps.result?.wishList) {
+                        this.onSuccess?.(wishListProps.result.wishList);
+                    } else if (wishListProps.result?.errorMessage) {
+                        this.onError?.(wishListProps.result.errorMessage);
+                    }
+                },
             });
         }
     }

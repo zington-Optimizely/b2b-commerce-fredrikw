@@ -1,4 +1,5 @@
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
+import ProductSearchScoreData from "@insite/content-library/Components/ProductSearchScoreData";
 import { ProductCardSelections } from "@insite/content-library/Widgets/ProductList/ProductCardSelections";
 import ProductListActions from "@insite/content-library/Widgets/ProductList/ProductListActions";
 import ProductListProductImage from "@insite/content-library/Widgets/ProductList/ProductListProductImage";
@@ -17,6 +18,7 @@ export interface ProductListProductCardStyles {
     rightColumnGridContainer?: GridContainerProps;
     infoGridItem?: GridItemProps;
     actionsGridItem?: GridItemProps;
+    searchScoreDataGridItem?: GridItemProps;
 }
 
 export const productCardStyles: ProductListProductCardStyles = {
@@ -42,6 +44,9 @@ export const productCardStyles: ProductListProductCardStyles = {
     actionsGridItem: {
         width: [12, 12, 12, 5, 5],
     },
+    searchScoreDataGridItem: {
+        width: 12,
+    },
 };
 
 const styles = productCardStyles;
@@ -65,6 +70,9 @@ const ProductListProductCard: FC<Props> = props => {
                     </GridItem>
                     <GridItem {...styles.actionsGridItem}>
                         <ProductListActions showPrice={props.showPrice} showAddToList={props.showAddToList} />
+                    </GridItem>
+                    <GridItem {...styles.searchScoreDataGridItem}>
+                        <ProductSearchScoreData />
                     </GridItem>
                 </GridContainer>
             </GridItem>

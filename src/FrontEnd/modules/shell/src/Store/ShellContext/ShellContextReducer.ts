@@ -1,14 +1,16 @@
 import ContentMode, {
     contentModeCookieName,
     contentModeSignatureCookieName,
+    isMobileAppCookieName,
     isSiteInShellCookieName,
 } from "@insite/client-framework/Common/ContentMode";
-import { getCookie, removeCookie } from "@insite/client-framework/Common/Cookies";
+import { getCookie, removeCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import { createTypedReducerWithImmer } from "@insite/client-framework/Common/CreateTypedReducer";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
+import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { adminAccessTokenName } from "@insite/shell/Services/AccessTokenService";
 import { ShellContextState } from "@insite/shell/Store/ShellContext/ShellContextState";
 import { Draft } from "immer";
@@ -25,12 +27,14 @@ const initialState: ShellContextState = {
     defaultPersonaId: emptyGuid,
     currentDeviceType: "Desktop",
     websiteId: emptyGuid,
-    stageMode: "Desktop",
+    stageMode: getCookie(isMobileAppCookieName) === "true" ? "Phone" : "Desktop",
     contentMode: getStoredContentMode(),
     homePageId: emptyGuid,
     mobileHomePageId: emptyGuid,
     settings: {} as SettingsModel,
     cmsType: "",
+    searchDataModeActive: false,
+    mobileCmsModeActive: getCookie(isMobileAppCookieName) === "true",
 };
 
 function getStoredContentMode() {
@@ -126,9 +130,11 @@ const reducer = {
 
     "ShellContext/ToggleMobileCmsMode": (draft: Draft<ShellContextState>) => {
         if (draft.mobileCmsModeActive) {
-            delete draft.mobileCmsModeActive;
+            removeCookie(isMobileAppCookieName);
+            draft.mobileCmsModeActive = false;
             draft.stageMode = "Desktop";
         } else {
+            setCookie(isMobileAppCookieName, "true");
             draft.mobileCmsModeActive = true;
             draft.stageMode = "Phone";
         }
@@ -136,6 +142,12 @@ const reducer = {
 
     "ShellContext/SetContentMode": (draft: Draft<ShellContextState>, action: { contentMode: ContentMode }) => {
         draft.contentMode = action.contentMode;
+    },
+
+    "ShellContext/ToggleSearchDataModeActive": (draft: Draft<ShellContextState>) => {
+        draft.searchDataModeActive = !draft.searchDataModeActive;
+
+        sendToSite({ type: "SearchDataModeActive", active: draft.searchDataModeActive });
     },
 };
 

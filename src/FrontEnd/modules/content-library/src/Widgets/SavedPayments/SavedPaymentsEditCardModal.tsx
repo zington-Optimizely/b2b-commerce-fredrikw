@@ -565,9 +565,29 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         };
 
         if (editingPaymentProfile) {
-            updatePaymentProfile({ paymentProfile: paymentProfileToSave, onSuccess: onSuccessSave });
+            updatePaymentProfile({
+                paymentProfile: paymentProfileToSave,
+                onSuccess: onSuccessSave,
+                onComplete(resultProps) {
+                    if (resultProps.apiResult) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.();
+                    }
+                },
+            });
         } else {
-            addPaymentProfile({ paymentProfile: paymentProfileToSave, onSuccess: onSuccessSave });
+            addPaymentProfile({
+                paymentProfile: paymentProfileToSave,
+                onSuccess: onSuccessSave,
+                onComplete(resultProps) {
+                    if (resultProps.apiResult) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.();
+                    }
+                },
+            });
         }
     };
 

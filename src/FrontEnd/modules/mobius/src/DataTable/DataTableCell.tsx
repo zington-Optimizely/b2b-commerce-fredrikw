@@ -18,11 +18,11 @@ const DataTableCell: React.FC<DataTableCellProps> = ({
     <DataTableContext.Consumer>
         {({ _cssOverrides, cellTypographyProps }) => (
             <DataTableCellBase
+                {...otherProps}
                 css={css`
                     ${_cssOverrides.cell || ""}
                     ${cellCss}
                 `}
-                {...otherProps}
             >
                 {typeof children === "string" ? (
                     <Typography {...cellTypographyProps} {...typographyProps}>

@@ -2,6 +2,7 @@ import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { HasPagingParameters } from "@insite/client-framework/Services/ApiService";
 import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
+import { AttributeTypeFacetModel } from "@insite/client-framework/Types/ApiModels";
 
 export interface ProductFilters extends HasPagingParameters {
     pageCategoryId?: string;
@@ -21,7 +22,7 @@ export interface ProductFilters extends HasPagingParameters {
     additionalExpands?: string[];
 }
 
-export type ProductListViewType = "List" | "Grid";
+export type ProductListViewType = "List" | "Grid" | "Table";
 
 export default interface ProductListState {
     // needed because we don't immediately have the new parameter available for retrieving the next productDataView
@@ -35,4 +36,6 @@ export default interface ProductListState {
     filterQuery?: string;
     isSearchPage?: boolean;
     view?: ProductListViewType;
+    tableColumns: AttributeTypeFacetModel[];
+    visibleColumnNames: string[];
 }

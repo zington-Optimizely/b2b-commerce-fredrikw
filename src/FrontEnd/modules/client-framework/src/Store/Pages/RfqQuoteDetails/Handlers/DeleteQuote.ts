@@ -1,4 +1,10 @@
-import { createHandlerChainRunner, Handler, HasOnError, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnError,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { deleteQuote as deleteQuoteApi } from "@insite/client-framework/Services/QuoteService";
 
 type HandlerType = Handler<
@@ -23,6 +29,7 @@ export const DispatchQuotesReset: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

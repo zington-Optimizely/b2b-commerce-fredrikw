@@ -1,7 +1,5 @@
 import { FrameHole, setupSiteHole } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
-import { autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { Action, Dispatch, MiddlewareAPI } from "redux";

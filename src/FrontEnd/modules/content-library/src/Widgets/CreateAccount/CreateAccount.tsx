@@ -182,7 +182,9 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
 
     const [email, setEmail] = useState("");
     const [userName, setUserName] = useState("");
-    const [userNameError, setUserNameError] = useState(userNameRequiredFieldMessage);
+    const [userNameError, setUserNameError] = useState(
+        accountSettings.useEmailAsUserName ? "" : userNameRequiredFieldMessage,
+    );
     const [errorMessage, setErrorMessage] = useState("");
     const [password, setPassword] = useState("");
     const [passwordErrorMessage, setPasswordErrorMessage] = useState<ReactNode>("");
@@ -202,6 +204,7 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
         passwordRequiresSpecialCharacter,
         passwordRequiresLowercase,
         passwordRequiresDigit,
+        useEmailAsUserName,
     } = accountSettings;
 
     const validateEmail = (email: string) => {
@@ -211,7 +214,7 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
     };
 
     const validateUserName = (name: string) => {
-        const errorMessage = !name ? userNameRequiredFieldMessage : "";
+        const errorMessage = !name && !useEmailAsUserName ? userNameRequiredFieldMessage : "";
         setUserNameError(errorMessage);
         return !errorMessage;
     };
@@ -260,7 +263,7 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
         toasterContext.addToast({ body: translate("Account created successfully!"), messageType: "success" });
         setTimeout(() => {
             signIn({
-                userName,
+                userName: useEmailAsUserName ? email : userName,
                 password,
                 rememberMe: false,
                 returnUrl,
@@ -289,6 +292,17 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
                 setErrorMessage(error);
                 setIsSubmitting(false);
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult?.successful) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                } else if (resultProps.apiResult?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(resultProps.apiResult.errorMessage);
+                }
+            },
         });
     };
 
@@ -311,17 +325,19 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
                                 error={isSubmitted && emailError}
                             />
                         </GridItem>
-                        <GridItem {...styles.userNameGridItem}>
-                            <TextField
-                                {...styles.userNameTextField}
-                                label={translate("User Name")}
-                                value={userName}
-                                data-test-selector="createAccount_userName"
-                                onChange={e => userChangeHandler(e.currentTarget.value)}
-                                error={isSubmitted && userNameError}
-                                required
-                            />
-                        </GridItem>
+                        {!useEmailAsUserName && (
+                            <GridItem {...styles.userNameGridItem}>
+                                <TextField
+                                    {...styles.userNameTextField}
+                                    label={translate("User Name")}
+                                    value={userName}
+                                    data-test-selector="createAccount_userName"
+                                    onChange={e => userChangeHandler(e.currentTarget.value)}
+                                    error={isSubmitted && userNameError}
+                                    required
+                                />
+                            </GridItem>
+                        )}
                         <GridItem {...styles.passwordGridItem}>
                             <TextField
                                 id="password"

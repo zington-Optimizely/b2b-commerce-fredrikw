@@ -16,6 +16,7 @@ const initialState: CategoriesState = {
     dataViews: {},
     parentCategoryIdToChildrenIds: {},
     categoryDepthLoaded: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -88,6 +89,15 @@ const reducer = {
     "Data/Categories/CompleteLoadCategory": (draft: Draft<CategoriesState>, action: { model: Category }) => {
         delete draft.isLoading[action.model.id];
         assignById(draft, action.model);
+    },
+
+    "Data/Categories/FailedToLoadCategory": (
+        draft: Draft<CategoriesState>,
+        action: { categoryId: string; status: number },
+    ) => {
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.categoryId] = action.status;
+        }
     },
 };
 

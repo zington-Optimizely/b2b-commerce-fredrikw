@@ -36,7 +36,7 @@ const applyPropBuilder = <Props extends Partial<ThemeProps<BaseTheme>>>(
 
     /**
      * Function that provides the appropriate value for the property.
-     * @param {string} name Name of the component prop (theme defaultProps key) being accessed.
+     * @param {string | string[]} name Name of the component prop (theme defaultProps key) being accessed. The array type will access multple levels of an object.
      * @param {string} [fallback] Fallback value of the prop.
      * @param {true|undefined} mergeCss If true and the property name is "css", returns the category default, component default, and instance css prop values as an array, otherwise returns the appropriate value for the named property.
      * @return {string|undefined} End value of the prop based on prop/theme specificity rules.
@@ -56,7 +56,7 @@ const applyPropBuilder = <Props extends Partial<ThemeProps<BaseTheme>>>(
     };
     /**
      * Function that provides the appropriate value for the property for use in cases where the property extends StyledProp.
-     * @param {string} name Name of the component prop (theme defaultProps key) being accessed or and array of strings to access multiple levels of an object. If parameter is a string, the value for this property name should extend StyledProp.
+     * @param {string | string[]} name Name of the component prop (theme defaultProps key) being accessed or and array of strings to access multiple levels of an object. If parameter is a string, the value for this property name should extend StyledProp.
      * @param {true|undefined} merge If true, returns the category default, component default, and instance prop values as an array (in that order), otherwise returns the appropriate value for the named property.
      */
     // It would be ideal to limit the "name" argument to only properties

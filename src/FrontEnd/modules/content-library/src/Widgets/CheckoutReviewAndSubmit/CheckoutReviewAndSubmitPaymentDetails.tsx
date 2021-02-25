@@ -409,6 +409,17 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                     setIsCardNumberTokenized(false);
                     tokenExIframe?.reset();
                 },
+                onComplete(resultProps) {
+                    if (resultProps.apiResult?.cart) {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onSuccess?.(resultProps.apiResult.cart.id);
+                    } else {
+                        // "this" is targeting the object being created, not the parent SFC
+                        // eslint-disable-next-line react/no-this-in-sfc
+                        this.onError?.();
+                    }
+                },
             });
         }
     }, [isCardNumberTokenized]);
@@ -957,6 +968,14 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                             history.push(`${orderConfirmationPageLink!.url}?cartId=${cartId}`);
                         },
                     });
+                },
+                onComplete(resultProps) {
+                    if (!resultProps.apiResult?.cart) {
+                        return;
+                    }
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(resultProps.apiResult.cart.id);
                 },
             });
         }

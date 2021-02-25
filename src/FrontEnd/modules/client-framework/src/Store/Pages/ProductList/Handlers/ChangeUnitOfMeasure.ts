@@ -59,6 +59,13 @@ export const UpdatePrice: HandlerType = props => {
                     productId,
                 });
             },
+            onComplete(realTimePricingProps) {
+                if (realTimePricingProps.apiResult) {
+                    this.onSuccess?.(realTimePricingProps.apiResult);
+                } else if (realTimePricingProps.error) {
+                    this.onError?.(realTimePricingProps.error);
+                }
+            },
         }),
     );
 };

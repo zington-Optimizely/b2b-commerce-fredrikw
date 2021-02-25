@@ -24,6 +24,15 @@ export interface TagPresentationProps {
     /** The color of the tag.
      * @themable */
     color?: string;
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<TagProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
 }
 
 export type TagComponentProps = MobiusStyledComponentProps<
@@ -54,6 +63,7 @@ const TagStyle = styled.div<
     justify-content: space-between;
     border-radius: 5px;
     padding: 5px 5px 5px 10px;
+    margin: 0 10px 10px 0;
     background: ${({ _color, theme }) => resolveColor(_color, theme)};
     color: ${({ _color, theme }) => getContrastColor(_color, theme)};
     button {
@@ -82,10 +92,6 @@ const TagStyle = styled.div<
     ${injectCss}
 `;
 
-const TagWrapper = styled.div`
-    margin: 0 10px 10px 0;
-`;
-
 export const horizontalStyles = css`
     display: flex;
     flex-wrap: wrap;
@@ -101,30 +107,30 @@ export const verticalStyles = css`
 /**
  * Tag is an interactive component that takes a callback to remove it from the interface. The removal must be handled by the parent.
  */
-const Tag: React.FC<TagProps> = withTheme(({ children, css, deletable, disabled, onDelete, ...otherProps }) => {
-    const { applyProp, spreadProps } = applyPropBuilder(otherProps, { component: "tag" });
+const Tag: React.FC<TagProps> = withTheme(({ children, deletable, disabled, onDelete, mergeCss, ...otherProps }) => {
+    const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(otherProps, { component: "tag" });
     const color = applyProp("color", "secondary");
     const iconProps = spreadProps("iconProps");
+    const resolvedMergeCss = mergeCss ?? otherProps?.theme?.tag?.defaultProps?.mergeCss;
+
     return (
-        <TagWrapper>
-            <TagStyle
-                css={applyProp("css")}
-                disabled={!!disabled}
-                _color={color}
-                iconSize={iconProps?.size}
-                iconColor={iconProps?.color}
-                {...omitSingle(otherProps, "color")}
-            >
-                <Typography {...spreadProps("typographyProps")}>{children}</Typography>
-                {deletable && !disabled && (
-                    <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>
-                        <VisuallyHidden>{otherProps.theme.translate("delete")}</VisuallyHidden>
-                        <TagIcon {...iconProps} />
-                    </Button>
-                )}
-                {disabled && <TagIcon {...iconProps} disabled />}
-            </TagStyle>
-        </TagWrapper>
+        <TagStyle
+            disabled={!!disabled}
+            _color={color}
+            iconSize={iconProps?.size}
+            iconColor={iconProps?.color}
+            {...omitSingle(otherProps, "color")}
+            css={applyStyledProp("css", resolvedMergeCss)}
+        >
+            <Typography {...spreadProps("typographyProps")}>{children}</Typography>
+            {deletable && !disabled && (
+                <Button disabled={!!disabled} buttonType="solid" color={color} onClick={onDelete}>
+                    <VisuallyHidden>{otherProps.theme.translate("delete")}</VisuallyHidden>
+                    <TagIcon {...iconProps} />
+                </Button>
+            )}
+            {disabled && <TagIcon {...iconProps} disabled />}
+        </TagStyle>
     );
 });
 

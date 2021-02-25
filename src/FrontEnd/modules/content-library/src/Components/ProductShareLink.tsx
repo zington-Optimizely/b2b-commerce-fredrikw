@@ -224,6 +224,13 @@ const ProductShareLink: React.FC<Props> = ({ product, productInfo, text, session
                 setModalIsOpen(false);
                 toasterContext.addToast({ body: siteMessage("TellAFriend_Success"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 

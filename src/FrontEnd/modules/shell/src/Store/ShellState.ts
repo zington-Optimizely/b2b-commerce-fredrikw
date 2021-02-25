@@ -5,6 +5,7 @@ import { CompareModalState } from "@insite/shell/Store/CompareModal/CompareModal
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
 import { ImportExportModalState } from "@insite/shell/Store/ImportExportModal/ImportExportModalState";
 import LogoutWarningModalState from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalState";
+import NeverPublishedModalState from "@insite/shell/Store/NeverPublishedModal/NeverPublishedModalState";
 import { PageEditorState } from "@insite/shell/Store/PageEditor/PageEditorState";
 import { PageTreeState } from "@insite/shell/Store/PageTree/PageTreeState";
 import { PublishModalState } from "@insite/shell/Store/PublishModal/PublishModalState";
@@ -21,6 +22,7 @@ export default interface ShellState {
     readonly links: LinksState;
     readonly logoutWarningModal: LogoutWarningModalState;
     readonly importExportModal: ImportExportModalState;
+    readonly neverPublishedModal: NeverPublishedModalState;
     readonly pageEditor: PageEditorState;
     readonly pageTree: PageTreeState;
     readonly publishModal: PublishModalState;

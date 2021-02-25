@@ -17,14 +17,20 @@ export interface IconThemableProps {
     /** Icon size in pixels. Sets the width and height to the same value.
      * @themable */
     size?: number;
-}
-
-export interface IconPresentationProps extends IconThemableProps {
     /** CSS string or styled-components function to be injected into this component. */
     css?: StyledProp<IconProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** A string describing the path to the Mobius Icon, React component or a URL.
      * PLEASE NOTE: Using a string matching the filename in `Icons/*.tsx` will allow the icon source
      * to be loaded as a second module and will save on initial site load. */
+}
+
+export interface IconPresentationProps extends IconThemableProps {
     src?: React.ComponentType | string;
 }
 
@@ -105,8 +111,12 @@ class Icon extends React.Component<IconProps> {
         return (
             <ThemeConsumer>
                 {(theme?: BaseTheme) => {
-                    const { src, ...otherProps } = this.props;
-                    const { applyProp } = applyPropBuilder(otherProps, { component: "icon" });
+                    const { src, mergeCss, ...otherProps } = this.props;
+                    const { applyProp, applyStyledProp } = applyPropBuilder(
+                        { theme, ...otherProps },
+                        { component: "icon" },
+                    );
+                    const resolvedMergeCss = mergeCss ?? theme?.icon?.defaultProps?.mergeCss;
                     if (!src) {
                         return null;
                     }
@@ -146,7 +156,7 @@ class Icon extends React.Component<IconProps> {
                             _height={applyProp("height")}
                             _size={applyProp("size")}
                             _width={applyProp("width")}
-                            css={applyProp("css")}
+                            css={applyStyledProp("css", resolvedMergeCss)}
                             {...omitMultiple(otherProps, ["color", "size", "height", "width", "css"])}
                         >
                             <Component />

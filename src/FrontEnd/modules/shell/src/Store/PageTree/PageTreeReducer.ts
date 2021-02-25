@@ -22,8 +22,12 @@ const initialState: PageTreeState = {
     footerTreeNodesByParentId: {},
     mobileTreeNodesByParentId: {},
     layoutTreeNodesByParentId: {},
+    neverPublishedNodeIds: {},
+    futurePublishNodeIds: {},
+    draftNodeIds: {},
     displayReorderPages: false,
-    homeNodeId: emptyGuid,
+    rootNodeId: emptyGuid,
+    isVariantReorder: false,
     savingReorderPages: false,
     expandedNodes: {},
 };
@@ -40,6 +44,9 @@ const reducer = {
         draft.footerTreeNodesByParentId = {};
         draft.mobileTreeNodesByParentId = {};
         draft.layoutTreeNodesByParentId = {};
+        draft.neverPublishedNodeIds = {};
+        draft.futurePublishNodeIds = {};
+        draft.draftNodeIds = {};
 
         if (draft.appliedTreeFilters.length > 0) {
             draft.expandedNodes = {};
@@ -86,6 +93,9 @@ const reducer = {
             }
         };
 
+        const draftPageIds: Dictionary<boolean> = {};
+        const futurePublishPageIds: Dictionary<Date> = {};
+        const neverPublishedPageIds: Dictionary<boolean> = {};
         const treeNodesByNodeId: Dictionary<TreeNodeModel[]> = {};
         for (const pageState of action.pageStates) {
             if (pageState.displayName === "Home" && pageState.pageId) {
@@ -100,13 +110,28 @@ const reducer = {
                 parentId: pageState.parentNodeId ? pageState.parentNodeId : "",
                 isMatchingPage: pageState.attributes.indexOf("NonMatching") < 0,
                 type: pageState.type,
-                futurePublishOn: pageState.futurePublishOn ? new Date(pageState.futurePublishOn) : undefined,
                 isWaitingForApproval: pageState.isWaitingForApproval,
                 variantName: pageState.variantName,
                 isDefaultVariant: pageState.isDefaultVariant,
                 isShared: pageState.isShared,
                 allowedForPageType: pageState.allowedForPageType,
             };
+
+            if (pageState.neverPublished) {
+                neverPublishedPageIds[pageState.pageId || "empty"] = draft.neverPublishedNodeIds[
+                    pageState.nodeId
+                ] = true;
+            }
+
+            if (pageState.isDraftPage) {
+                draftPageIds[pageState.pageId || "empty"] = draft.draftNodeIds[pageState.nodeId] = true;
+            }
+
+            if (pageState.futurePublishOn) {
+                futurePublishPageIds[pageState.pageId || "empty"] = draft.futurePublishNodeIds[
+                    pageState.nodeId
+                ] = new Date(pageState.futurePublishOn);
+            }
 
             const nodes = treeNodesByNodeId[treeNode.nodeId];
             if (nodes) {
@@ -126,6 +151,10 @@ const reducer = {
             if (nodes.length < 2) {
                 continue;
             }
+
+            delete draft.neverPublishedNodeIds[nodeId];
+            delete draft.futurePublishNodeIds[nodeId];
+            delete draft.draftNodeIds[nodeId];
 
             let sharedIndex = -1;
             for (let i = 0; i < nodes.length; ++i) {
@@ -149,6 +178,19 @@ const reducer = {
                 for (const node of nodes.reverse()) {
                     node.isVariant = true;
                     node.parentId = nodeId;
+
+                    if (neverPublishedPageIds[node.pageId]) {
+                        draft.neverPublishedNodeIds[`${node.nodeId}_${node.pageId}`] = true;
+                    }
+
+                    if (futurePublishPageIds[node.pageId]) {
+                        draft.futurePublishNodeIds[`${node.nodeId}_${node.pageId}`] = futurePublishPageIds[node.pageId];
+                    }
+
+                    if (draftPageIds[node.pageId]) {
+                        draft.draftNodeIds[`${node.nodeId}_${node.pageId}`] = true;
+                    }
+
                     insertNode(node, false);
                 }
             }
@@ -157,27 +199,81 @@ const reducer = {
 
     "PageTree/UpdatePageState": (
         draft: Draft<PageTreeState>,
-        action: { pageId: string; parentId: string | null; publishOn?: Date; isWaitingForApproval: boolean },
+        action: {
+            pageId: string;
+            parentId: string | null;
+            publishOn?: Date;
+            isWaitingForApproval: boolean;
+            publishInTheFuture: boolean;
+        },
     ) => {
-        const pageState = action.parentId
-            ? getPageState(
-                  action.pageId,
-                  draft.treeNodesByParentId[action.parentId],
-                  draft.headerTreeNodesByParentId[action.parentId],
-                  draft.footerTreeNodesByParentId[action.parentId],
-              )
-            : getPageStateFromDictionaries(
-                  action.pageId,
-                  draft.treeNodesByParentId,
-                  draft.headerTreeNodesByParentId,
-                  draft.footerTreeNodesByParentId,
-              );
+        const pageState =
+            (action.parentId &&
+                getPageState(
+                    action.pageId,
+                    draft.treeNodesByParentId[action.parentId],
+                    draft.headerTreeNodesByParentId[action.parentId],
+                    draft.footerTreeNodesByParentId[action.parentId],
+                )) ||
+            getPageStateFromDictionaries(
+                action.pageId,
+                draft.treeNodesByParentId,
+                draft.headerTreeNodesByParentId,
+                draft.footerTreeNodesByParentId,
+            );
         if (!pageState) {
             return;
         }
 
-        pageState.futurePublishOn = action.publishOn;
+        const key = pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId;
+
+        if (
+            (!action.publishInTheFuture || (action.publishInTheFuture && action.publishOn)) &&
+            draft.neverPublishedNodeIds[key]
+        ) {
+            delete draft.neverPublishedNodeIds[key];
+        }
+
+        if (action.publishInTheFuture && !action.publishOn) {
+            draft.draftNodeIds[key] = true;
+        } else {
+            delete draft.draftNodeIds[key];
+        }
+
+        if (action.publishOn && action.publishOn > new Date()) {
+            draft.futurePublishNodeIds[key] = action.publishOn;
+        } else {
+            delete draft.futurePublishNodeIds[key];
+        }
+
         pageState.isWaitingForApproval = action.isWaitingForApproval;
+    },
+
+    "PageTree/UpdatePageStateisDraftPage": (
+        draft: Draft<PageTreeState>,
+        action: {
+            pageId: string;
+            isDraftPage: boolean;
+        },
+    ) => {
+        const pageState = getPageStateFromDictionaries(
+            action.pageId,
+            draft.treeNodesByParentId,
+            draft.headerTreeNodesByParentId,
+            draft.footerTreeNodesByParentId,
+        );
+
+        if (!pageState) {
+            return;
+        }
+
+        const key = pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId;
+
+        if (action.isDraftPage) {
+            draft.draftNodeIds[key] = true;
+        } else {
+            delete draft.draftNodeIds[key];
+        }
     },
 
     "PageTree/SetExpandedNodes": (draft: Draft<PageTreeState>, action: { expandedNodes: Dictionary<boolean> }) => {
@@ -336,16 +432,39 @@ const reducer = {
 
     "PageTree/LoadReorderPagesComplete": (
         draft: Draft<PageTreeState>,
-        action: { homeNodeId: string; pageReorderingModels: PageReorderModel[] },
+        action: { rootNodeId: string; pageReorderingModels: PageReorderModel[]; nodeId?: string },
     ) => {
         draft.reorderPagesByParentId = {};
-        draft.homeNodeId = action.homeNodeId;
+        draft.rootNodeId = action.rootNodeId;
+        draft.isVariantReorder = !!action.nodeId;
         action.pageReorderingModels.sort((a, b) => a.sortOrder - b.sortOrder);
+
+        const pages: Dictionary<TreeNodeModel> = {};
+        if (action.nodeId) {
+            const treeNodes =
+                draft.treeNodesByParentId[action.nodeId] ||
+                draft.headerTreeNodesByParentId[action.nodeId] ||
+                draft.footerTreeNodesByParentId[action.nodeId];
+            if (treeNodes) {
+                for (const treeNode of treeNodes) {
+                    pages[treeNode.pageId] = treeNode;
+                }
+            }
+        }
 
         for (const page of action.pageReorderingModels) {
             if (!draft.reorderPagesByParentId[page.parentId]) {
                 draft.reorderPagesByParentId[page.parentId] = [];
             }
+
+            if (action.nodeId && page.pageId) {
+                if (!pages[page.pageId]) {
+                    continue;
+                } else {
+                    page.variantName = pages[page.pageId].variantName;
+                }
+            }
+
             page.sortOrder = draft.reorderPagesByParentId[page.parentId].length;
             draft.reorderPagesByParentId[page.parentId].push(page);
         }

@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import setUserFields from "@insite/client-framework/Store/Pages/UserSetup/Handlers/SetUserFields";
 import { getCurrentEditingUser } from "@insite/client-framework/Store/Pages/UserSetup/UserSetupSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -17,6 +18,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     emailErrorMessage: state.pages.userSetup.emailErrorMessage,
     firstNameErrorMessage: state.pages.userSetup.firstNameErrorMessage,
     lastNameErrorMessage: state.pages.userSetup.lastNameErrorMessage,
+    useEmailAsUserName: getSettingsCollection(state).accountSettings.useEmailAsUserName,
 });
 
 const mapDispatchToProps = {
@@ -50,6 +52,7 @@ const UserSetupUserInformation = ({
     emailErrorMessage,
     firstNameErrorMessage,
     lastNameErrorMessage,
+    useEmailAsUserName,
     setUserFields,
 }: Props) => {
     if (!editingUser) {
@@ -57,13 +60,21 @@ const UserSetupUserInformation = ({
     }
 
     const [email, setEmail] = useState(editingUser.email);
+    const [userName, setUserName] = useState(editingUser.userName);
 
     useEffect(() => {
         setEmail(editingUser.email);
     }, [editingUser.email]);
 
+    useEffect(() => {
+        setUserName(editingUser.userName);
+    }, [editingUser.userName]);
+
     const emailChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
+        if (useEmailAsUserName) {
+            setUserName(event.target.value);
+        }
     };
 
     const emailBlurHandler = () => {
@@ -85,7 +96,7 @@ const UserSetupUserInformation = ({
             </Typography>
             <StyledWrapper {...styles.wrapper}>
                 <TextField
-                    value={editingUser.userName}
+                    value={userName}
                     label={translate("Username")}
                     {...styles.userNameTextField}
                     disabled={true}

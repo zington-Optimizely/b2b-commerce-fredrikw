@@ -1,8 +1,8 @@
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Button from "@insite/mobius/Button";
 import Modal from "@insite/mobius/Modal";
 import ButtonBar from "@insite/shell/Components/Modals/ButtonBar";
-import { toggleShowGeneratedPageTemplate } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { getStorablePage } from "@insite/shell/Store/ShellSelectors";
+import { closePageTemplateModal } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -15,24 +15,19 @@ interface PageEditorState {
 }
 
 const mapStateToProps = (state: ShellState) => ({
-    show: state.pageEditor.showGeneratedPageTemplate,
-    getStorablePage: () => {
-        return getStorablePage(state, state.shellContext.websiteId);
-    },
+    pageType: getCurrentPage(state).type,
+    isOpen: state.pageEditor.displayPageTemplateModal,
+    generatedPageTemplate: state.pageEditor.generatedPageTemplate,
 });
 
 const mapDispatchToProps = {
-    toggleShowGeneratedPageTemplate,
+    closePageTemplateModal,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 class PageTemplateModal extends React.Component<Props, PageEditorState> {
     private textarea: HTMLTextAreaElement | null = null;
-
-    generatePageCreator = () => {
-        return JSON.stringify(this.props.getStorablePage(), null, 4);
-    };
 
     copyGeneratedPage = (event: React.MouseEvent<HTMLButtonElement>) => {
         if (this.textarea === null) {
@@ -45,34 +40,33 @@ class PageTemplateModal extends React.Component<Props, PageEditorState> {
     };
 
     render() {
-        if (!this.props.show) {
+        if (!this.props.isOpen) {
             return null;
         }
 
         const pathToSave =
             BLUEPRINT_NAME === "content-library"
-                ? `wwwroot/AppData/PageTemplates/BuiltIn/${this.props.getStorablePage().type}/Standard.json`
-                : `modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates/${
-                      this.props.getStorablePage().type
-                  }/Standard.json`;
+                ? `wwwroot/AppData/PageTemplates/BuiltIn/${this.props.pageType}/Standard.json`
+                : `modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageTemplates/${this.props.pageType}/Standard.json`;
 
         return (
             <Modal
-                isOpen={this.props.show}
+                isOpen={this.props.isOpen}
                 headline="Code for Page Template"
-                handleClose={this.props.toggleShowGeneratedPageTemplate}
+                handleClose={this.props.closePageTemplateModal}
                 closeOnEsc
                 closeOnScrimClick
             >
                 <p>Save this to {pathToSave}</p>
                 <TextAreaStyle
+                    readOnly={true}
                     ref={textarea => {
                         this.textarea = textarea;
                     }}
-                    value={this.generatePageCreator()}
+                    value={this.props.generatedPageTemplate}
                 />
                 <ButtonBar>
-                    <Button variant="secondary" onClick={this.props.toggleShowGeneratedPageTemplate}>
+                    <Button variant="secondary" onClick={this.props.closePageTemplateModal}>
                         Close
                     </Button>
                     <Button variant="primary" onClick={this.copyGeneratedPage}>

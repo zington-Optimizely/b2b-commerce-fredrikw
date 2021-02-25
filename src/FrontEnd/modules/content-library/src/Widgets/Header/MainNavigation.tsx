@@ -130,6 +130,7 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
         quickOrderLink: getPageLinkByPageType(state, "QuickOrderPage"),
         categoryIdsToLoad,
         allowQuickOrder: getSettingsCollection(state).orderSettings.allowQuickOrder,
+        categoryErrorStatusCodeById: state.data.categories.errorStatusCodeById,
     };
 };
 
@@ -462,7 +463,9 @@ class MainNavigation extends React.Component<Props, State> {
         if (categoryIdsToLoad.length !== 0) {
             for (const categoryId of Object.keys(categoryIdsToLoad)) {
                 const maxDepth = categoryIdsToLoad[categoryId];
-                this.props.loadCategories(getParameter(categoryId, maxDepth));
+                if (!this.props.categoryErrorStatusCodeById?.[categoryId]) {
+                    this.props.loadCategories(getParameter(categoryId, maxDepth));
+                }
             }
         }
     }

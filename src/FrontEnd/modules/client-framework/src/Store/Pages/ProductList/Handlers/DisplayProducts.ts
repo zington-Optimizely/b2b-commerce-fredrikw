@@ -9,10 +9,16 @@ import {
     Handler,
 } from "@insite/client-framework/HandlerCreator";
 import { CatalogPage } from "@insite/client-framework/Services/CategoryService";
-import { GetProductCollectionApiV2Parameter } from "@insite/client-framework/Services/ProductServiceV2";
+import {
+    GetProductCollectionApiV2Parameter,
+    ProductExpandTokens,
+} from "@insite/client-framework/Services/ProductServiceV2";
 import loadRealTimeInventory from "@insite/client-framework/Store/CommonHandlers/LoadRealTimeInventory";
 import loadRealTimePricing from "@insite/client-framework/Store/CommonHandlers/LoadRealTimePricing";
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import {
+    getSearchDataModeActive,
+    getSettingsCollection,
+} from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCatalogPageStateByPath } from "@insite/client-framework/Store/Data/CatalogPages/CatalogPagesSelectors";
 import loadCatalogPageByPath from "@insite/client-framework/Store/Data/CatalogPages/Handlers/LoadCatalogPageByPath";
 import loadProducts from "@insite/client-framework/Store/Data/Products/Handlers/LoadProducts";
@@ -46,6 +52,7 @@ interface Props {
     idByPath?: SafeDictionary<string>;
     result: DisplayProductsResult;
     pricingLoaded?: true;
+    expandTokens?: ProductExpandTokens;
 }
 
 type HandlerType = Handler<Parameter, Props>;
@@ -136,6 +143,13 @@ export const SetIsFiltered: HandlerType = ({ result, result: { productFilters } 
     }
 };
 
+export const SetExpandTokens: HandlerType = props => {
+    props.expandTokens = ["attributes", "facets"];
+    if (getSearchDataModeActive(props.getState())) {
+        props.expandTokens.push("scoreexplanation");
+    }
+};
+
 export const PopulateApiParameter: HandlerType = props => {
     const filters = props.result.productFilters;
     const {
@@ -160,7 +174,7 @@ export const PopulateApiParameter: HandlerType = props => {
         productLineIds: filters.pageProductLineId ? [filters.pageProductLineId] : productLineIds,
         priceFilters,
         attributeValueIds,
-        expand: ["attributes", "facets"],
+        expand: props.expandTokens || [],
         applyPersonalization: true,
         includeAttributes: ["includeOnProduct"],
     };
@@ -290,6 +304,13 @@ export const LoadRealTimePrices: HandlerType = async props => {
                 });
                 props.pricingLoaded = true;
             },
+            onComplete(realTimePricingProps) {
+                if (realTimePricingProps.apiResult) {
+                    this.onSuccess?.(realTimePricingProps.apiResult);
+                } else if (realTimePricingProps.error) {
+                    this.onError?.(realTimePricingProps.error);
+                }
+            },
         }),
     );
 
@@ -317,6 +338,13 @@ export const LoadRealTimeInventory: HandlerType = props => {
                     type: "Pages/ProductList/FailedLoadRealTimeInventory",
                 });
             },
+            onComplete(realTimeInventoryProps) {
+                if (realTimeInventoryProps.apiResult) {
+                    this.onSuccess?.(realTimeInventoryProps.apiResult);
+                } else if (realTimeInventoryProps.error) {
+                    this.onError?.(realTimeInventoryProps.error);
+                }
+            },
         }),
     );
 };
@@ -326,6 +354,7 @@ export const chain = [
     RequestCatalogPageFromApi,
     ParseQueryParameter,
     SetIsFiltered,
+    SetExpandTokens,
     PopulateApiParameter,
     HandleSortOrderDefault,
     DispatchSetParameter,

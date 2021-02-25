@@ -19,6 +19,14 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "GSD",
+            "program": "${workspaceFolder}/startDevelopment.js",
+            "cwd": "${workspaceFolder}/",
+            "args": [ "gsd" ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Production (No Build)",
             "program": "${workspaceFolder}/dist/server.js",
             "cwd": "${workspaceFolder}/",

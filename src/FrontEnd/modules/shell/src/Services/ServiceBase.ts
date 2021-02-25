@@ -1,5 +1,6 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { request, requestVoid } from "@insite/client-framework/Services/ApiService";
+import { showErrorModal } from "@insite/shell/Store/ErrorModal/ErrorModalActionCreator";
 import ErrorModalState from "@insite/shell/Store/ErrorModal/ErrorModalState";
 import { AnyShellAction } from "@insite/shell/Store/Reducers";
 import { stringify } from "qs";
@@ -34,7 +35,7 @@ export function requestJson<T>(
     body?: string | FormData,
 ) {
     return new Promise<T>(resolve => {
-        request<T>(`${endpoint}`, method, headers, body).then(resolve).catch(showErrorModal);
+        request<T>(`${endpoint}`, method, headers, body).then(resolve).catch(displayErrorModal);
     });
 }
 
@@ -47,7 +48,7 @@ export const setReduxDispatcher = (storeDispatch: typeof dispatch) => {
     dispatch = storeDispatch;
 };
 
-export function showErrorModal(error: any) {
+function displayErrorModal(error: any) {
     if (!dispatch) {
         return; // Can't do anything without a connection to Redux.
     }
@@ -65,10 +66,5 @@ export function showErrorModal(error: any) {
         onCloseAction = "RedirectToAdmin";
     }
 
-    dispatch({
-        type: "ErrorModal/ShowModal",
-        message,
-        error,
-        onCloseAction,
-    });
+    dispatch(showErrorModal(message, error, onCloseAction));
 }

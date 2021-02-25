@@ -1,5 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
+import { HasOnComplete } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setAddToListModalIsOpen from "@insite/client-framework/Store/Components/AddToListModal/Handlers/SetAddToListModalIsOpen";
@@ -385,7 +386,7 @@ const OrderLineCard = (props: {
         productInfos?: Omit<ProductInfo, "productDetailPath">[];
         modalIsOpen: boolean;
     }) => void;
-    addToWishList: (parameter: AddToWishListParameter) => void;
+    addToWishList: (parameter: AddToWishListParameter & HasOnComplete) => void;
 }) => {
     const { orderLine, order, wishListSettings, styles, setAddToListModalIsOpen, addToWishList } = props;
     const toasterContext = React.useContext(ToasterContext);

@@ -532,7 +532,7 @@ const Carousel = ({
                                             id={`carousel-${id}_attribute-label-${attribute.id}`}
                                             {...styles.attributeLabelText}
                                         >
-                                            {attribute.label}
+                                            {attribute.label || attribute.name}
                                         </Typography>
                                     </GridItem>
                                 ))}

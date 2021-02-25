@@ -1,4 +1,3 @@
-import caseInsensitiveSort from "@insite/client-framework/Common/Utilities/caseInsensitiveSort";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";

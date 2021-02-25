@@ -1,6 +1,6 @@
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { addWidget } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import WidgetGroups, { WidgetGroup } from "@insite/client-framework/Types/WidgetGroups";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Icon from "@insite/mobius/Icon";
@@ -14,8 +14,8 @@ import { getWidgetDefinition, getWidgetDefinitions } from "@insite/shell/Definit
 import { LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { addWidget } from "@insite/shell/Store/Data/Pages/PagesActionCreators";
 import { editWidget, hideAddWidgetModal, savePage } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import sortBy from "lodash/sortBy";
 import * as React from "react";
@@ -28,8 +28,8 @@ interface OwnProps {}
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
-    const currentPage = getCurrentPageForShell(state);
+const mapStateToProps = (state: ShellState) => {
+    const currentPage = getCurrentPage(state);
     const pageType = currentPage.type;
     const groups: WidgetGroup[] = [];
     const widgetsByGroup: Dictionary<LoadedWidgetDefinition[]> = {};
@@ -155,12 +155,6 @@ class AddWidgetModal extends React.Component<Props, State> {
             newWidget.isLayout = true;
         }
 
-        sendToSite({
-            type: "AddWidget",
-            widget: newWidget,
-            sortOrder: addWidgetData.sortOrder,
-            pageId: page.id,
-        });
         addWidget(newWidget, addWidgetData.sortOrder, page.id);
         editWidget(newWidget.id, true);
         hideAddWidgetModal();
@@ -168,7 +162,7 @@ class AddWidgetModal extends React.Component<Props, State> {
     };
 
     render() {
-        const { groups, widgetsByGroup, addWidgetData, page } = this.props;
+        const { groups, widgetsByGroup, addWidgetData } = this.props;
 
         if (addWidgetData?.addRow && !this.lastAddWidgetData?.addRow) {
             this.addWidget(getWidgetDefinition("Basic/Row"));
@@ -212,7 +206,7 @@ class AddWidgetModal extends React.Component<Props, State> {
                         placeholder="Search Widgets"
                         onChange={this.searchChange}
                         cssOverrides={{ formInputWrapper: formInputWrapperCss, formField: formFieldCss }}
-                        iconProps={{ src: () => <Search /> }}
+                        iconProps={{ src: "Search" }}
                     />
                     <WidgetListScroller>
                         {groups.map(

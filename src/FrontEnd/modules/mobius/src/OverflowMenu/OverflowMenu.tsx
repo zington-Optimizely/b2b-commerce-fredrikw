@@ -1,7 +1,7 @@
 import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
 import { BaseTheme, ThemeTransitionDuration } from "@insite/mobius/globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
-import Popover, { PopoverProps } from "@insite/mobius/Popover";
+import Popover, { ContentBodyProps, PopoverProps } from "@insite/mobius/Popover";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import getColor from "@insite/mobius/utilities/getColor";
 import getProp from "@insite/mobius/utilities/getProp";
@@ -18,6 +18,9 @@ export interface OverflowMenuPresentationProps {
     /** An object containing props to be passed down to trigger button component.
      * @themable */
     buttonProps?: ButtonPresentationProps;
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<OverflowMenuProps>;
     /** CSS strings or styled-components functions to be injected into nested components. These will override the theme defaults.
      * @themable */
     cssOverrides?: {
@@ -28,9 +31,17 @@ export interface OverflowMenuPresentationProps {
     /** Props to be passed into the trigger Icon component.
      * @themable */
     iconProps?: IconPresentationProps;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Theme transition length for appearance.
      * @themable */
     transitionDuration?: keyof ThemeTransitionDuration;
+    /** override the default max height */
+    maxHeight?: string;
 }
 
 export type OverflowMenuComponentProps = MobiusStyledComponentProps<
@@ -109,13 +120,16 @@ class OverflowMenu extends React.Component<Props, State> {
             position,
             transitionDuration,
             yPosition,
+            mergeCss,
+            maxHeight,
             ...otherProps
         } = this.props;
         const { controlsId } = this.state;
-        const { spreadProps } = applyPropBuilder(otherProps, { component: "overflowMenu" });
+        const { spreadProps, applyStyledProp } = applyPropBuilder(otherProps, { component: "overflowMenu" });
         const cssOverrides = spreadProps("cssOverrides" as any) as Required<
             OverflowMenuPresentationProps
         >["cssOverrides"];
+        const resolvedMergeCss = mergeCss ?? otherProps?.theme?.overflowMenu?.defaultProps?.mergeCss;
         const iconProps = spreadProps("iconProps" as any);
         const menuItems: JSX.Element[] = React.Children.map(children, (menuChild, index) => {
             const newProps: { onClick?: (event: Event) => void } = {};
@@ -130,17 +144,17 @@ class OverflowMenu extends React.Component<Props, State> {
             }
             return (
                 // eslint-disable-next-line react/no-array-index-key
-                <OverflowMenuItem key={index} css={cssOverrides.menuItem}>
+                <OverflowMenuItem key={index} css={applyStyledProp(["cssOverrides", "menuItem"], resolvedMergeCss)}>
                     {React.cloneElement(menuChild as React.ReactElement, newProps)}
                 </OverflowMenuItem>
             );
         });
 
-        const popoverBodyProps = {
+        const popoverBodyProps: ContentBodyProps = {
             uid: controlsId,
             _width: 191,
-            css: cssOverrides.menu,
             ...omitSingle(otherProps, "cssOverrides"),
+            css: applyStyledProp(["cssOverrides", "menu"], resolvedMergeCss),
         };
         const popoverTrigger = (
             <OverflowButton
@@ -156,7 +170,11 @@ class OverflowMenu extends React.Component<Props, State> {
             <Popover
                 ref={this.popover}
                 contentBodyProps={popoverBodyProps}
-                wrapperProps={{ css: cssOverrides?.wrapper, _width: "40px", _height: "40px" }}
+                wrapperProps={{
+                    css: applyStyledProp(["cssOverrides", "wrapper"], resolvedMergeCss),
+                    _width: "40px",
+                    _height: "40px",
+                }}
                 popoverTrigger={popoverTrigger}
                 onClose={onClose}
                 onOpen={onOpen}
@@ -166,6 +184,7 @@ class OverflowMenu extends React.Component<Props, State> {
                 transitionDuration={transitionDuration}
                 xPosition={position}
                 yPosition={yPosition}
+                _height={maxHeight}
             >
                 {menuItems}
             </Popover>

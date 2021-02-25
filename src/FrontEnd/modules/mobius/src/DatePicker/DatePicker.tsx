@@ -163,6 +163,7 @@ const DateTimePickerStyle = styled.div<
                 font: inherit;
                 box-sizing: content-box;
                 appearance: textfield;
+                padding: 1px 2px;
                 &::-webkit-outer-spin-button,
                 &::-webkit-inner-spin-button {
                     appearance: none;

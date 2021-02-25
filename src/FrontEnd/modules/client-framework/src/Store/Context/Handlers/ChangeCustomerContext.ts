@@ -4,6 +4,7 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { Cart, getCart, GetCartApiParameter } from "@insite/client-framework/Services/CartService";
@@ -118,6 +119,7 @@ export const ResetBillTosAndShipTosData: HandlerType = props => {
 };
 
 export const FireOnSuccess: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 
@@ -135,6 +137,8 @@ export const NavigateToReturnUrl: HandlerType = async props => {
     const session = getSession(state);
     const defaultUrl = session.dashboardIsHomepage
         ? getPageLinkByPageType(state, "MyAccountPage")?.url
+        : session.customLandingPage
+        ? session.customLandingPage
         : getPageLinkByPageType(state, "HomePage")?.url;
     const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
     let returnUrl = props.parameter.returnUrl;

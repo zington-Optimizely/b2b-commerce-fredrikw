@@ -18,9 +18,9 @@ export type AccordionComponentProps = MobiusStyledComponentProps<"dl", Accordion
 
 export type AccordionProps = AccordionPresentationProps & AccordionComponentProps;
 
-const AccordionStyle = styled.dl.attrs(() => ({
+const AccordionStyle = styled.dl.attrs({
     role: "presentation",
-}))`
+})`
     margin: 0;
     ${injectCss}
 `;
@@ -33,7 +33,7 @@ const Accordion: React.FC<AccordionProps & ThemeProps<BaseTheme>> = ({
     ...otherProps
 }) => (
     <AccordionContext.Provider value={{ headingLevel }}>
-        <AccordionStyle css={css || get(theme, "accordion.defaultProps.css")} {...otherProps}>
+        <AccordionStyle {...otherProps} css={css || get(theme, "accordion.defaultProps.css")}>
             {children}
         </AccordionStyle>
     </AccordionContext.Provider>

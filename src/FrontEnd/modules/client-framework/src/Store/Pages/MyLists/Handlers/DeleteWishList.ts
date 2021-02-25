@@ -1,4 +1,8 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { deleteWishList as deleteWishListApi } from "@insite/client-framework/Services/WishListService";
 import loadWishLists from "@insite/client-framework/Store/Pages/MyLists/Handlers/LoadWishLists";
 
@@ -33,6 +37,7 @@ export const ResetWishListsData: HandlerType = props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.error) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.();
     }
 };

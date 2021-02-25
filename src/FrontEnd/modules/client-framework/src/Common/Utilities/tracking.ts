@@ -112,6 +112,49 @@ export function trackSearchResultEvent(searchTerm: string, resultCount: number, 
             searchQuery: searchTerm,
             correctedQuery: correctedSearchTerm,
             numSearchResults: resultCount,
+            // Clear/Reset data for this layer
+            searchTerm: null,
+            /* eslint-disable */
+            product_numSearchResults: null,
+            categories_numSearchResults: null,
+            content_numSearchResults: null,
+            brands_numSearchResults: null,
+            /* eslint-enable */
+        });
+    }
+}
+
+export function trackAutocompleteSearchResultEvent(
+    searchEvent: string,
+    searchTerm: string,
+    resultCount: number,
+    productCount?: number,
+    categoryCount?: number,
+    contentCount?: number,
+    brandCount?: number,
+) {
+    if (IS_SERVER_SIDE || lastTrackedSearchTerm === searchTerm) {
+        return;
+    }
+
+    lastTrackedSearchTerm = searchTerm;
+
+    const dataLayer = getDataLayer();
+
+    if (dataLayer && searchEvent && searchTerm) {
+        dataLayer.push({
+            event: searchEvent,
+            searchTerm,
+            searchQuery: searchTerm,
+            correctedQuery: null,
+            // It is all products, categories, content, and brands
+            numSearchResults: resultCount,
+            /* eslint-disable */
+            product_numSearchResults: productCount,
+            categories_numSearchResults: categoryCount,
+            content_numSearchResults: contentCount,
+            brands_numSearchResults: brandCount,
+            /* eslint-enable */
         });
     }
 }

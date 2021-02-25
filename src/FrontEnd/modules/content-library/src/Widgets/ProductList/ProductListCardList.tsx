@@ -15,6 +15,7 @@ import { ProductListPageContext, ProductListPageDataContext } from "@insite/cont
 import ProductListProductCard from "@insite/content-library/Widgets/ProductList/ProductListProductCard";
 import ProductListProductContext from "@insite/content-library/Widgets/ProductList/ProductListProductContext";
 import ProductListProductGridCard from "@insite/content-library/Widgets/ProductList/ProductListProductGridCard";
+import ProductListTable from "@insite/content-library/Widgets/ProductList/ProductListTable";
 import Hidden from "@insite/mobius/Hidden";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
@@ -170,16 +171,20 @@ const ProductListCardList: FC<Props> = ({ isLoading, productsDataView, view, fie
             <LoadingOverlay loading={isLoading}>
                 <Hidden below="md">
                     <CardList extendedStyles={styles.cardList} data-test-selector={`productListCardContainer${view}`}>
-                        {renderProducts(
-                            view === "List" ? (
-                                <CardContainer extendedStyles={styles.cardContainerStyles}>
-                                    <ProductListProductCard {...fields} />
-                                </CardContainer>
-                            ) : (
-                                <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
-                                    <ProductListProductGridCard {...fields} />
-                                </CardContainerMultiColumn>
-                            ),
+                        {view === "Table" ? (
+                            <ProductListTable products={products} {...fields} />
+                        ) : (
+                            renderProducts(
+                                view === "List" ? (
+                                    <CardContainer extendedStyles={styles.cardContainerStyles}>
+                                        <ProductListProductCard {...fields} />
+                                    </CardContainer>
+                                ) : (
+                                    <CardContainerMultiColumn extendedStyles={styles.cardContainerMultiColumnStyles}>
+                                        <ProductListProductGridCard {...fields} />
+                                    </CardContainerMultiColumn>
+                                ),
+                            )
                         )}
                     </CardList>
                 </Hidden>
@@ -290,6 +295,10 @@ const widgetModule: WidgetModule = {
                     {
                         displayName: "Grid",
                         value: "Grid",
+                    },
+                    {
+                        displayName: "Table",
+                        value: "Table",
                     },
                 ],
             },

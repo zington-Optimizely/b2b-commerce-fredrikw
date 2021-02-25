@@ -181,6 +181,13 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteL
             onSuccess: () => {
                 toasterContext.addToast({ body: translate("Quantity updated"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.result?.quoteLine) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 
@@ -212,6 +219,13 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteL
             },
             onSuccess: () => {
                 toasterContext.addToast({ body: translate("Notes updated"), messageType: "success" });
+            },
+            onComplete(resultProps) {
+                if (resultProps.result?.quoteLine) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
             },
         });
     };

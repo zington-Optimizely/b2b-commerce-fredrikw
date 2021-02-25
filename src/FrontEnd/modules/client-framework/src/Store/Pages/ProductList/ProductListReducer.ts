@@ -6,6 +6,7 @@ import ProductListState, {
     ProductListViewType,
 } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import {
+    AttributeTypeFacetModel,
     ProductInventoryDto,
     RealTimeInventoryModel,
     RealTimePricingModel,
@@ -16,6 +17,8 @@ const initialState: ProductListState = {
     isLoading: false,
     productFilters: {},
     productInfosByProductId: {},
+    visibleColumnNames: [],
+    tableColumns: [],
 };
 
 const reducer = {
@@ -132,6 +135,18 @@ const reducer = {
         draft.lastParameter = undefined;
         draft.parameter = undefined;
         draft.productInfosByProductId = {};
+    },
+    "Pages/ProductList/SetTableColumns": (
+        draft: Draft<ProductListState>,
+        action: { tableColumns: AttributeTypeFacetModel[] },
+    ) => {
+        draft.tableColumns = action.tableColumns;
+    },
+    "Pages/ProductList/SetVisibleColumnNames": (
+        draft: Draft<ProductListState>,
+        action: { visibleColumnNames: string[] },
+    ) => {
+        draft.visibleColumnNames = action.visibleColumnNames;
     },
 };
 

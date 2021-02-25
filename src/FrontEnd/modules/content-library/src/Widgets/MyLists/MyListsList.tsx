@@ -107,7 +107,15 @@ class MyListsList extends React.Component<Props, State> {
     deleteSubmitHandler = () => {
         this.setState({ deleteListModalIsOpen: false });
         if (this.state.wishListToAction) {
-            this.props.deleteWishList({ wishListId: this.state.wishListToAction.id, onSuccess: this.onDeleteSuccess });
+            this.props.deleteWishList({
+                wishListId: this.state.wishListToAction.id,
+                onSuccess: this.onDeleteSuccess,
+                onComplete(resultProps) {
+                    if (!resultProps.error) {
+                        this.onSuccess?.();
+                    }
+                },
+            });
         }
     };
 
@@ -129,7 +137,13 @@ class MyListsList extends React.Component<Props, State> {
     leaveSubmitHandler = () => {
         this.setState({ leaveListModalIsOpen: false });
         if (this.state.wishListToAction) {
-            this.props.deleteWishListShare({ wishList: this.state.wishListToAction, onSuccess: this.onLeaveSuccess });
+            this.props.deleteWishListShare({
+                wishList: this.state.wishListToAction,
+                onSuccess: this.onLeaveSuccess,
+                onComplete() {
+                    this.onSuccess?.();
+                },
+            });
         }
     };
 

@@ -3,6 +3,8 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { ServiceResult } from "@insite/client-framework/Services/ApiService";
 import {
@@ -34,12 +36,14 @@ export const SendDataToApi: HandlerType = async props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.apiResult.successful) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.();
     }
 };
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (!props.apiResult.successful) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.apiResult.errorMessage);
     }
 };

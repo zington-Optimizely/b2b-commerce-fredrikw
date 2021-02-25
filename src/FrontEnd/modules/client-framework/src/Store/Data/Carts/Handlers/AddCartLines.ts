@@ -1,5 +1,10 @@
 import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
-import { createHandlerChainRunner, Handler, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import { AddCartLinesApiParameter, addLineCollection } from "@insite/client-framework/Services/CartService";
 import { CartLineCollectionModel, CartLineModel } from "@insite/client-framework/Types/ApiModels";
@@ -43,6 +48,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult);
 };
 

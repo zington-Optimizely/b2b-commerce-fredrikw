@@ -23,4 +23,5 @@ export default interface PermissionsModel {
     canRollbackContent: boolean;
 
     canEditGlobalStyleGuide: boolean;
+    canUseSearchDataMode: boolean;
 }

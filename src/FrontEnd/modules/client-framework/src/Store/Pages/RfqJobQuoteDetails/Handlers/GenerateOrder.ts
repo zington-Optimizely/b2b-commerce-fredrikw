@@ -3,6 +3,7 @@ import {
     createHandlerChainRunner,
     HasOnError,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import { updateJobQuote, UpdateJobQuoteApiParameter } from "@insite/client-framework/Services/JobQuoteService";
 import { getQtyOrderedByJobQuoteLineId } from "@insite/client-framework/Store/Data/JobQuotes/JobQuotesSelector";
@@ -48,6 +49,7 @@ export const SendDataToApi: HandlerType = async props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.(props.apiResult);
 };
 

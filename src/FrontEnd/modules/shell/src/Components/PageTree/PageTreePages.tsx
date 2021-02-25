@@ -14,6 +14,9 @@ interface Props {
     onExpandNode: (node: TreeNodeModel) => void;
     flyOutNode?: TreeNodeModel;
     permissions?: PermissionsModel;
+    neverPublishedNodeIds: Dictionary<boolean>;
+    futurePublishNodeIds: Dictionary<Date>;
+    draftNodeIds: Dictionary<boolean>;
 }
 
 const PageTreePages: React.FC<Props> = ({
@@ -26,6 +29,9 @@ const PageTreePages: React.FC<Props> = ({
     isEditMode,
     selectedPageId,
     permissions,
+    neverPublishedNodeIds,
+    futurePublishNodeIds,
+    draftNodeIds,
 }) => (
     <ul>
         {nodesByParentId[parentId] &&
@@ -41,6 +47,9 @@ const PageTreePages: React.FC<Props> = ({
                     onFlyOutNode={onFlyOutNode}
                     flyOutNode={flyOutNode}
                     permissions={permissions}
+                    neverPublishedNodeIds={neverPublishedNodeIds}
+                    futurePublishNodeIds={futurePublishNodeIds}
+                    draftNodeIds={draftNodeIds}
                 />
             ))}
     </ul>

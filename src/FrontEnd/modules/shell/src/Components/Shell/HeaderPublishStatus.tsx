@@ -1,6 +1,6 @@
-import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getPageState, getPageStateFromDictionaries } from "@insite/shell/Services/ContentAdminService";
 import { loadPublishInfo } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import React, { FC, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -11,20 +11,26 @@ const mapStateToProps = (state: ShellState) => {
         publishModal: { pagePublishInfosState },
         shellContext: { currentLanguageId, currentPersonaId, currentDeviceType, contentMode },
         pageEditor: { isEditingNewPage },
-        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId },
+        pageTree: { treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId, futurePublishNodeIds },
     } = state;
 
-    const page = getCurrentPageForShell(state);
+    const page = getCurrentPage(state);
     const pageId = page.id;
 
-    return {
-        pageId,
-        futurePublishOn: getPageState(
+    const pageState =
+        getPageState(
             pageId,
             treeNodesByParentId[page.parentId],
             headerTreeNodesByParentId[page.parentId],
             footerTreeNodesByParentId[page.parentId],
-        )?.futurePublishOn,
+        ) ||
+        getPageStateFromDictionaries(pageId, treeNodesByParentId, headerTreeNodesByParentId, footerTreeNodesByParentId);
+
+    return {
+        pageId,
+        futurePublishOn:
+            pageState &&
+            futurePublishNodeIds[pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId],
         contentMode,
         loaded: pagePublishInfosState.value,
         hasDraft:

@@ -1,4 +1,9 @@
-import { createHandlerChainRunner, HandlerWithResult, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { updateWishListLine as updateWishListLineApi } from "@insite/client-framework/Services/WishListService";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import { WishListLineModel } from "@insite/client-framework/Types/ApiModels";
@@ -56,6 +61,7 @@ export const DispatchUpdateWishListLine: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

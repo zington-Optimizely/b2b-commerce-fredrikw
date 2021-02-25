@@ -1,8 +1,5 @@
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
-import Monitor from "@insite/mobius/Icons/Monitor";
-import Smartphone from "@insite/mobius/Icons/Smartphone";
-import Tablet from "@insite/mobius/Icons/Tablet";
 import ClickerStyle from "@insite/shell/Components/Shell/ClickerStyle";
 import shellTheme from "@insite/shell/ShellTheme";
 import * as React from "react";
@@ -40,7 +37,7 @@ class ViewPortClicker extends React.Component<Props> {
             iconColor = text.accent;
         }
 
-        const icon = targetStageMode === "Phone" ? Smartphone : targetStageMode === "Tablet" ? Tablet : Monitor;
+        const icon = targetStageMode === "Phone" ? "Smartphone" : targetStageMode === "Tablet" ? "Tablet" : "Monitor";
 
         return (
             <ClickerStyle

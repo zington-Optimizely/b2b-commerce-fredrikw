@@ -1,6 +1,11 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
 import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { addWishList, addWishListLines } from "@insite/client-framework/Services/WishListService";
 import { WishListModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -71,12 +76,14 @@ export const ResetWishListData: HandlerType = props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.result?.errorMessage && props.parameter.onSuccess) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess(props.result.wishList!);
     }
 };
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.result?.errorMessage) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.result.errorMessage);
     }
 };

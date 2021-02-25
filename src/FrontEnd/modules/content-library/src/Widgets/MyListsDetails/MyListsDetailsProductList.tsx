@@ -252,6 +252,11 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             onSuccess: () => {
                 setDeleteLineModalIsOpen(false);
             },
+            onComplete() {
+                // "this" is targeting the object being created, not the parent SFC
+                // eslint-disable-next-line react/no-this-in-sfc
+                this.onSuccess?.();
+            },
         });
     };
 
@@ -289,6 +294,13 @@ const MyListsDetailsProductList: React.FC<Props> = ({
             wishListLine: wishListLineToUpdate,
             onSuccess: () => {
                 setEditNotesModalIsOpen(false);
+            },
+            onComplete(resultProps) {
+                if (resultProps.result?.wishListLine) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
             },
         });
     };

@@ -1,6 +1,5 @@
 import Button from "@insite/mobius/Button";
 import Icon from "@insite/mobius/Icon";
-import AlertTriangle from "@insite/mobius/Icons/AlertTriangle";
 import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import Modal from "@insite/mobius/Modal";
 import Drag from "@insite/shell/Components/Icons/Drag";
@@ -19,8 +18,9 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     return {
         displayReorderPages: state.pageTree.displayReorderPages,
         reorderPagesByParentId: state.pageTree.reorderPagesByParentId,
-        homeNodeId: state.pageTree.homeNodeId,
+        rootNodeId: state.pageTree.rootNodeId,
         savingReorderPages: state.pageTree.savingReorderPages,
+        isVariantReorder: state.pageTree.isVariantReorder,
     };
 };
 
@@ -55,7 +55,9 @@ class ReorderPagesModal extends React.Component<Props> {
             const parentId = listElement.getAttribute("data-id") as string;
             let sortOrder = 0;
             listElement.childNodes.forEach(pageElement => {
-                const id = (pageElement as HTMLElement).querySelector("h3")!.getAttribute("data-id") as string;
+                const h3Element = (pageElement as HTMLElement).querySelector("h3");
+                const id = h3Element!.getAttribute("data-id") as string;
+                const pageId = h3Element!.getAttribute("data-pageid") as string;
                 if (!id) {
                     return;
                 }
@@ -64,6 +66,8 @@ class ReorderPagesModal extends React.Component<Props> {
                     id,
                     parentId,
                     sortOrder,
+                    pageId,
+                    isVariant: this.props.isVariantReorder,
                 });
 
                 sortOrder += 1;
@@ -103,7 +107,7 @@ class ReorderPagesModal extends React.Component<Props> {
             this.placeholder = document.createElement("li");
             const placeholderChild = document.createElement("h3");
             placeholderChild.style.backgroundColor = "#ddd";
-            placeholderChild.style.width = "120px";
+            placeholderChild.style.width = this.props.isVariantReorder ? "100%" : "120px";
             placeholderChild.innerHTML = "&nbsp;";
             this.placeholder.append(placeholderChild);
         }
@@ -128,7 +132,7 @@ class ReorderPagesModal extends React.Component<Props> {
             const height = (rect.bottom - rect.top) / 2;
 
             const relX = event.clientX - rect.left;
-            if (relX > 50) {
+            if (relX > 50 && !this.props.isVariantReorder) {
                 const theUl = closestLi.querySelector("ul") as HTMLElement;
 
                 if (theUl) {
@@ -221,16 +225,17 @@ class ReorderPagesModal extends React.Component<Props> {
                 {reorderPagesByParentId![parentId] &&
                     reorderPagesByParentId![parentId].map(page => {
                         return (
-                            <ReorderTreeItemStyle key={page.id}>
+                            <ReorderTreeItemStyle key={page.pageId}>
                                 <TitleStyle
                                     data-id={page.id}
+                                    data-pageid={page.pageId}
                                     draggable={true}
                                     onDragStart={this.dragStart}
                                     onDragEnd={this.dragEnd}
                                     onDrag={this.drag}
                                 >
                                     <Drag color1={shellTheme.colors.text.accent} height={18} />
-                                    {page.name}
+                                    {page.variantName ? `${page.name} - ${page.variantName}` : page.name}
                                 </TitleStyle>
                                 {this.renderTreeChunk(page.id)}
                             </ReorderTreeItemStyle>
@@ -243,7 +248,7 @@ class ReorderPagesModal extends React.Component<Props> {
     render() {
         return (
             <Modal
-                headline="Reorder Pages"
+                headline={this.props.isVariantReorder ? "Reorder Variants" : "Reorder Pages"}
                 isOpen={this.props.displayReorderPages}
                 handleClose={this.cancel}
                 size={500}
@@ -255,15 +260,21 @@ class ReorderPagesModal extends React.Component<Props> {
                     `,
                 }}
             >
-                {this.props.reorderPagesByParentId && this.props.reorderPagesByParentId[this.props.homeNodeId] ? (
+                {this.props.reorderPagesByParentId && this.props.reorderPagesByParentId[this.props.rootNodeId] ? (
                     <>
-                        <ReorderTreeWarningStyle>
-                            <Icon src={AlertTriangle} />
-                            Warning: Moving pages will change their URL. Make sure to set up any necessary redirects for
-                            relocated pages.
-                        </ReorderTreeWarningStyle>
-                        <ReorderTreeStyle onDragLeave={this.dragLeaveArea} ref={this.reorderTree}>
-                            {this.props.reorderPagesByParentId && this.renderTreeChunk(this.props.homeNodeId)}
+                        {!this.props.isVariantReorder && (
+                            <ReorderTreeWarningStyle>
+                                <Icon src="AlertTriangle" />
+                                Warning: Moving pages will change their URL. Make sure to set up any necessary redirects
+                                for relocated pages.
+                            </ReorderTreeWarningStyle>
+                        )}
+                        <ReorderTreeStyle
+                            onDragLeave={this.dragLeaveArea}
+                            ref={this.reorderTree}
+                            isVariantReorder={this.props.isVariantReorder}
+                        >
+                            {this.props.reorderPagesByParentId && this.renderTreeChunk(this.props.rootNodeId)}
                         </ReorderTreeStyle>
                         <ButtonBar>
                             <Button variant="tertiary" onClick={this.cancel}>
@@ -316,12 +327,12 @@ const TitleStyle = styled.h3`
     }
 `;
 
-const ReorderTreeStyle = styled.div`
+const ReorderTreeStyle = styled.div<{ isVariantReorder: boolean }>`
     max-height: calc(70vh - 65px);
     overflow-y: auto;
-    padding: 5px 15px 15px 15px;
+    padding: ${props => (props.isVariantReorder ? "30px" : "5px")} 15px 15px 15px;
     h3 {
-        display: inline-block;
+        ${props => (props.isVariantReorder ? "display: block;" : "display: inline-block;")}
         border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.text.accent};
         border-radius: 3px;
         margin: 2px 0;

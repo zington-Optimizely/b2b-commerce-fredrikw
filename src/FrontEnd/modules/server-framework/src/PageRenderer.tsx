@@ -272,7 +272,8 @@ export async function pageRenderer(request: Request, response: Response) {
                         }}
                     ></script>
                 )}
-                <script dangerouslySetInnerHTML={{ __html: `var initialTheme = ${JSON.stringify(theme)}` }}></script>
+                {/* The theme is no longer passed inside a script tag as initialTheme to later be accessed on the window object in the browser. 
+                    Instead we refetch the theme and merge it on the frontend to ensure iconSrcByMessage works inside the Toaster component */}
                 {/* eslint-enable react/no-danger */}
                 <script async defer src={`/dist/public.js?v=${BUILD_DATE}`} />
                 <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
@@ -344,21 +345,21 @@ async function generateDataIfNeeded(request: Request) {
     ) {
         try {
             await generateSiteIfNeeded();
-        } catch (e) {
+        } catch (error) {
             if (IS_PRODUCTION) {
-                logger.error(`Site generation failed: ${e}`);
+                logger.error(`Site generation failed: ${error}`);
             } else {
-                throw e;
+                throw error;
             }
         }
         checkedForSiteGeneration = true;
     }
 
-    if (!triedToGenerateTranslations || !IS_PRODUCTION) {
+    if (!triedToGenerateTranslations && IS_PRODUCTION) {
         try {
             await generateTranslations();
-        } catch (e) {
-            logger.error(`Translation generation failed: ${e}`);
+        } catch (error) {
+            logger.error(`Translation generation failed: ${error}`);
         }
         triedToGenerateTranslations = true;
     }

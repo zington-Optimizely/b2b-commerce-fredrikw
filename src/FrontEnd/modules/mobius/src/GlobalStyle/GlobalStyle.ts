@@ -39,6 +39,7 @@ const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     }
     a {
         color: inherit;
+        cursor: pointer; // for links without href
         text-decoration: none;
     }
 

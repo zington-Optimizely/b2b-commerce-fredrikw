@@ -298,6 +298,11 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                     cartLineCollection: { cartLines } as CartLineCollectionModel,
                 },
                 onSuccess: this.onAddToCartSuccess,
+                onComplete(resultProps) {
+                    if (resultProps.apiResult) {
+                        this.onSuccess?.();
+                    }
+                },
             });
         } else {
             const changedSharedListLinesQuantities: Dictionary<number> = {};
@@ -313,6 +318,11 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                     changedSharedListLinesQuantities,
                 },
                 onSuccess: this.onAddToCartSuccess,
+                onComplete(resultProps) {
+                    if (resultProps.apiResult) {
+                        this.onSuccess?.(resultProps.apiResult);
+                    }
+                },
             });
         }
     };
@@ -348,6 +358,9 @@ class MyListsDetailsActions extends React.Component<Props, State> {
             wishListId: this.props.wishList.id,
             wishListLineIds,
             onSuccess: this.onRemoveSelectedSuccess,
+            onComplete() {
+                this.onSuccess?.();
+            },
         });
     };
 
@@ -374,6 +387,9 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         this.props.deleteWishList({
             wishListId: this.props.wishList.id,
             onSuccess: this.onDeleteSuccess,
+            onComplete() {
+                this.onSuccess?.();
+            },
         });
     };
 

@@ -6,13 +6,16 @@ import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
 import "@insite/client-framework/polyfills";
-import { getContentByVersionPath } from "@insite/client-framework/Services/ContentService";
+import { getContentByVersionPath, getTheme } from "@insite/client-framework/Services/ContentService";
 import { setResolver } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { configureStore } from "@insite/client-framework/Store/ConfigureStore";
+import { theme as defaultTheme } from "@insite/client-framework/Theme";
+import { postStyleGuideTheme, preStyleGuideTheme } from "@insite/client-framework/ThemeConfiguration";
 import translate, { setTranslationResolver } from "@insite/client-framework/Translate";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
+import merge from "lodash/merge";
 import "promise-polyfill/src/polyfill";
 import * as React from "react";
 import { hydrate, render, Renderer } from "react-dom";
@@ -35,7 +38,6 @@ type customWindow = {
     siteMessages: SafeDictionary<string>;
     translationDictionaries: SafeDictionary<string>;
     initialReduxState: ApplicationState;
-    initialTheme: BaseTheme;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,9 +50,7 @@ setTranslationResolver(keyword => theWindow.translationDictionaries[keyword]);
 const initialState = theWindow.initialReduxState;
 const store = configureStore(initialState);
 
-const initialTheme = theWindow.initialTheme;
-
-function renderApp(renderer: Renderer = render) {
+async function renderApp(renderer: Renderer = render) {
     let WrappingContext: React.FC = ({ children }) => <>{children}</>;
     if (!!window && window.parent && window.parent.location.toString().toLowerCase().indexOf("/contentadmin/") > 0) {
         logger.debug("CMS shell detected.");
@@ -78,18 +78,14 @@ function renderApp(renderer: Renderer = render) {
         renderer(<></>, document.getElementById("react-app"));
     }
 
+    const theme = await fetchThenMergeTheme();
     // This code starts up the React app when it runs in a browser. It sets up the routing configuration
     // and injects the app into a DOM element.
     // Changes here must be mirrored to the storefront section in Server.tsx so the render output matches.
     renderer(
         <Provider store={store}>
             <WrappingContext>
-                <ThemeProvider
-                    theme={initialTheme}
-                    createGlobalStyle={true}
-                    createChildGlobals={false}
-                    translate={translate}
-                >
+                <ThemeProvider theme={theme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
                     <SessionLoader location={{ pathname: window.location.pathname, search: window.location.search }}>
                         <SpireRouter />
                     </SessionLoader>
@@ -101,3 +97,17 @@ function renderApp(renderer: Renderer = render) {
 }
 
 renderApp(initialState ? hydrate : render);
+
+/**
+ * The theme object must be put together on the frontend because running JSON.stringify() serverside was ignoring components passed to iconSrcByMessage,
+ * which is a property found on the Toast component.
+ * This function's returned theme object replaces the intialTheme, which was serverside and later accessed on the global window object on the browser
+ */
+async function fetchThenMergeTheme(): Promise<BaseTheme> {
+    try {
+        return merge({}, defaultTheme, preStyleGuideTheme, await getTheme(), postStyleGuideTheme);
+    } catch (e) {
+        logger.error(e);
+    }
+    return defaultTheme;
+}

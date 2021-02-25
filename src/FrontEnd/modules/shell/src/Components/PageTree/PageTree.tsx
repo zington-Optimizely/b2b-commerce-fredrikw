@@ -1,4 +1,5 @@
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import Typography from "@insite/mobius/Typography";
 import ClickOutside from "@insite/shell/Components/ClickOutside";
 import Add from "@insite/shell/Components/Icons/Add";
@@ -15,7 +16,6 @@ import {
     setExpandedNodes,
 } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -24,7 +24,7 @@ import styled, { css } from "styled-components";
 interface OwnProps {}
 
 const mapStateToProps = (state: ShellState) => ({
-    selectedPageId: getCurrentPageForShell(state).id,
+    selectedPageId: getCurrentPage(state).id,
     isEditMode: state.shellContext.contentMode === "Editing",
     nodesByParentId: state.pageTree.treeNodesByParentId,
     allowRootAddPage: state.pageTree.appliedTreeFilters.length === 0 && state.shellContext.contentMode === "Editing",
@@ -36,6 +36,9 @@ const mapStateToProps = (state: ShellState) => ({
     mobileCmsModeActive: state.shellContext.mobileCmsModeActive,
     mobileTreeNodesByParentId: state.pageTree.mobileTreeNodesByParentId,
     layoutTreeNodesByParentId: state.pageTree.layoutTreeNodesByParentId,
+    neverPublishedNodeIds: state.pageTree.neverPublishedNodeIds,
+    futurePublishNodeIds: state.pageTree.futurePublishNodeIds,
+    draftNodeIds: state.pageTree.draftNodeIds,
 });
 
 const mapDispatchToProps = {
@@ -129,6 +132,9 @@ class PageTree extends ClickOutside<Props, State> {
             mobileCmsModeActive,
             mobileTreeNodesByParentId,
             layoutTreeNodesByParentId,
+            neverPublishedNodeIds,
+            futurePublishNodeIds,
+            draftNodeIds,
         } = this.props;
         if (mobileCmsModeActive) {
             return (
@@ -146,6 +152,9 @@ class PageTree extends ClickOutside<Props, State> {
                         onFlyOutNode={this.handleFlyOutNode}
                         flyOutNode={flyOutNode}
                         permissions={permissions}
+                        neverPublishedNodeIds={neverPublishedNodeIds}
+                        futurePublishNodeIds={futurePublishNodeIds}
+                        draftNodeIds={draftNodeIds}
                     />
                     {flyOutNode && flyOutElement && (
                         <PageTreeFlyOut
@@ -185,6 +194,9 @@ class PageTree extends ClickOutside<Props, State> {
                         onFlyOutNode={this.handleFlyOutNode}
                         flyOutNode={flyOutNode}
                         permissions={permissions}
+                        neverPublishedNodeIds={neverPublishedNodeIds}
+                        futurePublishNodeIds={futurePublishNodeIds}
+                        draftNodeIds={draftNodeIds}
                     />
                     <PageTreePages
                         isEditMode={isEditMode}
@@ -196,6 +208,9 @@ class PageTree extends ClickOutside<Props, State> {
                         onFlyOutNode={this.handleFlyOutNode}
                         flyOutNode={flyOutNode}
                         permissions={permissions}
+                        neverPublishedNodeIds={neverPublishedNodeIds}
+                        futurePublishNodeIds={futurePublishNodeIds}
+                        draftNodeIds={draftNodeIds}
                     />
                     <PageTreePages
                         isEditMode={isEditMode}
@@ -207,6 +222,9 @@ class PageTree extends ClickOutside<Props, State> {
                         onFlyOutNode={this.handleFlyOutNode}
                         flyOutNode={flyOutNode}
                         permissions={permissions}
+                        neverPublishedNodeIds={neverPublishedNodeIds}
+                        futurePublishNodeIds={futurePublishNodeIds}
+                        draftNodeIds={draftNodeIds}
                     />
 
                     {flyOutNode && flyOutElement && (
@@ -224,7 +242,11 @@ class PageTree extends ClickOutside<Props, State> {
                     <PageTreeStyle ref={this.setWrapperRef} onClick={this.closeFlyOut}>
                         <Typography variant="h2" css={pagesH2}>
                             Layouts
-                            <PageTreeNewLayout onClick={this.addNewLayout} title="Add New Layout">
+                            <PageTreeNewLayout
+                                onClick={this.addNewLayout}
+                                title="Add New Layout"
+                                data-test-selector="pageTree_addNewLayout"
+                            >
                                 <Add />
                             </PageTreeNewLayout>
                         </Typography>
@@ -238,6 +260,9 @@ class PageTree extends ClickOutside<Props, State> {
                             onFlyOutNode={this.handleFlyOutNode}
                             flyOutNode={flyOutNode}
                             permissions={permissions}
+                            neverPublishedNodeIds={neverPublishedNodeIds}
+                            futurePublishNodeIds={futurePublishNodeIds}
+                            draftNodeIds={draftNodeIds}
                         />
                         {flyOutNode && flyOutElement && (
                             <PageTreeFlyOut

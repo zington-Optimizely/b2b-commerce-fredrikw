@@ -1,34 +1,92 @@
+/* eslint-disable no-undef */
+import Select from "@insite/mobius/Select/Select";
+import { FormFieldStyle } from "@insite/mobius/FormField";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
+import DisablerContext from "@insite/mobius/utilities/DisablerContext";
+import { mount } from "enzyme";
 import "jest-styled-components";
 import React from "react";
-import { mount } from "enzyme";
-import Select from "./Select";
-import ThemeProvider from "../ThemeProvider";
-import DisablerContext from "../utilities/DisablerContext";
+import { css } from "styled-components";
+
+let props;
+let mountedWrapper;
+let disablerValue;
+let theme;
+
+const children = [
+    <option key={0} value={0}>
+        Select
+    </option>,
+    <option key={1} value={1}>
+        apple
+    </option>,
+    <option key={2} value={2}>
+        bananas
+    </option>,
+    <option key={3} value={3}>
+        cherries
+    </option>,
+];
+
+const wrapper = () => {
+    if (!mountedWrapper) {
+        mountedWrapper = mount(
+            <ThemeProvider theme={theme}>
+                <DisablerContext.Provider value={disablerValue}>
+                    <Select {...props}>{children}</Select>
+                </DisablerContext.Provider>
+            </ThemeProvider>,
+        );
+    }
+    return mountedWrapper;
+};
+
+const unmountSelect = () => {
+    mountedWrapper = null;
+};
+
+const withProps = () => {
+    props = {};
+    const builder = {
+        withCssColor(color) {
+            props.css = css`
+                color: ${color};
+            `;
+            return this;
+        },
+        withMergeCss(value) {
+            props.mergeCss = value;
+            return this;
+        },
+    };
+    return builder;
+};
+
+const withTheme = () => {
+    theme = {
+        select: {
+            defaultProps: {},
+        },
+    };
+    const builder = {
+        withCssBgColor(color) {
+            theme.select.defaultProps.css = css`
+                background: ${color};
+            `;
+            return this;
+        },
+        withMergeCss(value) {
+            theme.select.defaultProps.mergeCss = value;
+            return this;
+        },
+    };
+    return builder;
+};
 
 describe("Select", () => {
-    let props;
-    let mountedWrapper;
-    let disablerValue;
-    const wrapper = () => {
-        if (!mountedWrapper) {
-            mountedWrapper = mount(
-                <ThemeProvider>
-                    <DisablerContext.Provider value={disablerValue}>
-                        <Select {...props} />
-                    </DisablerContext.Provider>
-                </ThemeProvider>,
-            );
-        }
-        return mountedWrapper;
-    };
-
-    const unmountSelect = () => {
-        mountedWrapper = undefined;
-    };
-
     beforeEach(() => {
         props = {};
-        mountedWrapper = undefined;
+        mountedWrapper = null;
     });
 
     test("renders the label when prop is provided", () => {
@@ -68,5 +126,45 @@ describe("Select", () => {
             disablerValue = { disable: false };
             expect(wrapper().find("select").prop("disabled")).toBe(false);
         });
+    });
+
+    describe("Merge Css", () => {
+        test("Does not merge when mergeCss not specified", () => {
+            withProps().withCssColor("red");
+            withTheme().withCssBgColor("pink");
+            expect(wrapper().find("select")).toHaveStyleRule("color", "red");
+            expect(wrapper().find("select")).toHaveStyleRule("background", undefined);
+        });
+
+        test("Merges when component specifies", () => {
+            withProps().withMergeCss(true).withCssColor("red");
+            withTheme().withCssBgColor("pink");
+
+            expect(wrapper().find("select")).toHaveStyleRule("color", "red");
+            expect(wrapper().find("select")).toHaveStyleRule("background", "pink");
+        });
+
+        test("Merges when theme specifies", () => {
+            withProps().withCssColor("red");
+            withTheme().withMergeCss(true).withCssBgColor("pink");
+
+            expect(wrapper().find("select")).toHaveStyleRule("color", "red");
+            expect(wrapper().find("select")).toHaveStyleRule("background", "pink");
+        });
+
+        test("Does not merge when component overrides theme", () => {
+            withProps().withMergeCss(false).withCssColor("red");
+            withTheme().withMergeCss(true).withCssBgColor("pink");
+
+            expect(wrapper().find("select")).toHaveStyleRule("color", "red");
+            expect(wrapper().find("select")).toHaveStyleRule("background", undefined);
+        });
+    });
+
+    test("No border on formfield by default", () => {
+        withTheme();
+        props = {};
+
+        expect(wrapper().find(FormFieldStyle)).toHaveStyleRule("border", "0");
     });
 });

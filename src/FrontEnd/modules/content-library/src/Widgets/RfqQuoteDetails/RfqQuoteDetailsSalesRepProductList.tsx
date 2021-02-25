@@ -283,6 +283,17 @@ const RfqQuoteDetailsSalesRepProductList = ({
             onError: error => {
                 setQuoteCalculationError(error);
             },
+            onComplete(resultProps) {
+                if (resultProps.result?.quote) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                } else if (resultProps.result?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(resultProps.result.errorMessage);
+                }
+            },
         });
     };
 

@@ -99,12 +99,26 @@ class MyListsEditListForm extends React.Component<Props, State> {
                 },
                 onSuccess: this.onSubmitSuccess,
                 onError: this.onSubmitError,
+                onComplete(resultProps) {
+                    if (resultProps.result?.wishList) {
+                        this.onSuccess?.();
+                    } else if (resultProps.result?.errorMessage) {
+                        this.onError?.(resultProps.result.errorMessage);
+                    }
+                },
             });
         } else {
             this.props.addWishList({
                 apiParameter: { name: this.state.name, description: this.state.description },
                 onSuccess: this.onSubmitSuccess,
                 onError: this.onSubmitError,
+                onComplete(resultProps) {
+                    if (resultProps.result?.wishListModel) {
+                        this.onSuccess?.(resultProps.result?.wishListModel);
+                    } else if (resultProps.result?.errorMessage) {
+                        this.onError?.(resultProps.result.errorMessage);
+                    }
+                },
             });
         }
     };

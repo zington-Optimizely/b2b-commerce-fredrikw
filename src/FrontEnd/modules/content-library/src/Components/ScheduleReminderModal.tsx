@@ -376,6 +376,13 @@ const ScheduleReminderModal: React.FC<Props> = ({
                 handleClose();
                 toasterContext.addToast({ body: siteMessage("Lists_Schedule_Saved"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.result?.wishList) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 
@@ -397,6 +404,13 @@ const ScheduleReminderModal: React.FC<Props> = ({
             onSuccess: () => {
                 handleClose();
                 toasterContext.addToast({ body: siteMessage("Lists_Schedule_Canceled"), messageType: "success" });
+            },
+            onComplete(resultProps) {
+                if (resultProps.result?.wishList) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
             },
         });
     };

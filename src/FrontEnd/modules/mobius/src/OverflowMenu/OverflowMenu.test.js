@@ -1,12 +1,14 @@
+/* eslint-disable no-undef */
+import Button from "@insite/mobius/Button";
+import Clickable from "@insite/mobius/Clickable";
+import baseTheme from "@insite/mobius/globals/baseTheme";
+import Icon from "@insite/mobius/Icon";
+import OverflowMenu from "@insite/mobius/OverflowMenu/OverflowMenu";
+import ThemeProvider from "@insite/mobius/ThemeProvider";
 import { mount } from "enzyme";
 import "jest-styled-components";
 import React from "react";
-import Button from "../Button";
-import Clickable from "../Clickable";
-import baseTheme from "../globals/baseTheme";
-import Icon from "../Icon";
-import OverflowMenu from "./OverflowMenu";
-import ThemeProvider from "../ThemeProvider";
+import { css } from "styled-components";
 
 const generateChild = name => <Clickable key={name}>{name}</Clickable>;
 const children = [generateChild("title"), generateChild("moose")];
@@ -34,9 +36,61 @@ describe("OverflowMenu", () => {
 
     beforeEach(() => {
         props = propsBase;
-        theme = baseTheme;
+        theme = { ...baseTheme };
         mountedWrapper = undefined;
     });
+
+    const withProps = () => {
+        props = { ...propsBase };
+        const builder = {
+            withCssColor(color) {
+                const theCss = css`
+                    color: ${color};
+                `;
+
+                props.cssOverrides = {
+                    wrapper: theCss,
+                    menu: theCss,
+                    menuItem: theCss,
+                };
+                return this;
+            },
+
+            withMergeCss(isMergeCss) {
+                props.mergeCss = isMergeCss;
+                return this;
+            },
+        };
+        return builder;
+    };
+
+    const withTheme = () => {
+        theme = {
+            ...baseTheme,
+            overflowMenu: {
+                defaultProps: {},
+            },
+        };
+        const builder = {
+            withCssBgColor(bgColor) {
+                const theCss = css`
+                    background-color: ${bgColor};
+                `;
+
+                theme.overflowMenu.defaultProps.cssOverrides = {
+                    wrapper: theCss,
+                    menu: theCss,
+                    menuItem: theCss,
+                };
+                return this;
+            },
+            withMergeCss(isMergeCss) {
+                theme.overflowMenu.defaultProps.mergeCss = isMergeCss;
+                return this;
+            },
+        };
+        return builder;
+    };
 
     describe("render html elements", () => {
         test("only renders a button and nav by default if open false", () => {
@@ -175,6 +229,44 @@ describe("OverflowMenu", () => {
                 expect(root).not.toHaveStyleRule("min-height", "40px");
                 expect(root).toHaveStyleRule("border-radius", ".5em");
             });
+        });
+    });
+
+    function expectStyleRule(property, value) {
+        expect(wrapper().find("ul")).toHaveStyleRule(property, value); // menu
+        // this doesn't work for some reason expect(wrapper().find("li span")).toHaveStyleRule(property, value); // menuItem
+        expect(wrapper().find("nav")).toHaveStyleRule(property, value); // wrapper
+    }
+
+    describe("Merge Css", () => {
+        test("No merge if not specified", () => {
+            withProps().withCssColor("red").withMergeCss(false);
+            withTheme().withCssBgColor("violet").withMergeCss(false);
+
+            expectStyleRule("color", "red");
+            expectStyleRule("background-color", undefined);
+        });
+
+        test("No merge if component does not specify", () => {
+            withProps().withCssColor("red").withMergeCss(false);
+            withTheme().withCssBgColor("violet").withMergeCss(true);
+
+            expectStyleRule("color", "red");
+            expectStyleRule("background-color", undefined);
+        });
+        test("Merge when theme says so", () => {
+            withProps().withCssColor("red");
+            withTheme().withCssBgColor("violet").withMergeCss(true);
+
+            expectStyleRule("color", "red");
+            expectStyleRule("background-color", "violet");
+        });
+        test("Merge if component says so", () => {
+            withProps().withCssColor("red").withMergeCss(true);
+            withTheme().withCssBgColor("violet").withMergeCss(false);
+
+            expectStyleRule("color", "red");
+            expectStyleRule("background-color", "violet");
         });
     });
 });

@@ -60,6 +60,8 @@ export interface PopoverPresentationProps {
     knownHeight?: number;
     /** Function to override standard position function. */
     positionFunction?: (element: React.RefObject<HTMLUListElement>) => PositionStyle;
+    /** override the default max height */
+    _height?: string;
 }
 
 export type PopoverProps = MobiusStyledComponentPropsWithRef<

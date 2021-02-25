@@ -17,11 +17,14 @@ export type GridContainerProps = MobiusStyledComponentProps<
         gap?: number;
         /** Props to be passed to grid offset. */
         offsetProps?: MobiusStyledComponentProps<"div">;
+        /** CSS string or styled-components function to be injected into this component. */
+        offsetCss?: StyledProp<GridContainerProps>;
     }
 >;
 
 const GridOffset = styled.div<{ gap: number }>`
     margin: ${({ gap }) => -gap / 2}px;
+    ${injectCss}
 `;
 
 const GridWrapper = styled.div<GridContainerProps>`
@@ -71,14 +74,14 @@ const GridWrapper = styled.div<GridContainerProps>`
 /**
  * GridContainer provides a 12-column grid scaffolding for GridItem components.
  */
-const GridContainer: React.FC<GridContainerProps> = ({ children, css, offsetProps, ...otherProps }) => {
+const GridContainer: React.FC<GridContainerProps> = ({ children, css, offsetCss, offsetProps, ...otherProps }) => {
     if (!React.Children.count(children)) {
         return null;
     }
     return (
         <GridWrapper css={css} {...otherProps} gap={otherProps.gap ?? 30}>
             <GridContext.Provider value={{ gap: otherProps.gap ?? 30 }}>
-                <GridOffset gap={otherProps.gap ?? 30} {...offsetProps}>
+                <GridOffset {...offsetProps} css={offsetCss} gap={otherProps.gap ?? 30}>
                     {children}
                 </GridOffset>
             </GridContext.Provider>

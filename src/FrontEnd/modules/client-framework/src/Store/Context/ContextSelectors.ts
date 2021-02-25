@@ -55,3 +55,7 @@ export const getFulfillmentLabel = (state: ApplicationState) => {
 export const getIsPunchOutSession = (state: ApplicationState) => {
     return !!state.context.punchOutSessionId && !!state.context.session?.userName;
 };
+
+export const getSearchDataModeActive = (state: ApplicationState) => {
+    return !!state.context.isSearchDataModeActive;
+};

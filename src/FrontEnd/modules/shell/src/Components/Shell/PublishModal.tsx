@@ -1,5 +1,6 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import Button from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
@@ -22,7 +23,6 @@ import {
     setRollbackOn,
     togglePublishInTheFuture,
 } from "@insite/shell/Store/PublishModal/PublishModalActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -45,7 +45,7 @@ const mapStateToProps = (state: ShellState) => {
         },
     } = state;
 
-    const page = getCurrentPageForShell(state);
+    const page = getCurrentPage(state);
 
     return {
         visible: !!showModal && !compareVersions,
@@ -386,24 +386,26 @@ const PublishModal: React.FC<Props> = ({
                                                 {new Date(modifiedOn).toLocaleString()}
                                             </td>
                                             <td>
-                                                <ButtonInTable
-                                                    data-test-selector={`${testSelector}_compareButton`}
-                                                    variant="tertiary"
-                                                    onClick={() => {
-                                                        configureComparison({
-                                                            unpublished,
-                                                            published,
-                                                            languageId: languageId ?? currentLanguageId,
-                                                            personaId,
-                                                            deviceType,
-                                                            stageMode,
-                                                            pageId,
-                                                            name,
-                                                        });
-                                                    }}
-                                                >
-                                                    Compare
-                                                </ButtonInTable>
+                                                {published && (
+                                                    <ButtonInTable
+                                                        data-test-selector={`${testSelector}_compareButton`}
+                                                        variant="tertiary"
+                                                        onClick={() => {
+                                                            configureComparison({
+                                                                unpublished,
+                                                                published,
+                                                                languageId: languageId ?? currentLanguageId,
+                                                                personaId,
+                                                                deviceType,
+                                                                stageMode,
+                                                                pageId,
+                                                                name,
+                                                            });
+                                                        }}
+                                                    >
+                                                        Compare
+                                                    </ButtonInTable>
+                                                )}
                                             </td>
                                         </tr>
                                     );

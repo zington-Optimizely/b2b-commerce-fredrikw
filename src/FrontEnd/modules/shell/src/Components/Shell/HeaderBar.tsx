@@ -1,9 +1,6 @@
 import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import Icon from "@insite/mobius/Icon";
-import Globe from "@insite/mobius/Icons/Globe";
-import Monitor from "@insite/mobius/Icons/Monitor";
-import Users from "@insite/mobius/Icons/Users";
 import getColor from "@insite/mobius/utilities/getColor";
 import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import { updateShellContext } from "@insite/shell/Services/ContentAdminService";
@@ -91,7 +88,7 @@ class HeaderBar extends React.Component<Props, State> {
 
         return (
             <HeaderBarStyle data-test-selector="headerBar">
-                <Icon src={Globe} size={20} color="#ffffff87" />
+                <Icon src="Globe" size={20} color="#ffffff87" />
                 <SelectWrapper>
                     <select
                         onChange={this.onLanguageChange}
@@ -109,7 +106,7 @@ class HeaderBar extends React.Component<Props, State> {
                 </SelectWrapper>
                 {hasDeviceSpecificContent && (
                     <>
-                        <Icon src={Monitor} size={20} color="#ffffff87" />
+                        <Icon src="Monitor" size={20} color="#ffffff87" />
                         <SelectWrapper>
                             <select onChange={this.onDeviceTypeChange} value={currentDeviceType} disabled={disabled}>
                                 {deviceTypes.map(deviceType => (
@@ -124,7 +121,7 @@ class HeaderBar extends React.Component<Props, State> {
                 )}
                 {hasPersonaSpecificContent && (
                     <>
-                        <Icon src={Users} size={20} color="#ffffff87" />
+                        <Icon src="Users" size={20} color="#ffffff87" />
                         <SelectWrapper>
                             <select
                                 onChange={this.onPersonaChange}

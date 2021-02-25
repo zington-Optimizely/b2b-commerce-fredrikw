@@ -312,6 +312,13 @@ const AddressActions: React.FunctionComponent<AddressActionsProps> = (props: Add
             onSuccess: () => {
                 addressBookContext.setIsSettingShipTo(false);
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 

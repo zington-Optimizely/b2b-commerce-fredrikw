@@ -1,17 +1,16 @@
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import { removeWidget, replaceItem, updateField } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Scrim from "@insite/mobius/Overlay/Scrim";
 import FieldsEditor from "@insite/shell/Components/ItemEditor/FieldsEditor";
 import SideBarForm from "@insite/shell/Components/Shell/SideBarForm";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageDefinition, getWidgetDefinition } from "@insite/shell/DefinitionLoader";
 import { LoadedPageDefinition, LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { removeWidget, replaceItem, updateField } from "@insite/shell/Store/Data/Pages/PagesActionCreators";
 import { cancelEditingItem, doneEditingItem } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import cloneDeep from "lodash/cloneDeep";
 import * as React from "react";
@@ -19,10 +18,10 @@ import { connect, ResolveThunks } from "react-redux";
 
 interface OwnProps {}
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
+const mapStateToProps = (state: ShellState) => {
     let item: PageProps | WidgetProps | undefined;
     let definition: LoadedPageDefinition | LoadedWidgetDefinition | undefined;
-    const currentPage = getCurrentPageForShell(state);
+    const currentPage = getCurrentPage(state);
     if (state.pageEditor.editingId) {
         if (state.pageEditor.editingId === currentPage.id) {
             item = currentPage;
@@ -96,10 +95,6 @@ class ItemEditor extends React.Component<Props, State> {
             defaultPersonaId,
             deviceType,
         };
-        sendToSite({
-            type: "UpdateField",
-            ...parameter,
-        });
         this.props.updateField(parameter);
     };
 
@@ -118,20 +113,12 @@ class ItemEditor extends React.Component<Props, State> {
             replaceItem,
             pageId,
         } = this.props;
+
         cancelEditingItem();
         if (removeItemIfCanceled) {
             removeWidget(itemBeforeEditing!.id, pageId);
-            sendToSite({
-                type: "RemoveWidget",
-                id: itemBeforeEditing!.id,
-                pageId,
-            });
         } else {
             replaceItem(itemBeforeEditing!);
-            sendToSite({
-                type: "ReplaceItem",
-                item: itemBeforeEditing!,
-            });
         }
     };
 
@@ -243,10 +230,23 @@ class ItemEditor extends React.Component<Props, State> {
             removeFieldDefinitions.add("layoutPage");
         }
 
+        if (item.type === "Layout" || item.type === "VariantRootPage") {
+            ["horizontalRule", "tags", "hideBreadcrumbs"].forEach(o => removeFieldDefinitions.add(o));
+        }
+
         if (removeFieldDefinitions.size) {
+            let tabName;
+            const previousNameForTab: Dictionary<string> = {};
             for (let i = fieldDefinitions.length - 1; i >= 0; --i) {
-                if (removeFieldDefinitions.has(fieldDefinitions[i].name)) {
+                tabName = fieldDefinitions[i].tab?.displayName || "_";
+                if (
+                    removeFieldDefinitions.has(fieldDefinitions[i].name) ||
+                    (previousNameForTab[tabName] === "horizontalRule" &&
+                        previousNameForTab[tabName] === fieldDefinitions[i].name)
+                ) {
                     fieldDefinitions.splice(i, 1);
+                } else {
+                    previousNameForTab[tabName] = fieldDefinitions[i].name;
                 }
             }
         }

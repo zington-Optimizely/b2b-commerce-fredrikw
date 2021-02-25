@@ -1,6 +1,8 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import Edit from "@insite/shell/Components/Icons/Edit";
+import Move from "@insite/shell/Components/Icons/Move";
 import OverflowAddPage from "@insite/shell/Components/Icons/OverflowAddPage";
 import OverflowCopyPage from "@insite/shell/Components/Icons/OverflowCopyPage";
 import Trash from "@insite/shell/Components/Icons/Trash";
@@ -16,6 +18,7 @@ import {
 import { getPageDefinition } from "@insite/shell/DefinitionLoader";
 import { getPagePublishInfo } from "@insite/shell/Services/ContentAdminService";
 import { ShellThemeProps } from "@insite/shell/ShellTheme";
+import { showErrorModal } from "@insite/shell/Store/ErrorModal/ErrorModalActionCreator";
 import { editPageOptions } from "@insite/shell/Store/PageEditor/PageEditorActionCreators";
 import {
     deletePage,
@@ -23,13 +26,12 @@ import {
     openCopyPage,
     openCreateVariant,
     openMakeDefaultVariant,
+    openReorderPages,
     openRulesEdit,
 } from "@insite/shell/Store/PageTree/PageTreeActionCreators";
 import { TreeNodeModel } from "@insite/shell/Store/PageTree/PageTreeState";
 import { setContentMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
-import ShellThunkAction from "@insite/shell/Store/ShellThunkAction";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router";
@@ -42,6 +44,13 @@ interface OwnProps {
     nodesByParentId: Dictionary<TreeNodeModel[]>;
 }
 
+const mapStateToProps = (state: ShellState) => ({
+    currentPageId: getCurrentPage(state).id,
+    permissions: state.shellContext.permissions,
+    mobileCmsModeActive: state.shellContext.mobileCmsModeActive,
+    futurePublishNodeIds: state.pageTree.futurePublishNodeIds,
+});
+
 const mapDispatchToProps = {
     deletePage,
     openAddPage,
@@ -51,19 +60,9 @@ const mapDispatchToProps = {
     openCreateVariant,
     openMakeDefaultVariant,
     openRulesEdit,
-    showErrorMessage: (message: string): ShellThunkAction => dispatch => {
-        dispatch({
-            type: "ErrorModal/ShowModal",
-            message,
-        });
-    },
+    openReorderPages,
+    showErrorModal,
 };
-
-const mapStateToProps = (state: ShellState) => ({
-    currentPageId: getCurrentPageForShell(state).id,
-    permissions: state.shellContext.permissions,
-    mobileCmsModeActive: state.shellContext.mobileCmsModeActive,
-});
 
 type Props = RouteComponentProps &
     ReturnType<typeof mapStateToProps> &
@@ -126,11 +125,13 @@ class PageTreeFlyOut extends React.Component<Props> {
         );
     };
 
+    private handleReorderVariants = () => {
+        this.props.closeFlyOut();
+        this.props.openReorderPages(this.props.flyOutNode.nodeId);
+    };
+
     private handleEditPage = () => {
         this.props.closeFlyOut();
-        if (this.props.currentPageId !== this.props.flyOutNode.pageId) {
-            this.props.history.push(`/ContentAdmin/Page/${this.props.flyOutNode.pageId}`);
-        }
 
         this.props.editPageOptions(this.props.flyOutNode.pageId, !!this.props.flyOutNode.isVariant);
     };
@@ -140,7 +141,7 @@ class PageTreeFlyOut extends React.Component<Props> {
         if (!this.props.flyOutNode.isRootVariant) {
             const pagePublishInfo = await getPagePublishInfo(this.props.flyOutNode.pageId);
             if (pagePublishInfo.length) {
-                this.props.showErrorMessage("Page should be published before creating any variant.");
+                this.props.showErrorModal("Page should be published before creating any variant.");
                 return;
             }
         }
@@ -187,7 +188,7 @@ class PageTreeFlyOut extends React.Component<Props> {
 
         return (
             <PageTreeFlyOutMenu style={style}>
-                {canEditPage(pageDefinition, permissions, flyOutNode) &&
+                {canEditPage(this.props.futurePublishNodeIds, pageDefinition, permissions, flyOutNode) &&
                     flyOutOption(
                         this.handleEditPage,
                         <Edit />,
@@ -199,18 +200,20 @@ class PageTreeFlyOut extends React.Component<Props> {
                             flyOutOption(this.handleAddPage, <OverflowAddPage />, "Add Page")}
                         {permissions.canCreateVariant &&
                             !flyOutNode.isVariant &&
-                            flyOutOption(this.handleCreateVariant, <OverflowCopyPage />, "Create Variant")}
+                            flyOutOption(this.handleCreateVariant, <OverflowAddPage />, "Create Variant")}
                         {permissions.canCreateVariant &&
                             flyOutNode.isVariant &&
                             !flyOutNode.isDefaultVariant &&
-                            flyOutOption(this.handleEditRules, <OverflowCopyPage />, "Edit Rules")}
+                            flyOutOption(this.handleEditRules, <Edit />, "Edit Rules")}
                         {permissions.canCreateVariant &&
                             flyOutNode.isVariant &&
                             !flyOutNode.isDefaultVariant &&
-                            flyOutOption(this.handleMakeDefault, <OverflowCopyPage />, "Make Default")}
+                            flyOutOption(this.handleMakeDefault, <Edit />, "Make Default")}
                         {canCopyPage(pageDefinition, permissions, flyOutNode) &&
                             flyOutOption(this.handleCopyPage, <OverflowCopyPage />, "Copy Page")}
-                        {canDeletePage(pageDefinition, permissions, flyOutNode) &&
+                        {flyOutNode.isRootVariant &&
+                            flyOutOption(this.handleReorderVariants, <Move />, "Reorder Variants")}
+                        {canDeletePage(this.props.futurePublishNodeIds, pageDefinition, permissions, flyOutNode) &&
                             flyOutOption(
                                 this.handleDeletePage,
                                 <Trash color1="#9b9b9b" />,
@@ -239,6 +242,7 @@ class PageTreeFlyOut extends React.Component<Props> {
 }
 
 export const pageTreeFlyOutMenuHasItems = (
+    futurePublishNodeIds: Dictionary<Date>,
     flyOutNode: TreeNodeModel,
     permissions: PermissionsModel | undefined,
 ): boolean => {
@@ -247,11 +251,11 @@ export const pageTreeFlyOutMenuHasItems = (
     return (
         !!permissions &&
         ((pageDefinition &&
-            (canEditPage(pageDefinition, permissions, flyOutNode) ||
+            (canEditPage(futurePublishNodeIds, pageDefinition, permissions, flyOutNode) ||
                 canAddChildPage(pageDefinition, permissions, flyOutNode) ||
                 permissions.canCreateVariant ||
                 canCopyPage(pageDefinition, permissions, flyOutNode) ||
-                canDeletePage(pageDefinition, permissions, flyOutNode))) ||
+                canDeletePage(futurePublishNodeIds, pageDefinition, permissions, flyOutNode))) ||
             (flyOutNode.type === "Layout" && (canEditLayout(permissions) || canDeleteLayout(permissions))))
     );
 };

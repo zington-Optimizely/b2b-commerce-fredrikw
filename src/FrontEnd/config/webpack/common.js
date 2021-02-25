@@ -4,7 +4,6 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const BlueprintReplacementPlugin = require("./blueprintReplacementPlugin");
 const path = require("path");
 const setupEntryFiles = require("./setupEntryFiles");
-const validatePageTemplates = require("./validatePageTemplates");
 require("./setupTsconfigPathsFile");
 const webpack = require("webpack");
 const RemovePlugin = require("remove-files-webpack-plugin");
@@ -29,10 +28,6 @@ exports.setupCommonConfig = (isDevBuild, env, target = "ES2017") => {
 
     if (!blueprint) {
         blueprint = "content-library";
-    }
-
-    if (blueprint === "content-library") {
-        validatePageTemplates();
     }
 
     console.log(`Blueprint is ${blueprint}.`);

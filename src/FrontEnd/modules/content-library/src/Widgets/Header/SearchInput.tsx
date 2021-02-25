@@ -1,5 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { trackAutocompleteSearchResultEvent } from "@insite/client-framework/Common/Utilities/tracking";
 import {
     addSearchHistory,
     getSearchHistory,
@@ -7,6 +8,7 @@ import {
 } from "@insite/client-framework/Services/AutocompleteService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import getAutocompleteModel from "@insite/client-framework/Store/CommonHandlers/GetAutocompleteModel";
+import sendSearchTracking from "@insite/client-framework/Store/CommonHandlers/SendSearchTracking";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
@@ -68,6 +70,7 @@ const mapStateToProps = (state: ApplicationState) => {
 
 const mapDispatchToProps = {
     getAutocompleteModel,
+    sendSearchTracking,
 };
 
 type Props = OwnProps &
@@ -243,7 +246,7 @@ class SearchInput extends React.Component<Props, State> {
         if (this.state.autoCompleteModel?.products?.length === 1) {
             this.goToUrl(this.state.autoCompleteModel?.products[0].url);
         } else {
-            this.goToUrl(`/Search?query=${this.state.query}`);
+            this.goToUrl(`/Search?query=${this.state.query}`, false);
         }
         if (this.props.searchHistoryEnabled) {
             addSearchHistory(this.state.query, this.props.searchHistoryLimit);
@@ -259,6 +262,11 @@ class SearchInput extends React.Component<Props, State> {
                         autoCompleteModel: result,
                     });
                     this.openAutocomplete();
+                }
+            },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    this.onSuccess?.(resultProps.apiResult);
                 }
             },
         });
@@ -353,8 +361,42 @@ class SearchInput extends React.Component<Props, State> {
         });
     };
 
-    goToUrl = (url: string) => {
+    trackAutcompleteSearchResults = () => {
+        // Make sure only to trigger for autocomplete results
+        if (!this.state.query || !this.props.autocompleteEnabled || !this.state.autoCompleteModel) {
+            return;
+        }
+
+        const { categories, brands, content, products } = this.state.autoCompleteModel;
+        const resultCount =
+            (products?.length ?? 0) + (categories?.length || 0) + (content?.length || 0) + (brands?.length || 0);
+        if (resultCount > 0) {
+            // Track an autocomplete of 1+ items
+            this.props.sendSearchTracking({
+                searchEvent: "autocompleteSearchResults",
+                searchTerm: this.state.query,
+                resultCount,
+                productCount: products?.length,
+                categoryCount: categories?.length,
+                contentCount: content?.length,
+                brandCount: brands?.length,
+            });
+            return;
+        }
+
+        // Track zero resultCount search results and triggers from this.doSearch
+        this.props.sendSearchTracking({
+            searchEvent: "searchResults",
+            searchTerm: this.state.query,
+            resultCount,
+        });
+    };
+
+    goToUrl = (url: string, track = true) => {
         this.props.onBeforeGoToUrl && this.props.onBeforeGoToUrl();
+        if (track) {
+            this.trackAutcompleteSearchResults();
+        }
         this.closeAutocomplete();
         this.setState({
             // don't use stale results on next search and go to wrong PDP

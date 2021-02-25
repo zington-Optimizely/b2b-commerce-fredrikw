@@ -239,6 +239,13 @@ const SavedPaymentsCardList: React.FC<Props> = ({ updateEditModal, updatePayment
             onSuccess: () => {
                 toasterContext.addToast({ body: translate("Default Card Updated"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 
@@ -261,6 +268,13 @@ const SavedPaymentsCardList: React.FC<Props> = ({ updateEditModal, updatePayment
             paymentProfileId: paymentProfileToDelete.id,
             onSuccess: () => {
                 toasterContext.addToast({ body: translate("Card Deleted"), messageType: "success" });
+            },
+            onComplete(resultProps) {
+                if (resultProps.apiResult) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
             },
         });
     };

@@ -3,19 +3,62 @@ import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
 import RadioGroup from "./RadioGroup";
+import Typography from "../Typography";
+
+import { css } from "styled-components";
+
+import baseTheme from "../globals/baseTheme";
 
 describe("RadioGroup", () => {
     let props;
     let mountedWrapper;
+    let theme = {
+        ...baseTheme,
+    };
+
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
-                <ThemeProvider>
+                <ThemeProvider theme={theme}>
                     <RadioGroup {...props} />
                 </ThemeProvider>,
             );
         }
         return mountedWrapper;
+    };
+
+    const withTheme = () => {
+        theme = { ...baseTheme };
+        const builder = {
+            withCssColor(color) {
+                theme.radio.groupDefaultProps.css = css`
+                    color: ${color};
+                `;
+                return this;
+            },
+            withMergeCss(isMerge) {
+                theme.radio.groupDefaultProps.mergeCss = isMerge;
+                return this;
+            },
+        };
+        return builder;
+    };
+
+    const withProps = () => {
+        props = {};
+        const builder = {
+            withCssBackground(color) {
+                props.css = css`
+                    background-color: ${color};
+                `;
+                return this;
+            },
+            withMergeCss(isMerge) {
+                props.mergeCss = isMerge;
+                return this;
+            },
+        };
+        return builder;
     };
 
     beforeEach(() => {
@@ -26,5 +69,62 @@ describe("RadioGroup", () => {
     test("renders a fieldset by default", () => {
         const root = wrapper().find(RadioGroup).getDOMNode();
         expect(root instanceof HTMLFieldSetElement).toBe(true);
+    });
+
+    test("Error text", () => {
+        props.error = "Error text";
+
+        const typographyComponents = wrapper().find(Typography);
+        expect(typographyComponents.at(1).text()).toBe("Error text");
+    });
+
+    test("Label text", () => {
+        props.label = "Label text";
+
+        const typographyComponents = wrapper().find(Typography);
+
+        expect(typographyComponents.at(0).text()).toBe("Label text");
+    });
+
+    describe("Css check", () => {
+        test("No merge if not specified", () => {
+            withProps().withCssBackground("tomato").withMergeCss(false);
+            withTheme().withCssColor("green").withMergeCss(false);
+
+            const root = wrapper().find(RadioGroup);
+
+            expect(root).toHaveStyleRule("background-color", "tomato");
+            expect(root).toHaveStyleRule("color", undefined);
+        });
+
+        test("No merge if component does not specify", () => {
+            withProps().withCssBackground("tomato").withMergeCss(false);
+            withTheme().withCssColor("green").withMergeCss(true);
+
+            const root = wrapper().find(RadioGroup);
+
+            expect(root).toHaveStyleRule("background-color", "tomato");
+            expect(root).toHaveStyleRule("color", undefined);
+        });
+
+        test("Merge when theme says so", () => {
+            withProps().withCssBackground("tomato");
+            withTheme().withCssColor("green").withMergeCss(true);
+
+            const root = wrapper().find(RadioGroup);
+
+            expect(root).toHaveStyleRule("background-color", "tomato");
+            expect(root).toHaveStyleRule("color", "green");
+        });
+
+        test("Merge if component says so", () => {
+            withProps().withCssBackground("tomato").withMergeCss(true);
+            withTheme().withCssColor("green").withMergeCss(false);
+
+            const root = wrapper().find(RadioGroup);
+
+            expect(root).toHaveStyleRule("background-color", "tomato");
+            expect(root).toHaveStyleRule("color", "green");
+        });
     });
 });

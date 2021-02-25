@@ -38,13 +38,15 @@ const scrollPositionsKey = "scrollPositions";
 
 class SpireRouter extends React.Component<Props> {
     UNSAFE_componentWillMount() {
+        const { loadPage, loadPageLinks, pageLinks, currentPage, setBreadcrumbs, location } = this.props;
+
         const windowIfDefined = typeof window === "undefined" ? undefined : (window as any);
         if (windowIfDefined) {
             windowIfDefined.onpopstate = () => {
                 const { search, pathname } = windowIfDefined.location;
-                if (pathname !== this.props.location.pathname) {
-                    this.props.loadPage({ pathname, search }, this.historyContext.history, () => {
-                        this.props.setBreadcrumbs({ links: undefined });
+                if (pathname !== location.pathname) {
+                    loadPage({ pathname, search }, this.historyContext.history, () => {
+                        setBreadcrumbs({ links: undefined });
                     });
                 } else {
                     this.setLocation(pathname, search);
@@ -52,10 +54,8 @@ class SpireRouter extends React.Component<Props> {
             };
         }
 
-        const { loadPage, loadPageLinks, pageLinks } = this.props;
-
-        if (this.props.currentPage === nullPage) {
-            loadPage(this.props.location, this.historyContext.history);
+        if (currentPage === nullPage) {
+            loadPage(location, this.historyContext.history);
         }
 
         if (pageLinks.length === 0) {

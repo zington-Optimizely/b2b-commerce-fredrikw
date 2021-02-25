@@ -1,4 +1,10 @@
 import DataTable from "@insite/mobius/DataTable/DataTable";
+import DataTableHead from "@insite/mobius/DataTable/DataTableHead";
+import DataTableHeader from "@insite/mobius/DataTable/DataTableHeader";
+import DataTableRow from "@insite/mobius/DataTable/DataTableRow";
+import DataTableBody from "@insite/mobius/DataTable/DataTableBody";
+import DataTableCell from "@insite/mobius/DataTable/DataTableCell";
+
 import baseTheme from "@insite/mobius/globals/baseTheme";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
 import { mount } from "enzyme";
@@ -157,4 +163,150 @@ describe("Multiple DataTables", () => {
             });
         });
     });
+    describe("Datatable children", () => {
+        let propsWithChildren = {},
+            themeWithChildren = { ...baseTheme },
+            mountedWrapperWithChildren = null;
+        const data = returnData();
+
+        const wrapperWithChildren = () => {
+            if (!mountedWrapperWithChildren) {
+                mountedWrapperWithChildren = mount(
+                    <ThemeProvider theme={themeWithChildren}>
+                        <DataTable {...propsWithChildren}>
+                            <DataTableHead>
+                                <DataTableHeader onSortClick={() => console.log("sorting")} tight>
+                                    Date
+                                </DataTableHeader>
+                                <DataTableHeader onSortClick={() => console.log("sorting")} tight title="Order Number">
+                                    Order #
+                                </DataTableHeader>
+                                <DataTableHeader>Ship To</DataTableHeader>
+                                <DataTableHeader onSortClick={() => console.log("sorting")} sorted="descending" tight>
+                                    Status
+                                </DataTableHeader>
+                                <DataTableHeader
+                                    onSortClick={() => console.log("sorting")}
+                                    tight
+                                    title="Purchase Order Number"
+                                >
+                                    PO #
+                                </DataTableHeader>
+                                <DataTableHeader tight alignX="right">
+                                    Order Total
+                                </DataTableHeader>
+                                <DataTableHeader tight title="reorder"></DataTableHeader>
+                            </DataTableHead>
+                            <DataTableBody>
+                                {data.map(({ date, order, shipTo, status, po, total }) => (
+                                    <DataTableRow key={order}>
+                                        <DataTableCell>{date}</DataTableCell>
+                                        <DataTableCell>{order}</DataTableCell>
+                                        <DataTableCell>{shipTo}</DataTableCell>
+                                        <DataTableCell>{status}</DataTableCell>
+                                        <DataTableCell>{po}</DataTableCell>
+                                        <DataTableCell alignX="right">${total}</DataTableCell>
+                                        <DataTableCell>
+                                            <button>Test button</button>
+                                        </DataTableCell>
+                                    </DataTableRow>
+                                ))}
+                            </DataTableBody>
+                        </DataTable>
+                    </ThemeProvider>,
+                );
+            }
+            return mountedWrapperWithChildren;
+        };
+
+        beforeEach(() => {
+            propsWithChildren = {};
+            themeWithChildren = { ...baseTheme };
+            mountedWrapperWithChildren = null;
+        });
+
+        test("Renders DataTableHead", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableHead)).toHaveLength(1);
+        });
+
+        test("Renders DataTableHeader", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableHeader)).toHaveLength(7);
+        });
+        test("DataTableHeader props of second element", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableHeader).at(1).props().tight).toBeTruthy();
+            expect(wrapper.find(DataTableHeader).at(1).props().title).toEqual("Order Number");
+            expect(wrapper.find(DataTableHeader).at(1).text()).toEqual(
+                "Order NumberOrder #sort by Order Number in descending order",
+            );
+        });
+
+        test("Render DataTableBody", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableBody)).toHaveLength(1);
+        });
+
+        test("Render DataTableRow", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableRow)).toHaveLength(returnData().length);
+        });
+
+        test("DataTableCell", () => {
+            const wrapper = wrapperWithChildren();
+
+            expect(wrapper.find(DataTableCell)).toHaveLength(returnData().length * 7);
+        });
+    });
 });
+
+function returnData() {
+    return [
+        {
+            date: "1/5/2018",
+            order: 1234504,
+            shipTo: "MFG Co., 123 North Fifth, Minneapolis, MN 55406",
+            status: "Submitted",
+            po: 10000,
+            total: 805.92,
+        },
+        {
+            date: "1/4/2018",
+            order: 1234503,
+            shipTo: "MFG Co., 123 North Fifth, Minneapolis, MN 55406",
+            status: "Shipped",
+            po: 10000,
+            total: 44.01,
+        },
+        {
+            date: "1/3/2018",
+            order: 1234502,
+            shipTo: "MFG Co., 123 North Fifth, Minneapolis, MN 55406",
+            status: "RMA",
+            po: 10000,
+            total: 123.45,
+        },
+        {
+            date: "1/2/2018",
+            order: 1234501,
+            shipTo: "MFG Co., 123 North Fifth, Minneapolis, MN 55406",
+            status: "Complete",
+            po: 10000,
+            total: 44.01,
+        },
+        {
+            date: "1/1/2018",
+            order: 1234500,
+            shipTo: "MFG Co., 123 North Fifth, Minneapolis, MN 55406",
+            status: "Complete",
+            po: 10000,
+            total: 123.45,
+        },
+    ];
+}

@@ -2,6 +2,7 @@ import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunner,
     HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
 } from "@insite/client-framework/HandlerCreator";
 import {
     Cart,
@@ -56,7 +57,10 @@ export const ReloadCurrentCart: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
-    props.parameter.onSuccess && props.parameter.onSuccess(props.apiResult.cart.id);
+    if (props.parameter.onSuccess) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
+        props.parameter.onSuccess(props.apiResult.cart.id);
+    }
 };
 
 export const DispatchCompletePlaceOrderForApproval: HandlerType = props => {

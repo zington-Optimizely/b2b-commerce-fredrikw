@@ -11,6 +11,7 @@ import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable"
 import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import Grid from "@insite/mobius/Icons/Grid";
 import List from "@insite/mobius/Icons/List";
+import Table from "@insite/mobius/Icons/Table";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -35,6 +36,8 @@ export interface ProductListViewSelectStyles {
     listViewIcon?: IconPresentationProps;
     gridViewClickable?: ClickablePresentationProps;
     gridViewIcon?: IconPresentationProps;
+    tableViewClickable?: ClickablePresentationProps;
+    tableViewIcon?: IconPresentationProps;
 }
 
 export const viewSelectStyles: ProductListViewSelectStyles = {
@@ -50,6 +53,11 @@ export const viewSelectStyles: ProductListViewSelectStyles = {
             margin-right: 20px;
         `,
     },
+    gridViewClickable: {
+        css: css`
+            margin-right: 20px;
+        `,
+    },
     listViewIcon: {
         src: List,
         size: 30,
@@ -57,6 +65,10 @@ export const viewSelectStyles: ProductListViewSelectStyles = {
     gridViewIcon: {
         src: Grid,
         size: 30,
+    },
+    tableViewIcon: {
+        src: Table,
+        size: 26,
     },
 };
 
@@ -85,6 +97,10 @@ class ProductListViewSelect extends React.Component<Props> {
             changeView("Grid");
         };
 
+        const clickTableViewHandler = () => {
+            changeView("Table");
+        };
+
         const changeView = (view: ProductListViewType) => {
             setCookie("ProductList-View", view);
             setView({ view });
@@ -105,6 +121,13 @@ class ProductListViewSelect extends React.Component<Props> {
                     onClick={clickGridViewHandler}
                 >
                     <Icon {...styles.gridViewIcon} color={view === "Grid" ? "primary" : undefined} />
+                </Clickable>
+                <Clickable
+                    data-test-selector="viewSelectTable"
+                    {...styles.gridViewClickable}
+                    onClick={clickTableViewHandler}
+                >
+                    <Icon {...styles.tableViewIcon} color={view === "Table" ? "primary" : undefined} />
                 </Clickable>
             </StyledWrapper>
         );

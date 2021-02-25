@@ -104,7 +104,7 @@ const DataTable: React.FC<DataTableProps> = ({ sortOrder, mergeCss, css, ...othe
                 sortOrder,
             }}
         >
-            <DataTableStyle css={applyStyledProp("css", resolvedMergeCss)} {...otherProps} />
+            <DataTableStyle {...otherProps} css={applyStyledProp("css", resolvedMergeCss)} />
         </DataTableContext.Provider>
     );
 };

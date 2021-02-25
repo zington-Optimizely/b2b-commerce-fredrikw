@@ -113,14 +113,15 @@ export interface AccountSettingsModel extends BaseModel {
 export interface SessionModel extends BaseModel {
     activateAccount: boolean;
     billTo: BillToModel | null;
-    cartReminderUnsubscribeToken: string;
     cartReminderUnsubscribeEmail: string;
+    cartReminderUnsubscribeToken: string;
     currency: CurrencyModel | null;
     customerWasUpdated: boolean;
     customLandingPage: string;
     dashboardIsHomepage: boolean | null;
     deviceType: string;
     displayChangeCustomerLink: boolean;
+    displayMyAccountMenu: boolean;
     email: string;
     firstName: string;
     fulfillmentMethod: string;
@@ -366,11 +367,11 @@ export interface BrandModel extends BaseModel {
     logoLargeImagePath: string;
     logoSmallImagePath: string;
     manufacturer: string;
+    metaDescription: string;
     name: string;
+    pageTitle: string;
     productListPagePath: string;
     topSellerProducts: ProductDto[] | null;
-    pageTitle: string;
-    metaDescription: string;
 }
 
 export interface BrandProductLineCollectionModel extends BaseModel {
@@ -657,10 +658,14 @@ export interface ProductPriceDto {
     extendedRegularPriceDisplay: string;
     extendedUnitListPrice: number;
     extendedUnitListPriceDisplay: string;
+    extendedUnitListPriceWithVat: number;
+    extendedUnitListPriceWithVatDisplay: string;
     extendedUnitNetPrice: number;
     extendedUnitNetPriceDisplay: string;
     extendedUnitRegularPrice: number;
     extendedUnitRegularPriceDisplay: string;
+    extendedUnitRegularPriceWithVat: number;
+    extendedUnitRegularPriceWithVatDisplay: string;
     isOnSale: boolean;
     productId: string;
     regularBreakPrices: BreakPriceDto[] | null;
@@ -672,12 +677,19 @@ export interface ProductPriceDto {
     unitListBreakPrices: BreakPriceDto[] | null;
     unitListPrice: number;
     unitListPriceDisplay: string;
+    unitListPriceWithVat: number;
+    unitListPriceWithVatDisplay: string;
     unitNetPrice: number;
     unitNetPriceDisplay: string;
     unitOfMeasure: string;
     unitRegularBreakPrices: BreakPriceDto[] | null;
     unitRegularPrice: number;
     unitRegularPriceDisplay: string;
+    unitRegularPriceWithVat: number;
+    unitRegularPriceWithVatDisplay: string;
+    vatAmount: number;
+    vatMinusExtendedUnitRegularPrice: number;
+    vatRate: number;
 }
 
 export interface BreakPriceDto {
@@ -901,6 +913,7 @@ export interface CartModel extends BaseModel {
     creditCardBillingAddress: CreditCardBillingAddressDto | null;
     currencySymbol: string;
     customerOrderTaxes: CustomerOrderTaxDto[] | null;
+    customerVatNumber: string;
     displayContinueShoppingLink: boolean;
     erpOrderNumber: string;
     failedToGetRealTimeInventory: boolean;
@@ -1125,6 +1138,8 @@ export interface ProductModel extends BaseModel {
     productNumber: string;
     productTitle: string;
     quoteRequired: boolean;
+    score: number;
+    scoreExplanation?: ScoreExplanationModel;
     smallImagePath: string;
     specifications?: SpecificationModel[];
     trackInventory: boolean;
@@ -1281,6 +1296,8 @@ export interface ProductPriceModel extends BaseModel {
     unitRegularBreakPrices: BreakPriceDto[] | null;
     unitRegularPrice: number;
     unitRegularPriceDisplay: string;
+    vatAmount: number;
+    vatRate: number;
 }
 
 export interface ProductSettingsModel extends BaseModel {
@@ -1378,6 +1395,27 @@ export interface SpecificationModel {
     value: string;
 }
 
+export interface ScoreExplanationModel {
+    aggregateFieldScores: FieldScoreModel[] | null;
+    detailedFieldScores: FieldScoreDetailedModel[] | null;
+    totalBoost: any;
+}
+
+export interface FieldScoreDetailedModel {
+    boost: any;
+    inverseDocumentFrequency: any;
+    matchText: string;
+    name: string;
+    score: any;
+    scoreUsed: boolean;
+    termFrequencyNormalized: any;
+}
+
+export interface FieldScoreModel {
+    name: string;
+    score: any;
+}
+
 export interface ImageModel {
     id: string;
     imageAltText: string;
@@ -1424,6 +1462,7 @@ export interface DetailModel {
     taxCode2: string;
     unspsc: string;
     upcCode: string;
+    vatCodeId: string | null;
 }
 
 export interface ConfigurationModel {
@@ -1687,6 +1726,7 @@ export interface InvoiceModel extends BaseModel {
     customerNumber: string;
     customerPO: string;
     customerSequence: string;
+    customerVatNumber: string;
     discountAmount: number;
     discountAmountDisplay: string;
     dueDate: Date;
@@ -1749,6 +1789,8 @@ export interface InvoiceLineModel extends BaseModel {
     releaseNumber: number;
     shipmentNumber: string;
     shortDescription: string;
+    taxAmount: number;
+    taxRate: number;
     unitOfMeasure: string;
     unitPrice: number;
     unitPriceDisplay: string;
@@ -1842,6 +1884,7 @@ export interface JobQuoteModel extends BaseModel {
     currencySymbol: string;
     customerName: string;
     customerOrderTaxes: CustomerOrderTaxDto[] | null;
+    customerVatNumber: string;
     displayContinueShoppingLink: boolean;
     erpOrderNumber: string;
     expirationDate: Date;
@@ -2022,6 +2065,7 @@ export interface OrderModel extends BaseModel {
     customerNumber: string;
     customerPO: string;
     customerSequence: string;
+    customerVatNumber: string;
     discountAmount: number;
     discountAmountDisplay: string;
     erpOrderNumber: string;
@@ -2124,6 +2168,8 @@ export interface OrderLineModel extends BaseModel {
     sectionOptions: SectionOptionDto[] | null;
     shortDescription: string;
     status: string;
+    taxAmount: number;
+    taxRate: number;
     totalDiscountAmount: number;
     totalDiscountAmountDisplay: string;
     totalRegularPrice: number;
@@ -2462,6 +2508,7 @@ export interface QuoteModel extends BaseModel {
     customerName: string;
     customerNumber: string;
     customerOrderTaxes: CustomerOrderTaxDto[] | null;
+    customerVatNumber: string;
     displayContinueShoppingLink: boolean;
     erpOrderNumber: string;
     expirationDate: Date | null;

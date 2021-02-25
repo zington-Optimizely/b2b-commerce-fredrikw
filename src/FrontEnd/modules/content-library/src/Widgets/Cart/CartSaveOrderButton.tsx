@@ -71,6 +71,13 @@ const CartSaveOrderButton = ({
             onSuccess: (orderId: string) => {
                 history.push(`${savedOrdersPageUrl}?cartId=${orderId}`);
             },
+            onComplete(resultProps) {
+                if (resultProps.apiResult?.cart) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.(resultProps.apiResult.cart.id);
+                }
+            },
             onError: (errorMessage: string) => {
                 toaster.addToast({ body: errorMessage, messageType: "danger" });
             },

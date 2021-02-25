@@ -1,4 +1,8 @@
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    Handler,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import { updateBudget, UpdateBudgetApiParameter } from "@insite/client-framework/Services/BudgetService";
 import { BudgetModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -18,6 +22,7 @@ export const CallUpdateBudgetApi: HandlerType = async props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (props.apiResult) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess?.();
     }
 };

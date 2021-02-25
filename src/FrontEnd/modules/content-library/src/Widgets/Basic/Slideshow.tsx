@@ -2,6 +2,7 @@ import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Com
 import useRecursiveTimeout from "@insite/client-framework/Common/Hooks/useRecursiveTimeout";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import { responsiveStyleRules } from "@insite/client-framework/Common/Utilities/responsive";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
@@ -48,25 +49,43 @@ interface SlideModel {
             | "bottomCenter"
             | "bottomRight";
         contentPadding: number;
+        centerTextVertically: boolean;
     };
 }
 
 const enum fields {
     height = "height",
-    textAalignment = "textAalignment",
+    textAlignment = "textAlignment",
     showArrows = "showArrows",
     slideIndicator = "slideIndicator",
     autoplay = "autoplay",
     slides = "slides",
+    responsiveFontSizes = "responsiveFontSizes",
+    customFontSizes = "customFontSizes",
+    h1FontSize = "h1FontSize",
+    h2FontSize = "h2FontSize",
+    h3FontSize = "h3FontSize",
+    h4FontSize = "h4FontSize",
+    h5FontSize = "h5FontSize",
+    h6FontSize = "h6FontSize",
+    normalFontSize = "normalFontSize",
 }
 
 interface OwnProps extends WidgetProps {
     fields: {
         [fields.height]: "1/4 viewport" | "1/2 viewport" | "3/4 viewport" | "fullViewport";
-        [fields.textAalignment]: "left" | "center" | "right";
+        [fields.textAlignment]: "left" | "center" | "right";
         [fields.showArrows]: boolean;
         [fields.slideIndicator]: boolean;
         [fields.autoplay]: number;
+        [fields.responsiveFontSizes]: boolean;
+        [fields.customFontSizes]: boolean;
+        [fields.h1FontSize]: number;
+        [fields.h2FontSize]: number;
+        [fields.h3FontSize]: number;
+        [fields.h4FontSize]: number;
+        [fields.h5FontSize]: number;
+        [fields.normalFontSize]: number;
         [fields.slides]: SlideModel[];
     };
     extendedStyles?: SlideshowStyles;
@@ -87,6 +106,7 @@ export interface SlideshowStyles {
     slideContainerWrapper?: InjectableCss;
     slideContentWrapper?: InjectableCss;
     slideOverlayWrapper?: InjectableCss;
+    slideCenteringWrapperStyles?: InjectableCss;
     headingText?: TypographyPresentationProps;
     subheadingText?: TypographyPresentationProps;
     slideButton?: ButtonPresentationProps;
@@ -271,7 +291,7 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
             break;
     }
 
-    const textAlignStyles = `text-align: ${fields.textAalignment};`;
+    const textAlignStyles = `text-align: ${fields.textAlignment};`;
 
     return (
         <StyledWrapper {...styles.slideshowWrapper}>
@@ -315,6 +335,14 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
                             overlayPositioningStyles = "align-items: flex-end;";
                         }
 
+                        let fontSizeStyles;
+                        if (fields.responsiveFontSizes || fields.customFontSizes) {
+                            fontSizeStyles = responsiveStyleRules(
+                                fields.responsiveFontSizes,
+                                fields.customFontSizes ? fields : undefined,
+                            );
+                        }
+
                         const slideWrapperStyles = {
                             css: css`
                                 ${styles.slideContentWrapper?.css || ""}
@@ -324,6 +352,7 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
                                 ${responsiveImageBehaviorStyles}
                                 ${focalPointStyles}
                                 ${overlayPositioningStyles}
+                                ${fontSizeStyles}
                             `,
                         };
                         const slideOverlayWrapperStyles = {
@@ -333,31 +362,40 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
                                     slide.fields.background === "image" ? slide.fields.imageOverlay : ""
                                 };
                                 padding: ${slide.fields.contentPadding}px;
+                                ${
+                                    slide.fields.centerTextVertically &&
+                                    `
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;`
+                                }
                             `,
                         };
                         return (
                             // eslint-disable-next-line react/no-array-index-key
                             <StyledWrapper key={index} {...slideWrapperStyles}>
                                 <StyledWrapper {...slideOverlayWrapperStyles}>
-                                    {slide.fields.heading && (
-                                        <Typography {...styles.headingText}>
-                                            {parse(slide.fields.heading, parserOptions)}
-                                        </Typography>
-                                    )}
-                                    {slide.fields.subheading && (
-                                        <Typography {...styles.subheadingText}>
-                                            {parse(slide.fields.subheading, parserOptions)}
-                                        </Typography>
-                                    )}
-                                    {(slide.fields.buttonLabel || slide.fields.buttonLink.value) && (
-                                        <Button
-                                            {...styles.slideButton}
-                                            variant={slide.fields.buttonVariant}
-                                            onClick={() => onClick(history, buttonLink?.url)}
-                                        >
-                                            {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
-                                        </Button>
-                                    )}
+                                    <StyledWrapper {...styles.slideCenteringWrapperStyles}>
+                                        {slide.fields.heading && (
+                                            <Typography {...styles.headingText}>
+                                                {parse(slide.fields.heading, parserOptions)}
+                                            </Typography>
+                                        )}
+                                        {slide.fields.subheading && (
+                                            <Typography {...styles.subheadingText}>
+                                                {parse(slide.fields.subheading, parserOptions)}
+                                            </Typography>
+                                        )}
+                                        {(slide.fields.buttonLabel || slide.fields.buttonLink.value) && (
+                                            <Button
+                                                {...styles.slideButton}
+                                                variant={slide.fields.buttonVariant}
+                                                onClick={() => onClick(history, buttonLink?.url)}
+                                            >
+                                                {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
+                                            </Button>
+                                        )}
+                                    </StyledWrapper>
                                 </StyledWrapper>
                             </StyledWrapper>
                         );
@@ -427,7 +465,7 @@ const widgetModule: WidgetModule = {
                 tab: settingsTab,
             },
             {
-                name: fields.textAalignment,
+                name: fields.textAlignment,
                 editorTemplate: "DropDownField",
                 defaultValue: "center",
                 fieldType: "General",
@@ -460,6 +498,83 @@ const widgetModule: WidgetModule = {
                 fieldType: "General",
                 tab: settingsTab,
                 min: 1,
+            },
+            {
+                name: fields.responsiveFontSizes,
+                editorTemplate: "CheckboxField",
+                fieldType: "General",
+                tab: settingsTab,
+                defaultValue: true,
+            },
+            {
+                name: fields.customFontSizes,
+                editorTemplate: "CheckboxField",
+                fieldType: "General",
+                tab: settingsTab,
+                defaultValue: false,
+            },
+            {
+                name: fields.normalFontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h1FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: 40,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h2FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: 32,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h3FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h4FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h5FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
+            },
+            {
+                name: fields.h6FontSize,
+                editorTemplate: "IntegerField",
+                fieldType: "General",
+                tab: settingsTab,
+                min: 1,
+                defaultValue: null,
+                isVisible: item => item?.fields[fields.customFontSizes],
             },
             {
                 name: fields.slides,
@@ -604,6 +719,11 @@ const widgetModule: WidgetModule = {
                         name: "contentPadding",
                         editorTemplate: "IntegerField",
                         defaultValue: 50,
+                    },
+                    {
+                        name: "centerTextVertically",
+                        editorTemplate: "CheckboxField",
+                        defaultValue: false,
                     },
                 ],
             },

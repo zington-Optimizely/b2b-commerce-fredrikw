@@ -1,10 +1,11 @@
 import CategoriesReducer from "@insite/client-framework/Store/Data/Categories/CategoriesReducer";
-import PagesReducer from "@insite/client-framework/Store/Data/Pages/PagesReducer";
 import LinksReducer from "@insite/client-framework/Store/Links/LinksReducer";
 import CompareModalReducer from "@insite/shell/Store/CompareModal/CompareModalReducer";
+import PagesReducer from "@insite/shell/Store/Data/Pages/PagesReducer";
 import ErrorModalReducer from "@insite/shell/Store/ErrorModal/ErrorModalReducer";
 import ImportExportModalReducer from "@insite/shell/Store/ImportExportModal/ImportExportModalReducer";
 import LogoutWarningModalReducer from "@insite/shell/Store/LogoutWarningModal/LogoutWarningModalReducer";
+import NeverPublishedModalReducer from "@insite/shell/Store/NeverPublishedModal/NeverPublishedModalReducer";
 import PageEditorReducer from "@insite/shell/Store/PageEditor/PageEditorReducer";
 import PageTreeReducer from "@insite/shell/Store/PageTree/PageTreeReducer";
 import PublishModalReducer from "@insite/shell/Store/PublishModal/PublishModalReducer";
@@ -28,6 +29,7 @@ export const reducers = {
     importExportModal: ImportExportModalReducer,
     links: LinksReducer,
     logoutWarningModal: LogoutWarningModalReducer,
+    neverPublishedModal: NeverPublishedModalReducer,
     pageEditor: PageEditorReducer,
     pageTree: PageTreeReducer,
     publishModal: PublishModalReducer,

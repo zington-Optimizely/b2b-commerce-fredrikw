@@ -1,14 +1,19 @@
 import Clickable from "@insite/mobius/Clickable";
 import Modal from "@insite/mobius/Modal";
-import OverflowMenu from "@insite/mobius/OverflowMenu";
+import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu";
 import getColor from "@insite/mobius/utilities/getColor";
+import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import About from "@insite/shell/Components/Shell/About";
 import shellTheme from "@insite/shell/ShellTheme";
 import {
     showImportExportModal,
     showRestoreContentModal,
 } from "@insite/shell/Store/ImportExportModal/ImportExportModalActionCreators";
-import { logOut, toggleMobileCmsMode } from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
+import {
+    logOut,
+    toggleMobileCmsMode,
+    toggleSearchDataModeActive,
+} from "@insite/shell/Store/ShellContext/ShellContextActionCreators";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -16,12 +21,21 @@ import { RouteComponentProps, withRouter } from "react-router";
 import { css } from "styled-components";
 
 const mapStateToProps = ({
-    shellContext: { mobileCmsModeActive, enableMobileCms, homePageId, mobileHomePageId },
+    shellContext: {
+        mobileCmsModeActive,
+        enableMobileCms,
+        homePageId,
+        mobileHomePageId,
+        searchDataModeActive,
+        permissions,
+    },
 }: ShellState) => ({
     mobileCmsModeActive,
     enableMobileCms,
     homePageId,
     mobileHomePageId,
+    searchDataModeActive,
+    permissions,
 });
 
 const mapDispatchToProps = {
@@ -29,6 +43,7 @@ const mapDispatchToProps = {
     showImportExportModal,
     showRestoreContentModal,
     toggleMobileCmsMode,
+    toggleSearchDataModeActive,
 };
 
 /** Fixes blackout caused by `OverflowMenu` using `common.border` for the background color, which in the Shell, is the same as the text. */
@@ -39,7 +54,7 @@ const menuItemStyles = css`
     }
 ` as any; // The type on the overflow menu doesn't like this but it works.
 
-const wrapperStyles = css`
+const wrapperStyles: StyledProp<OverflowMenuProps> = css`
     width: 24px;
 `;
 
@@ -55,6 +70,9 @@ const HeaderGear = ({
     logOut,
     showImportExportModal,
     showRestoreContentModal,
+    searchDataModeActive,
+    toggleSearchDataModeActive,
+    permissions,
 }: Props) => {
     const [showAbout, setShowAbout] = React.useState(false);
 
@@ -85,7 +103,11 @@ const HeaderGear = ({
                     src: "Settings",
                     color: "text.accent",
                 }}
-                cssOverrides={{ menuItem: menuItemStyles, wrapper: wrapperStyles }}
+                cssOverrides={{
+                    menuItem: menuItemStyles,
+                    wrapper: wrapperStyles,
+                }}
+                maxHeight="300px"
                 data-test-selector="expand_shellSettings"
             >
                 {enableMobileCms && (
@@ -104,6 +126,11 @@ const HeaderGear = ({
                 <Clickable data-test-selector="shellSettings_showRestoreContentModal" onClick={showRestoreContentModal}>
                     Restore Content
                 </Clickable>
+                {permissions?.canUseSearchDataMode && (
+                    <Clickable data-test-selector="shellSettings_searchDataMode" onClick={toggleSearchDataModeActive}>
+                        {searchDataModeActive ? "Disable Search Data Mode" : "Enable Search Data Mode"}
+                    </Clickable>
+                )}
                 <Clickable data-test-selector="shellSettings_logOut" onClick={logOut}>
                     Log Out
                 </Clickable>

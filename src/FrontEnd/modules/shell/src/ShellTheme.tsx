@@ -17,7 +17,8 @@ export interface ShellColors extends ThemeColors {
         nonmatchingTreeLinks: string;
         accentSecondary: string;
         futurePublish: string;
-        futurePublishActive: string;
+        draftPage: string;
+        neverPublished: string;
         isWaitingForApproval: string;
         isWaitingForApprovalActive: string;
     };
@@ -29,7 +30,8 @@ const colors: ShellColors = {
         nonmatchingTreeLinks: "#bbb",
         accentSecondary: "#cccccc",
         futurePublish: "#0072bc",
-        futurePublishActive: "#c4e9fc",
+        draftPage: "#ff6a00",
+        neverPublished: "#ff2300",
         isWaitingForApproval: "#f7941d",
         isWaitingForApprovalActive: "#f2d7b8",
     },

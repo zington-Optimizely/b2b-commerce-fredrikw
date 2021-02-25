@@ -1,4 +1,9 @@
-import { ApiHandler, createHandlerChainRunner, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
+import {
+    ApiHandler,
+    createHandlerChainRunner,
+    HasOnSuccess,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import {
     addPaymentProfile as addPaymentProfileApi,
     AddPaymentProfileApiParameter,
@@ -22,6 +27,7 @@ export const DispatchResetPaymentProfiles: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    markSkipOnCompleteIfOnSuccessIsSet(props);
     props.parameter.onSuccess?.();
 };
 

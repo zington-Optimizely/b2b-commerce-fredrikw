@@ -82,6 +82,13 @@ const RequisitionsRequisitionLineRow = ({
             onSuccess: () => {
                 toaster.addToast({ body: siteMessage("Requisition_ItemUpdated"), messageType: "success" });
             },
+            onComplete(resultProps) {
+                if (resultProps.result) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                }
+            },
         });
     };
 
@@ -98,6 +105,11 @@ const RequisitionsRequisitionLineRow = ({
             requisitionLineId: requisitionLine.id,
             onSuccess: () => {
                 toaster.addToast({ body: siteMessage("Requisition_ItemDeleted"), messageType: "success" });
+            },
+            onComplete() {
+                // "this" is targeting the object being created, not the parent SFC
+                // eslint-disable-next-line react/no-this-in-sfc
+                this.onSuccess?.();
             },
         });
     };

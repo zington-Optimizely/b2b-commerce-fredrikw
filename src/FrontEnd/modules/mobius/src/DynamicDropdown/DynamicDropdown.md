@@ -77,6 +77,12 @@ class Example extends React.Component {
 ### Custom Filter
 This custom filter dynamic drop down uses a custom filter that is case-sensitive and only returns values that match from the beginning of the string.
 
+It also has CSS overrides to grant you full control of styling.
+
+By default, your CSS overrides, replace the theme CSS. 
+
+If you would like to merge the your CSS with the theme, simply pass in `mergeCss={true}` or `mergeCss`.
+
 ```jsx
 const {basicList} = require('./optionsLists.ts');
 const Container = ({ children }) => <div style={{ maxWidth: 400 }}>{children}</div>;
@@ -93,7 +99,16 @@ const filter = () => (
         label="Custom filter" 
         options={basicList} 
         filterOption={filter()} 
-        cssOverrides={{dropdownWrapper: "margin-bottom: 25px;"}}
+        cssOverrides={{
+            option: css`
+                display: flex;
+                align-items: center;
+                height: 30px;
+                background: #222;
+                color: #fff;
+                text-transform: capitalize;
+            `,
+        }}
     />
     <DynamicDropdown label="Standard filter" options={basicList} />
 </Container>

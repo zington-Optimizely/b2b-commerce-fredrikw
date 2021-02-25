@@ -198,10 +198,12 @@ class AccordionSection extends React.Component<Props, State> {
     }
 }
 
-const TransitionManager = styled.span<{
+interface TransitionManagerProps {
     transitionState: TransitionStatus;
     css?: StyledProp<{ transitionState: TransitionStatus }>;
-}>`
+}
+
+const TransitionManager = styled.span<TransitionManagerProps>`
     position: absolute;
     bottom: -3px;
     right: 0;

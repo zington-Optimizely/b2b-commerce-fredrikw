@@ -110,6 +110,8 @@ export const linkListStyles: LinkListStyles = {
     },
 };
 
+export const socialLinksStyles = linkListStyles;
+
 const styles = linkListStyles;
 
 const GetIcon = (icon: string) => {

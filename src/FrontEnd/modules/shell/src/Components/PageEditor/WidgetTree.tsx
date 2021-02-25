@@ -1,4 +1,4 @@
-import { getCurrentPageForShell } from "@insite/shell/Store/ShellSelectors";
+import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ const mapStateToProps = (state: ShellState) => {
         },
     } = state;
 
-    const page = getCurrentPageForShell(state);
+    const page = getCurrentPage(state);
 
     return {
         pageContent: widgetIdsByPageIdParentIdAndZone[page.id],

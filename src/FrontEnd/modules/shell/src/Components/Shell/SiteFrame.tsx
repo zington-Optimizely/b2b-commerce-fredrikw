@@ -1,19 +1,15 @@
 import { AddWidgetData } from "@insite/client-framework/Common/FrameHole";
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
-import {
-    addWidget,
-    changeContext,
-    moveWidgetTo,
-    removeWidget,
-} from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
+import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
 import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import AddWidgetModal from "@insite/shell/Components/Modals/AddWidgetModal";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
 import { sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageDefinitions } from "@insite/shell/DefinitionLoader";
-import { getPageState } from "@insite/shell/Services/ContentAdminService";
+import { getPageState, getPageStateFromDictionaries } from "@insite/shell/Services/ContentAdminService";
+import { moveWidgetTo, removeWidget } from "@insite/shell/Store/Data/Pages/PagesActionCreators";
+import { loadPageOnSite } from "@insite/shell/Store/Data/Pages/PagesHelpers";
 import {
     displayAddWidgetModal,
     editWidget,
@@ -30,7 +26,7 @@ interface OwnProps {
     pageId: string;
 }
 
-const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: ShellState) => ({
     stageMode: state.shellContext.stageMode,
     isEditMode: state.shellContext.contentMode === "Editing",
     selectedProductPath: state.pageEditor.selectedProductPath,
@@ -45,10 +41,10 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => ({
     headerNodesByParentId: state.pageTree.headerTreeNodesByParentId,
     footerNodesByParentId: state.pageTree.footerTreeNodesByParentId,
     updatedLayoutIds: state.pageEditor.updatedLayoutIds,
+    futurePublishNodeIds: state.pageTree.futurePublishNodeIds,
 });
 
 const mapDispatchToProps = {
-    addWidget,
     moveWidgetTo,
     displayAddWidgetModal,
     editWidget,
@@ -130,10 +126,7 @@ class SiteFrame extends React.Component<Props, State> {
         const url = pageId.startsWith("SwitchTo") ? pageId.replace("SwitchTo", "") + search : `/Content/Page/${pageId}`;
 
         if (this.framePageId !== pageId) {
-            sendToSite({
-                type: "LoadUrl",
-                url,
-            });
+            loadPageOnSite(pageId);
         }
 
         return (
@@ -182,17 +175,30 @@ class SiteFrame extends React.Component<Props, State> {
                     pageDefinitionsByType[definition.type] = { pageType: definition.pageType };
                 });
 
-                const pageState = getPageState(
-                    data.pageId,
-                    this.props.nodesByParentId[data.parentId],
-                    this.props.headerNodesByParentId[data.parentId],
-                    this.props.footerNodesByParentId[data.parentId],
-                );
+                const pageState =
+                    getPageState(
+                        data.pageId,
+                        this.props.nodesByParentId[data.parentId],
+                        this.props.headerNodesByParentId[data.parentId],
+                        this.props.footerNodesByParentId[data.parentId],
+                    ) ||
+                    getPageStateFromDictionaries(
+                        data.pageId,
+                        this.props.nodesByParentId,
+                        this.props.headerNodesByParentId,
+                        this.props.footerNodesByParentId,
+                    );
+
+                const key =
+                    pageState && (pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId);
 
                 sendToSite({
                     type: "CMSPermissions",
                     permissions: this.props.permissions,
-                    canChangePage: !pageState?.futurePublishOn || pageState.futurePublishOn <= new Date(),
+                    canChangePage:
+                        !key ||
+                        !this.props.futurePublishNodeIds[key] ||
+                        this.props.futurePublishNodeIds[key] <= new Date(),
                 });
 
                 sendToSite({
@@ -208,10 +214,6 @@ class SiteFrame extends React.Component<Props, State> {
                 this.props.moveWidgetTo(data.id, data.parentId, data.zoneName, data.index, data.pageId);
                 this.props.savePage();
             },
-            AddWidget: (data: { widget: WidgetProps; index: number; pageId: string }) => {
-                this.props.addWidget(data.widget, data.index, data.pageId);
-                this.props.editWidget(data.widget.id, true);
-            },
             AddRow: (data: AddWidgetData) => {
                 this.props.displayAddWidgetModal(data);
             },
@@ -226,11 +228,6 @@ class SiteFrame extends React.Component<Props, State> {
                     message: "Are you sure you want to delete this widget?",
                     title: `Delete ${data.widgetType}`,
                     onConfirm: () => {
-                        sendToSite({
-                            type: "RemoveWidget",
-                            id: data.id,
-                            pageId: data.pageId,
-                        });
                         this.props.removeWidget(data.id, data.pageId);
                         this.props.savePage();
                     },

@@ -92,6 +92,10 @@ export const setupSiteHole = async function (
         await sleep(200);
     }
 
+    if (!siteFrame.isConnected) {
+        return;
+    }
+
     if (!completedHandshake) {
         throw new Error("FrameHole could not establish connection to the site");
     }

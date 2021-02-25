@@ -1,5 +1,10 @@
 import isApiError from "@insite/client-framework/Common/isApiError";
-import { createHandlerChainRunner, HandlerWithResult } from "@insite/client-framework/HandlerCreator";
+import {
+    createHandlerChainRunner,
+    HandlerWithResult,
+    markSkipOnCompleteIfOnErrorIsSet,
+    markSkipOnCompleteIfOnSuccessIsSet,
+} from "@insite/client-framework/HandlerCreator";
 import {
     addWishList as addWishListApi,
     AddWishListApiParameter,
@@ -49,12 +54,14 @@ export const ResetWishListsData: HandlerType = props => {
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
     if (!props.result.errorMessage && props.result.wishListModel && props.parameter.onSuccess) {
+        markSkipOnCompleteIfOnSuccessIsSet(props);
         props.parameter.onSuccess(props.result.wishListModel);
     }
 };
 
 export const ExecuteOnErrorCallback: HandlerType = props => {
     if (props.result.errorMessage) {
+        markSkipOnCompleteIfOnErrorIsSet(props);
         props.parameter.onError?.(props.result.errorMessage);
     }
 };

@@ -10,7 +10,7 @@ import {
     addTask,
     clearInitialPage,
     getInitialPage,
-    redirectTo,
+    redirectTo as performRedirectTo,
     setStatusCode,
 } from "@insite/client-framework/ServerSideRendering";
 import {
@@ -30,8 +30,7 @@ import { AnyAction } from "@insite/client-framework/Store/Reducers";
 import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import { FieldType } from "@insite/client-framework/Types/FieldDefinition";
-import PageProps, { ItemProps } from "@insite/client-framework/Types/PageProps";
-import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import PageProps, { PageModel } from "@insite/client-framework/Types/PageProps";
 import { History } from "@insite/mobius/utilities/HistoryContext";
 
 export const beginDraggingWidget = (id: string): AnyAction => ({
@@ -41,44 +40,6 @@ export const beginDraggingWidget = (id: string): AnyAction => ({
 
 export const endDraggingWidget = (): AnyAction => ({
     type: "Data/Pages/EndDraggingWidget",
-});
-
-export const moveWidgetTo = (
-    id: string,
-    parentId: string,
-    zoneName: string,
-    index: number,
-    pageId: string,
-): AnyAction => ({
-    type: "Data/Pages/MoveWidgetTo",
-    id,
-    parentId,
-    zoneName,
-    index,
-    pageId,
-});
-
-export const addWidget = (widget: WidgetProps, index: number, pageId: string): AnyAction => ({
-    type: "Data/Pages/AddWidget",
-    widget,
-    index,
-    pageId,
-});
-
-export const updateField = (parameter: UpdateFieldParameter): AnyAction => ({
-    type: "Data/Pages/UpdateField",
-    ...parameter,
-});
-
-export const removeWidget = (id: string, pageId: string): AnyAction => ({
-    type: "Data/Pages/RemoveWidget",
-    id,
-    pageId,
-});
-
-export const replaceItem = (item: ItemProps): AnyAction => ({
-    type: "Data/Pages/ReplaceItem",
-    item,
 });
 
 export const resetPageDataViews = (): AnyAction => ({
@@ -151,6 +112,11 @@ export const loadPagesForParent = (parameter: GetPagesByParentApiParameter): App
     );
 };
 
+export const updatePage = (page: PageModel): AnyAction => ({
+    type: "Data/Pages/UpdatePage",
+    page,
+});
+
 export const loadPage = (location: Location, history?: History, onSuccess?: () => void): AppThunkAction => (
     dispatch,
     getState,
@@ -159,7 +125,7 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
         (async function () {
             const url = location.pathname + location.search;
 
-            const finished = (page: PageProps) => {
+            const finishedLoadingPage = (page: PageProps) => {
                 sendToShell({
                     type: "LoadPageComplete",
                     pageId: page.id,
@@ -181,12 +147,21 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 }
             };
 
-            const currentState = getState();
-            const page = getPageStateByPath(currentState, location.pathname);
+            const dispatchCompleteLoadPage = (page: PageModel) => {
+                dispatch({
+                    type: "Data/Pages/CompleteLoadPage",
+                    page,
+                    path: location.pathname,
+                    ...getContextData(getState()),
+                });
+            };
 
-            // bypass caching for pages requiring authorization so we don't incorrectly show them if auth has timed out
-            if (page.value && !page.value.requiresAuthorization) {
-                finished(page.value);
+            const currentState = getState();
+            const existingPage = getPageStateByPath(currentState, location.pathname);
+
+            // if a page requiresAuthorization we want to reload them in case the user has signed in, so bypass the finished call
+            if (existingPage.value && !existingPage.value.requiresAuthorization) {
+                finishedLoadingPage(existingPage.value);
                 return;
             }
 
@@ -195,14 +170,14 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 key: location.pathname,
             });
 
-            let result: RetrievePageResult | undefined;
+            let retrievePageResult: RetrievePageResult | undefined;
             const bypassFilters = url.startsWith("/Content/Page/");
 
             try {
                 const initialPage = getInitialPage();
 
                 if (initialPage && initialPage.result && url === initialPage.url) {
-                    result = initialPage.result;
+                    retrievePageResult = initialPage.result;
                     clearInitialPage();
                 } else if (location.pathname === getContentByVersionPath) {
                     if (IS_SERVER_SIDE) {
@@ -211,60 +186,50 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                     const pageVersion = await getPageByVersion(
                         parseQueryString<{ pageVersionId: string }>(location.search).pageVersionId,
                     );
-                    dispatch({
-                        type: "Data/Pages/CompleteLoadPage",
-                        page: pageVersion,
-                        path: location.pathname,
-                        ...getContextData(getState()),
-                    });
 
-                    finished(pageVersion);
+                    dispatchCompleteLoadPage(pageVersion);
+                    finishedLoadingPage(pageVersion);
                     return;
                 } else {
-                    result = await getPageByUrl(url, bypassFilters);
+                    retrievePageResult = await getPageByUrl(url, bypassFilters);
                 }
             } catch (ex) {
                 logger.error(ex);
                 const pageLink = getPageLinkByPageType(getState(), "UnhandledErrorPage");
                 if (pageLink) {
-                    redirectTo(pageLink.url);
+                    performRedirectTo(pageLink.url);
                 }
                 return;
             }
 
-            setStatusCode(result.statusCode);
-            if (result.redirectTo) {
+            const { statusCode, redirectTo, page, authorizationFailed } = retrievePageResult;
+
+            setStatusCode(statusCode);
+            if (redirectTo) {
                 const session = getState().context?.session;
                 const isAuthenticated = session && (session.isAuthenticated || session.rememberMe) && !session.isGuest;
                 if (IS_SERVER_SIDE) {
-                    redirectTo(result.redirectTo);
-                } else if (result.redirectTo.startsWith("http") || (result.authorizationFailed && isAuthenticated)) {
+                    performRedirectTo(redirectTo);
+                } else if (redirectTo.startsWith("http") || (authorizationFailed && isAuthenticated)) {
                     // authorizationFailed may mean auth session timed out - do a full refresh to update the header etc
-                    window.location.href = result.redirectTo;
+                    window.location.href = redirectTo;
                 } else if (history) {
-                    history.push(result.redirectTo);
+                    history.push(redirectTo);
                 }
-            } else if (result.page) {
-                const hasPageByType = getPageStateByType(currentState, result.page.type).value?.id === result.page.id;
+            } else if (page) {
+                const hasPageByType = getPageStateByType(currentState, page.type).value?.id === page.id;
                 if (hasPageByType) {
                     dispatch({
                         type: "Data/Pages/SetPageIsLoaded",
-                        pageType: result.page.type,
-                        page: result.page,
+                        pageType: page.type,
+                        page,
                         path: location.pathname,
                     });
-
-                    finished(result.page);
                 } else {
-                    dispatch({
-                        type: "Data/Pages/CompleteLoadPage",
-                        page: result.page,
-                        path: location.pathname,
-                        ...getContextData(getState()),
-                    });
-
-                    finished(result.page);
+                    dispatchCompleteLoadPage(page);
                 }
+
+                finishedLoadingPage(page);
             }
         })(),
     );
