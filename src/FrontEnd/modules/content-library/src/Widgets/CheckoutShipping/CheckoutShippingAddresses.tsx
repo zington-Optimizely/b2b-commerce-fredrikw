@@ -170,10 +170,6 @@ const CheckoutShippingAddresses: FC<Props> = ({
     const { fulfillmentMethod } = session;
 
     const changeShippingAddressHandler = (address: ShipToModel) => {
-        if (currentUserIsGuest && useBillingAddress) {
-            throw new Error("You cannot select a saved address during guest checkout.");
-        }
-
         updateShipTo({
             billToId: billToId!,
             shipTo: address,

@@ -241,7 +241,7 @@ const ShippingAddress: FC<Props> = ({
                 <Typography {...styles.headingText} as="h3">
                     {translate("Shipping Address")}
                 </Typography>
-                {!currentUserIsGuest && (
+                {(!currentUserIsGuest || (currentUserIsGuest && allowCreateNewShipToAddress)) && (
                     <Link
                         {...styles.selectSavedAddressLink}
                         type="button"
@@ -335,8 +335,8 @@ const ShippingAddress: FC<Props> = ({
                                 <Checkbox
                                     {...styles.oneTimeAddressCheckbox}
                                     onChange={useBillingAddressChangeHandler}
-                                    checked={useBillingAddress}
-                                    disabled={currentUserIsGuest || isUseBillingAddressDisabled}
+                                    checked={useBillingAddress || isUseBillingAddressDisabled}
+                                    disabled={isUseBillingAddressDisabled}
                                 >
                                     {translate("Use Billing Address")}
                                 </Checkbox>
