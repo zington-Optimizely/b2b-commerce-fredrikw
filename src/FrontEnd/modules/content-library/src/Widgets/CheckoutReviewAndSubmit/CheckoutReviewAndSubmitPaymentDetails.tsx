@@ -1,3 +1,4 @@
+import { useTokenExFrame } from "@insite/client-framework/Common/Hooks/useTokenExFrame";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
 import validateCreditCard from "@insite/client-framework/Common/Utilities/validateCreditCard";
@@ -364,17 +365,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         }
     }, [billToState]);
 
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js";
-        script.async = true;
-
-        document.body.appendChild(script);
-
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
+    useTokenExFrame(websiteSettings);
 
     useEffect(() => resetForm(), [paymentMethod]);
 
@@ -514,18 +505,18 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         }
 
         const iframeConfig: TokenExPCIIframeConfig = {
-            tokenExID: config.tokenExId,
-            tokenScheme: config.tokenScheme,
             authenticationKey: config.authenticationKey,
-            timestamp: config.timestamp,
-            origin: config.origin,
-            styles: tokenExFrameStyleConfig,
-            inputType: "text",
             cvv: true,
             cvvContainerID: "tokenExSecurityCode",
             cvvInputType: "text",
-            pci: true,
             enablePrettyFormat: true,
+            inputType: "text",
+            origin: config.origin,
+            pci: true,
+            styles: tokenExFrameStyleConfig,
+            timestamp: config.timestamp,
+            tokenExID: config.tokenExId,
+            tokenScheme: config.tokenScheme,
         };
 
         tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", iframeConfig);
@@ -574,17 +565,17 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         }
 
         const iframeConfig: TokenExCvvOnlyIframeConfig = {
-            tokenExID: config.tokenExId,
-            tokenScheme: paymentMethodDto!.tokenScheme,
             authenticationKey: config.authenticationKey,
-            timestamp: config.timestamp,
-            origin: config.origin,
-            styles: tokenExFrameStyleConfig,
-            inputType: "text",
+            cardType: convertApiDataToTokenExCardType(paymentMethodDto!.cardType),
             cvv: true,
             cvvOnly: true,
+            inputType: "text",
+            origin: config.origin,
+            styles: tokenExFrameStyleConfig,
+            timestamp: config.timestamp,
             token: paymentMethodDto!.name,
-            cardType: convertApiDataToTokenExCardType(paymentMethodDto!.cardType),
+            tokenExID: config.tokenExId,
+            tokenScheme: paymentMethodDto!.tokenScheme,
         };
 
         tokenExIframe = new TokenEx.Iframe("ppTokenExSecurityCode", iframeConfig);

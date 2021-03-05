@@ -272,11 +272,8 @@ export async function pageRenderer(request: Request, response: Response) {
                         }}
                     ></script>
                 )}
-                {/* The theme is no longer passed inside a script tag as initialTheme to later be accessed on the window object in the browser. 
-                    Instead we refetch the theme and merge it on the frontend to ensure iconSrcByMessage works inside the Toaster component */}
                 {/* eslint-enable react/no-danger */}
                 <script async defer src={`/dist/public.js?v=${BUILD_DATE}`} />
-                <script src="https://test-htp.tokenex.com/Iframe/Iframe-v3.min.js"></script>
                 {BodyEnd(layoutSectionRenderingContext)}
             </body>
         </html>

@@ -2683,6 +2683,7 @@ export interface WebsiteSettingsModel extends BaseModel {
     mobileAppEnabled: boolean;
     pageTitleDelimiter: string;
     siteNameAfterTitle: boolean;
+    tokenExTestMode: boolean;
     usePaymetricGateway: boolean;
     useTokenExGateway: boolean;
 }

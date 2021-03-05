@@ -1,3 +1,4 @@
+import { useTokenExFrame } from "@insite/client-framework/Common/Hooks/useTokenExFrame";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -231,6 +232,8 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         return null;
     }
 
+    useTokenExFrame(websiteSettings);
+
     React.useEffect(() => {
         if (!billToState.value && !billToState.isLoading && billToState.id) {
             loadBillTo({ billToId: billToState!.id });
@@ -274,17 +277,17 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         }
 
         const iframeConfig = {
+            authenticationKey: tokenExConfig.authenticationKey,
+            cvv: false,
+            enablePrettyFormat: true,
+            enableValidateOnBlur: true,
+            inputType: "text",
             origin: tokenExConfig.origin,
+            pci: true,
+            styles: tokenExFrameStyleConfig,
             timestamp: tokenExConfig.timestamp,
             tokenExID: tokenExConfig.tokenExId,
             tokenScheme: tokenExConfig.tokenScheme,
-            authenticationKey: tokenExConfig.authenticationKey,
-            styles: tokenExFrameStyleConfig,
-            pci: true,
-            enableValidateOnBlur: true,
-            inputType: "text",
-            enablePrettyFormat: true,
-            cvv: false,
         };
         tokenExIframe = new TokenEx.Iframe("tokenExCardNumber", iframeConfig);
         tokenExIframe.load();

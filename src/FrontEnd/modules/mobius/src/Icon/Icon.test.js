@@ -25,7 +25,7 @@ describe("Icon", () => {
 
     const withProps = () => {
         props = {
-            src: "Trash"
+            src: "Trash",
         };
         const builder = {
             withCssColor(color) {
@@ -99,23 +99,20 @@ describe("Icon", () => {
 
             expect(wrapper().find(Icon)).toHaveStyleRule("color", "red");
             expect(wrapper().find(Icon)).toHaveStyleRule("background-color", undefined);
-        })
+        });
         test("Merge when theme says so", () => {
             withProps().withCssColor("red");
             withTheme().withCssBgColor("violet").withMergeCss(true);
 
             expect(wrapper().find(Icon)).toHaveStyleRule("color", "red");
             expect(wrapper().find(Icon)).toHaveStyleRule("background-color", "violet");
-        })
+        });
         test("Merge if component says so", () => {
             withProps().withCssColor("red").withMergeCss(true);
             withTheme().withCssBgColor("violet").withMergeCss(false);
 
             expect(wrapper().find(Icon)).toHaveStyleRule("color", "red");
             expect(wrapper().find(Icon)).toHaveStyleRule("background-color", "violet");
-        })
-
-
-
+        });
     });
 });

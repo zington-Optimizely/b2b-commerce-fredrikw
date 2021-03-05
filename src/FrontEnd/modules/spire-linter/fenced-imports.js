@@ -28,11 +28,7 @@ const validClientImports = [
     "whatwg-fetch",
     "xlsx",
 ];
-const validMobiusImports = [
-    ...validClientImports,
-    "enzyme",
-    "jest-styled-components",
-];
+const validMobiusImports = [...validClientImports, "enzyme", "jest-styled-components"];
 const validServerImports = [
     "connect",
     "crypto",
@@ -62,7 +58,13 @@ const allowedModules = {
     mobius: [validMobiusImports, ["@insite/mobius"]],
     "server-framework": [
         validServerImports,
-        ["@insite/server-framework", "@insite/client-framework", "@insite/content-library", "@insite/mobius", "@insite/shell"],
+        [
+            "@insite/server-framework",
+            "@insite/client-framework",
+            "@insite/content-library",
+            "@insite/mobius",
+            "@insite/shell",
+        ],
     ],
     shell: [
         validClientImports,
