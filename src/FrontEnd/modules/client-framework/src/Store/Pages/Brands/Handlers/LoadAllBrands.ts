@@ -2,7 +2,14 @@ import { createHandlerChainRunnerOptionalParameter, HandlerWithResult } from "@i
 import { getBrands, GetBrandsApiParameter } from "@insite/client-framework/Services/BrandService";
 import { BrandCollectionModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
 
-type HandlerType = HandlerWithResult<GetBrandsApiParameter, BrandModel[]>;
+type Parameter = Omit<GetBrandsApiParameter, "page"> & {
+    /**
+     * @deprecated This property is ignored. Loading all brands starting from a page is not supported.
+     */
+    page?: number;
+};
+
+type HandlerType = HandlerWithResult<Parameter, BrandModel[]>;
 
 export const DispatchBeginLoadBrands: HandlerType = props => {
     props.dispatch({
@@ -12,23 +19,34 @@ export const DispatchBeginLoadBrands: HandlerType = props => {
 };
 
 export const RequestDataFromApi: HandlerType = async props => {
-    let runApiRequest = true;
-    let page = props.parameter.page || 1;
-    let collection: BrandModel[] = [];
+    const pages: BrandModel[][] = [];
     const pageSize = props.parameter.pageSize || 500;
-    while (runApiRequest) {
+    const getPage = async (page: number) => {
         const parameter = {
             ...props.parameter,
             pageSize,
             page,
         };
         const apiResult = await getBrands(parameter);
-        if (apiResult.pagination!.totalItemCount < page * pageSize) {
-            runApiRequest = false;
-        }
-        page = page + 1;
-        collection = [...collection, ...(apiResult.brands || [])];
+        pages[page] = apiResult.brands!;
+        return apiResult;
+    };
+
+    const { pagination } = await getPage(1);
+    const promises = [];
+    for (let x = 2; (x - 1) * pageSize < pagination!.totalItemCount; x++) {
+        promises.push(getPage(x));
     }
+    await Promise.all(promises);
+
+    let collection: BrandModel[] = [];
+    for (const page of pages) {
+        if (!page) {
+            continue;
+        }
+        collection = collection.concat(page);
+    }
+
     props.result = collection;
 };
 

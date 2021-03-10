@@ -2,7 +2,6 @@ import isNumeric from "@insite/client-framework/Common/isNumeric";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getAllBrandsDataView } from "@insite/client-framework/Store/Data/Brands/BrandsSelectors";
-import loadBrands from "@insite/client-framework/Store/Pages/Brands/Handlers/LoadAllBrands";
 import translate from "@insite/client-framework/Translate";
 import { BrandAlphabetLetterModel, BrandModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -23,7 +22,7 @@ import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinn
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
-import { connect, ResolveThunks } from "react-redux";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps extends WidgetProps {}
@@ -33,11 +32,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     brandAlphabetState: state.pages.brands.brandAlphabetState,
 });
 
-const mapDispatchToProps = {
-    loadBrands,
-};
-
-type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
+type Props = ReturnType<typeof mapStateToProps> & OwnProps;
 
 type BrandLetterMap = {
     [letter: string]: BrandModel[];
@@ -282,7 +277,7 @@ const BrandList: FC<Props> = (props: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(BrandList),
+    component: connect(mapStateToProps)(BrandList),
     definition: {
         group: "Brands",
         icon: "List",
