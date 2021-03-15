@@ -44,11 +44,7 @@ export const cartPageStyles: CartPageStyles = {
 
 class CartPage extends Component<Props> {
     UNSAFE_componentWillMount() {
-        const { cart, shouldLoadPromotions, loadCurrentCart, loadCurrentPromotions, isPreloadingData } = this.props;
-
-        if (!cart.isLoading && (!cart.value || !cart.value.cartLines)) {
-            loadCurrentCart();
-        }
+        const { shouldLoadPromotions, loadCurrentPromotions, isPreloadingData } = this.props;
 
         if (shouldLoadPromotions) {
             loadCurrentPromotions();
@@ -56,6 +52,13 @@ class CartPage extends Component<Props> {
 
         if (isPreloadingData) {
             this.props.setIsPreloadingData({ isPreloadingData: false });
+        }
+    }
+
+    componentDidMount() {
+        const { cart, loadCurrentCart } = this.props;
+        if (!cart.isLoading) {
+            loadCurrentCart();
         }
     }
 

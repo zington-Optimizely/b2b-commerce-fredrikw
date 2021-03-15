@@ -460,12 +460,10 @@ class MainNavigation extends React.Component<Props, State> {
 
     loadCategoriesIfNeeded() {
         const { categoryIdsToLoad } = this.props;
-        if (categoryIdsToLoad.length !== 0) {
-            for (const categoryId of Object.keys(categoryIdsToLoad)) {
+        for (const categoryId of Object.keys(categoryIdsToLoad)) {
+            if (!this.props.categoryErrorStatusCodeById?.[categoryId]) {
                 const maxDepth = categoryIdsToLoad[categoryId];
-                if (!this.props.categoryErrorStatusCodeById?.[categoryId]) {
-                    this.props.loadCategories(getParameter(categoryId, maxDepth));
-                }
+                this.props.loadCategories(getParameter(categoryId, maxDepth));
             }
         }
     }

@@ -1,3 +1,4 @@
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import { ApiHandler, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { fetch } from "@insite/client-framework/ServerSideRendering";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
@@ -41,7 +42,8 @@ export const DispatchBeginSignIn: HandlerType = props => {
 export const UnassignCartFromGuest: HandlerType = async props => {
     const { value: cart } = getCurrentCartState(props.getState());
     const currentUserIsGuest = getCurrentUserIsGuest(props.getState());
-    if (!currentUserIsGuest) {
+    const applicationCookie = getCookie(".AspNet.ApplicationCookie");
+    if (!currentUserIsGuest || !applicationCookie) {
         return;
     }
     if (!cart) {

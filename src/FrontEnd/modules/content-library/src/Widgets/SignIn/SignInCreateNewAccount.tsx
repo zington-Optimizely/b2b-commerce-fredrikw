@@ -1,3 +1,4 @@
+import { getCookie } from "@insite/client-framework/Common/Cookies";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getLocation, getReturnUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
@@ -28,10 +29,13 @@ const mapStateToProps = (state: ApplicationState) => {
     const returnUrl = getReturnUrl(state);
     const referredFromShipping = returnUrl?.toLowerCase() === "/checkoutshipping";
     const createAccountPageLink = getPageLinkByPageType(state, "CreateAccountPage");
+    const applicationCookie = getCookie(".AspNet.ApplicationCookie");
     return {
         allowCreateAccount: accountSettings.allowCreateAccount,
         allowGuestCheckout:
-            accountSettings.allowGuestCheckout && !state.context.session.isAuthenticated && referredFromShipping,
+            accountSettings.allowGuestCheckout &&
+            (!state.context.session.isAuthenticated || !applicationCookie) &&
+            referredFromShipping,
         returnUrl,
         createAccountUrl: createAccountPageLink ? `${createAccountPageLink.url}${search}` : undefined,
     };
