@@ -11,12 +11,14 @@ import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { IconPresentationProps } from "@insite/mobius/Icon";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import { HasDisablerContext, withDisabler } from "@insite/mobius/utilities/DisablerContext";
+import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
+import injectCss from "@insite/mobius/utilities/injectCss";
 import { MobiusStyledComponentPropsWithRef } from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import * as React from "react";
-import { ThemeConsumer } from "styled-components";
+import styled, { ThemeConsumer } from "styled-components";
 
 export interface TextFieldPresentationProps extends FormFieldPresentationProps<TextFieldComponentProps> {
     /** Props to be passed into the Clickable component that will optionally wrap the icon.
@@ -25,6 +27,15 @@ export interface TextFieldPresentationProps extends FormFieldPresentationProps<T
     /** The props for icon displaying on the text input field.
      * @themable */
     iconProps?: IconPresentationProps;
+    /** CSS string or styled-components function to be injected into this component.
+     * @themable */
+    css?: StyledProp<TextFieldComponentProps>;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
 }
 
 type TextFieldComponentProps = MobiusStyledComponentPropsWithRef<
@@ -48,6 +59,10 @@ type TextFieldComponentProps = MobiusStyledComponentPropsWithRef<
 >;
 
 export type TextFieldProps = TextFieldComponentProps & TextFieldPresentationProps;
+
+export const InputStyle = styled.input<InjectableCss>`
+    ${injectCss}
+`;
 
 const omitKeys = [
     "sizeVariant",
@@ -75,6 +90,8 @@ const omitKeys = [
     | "placeholder"
     | "required"
     | "disable"
+    | "mergeCss"
+    | "css"
 >)[];
 
 const validForNumber = ({ altKey, ctrlKey, key }: React.KeyboardEvent<HTMLInputElement>) => {
@@ -104,38 +121,24 @@ const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRe
                     id,
                     placeholder,
                     required,
+                    mergeCss,
                     ...otherProps
                 } = props;
-                // Because disabled html attribute doesn't accept undefined
-                // eslint-disable-next-line no-unneeded-ternary
-                const isDisabled = disable || disabled ? true : false;
-                const { applyProp, spreadProps } = applyPropBuilder(
-                    { theme, ...otherProps },
-                    { component: "textField", category: "formField" },
-                );
+
+                const isDisabled = !!(disable || disabled);
                 const inputId = id || uniqueId();
                 const labelId = `${inputId}-label`;
                 const inputLabelObj = otherProps.label === 0 || otherProps.label ? { "aria-labelledby": labelId } : {};
                 const descriptionId = `${inputId}-description`;
                 const hasDescription = error || hint;
+
+                const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(
+                    { theme, ...otherProps },
+                    { component: "textField", category: "formField" },
+                );
                 const sizeVariant: FormFieldSizeVariant = applyProp("sizeVariant", "default");
                 const iconProps = spreadProps("iconProps");
-
-                let formIcon = (
-                    <FormFieldIcon
-                        {...iconProps}
-                        size={sizeVariantValues[sizeVariant].icon}
-                        color={isDisabled ? "text.disabled" : iconProps.color || "text.main"}
-                    />
-                );
-                if (iconClickableProps) {
-                    formIcon = (
-                        <FormFieldClickable {...iconClickableProps} disabled={isDisabled}>
-                            {formIcon}
-                            <VisuallyHidden>{clickableText}</VisuallyHidden>
-                        </FormFieldClickable>
-                    );
-                }
+                const resolvedMergeCss = mergeCss ?? theme?.textField?.defaultProps?.mergeCss;
 
                 const internalOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
                     if (type === "number" && !validForNumber(event)) {
@@ -145,9 +148,29 @@ const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRe
                     onKeyDown?.(event);
                 };
 
-                const textInput = (
+                const formFieldProps = {
+                    ...iconProps,
+                    size: sizeVariantValues[sizeVariant].icon,
+                    color: isDisabled ? "text.disabled" : iconProps.color || "text.main",
+                };
+
+                const formIcon = iconProps ? (
+                    iconClickableProps ? (
+                        <FormFieldClickable {...iconClickableProps} disabled={isDisabled}>
+                            <FormFieldIcon {...formFieldProps} />
+                            <VisuallyHidden>{clickableText}</VisuallyHidden>
+                        </FormFieldClickable>
+                    ) : (
+                        <FormFieldIcon {...formFieldProps} />
+                    )
+                ) : null;
+
+                const InputElement = (
                     <>
-                        <input
+                        <InputStyle
+                            {...{ disabled: isDisabled, placeholder, required }}
+                            {...inputLabelObj}
+                            {...omitMultiple(otherProps, omitKeys)}
                             ref={ref}
                             type={type || "text"}
                             id={inputId}
@@ -157,21 +180,19 @@ const TextField: React.FC<TextFieldProps & HasDisablerContext> = React.forwardRe
                             aria-invalid={error ? !!error : undefined}
                             aria-required={!disabled && required}
                             tabIndex={0}
-                            {...{ disabled: isDisabled, placeholder, required }}
-                            {...omitMultiple(otherProps, omitKeys)}
-                            {...inputLabelObj}
+                            css={applyStyledProp("css", resolvedMergeCss)}
                         />
-                        {iconProps ? formIcon : null}
+                        {formIcon}
                     </>
                 );
 
                 return (
                     <FormField
+                        {...props}
                         descriptionId={descriptionId}
-                        formInput={textInput}
+                        formInput={InputElement}
                         labelId={labelId}
                         inputId={inputId}
-                        {...props}
                     />
                 );
             }}

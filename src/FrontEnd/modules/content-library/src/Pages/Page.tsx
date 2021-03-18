@@ -15,14 +15,14 @@ import {
 } from "@insite/client-framework/Types/FieldDefinition";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import MobiusPage from "@insite/mobius/Page";
 import * as React from "react";
 
 const Page = ({ id }: PageProps) => (
     <MobiusPage>
         <Zone contentId={id} zoneName="Content" requireRows />
-        <AddToListModal />
+        <Modals />
     </MobiusPage>
 );
 

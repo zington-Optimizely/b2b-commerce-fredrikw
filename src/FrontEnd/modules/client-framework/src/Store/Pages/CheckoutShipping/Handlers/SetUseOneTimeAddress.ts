@@ -85,7 +85,30 @@ export const SetShipToForEditing: HandlerType = props => {
             throw new Error("The one-time address shipto was not found in the cart. It must be loaded with the cart.");
         }
 
-        props.shipToForEditing = shipTo;
+        props.shipToForEditing = {
+            ...cloneDeep(shipTo),
+            firstName: "",
+            lastName: "",
+            attention: "",
+            companyName: "",
+            address1: "",
+            address2: "",
+            address3: "",
+            address4: "",
+            city: "",
+            state: null,
+            postalCode: "",
+            phone: "",
+            email: "",
+            fax: "",
+        };
+
+        const countries = getCurrentCountries(state);
+        if (!countries) {
+            throw new Error("There were no countries loaded yet");
+        }
+
+        props.shipToForEditing.country = countries.length === 1 ? countries[0] : null;
     } else {
         const {
             pages: {
@@ -107,31 +130,6 @@ export const SetShipToForEditing: HandlerType = props => {
 
         props.shipToForEditing = shipTo;
     }
-
-    props.shipToForEditing = {
-        ...cloneDeep(props.shipToForEditing),
-        firstName: "",
-        lastName: "",
-        attention: "",
-        companyName: "",
-        address1: "",
-        address2: "",
-        address3: "",
-        address4: "",
-        city: "",
-        state: null,
-        postalCode: "",
-        phone: "",
-        email: "",
-        fax: "",
-    };
-
-    const countries = getCurrentCountries(state);
-    if (!countries) {
-        throw new Error("There were no countries loaded yet");
-    }
-
-    props.shipToForEditing.country = countries.length === 1 ? countries[0] : null;
 };
 
 export const SetCurrentShipTo: HandlerType = props => {

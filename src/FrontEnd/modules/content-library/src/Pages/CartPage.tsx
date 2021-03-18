@@ -7,7 +7,7 @@ import { getCurrentPromotionsDataView } from "@insite/client-framework/Store/Dat
 import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutShipping/Handlers/SetIsPreloadingData";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import LoadingOverlay, { LoadingOverlayProps } from "@insite/mobius/LoadingOverlay";
 import Page from "@insite/mobius/Page";
 import React, { Component } from "react";
@@ -69,7 +69,7 @@ class CartPage extends Component<Props> {
                 <LoadingOverlay {...styles.loadingOverlay} loading={this.props.isPreloadingData}>
                     <Zone contentId={this.props.id} zoneName="Content"></Zone>
                 </LoadingOverlay>
-                <AddToListModal />
+                <Modals />
             </Page>
         );
     }

@@ -10,8 +10,8 @@ import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/MyListDet
 import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import ManageShareListModal from "@insite/content-library/Components/ManageShareListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import ShareListModal from "@insite/content-library/Components/ShareListModal";
 import Page from "@insite/mobius/Page";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
@@ -125,7 +125,7 @@ class MyListsDetailsPage extends React.Component<Props, State> {
                 ) : (
                     <Zone contentId={this.props.id} zoneName="Content" />
                 )}
-                <AddToListModal />
+                <Modals />
                 <ShareListModal />
                 <ManageShareListModal />
             </Page>

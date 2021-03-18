@@ -42,7 +42,7 @@
 
         getRequisitions(): void {
             this.spinnerService.show();
-            this.requisitionService.getRequisitions(this.pagination).then(
+            this.requisitionService.getRequisitions(this.pagination, true).then(
                 (requisitionCollection: RequisitionCollectionModel) => { this.getRequisitionsCompleted(requisitionCollection); },
                 (error: any) => { this.getRequisitionsFailed(error); });
         }

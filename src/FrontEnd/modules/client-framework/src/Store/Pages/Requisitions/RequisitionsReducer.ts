@@ -5,7 +5,7 @@ import RequisitionsState from "@insite/client-framework/Store/Pages/Requisitions
 import { Draft } from "immer";
 
 const initialState: RequisitionsState = {
-    getRequisitionsParameter: {},
+    getRequisitionsParameter: { recalculatePrice: true },
     selectedRequisitionIds: [],
     expandedRequisitionIds: [],
     isEditing: false,

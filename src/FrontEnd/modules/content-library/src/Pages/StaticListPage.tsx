@@ -7,7 +7,7 @@ import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/
 import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/StaticList/Handlers/LoadWishListIfNeeded";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import { generateLinksFrom } from "@insite/content-library/Components/PageBreadcrumbs";
 import Page from "@insite/mobius/Page";
 import React, { useEffect } from "react";
@@ -66,7 +66,7 @@ const StaticListPage = ({
             <Page>
                 <Zone contentId={id} zoneName="Content" />
             </Page>
-            <AddToListModal />
+            <Modals />
         </>
     );
 };

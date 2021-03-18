@@ -6,6 +6,7 @@ export default interface ProductDetailsState {
     productInfosById?: SafeDictionary<ProductInfo>;
     selectedImageIndex: number;
     lastProductPath?: string;
+    lastStyledOption?: string;
     variantSelection: SafeDictionary<string>;
     variantSelectionCompleted: boolean;
     configurationSelection: SafeDictionary<string>;

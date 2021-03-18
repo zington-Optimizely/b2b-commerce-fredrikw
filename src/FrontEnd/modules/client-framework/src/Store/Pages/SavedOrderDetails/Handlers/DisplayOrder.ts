@@ -24,7 +24,7 @@ export const PopulateApiParameter: HandlerType = props => {
         if (currentCartId !== props.parameter.cartId) {
             props.apiParameter = {
                 cartId: props.parameter.cartId,
-                expand: ["cartLines", "hiddenproducts"],
+                expand: ["cartLines", "hiddenproducts", "restrictions"],
             } as GetCartApiParameter;
         } else {
             props.parameter.onError?.();

@@ -18,6 +18,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import Radio, { RadioProps } from "@insite/mobius/Radio";
 import RadioGroup, { RadioGroupProps } from "@insite/mobius/RadioGroup";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -41,7 +42,8 @@ type Props = OwnProps &
     ReturnType<typeof mapStateToProps> &
     ResolveThunks<typeof mapDispatchToProps> &
     HasCartContext &
-    HasHistory;
+    HasHistory &
+    HasToasterContext;
 
 const mapStateToProps = (state: ApplicationState) => ({
     sessionShipTo: getShipToState(state, state.context.session.shipToId).value,
@@ -213,6 +215,7 @@ const SavedOrderDetailsAddressModal: React.FC<Props> = ({
     placeOrder,
     history,
     cartPageLink,
+    toaster,
     changeCustomerContext,
 }) => {
     if (!cart || !cart.shipTo || !cart.billTo || !sessionShipTo || !sessionBillTo) {
@@ -233,6 +236,7 @@ const SavedOrderDetailsAddressModal: React.FC<Props> = ({
 
     const continuePlaceOrder = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        onClose();
         if (useCustomerFrom === addressType.session) {
             executePlaceOrder();
         } else {
@@ -263,6 +267,9 @@ const SavedOrderDetailsAddressModal: React.FC<Props> = ({
             order,
             onSuccess: () => {
                 history.push(cartPageLink!.url);
+            },
+            onError: (errorMessage: string) => {
+                toaster.addToast({ body: errorMessage, messageType: "danger" });
             },
         });
     };
@@ -394,4 +401,7 @@ const SavedOrderDetailsAddressModal: React.FC<Props> = ({
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withHistory(withCart(SavedOrderDetailsAddressModal)));
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(withHistory(withCart(withToaster(SavedOrderDetailsAddressModal))));

@@ -19,6 +19,10 @@ import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext
 import React, { useState } from "react";
 
 import siteMessage from "@insite/client-framework/SiteMessage";
+import {
+    canAddToListSavedOrder,
+    canPlaceSavedOrder,
+} from "@insite/client-framework/Store/Pages/SavedOrderDetails/SavedOrderDetailsSelectors";
 import SavedOrderDetailsAddressModal from "@insite/content-library/Widgets/SavedOrderDetails/SavedOrderDetailsAddressModal";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -217,16 +221,28 @@ const SavedOrderDetailsActionButtons = ({
                     <Clickable {...styles.deleteClickable} onClick={showDeleteModal}>
                         {deleteLabel}
                     </Clickable>
-                    <Clickable {...styles.addToListClickable} onClick={() => addAllToListClickHandler()}>
+                    <Clickable
+                        {...styles.addToListClickable}
+                        disabled={!canAddToListSavedOrder(cart)}
+                        onClick={() => addAllToListClickHandler()}
+                    >
                         {addToListLabel}
                     </Clickable>
-                    <Clickable {...styles.placeOrderClickable} onClick={placeOrderClickHandler}>
+                    <Clickable
+                        {...styles.placeOrderClickable}
+                        onClick={placeOrderClickHandler}
+                        disabled={!canPlaceSavedOrder(cart)}
+                    >
                         {placeLabel}
                     </Clickable>
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.middleHiddenContainer}>
-                <Button {...styles.placeOrderButton} onClick={placeOrderClickHandler}>
+                <Button
+                    {...styles.placeOrderButton}
+                    onClick={placeOrderClickHandler}
+                    disabled={!canPlaceSavedOrder(cart)}
+                >
                     {placeLabel}
                 </Button>
                 <OverflowMenu position="end" {...styles.middleOverflowMenu}>
@@ -236,7 +252,11 @@ const SavedOrderDetailsActionButtons = ({
                     <Clickable {...styles.deleteClickable} onClick={showDeleteModal}>
                         {deleteLabel}
                     </Clickable>
-                    <Clickable {...styles.addToListClickable} onClick={() => addAllToListClickHandler()}>
+                    <Clickable
+                        {...styles.addToListClickable}
+                        disabled={!canAddToListSavedOrder(cart)}
+                        onClick={() => addAllToListClickHandler()}
+                    >
                         {addToListLabel}
                     </Clickable>
                 </OverflowMenu>
@@ -259,6 +279,7 @@ const SavedOrderDetailsActionButtons = ({
                 <Button
                     data-test-selector="savedOrderDetails_addOrderToList"
                     {...styles.addToListButton}
+                    disabled={!canAddToListSavedOrder(cart)}
                     onClick={() => addAllToListClickHandler()}
                 >
                     {addToListLabel}
@@ -267,6 +288,7 @@ const SavedOrderDetailsActionButtons = ({
                     data-test-selector="savedOrderDetails_placeOrder"
                     {...styles.placeOrderButton}
                     onClick={placeOrderClickHandler}
+                    disabled={!canPlaceSavedOrder(cart)}
                 >
                     {placeLabel}
                 </Button>

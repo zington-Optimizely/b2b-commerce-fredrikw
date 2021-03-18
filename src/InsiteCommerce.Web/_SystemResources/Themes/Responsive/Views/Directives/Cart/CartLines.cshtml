@@ -44,7 +44,7 @@
             <div class="item-opt">
                 <div ng-if="showAddToList" class="actions-block wishlist-actions-block">
                     <a href="javascript:void(0);" class="btn secondary btn-add-list isc-addToWishlistPopup"
-                       ng-click="vm.openWishListPopup(cartLine)" ng-if="::cartLine.canAddToWishlist">[% translate 'Add to List' %]</a>
+                       ng-click="vm.openWishListPopup(cartLine)" ng-if="::cartLine.canAddToWishlist && !cartLine.isRestricted">[% translate 'Add to List' %]</a>
                 </div>
                 <div class="item-qty" ng-if="!editable || vm.isOutOfStockLine(inventoryCheck, cartLine)">
                     <strong>[% translate 'QTY_quantity' %]:</strong>

@@ -20,8 +20,12 @@ const initialState: ProductDetailsState = {
 };
 
 const reducer = {
-    "Pages/ProductDetails/BeginLoadProduct": (draft: Draft<ProductDetailsState>, action: { path?: string }) => {
+    "Pages/ProductDetails/BeginLoadProduct": (
+        draft: Draft<ProductDetailsState>,
+        action: { path?: string; styledOption?: string },
+    ) => {
         draft.lastProductPath = action.path;
+        draft.lastStyledOption = action.styledOption;
     },
     "Pages/ProductDetails/CompleteLoadProduct": (
         draft: Draft<ProductDetailsState>,

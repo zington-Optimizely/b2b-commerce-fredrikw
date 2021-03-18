@@ -43,6 +43,7 @@ export const DispatchBeginLoadProduct: HandlerType = props => {
     props.dispatch({
         type: "Pages/ProductDetails/BeginLoadProduct",
         path: props.parameter.path,
+        styledOption: props.parameter.styledOption,
     });
 };
 

@@ -1,5 +1,6 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
@@ -154,10 +155,19 @@ export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
 };
 
 const styles = pageContainerStyles;
-const mapStateToProps = (state: ApplicationState) => ({
-    isPreloadingData: state.pages.orderConfirmation.isPreloadingData || state.pages.checkoutShipping.isPreloadingData,
-    isPlacingOrder: state.pages.checkoutReviewAndSubmit.isPlacingOrder,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const { cartId } = state.pages.checkoutReviewAndSubmit;
+    const cartState = cartId ? getCartState(state, cartId) : getCurrentCartState(state);
+
+    return {
+        isPreloadingData:
+            state.pages.orderConfirmation.isPreloadingData ||
+            state.pages.checkoutShipping.isPreloadingData ||
+            state.pages.checkoutReviewAndSubmit.isPreloadingData ||
+            cartState.isLoading,
+        isPlacingOrder: state.pages.checkoutReviewAndSubmit.isPlacingOrder,
+    };
+};
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
 

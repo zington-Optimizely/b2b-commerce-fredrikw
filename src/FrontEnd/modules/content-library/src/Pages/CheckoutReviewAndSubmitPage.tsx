@@ -9,6 +9,7 @@ import loadDataIfNeeded from "@insite/client-framework/Store/Pages/CheckoutRevie
 import setPlaceOrderErrorMessage from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetPlaceOrderErrorMessage";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import AddressErrorModal from "@insite/content-library/Components/AddressErrorModal";
 import Page from "@insite/mobius/Page";
 import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -32,15 +33,19 @@ const mapStateToProps = (state: ApplicationState) => {
 type Props = PageProps & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
 class CheckoutReviewAndSubmitPage extends Component<Props> {
+    UNSAFE_componentWillMount() {
+        this.props.loadDataIfNeeded({ cartId: this.props.cartId });
+    }
+
     componentDidMount() {
         this.props.setPlaceOrderErrorMessage({});
-        this.props.loadDataIfNeeded({ cartId: this.props.cartId });
     }
 
     render() {
         return (
             <Page data-test-selector="checkoutReviewAndSubmitPage">
                 <Zone zoneName="Content" contentId={this.props.id} />
+                <AddressErrorModal />
             </Page>
         );
     }

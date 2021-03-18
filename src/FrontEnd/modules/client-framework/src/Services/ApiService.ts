@@ -29,7 +29,12 @@ export interface HasPagingParameters {
     sort?: string;
 }
 
-export function get<T>(endpoint: string, parameter: ApiParameter = {}, queryStringParameters: Dictionary<any> = {}) {
+export function get<T>(
+    endpoint: string,
+    parameter: ApiParameter = {},
+    queryStringParameters: Dictionary<any> = {},
+    cache: RequestInit["cache"] = "no-cache",
+) {
     let queryString = "";
     const combinedQueryString: Dictionary<any> = {
         ...parameter,
@@ -63,7 +68,7 @@ export function get<T>(endpoint: string, parameter: ApiParameter = {}, queryStri
         queryString = (endpoint.indexOf("?") < 0 ? "?" : "&") + queryString.substr(0, queryString.length - 1);
     }
 
-    return request<T>(endpoint + queryString, "GET");
+    return request<T>(endpoint + queryString, "GET", undefined, undefined, undefined, cache);
 }
 
 export function post<Parameter, Result = Parameter>(endpoint: string, model?: Parameter) {

@@ -4,7 +4,7 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
-import { removeAbsoluteUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getLocation, removeAbsoluteUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -40,9 +40,13 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-    showRememberMe: getSettingsCollection(state).accountSettings.rememberMe,
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const parsedQuery = parseQueryString<{ externalError?: string }>(getLocation(state).search);
+    return {
+        accountSettings: getSettingsCollection(state).accountSettings,
+        externalError: parsedQuery.externalError,
+    };
+};
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
@@ -136,7 +140,7 @@ export const signInExistingAccount = signInExistingAccountStyles;
 const styles = signInExistingAccountStyles;
 const StyledForm = getStyledWrapper("form");
 
-const SignInExistingAccount = ({ signIn, fields, showRememberMe }: Props) => {
+const SignInExistingAccount = ({ signIn, fields, accountSettings, externalError }: Props) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [userName, setUserName] = useState("");
@@ -144,7 +148,9 @@ const SignInExistingAccount = ({ signIn, fields, showRememberMe }: Props) => {
     const [isSignInClicked, setIsSignInClicked] = useState(false);
     const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState(externalError || "");
+
+    const showRememberMe = accountSettings.rememberMe;
 
     const signInHandler = (newPassword?: string) => {
         const pass = newPassword || password;
@@ -193,7 +199,12 @@ const SignInExistingAccount = ({ signIn, fields, showRememberMe }: Props) => {
         signInHandler(newPassword);
     };
 
-    const userErrorMessage = !userName && isSignInClicked ? siteMessage("SignInInfo_UserName_Required") : "";
+    const userErrorMessage =
+        !userName && isSignInClicked
+            ? accountSettings.useEmailAsUserName
+                ? siteMessage("SignInInfo_Email_Required")
+                : siteMessage("SignInInfo_UserName_Required")
+            : "";
     const passwordErrorMessage =
         !password && isSignInClicked ? siteMessage("SignInInfo_Password_Required") : errorMessage || "";
 
@@ -206,7 +217,7 @@ const SignInExistingAccount = ({ signIn, fields, showRememberMe }: Props) => {
                         <TextField
                             id="userName"
                             {...styles.userNameTextField}
-                            label={translate("User Name")}
+                            label={accountSettings.useEmailAsUserName ? translate("Email") : translate("User Name")}
                             onChange={e => setUserName(e.currentTarget.value)}
                             value={userName}
                             error={userErrorMessage}

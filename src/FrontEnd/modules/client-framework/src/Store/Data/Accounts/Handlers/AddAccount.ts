@@ -53,6 +53,9 @@ export const SignOutGuest: HandlerType = async props => {
     }
 
     await deleteSession();
+    props.dispatch({
+        type: "Context/DeleteSession",
+    });
 };
 
 export const PopulateApiParameter: HandlerType = props => {

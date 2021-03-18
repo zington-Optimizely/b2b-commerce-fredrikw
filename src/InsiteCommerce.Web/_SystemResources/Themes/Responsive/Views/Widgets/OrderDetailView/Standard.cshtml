@@ -38,6 +38,8 @@
                                     <li data-test-selector="tst_orderDetailPage_shippingCompanyName" ng-bind="vm.order.stCompanyName"></li>
                                     <li data-test-selector="tst_orderDetailPage_shippingAddress1" ng-bind="vm.order.stAddress1"></li>
                                     <li ng-if="vm.order.stAddress2" ng-bind="vm.order.stAddress2"></li>
+                                    <li ng-if="vm.order.stAddress3" ng-bind="vm.order.stAddress3"></li>
+                                    <li ng-if="vm.order.stAddress4" ng-bind="vm.order.stAddress4"></li>
                                     <li ng-bind="vm.stFormat"></li>
                                     <li ng-bind="vm.order.stCountry"></li>
                                 </ul>
@@ -63,6 +65,8 @@
                                     <li ng-bind="vm.order.btCompanyName"></li>
                                     <li ng-bind="vm.order.btAddress1"></li>
                                     <li ng-if="vm.order.btAddress2" ng-bind="vm.order.btAddress2"></li>
+                                    <li ng-if="vm.order.btAddress3" ng-bind="vm.order.btAddress3"></li>
+                                    <li ng-if="vm.order.btAddress4" ng-bind="vm.order.btAddress4"></li>
                                     <li ng-bind="vm.btFormat"></li>
                                     <li ng-bind="vm.order.btCountry"></li>
                                 </ul>

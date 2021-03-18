@@ -2056,6 +2056,8 @@ export interface OrderModel extends BaseModel {
     billToState: string;
     btAddress1: string;
     btAddress2: string;
+    btAddress3: string;
+    btAddress4: string;
     btCompanyName: string;
     btCountry: string;
     canAddAllToCart: boolean;
@@ -2108,6 +2110,8 @@ export interface OrderModel extends BaseModel {
     showTaxAndShipping: boolean;
     stAddress1: string;
     stAddress2: string;
+    stAddress3: string;
+    stAddress4: string;
     status: string;
     statusDisplay: string;
     stCompanyName: string;

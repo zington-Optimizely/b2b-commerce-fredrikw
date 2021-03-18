@@ -218,9 +218,10 @@ function finishLoadPage(
         prepareFields(page, currentLanguageId, defaultLanguageId, contextualIds);
     }
 
-    const { fields } = page;
+    const { fields, generalFields } = page;
     if (fields) {
         fields["variantName"] = page.variantName;
+        generalFields["variantName"] = page.variantName;
     }
 
     draft.widgetIdsByPageId[page.id] = [];

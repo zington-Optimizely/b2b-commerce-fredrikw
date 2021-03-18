@@ -597,7 +597,7 @@
                                     </div>
 
                                     <div ng-if="vm.productSettings.displayFacetsForStockedItems" class="filter-option-container">
-                                        <select data-mini="true" 
+                                        <select data-mini="true"
                                                 ng-model="vm.stockedItemsOnly"
                                                 ng-change="vm.toggleStockedItemsOnly()">
                                             <option ng-value="false">[% translate 'Stocked Items' %]</option>
@@ -631,7 +631,7 @@
                                         </select>
                                     </div>
 
-                                     <div ng-if="vm.products.productLineFacets.length > 0" class="filter-option-container">
+                                    <div ng-if="vm.showProductLines && vm.products.productLineFacets.length > 0" class="filter-option-container">
                                         <select data-mini="true"
                                                 ng-model="vm.filterProductLineId"
                                                 ng-change="vm.toggleProductLineId(vm.filterProductLineId)">

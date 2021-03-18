@@ -6,7 +6,7 @@ module insite.requisitions {
     "use strict";
 
     export interface IRequisitionService {
-        getRequisitions(pagination: PaginationModel): ng.IPromise<RequisitionCollectionModel>;
+        getRequisitions(pagination: PaginationModel, recalculatePrice?: boolean): ng.IPromise<RequisitionCollectionModel>;
         getRequisition(requisitionId: System.Guid): ng.IPromise<RequisitionModel>;
         getRequisitionCount(): ng.IPromise<PaginationModel>;
         patchRequisition(requisition: RequisitionModel): ng.IPromise<RequisitionModel>;
@@ -24,23 +24,27 @@ module insite.requisitions {
             protected httpWrapperService: core.HttpWrapperService) {
         }
 
-        getRequisitions(pagination: PaginationModel): ng.IPromise<RequisitionCollectionModel> {
+        getRequisitions(pagination: PaginationModel, recalculatePrice?: boolean): ng.IPromise<RequisitionCollectionModel> {
             const filter = {} as cart.IQueryStringFilter;
 
             return this.httpWrapperService.executeHttpRequest(
                 this,
-                this.$http({ method: "GET", url: this.serviceUri, params: this.getRequisitionsParams(filter, pagination) }),
+                this.$http({ method: "GET", url: this.serviceUri, params: this.getRequisitionsParams(filter, pagination, recalculatePrice) }),
                 this.getRequisitionsCompleted,
                 this.getRequisitionsFailed
             );
         }
 
-        protected getRequisitionsParams(filter?: cart.IQueryStringFilter, pagination?: PaginationModel): any {
+        protected getRequisitionsParams(filter?: cart.IQueryStringFilter, pagination?: PaginationModel, recalculatePrice?: boolean): any {
             const params: any = filter ? JSON.parse(JSON.stringify(filter)) : {};
 
             if (pagination) {
                 params.page = pagination.page;
                 params.pageSize = pagination.pageSize;
+            }
+
+            if (recalculatePrice) {
+                params.recalculatePrice = recalculatePrice;
             }
 
             return params;

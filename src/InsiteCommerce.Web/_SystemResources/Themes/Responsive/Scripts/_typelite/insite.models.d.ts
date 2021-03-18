@@ -1570,6 +1570,8 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		btCompanyName: string;
 		btAddress1: string;
 		btAddress2: string;
+		btAddress3: string;
+		btAddress4: string;
 		billToCity: string;
 		billToState: string;
 		billToPostalCode: string;
@@ -1577,6 +1579,8 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		stCompanyName: string;
 		stAddress1: string;
 		stAddress2: string;
+		stAddress3: string;
+		stAddress4: string;
 		shipToCity: string;
 		shipToState: string;
 		shipToPostalCode: string;

@@ -21,7 +21,7 @@ import displayProducts from "@insite/client-framework/Store/Pages/ProductList/Ha
 import translate from "@insite/client-framework/Translate";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import ProductCompareFlyOut from "@insite/content-library/Components/ProductCompareFlyOut";
 import Page from "@insite/mobius/Page";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
@@ -264,7 +264,7 @@ class ProductListPage extends React.Component<Props> {
                 <CategoryContext.Provider value={this.props.category}>
                     <ProductListPageDataContext.Provider value={{ ref: this.afterFilters }}>
                         <Zone contentId={this.props.id} zoneName="Content" />
-                        <AddToListModal />
+                        <Modals />
                         <ProductCompareFlyOut />
                     </ProductListPageDataContext.Provider>
                 </CategoryContext.Provider>

@@ -195,7 +195,9 @@ class Menu extends React.Component<MenuProps, MenuState> {
                                 {childMenuItems
                                     ?.filter(item => !item.excludeFromNavigation)
                                     .map(item => {
-                                        const hasChildren = item.children?.length && currentDepth < maxDepth;
+                                        const hasChildren =
+                                            item.children?.some(o => !o.excludeFromNavigation) &&
+                                            currentDepth < maxDepth;
                                         return (
                                             <MenuItemStyle
                                                 width={otherProps.width}
@@ -214,9 +216,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
                                                     >
                                                         {item.title}
                                                     </MenuItemText>
-                                                    {item.children?.length && currentDepth < maxDepth ? (
-                                                        <IconMemo {...applyProp("moreIconProps")} />
-                                                    ) : null}
+                                                    {hasChildren && <IconMemo {...applyProp("moreIconProps")} />}
                                                 </Clickable>
                                                 {hasChildren
                                                     ? renderMenuItems(item!.children!, currentDepth + 1)

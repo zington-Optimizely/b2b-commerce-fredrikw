@@ -1,5 +1,11 @@
+import isApiError from "@insite/client-framework/Common/isApiError";
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
-import { Cart, updateCart, UpdateCartApiParameter } from "@insite/client-framework/Services/CartService";
+import {
+    Cart,
+    invalidAddressException,
+    updateCart,
+    UpdateCartApiParameter,
+} from "@insite/client-framework/Services/CartService";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
@@ -30,7 +36,18 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const UpdateCart: HandlerType = async props => {
-    await updateCart(props.apiParameter);
+    try {
+        await updateCart(props.apiParameter);
+    } catch (error) {
+        if (isApiError(error) && error.status === 400 && error.errorJson.message === invalidAddressException) {
+            props.dispatch({
+                type: "Components/AddressErrorModal/SetIsOpen",
+                isOpen: true,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const LoadCart: HandlerType = props => {

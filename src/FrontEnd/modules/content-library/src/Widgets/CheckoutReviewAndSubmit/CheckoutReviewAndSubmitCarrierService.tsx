@@ -5,10 +5,12 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import setIsPreloadingData from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetIsPreloadingData";
 import setRequestedDeliveryDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedDeliveryDate";
 import setRequestedPickUpDate from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetRequestedPickUpDate";
 import setShippingMethod from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetShippingMethod";
 import translate from "@insite/client-framework/Translate";
+import { CarrierDto, ShipViaDto } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import { CheckoutReviewAndSubmitPageContext } from "@insite/content-library/Pages/CheckoutReviewAndSubmitPage";
@@ -19,7 +21,7 @@ import LoadingSpinner from "@insite/mobius/LoadingSpinner";
 import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { ChangeEvent, FC } from "react";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -47,6 +49,7 @@ const mapDispatchToProps = {
     setShippingMethod,
     setRequestedDeliveryDate,
     setRequestedPickUpDate,
+    setIsPreloadingData,
 };
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
@@ -97,7 +100,17 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
     showShippingMethod,
     setShippingMethod,
     showPickUpDate,
+    setIsPreloadingData,
 }) => {
+    const [selectedCarrier, setSelectedCarrier] = useState<CarrierDto | null>(null);
+    const [selectedShipVia, setSelectedShipVia] = useState<ShipViaDto | null>(null);
+    useEffect(() => {
+        if (cart) {
+            setSelectedCarrier(cart.carrier);
+            setSelectedShipVia(cart.shipVia);
+        }
+    }, [cart?.carrier, cart?.shipVia]);
+
     if (!cart || !cart.cartLines) {
         return (
             <StyledWrapper {...styles.centeringWrapper}>
@@ -106,21 +119,33 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
         );
     }
 
-    const { carrier, shipVia } = cart;
-
     const carrierChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
         const selectedCarrier = cart.carriers!.find(c => c.id === event.currentTarget.value)!;
+        setIsPreloadingData({ isPreloadingData: true });
+        setSelectedCarrier(selectedCarrier);
+        setSelectedShipVia(selectedCarrier.shipVias![0]);
         setShippingMethod({
             carrier: selectedCarrier,
             shipVia: selectedCarrier.shipVias![0],
+            onComplete: () => {
+                setIsPreloadingData({ isPreloadingData: false });
+            },
         });
     };
     const shipViaChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        if (!carrier) {
+        if (!selectedCarrier) {
             return;
         }
-        const selectedShipVia = carrier.shipVias!.find(s => s.id === event.currentTarget.value)!;
-        setShippingMethod({ carrier, shipVia: selectedShipVia });
+        const selectedShipVia = selectedCarrier.shipVias!.find(s => s.id === event.currentTarget.value)!;
+        setIsPreloadingData({ isPreloadingData: true });
+        setSelectedShipVia(selectedShipVia);
+        setShippingMethod({
+            carrier: selectedCarrier,
+            shipVia: selectedShipVia,
+            onComplete: () => {
+                setIsPreloadingData({ isPreloadingData: false });
+            },
+        });
     };
 
     const handleRequestPickUpDateChanged = ({ selectedDay }: DatePickerState) => {
@@ -151,7 +176,7 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                 <Select
                                     label={translate("Select Carrier")}
                                     {...styles.carrierSelect}
-                                    value={carrier ? carrier.id?.toString() : ""}
+                                    value={selectedCarrier?.id || ""}
                                     onChange={carrierChangeHandler}
                                     data-test-selector="checkoutReviewAndSubmitCarrierSelect"
                                 >
@@ -169,12 +194,12 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                 <Select
                                     label={translate("Select Service")}
                                     {...styles.serviceSelect}
-                                    value={shipVia ? shipVia.id.toString() : ""}
+                                    value={selectedShipVia?.id || ""}
                                     onChange={shipViaChangeHandler}
                                     data-test-selector="checkoutReviewAndSubmitShippingServiceSelect"
                                 >
-                                    {carrier &&
-                                        carrier.shipVias!.map(s => {
+                                    {selectedCarrier &&
+                                        selectedCarrier.shipVias!.map(s => {
                                             const id = s.id.toString();
                                             return (
                                                 <option key={id} value={id}>

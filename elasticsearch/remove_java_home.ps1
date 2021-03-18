@@ -1,1 +1,0 @@
-[Environment]::SetEnvironmentVariable("JAVA_HOME",$null,"Machine")

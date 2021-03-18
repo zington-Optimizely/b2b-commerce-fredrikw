@@ -1,4 +1,5 @@
 import AddressDrawerState from "@insite/client-framework/Store/Components/AddressDrawer/AddressDrawerState";
+import AddressErrorModalState from "@insite/client-framework/Store/Components/AddressErrorModal/AddressErrorModalState";
 import AddToListModalState from "@insite/client-framework/Store/Components/AddToListModal/AddToListModalState";
 import BreadcrumbsState from "@insite/client-framework/Store/Components/Breadcrumbs/BreadcrumbsState";
 import CompareProductsDrawerState from "@insite/client-framework/Store/Components/CompareProductsDrawer/CompareProductsDrawerState";
@@ -22,4 +23,5 @@ export default interface ComponentsState {
     readonly productInfoLists: ProductInfoListsState;
     readonly productSelector: ProductSelectorState;
     readonly shareListModal: ShareListModalState;
+    readonly addressErrorModal: AddressErrorModalState;
 }

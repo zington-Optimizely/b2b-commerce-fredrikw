@@ -5,7 +5,7 @@ import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelec
 import loadOrder from "@insite/client-framework/Store/Pages/OrderStatus/Handlers/LoadOrder";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import React from "react";
@@ -81,7 +81,7 @@ class OrderStatusPage extends React.Component<Props> {
         return (
             <Page>
                 <Zone contentId={this.props.id} zoneName="Content" />
-                <AddToListModal />
+                <Modals />
             </Page>
         );
     }

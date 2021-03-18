@@ -1,6 +1,7 @@
 import {
     ApiHandlerDiscreteParameter,
     createHandlerChainRunnerOptionalParameter,
+    HasOnError,
     HasOnSuccess,
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
@@ -13,10 +14,12 @@ import {
 import { getCartState, getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import deleteOrder from "@insite/client-framework/Store/Pages/SavedOrderDetails/Handlers/DeleteOrder";
+import displayOrder from "@insite/client-framework/Store/Pages/SavedOrderDetails/Handlers/DisplayOrder";
+import translate from "@insite/client-framework/Translate";
 import { CartLineModel, CartModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<
-    { order?: CartModel } & HasOnSuccess,
+    { order?: CartModel } & HasOnSuccess & HasOnError<string>,
     AddCartLinesApiParameter,
     CartModel,
     { updateCartApiParameter: UpdateCartApiParameter }
@@ -49,7 +52,24 @@ export const PopulateAddLineCollectionApiParameter: HandlerType = props => {
 };
 
 export const SendDataToApi: HandlerType = async props => {
-    await addLineCollection(props.apiParameter);
+    try {
+        await addLineCollection(props.apiParameter);
+    } catch (error) {
+        if (error.status === 404) {
+            const state = props.getState();
+            const cartId = state.pages.savedOrderDetails.cartId;
+            props.dispatch({
+                type: "Pages/SavedOrderDetails/Reset",
+            });
+            if (cartId) {
+                props.dispatch(displayOrder({ cartId }));
+            }
+
+            props.parameter.onError?.(translate("Cannot place order - product not found"));
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const PopulateUpdateCartApiParameter: HandlerType = props => {

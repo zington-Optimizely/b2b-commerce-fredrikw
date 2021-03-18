@@ -23,6 +23,8 @@ interface Parameter {
         getProductCollectionParameter: GetProductCollectionApiV2Parameter | GetRelatedProductCollectionApiV2Parameter;
         numberOfProductsToDisplay: number;
     };
+    forceLoad?: boolean;
+    excludeProductId?: string;
 }
 
 interface Props {
@@ -42,7 +44,7 @@ export const LoadProducts: HandlerType = async props => {
 
     props.products = getProductsDataView(props.getState(), parameter).value;
 
-    if (props.products) {
+    if (props.products && !props.parameter.forceLoad) {
         return;
     }
 
@@ -83,6 +85,14 @@ export const LoadExtraProducts: HandlerType = async props => {
             props.products!.push(extraProduct);
         }
     });
+};
+
+export const FilterProducts: HandlerType = props => {
+    if (!props.products || !props.parameter.excludeProductId) {
+        return;
+    }
+
+    props.products = props.products.filter(o => o.id !== props.parameter.excludeProductId);
 };
 
 export const SetUpProductInfos: HandlerType = props => {
@@ -178,6 +188,7 @@ export const LoadRealTimeInventory: HandlerType = props => {
 export const chain = [
     LoadProducts,
     LoadExtraProducts,
+    FilterProducts,
     SetUpProductInfos,
     DispatchCompleteLoadPurchasedProducts,
     LoadRealTimePrices,

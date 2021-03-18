@@ -50,6 +50,8 @@ const OrderDetailsBillingAddress: React.FunctionComponent = () => {
                 companyName={order.btCompanyName}
                 address1={order.btAddress1}
                 address2={order.btAddress2}
+                address3={order.btAddress3}
+                address4={order.btAddress4}
                 city={order.billToCity}
                 state={order.billToState}
                 postalCode={order.billToPostalCode}

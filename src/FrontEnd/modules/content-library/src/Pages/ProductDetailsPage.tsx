@@ -17,8 +17,8 @@ import changeUnitOfMeasure from "@insite/client-framework/Store/Pages/ProductDet
 import displayProduct from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/DisplayProduct";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
 import CurrentCategory from "@insite/content-library/Components/CurrentCategory";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -40,6 +40,7 @@ const mapStateToProps = (state: ApplicationState) => {
                 : undefined,
         productPath,
         lastProductPath: state.pages.productDetails.lastProductPath,
+        lastStyledOption: state.pages.productDetails.lastStyledOption,
         websiteName: state.context.website.name,
         page: getCurrentPage(state),
         location,
@@ -126,16 +127,20 @@ class ProductDetailsPage extends React.Component<Props, State> {
             location: { search },
             productPath,
             lastProductPath,
+            lastStyledOption,
         } = this.props;
-        if (productPath.toLowerCase() === lastProductPath?.toLowerCase()) {
-            return;
-        }
         const queryParams = parseQueryString<{ option?: string; criteria?: string }>(search.replace("?", ""));
         const styledOption = (
             queryParams.option?.toString() ||
             queryParams.criteria?.toString() ||
             ""
         ).toLocaleLowerCase();
+        if (
+            productPath.toLowerCase() === lastProductPath?.toLowerCase() &&
+            styledOption === lastStyledOption?.toLowerCase()
+        ) {
+            return;
+        }
         this.props.displayProduct({ path: productPath, styledOption });
     }
 
@@ -172,7 +177,7 @@ class ProductDetailsPage extends React.Component<Props, State> {
                         </ParentProductIdContext.Provider>
                     </ProductContext.Provider>
                 </CurrentCategory>
-                <AddToListModal />
+                <Modals />
             </Page>
         );
     }

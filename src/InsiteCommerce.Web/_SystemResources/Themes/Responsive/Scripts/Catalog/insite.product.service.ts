@@ -182,7 +182,7 @@ module insite.catalog {
         }
 
         updateAvailability(product: ProductDto): void {
-            if (product && !product.isStyleProductParent && product.productUnitOfMeasures && product.selectedUnitOfMeasure) {
+            if (product && !product.isStyleProductParent && product.productUnitOfMeasures && (product.selectedUnitOfMeasure || product.productUnitOfMeasures.length === 1)) {
                 const productUnitOfMeasure = product.productUnitOfMeasures.find((uom) => uom.unitOfMeasure === product.selectedUnitOfMeasure);
                 if (productUnitOfMeasure && (productUnitOfMeasure as any).availability) {
                     product.availability = (productUnitOfMeasure as any).availability;

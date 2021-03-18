@@ -16,7 +16,9 @@ import {
 
 const requisitionsUrl = "/api/v1/requisitions";
 
-export interface GetRequisitionsApiParameter extends ApiParameter, HasPagingParameters {}
+export interface GetRequisitionsApiParameter extends ApiParameter, HasPagingParameters {
+    recalculatePrice?: boolean;
+}
 
 export interface GetRequisitionApiParameter extends ApiParameter {
     requisitionId: string;

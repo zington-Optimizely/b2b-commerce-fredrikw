@@ -41,7 +41,7 @@
                     (error: any) => { this.getSessionFailed(error); });
             }
 
-            this.cartService.expand = "cartlines,costcodes,hiddenproducts";
+            this.cartService.expand = "cartlines,costcodes,hiddenproducts,restrictions";
             this.cartService.getCart(this.queryString.get("cartid"), true).then(
                 (cart: CartModel) => { this.getCartCompleted(cart); },
                 (error: any) => { this.getCartFailed(error); });
@@ -73,7 +73,7 @@
             this.cartService.expand = "";
             this.cart = cart;
             this.cart.showTaxAndShipping = false;
-            this.canAddAllToList = this.cart.cartLines.every(l => l.canAddToWishlist);
+            this.canAddAllToList = this.cart.cartLines.every(l => l.canAddToWishlist && !l.isRestricted);
             this.canAddToCart = this.cart.cartLines.some(this.canAddCartLineToCart);
             this.canAddAllToCart = this.cart.cartLines.every(this.canAddCartLineToCart);
             this.getRealTimeInventory();
@@ -184,7 +184,7 @@
         }
 
         canAddCartLineToCart(cartLine: CartLineModel): boolean {
-            return cartLine.canAddToCart && ((cartLine.availability as any).messageType !== 2 || cartLine.canBackOrder);
+            return cartLine.canAddToCart && !cartLine.isRestricted && ((cartLine.availability as any).messageType !== 2 || cartLine.canBackOrder);
         }
     }
 

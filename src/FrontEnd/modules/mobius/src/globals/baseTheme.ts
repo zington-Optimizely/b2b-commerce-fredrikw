@@ -45,7 +45,7 @@ import { TabPresentationProps } from "@insite/mobius/Tab";
 import { TabGroupPresentationProps } from "@insite/mobius/TabGroup";
 import { TagPresentationProps } from "@insite/mobius/Tag";
 import TagPresentationPropsDefault from "@insite/mobius/Tag/presentationProps";
-import { TextAreaProps } from "@insite/mobius/TextArea";
+import { TextAreaPresentationProps, TextAreaProps } from "@insite/mobius/TextArea";
 import { TextFieldPresentationProps } from "@insite/mobius/TextField";
 import { ToastPresentationProps } from "@insite/mobius/Toast";
 import ToastPropsDefault, { toasterProps as toasterPropsDefault } from "@insite/mobius/Toast/presentationProps";
@@ -206,7 +206,7 @@ export interface ComponentThemeProps {
     tag: { defaultProps?: TagPresentationProps };
     textField: { defaultProps?: TextFieldPresentationProps };
     tokenExFrame: { defaultProps?: TokenExFramePresentationProps };
-    textArea: { defaultProps?: FormFieldPresentationProps<TextAreaProps> };
+    textArea: { defaultProps?: FormFieldPresentationProps<TextAreaProps> & TextAreaPresentationProps };
     toast: {
         defaultProps?: ToastPresentationProps;
         toasterProps?: ToasterPresentationProps;

@@ -22,13 +22,13 @@
   },
   "translatableFields": {
     "title": {
-      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "news1"
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "openGraphTitle": {
       "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "urlSegment": {
-      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "news1"
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "openGraphUrl": {
       "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
@@ -43,13 +43,13 @@
       "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "author": {
-      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "bob"
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "newsSummary": {
       "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     },
     "newsContent": {
-      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "<p>unpublished!</p>"
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": "<p>Content!</p>"
     }
   },
   "contextualFields": {},

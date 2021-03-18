@@ -28,7 +28,8 @@
     "generalFields": {
         "horizontalRule": "",
         "tags": [],
-        "hideBreadcrumbs": false
+        "hideBreadcrumbs": false,
+        "excludeFromSignInRequired": true
     },
     "translatableFields": {
         "title": {

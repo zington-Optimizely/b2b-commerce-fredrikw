@@ -189,11 +189,16 @@ export const LoadProducts: HandlerType = props => {
           }
         : undefined;
 
+    const isRecentlyViewedOnPDP =
+        props.parameter.carouselType === "recentlyViewed" && props.parameter.isProductDetailsPage;
+
     props.dispatch(
         loadProductInfoList({
             id: props.parameter.carouselId,
             getProductCollectionParameter: props.getProductCollectionParameter,
             extraProductOptions,
+            excludeProductId: isRecentlyViewedOnPDP ? props.parameter.productId : undefined,
+            forceLoad: isRecentlyViewedOnPDP,
         }),
     );
 };

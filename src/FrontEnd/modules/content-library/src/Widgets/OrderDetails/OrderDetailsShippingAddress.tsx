@@ -53,6 +53,8 @@ const OrderDetailsShippingAddress: React.FunctionComponent = () => {
                 companyName={order.stCompanyName}
                 address1={order.stAddress1}
                 address2={order.stAddress2}
+                address3={order.stAddress3}
+                address4={order.stAddress4}
                 city={order.shipToCity}
                 state={order.shipToState}
                 postalCode={order.shipToPostalCode}

@@ -129,7 +129,7 @@ export async function addAccount(parameter: AddAccountApiParameter): Promise<Ser
 }
 
 export function getPaymentProfiles(parameter: GetPaymentProfilesApiParameter) {
-    return get<AccountPaymentProfileCollectionModel>(paymentProfilesUrl, parameter);
+    return get<AccountPaymentProfileCollectionModel>(paymentProfilesUrl, parameter, {}, "no-store");
 }
 
 export function addPaymentProfile(parameter: AddPaymentProfileApiParameter) {

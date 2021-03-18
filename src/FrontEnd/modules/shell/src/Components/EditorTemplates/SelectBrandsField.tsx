@@ -23,10 +23,12 @@ type OwnProps = EditorTemplateProps<string[], SelectBrandsFieldDefinition>;
 const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
     const selectBrands = state.pageEditor.selectBrandsState?.selectBrands || [];
     const selectedBrands = state.pageEditor.selectBrandsState?.selectedBrands || [];
+    const websiteId = state.shellContext.websiteId;
 
     return {
         selectBrands,
         selectedBrands,
+        initialFilter: `logoSmallImagePath ne '' and Products/any(product: product/Categories/any(category: category/websiteId eq ${websiteId}))`,
     };
 };
 
@@ -52,10 +54,10 @@ class SelectBrandsField extends React.Component<Props, State> {
         this.loadSelectedBrands(this.props.fieldValue);
     }
 
-    private loadSelectBrands(brands: string[], filter?: string) {
-        let queryFilter = "logoSmallImagePath ne '' and Products/any()";
-        if (filter) {
-            queryFilter = `${queryFilter} and contains(name,'${filter}') eq true`;
+    private loadSelectBrands(brands: string[], nameFilter?: string) {
+        let queryFilter = this.props.initialFilter;
+        if (nameFilter) {
+            queryFilter = `${queryFilter} and contains(name,'${nameFilter}') eq true`;
         }
         this.props.loadSelectBrands({
             $filter: queryFilter,
@@ -66,16 +68,16 @@ class SelectBrandsField extends React.Component<Props, State> {
     }
 
     private loadSelectedBrands(brands: string[]) {
-        let filter = "logoSmallImagePath ne '' and Products/any()";
+        let queryFilter = this.props.initialFilter;
         if (brands.length > 0) {
             const brandFilter: string[] = [];
             brands.forEach(brand => {
                 brandFilter.push(`(id eq ${brand})`);
             });
-            filter = `${filter} and (${brandFilter.join(" or ")})`;
+            queryFilter = `${queryFilter} and (${brandFilter.join(" or ")})`;
         }
         this.props.loadSelectedBrands({
-            $filter: filter,
+            $filter: queryFilter,
             $select: "id,name",
             $orderBy: "name",
             $top: `${20 + brands.length}`,

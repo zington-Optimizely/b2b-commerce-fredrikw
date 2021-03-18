@@ -1,16 +1,14 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
-import ProductSelectorVariantModal from "@insite/content-library/Components/ProductSelectorVariantModal";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import React from "react";
 
 const QuickOrderPage = ({ id }: PageProps) => (
     <Page>
         <Zone contentId={id} zoneName="Content"></Zone>
-        <AddToListModal />
-        <ProductSelectorVariantModal />
+        <Modals />
     </Page>
 );
 

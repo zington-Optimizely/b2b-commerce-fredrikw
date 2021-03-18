@@ -178,7 +178,6 @@ export async function resetPassword(parameter: ResetPasswordApiParameter): Promi
     try {
         const session = await patch<SessionModel>("/api/v1/sessions/current", {
             ...parameter,
-            resetPassword: true,
         });
         cleanSession(session);
         return {

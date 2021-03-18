@@ -64,6 +64,8 @@ export interface SavedOrderDetailsCartLineStyles {
     productPartNumbers?: ProductPartNumbersStyles;
     productAvailabilityGridItem?: GridItemProps;
     productAvailability?: ProductAvailabilityStyles;
+    cartLineErrorMessageGridItem?: GridItemProps;
+    cartLineErrorMessageText?: TypographyPresentationProps;
     productPriceAndQuantityGridItem?: GridItemProps;
     productPriceAndQuantityContainer?: GridContainerProps;
     inactiveProductLabel?: TypographyPresentationProps;
@@ -124,6 +126,12 @@ export const savedOrderDetailsCartLineStyles: SavedOrderDetailsCartLineStyles = 
     },
     productAvailabilityGridItem: {
         width: 12,
+    },
+    cartLineErrorMessageGridItem: {
+        width: 12,
+    },
+    cartLineErrorMessageText: {
+        color: "danger",
     },
     productPriceAndQuantityGridItem: {
         width: [12, 12, 7, 7, 7],
@@ -240,6 +248,13 @@ const SavedOrderDetailsCartLine: React.FC<Props> = ({
                                     extendedStyles={styles.productAvailability}
                                 />
                             </GridItem>
+                            {cartLine.isRestricted && (
+                                <GridItem {...styles.productAvailabilityGridItem}>
+                                    <Typography {...styles.cartLineErrorMessageText}>
+                                        {translate("Restricted product")}
+                                    </Typography>
+                                </GridItem>
+                            )}
                         </GridContainer>
                     </GridItem>
                     <GridItem {...styles.productPriceAndQuantityGridItem}>
@@ -275,7 +290,7 @@ const SavedOrderDetailsCartLine: React.FC<Props> = ({
                                 )}
                             </GridItem>
                             <GridItem {...styles.savedOrderLineCardAddToListGridItem}>
-                                {cartLine.canAddToWishlist && (
+                                {cartLine.canAddToWishlist && !cartLine.isRestricted && (
                                     <Button
                                         {...styles.savedOrderLineCardAddToListButton}
                                         onClick={addToListClickHandler}

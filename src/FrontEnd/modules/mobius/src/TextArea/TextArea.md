@@ -1,6 +1,7 @@
 ### Example
 
 ```jsx
+const { css } = require('styled-components');
 const Spacer = () => <div style={{ height: 50 }} />;
 const longContent= `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dapibus gravida magna sed sollicitudin. Donec pretium pellentesque nibh, sit amet feugiat quam feugiat vel. Mauris tristique metus id ligula placerat, quis auctor magna sodales. Nunc nisi urna, tincidunt nec ligula at, fringilla condimentum risus. Vivamus et sagittis quam, vel ullamcorper nisi. Cras sed metus lacinia, congue nibh in, congue velit. Sed euismod sem at dapibus luctus. Aliquam sit amet suscipit tortor. Cras malesuada justo id magna consectetur convallis nec tincidunt dui. Etiam at tellus vel erat tempor dignissim. Aliquam tempor auctor sem eget cursus. Phasellus ut finibus dolor. Etiam et sodales dolor.
 
@@ -15,6 +16,8 @@ Vivamus mollis posuere dictum. Suspendisse dictum aliquam interdum. Phasellus el
 
 <>
     <TextArea placeholder="Type some long content" label="Description"/>
+    <Spacer />
+    <TextArea placeholder="Custom CSS" css={css`background: tomato; color: #fff;`} label="Description"/>
     <Spacer />
     <TextArea rows="10" label="Description" defaultValue={longContent} border="underline" />
     <Spacer />

@@ -1,4 +1,5 @@
 import AddressDrawerReducer from "@insite/client-framework/Store/Components/AddressDrawer/AddressDrawerReducer";
+import AddressErrorModalReducer from "@insite/client-framework/Store/Components/AddressErrorModal/AddressErrorModalReducer";
 import AddToListModalReducer from "@insite/client-framework/Store/Components/AddToListModal/AddToListModalReducer";
 import BreadcrumbsReducer from "@insite/client-framework/Store/Components/Breadcrumbs/BreadcrumbsReducer";
 import CompareProductsDrawerReducer from "@insite/client-framework/Store/Components/CompareProductsDrawer/CompareProductsDrawerReducer";
@@ -23,6 +24,7 @@ const reducers = {
     productInfoLists: ProductInfoListsReducer,
     productSelector: ProductSelectorReducer,
     shareListModal: ShareListModalReducer,
+    addressErrorModal: AddressErrorModalReducer,
 };
 
 export type ComponentsReducers = Readonly<typeof reducers>;

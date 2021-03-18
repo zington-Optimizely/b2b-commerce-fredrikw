@@ -20,6 +20,9 @@ const reducer = {
     "Pages/SavedOrderDetails/SetCartId": (draft: Draft<SavedOrderDetailsState>, action: { cartId: string }) => {
         draft.cartId = action.cartId;
     },
+    "Pages/SavedOrderDetails/Reset": () => {
+        return initialState;
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

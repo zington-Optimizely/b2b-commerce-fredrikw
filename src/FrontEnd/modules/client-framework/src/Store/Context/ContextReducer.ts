@@ -117,6 +117,9 @@ const reducer = {
     ) => {
         draft.paymetricConfig = action.paymetricConfig;
     },
+    "Context/DeleteSession": (draft: Draft<ContextState>) => {
+        draft.session = {} as Session;
+    },
 };
 
 export default createTypedReducerWithImmer(initialState, reducer);

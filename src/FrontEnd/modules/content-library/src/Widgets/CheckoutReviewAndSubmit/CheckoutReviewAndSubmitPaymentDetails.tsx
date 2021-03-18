@@ -492,7 +492,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             return;
         }
 
-        if (paymentMethodDto.isPaymentProfile) {
+        if (paymentMethodDto.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired) {
             setUpTokenExIFrameCvvOnly(tokenExConfig);
         } else if (paymentMethodDto.isCreditCard) {
             setUpTokenExIFrame(tokenExConfig);

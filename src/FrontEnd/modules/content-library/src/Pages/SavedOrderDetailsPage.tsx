@@ -13,7 +13,7 @@ import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/Link
 import displayOrder from "@insite/client-framework/Store/Pages/SavedOrderDetails/Handlers/DisplayOrder";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -38,7 +38,6 @@ const mapStateToProps = (state: ApplicationState) => {
         savedCartState: savedOrderState,
         billToState: getBillToState(state, savedOrderState?.value?.billToId),
         shipToState: getShipToState(state, savedOrderState?.value?.shipToId),
-        allowMultipleWishLists: getSettingsCollection(state).wishListSettings.allowMultipleWishLists,
         savedOrderListPageLink: getPageLinkByPageType(state, "SavedOrderListPage")?.url,
     };
 };
@@ -75,7 +74,6 @@ const SavedOrderDetailsPage = ({
     displayOrder,
     billToState,
     shipToState,
-    allowMultipleWishLists,
     history,
     savedOrderListPageLink,
 }: Props) => {
@@ -107,7 +105,7 @@ const SavedOrderDetailsPage = ({
             ) : (
                 <CartContext.Provider value={savedOrder}>
                     <Zone contentId={id} zoneName="Content" />
-                    {allowMultipleWishLists && <AddToListModal />}
+                    <Modals />
                 </CartContext.Provider>
             )}
         </Page>

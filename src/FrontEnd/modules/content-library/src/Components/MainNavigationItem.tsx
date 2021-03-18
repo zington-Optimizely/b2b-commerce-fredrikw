@@ -52,8 +52,9 @@ class MainNavigationItem extends React.Component<Props> {
             },
         } = this.props;
         const downIcon = <StyledIcon src={ChevronDown} {...styles.menuItemIcon} />;
-        const isCascading = link.children && link.children.length > 0 && link.childrenType === "CascadingMenu";
-        const isMega = link.children && link.children.length > 0 && link.childrenType === "MegaMenu";
+        const hasChildren = link.children && link.children.filter(child => !child.excludeFromNavigation).length > 0;
+        const isCascading = hasChildren && link.childrenType === "CascadingMenu";
+        const isMega = hasChildren && link.childrenType === "MegaMenu";
         let menuLink = (
             <Link
                 typographyProps={styles.menuItemTypography}

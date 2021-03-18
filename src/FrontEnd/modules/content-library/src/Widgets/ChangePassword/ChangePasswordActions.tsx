@@ -158,7 +158,8 @@ const ChangePasswordActions = ({
         });
     };
 
-    const onCancelClick = () => {
+    const onCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
         history.push(accountSettingsPageLink!.url);
     };
 
@@ -167,7 +168,7 @@ const ChangePasswordActions = ({
     return (
         <GridContainer {...styles.buttonGridContainer}>
             <GridItem {...styles.buttonGridItem}>
-                <Button {...styles.cancelButton} onClick={onCancelClick}>
+                <Button {...styles.cancelButton} onClick={e => onCancelClick(e)}>
                     {translate("Cancel")}
                 </Button>
             </GridItem>

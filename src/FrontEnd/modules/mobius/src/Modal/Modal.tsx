@@ -80,7 +80,7 @@ const ModalTitle = styled.div<InjectableCss<any>>`
 
 const ModalContent = styled.div<InjectableCss<any>>`
     padding: 30px;
-    overflow-y: auto;
+    overflow-y: visible;
     ${injectCss}
 `;
 

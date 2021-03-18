@@ -1,7 +1,7 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import React from "react";
 import { css } from "styled-components";
@@ -13,7 +13,7 @@ const HomePage: React.FunctionComponent<PageProps> = ({ id }) => (
         `}
     >
         <Zone contentId={id} zoneName="Content" requireRows />
-        <AddToListModal />
+        <Modals />
     </Page>
 );
 

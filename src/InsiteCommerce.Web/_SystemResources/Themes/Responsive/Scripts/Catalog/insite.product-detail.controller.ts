@@ -242,7 +242,8 @@ module insite.catalog {
                     this.product.styledProducts.forEach((s) => {
                         const inventoryProduct = <ProductDto>{
                             id: s.productId,
-                            selectedUnitOfMeasure: s.unitOfMeasure
+                            selectedUnitOfMeasure: s.unitOfMeasure,
+                            productUnitOfMeasures: s.productUnitOfMeasures
                         };
                         inventoryProducts.push(inventoryProduct);
                     });
@@ -599,7 +600,7 @@ module insite.catalog {
             return this.product && this.product.allowedAddToCart &&
             (this.product.canAddToCart ||
                 ((this.styleSelectionCompleted || this.configurationCompleted)
-                    && (this.settings.allowBackOrder || (<any>this.product.availability).messageType !== 2))
+                && (this.settings.allowBackOrder || (<any>this.product.availability) && (<any>this.product.availability).messageType !== 2))
                     && !this.product.canConfigure);
         }
     }

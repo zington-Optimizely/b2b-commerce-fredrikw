@@ -12,8 +12,12 @@ class BlueprintReplacementPlugin {
             return;
         }
         const contentLibraryContext = /content\-library/;
-        const componentPath = /content\-library\/src\/([a-zA-Z0-9\/]+)/;
-        const atInsitePath = /@insite\/content\-library\/([a-zA-Z0-9\/]+)/;
+        const contentLibraryComponentPath = /content\-library\/src\/([a-zA-Z0-9\/]+)/;
+        const atInsiteContentLibraryPath = /@insite\/content\-library\/([a-zA-Z0-9\/]+)/;
+        const mobiusContext = /mobius/;
+        const mobiusComponentPath = /mobius\/src\/([a-zA-Z0-9\/]+)/;
+        const atInsiteMobiusPath = /@insite\/mobius\/([a-zA-Z0-9\/]+)/;
+
         compiler.hooks.normalModuleFactory.tap("BlueprintReplacementPlugin", nmf => {
             const replacementExists = {};
 
@@ -23,15 +27,25 @@ class BlueprintReplacementPlugin {
                 // result.request uses /
                 // result.context uses \
 
-                if (!(contentLibraryContext.test(result.context) || contentLibraryContext.test(result.request))) {
+                if (
+                    !(contentLibraryContext.test(result.context) || contentLibraryContext.test(result.request)) &&
+                    !(mobiusContext.test(result.context) || mobiusContext.test(result.request))
+                ) {
                     callback();
                     return;
                 }
                 let potentialPath = path.join(result.context, result.request).replace(/\\/g, "/");
-                if (atInsitePath.test(potentialPath)) {
-                    potentialPath = `/modules/content-library/src/${potentialPath.match(atInsitePath)[1]}`;
+                if (atInsiteContentLibraryPath.test(potentialPath)) {
+                    potentialPath = `/modules/content-library/src/${
+                        potentialPath.match(atInsiteContentLibraryPath)[1]
+                    }`;
+                } else if (atInsiteMobiusPath.test(potentialPath)) {
+                    potentialPath = `/modules/mobius/src/${potentialPath.match(atInsiteMobiusPath)[1]}`;
                 }
-                if (!componentPath.test(potentialPath)) {
+
+                const isContentLibraryPath = contentLibraryComponentPath.test(potentialPath);
+                const isMobiusPath = mobiusComponentPath.test(potentialPath);
+                if (!isContentLibraryPath && !isMobiusPath) {
                     callback();
                     return;
                 }
@@ -42,8 +56,14 @@ class BlueprintReplacementPlugin {
                 for (let x = modulePart + 1; x < contextPath.length; x++) {
                     potentialReplacement += "../";
                 }
-                const componentPathMatch = potentialPath.match(componentPath);
-                potentialReplacement += `blueprints/${this.blueprintName}/src/Overrides/${componentPathMatch[1]}`;
+                if (isContentLibraryPath) {
+                    const componentPathMatch = potentialPath.match(contentLibraryComponentPath);
+                    potentialReplacement += `blueprints/${this.blueprintName}/src/Overrides/${componentPathMatch[1]}`;
+                } else {
+                    const componentPathMatch = potentialPath.match(mobiusComponentPath);
+                    potentialReplacement += `blueprints/${this.blueprintName}/src/MobiusOverrides/${componentPathMatch[1]}`;
+                }
+
                 const pathToFile = path.join(result.context, `${potentialReplacement}.tsx`);
                 if (replacementExists[pathToFile] === undefined) {
                     replacementExists[pathToFile] = fs.existsSync(pathToFile);

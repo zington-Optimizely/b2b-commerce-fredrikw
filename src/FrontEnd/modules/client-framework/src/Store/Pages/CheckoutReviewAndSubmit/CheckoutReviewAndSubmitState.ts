@@ -9,4 +9,5 @@ export default interface CheckoutReviewAndSubmitState {
     requestedDeliveryDate?: Date | null;
     requestedPickupDate?: Date | null;
     placeOrderErrorMessage?: string;
+    isPreloadingData: boolean;
 }

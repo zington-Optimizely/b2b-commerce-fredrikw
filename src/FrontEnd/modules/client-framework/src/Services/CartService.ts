@@ -115,6 +115,8 @@ export interface PaymetricResponseApiResult {
 
 const cartsUrl = "/api/v1/carts";
 
+export const invalidAddressException = "Insite.Core.Exceptions.InvalidAddressException";
+
 export type Cart = Omit<CartModel, "billTo" | "shipTo"> & {
     billToId?: string;
     shipToId?: string;

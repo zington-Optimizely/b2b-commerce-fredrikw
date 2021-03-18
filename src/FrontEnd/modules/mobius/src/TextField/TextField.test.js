@@ -2,17 +2,19 @@ import "jest-styled-components";
 import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
-import TextField from "./TextField";
+import TextField, { InputStyle } from "./TextField";
 import DisablerContext from "../utilities/DisablerContext";
+import { css } from "styled-components";
 
 describe("TextField", () => {
     let props;
     let mountedWrapper;
     let disablerValue;
+    let theme;
     const wrapper = () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
-                <ThemeProvider>
+                <ThemeProvider theme={theme}>
                     <DisablerContext.Provider value={disablerValue}>
                         <TextField {...props} />
                     </DisablerContext.Provider>
@@ -24,6 +26,44 @@ describe("TextField", () => {
 
     const unmountTextField = () => {
         mountedWrapper = undefined;
+    };
+
+    const withProps = () => {
+        props = {};
+        const builder = {
+            withCssColor(color) {
+                props.css = css`
+                    color: ${color};
+                `;
+                return this;
+            },
+            withMergeCss(value) {
+                props.mergeCss = value;
+                return this;
+            },
+        };
+        return builder;
+    };
+
+    const withTheme = () => {
+        theme = {
+            textField: {
+                defaultProps: {},
+            },
+        };
+        const builder = {
+            withCssBgColor(color) {
+                theme.textField.defaultProps.css = css`
+                    background: ${color};
+                `;
+                return this;
+            },
+            withMergeCss(value) {
+                theme.textField.defaultProps.mergeCss = value;
+                return this;
+            },
+        };
+        return builder;
     };
 
     beforeEach(() => {
@@ -69,6 +109,39 @@ describe("TextField", () => {
         test("if DisablerContext is false and disabled is false", () => {
             disablerValue = { disable: false };
             expect(wrapper().find("input").prop("disabled")).toBe(false);
+        });
+    });
+
+    describe("Merge Css", () => {
+        test("Does not merge when mergeCss not specified", () => {
+            withProps().withCssColor("red");
+            withTheme().withCssBgColor("pink");
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("color", "red");
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("background", undefined);
+        });
+
+        test("Merges when component specifies", () => {
+            withProps().withMergeCss(true).withCssColor("red");
+            withTheme().withCssBgColor("pink");
+
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("color", "red");
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("background", "pink");
+        });
+
+        test("Merges when theme specifies", () => {
+            withProps().withCssColor("red");
+            withTheme().withMergeCss(true).withCssBgColor("pink");
+
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("color", "red");
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("background", "pink");
+        });
+
+        test("Does not merge when component overrides theme", () => {
+            withProps().withMergeCss(false).withCssColor("red");
+            withTheme().withMergeCss(true).withCssBgColor("pink");
+
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("color", "red");
+            expect(wrapper().find(InputStyle)).toHaveStyleRule("background", undefined);
         });
     });
 });

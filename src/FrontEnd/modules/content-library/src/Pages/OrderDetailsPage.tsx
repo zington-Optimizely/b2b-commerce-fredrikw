@@ -10,7 +10,7 @@ import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelec
 import displayOrder from "@insite/client-framework/Store/Pages/OrderDetails/Handlers/DisplayOrder";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
-import AddToListModal from "@insite/content-library/Components/AddToListModal";
+import Modals from "@insite/content-library/Components/Modals";
 import Page from "@insite/mobius/Page";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
@@ -90,7 +90,7 @@ class OrderDetailsPage extends React.Component<Props> {
                         <Zone contentId={this.props.id} zoneName="Content" />
                     </OrderStateContext.Provider>
                 )}
-                <AddToListModal />
+                <Modals />
             </Page>
         );
     }

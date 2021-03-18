@@ -14,7 +14,7 @@
         "hideFromSearchEngines": false,
         "hideFromSiteSearch": false,
         "excludeFromNavigation": false,
-        "excludeFromSignInRequired": false,
+        "excludeFromSignInRequired": true,
         "tags": [],
         "hideBreadcrumbs": false
     },

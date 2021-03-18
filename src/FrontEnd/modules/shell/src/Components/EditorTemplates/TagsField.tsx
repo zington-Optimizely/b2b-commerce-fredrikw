@@ -36,7 +36,7 @@ export default class TagsField extends React.Component<EditorTemplateProps<strin
             }
             const nextValue = event.currentTarget.value.trim();
             if (currentArray.indexOf(nextValue) === -1) {
-                currentArray.push(event.currentTarget.value.trim());
+                currentArray = [...currentArray, event.currentTarget.value.trim()];
 
                 this.props.updateField(this.props.fieldDefinition.name, currentArray);
             }
@@ -48,7 +48,7 @@ export default class TagsField extends React.Component<EditorTemplateProps<strin
     };
 
     removeTag = (tag: string) => {
-        const currentArray = this.props.fieldValue;
+        const currentArray = [...this.props.fieldValue];
         currentArray.splice(currentArray.indexOf(tag), 1);
         this.props.updateField(this.props.fieldDefinition.name, currentArray);
     };
@@ -104,13 +104,13 @@ const FakeTextFieldStyle = styled.div<{ isFocused: boolean }>`
                   border-color: ${props => props.theme.focus.color};
                   border-style: ${props => props.theme.focus.style};
                   border-width: ${props => props.theme.focus.width};
-                  padding: 6px 6px 0;
+                  padding: 7px 5px 1px 7px;
               `
             : ""}
 
     span {
         display: flex;
-        background-color: ${(props: ShellThemeProps) => props.theme.colors.common.border};
+        background-color: #ddd;
         border-radius: 4px;
         white-space: nowrap;
         margin-right: 6px;
@@ -124,6 +124,7 @@ const FakeTextFieldStyle = styled.div<{ isFocused: boolean }>`
         }
     }
     input {
+        background: transparent;
         border: none;
         flex-grow: 1;
         font-family: inherit;

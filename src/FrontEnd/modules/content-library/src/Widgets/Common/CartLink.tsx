@@ -22,7 +22,7 @@ const enum fields {
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
-    shouldLoadCart: !getCurrentCartState(state).value,
+    shouldLoadCart: !getCurrentCartState(state).value && !getCurrentCartState(state).isLoading,
     totalCountDisplay: getCurrentCartState(state).value?.totalCountDisplay,
     cartUrl: getPageLinkByPageType(state, "CartPage")?.url,
 });

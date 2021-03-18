@@ -6,6 +6,7 @@ const initialState: CheckoutReviewAndSubmitState = {
     isPlacingOrder: false,
     isApplyingPromotion: false,
     isCheckingOutWithPayPay: false,
+    isPreloadingData: false,
 };
 
 const reducer = {
@@ -66,6 +67,12 @@ const reducer = {
     },
     "Pages/CheckoutReviewAndSubmit/CompletePlaceOrderForApproval": (draft: Draft<CheckoutReviewAndSubmitState>) => {
         draft.isPlacingOrder = false;
+    },
+    "Pages/CheckoutReviewAndSubmit/SetIsPreloadingData": (
+        draft: Draft<CheckoutReviewAndSubmitState>,
+        action: { isPreloadingData: boolean },
+    ) => {
+        draft.isPreloadingData = action.isPreloadingData;
     },
 };
 
