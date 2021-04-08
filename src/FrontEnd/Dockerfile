@@ -95,7 +95,7 @@ COPY ./modules/blueprints ./modules/blueprints/
 
 # Create the JS bundles for the application.
 ARG BLUEPRINT=content-library
-RUN npm run build:docker || exit 1
+RUN npm run build || exit 1
 
 ARG BLUEPRINT_NAME=content-library
 RUN mkdir -p /app/modules/blueprints/${BLUEPRINT_NAME}/wwwroot/AppData/PageCreators \
