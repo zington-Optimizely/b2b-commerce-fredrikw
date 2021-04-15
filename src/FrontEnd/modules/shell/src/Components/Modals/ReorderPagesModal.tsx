@@ -32,6 +32,8 @@ const mapDispatchToProps = {
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
 class ReorderPagesModal extends React.Component<Props> {
+    // this is required because firefox doesn't set clientY in the drag event that uses this below
+    private clientY = 0;
     private readonly reorderTree: React.RefObject<HTMLDivElement>;
 
     constructor(props: Props) {
@@ -44,6 +46,18 @@ class ReorderPagesModal extends React.Component<Props> {
 
         this.reorderTree = React.createRef();
     }
+
+    componentDidMount() {
+        document.addEventListener("dragover", this.documentDragOver);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("dragover", this.documentDragOver);
+    }
+
+    documentDragOver = (event: DragEvent) => {
+        this.clientY = event.clientY;
+    };
 
     cancel = () => {
         this.props.cancelReorderPages();
@@ -166,21 +180,20 @@ class ReorderPagesModal extends React.Component<Props> {
         }
     };
 
-    drag = (event: React.DragEvent<HTMLElement>) => {
+    drag = () => {
         if (!this.draggedElement) {
             return;
         }
 
         const boundingClientRect = this.reorderTree.current!.getBoundingClientRect();
-
-        const top = event.clientY - boundingClientRect.top;
+        const top = this.clientY - boundingClientRect.top;
         if (top < 40) {
             this.scroll(-10);
         } else if (top < 60) {
             this.scroll(-5);
         }
 
-        const bottom = boundingClientRect.bottom - event.clientY;
+        const bottom = boundingClientRect.bottom - this.clientY;
         if (bottom < 40) {
             this.scroll(15);
         } else if (bottom < 60) {

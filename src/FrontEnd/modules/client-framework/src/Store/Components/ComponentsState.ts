@@ -9,6 +9,7 @@ import ManageShareListModalState from "@insite/client-framework/Store/Components
 import OrderUploadState from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadState";
 import ProductInfoListsState from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListsState";
 import ProductSelectorState from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorState";
+import ReCaptchaState from "@insite/client-framework/Store/Components/ReCaptcha/ReCaptchaState";
 import ShareListModalState from "@insite/client-framework/Store/Components/ShareListModal/ShareListModalState";
 
 export default interface ComponentsState {
@@ -22,6 +23,7 @@ export default interface ComponentsState {
     readonly orderUpload: OrderUploadState;
     readonly productInfoLists: ProductInfoListsState;
     readonly productSelector: ProductSelectorState;
+    readonly reCaptcha: ReCaptchaState;
     readonly shareListModal: ShareListModalState;
     readonly addressErrorModal: AddressErrorModalState;
 }

@@ -34,6 +34,8 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     allowMultipleWishLists: getSettingsCollection(state).wishListSettings.allowMultipleWishLists,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 const mapDispatchToProps = {
@@ -73,6 +75,8 @@ export interface SavedOrderDetailsCartLineStyles {
     quantityGridItem?: GridItemProps;
     extendedUnitNetPriceGridItem?: GridItemProps;
     extendedUnitNetPrice?: SmallHeadingAndTextStyles;
+    subtotalWithoutVatText?: SmallHeadingAndTextStyles;
+    vatAmount?: SmallHeadingAndTextStyles;
     savedOrderLineCardAddToListGridItem?: GridItemProps;
     savedOrderLineCardAddToListButton?: ButtonPresentationProps;
 }
@@ -153,6 +157,11 @@ export const savedOrderDetailsCartLineStyles: SavedOrderDetailsCartLineStyles = 
                 weight: "normal",
             },
         },
+        secondaryPrice: {
+            priceText: {
+                weight: "normal",
+            },
+        },
     },
     inactiveProductLabel: {
         color: "danger",
@@ -162,10 +171,27 @@ export const savedOrderDetailsCartLineStyles: SavedOrderDetailsCartLineStyles = 
     },
     extendedUnitNetPriceGridItem: {
         width: [4, 4, 4, 3, 3],
+        css: css`
+            flex-direction: column;
+        `,
     },
     extendedUnitNetPrice: {
         text: {
             weight: 700,
+        },
+    },
+    subtotalWithoutVatText: {
+        wrapper: {
+            css: css`
+                margin-bottom: 6px;
+            `,
+        },
+    },
+    vatAmount: {
+        wrapper: {
+            css: css`
+                margin-bottom: 6px;
+            `,
         },
     },
     savedOrderLineCardAddToListGridItem: {
@@ -181,6 +207,8 @@ const SavedOrderDetailsCartLine: React.FC<Props> = ({
     showSavingsPercent,
     extendedStyles,
     allowMultipleWishLists,
+    enableVat,
+    vatPriceDisplay,
     setAddToListModalIsOpen,
     addToWishList,
     toaster,
@@ -282,11 +310,37 @@ const SavedOrderDetailsCartLine: React.FC<Props> = ({
                             </GridItem>
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
                                 {cartLine.pricing && (
-                                    <SmallHeadingAndText
-                                        heading={translate("Subtotal")}
-                                        text={cartLine.pricing.extendedUnitNetPriceDisplay}
-                                        extendedStyles={styles.extendedUnitNetPrice}
-                                    />
+                                    <>
+                                        {enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                            <>
+                                                <SmallHeadingAndText
+                                                    heading={`${translate("Subtotal")} (${translate("Ex. VAT")})`}
+                                                    text={cartLine.pricing.extendedUnitNetPriceDisplay}
+                                                    extendedStyles={styles.subtotalWithoutVatText}
+                                                />
+                                                <SmallHeadingAndText
+                                                    heading={`${translate("Total VAT")} (${cartLine.pricing.vatRate}%)`}
+                                                    text={cartLine.pricing.vatAmountDisplay}
+                                                    extendedStyles={styles.vatAmount}
+                                                />
+                                            </>
+                                        )}
+                                        <SmallHeadingAndText
+                                            heading={
+                                                !enableVat
+                                                    ? translate("Subtotal")
+                                                    : vatPriceDisplay !== "DisplayWithoutVat"
+                                                    ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                                    : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                            }
+                                            text={
+                                                enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                    ? cartLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                    : cartLine.pricing.extendedUnitNetPriceDisplay
+                                            }
+                                            extendedStyles={styles.extendedUnitNetPrice}
+                                        />
+                                    </>
                                 )}
                             </GridItem>
                             <GridItem {...styles.savedOrderLineCardAddToListGridItem}>

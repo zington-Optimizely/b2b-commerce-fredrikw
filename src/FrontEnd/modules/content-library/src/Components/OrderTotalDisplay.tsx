@@ -1,4 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
@@ -6,6 +8,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import React, { FC } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
@@ -13,7 +16,11 @@ interface OwnProps {
     extendedStyles?: OrderTotalDisplayStyles;
 }
 
-type Props = OwnProps;
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface OrderTotalDisplayStyles {
     container?: GridContainerProps;
@@ -139,7 +146,7 @@ export const orderTotalDisplayStyles: OrderTotalDisplayStyles = {
     },
 };
 
-const OrderTotalDisplay: FC<Props> = ({ order, extendedStyles }) => {
+const OrderTotalDisplay: FC<Props> = ({ order, enableVat, extendedStyles }) => {
     const [styles] = React.useState(() => mergeToNew(orderTotalDisplayStyles, extendedStyles));
 
     if (!order) {
@@ -149,7 +156,9 @@ const OrderTotalDisplay: FC<Props> = ({ order, extendedStyles }) => {
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.subtotalLabelGridItem}>
-                <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
+                <Typography {...styles.subtotalLabel}>
+                    {translate("Subtotal") + (enableVat ? ` (${translate("Ex. VAT")})` : "")}
+                </Typography>
             </GridItem>
             <GridItem {...styles.subtotalValueGridItem}>
                 <Typography {...styles.subtotalValue}>{order.orderSubTotalDisplay}</Typography>
@@ -187,7 +196,7 @@ const OrderTotalDisplay: FC<Props> = ({ order, extendedStyles }) => {
             {(!order.orderHistoryTaxes || order.orderHistoryTaxes.length === 0) && (
                 <>
                     <GridItem {...styles.taxLabelGridItem}>
-                        <Typography {...styles.taxLabel}>{translate("Tax")}</Typography>
+                        <Typography {...styles.taxLabel}>{enableVat ? translate("VAT") : translate("Tax")}</Typography>
                     </GridItem>
                     <GridItem {...styles.taxValueGridItem}>
                         <Typography {...styles.taxValue} data-test-selector="orderDetails_totalTaxDisplay">
@@ -219,4 +228,4 @@ const OrderTotalDisplay: FC<Props> = ({ order, extendedStyles }) => {
     );
 };
 
-export default OrderTotalDisplay;
+export default connect(mapStateToProps)(OrderTotalDisplay);

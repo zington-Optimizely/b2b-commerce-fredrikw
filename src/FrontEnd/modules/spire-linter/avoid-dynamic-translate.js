@@ -3,13 +3,14 @@ const fs = require("fs");
 const path = require("path");
 
 let translations = [];
+let warnedAboutSkipping = false;
 
 module.exports = {
     meta: {
         messages: {
             avoid: "Avoid passing dynamic values to translate.",
             avoidUnsupported: "Avoid passing dynamic values to translate (unsupported case)",
-            unsupportedCasing: "Avoid mixing translate value Casing.",
+            unsupportedCasing: "Avoid mixing case with translate. The value \"{{value}}\" is already being translated with a different case.",
         },
     },
     schema: [
@@ -41,10 +42,16 @@ module.exports = {
             return {};
         }
 
+        if (generateTranslations && !translationsLocation) {
+            if (!warnedAboutSkipping) {
+                warnedAboutSkipping = true;
+                console.warn("translationsLocation was not supplied so translations may not be generated.");
+            }
+        }
+
         const writeTranslationsFileIfConfigured = () => {
             if (generateTranslations) {
                 if (!translationsLocation) {
-                    console.warn("translationsLocation was not supplied so translations may not be generated.");
                     return;
                 }
                 const translationsFilePath = path.resolve(translationsLocation, "translations.csv");
@@ -94,7 +101,7 @@ module.exports = {
                 }
 
                 if (argument.value && containsStringDifferentByCasing(translations, argument.value)) {
-                    context.report({ node, messageId: "unsupportedCasing" });
+                    context.report({ node, messageId: "unsupportedCasing", data: { value: argument.value }});
                     return;
                 } else if (argument.value) {
                     translations.push(argument.value);

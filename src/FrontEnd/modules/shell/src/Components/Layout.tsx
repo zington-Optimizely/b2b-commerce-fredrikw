@@ -69,7 +69,7 @@ const layout = (
             </SideBarArea>
             <MainArea>
                 <Switch>
-                    <Route path="/ContentAdmin/Page/*" render={props => <MainHeader {...props} />} />
+                    <Route path="/ContentAdmin/Page/*" component={MainHeader} />
                     <Route path={["/ContentAdmin/Design", "/ContentAdmin/"]}>
                         <MainHeader disabled />
                     </Route>

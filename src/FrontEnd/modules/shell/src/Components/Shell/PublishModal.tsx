@@ -1,5 +1,4 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
-import { changeContext } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import Button from "@insite/mobius/Button";
@@ -76,7 +75,6 @@ const mapDispatchToProps = {
     setIsSelected,
     setIsSelectedForAll,
     configureComparison,
-    changeContext,
 };
 
 export interface PublishPageSelection {
@@ -252,6 +250,25 @@ const PublishModal: React.FC<Props> = ({
     }
 
     const hasFailedToPublishPages = failedToPublishPageIds && Object.keys(failedToPublishPageIds).length > 0;
+    const getFailedPages = () => {
+        if (!failedToPublishPageIds || !pagePublishInfosState.value) {
+            return [];
+        }
+        const failedPages = [];
+        for (const pageId of Object.keys(failedToPublishPageIds)) {
+            if (!failedToPublishPageIds[pageId]) {
+                continue;
+            }
+            const page = pagePublishInfosState.value.find(o => o.pageId === pageId);
+            if (!page) {
+                continue;
+            }
+
+            failedPages.push(page);
+        }
+
+        return failedPages;
+    };
 
     const publishOnChangeHandler = ({ selectedDay }: Pick<DatePickerState, "selectedDay">) => {
         setPublishOn(selectedDay);
@@ -297,9 +314,9 @@ const PublishModal: React.FC<Props> = ({
                         Publication of selected page(s) has failed. Would you like to skip these pages and continue
                         publishing?
                         <ul>
-                            {pagePublishInfosState.value?.map(({ pageId, name }) => {
-                                return failedToPublishPageIds?.[pageId] ? <li key={pageId}>{name}</li> : null;
-                            })}
+                            {getFailedPages().map(o => (
+                                <li key={o.pageId}>{o.name}</li>
+                            ))}
                         </ul>
                     </Typography>
                 )}

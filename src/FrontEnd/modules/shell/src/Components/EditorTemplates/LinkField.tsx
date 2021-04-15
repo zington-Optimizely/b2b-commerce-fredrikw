@@ -11,6 +11,7 @@ import TabGroup from "@insite/mobius/TabGroup";
 import TextField from "@insite/mobius/TextField";
 import StandardControl from "@insite/shell-public/Components/StandardControl";
 import { EditorTemplateProps } from "@insite/shell-public/EditorTemplateProps";
+import { isValidUrl } from "@insite/shell/Common/IsValidUrl";
 import ClickOutside from "@insite/shell/Components/ClickOutside";
 import ArrowDown from "@insite/shell/Components/Icons/ArrowDown";
 import ArrowRight from "@insite/shell/Components/Icons/ArrowRight";
@@ -365,23 +366,6 @@ class LinkField extends ClickOutside<Props, State> {
             </StandardControl>
         );
     }
-}
-
-function isValidUrl(value: string) {
-    const fullUrl =
-        "^(https?:\\/\\/)" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$";
-    const fullUrlRegex = new RegExp(fullUrl, "i");
-    const pathUrl =
-        "^(\\/[-a-z\\d%_.~+]*)+" + // path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$";
-    const pathRegex = new RegExp(pathUrl, "i");
-    return !!fullUrlRegex.test(value) || !!pathRegex.test(value);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LinkField);

@@ -334,7 +334,7 @@ async function renderUntilPromisesResolved(request: Request, renderRawAndStyles:
     return redirect;
 }
 
-async function generateDataIfNeeded(request: Request) {
+export async function generateDataIfNeeded(request: Request) {
     if (
         !checkedForSiteGeneration ||
         !IS_PRODUCTION ||

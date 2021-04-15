@@ -1,4 +1,5 @@
 import { checkboxSizes } from "@insite/mobius/Checkbox";
+import { RadioStyle } from "@insite/mobius/Radio";
 import RadioGroupContext from "@insite/mobius/RadioGroup/RadioGroupContext";
 import Typography from "@insite/mobius/Typography";
 import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
@@ -10,7 +11,7 @@ import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledCom
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
+import styled, { css, withTheme } from "styled-components";
 
 export interface RadioGroupPresentationProps {
     /** CSS string or styled-components function to be injected into this component.
@@ -22,6 +23,11 @@ export interface RadioGroupPresentationProps {
      * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
      */
     mergeCss?: boolean;
+    /**
+     * Controls the alignment of the Radio children.
+     * Defaults to vertical alignment.
+     */
+    horizontal?: boolean;
 }
 
 export type RadioGroupComponentProps = MobiusStyledComponentProps<
@@ -44,16 +50,32 @@ export type RadioGroupProps = FieldSetGroupPresentationProps<RadioGroupComponent
     RadioGroupComponentProps &
     RadioGroupPresentationProps;
 
-const RadioGroupStyle = styled.fieldset`
+const RadioGroupStyle = styled.fieldset<{ horizontal?: boolean }>`
     border: 0;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
+
     & > ${TypographyStyle as any} {
         padding: 0;
         margin-bottom: 10px;
     }
+    ${props =>
+        props.horizontal
+            ? css`
+                  display: inline-block;
+                  & > ${RadioStyle} {
+                      display: inline-block;
+                      margin-top: 5px;
+                      margin-right: 20px;
+                  }
+              `
+            : css`
+                  display: flex;
+                  flex-direction: column;
+                   ${RadioStyle} + ${RadioStyle} {
+                        margin-top: 10px;
+                    }
+              `}
     ${injectCss}
 `;
 
@@ -83,7 +105,7 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
     };
 
     render() {
-        const { children, error, label, mergeCss, required, ...otherProps } = this.props;
+        const { children, error, label, mergeCss, required, horizontal, ...otherProps } = this.props;
         const { applyProp, spreadProps, applyStyledProp } = applyPropBuilder(this.props, {
             component: "radio",
             category: "fieldSet",
@@ -110,6 +132,7 @@ class RadioGroup extends React.Component<RadioGroupProps, State> {
                 <RadioGroupStyle
                     {...labelProps}
                     {...omitMultiple(otherProps, ["sizeVariant", "onChangeHandler"])}
+                    horizontal={horizontal}
                     css={applyStyledProp("css", resolvedMergeCss)}
                 >
                     {String(label) && (

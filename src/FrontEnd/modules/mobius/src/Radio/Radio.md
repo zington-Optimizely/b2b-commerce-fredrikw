@@ -18,6 +18,13 @@ const logTargetValue = e => { console.log(e.target.value); };
         </RadioGroup>
     </GridItem>
     <GridItem width={[12,12,6,6,6]} css={css` display: block; `}>
+        <Typography variant="h4">Horizontal</Typography>
+        <RadioGroup horizontal={true} label="Choose one" name="movie-2" onChangeHandler={logTargetValue} value="Blade Runner">
+            <Radio>Blade Runner</Radio>
+            <Radio>Toy Story</Radio>
+        </RadioGroup>
+    </GridItem>
+    <GridItem width={[12,12,6,6,6]} css={css` display: block; `}>
         <Typography variant="h4">Disabled</Typography>
         <RadioGroup label="Choose one" name="movie-3" value="Blade Runner">
             <Radio disabled>Blade Runner</Radio>

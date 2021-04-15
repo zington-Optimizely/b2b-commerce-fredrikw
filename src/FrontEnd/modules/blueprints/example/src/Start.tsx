@@ -134,6 +134,9 @@ setPostStyleGuideTheme({
             `,
         },
     },
+    zIndex: {
+        tabGroup: 1000,
+    },
     icon: {
         defaultProps: {
             css: css`

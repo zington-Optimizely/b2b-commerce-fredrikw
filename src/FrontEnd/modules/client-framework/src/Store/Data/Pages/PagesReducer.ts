@@ -29,6 +29,7 @@ export const initialState: PagesState = {
         state: "",
     },
     dataViews: {},
+    bypassedAuthorization: {},
 };
 
 interface SetPageIsLoaded {
@@ -144,6 +145,10 @@ export const reducer = {
         if (pageType) {
             draft.isLoading[pageType] = false;
         }
+    },
+
+    "Data/Pages/SetBypassedAuthorization": (draft: Draft<PagesState>, { pageId }: { pageId: string }) => {
+        draft.bypassedAuthorization[pageId] = true;
     },
 
     "Data/Pages/SetLocation": (draft: Draft<PagesState>, action: { location: Location }) => {

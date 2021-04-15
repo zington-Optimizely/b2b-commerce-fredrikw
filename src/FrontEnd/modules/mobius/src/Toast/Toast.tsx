@@ -62,7 +62,7 @@ export type ToastComponentProps = MobiusStyledComponentProps<
          * the importance or valence of the message. Defaults to `messageType` value if not passed in.
          * Can be used for translations or additional specificity if necessary. */
         messageTypeString?: string;
-        /** The length of time in miliseconds for the toast to display. Themable in `Toaster`. */
+        /** The length of time in milliseconds for the toast to display. Themable in `Toaster`. */
         timeoutLength?: number;
         onClose?: () => void;
     }

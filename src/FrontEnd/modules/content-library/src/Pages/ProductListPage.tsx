@@ -103,13 +103,17 @@ class ProductListPage extends React.Component<Props> {
             this.loadProducts();
         }
 
-        if (this.props.productListCatalogPage && !this.props.breadcrumbLinks) {
-            this.setProductListBreadcrumbs();
-        } else if (this.props.isSearchPage && !this.props.breadcrumbLinks) {
-            this.setSearchBreadcrumbs();
+        if (this.props.productListCatalogPage) {
+            this.setMetadata();
+            if (!this.props.breadcrumbLinks) {
+                this.setProductListBreadcrumbs();
+            }
+        } else if (this.props.isSearchPage) {
+            this.setMetadataTitle(translate("Search Results"));
+            if (!this.props.breadcrumbLinks) {
+                this.setSearchBreadcrumbs();
+            }
         }
-
-        this.setMetadata();
     }
 
     componentWillUnmount(): void {
@@ -171,18 +175,17 @@ class ProductListPage extends React.Component<Props> {
             this.loadProducts();
         }
 
-        if (productListCatalogPage && productListCatalogPage !== prevProps.productListCatalogPage) {
+        if (productListCatalogPage) {
             this.setMetadata();
             trackPageChange();
-            this.setProductListBreadcrumbs();
+            if (productListCatalogPage !== prevProps.productListCatalogPage || !this.props.breadcrumbLinks) {
+                this.setProductListBreadcrumbs();
+            }
         } else if (this.props.isSearchPage) {
             // For pages that do not have a productListCatalogPage, mainly the Search Page
             this.setMetadataTitle(translate("Search Results"));
             trackPageChange();
-        }
-
-        if (productListCatalogPage) {
-            if (this.props.isSearchPage && this.props.query !== prevProps.query) {
+            if (this.props.query !== prevProps.query || !this.props.breadcrumbLinks) {
                 this.setSearchBreadcrumbs();
             }
         }

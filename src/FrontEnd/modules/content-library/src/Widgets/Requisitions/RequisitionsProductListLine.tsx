@@ -31,6 +31,8 @@ const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     isSelected: !!state.pages.requisitions.selectedRequisitionIds.find(o => o === ownProps.requisition.id),
     isExpanded: !!state.pages.requisitions.expandedRequisitionIds.find(o => o === ownProps.requisition.id),
     productSettings: getSettingsCollection(state).productSettings,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 const mapDispatchToProps = {
@@ -58,6 +60,7 @@ export interface RequisitionsProductListLineStyles {
     quantityGridItem?: GridItemProps;
     quantityHeadingAndText?: SmallHeadingAndTextStyles;
     subtotalGridItem?: GridItemProps;
+    subtotalWithoutVatHeadingAndText?: SmallHeadingAndTextStyles;
     subtotalHeadingAndText?: SmallHeadingAndTextStyles;
     requisitionLinesGridItem?: GridItemProps;
     requisitionLinesAccordion?: AccordionPresentationProps;
@@ -122,7 +125,29 @@ export const requisitionsProductListLineStyles: RequisitionsProductListLineStyle
             `,
         },
     },
-    subtotalGridItem: { width: [4, 4, 2, 2, 2] },
+    subtotalGridItem: {
+        width: [4, 4, 2, 2, 2],
+        css: css`
+            flex-direction: column;
+        `,
+    },
+    subtotalWithoutVatHeadingAndText: {
+        heading: {
+            size: 10,
+            weight: "bold",
+            css: css`
+                margin-bottom: 0.5rem;
+            `,
+        },
+        text: {
+            weight: "bold",
+        },
+        wrapper: {
+            css: css`
+                margin-bottom: 10px;
+            `,
+        },
+    },
     subtotalHeadingAndText: {
         heading: {
             size: 10,
@@ -152,6 +177,8 @@ const RequisitionsProductListLine = ({
     isSelected,
     isExpanded,
     productSettings,
+    enableVat,
+    vatPriceDisplay,
     setRequisitionIsSelected,
     setRequisitionIsExpanded,
 }: Props) => {
@@ -212,12 +239,31 @@ const RequisitionsProductListLine = ({
                         </GridItem>
                         <GridItem {...styles.subtotalGridItem}>
                             {requisition.pricing && (
-                                <SmallHeadingAndText
-                                    heading={translate("Subtotal")}
-                                    text={requisition.pricing.extendedUnitNetPriceDisplay!}
-                                    extendedStyles={styles.subtotalHeadingAndText}
-                                    data-test-selector="subtotal"
-                                />
+                                <>
+                                    {enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                        <SmallHeadingAndText
+                                            heading={`${translate("Subtotal")} (${translate("Ex. VAT")})`}
+                                            text={requisition.pricing.extendedUnitNetPriceDisplay}
+                                            extendedStyles={styles.subtotalWithoutVatHeadingAndText}
+                                        />
+                                    )}
+                                    <SmallHeadingAndText
+                                        heading={
+                                            !enableVat
+                                                ? translate("Subtotal")
+                                                : vatPriceDisplay !== "DisplayWithoutVat"
+                                                ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                                : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                        }
+                                        text={
+                                            enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                ? requisition.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                : requisition.pricing.extendedUnitNetPriceDisplay
+                                        }
+                                        extendedStyles={styles.subtotalHeadingAndText}
+                                        data-test-selector="subtotal"
+                                    />
+                                </>
                             )}
                         </GridItem>
                     </GridContainer>

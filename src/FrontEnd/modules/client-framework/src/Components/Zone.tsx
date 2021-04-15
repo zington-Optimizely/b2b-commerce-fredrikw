@@ -15,6 +15,7 @@ export interface OwnProps {
     zoneName: string;
     fixed?: boolean;
     requireRows?: boolean;
+    fullHeight?: boolean;
 }
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps & HasShellContext) => {
@@ -150,14 +151,15 @@ class Zone extends React.Component<Props> {
             );
         }
 
-        return <Wrapper>{renderedWidgets}</Wrapper>;
+        return <Wrapper fullHeight={this.props.fullHeight}>{renderedWidgets}</Wrapper>;
     }
 }
 
 export default withIsInShell(connect(mapStateToProps)(Zone));
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ fullHeight?: boolean }>`
     width: 100%;
+    ${props => (props.fullHeight ? "height: 100%;" : "")}
 `;
 
 const ZoneStyle = styled.div`

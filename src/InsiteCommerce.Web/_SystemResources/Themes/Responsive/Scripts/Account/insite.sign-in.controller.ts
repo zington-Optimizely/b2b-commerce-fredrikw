@@ -65,7 +65,8 @@
             "$timeout",
             "$localStorage",
             "wishListService",
-            "$q"
+            "$q",
+            "reCaptcha"
         ];
 
         constructor(
@@ -84,7 +85,8 @@
             protected $timeout: ng.ITimeoutService,
             protected $localStorage: common.IWindowStorage,
             protected wishListService: IWishListService,
-            protected $q: ng.IQService) {
+            protected $q: ng.IQService,
+            protected reCaptcha: common.IReCaptchaService) {
         }
 
         $onInit() {
@@ -319,6 +321,7 @@
         }
 
         resetForgotPasswordPopup(): boolean {
+            this.reCaptcha.render("ForgotPassword");
             this.email = "";
             this.userNameToReset = "";
             this.resetPasswordSuccess = false;
@@ -358,6 +361,10 @@
 
             const valid = $("#resetPasswordForm").validate().form();
             if (!valid) {
+                return;
+            }
+
+            if (!this.reCaptcha.validate("ForgotPassword")) {
                 return;
             }
 

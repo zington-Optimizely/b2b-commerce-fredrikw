@@ -1,11 +1,14 @@
-import baseTheme from "@insite/mobius/globals/baseTheme";
+import baseTheme, { BaseTheme, ComponentThemeProps } from "@insite/mobius/globals/baseTheme";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
+import RecursivePartial from "@insite/mobius/utilities/RecursivePartial";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
+import merge from "lodash/merge";
 import * as React from "react";
-import styled, { css } from "styled-components";
+
+import styled, { css, ThemeProvider } from "styled-components";
 
 export type PageProps = MobiusStyledComponentProps<
     "main",
@@ -18,6 +21,8 @@ export type PageProps = MobiusStyledComponentProps<
         padding?: number;
         /** Breakpoints at which the element should be full width. */
         fullWidth?: boolean[];
+        /** This object, which partially matches the BaseTheme, modifies the theme for this page component and all its children */
+        themeMod?: RecursivePartial<ComponentThemeProps>;
     }
 >;
 
@@ -108,7 +113,20 @@ const PageStyle = styled.main<Pick<PageProps, "padding" | "fullWidth" | "backgro
  * The Page component is a basic container whose maximum width is controlled by breakpoints defined in the theme,
  * just like the Grid component. It also allows for an arbitrary padding value.
  */
-const Page: React.FC<PageProps> = props => <PageStyle {...props} data-test-selector={props["data-test-selector"]} />;
+const Page: React.FC<PageProps> = props => {
+    return (
+        <ThemeProvider
+            theme={(theme: BaseTheme) => {
+                if (props.themeMod) {
+                    return merge(theme, props.themeMod);
+                }
+                return theme;
+            }}
+        >
+            <PageStyle {...props} data-test-selector={props["data-test-selector"]} />
+        </ThemeProvider>
+    );
+};
 
 Page.defaultProps = {
     background: "common.background",

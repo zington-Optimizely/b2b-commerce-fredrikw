@@ -8,7 +8,6 @@
             restrict: "A",
             link: (scope, elem, attrs: any) => {
                 const animationSpeed = attrs.animationSpeed;
-                const animation = attrs.animation;
                 const slideshowSpeed = attrs.timerSpeed;
                 const directionNav = attrs.navigationArrows.toString().toLowerCase() === "true";
                 const controlNav = attrs.bullets.toString().toLowerCase() === "true";
@@ -16,7 +15,6 @@
 
                 elem.flexslider({
                     animationSpeed: animationSpeed,
-                    animation: animation,
                     slideshowSpeed: slideshowSpeed,
                     directionNav: directionNav,
                     controlNav: controlNav,

@@ -40,12 +40,12 @@ export const rfqQuoteDetailsPageContainerStyles: RfqQuoteDetailsPageContainerSty
         `,
     },
     mainContainer: { gap: 20 },
-    leftColumnGridItem: { width: [12, 12, 6, 7, 8] },
+    leftColumnGridItem: { width: [12, 12, 12, 7, 8] },
     leftColumnInnerContainer: { gap: 20 },
     leftColumnTopGridItem: { width: 12 },
-    leftColumnMiddleGridItem: { width: [12, 12, 0, 0, 0] },
+    leftColumnMiddleGridItem: { width: [12, 12, 12, 0, 0] },
     leftColumnBottomGridItem: { width: 12 },
-    rigthColumnGridItem: { width: [0, 0, 6, 5, 4] },
+    rigthColumnGridItem: { width: [0, 0, 0, 5, 4] },
 };
 
 const styles = rfqQuoteDetailsPageContainerStyles;

@@ -2,19 +2,17 @@ import { getFocalPointStyles, parserOptions } from "@insite/client-framework/Com
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { responsiveStyleRules } from "@insite/client-framework/Common/Utilities/responsive";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { useGetLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography from "@insite/mobius/Typography";
-import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import { useHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
-import React from "react";
-import { connect } from "react-redux";
+import React, { FC } from "react";
 import { css } from "styled-components";
 
 const enum fields {
@@ -85,14 +83,6 @@ interface OwnProps extends WidgetProps {
     extendedStyles?: BannerStyles;
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const link = getLink(state, ownProps.fields.buttonLink);
-    return {
-        url: link?.url,
-        title: link?.title,
-    };
-};
-
 export interface BannerStyles {
     wrapper?: InjectableCss;
     overlayWrapper?: InjectableCss;
@@ -120,15 +110,14 @@ export const bannerStyles: BannerStyles = {
     },
 };
 
-const onClick = (history: History, link: string | undefined) => {
-    if (link) {
-        history.push(link);
-    }
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
-
-const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }) => {
+const Banner: FC<OwnProps> = ({ fields, extendedStyles }) => {
+    const { url, title } = useGetLink(fields.buttonLink);
+    const history = useHistory();
+    const onClick = () => {
+        if (url) {
+            history.push(url);
+        }
+    };
     const backgroundStyles =
         fields.background === "image"
             ? `background-image: url(${fields.image});
@@ -204,7 +193,7 @@ const Banner: React.FC<Props> = ({ fields, url, title, history, extendedStyles }
                     <Typography>{parse(fields.heading, parserOptions)}</Typography>
                     <Typography>{parse(fields.subheading, parserOptions)}</Typography>
                     {!fields.disableButton && (
-                        <Button {...styles.bannerButton} variant={fields.variant} onClick={() => onClick(history, url)}>
+                        <Button {...styles.bannerButton} variant={fields.variant} onClick={onClick}>
                             {fields.buttonLabel || title || url}
                         </Button>
                     )}
@@ -225,7 +214,7 @@ const settingsTab = {
 };
 
 const banner: WidgetModule = {
-    component: connect(mapStateToProps)(withHistory(Banner)),
+    component: Banner,
     definition: {
         group: "Basic",
         icon: "Banner",

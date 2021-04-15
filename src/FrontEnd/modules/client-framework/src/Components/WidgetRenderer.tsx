@@ -56,6 +56,8 @@ const ErrorWithWidgetStyle = styled.div`
 `;
 
 class WidgetRenderer extends React.PureComponent<Props, State> {
+    // this is required because firefox doesn't set clientY in the drag event that uses this below
+    private clientY = 0;
     private readonly widgetHover = React.createRef<HTMLDivElement>();
 
     constructor(props: Props) {
@@ -78,6 +80,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
     }
 
     componentDidMount() {
+        document.addEventListener("dragover", this.documentDragOver);
         if (module.hot) {
             this.forceUpdate = this.forceUpdate.bind(this);
             registerWidgetUpdate(this.forceUpdate);
@@ -85,10 +88,15 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
     }
 
     componentWillUnmount() {
+        document.removeEventListener("dragover", this.documentDragOver);
         if (module.hot) {
             unregisterWidgetUpdate(this.forceUpdate);
         }
     }
+
+    documentDragOver = (event: DragEvent) => {
+        this.clientY = event.clientY;
+    };
 
     editWidget = () => {
         sendToShell({
@@ -135,9 +143,9 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
         clearInterval(this.scrollIfNeededId);
     };
 
-    drag = (event: React.DragEvent<HTMLElement>) => {
-        const top = event.clientY;
-        const bottom = document.documentElement.clientHeight - event.clientY;
+    drag = () => {
+        const top = this.clientY;
+        const bottom = document.documentElement.clientHeight - this.clientY;
         const fastStep = 30;
         const fastZone = 40;
         const slowStep = 20;

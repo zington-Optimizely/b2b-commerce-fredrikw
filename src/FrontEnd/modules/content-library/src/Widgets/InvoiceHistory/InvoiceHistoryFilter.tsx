@@ -351,10 +351,10 @@ class InvoiceHistoryFilter extends React.Component<Props, State> {
 
         const shipToOptions = this.props.currentShipTosDataView.value || [];
         const fromDate = this.props.getInvoicesParameter.fromDate
-            ? new Date(new Date(this.props.getInvoicesParameter.fromDate).getTime() + tzOffset)
+            ? new Date(this.props.getInvoicesParameter.fromDate.replace(/-/g, "/"))
             : undefined;
         const toDate = this.props.getInvoicesParameter.toDate
-            ? new Date(new Date(this.props.getInvoicesParameter.toDate).getTime() + tzOffset)
+            ? new Date(this.props.getInvoicesParameter.toDate.replace(/-/g, "/"))
             : undefined;
 
         return (

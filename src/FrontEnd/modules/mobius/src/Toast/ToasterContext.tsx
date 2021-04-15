@@ -1,5 +1,6 @@
 import { ToastProps } from "@insite/mobius/Toast";
 import * as React from "react";
+import { useContext } from "react";
 
 export interface ToastContextData {
     addToast: (toastProps: ToastProps) => void;
@@ -16,6 +17,10 @@ const ToasterContext = React.createContext<ToastContextData>({
 export interface HasToasterContext {
     toaster: ToastContextData;
 }
+
+export const useToaster = () => {
+    return useContext(ToasterContext);
+};
 
 export function withToaster<P extends HasToasterContext>(Component: React.ComponentType<P>) {
     return function ToasterComponent(props: Omit<P, keyof HasToasterContext>) {

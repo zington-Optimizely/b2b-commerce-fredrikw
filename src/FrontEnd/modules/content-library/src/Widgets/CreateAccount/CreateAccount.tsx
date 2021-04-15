@@ -1,7 +1,9 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import validatePassword from "@insite/client-framework/Store/CommonHandlers/ValidatePassword";
+import validateReCaptcha from "@insite/client-framework/Store/Components/ReCaptcha/Handlers/ValidateReCaptcha";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import signIn from "@insite/client-framework/Store/Context/Handlers/SignIn";
 import addAccount from "@insite/client-framework/Store/Data/Accounts/Handlers/AddAccount";
@@ -9,6 +11,7 @@ import { getCreateAccountReturnUrl } from "@insite/client-framework/Store/Pages/
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ReCaptcha from "@insite/content-library/Components/ReCaptcha";
 import { CreateAccountPageContext } from "@insite/content-library/Pages/CreateAccountPage";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Checkbox from "@insite/mobius/Checkbox";
@@ -33,6 +36,7 @@ const mapDispatchToProps = {
     addAccount,
     signIn,
     validatePassword,
+    validateReCaptcha: makeHandlerChainAwaitable<{}, boolean>(validateReCaptcha),
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -63,6 +67,7 @@ export interface CreateAccountStyles {
     submitErrorGridItem?: GridItemProps;
     submitErrorTitle?: TypographyProps;
     submitGridItem?: GridItemProps;
+    reCaptchaGridItem?: GridItemProps;
     submitButton?: ButtonPresentationProps;
     requirementsGridItem?: GridItemProps;
     requirementsTitle?: TypographyProps;
@@ -135,6 +140,7 @@ export const createAccountStyles: CreateAccountStyles = {
     submitErrorTitle: {
         color: "danger",
     },
+    reCaptchaGridItem: { width: 12 },
     submitGridItem: {
         width: 12,
         css: css`
@@ -175,7 +181,14 @@ const styles = createAccountStyles;
 const emailRegexp = new RegExp("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 const StyledForm = getStyledWrapper("form");
 
-const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, returnUrl }: Props) => {
+const CreateAccount = ({
+    addAccount,
+    signIn,
+    validatePassword,
+    validateReCaptcha,
+    accountSettings,
+    returnUrl,
+}: Props) => {
     const userNameRequiredFieldMessage = siteMessage("CreateNewAccountInfo_UserName_Required");
     const emailRequiredFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_Required");
     const emailFieldMessage = siteMessage("CreateNewAccountInfo_EmailAddress_ValidEmail");
@@ -271,13 +284,18 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
         }, 500);
     };
 
-    const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!isSubmitted) {
             setIsSubmitted(true);
         }
 
         if (!validateSubmitEnabled()) {
+            return;
+        }
+
+        const isReCaptchaValid = await validateReCaptcha({});
+        if (!isReCaptchaValid) {
             return;
         }
 
@@ -394,6 +412,9 @@ const CreateAccount = ({ addAccount, signIn, validatePassword, accountSettings, 
                                 <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
                             </GridItem>
                         )}
+                        <GridItem {...styles.reCaptchaGridItem}>
+                            <ReCaptcha location="CreateAccount" />
+                        </GridItem>
                         <GridItem {...styles.submitGridItem}>
                             <Button
                                 {...styles.submitButton}

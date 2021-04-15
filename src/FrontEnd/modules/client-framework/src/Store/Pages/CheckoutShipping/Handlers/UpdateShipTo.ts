@@ -133,7 +133,7 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.(hasCartlines);
 };
 
-const chain = [
+export const chain = [
     AddOrUpdateShipTo,
     DispatchShipTosResetDataViews,
     UpdateContext,

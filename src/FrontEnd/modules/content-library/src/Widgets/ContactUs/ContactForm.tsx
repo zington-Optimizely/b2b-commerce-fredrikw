@@ -1,9 +1,12 @@
 import Zone from "@insite/client-framework/Components/Zone";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import clearForm from "@insite/client-framework/Store/Components/ContactUsForm/Handlers/ClearForm";
 import submitContactForm from "@insite/client-framework/Store/Components/ContactUsForm/Handlers/SubmitContactForm";
+import validateReCaptcha from "@insite/client-framework/Store/Components/ReCaptcha/Handlers/ValidateReCaptcha";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import ReCaptcha from "@insite/content-library/Components/ReCaptcha";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -30,6 +33,7 @@ interface OwnProps extends WidgetProps {
 const mapDispatchToProps = {
     submitContactForm,
     clearForm,
+    validateReCaptcha: makeHandlerChainAwaitable<{}, boolean>(validateReCaptcha),
 };
 
 type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
@@ -80,13 +84,13 @@ export const ContactFormContext = React.createContext<ContextType>({
     validators: {},
 });
 
-const ContactForm = ({ id, fields, submitContactForm, clearForm }: Props) => {
+const ContactForm = ({ id, fields, submitContactForm, clearForm, validateReCaptcha }: Props) => {
     const { emailRecipients, submitButtonText, successMessage } = fields;
     const [validators] = useState<{ [key: string]: Validator | undefined }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const widgetValidators: Validator[] = [];
         Object.keys(validators).forEach(key => {
@@ -96,21 +100,28 @@ const ContactForm = ({ id, fields, submitContactForm, clearForm }: Props) => {
             }
         });
         const results = widgetValidators.map(v => v());
-        if (results.every(o => o)) {
-            setIsSubmitting(true);
-            submitContactForm({
-                emailRecipients,
-                onSuccess: () => {
-                    setIsModalOpen(true);
-                    setIsSubmitting(false);
-                },
-                onComplete() {
-                    // "this" is targeting the object being created, not the parent SFC
-                    // eslint-disable-next-line react/no-this-in-sfc
-                    this.onSuccess?.();
-                },
-            });
+        if (!results.every(o => o)) {
+            return;
         }
+
+        const isReCaptchaValid = await validateReCaptcha({});
+        if (!isReCaptchaValid) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        submitContactForm({
+            emailRecipients,
+            onSuccess: () => {
+                setIsModalOpen(true);
+                setIsSubmitting(false);
+            },
+            onComplete() {
+                // "this" is targeting the object being created, not the parent SFC
+                // eslint-disable-next-line react/no-this-in-sfc
+                this.onSuccess?.();
+            },
+        });
     };
 
     const modalCloseHandler = () => setIsModalOpen(false);
@@ -126,6 +137,7 @@ const ContactForm = ({ id, fields, submitContactForm, clearForm }: Props) => {
                 <ContactFormContext.Provider value={{ validators }}>
                     <form id="contactForm" onSubmit={handleFormSubmit} noValidate>
                         <Zone contentId={id} zoneName="Content" />
+                        <ReCaptcha location="ContactUs" />
                         <Button {...styles.submitButton} type="submit" disabled={isSubmitting}>
                             {submitButtonText}
                         </Button>

@@ -1,3 +1,5 @@
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { InvoiceStateContext } from "@insite/client-framework/Store/Data/Invoices/InvoicesSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -6,8 +8,15 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
-import React, { FC, Fragment, useContext } from "react";
+import React, { Fragment, useContext } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
+
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+});
+
+type Props = ReturnType<typeof mapStateToProps>;
 
 export interface InvoiceDetailsTotalStyles {
     container?: GridContainerProps;
@@ -72,7 +81,8 @@ export const totalStyles: InvoiceDetailsTotalStyles = {
 };
 
 const styles = totalStyles;
-const InvoiceDetailsTotal: FC = () => {
+
+const InvoiceDetailsTotal = ({ enableVat }: Props) => {
     const { value: invoice } = useContext(InvoiceStateContext);
     if (!invoice) {
         return null;
@@ -81,7 +91,9 @@ const InvoiceDetailsTotal: FC = () => {
     return (
         <GridContainer {...styles.container} data-test-selector="invoiceDetails_total">
             <GridItem {...styles.labelGridItem}>
-                <Typography {...styles.subtotalLabelText}>{translate("Subtotal")}</Typography>
+                <Typography {...styles.subtotalLabelText}>
+                    {translate("Subtotal") + (enableVat ? ` (${translate("Ex. VAT")})` : "")}
+                </Typography>
             </GridItem>
             <GridItem {...styles.valueGridItem}>
                 <Typography {...styles.subtotalValueText}>{invoice.productTotalDisplay}</Typography>
@@ -123,7 +135,9 @@ const InvoiceDetailsTotal: FC = () => {
             {(!invoice.invoiceHistoryTaxes || invoice.invoiceHistoryTaxes.length === 0) && (
                 <>
                     <GridItem {...styles.labelGridItem}>
-                        <Typography {...styles.taxLabelText}>{translate("Taxes")}</Typography>
+                        <Typography {...styles.taxLabelText}>
+                            {enableVat ? translate("VAT") : translate("Tax")}
+                        </Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
                         <Typography {...styles.taxValueText}>{invoice.taxAmountDisplay}</Typography>
@@ -157,7 +171,7 @@ const InvoiceDetailsTotal: FC = () => {
 };
 
 const widgetModule: WidgetModule = {
-    component: InvoiceDetailsTotal,
+    component: connect(mapStateToProps)(InvoiceDetailsTotal),
     definition: {
         group: "Invoice History",
         displayName: "Total",

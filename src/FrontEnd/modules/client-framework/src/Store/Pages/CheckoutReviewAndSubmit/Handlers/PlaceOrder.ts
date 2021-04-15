@@ -24,6 +24,7 @@ const convertDateToApiFormat = (date: Date | null) => (date ? formatDateWithTime
 interface PlaceOrderParameter {
     paymentMethod: string;
     poNumber: string;
+    vatNumber?: string;
     saveCard: boolean;
     cardHolderName: string;
     cardNumber: string;
@@ -70,6 +71,7 @@ export const SetCartStatus: HandlerType = props => {
         ...cloneDeep(cart),
         status: cart.requiresApproval ? "AwaitingApproval" : "Submitted",
         poNumber: props.parameter.poNumber,
+        customerVatNumber: props.parameter.vatNumber || "",
     };
 };
 

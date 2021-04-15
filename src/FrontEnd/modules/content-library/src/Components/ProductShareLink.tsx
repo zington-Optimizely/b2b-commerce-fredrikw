@@ -1,10 +1,13 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { HasProduct, withProduct } from "@insite/client-framework/Components/ProductContext";
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import shareProduct from "@insite/client-framework/Store/CommonHandlers/ShareProduct";
+import validateReCaptcha from "@insite/client-framework/Store/Components/ReCaptcha/Handlers/ValidateReCaptcha";
 import translate from "@insite/client-framework/Translate";
+import ReCaptcha from "@insite/content-library/Components/ReCaptcha";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
@@ -31,6 +34,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 
 const mapDispatchToProps = {
     shareProduct,
+    validateReCaptcha: makeHandlerChainAwaitable<{}, boolean>(validateReCaptcha),
 };
 
 export interface ProductShareLinkStyles {
@@ -47,6 +51,7 @@ export interface ProductShareLinkStyles {
     yourEmailTextField?: TextFieldProps;
     yourMessageGridItem?: GridItemProps;
     yourMessageTextArea?: TextAreaProps;
+    reCaptchaGridItem?: GridItemProps;
     buttonsWrapper?: InjectableCss;
     cancelButton?: ButtonPresentationProps;
     shareButton?: ButtonPresentationProps;
@@ -99,6 +104,9 @@ export const productShareLinkStyles: ProductShareLinkStyles = {
             `,
         },
     },
+    reCaptchaGridItem: {
+        width: 12,
+    },
     buttonsWrapper: {
         css: css`
             margin-top: 30px;
@@ -115,7 +123,15 @@ export const productShareLinkStyles: ProductShareLinkStyles = {
     },
 };
 
-const ProductShareLink: React.FC<Props> = ({ product, productInfo, text, session, shareProduct, extendedStyles }) => {
+const ProductShareLink = ({
+    product,
+    productInfo,
+    text,
+    session,
+    shareProduct,
+    validateReCaptcha,
+    extendedStyles,
+}: Props) => {
     const toasterContext = React.useContext(ToasterContext);
     const [styles] = React.useState(() => mergeToNew(productShareLinkStyles, extendedStyles));
     const isAuthenticated = (session.isAuthenticated || session.rememberMe) && !session.isGuest;
@@ -207,8 +223,13 @@ const ProductShareLink: React.FC<Props> = ({ product, productInfo, text, session
         setYourMessageError(!event.target.value ? requiredFieldMessage : "");
     };
 
-    const shareButtonClickHandler = () => {
+    const shareButtonClickHandler = async () => {
         if (checkForErrors()) {
+            return;
+        }
+
+        const isReCaptchaValid = await validateReCaptcha({});
+        if (!isReCaptchaValid) {
             return;
         }
 
@@ -295,6 +316,9 @@ const ProductShareLink: React.FC<Props> = ({ product, productInfo, text, session
                             data-test-selector="productShareYourMessage"
                             {...styles.yourMessageTextArea}
                         />
+                    </GridItem>
+                    <GridItem {...styles.reCaptchaGridItem}>
+                        <ReCaptcha location="ShareProduct" />
                     </GridItem>
                 </GridContainer>
                 <StyledWrapper {...styles.buttonsWrapper}>

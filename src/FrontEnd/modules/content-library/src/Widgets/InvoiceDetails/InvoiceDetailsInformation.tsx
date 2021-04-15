@@ -37,6 +37,7 @@ export interface InvoiceDetailsInformationStyles {
     poNumberGridItem?: GridItemProps;
     salespersonGridItem?: GridItemProps;
     dueDateGridItem?: GridItemProps;
+    vatNumberGridItem?: GridItemProps;
     billingAddressGridItem?: GridItemProps;
     shippingAddressGridItem?: GridItemProps;
     invoiceNotesGridItem?: GridItemProps;
@@ -88,6 +89,9 @@ export const informationStyles: InvoiceDetailsInformationStyles = {
         width: [6, 6, 6, 3, 3],
     },
     dueDateGridItem: {
+        width: [6, 6, 6, 3, 3],
+    },
+    vatNumberGridItem: {
         width: [6, 6, 6, 3, 3],
     },
     billingAddressGridItem: {
@@ -160,6 +164,15 @@ const InvoiceDetailsInformation: FC<Props> = ({ language }: Props) => {
                             })}
                         />
                     </GridItem>
+                    {invoice.customerVatNumber && (
+                        <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.vatNumberGridItem)}>
+                            <SmallHeadingAndText
+                                extendedStyles={styles.headingAndTextStyles}
+                                heading={translate("VAT Number")}
+                                text={invoice.customerVatNumber}
+                            />
+                        </GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
             <GridItem {...mergeToNew(styles.invoiceInformationGridItems, styles.billingAddressGridItem)}>

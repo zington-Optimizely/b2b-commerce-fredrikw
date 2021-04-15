@@ -9,6 +9,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
 import { connect } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     language: state.context.session.language,
@@ -37,7 +38,13 @@ export interface OrderSummaryCardStyles {
 }
 
 export const orderSummaryCardStyles: OrderSummaryCardStyles = {
-    orderSummaryCardGridItem: { width: 12 },
+    orderSummaryCardGridItem: {
+        width: 12,
+        css: css`
+            padding: 0 20px;
+            max-width: 500px;
+        `,
+    },
     container: { gap: 5 },
     pageTypeLinkGridItem: { width: 12 },
     orderNumberGridItem: { width: 6 },

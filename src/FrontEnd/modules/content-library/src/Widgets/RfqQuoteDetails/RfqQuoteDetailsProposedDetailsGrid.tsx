@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getQuoteState } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import translate from "@insite/client-framework/Translate";
 import RfqQuoteDetailsProposedDetailsGridItem, {
@@ -14,6 +15,8 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     quoteState: getQuoteState(state, state.pages.rfqQuoteDetails.quoteId),
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 type Props = ReturnType<typeof mapStateToProps>;
@@ -27,6 +30,8 @@ export interface RfqQuoteDetailsProposedDetailsGridStyles {
     footerWrapper?: InjectableCss;
     totalLabelText?: TypographyPresentationProps;
     totalValueText?: TypographyPresentationProps;
+    vatLabelText?: TypographyPresentationProps;
+    totalWithoutVatText?: TypographyPresentationProps;
 }
 
 export const rfqQuoteDetailsProposedDetailsGridStyles: RfqQuoteDetailsProposedDetailsGridStyles = {
@@ -49,6 +54,8 @@ export const rfqQuoteDetailsProposedDetailsGridStyles: RfqQuoteDetailsProposedDe
     footerWrapper: {
         css: css`
             display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             justify-content: flex-end;
             margin-top: 20px;
         `,
@@ -63,11 +70,20 @@ export const rfqQuoteDetailsProposedDetailsGridStyles: RfqQuoteDetailsProposedDe
     totalValueText: {
         size: 20,
     },
+    vatLabelText: {
+        size: 12,
+    },
+    totalWithoutVatText: {
+        size: 20,
+        css: css`
+            margin-top: 5px;
+        `,
+    },
 };
 
 const styles = rfqQuoteDetailsProposedDetailsGridStyles;
 
-const RfqQuoteDetailsProposedDetailsGrid = ({ quoteState }: Props) => {
+const RfqQuoteDetailsProposedDetailsGrid = ({ quoteState, enableVat, vatPriceDisplay }: Props) => {
     const quote = quoteState.value;
     if (!quote || !quote.quoteLineCollection) {
         return null;
@@ -94,8 +110,27 @@ const RfqQuoteDetailsProposedDetailsGrid = ({ quoteState }: Props) => {
             <StyledWrapper {...styles.footerWrapper}>
                 <Typography {...styles.totalValueText} as="p">
                     <Typography {...styles.totalLabelText}>{translate("Total")}:</Typography>
-                    {quote.orderSubTotalDisplay}
+                    {enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                        ? quote.orderGrandTotalDisplay
+                        : quote.orderSubTotalDisplay}
                 </Typography>
+                {enableVat && (
+                    <>
+                        <Typography as="p" {...styles.vatLabelText}>
+                            {vatPriceDisplay === "DisplayWithVat" || vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                ? translate("Inc. VAT")
+                                : translate("Ex. VAT")}
+                        </Typography>
+                        {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                            <>
+                                <Typography {...styles.totalWithoutVatText}>{quote.orderSubTotalDisplay}</Typography>
+                                <Typography as="p" {...styles.vatLabelText}>
+                                    {translate("Ex. VAT")}
+                                </Typography>
+                            </>
+                        )}
+                    </>
+                )}
             </StyledWrapper>
         </StyledWrapper>
     );

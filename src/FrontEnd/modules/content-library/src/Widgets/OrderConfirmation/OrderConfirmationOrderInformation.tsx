@@ -1,4 +1,5 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
@@ -28,6 +29,7 @@ const mapStateToProps = (state: ApplicationState) => {
         billTo: getBillToState(state, cart?.billToId).value,
         shipTo: getShipToState(state, cart?.shipToId).value,
         pickUpWarehouse: state.context.session.pickUpWarehouse,
+        enableVat: getSettingsCollection(state).productSettings.enableVat,
     };
 };
 
@@ -42,6 +44,9 @@ export interface OrderConfirmationOrderInformationStyles {
     orderNumberHeading?: TypographyProps;
     orderNumberText?: TypographyPresentationProps;
     shippingInformationGridItem?: GridItemProps;
+    vatNumberGridItem?: GridItemProps;
+    vatNumberTitleText?: TypographyPresentationProps;
+    vatNumberText?: TypographyPresentationProps;
     orderConfirmationShippingInformation?: OrderConfirmationShippingInformationStyles;
     billingInformationGridItem?: GridItemProps;
     orderConfirmationBillingInformation?: OrderConfirmationBillingInformationStyles;
@@ -66,6 +71,18 @@ export const orderInformationStyles: OrderConfirmationOrderInformationStyles = {
     },
     shippingInformationGridItem: {
         width: 12,
+    },
+    vatNumberGridItem: {
+        width: 12,
+        css: css`
+            flex-direction: column;
+        `,
+    },
+    vatNumberTitleText: {
+        variant: "h6",
+        css: css`
+            margin-bottom: 5px;
+        `,
     },
     billingInformationGridItem: {
         width: 12,
@@ -124,6 +141,14 @@ const OrderConfirmationOrderInformation: FC<Props> = props => {
                     extendedStyles={styles.orderConfirmationShippingInformation}
                 />
             </GridItem>
+            {props.enableVat && props.cart.customerVatNumber && (
+                <GridItem {...styles.vatNumberGridItem}>
+                    <Typography {...styles.vatNumberTitleText} as="h3">
+                        {translate("VAT Number")}
+                    </Typography>
+                    <Typography {...styles.vatNumberText}>{props.cart.customerVatNumber}</Typography>
+                </GridItem>
+            )}
             <GridItem {...styles.billingInformationGridItem}>
                 <OrderConfirmationBillingInformation
                     cart={props.cart}

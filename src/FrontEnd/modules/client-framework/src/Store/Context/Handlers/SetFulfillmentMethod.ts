@@ -40,7 +40,7 @@ export const DispatchCompleteLoadSession: HandlerType = props => {
     });
 };
 
-const chain = [PopulateApiParameter, UpdateContext, UpdateSession, LoadCart, DispatchCompleteLoadSession];
+export const chain = [PopulateApiParameter, UpdateContext, UpdateSession, LoadCart, DispatchCompleteLoadSession];
 
 const setFulfillmentMethod = createHandlerChainRunner(chain, "SetFulfillmentMethod");
 export default setFulfillmentMethod;

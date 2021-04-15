@@ -1,8 +1,10 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import {
     getCurrentPageJobQuoteState,
     getCurrentPageOrderTotal,
+    getCurrentPageOrderTotalWithVat,
     getQtyOrderedByJobQuoteLineId,
 } from "@insite/client-framework/Store/Data/JobQuotes/JobQuotesSelector";
 import translate from "@insite/client-framework/Translate";
@@ -22,6 +24,9 @@ const mapStateToProps = (state: ApplicationState) => ({
     jobQuoteState: getCurrentPageJobQuoteState(state),
     qtyOrderedByJobQuoteLineId: getQtyOrderedByJobQuoteLineId(state),
     orderTotal: getCurrentPageOrderTotal(state),
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+    orderTotalWithVat: getCurrentPageOrderTotalWithVat(state),
 });
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
@@ -34,6 +39,8 @@ export interface RfqJobQuoteDetailsProductListStyles {
     footerWrapper?: InjectableCss;
     totalLabelText?: TypographyPresentationProps;
     totalValueText?: TypographyPresentationProps;
+    vatLabelText?: TypographyPresentationProps;
+    totalWithoutVatText?: TypographyPresentationProps;
 }
 
 export const rfqJobQuoteDetailsProductListStyles: RfqJobQuoteDetailsProductListStyles = {
@@ -55,6 +62,8 @@ export const rfqJobQuoteDetailsProductListStyles: RfqJobQuoteDetailsProductListS
     footerWrapper: {
         css: css`
             display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             justify-content: flex-end;
             margin-top: 20px;
         `,
@@ -69,11 +78,27 @@ export const rfqJobQuoteDetailsProductListStyles: RfqJobQuoteDetailsProductListS
             margin-left: 10px;
         `,
     },
+    vatLabelText: {
+        size: 12,
+    },
+    totalWithoutVatText: {
+        size: 20,
+        weight: "bold",
+        css: css`
+            margin-top: 5px;
+        `,
+    },
 };
 
 const styles = rfqJobQuoteDetailsProductListStyles;
 
-const RfqJobQuoteDetailsProductList = ({ jobQuoteState, orderTotal }: Props) => {
+const RfqJobQuoteDetailsProductList = ({
+    jobQuoteState,
+    orderTotal,
+    enableVat,
+    vatPriceDisplay,
+    orderTotalWithVat,
+}: Props) => {
     const jobQuote = jobQuoteState.value;
     if (!jobQuote || !jobQuote.jobQuoteLineCollection) {
         return null;
@@ -100,11 +125,34 @@ const RfqJobQuoteDetailsProductList = ({ jobQuoteState, orderTotal }: Props) => 
             ))}
             <StyledWrapper {...styles.footerWrapper}>
                 <Typography {...styles.totalLabelText}>
-                    {translate("Total")}
+                    {translate("Total")}:
                     <Typography {...styles.totalValueText}>
-                        <LocalizedCurrency amount={orderTotal} />
+                        <LocalizedCurrency
+                            amount={
+                                enableVat && vatPriceDisplay !== "DisplayWithoutVat" ? orderTotalWithVat : orderTotal
+                            }
+                        />
                     </Typography>
                 </Typography>
+                {enableVat && (
+                    <>
+                        <Typography as="p" {...styles.vatLabelText}>
+                            {vatPriceDisplay === "DisplayWithVat" || vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                ? translate("Inc. VAT")
+                                : translate("Ex. VAT")}
+                        </Typography>
+                        {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                            <>
+                                <Typography {...styles.totalWithoutVatText}>
+                                    <LocalizedCurrency amount={orderTotal} />
+                                </Typography>
+                                <Typography as="p" {...styles.vatLabelText}>
+                                    {translate("Ex. VAT")}
+                                </Typography>
+                            </>
+                        )}
+                    </>
+                )}
             </StyledWrapper>
         </StyledWrapper>
     );

@@ -208,11 +208,17 @@ export const DispatchLoadProducts: HandlerType = async props => {
 export const GetUnfilteredProducts: HandlerType = async props => {
     const unfilteredApiParameter = { ...props.apiParameter };
     delete unfilteredApiParameter.searchWithin;
-    delete unfilteredApiParameter.brandIds;
-    delete unfilteredApiParameter.productLineIds;
+    if (!props.result.productFilters.pageBrandId) {
+        delete unfilteredApiParameter.brandIds;
+    }
+    if (!props.result.productFilters.pageProductLineId) {
+        delete unfilteredApiParameter.productLineIds;
+    }
     delete unfilteredApiParameter.priceFilters;
     delete unfilteredApiParameter.attributeValueIds;
-    delete unfilteredApiParameter.categoryId;
+    if (!props.result.productFilters.pageCategoryId) {
+        delete unfilteredApiParameter.categoryId;
+    }
     unfilteredApiParameter.stockedItemsOnly = false;
     unfilteredApiParameter.previouslyPurchasedProducts = false;
 

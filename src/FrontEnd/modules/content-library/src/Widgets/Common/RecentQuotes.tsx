@@ -15,6 +15,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
     const session = getSession(state);
@@ -69,7 +70,12 @@ class RecentQuotes extends React.Component<Props> {
         const myQuotesPageUrl = myQuotesPageNavLink ? myQuotesPageNavLink.url : undefined;
 
         return (
-            <CardList extendedStyles={styles.cardList}>
+            <CardList
+                css={css`
+                    padding-bottom: 50px;
+                `}
+                extendedStyles={styles.cardList}
+            >
                 <CardListHeading heading={translate("Recent Quotes")} viewAllUrl={myQuotesPageUrl} />
                 {quotesDataView.value.length === 0 && (
                     <GridItem {...styles.noQuotesGridItem}>

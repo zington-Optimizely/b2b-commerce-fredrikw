@@ -15,11 +15,41 @@ export const getUnitNetPrice = (pricing: ProductPriceDto, qtyOrdered: number) =>
     return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
 };
 
+export const getUnitRegularPrice = (pricing: ProductPriceDto, qtyOrdered: number) => {
+    const price = getPrice(
+        pricing.unitRegularBreakPrices,
+        pricing.unitRegularPrice,
+        pricing.unitRegularPriceDisplay,
+        qtyOrdered,
+    );
+    return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
+};
+
+export const getUnitRegularPriceWithVat = (pricing: ProductPriceDto, qtyOrdered: number) => {
+    const price = getPriceWithVat(
+        pricing.unitRegularBreakPrices,
+        pricing.unitRegularPriceWithVat,
+        pricing.unitRegularPriceWithVatDisplay,
+        qtyOrdered,
+    );
+    return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
+};
+
 export const getUnitListPrice = (pricing: ProductPriceDto, qtyOrdered: number) => {
     const price = getPrice(
         pricing.unitListBreakPrices,
         pricing.unitListPrice,
         pricing.unitListPriceDisplay,
+        qtyOrdered,
+    );
+    return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
+};
+
+export const getUnitListPriceWithVat = (pricing: ProductPriceDto, qtyOrdered: number) => {
+    const price = getPriceWithVat(
+        pricing.unitListBreakPrices,
+        pricing.unitListPriceWithVat,
+        pricing.unitListPriceWithVatDisplay,
         qtyOrdered,
     );
     return { price: price.price, priceDisplay: price.priceDisplay } as PriceModel;
@@ -37,6 +67,20 @@ const getPrice = (breaks: BreakPriceDto[] | null, price: number, priceToDisplay:
     }
 
     return { price: breakPrice.breakPrice, priceDisplay: breakPrice.breakPriceDisplay } as PriceModel;
+};
+
+const getPriceWithVat = (breaks: BreakPriceDto[] | null, price: number, priceToDisplay: string, qty: any) => {
+    const quantity = !qty || qty === "0" ? 1 : qty;
+    if (conditionBreakPrice(breaks, quantity)) {
+        return { price, priceDisplay: priceToDisplay } as PriceModel;
+    }
+
+    const breakPrice = getBreakPrice(breaks, quantity);
+    if (!breakPrice || (breakPrice && price < breakPrice.breakPrice)) {
+        return { price, priceDisplay: priceToDisplay } as PriceModel;
+    }
+
+    return { price: breakPrice.breakPriceWithVat, priceDisplay: breakPrice.breakPriceWithVatDisplay } as PriceModel;
 };
 
 const conditionBreakPrice = (breaks: BreakPriceDto[] | null, count: number) => {

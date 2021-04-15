@@ -32,12 +32,35 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & OwnProps;
 
-interface State {}
+interface State {
+    canChangeContext: boolean;
+}
 
 const primaryContrast = shellTheme.colors.primary.contrast;
 const commonDisabled = shellTheme.colors.common.disabled;
 
 class HeaderBar extends React.Component<Props, State> {
+    private intervalId: number;
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            canChangeContext: (window as any).frameHoleIsReady,
+        };
+
+        this.intervalId = setInterval(() => {
+            if (this.state.canChangeContext !== (window as any).frameHoleIsReady) {
+                this.setState({
+                    canChangeContext: (window as any).frameHoleIsReady,
+                });
+            }
+        }, 100);
+    }
+
+    componentWillUnmount() {
+        clearImmediate(this.intervalId);
+    }
+
     UNSAFE_componentWillMount(): void {
         if (this.props.languages.length === 0) {
             this.props.loadShellContext();
@@ -82,6 +105,8 @@ class HeaderBar extends React.Component<Props, State> {
             return null;
         }
 
+        const disableSelects = disabled || !this.state.canChangeContext;
+
         const { hasDeviceSpecificContent, hasPersonaSpecificContent } = languages.filter(
             o => o.id === currentLanguageId,
         )[0];
@@ -94,7 +119,7 @@ class HeaderBar extends React.Component<Props, State> {
                         onChange={this.onLanguageChange}
                         data-test-selector="headerBar_languageSelect"
                         value={currentLanguageId}
-                        disabled={disabled}
+                        disabled={disableSelects}
                     >
                         {languages.map(({ id, description }) => (
                             <option key={id} value={id}>
@@ -102,20 +127,24 @@ class HeaderBar extends React.Component<Props, State> {
                             </option>
                         ))}
                     </select>
-                    <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
+                    <ArrowDown color1={disableSelects ? commonDisabled : primaryContrast} height={7} />
                 </SelectWrapper>
                 {hasDeviceSpecificContent && (
                     <>
                         <Icon src="Monitor" size={20} color="#ffffff87" />
                         <SelectWrapper>
-                            <select onChange={this.onDeviceTypeChange} value={currentDeviceType} disabled={disabled}>
+                            <select
+                                onChange={this.onDeviceTypeChange}
+                                value={currentDeviceType}
+                                disabled={disableSelects}
+                            >
                                 {deviceTypes.map(deviceType => (
                                     <option key={deviceType} value={deviceType}>
                                         {deviceType}
                                     </option>
                                 ))}
                             </select>
-                            <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
+                            <ArrowDown color1={disableSelects ? commonDisabled : primaryContrast} height={7} />
                         </SelectWrapper>
                     </>
                 )}
@@ -127,7 +156,7 @@ class HeaderBar extends React.Component<Props, State> {
                                 onChange={this.onPersonaChange}
                                 data-test-selector="headerBar_personaSelect"
                                 value={currentPersonaId}
-                                disabled={disabled}
+                                disabled={disableSelects}
                             >
                                 {personas.map(({ id, name }) => (
                                     <option key={id} value={id}>
@@ -135,7 +164,7 @@ class HeaderBar extends React.Component<Props, State> {
                                     </option>
                                 ))}
                             </select>
-                            <ArrowDown color1={disabled ? commonDisabled : primaryContrast} height={7} />
+                            <ArrowDown color1={disableSelects ? commonDisabled : primaryContrast} height={7} />
                         </SelectWrapper>
                     </>
                 )}

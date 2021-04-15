@@ -2,9 +2,6 @@ import { RichTextFieldDefinition } from "@insite/client-framework/Types/FieldDef
 import StandardControl from "@insite/shell-public/Components/StandardControl";
 import { EditorTemplateProps } from "@insite/shell-public/EditorTemplateProps";
 import RichTextEditor from "@insite/shell/Components/Elements/RichTextEditor";
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/xml/xml.js";
-import "font-awesome/css/font-awesome.css";
 import * as React from "react";
 
 type Props = EditorTemplateProps<string, RichTextFieldDefinition>;

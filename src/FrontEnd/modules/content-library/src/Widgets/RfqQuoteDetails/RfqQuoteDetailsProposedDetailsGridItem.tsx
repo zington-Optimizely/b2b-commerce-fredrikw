@@ -1,4 +1,6 @@
 import useAccessibleSubmit from "@insite/client-framework/Common/Hooks/useAccessibleSubmit";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import updateQuoteLine from "@insite/client-framework/Store/Pages/RfqQuoteDetails/Handlers/UpdateQuoteLine";
 import translate from "@insite/client-framework/Translate";
 import { QuoteLineModel, QuoteModel } from "@insite/client-framework/Types/ApiModels";
@@ -30,11 +32,16 @@ interface OwnProps {
     extendedStyles?: RfqQuoteDetailsProposedDetailsGridItemStyles;
 }
 
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+});
+
 const mapDispatchToProps = {
     updateQuoteLine,
 };
 
-type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface RfqQuoteDetailsProposedDetailsGridItemStyles {
     container?: GridContainerProps;
@@ -58,6 +65,8 @@ export interface RfqQuoteDetailsProposedDetailsGridItemStyles {
     quantityTextField?: TextFieldPresentationProps;
     subtotalGridItem?: GridItemProps;
     subtotalText?: TypographyPresentationProps;
+    vatLabelText?: TypographyPresentationProps;
+    subtotalWithoutVatText?: TypographyPresentationProps;
     notesAndCostCodeGridItem?: GridItemProps;
     notesAndCostCodesContainer?: GridContainerProps;
     notesGridItem?: GridItemProps;
@@ -87,7 +96,7 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
         gap: 20,
     },
     infoLeftColumn: {
-        width: [12, 12, 12, 6, 6],
+        width: [12, 12, 6, 6, 5],
     },
     infoLeftColumnContainer: {
         gap: 20,
@@ -106,7 +115,7 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
         },
     },
     quotedPricingGridItem: {
-        width: [12, 12, 12, 4, 4],
+        width: [12, 12, 6, 6, 5],
         css: css`
             flex-direction: column;
         `,
@@ -115,20 +124,34 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
         weight: "bold",
     },
     quantityAndSubtotalGridItem: {
-        width: [12, 12, 12, 2, 2],
+        width: [12, 12, 12, 12, 2],
     },
     quantityAndSubtotalContainer: {
         gap: 20,
     },
     quantityGridItem: {
-        width: [6, 6, 6, 12, 12],
+        width: [6, 6, 6, 6, 12],
     },
     subtotalGridItem: {
-        width: [6, 6, 6, 12, 12],
+        width: [6, 6, 6, 6, 12],
         align: "bottom",
+        css: css`
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+        `,
     },
     subtotalText: {
         weight: 700,
+    },
+    vatLabelText: {
+        size: 12,
+    },
+    subtotalWithoutVatText: {
+        weight: "bold",
+        css: css`
+            margin-top: 5px;
+        `,
     },
     notesAndCostCodeGridItem: {
         width: 12,
@@ -162,7 +185,13 @@ export const rfqQuoteDetailsProposedDetailsGridItemStyles: RfqQuoteDetailsPropos
 
 const styles = rfqQuoteDetailsProposedDetailsGridItemStyles;
 
-const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteLine }: Props) => {
+const RfqQuoteDetailsProposedDetailsGridItem = ({
+    quote,
+    quoteLine,
+    enableVat,
+    vatPriceDisplay,
+    updateQuoteLine,
+}: Props) => {
     const toasterContext = useContext(ToasterContext);
 
     const qtyOrderedSubmitHandler = (value: string) => {
@@ -296,8 +325,30 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteL
                                     <>
                                         <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
                                         <Typography {...styles.subtotalText}>
-                                            {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                            {enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                ? quoteLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                : quoteLine.pricing.extendedUnitNetPriceDisplay}
                                         </Typography>
+                                        {enableVat && (
+                                            <>
+                                                <Typography as="p" {...styles.vatLabelText}>
+                                                    {vatPriceDisplay === "DisplayWithVat" ||
+                                                    vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                                        ? `${translate("Inc. VAT")} (${quoteLine.pricing.vatRate}%)`
+                                                        : translate("Ex. VAT")}
+                                                </Typography>
+                                                {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                                    <>
+                                                        <Typography {...styles.subtotalWithoutVatText}>
+                                                            {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                                        </Typography>
+                                                        <Typography as="p" {...styles.vatLabelText}>
+                                                            {translate("Ex. VAT")}
+                                                        </Typography>
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
                                     </>
                                 )}
                             </GridItem>
@@ -347,4 +398,4 @@ const RfqQuoteDetailsProposedDetailsGridItem = ({ quote, quoteLine, updateQuoteL
     );
 };
 
-export default connect(null, mapDispatchToProps)(RfqQuoteDetailsProposedDetailsGridItem);
+export default connect(mapStateToProps, mapDispatchToProps)(RfqQuoteDetailsProposedDetailsGridItem);

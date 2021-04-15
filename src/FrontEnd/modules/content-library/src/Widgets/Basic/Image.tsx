@@ -1,6 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { useGetLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -8,7 +7,7 @@ import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect } from "react-redux";
+import { FC } from "react";
 import { css } from "styled-components";
 
 const enum fields {
@@ -24,13 +23,6 @@ interface OwnProps extends WidgetProps {
         [fields.imageLink]: LinkFieldValue;
     };
 }
-
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const link = getLink(state, ownProps.fields.imageLink);
-    return { pageUrl: link?.url };
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface ImageStyles {
     wrapper?: InjectableCss;
@@ -48,13 +40,14 @@ export const imageStyles: ImageStyles = {
 
 const styles = imageStyles;
 
-const Image: React.FunctionComponent<Props> = ({ fields, pageUrl }: Props) => {
+const Image: FC<OwnProps> = ({ fields }) => {
+    const { url } = useGetLink(fields.imageLink);
     const image = <LazyImage src={fields.imageUrl} altText={fields.altText} {...styles.image} />;
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            {pageUrl ? (
-                <Link href={pageUrl} {...styles.imageLink}>
+            {url ? (
+                <Link href={url} {...styles.imageLink}>
                     {image}
                 </Link>
             ) : (
@@ -65,7 +58,7 @@ const Image: React.FunctionComponent<Props> = ({ fields, pageUrl }: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(Image),
+    component: Image,
     definition: {
         group: "Basic",
         icon: "Image",

@@ -64,6 +64,10 @@ export const DispatchResetAccounts: HandlerType = props => {
 };
 
 export const ExecuteOnSuccessCallback: HandlerType = props => {
+    if (!props.apiResult.successful) {
+        return;
+    }
+
     props.parameter.onSuccess?.();
 };
 

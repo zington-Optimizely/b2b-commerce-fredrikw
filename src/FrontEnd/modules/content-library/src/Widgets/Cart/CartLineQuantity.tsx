@@ -25,6 +25,7 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     isLoading: state.data.carts.isLoading,
+    cartLoadedTime: state.data.carts.cartLoadedTime,
 });
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasCartLineContext;
@@ -48,6 +49,7 @@ const CartLineQuantity: FC<Props> = ({
     editable = false,
     label,
     isLoading,
+    cartLoadedTime,
     onQtyOrderedChange = () => {},
     extendedStyles,
 }) => {
@@ -63,6 +65,7 @@ const CartLineQuantity: FC<Props> = ({
     const { value, changeHandler, keyDownHandler, blurHandler } = useAccessibleSubmit(
         cartLine.qtyOrdered!.toString(),
         localOnQtyOrderedChange,
+        cartLoadedTime,
     );
 
     const [styles] = React.useState(() => mergeToNew(cartLineQuantityStyles, extendedStyles));

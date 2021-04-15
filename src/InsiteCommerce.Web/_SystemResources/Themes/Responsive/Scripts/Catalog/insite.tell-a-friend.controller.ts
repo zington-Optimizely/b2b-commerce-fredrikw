@@ -8,14 +8,15 @@
         isError: boolean;
         inProgress: boolean;
 
-        static $inject = ["$scope", "emailService", "$timeout", "coreService", "tellAFriendPopupService"];
+        static $inject = ["$scope", "emailService", "$timeout", "coreService", "tellAFriendPopupService", "reCaptcha"];
 
         constructor(
             protected $scope: ng.IScope,
             protected emailService: email.IEmailService,
             protected $timeout: ng.ITimeoutService,
             protected coreService: core.ICoreService,
-            protected tellAFriendPopupService: ITellAFriendPopupService) {
+            protected tellAFriendPopupService: ITellAFriendPopupService,
+            protected reCaptcha: common.IReCaptchaService) {
         }
 
         $onInit(): void {
@@ -39,11 +40,17 @@
 
             angular.element("#tellAFriendForm").validate().resetForm();
             angular.element("#tellAFriendForm input.error, #tellAFriendForm textarea.error").removeClass("error");
+
+            this.reCaptcha.render("ShareProduct");
         }
 
         shareWithFriend(): void {
             const valid = angular.element("#tellAFriendForm").validate().form();
             if (!valid) {
+                return;
+            }
+
+            if (!this.reCaptcha.validate("ShareProduct")) {
                 return;
             }
 

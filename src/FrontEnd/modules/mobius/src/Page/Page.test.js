@@ -3,6 +3,7 @@ import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
 import Page, { PageStyle } from "./Page";
+import Button from "../Button";
 import { css } from "styled-components";
 
 describe("Page", () => {
@@ -12,7 +13,9 @@ describe("Page", () => {
         if (!mountedWrapper) {
             mountedWrapper = mount(
                 <ThemeProvider>
-                    <Page {...props} />
+                    <Page {...props}>
+                        <Button>Test Button</Button>
+                    </Page>
                 </ThemeProvider>,
             );
         }
@@ -55,5 +58,36 @@ describe("Page", () => {
 
         const root = wrapper().find(Page);
         expect(root).toHaveStyleRule("color", "tomato");
+    });
+
+    test("themeMod property on Page Component", () => {
+        props = {
+            themeMod: {
+                button: {
+                    primary: {
+                        buttonType: "outline",
+                    },
+                },
+            },
+        };
+
+        const root = wrapper().find(Page);
+        expect(root.props().themeMod.button.primary.buttonType).toBe("outline");
+    });
+
+    test("button styles inside Page Component", () => {
+        props = {
+            themeMod: {
+                button: {
+                    primary: {
+                        css: css`
+                            background: #fff;
+                        `,
+                    },
+                },
+            },
+        };
+        const buttonComponent = wrapper().find(Button);
+        expect(buttonComponent).toHaveStyleRule("background", "#fff");
     });
 });

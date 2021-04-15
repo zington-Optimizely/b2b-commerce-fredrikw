@@ -754,6 +754,7 @@ declare module Insite.Catalog.Services.Dtos {
 		searchBoost: number;
 		searchBoostDecimal: number;
 		salePriceLabel: string;
+		cantBuy: boolean;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
 		productLine: Insite.Catalog.Services.Dtos.ProductLineDto;
 		productSubscription: Insite.Catalog.Services.Dtos.ProductSubscriptionDto;
@@ -825,6 +826,7 @@ declare module Insite.Catalog.Services.Dtos {
 		manufacturerItem: string;
 		upcCode: string;
 		sku: string;
+		cantBuy: boolean;
 	}
 	interface ProductUnitOfMeasureDto {
 		productUnitOfMeasureId: System.Guid;

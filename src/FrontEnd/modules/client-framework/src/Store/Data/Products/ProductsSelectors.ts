@@ -47,10 +47,11 @@ export function canAddToCart(
             o => o.unitOfMeasure.toLowerCase() === (productInfo?.unitOfMeasure?.toLowerCase() || ""),
         )?.availability || undefined;
     return (
-        product.canAddToCart ||
-        ((configurationCompleted || variantSelectionCompleted) &&
-            (allowBackOrder || (availability && availability.messageType !== 2)) &&
-            !product.canConfigure)
+        !product.cantBuy &&
+        (product.canAddToCart ||
+            ((configurationCompleted || variantSelectionCompleted) &&
+                (allowBackOrder || (availability && availability.messageType !== 2)) &&
+                !product.canConfigure))
     );
 }
 
@@ -111,6 +112,7 @@ export function getComputedVariantProduct(
         unitOfMeasures: variantProduct.unitOfMeasures,
         isVariantParent: false,
         canAddToWishlist: variantProduct.canAddToWishlist,
+        cantBuy: variantProduct.cantBuy,
     });
 
     return {

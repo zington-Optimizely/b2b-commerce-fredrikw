@@ -12,7 +12,10 @@ let siteHole: SiteHole;
 
 export const closeSiteHole = () => {
     (window as any).frameHoleIsReady = false; // makes sure our AUI tests won't try to access the iframe until it reestablishes the connection which indicates it is done loading.
-    delete siteHole.frameHole;
+
+    if (siteHole) {
+        delete siteHole.frameHole;
+    }
 };
 
 export const sendToSite = (message: any) => {

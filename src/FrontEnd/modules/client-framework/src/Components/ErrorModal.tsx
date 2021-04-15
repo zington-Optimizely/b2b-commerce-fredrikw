@@ -1,4 +1,5 @@
 import { createPageElement } from "@insite/client-framework/Components/ContentItemStore";
+import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import closeErrorModal from "@insite/client-framework/Store/Context/Handlers/CloseErrorModal";
 import { loadPageByType } from "@insite/client-framework/Store/Data/Pages/PagesActionCreators";
@@ -6,7 +7,7 @@ import { getPageStateByType } from "@insite/client-framework/Store/Data/Pages/Pa
 import translate from "@insite/client-framework/Translate";
 import Modal from "@insite/mobius/Modal";
 import * as React from "react";
-import { useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -22,13 +23,8 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
-const ErrorModal: React.FC<Props> = ({
-    modalIsOpen,
-    isUnauthorizedError,
-    closeErrorModal,
-    errorPage,
-    loadPageByType,
-}) => {
+const ErrorModal: FC<Props> = ({ modalIsOpen, isUnauthorizedError, closeErrorModal, errorPage, loadPageByType }) => {
+    const { isInShell } = useContext(ShellContext);
     useEffect(() => {
         if (!errorPage.value && !errorPage.isLoading) {
             loadPageByType("UnhandledErrorModal");
@@ -39,16 +35,20 @@ const ErrorModal: React.FC<Props> = ({
         closeErrorModal();
     };
 
-    if (!errorPage.value) {
+    if (!errorPage.value || isInShell) {
         return null;
     }
 
     return (
         <Modal headline={errorPage.value.fields["modalTitle"]} isOpen={modalIsOpen} handleClose={modalCloseHandler}>
             {isUnauthorizedError && <>{translate("Please sign in with a website user to view this page.")}</>}
-            <div data-test-selector="unhandledErrorModal">
-                {createPageElement(errorPage.value.type, errorPage.value)}
-            </div>
+            {!isUnauthorizedError && (
+                <div data-test-selector="unhandledErrorModal">
+                    <ShellContext.Provider value={{ isInShell, pageId: errorPage.id }}>
+                        {createPageElement(errorPage.value.type, errorPage.value)}
+                    </ShellContext.Provider>
+                </div>
+            )}
         </Modal>
     );
 };

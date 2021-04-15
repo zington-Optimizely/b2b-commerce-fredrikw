@@ -70,7 +70,7 @@ export const LoadPromotions: HandlerType = props => {
     props.dispatch(loadCurrentPromotions());
 };
 
-const chain = [
+export const chain = [
     DispatchBeginApplyPromotion,
     PopulateApiParameter,
     AddCartPromotion,

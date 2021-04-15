@@ -17,11 +17,11 @@ import setLanguage from "@insite/client-framework/Store/Context/Handlers/SetLang
 import signOut from "@insite/client-framework/Store/Context/Handlers/SignOut";
 import { getHeader, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getWidgetsByPageId } from "@insite/client-framework/Store/Data/Widgets/WidgetSelectors";
-import { getPageLinkByPageType, LinkModel, mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getPageLinkByPageType, LinkModel, useGetLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button, { ButtonIcon, ButtonPresentationProps } from "@insite/mobius/Button";
-import Drawer, { DrawerPresentationProps, DrawerProps } from "@insite/mobius/Drawer";
+import Drawer, { DrawerPresentationProps } from "@insite/mobius/Drawer";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Icon, { IconProps } from "@insite/mobius/Icon";
@@ -37,14 +37,15 @@ import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import omitSingle from "@insite/mobius/utilities/omitSingle";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
-import React from "react";
+import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => {
-    const linkListStateLinks = getWidgetsByPageId(state, getHeader(state).id).find((widget: WidgetProps) => {
-        return widget.type === "Header/HeaderLinkList";
-    })?.fields.links;
+    const headerLinkListLinkFields =
+        (getWidgetsByPageId(state, getHeader(state).id).find((widget: WidgetProps) => {
+            return widget.type === "Header/HeaderLinkList";
+        })?.fields.links as LinkModel[]) ?? [];
 
     return {
         currencies: getCurrencies(state),
@@ -58,13 +59,7 @@ const mapStateToProps = (state: ApplicationState) => {
         isGuest: state.context.session?.isGuest,
         myAccountPageLink: getPageLinkByPageType(state, "MyAccountPage"),
         signInUrl: getPageLinkByPageType(state, "SignInPage"),
-        headerLinkListLinks: mapLinks<LinkModel, { openInNewWindow: boolean }>(
-            state,
-            linkListStateLinks,
-            widgetLink => ({
-                openInNewWindow: widgetLink.fields.openInNewWindow,
-            }),
-        ),
+        headerLinkListLinkFields,
         showCustomerMenuItem: getSettingsCollection(state).accountSettings.enableWarehousePickup,
         fulfillmentLabel: getFulfillmentLabel(state),
         drawerIsOpen: state.components.addressDrawer.navDrawerIsOpen,
@@ -87,11 +82,7 @@ interface OwnProps {
     quickOrderLink: PageLinkModel | undefined;
 }
 
-interface NavigationDrawerState extends Pick<NavigationDrawerProps, "currentLocation"> {
-    open?: boolean;
-}
-
-type NavigationDrawerProps = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface NavigationDrawerStyles {
     menuTriggerButton?: ButtonPresentationProps;
@@ -261,268 +252,259 @@ export const navigationDrawerStyles: NavigationDrawerStyles = {
 
 const styles = navigationDrawerStyles;
 
-class NavigationDrawer extends React.Component<NavigationDrawerProps, NavigationDrawerState> {
-    constructor(props: NavigationDrawerProps) {
-        super(props);
-        this.state = {
-            currentLocation: props.currentLocation,
-        };
-    }
-
-    openDrawer = () => {
-        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: true });
-        this.props.setInitialValues({});
+const NavigationDrawer: FC<Props> = props => {
+    const headerLinkListLinks = useGetLinks(props.headerLinkListLinkFields, o => o.fields.destination);
+    const openDrawer = () => {
+        props.setNavDrawerIsOpen({ navDrawerIsOpen: true });
+        props.setInitialValues({});
     };
 
-    closeDrawer = () => {
-        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
-        setTimeout(() => this.props.setNavDrawerIsOpen({ navDrawerIsOpen: undefined }), 300);
+    const closeDrawer = () => {
+        props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
+        setTimeout(() => props.setNavDrawerIsOpen({ navDrawerIsOpen: undefined }), 300);
     };
 
-    onSignOutHandler = () => {
-        this.props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
-        this.props.isPunchOutSession ? this.props.cancelPunchOut() : this.props.signOut();
+    const onSignOutHandler = () => {
+        props.setNavDrawerIsOpen({ navDrawerIsOpen: false });
+        props.isPunchOutSession ? props.cancelPunchOut() : props.signOut();
     };
 
-    render() {
-        const {
-            quickOrderLink,
-            links,
-            showQuickOrder,
-            currencies,
-            currentCurrencyId,
-            currentCurrencySymbol,
-            languages,
-            currentLanguage,
-            setLanguage,
-            setCurrency,
-            userName,
-            isGuest,
-            myAccountPageLink,
-            signInUrl,
-            currentLocation,
-            showCustomerMenuItem,
-            fulfillmentLabel,
-            isPunchOutSession,
-        } = this.props;
+    const {
+        quickOrderLink,
+        links,
+        showQuickOrder,
+        currencies,
+        currentCurrencyId,
+        currentCurrencySymbol,
+        languages,
+        currentLanguage,
+        setLanguage,
+        setCurrency,
+        userName,
+        isGuest,
+        myAccountPageLink,
+        signInUrl,
+        currentLocation,
+        showCustomerMenuItem,
+        fulfillmentLabel,
+        isPunchOutSession,
+        headerLinkListLinkFields,
+    } = props;
 
-        const currentPageUrl = currentLocation.pathname;
+    const currentPageUrl = currentLocation.pathname;
 
-        return (
-            <>
-                <Button onClick={this.openDrawer} {...styles.menuTriggerButton} data-test-selector="expandMobileMenu">
-                    <ButtonIcon src={Menu} />
-                    <VisuallyHidden>{translate("menu")}</VisuallyHidden>
-                </Button>
-                <Drawer
-                    draggable
-                    position="left"
-                    {...styles.drawer}
-                    isOpen={this.props.drawerIsOpen}
-                    handleClose={this.closeDrawer}
-                    contentLabel="menu drawer"
-                >
-                    <StyledSection {...styles.drawerSectionWrapper}>
-                        {userName && !isGuest && !isPunchOutSession ? (
-                            <PanelMenu
-                                currentUrl={currentPageUrl}
-                                panelTrigger={
-                                    <PanelRow hasChildren {...styles.mainNavigationRow}>
-                                        <StyledSpan {...styles.panelSectionWrapper}>
-                                            <Icon {...styles.mainNavigationRowIcon} />
-                                            <Typography {...styles.userRowTypography}>{userName}</Typography>
-                                        </StyledSpan>
-                                    </PanelRow>
-                                }
-                                menuItems={myAccountPageLink?.children ? myAccountPageLink?.children : []}
-                                maxDepth={3}
-                                closeOverlay={this.closeDrawer}
-                                layer={0}
-                                {...styles.panelMenu}
-                            />
-                        ) : isPunchOutSession ? (
-                            <PanelRow {...styles.mainNavigationRow}>
-                                <StyledSpan {...styles.panelSectionWrapper}>
-                                    <Icon {...styles.punchOutNavigationRowIcon} />
-                                    <Typography {...styles.punchOutUserRowText}>{userName}</Typography>
-                                </StyledSpan>
-                            </PanelRow>
-                        ) : (
-                            <PanelRow
-                                {...styles.mainNavigationRow}
-                                isCurrent={currentPageUrl === signInUrl?.url}
-                                onClick={this.closeDrawer}
-                                href={signInUrl?.url}
-                            >
-                                <StyledSpan {...styles.panelSectionWrapper}>
-                                    <Icon {...styles.mainNavigationRowIcon} />
-                                    <Typography {...styles.userRowTypography}>{translate("Sign In")}</Typography>
-                                </StyledSpan>
-                            </PanelRow>
-                        )}
-                        {/* covers MainNavigation functionality */}
-                        {links.map((link, index) => {
-                            if (link.children && link.children.length > 0) {
-                                return (
-                                    <PanelMenu
-                                        // eslint-disable-next-line react/no-array-index-key
-                                        key={index}
-                                        currentUrl={currentPageUrl}
-                                        closeOverlay={this.closeDrawer}
-                                        panelTrigger={
-                                            <PanelRow hasChildren {...styles.mainNavigationRow}>
-                                                <Typography {...styles.mainNavigationRowTypography}>
-                                                    {link.title}
-                                                </Typography>
-                                            </PanelRow>
-                                        }
-                                        menuItems={link.children}
-                                        maxDepth={link.maxDepth || 3}
-                                        layer={0}
-                                        {...styles.panelMenu}
-                                    />
-                                );
+    return (
+        <>
+            <Button onClick={openDrawer} {...styles.menuTriggerButton} data-test-selector="expandMobileMenu">
+                <ButtonIcon src={Menu} />
+                <VisuallyHidden>{translate("menu")}</VisuallyHidden>
+            </Button>
+            <Drawer
+                draggable
+                position="left"
+                {...styles.drawer}
+                isOpen={props.drawerIsOpen}
+                handleClose={closeDrawer}
+                contentLabel="menu drawer"
+            >
+                <StyledSection {...styles.drawerSectionWrapper}>
+                    {userName && !isGuest && !isPunchOutSession ? (
+                        <PanelMenu
+                            currentUrl={currentPageUrl}
+                            panelTrigger={
+                                <PanelRow hasChildren {...styles.mainNavigationRow}>
+                                    <StyledSpan {...styles.panelSectionWrapper}>
+                                        <Icon {...styles.mainNavigationRowIcon} />
+                                        <Typography {...styles.userRowTypography}>{userName}</Typography>
+                                    </StyledSpan>
+                                </PanelRow>
                             }
+                            menuItems={myAccountPageLink?.children ? myAccountPageLink?.children : []}
+                            maxDepth={3}
+                            closeOverlay={closeDrawer}
+                            layer={0}
+                            {...styles.panelMenu}
+                        />
+                    ) : isPunchOutSession ? (
+                        <PanelRow {...styles.mainNavigationRow}>
+                            <StyledSpan {...styles.panelSectionWrapper}>
+                                <Icon {...styles.punchOutNavigationRowIcon} />
+                                <Typography {...styles.punchOutUserRowText}>{userName}</Typography>
+                            </StyledSpan>
+                        </PanelRow>
+                    ) : (
+                        <PanelRow
+                            {...styles.mainNavigationRow}
+                            isCurrent={currentPageUrl === signInUrl?.url}
+                            onClick={closeDrawer}
+                            href={signInUrl?.url}
+                        >
+                            <StyledSpan {...styles.panelSectionWrapper}>
+                                <Icon {...styles.mainNavigationRowIcon} />
+                                <Typography {...styles.userRowTypography}>{translate("Sign In")}</Typography>
+                            </StyledSpan>
+                        </PanelRow>
+                    )}
+                    {/* covers MainNavigation functionality */}
+                    {links.map((link, index) => {
+                        if (link.children && link.children.length > 0) {
                             return (
-                                <PanelRow
+                                <PanelMenu
                                     // eslint-disable-next-line react/no-array-index-key
                                     key={index}
-                                    href={link.url}
-                                    target={link.openInNewWindow ? "_blank" : ""}
-                                    {...styles.mainNavigationRow}
-                                >
-                                    <Typography {...styles.mainNavigationRowTypography}>{link.title}</Typography>
-                                </PanelRow>
+                                    currentUrl={currentPageUrl}
+                                    closeOverlay={closeDrawer}
+                                    panelTrigger={
+                                        <PanelRow hasChildren {...styles.mainNavigationRow}>
+                                            <Typography {...styles.mainNavigationRowTypography}>
+                                                {link.title}
+                                            </Typography>
+                                        </PanelRow>
+                                    }
+                                    menuItems={link.children}
+                                    maxDepth={link.maxDepth || 3}
+                                    layer={0}
+                                    {...styles.panelMenu}
+                                />
                             );
-                        })}
-                        {showQuickOrder && quickOrderLink && (
+                        }
+                        return (
                             <PanelRow
-                                isCurrent={currentPageUrl === quickOrderLink.url}
-                                onClick={this.closeDrawer}
-                                href={quickOrderLink.url}
+                                // eslint-disable-next-line react/no-array-index-key
+                                key={index}
+                                href={link.url}
+                                target={link.openInNewWindow ? "_blank" : ""}
                                 {...styles.mainNavigationRow}
                             >
-                                <Typography {...styles.mainNavigationRowTypography}>{quickOrderLink.title}</Typography>
+                                <Typography {...styles.mainNavigationRowTypography}>{link.title}</Typography>
                             </PanelRow>
-                        )}
-                    </StyledSection>
-                    {this.props.headerLinkListLinks.length > 0 && (
-                        <StyledSection {...styles.drawerSectionWrapper}>
-                            {this.props.headerLinkListLinks.map(link => (
-                                <PanelRow
-                                    key={link.title}
-                                    {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
-                                    isCurrent={currentPageUrl === link.url}
-                                    onClick={this.closeDrawer}
-                                    href={link.url}
-                                    target={link.openInNewWindow ? "_blank" : ""}
-                                >
-                                    <Typography {...styles.logoLinks?.typographyProps}>{link.title}</Typography>
-                                </PanelRow>
-                            ))}
-                        </StyledSection>
+                        );
+                    })}
+                    {showQuickOrder && quickOrderLink && (
+                        <PanelRow
+                            isCurrent={currentPageUrl === quickOrderLink.url}
+                            onClick={closeDrawer}
+                            href={quickOrderLink.url}
+                            {...styles.mainNavigationRow}
+                        >
+                            <Typography {...styles.mainNavigationRowTypography}>{quickOrderLink.title}</Typography>
+                        </PanelRow>
                     )}
+                </StyledSection>
+                {headerLinkListLinks.length > 0 && (
                     <StyledSection {...styles.drawerSectionWrapper}>
-                        <SelectorMenu
-                            options={currencies?.map(c => {
-                                return {
-                                    title: c.currencyCode.toUpperCase(),
-                                    clickableProps: {
-                                        onClick: () => {
-                                            setCurrency({ currencyId: c.id });
-                                            this.closeDrawer();
-                                        },
-                                    },
-                                };
-                            })}
-                            closeModal={this.closeDrawer}
-                            currentOption={currencies?.find(c => c.id === currentCurrencyId)?.currencyCode}
-                            currentOptionIcon={
-                                <Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography>
-                            }
-                        />
-                        <SelectorMenu
-                            dataTestSelector="mobileLanguageSelector"
-                            options={languages?.map(l => {
-                                return {
-                                    title: l.languageCode.toUpperCase(),
-                                    clickableProps: {
-                                        onClick: () => {
-                                            setLanguage({ languageId: l.id });
-                                            this.closeDrawer();
-                                        },
-                                    },
-                                };
-                            })}
-                            currentOption={currentLanguage?.languageCode}
-                            closeModal={this.closeDrawer}
-                            currentOptionIcon={
-                                currentLanguage?.imageFilePath ? (
-                                    <LogoImage src={currentLanguage.imageFilePath} alt="" />
-                                ) : (
-                                    <Icon src={Globe} {...styles.menuRowIcon} />
-                                )
-                            }
-                        />
-                        {showCustomerMenuItem && (
-                            <PanelMenu
-                                {...styles.panelMenu}
-                                panelTrigger={
-                                    <PanelRow hasChildren {...styles.logoLinks} color="common.accent">
-                                        <Typography {...styles.logoLinks?.typographyProps}>
-                                            <Icon src={MapPin} {...styles.menuRowIcon} />
-                                            {fulfillmentLabel}
-                                        </Typography>
-                                    </PanelRow>
-                                }
-                                layer={0}
-                                closeOverlay={this.closeDrawer}
+                        {headerLinkListLinks.map((link, index) => (
+                            <PanelRow
+                                key={link.title}
+                                {...(styles.logoLinks && omitSingle(styles.logoLinks, "typographyProps"))}
+                                isCurrent={currentPageUrl === link.url}
+                                onClick={closeDrawer}
+                                href={link.url}
+                                target={headerLinkListLinkFields[index].fields.openInNewWindow ? "_blank" : ""}
                             >
-                                {isPunchOutSession ? (
-                                    <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
-                                        {createWidgetElement("Header/AddressDrawerPunchOutCustomer", {
-                                            fields: {},
-                                        })}
-                                    </PanelRow>
-                                ) : (
-                                    <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
-                                        <GridContainer {...styles.changeCustomerRowContainer}>
-                                            <GridItem {...styles.fulfillmentMethodGridItem}>
-                                                {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", {
-                                                    fields: {},
-                                                })}
-                                            </GridItem>
-                                            <GridItem {...styles.addressesGridItem}>
-                                                {createWidgetElement("Header/AddressDrawerSelectCustomer", {
-                                                    fields: {},
-                                                })}
-                                            </GridItem>
-                                            <GridItem {...styles.pickUpAddressGridItem}>
-                                                {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", {
-                                                    fields: {},
-                                                })}
-                                            </GridItem>
-                                            <GridItem {...styles.applyButtonGridItem}>
-                                                {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
-                                            </GridItem>
-                                        </GridContainer>
-                                    </PanelRow>
-                                )}
-                            </PanelMenu>
-                        )}
-                        {userName && !isGuest && (
-                            <PanelRow onClick={this.onSignOutHandler} {...styles.signOutRow}>
-                                <Typography {...styles.signOutRowText}>
-                                    {isPunchOutSession ? translate("Cancel PunchOut") : translate("Sign Out")}
-                                </Typography>
+                                <Typography {...styles.logoLinks?.typographyProps}>{link.title}</Typography>
                             </PanelRow>
-                        )}
+                        ))}
                     </StyledSection>
-                </Drawer>
-            </>
-        );
-    }
-}
+                )}
+                <StyledSection {...styles.drawerSectionWrapper}>
+                    <SelectorMenu
+                        options={currencies?.map(c => {
+                            return {
+                                title: c.currencyCode.toUpperCase(),
+                                clickableProps: {
+                                    onClick: () => {
+                                        setCurrency({ currencyId: c.id });
+                                        closeDrawer();
+                                    },
+                                },
+                            };
+                        })}
+                        closeModal={closeDrawer}
+                        currentOption={currencies?.find(c => c.id === currentCurrencyId)?.currencyCode}
+                        currentOptionIcon={<Typography {...styles.currencySymbol}>{currentCurrencySymbol}</Typography>}
+                    />
+                    <SelectorMenu
+                        dataTestSelector="mobileLanguageSelector"
+                        options={languages?.map(l => {
+                            return {
+                                title: l.languageCode.toUpperCase(),
+                                clickableProps: {
+                                    onClick: () => {
+                                        setLanguage({ languageId: l.id });
+                                        closeDrawer();
+                                    },
+                                },
+                            };
+                        })}
+                        currentOption={currentLanguage?.languageCode}
+                        closeModal={closeDrawer}
+                        currentOptionIcon={
+                            currentLanguage?.imageFilePath ? (
+                                <LogoImage src={currentLanguage.imageFilePath} alt="" />
+                            ) : (
+                                <Icon src={Globe} {...styles.menuRowIcon} />
+                            )
+                        }
+                    />
+                    {showCustomerMenuItem && (
+                        <PanelMenu
+                            {...styles.panelMenu}
+                            panelTrigger={
+                                <PanelRow hasChildren {...styles.logoLinks} color="common.accent">
+                                    <Typography {...styles.logoLinks?.typographyProps}>
+                                        <Icon src={MapPin} {...styles.menuRowIcon} />
+                                        {fulfillmentLabel}
+                                    </Typography>
+                                </PanelRow>
+                            }
+                            layer={0}
+                            closeOverlay={closeDrawer}
+                        >
+                            {isPunchOutSession ? (
+                                <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
+                                    {createWidgetElement("Header/AddressDrawerPunchOutCustomer", {
+                                        fields: {},
+                                    })}
+                                </PanelRow>
+                            ) : (
+                                <PanelRow tabIndex={-1} {...styles.changeCustomerRow}>
+                                    <GridContainer {...styles.changeCustomerRowContainer}>
+                                        <GridItem {...styles.fulfillmentMethodGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerFulfillmentMethodSelector", {
+                                                fields: {},
+                                            })}
+                                        </GridItem>
+                                        <GridItem {...styles.addressesGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerSelectCustomer", {
+                                                fields: {},
+                                            })}
+                                        </GridItem>
+                                        <GridItem {...styles.pickUpAddressGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerPickUpLocationSelector", {
+                                                fields: {},
+                                            })}
+                                        </GridItem>
+                                        <GridItem {...styles.applyButtonGridItem}>
+                                            {createWidgetElement("Header/AddressDrawerApplyButton", { fields: {} })}
+                                        </GridItem>
+                                    </GridContainer>
+                                </PanelRow>
+                            )}
+                        </PanelMenu>
+                    )}
+                    {userName && !isGuest && (
+                        <PanelRow onClick={onSignOutHandler} {...styles.signOutRow}>
+                            <Typography {...styles.signOutRowText}>
+                                {isPunchOutSession ? translate("Cancel PunchOut") : translate("Sign Out")}
+                            </Typography>
+                        </PanelRow>
+                    )}
+                </StyledSection>
+            </Drawer>
+        </>
+    );
+};
 
 const LogoImage = styled.img`
     margin-right: 10px;

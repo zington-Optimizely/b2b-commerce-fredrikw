@@ -4,7 +4,7 @@ import * as React from "react";
 import { match } from "react-router-dom";
 import styled from "styled-components";
 
-const MainHeader: React.FunctionComponent<{ match?: match; disabled?: boolean }> = ({ disabled, match }) => {
+const MainHeader: React.FunctionComponent<{ disabled?: boolean }> = ({ disabled }) => {
     return (
         <>
             <MainHeaderStyle>

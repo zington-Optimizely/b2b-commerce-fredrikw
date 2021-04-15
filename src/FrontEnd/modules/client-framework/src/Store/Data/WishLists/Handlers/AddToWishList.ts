@@ -57,6 +57,10 @@ export const AddLineToWishList: HandlerType = async props => {
             props.result.errorMessage = error.errorJson.message;
             return;
         }
+        if (error?.status === 404) {
+            props.result.errorMessage = error.errorMessage;
+            return;
+        }
         throw error;
     }
 };

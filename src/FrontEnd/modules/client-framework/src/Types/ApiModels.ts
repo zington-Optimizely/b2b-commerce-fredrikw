@@ -28,6 +28,7 @@ export interface AccountCollectionModel extends BaseModel {
 }
 
 export interface AccountModel extends BaseModel {
+    accessToken: string;
     activationStatus: string;
     approver: string;
     availableApprovers: string[] | null;
@@ -105,8 +106,8 @@ export interface AccountSettingsModel extends BaseModel {
     passwordRequiresLowercase: boolean;
     passwordRequiresSpecialCharacter: boolean;
     passwordRequiresUppercase: boolean;
-    requireSelectCustomerOnSignIn: boolean;
     rememberMe: boolean;
+    requireSelectCustomerOnSignIn: boolean;
     useEmailAsUserName: boolean;
 }
 
@@ -688,6 +689,7 @@ export interface ProductPriceDto {
     unitRegularPriceWithVat: number;
     unitRegularPriceWithVatDisplay: string;
     vatAmount: number;
+    vatAmountDisplay: string;
     vatMinusExtendedUnitRegularPrice: number;
     vatRate: number;
 }
@@ -695,6 +697,8 @@ export interface ProductPriceDto {
 export interface BreakPriceDto {
     breakPrice: number;
     breakPriceDisplay: string;
+    breakPriceWithVat: number;
+    breakPriceWithVatDisplay: string;
     breakQty: number;
     savingsMessage: string;
 }
@@ -1150,6 +1154,7 @@ export interface ProductModel extends BaseModel {
     variantTraits?: VariantTraitModel[];
     variantTypeId: string | null;
     warehouses?: WarehouseModel[];
+    cantBuy: boolean;
 }
 
 export interface AutocompleteItemModel extends BaseModel {
@@ -1297,6 +1302,7 @@ export interface ProductPriceModel extends BaseModel {
     unitRegularPrice: number;
     unitRegularPriceDisplay: string;
     vatAmount: number;
+    vatAmountDisplay: string;
     vatRate: number;
 }
 
@@ -1319,6 +1325,7 @@ export interface ProductSettingsModel extends BaseModel {
     displayInventoryPerWarehouseOnlyOnProductDetail: boolean;
     documentsTabSortOrder: string;
     enableProductComparisons: boolean;
+    enableVat: boolean;
     imageProvider: string;
     inventoryIncludedWithPricing: boolean;
     pricingService: string;
@@ -1330,6 +1337,7 @@ export interface ProductSettingsModel extends BaseModel {
     showSavingsPercent: boolean;
     storefrontAccess: string;
     thirdPartyReviews: string;
+    vatPriceDisplay: string;
 }
 
 export interface ProductSubscriptionModel extends BaseModel {
@@ -1781,6 +1789,8 @@ export interface InvoiceLineModel extends BaseModel {
     lineType: string;
     manufacturerItem: string;
     mediumImagePath: string;
+    netPriceWithVat: number;
+    netPriceWithVatDisplay: string;
     notes: string;
     productERPNumber: string;
     productName: string;
@@ -1794,6 +1804,8 @@ export interface InvoiceLineModel extends BaseModel {
     unitOfMeasure: string;
     unitPrice: number;
     unitPriceDisplay: string;
+    unitPriceWithVat: number;
+    unitPriceWithVatDisplay: string;
     warehouse: string;
 }
 
@@ -2152,6 +2164,8 @@ export interface OrderLineModel extends BaseModel {
     lineType: string;
     manufacturerItem: string;
     mediumImagePath: string;
+    netPriceWithVat: number;
+    netPriceWithVatDisplay: string;
     notes: string;
     orderLineOtherCharges: number;
     orderLineOtherChargesDisplay: string;
@@ -2191,6 +2205,8 @@ export interface OrderLineModel extends BaseModel {
     unitOfMeasureDisplay: string;
     unitPrice: number;
     unitPriceDisplay: string;
+    unitPriceWithVat: number;
+    unitPriceWithVatDisplay: string;
     unitRegularPrice: number;
     unitRegularPriceDisplay: string;
     warehouse: string;
@@ -2686,6 +2702,11 @@ export interface WebsiteSettingsModel extends BaseModel {
     includeSiteNameInPageTitle: boolean;
     mobileAppEnabled: boolean;
     pageTitleDelimiter: string;
+    reCaptchaEnabledForContactUs: boolean;
+    reCaptchaEnabledForCreateAccount: boolean;
+    reCaptchaEnabledForForgotPassword: boolean;
+    reCaptchaEnabledForShareProduct: boolean;
+    reCaptchaSiteKey: string;
     siteNameAfterTitle: boolean;
     tokenExTestMode: boolean;
     usePaymetricGateway: boolean;

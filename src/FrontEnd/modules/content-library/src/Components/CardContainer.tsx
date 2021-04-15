@@ -14,11 +14,9 @@ export interface CardContainerStyles {
 export const cardContainerStyles: CardContainerStyles = {
     cardDivider: {
         css: css`
-            width: 100%;
-            border-top: 1px solid ${getColor("common.border")};
-            &:last-child {
-                border-bottom: 1px solid ${getColor("common.border")};
-            }
+            width: calc(100% - 20px);
+            margin: 0 10px;
+            border-bottom: 1px solid ${getColor("common.border")};
         `,
     },
     gridItem: {

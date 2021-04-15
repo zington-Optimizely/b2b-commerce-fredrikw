@@ -69,6 +69,7 @@ const mapStateToProps = (state: ApplicationState) => {
         location: getLocation(state),
         usePaymetricGateway: settingsCollection.websiteSettings.usePaymetricGateway,
         paymetricConfig: state.context.paymetricConfig,
+        enableVat: settingsCollection.productSettings.enableVat,
     };
 };
 
@@ -100,6 +101,8 @@ export interface CheckoutReviewAndSubmitPaymentDetailsStyles {
     paymentProfileExpiredErrorWrapper?: InjectableCss;
     paymentProfileExpiredErrorText?: TypographyPresentationProps;
     paymentProfileEditCardLink?: LinkPresentationProps;
+    vatNumberGridItem?: GridItemProps;
+    vatNumberText?: TextFieldPresentationProps;
     poNumberGridItem?: GridItemProps;
     poNumberText?: TextFieldPresentationProps;
     mainContainer?: GridContainerProps;
@@ -144,6 +147,7 @@ export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmi
             margin-left: 1rem;
         `,
     },
+    vatNumberGridItem: { width: 6 },
     poNumberGridItem: { width: 6 },
     creditCardDetailsGridItem: { width: [12, 12, 12, 6, 6] },
     creditCardAddressGridItem: {
@@ -296,9 +300,11 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     loadPaymetricConfig,
     usePaymetricGateway,
     getPaymetricResponsePacket,
+    enableVat,
 }: Props) => {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [poNumber, setPONumber] = useState("");
+    const [vatNumber, setVatNumber] = useState("");
     const [saveCard, setSaveCard] = useState(false);
     const [cardHolderName, setCardHolderName] = useState("");
     const [cardNumber, setCardNumber] = useState("");
@@ -374,6 +380,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             placeOrder({
                 paymentMethod,
                 poNumber,
+                vatNumber,
                 saveCard,
                 cardHolderName,
                 cardNumber,
@@ -644,6 +651,9 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const handlePONumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPONumber(event.currentTarget.value);
         validatePONumber(event.currentTarget.value);
+    };
+    const handleVatNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setVatNumber(event.currentTarget.value);
     };
     const handleSaveCardChange = (_: React.SyntheticEvent<Element, Event>, value: boolean) => setSaveCard(value);
     const handleCardHolderNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -931,6 +941,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             placeOrder({
                 paymentMethod,
                 poNumber,
+                vatNumber,
                 saveCard,
                 cardHolderName,
                 cardNumber,
@@ -1057,6 +1068,18 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                         )}
                                     </StyledWrapper>
                                 )}
+                            </GridItem>
+                        )}
+                        {enableVat && (
+                            <GridItem {...styles.vatNumberGridItem}>
+                                <TextField
+                                    {...styles.vatNumberText}
+                                    label={translate("VAT Number")}
+                                    value={vatNumber}
+                                    onChange={handleVatNumberChange}
+                                    maxLength={50}
+                                    data-test-selector="checkoutReviewAndSubmit_vatNumber"
+                                />
                             </GridItem>
                         )}
                         {cart.showPoNumber && (

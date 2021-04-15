@@ -5,7 +5,10 @@ import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/Link
 export function getCreateAccountReturnUrl(state: ApplicationState) {
     const returnUrl = getReturnUrl(state);
     const changeCustomerPageUrl = getPageLinkByPageType(state, "ChangeCustomerPage")?.url;
-    if (returnUrl === changeCustomerPageUrl) {
+    const orderConfirmationPageUrl = getPageLinkByPageType(state, "OrderConfirmationPage")?.url;
+    const referredFromOrderConfirmationUrl =
+        orderConfirmationPageUrl && returnUrl && returnUrl.indexOf(orderConfirmationPageUrl) > -1;
+    if (returnUrl === changeCustomerPageUrl || referredFromOrderConfirmationUrl) {
         return getPageLinkByPageType(state, "HomePage")?.url ?? "/";
     }
     return returnUrl;

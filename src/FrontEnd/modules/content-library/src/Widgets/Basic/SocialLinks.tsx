@@ -1,6 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { useGetLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { WidgetDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
@@ -20,7 +19,6 @@ import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
 import { FC } from "react";
-import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const enum fields {
@@ -143,26 +141,8 @@ const GetIcon = (icon: string) => {
     return "";
 };
 
-interface OptionalFieldReturn {
-    title: string;
-    icon: string;
-    openInNewWindow: boolean;
-}
-
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const links = mapLinks<LinkModel, OptionalFieldReturn>(state, ownProps.fields.links, (widgetLink, stateLink) => ({
-        title: widgetLink.fields.title ?? stateLink?.title,
-        icon: widgetLink.fields.icon,
-        openInNewWindow: widgetLink.fields.openInNewWindow,
-    }));
-    return {
-        links,
-    };
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
-
-const SocialLinks: FC<Props> = ({ fields, links }) => {
+const SocialLinks: FC<OwnProps> = ({ fields }) => {
+    const links = useGetLinks(fields.links, o => o.fields.destination);
     const socialLinkListStyle = css`
         ${fields.direction === "horizontal" ? "flex-direction: row;" : "flex-direction: column;"}
         ${fields.backgroundColor && `background-color: ${fields.backgroundColor};`}
@@ -184,11 +164,11 @@ const SocialLinks: FC<Props> = ({ fields, links }) => {
             {links.map((link, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <StyledWrapper css={linkWrapperStyle} key={index}>
-                    {link?.url && (
+                    {link.url && (
                         <Link
                             {...styles.link}
                             href={link.url}
-                            target={link.openInNewWindow ? "_blank" : ""}
+                            target={fields.links[index].fields.openInNewWindow ? "_blank" : ""}
                             icon={{
                                 iconProps: {
                                     size: fields.iconSize,
@@ -196,7 +176,7 @@ const SocialLinks: FC<Props> = ({ fields, links }) => {
                                     css: css`
                                         margin: 5px;
                                     `,
-                                    src: showIcon ? GetIcon(link.icon) : undefined,
+                                    src: showIcon ? GetIcon(fields.links[index].fields.icon) : undefined,
                                 },
                                 position: fields.alignment,
                             }}
@@ -388,7 +368,7 @@ const definition: WidgetDefinition = {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(SocialLinks),
+    component: SocialLinks,
     definition,
 };
 

@@ -1,4 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { InvoiceLineModel } from "@insite/client-framework/Types/ApiModels";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
@@ -7,14 +9,23 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
     invoiceLine: InvoiceLineModel;
     extendedStyles?: InvoiceDetailsLineCardStyles;
 }
+
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface InvoiceDetailsLineCardStyles {
     container?: GridContainerProps;
@@ -47,6 +58,10 @@ export interface InvoiceDetailsLineCardStyles {
     qtyStyles?: SmallHeadingAndTextStyles;
     totalItem?: GridItemProps;
     totalStyles?: SmallHeadingAndTextStyles;
+    subtotalWithoutVatHeadingAndText?: SmallHeadingAndTextStyles;
+    vatLabelText?: TypographyPresentationProps;
+    secondaryPriceText?: TypographyPresentationProps;
+    secondaryVatLabelText?: TypographyPresentationProps;
 }
 
 export const cardStyles: InvoiceDetailsLineCardStyles = {
@@ -69,7 +84,7 @@ export const cardStyles: InvoiceDetailsLineCardStyles = {
         gap: 8,
     },
     infoLeftColumn: {
-        width: [12, 12, 10, 10, 7],
+        width: [12, 12, 10, 7, 7],
         printWidth: 7,
     },
     infoLeftColumnContainer: {
@@ -110,30 +125,40 @@ export const cardStyles: InvoiceDetailsLineCardStyles = {
         width: 12,
     },
     infoRightColumn: {
-        width: [12, 12, 2, 2, 5],
+        width: [12, 12, 2, 5, 5],
         printWidth: 5,
     },
     infoRightColumnContainer: {
         gap: 8,
     },
     priceItem: {
-        width: [6, 6, 12, 12, 5],
+        width: [6, 6, 12, 5, 5],
         printWidth: 5,
+        css: css`
+            flex-direction: column;
+        `,
+    },
+    vatLabelText: {
+        size: 12,
+    },
+    secondaryVatLabelText: {
+        size: 12,
     },
     qtyItem: {
-        width: [6, 6, 12, 12, 3],
+        width: [6, 6, 12, 3, 3],
         printWidth: 3,
     },
     totalItem: {
-        width: [12, 12, 12, 12, 4],
+        width: [12, 12, 12, 4, 4],
         printWidth: 4,
         css: css`
             font-weight: 600;
+            flex-direction: column;
         `,
     },
 };
 
-const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyles }) => {
+const InvoiceDetailsLineCard = ({ invoiceLine, enableVat, vatPriceDisplay, extendedStyles }: Props) => {
     const [styles] = React.useState(() => mergeToNew(cardStyles, extendedStyles));
 
     return (
@@ -205,11 +230,36 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                                 <SmallHeadingAndText
                                     heading={translate("Price")}
                                     text={
-                                        invoiceLine.unitPriceDisplay +
+                                        (enableVat
+                                            ? invoiceLine.unitPriceWithVatDisplay
+                                            : invoiceLine.unitPriceDisplay) +
                                         (invoiceLine.unitOfMeasure ? ` / ${invoiceLine.unitOfMeasure}` : "")
                                     }
                                     extendedStyles={styles.priceStyles}
                                 />
+                                {enableVat && (
+                                    <>
+                                        <Typography as="p" {...styles.vatLabelText}>
+                                            {vatPriceDisplay === "DisplayWithVat" ||
+                                            vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                                ? `${translate("Inc. VAT")} (${invoiceLine.taxRate}%)`
+                                                : translate("Ex. VAT")}
+                                        </Typography>
+                                        {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                            <>
+                                                <Typography {...styles.secondaryPriceText} as="p">
+                                                    {invoiceLine.unitPriceDisplay +
+                                                        (invoiceLine.unitOfMeasure
+                                                            ? ` / ${invoiceLine.unitOfMeasure}`
+                                                            : "")}
+                                                </Typography>
+                                                <Typography as="p" {...styles.secondaryVatLabelText}>
+                                                    {translate("Ex. VAT")}
+                                                </Typography>
+                                            </>
+                                        )}
+                                    </>
+                                )}
                             </GridItem>
                             <GridItem {...styles.qtyItem}>
                                 <SmallHeadingAndText
@@ -219,9 +269,26 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
                                 />
                             </GridItem>
                             <GridItem {...styles.totalItem}>
+                                {enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                    <SmallHeadingAndText
+                                        heading={`${translate("Subtotal")} (${translate("Ex. VAT")})`}
+                                        text={invoiceLine.lineTotalDisplay}
+                                        extendedStyles={styles.subtotalWithoutVatHeadingAndText}
+                                    />
+                                )}
                                 <SmallHeadingAndText
-                                    heading={translate("Subtotal")}
-                                    text={invoiceLine.lineTotalDisplay}
+                                    heading={
+                                        !enableVat
+                                            ? translate("Subtotal")
+                                            : vatPriceDisplay !== "DisplayWithoutVat"
+                                            ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                            : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                    }
+                                    text={
+                                        enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                            ? invoiceLine.netPriceWithVatDisplay
+                                            : invoiceLine.lineTotalDisplay
+                                    }
                                     extendedStyles={styles.totalStyles}
                                 />
                             </GridItem>
@@ -233,4 +300,4 @@ const InvoiceDetailsLineCard: React.FC<OwnProps> = ({ invoiceLine, extendedStyle
     );
 };
 
-export default InvoiceDetailsLineCard;
+export default connect(mapStateToProps)(InvoiceDetailsLineCard);

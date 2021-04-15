@@ -24,7 +24,7 @@ import Icon, { IconPresentationProps } from "@insite/mobius/Icon";
 import Move from "@insite/mobius/Icons/Move";
 import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinner";
 import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
-import Pagination, { PaginationPresentationProps } from "@insite/mobius/Pagination";
+import { PaginationPresentationProps } from "@insite/mobius/Pagination";
 import TextArea, { TextAreaProps } from "@insite/mobius/TextArea";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
@@ -62,10 +62,10 @@ export interface MyListsDetailsProductListStyles {
     sortOrderWrapper?: InjectableCss;
     dragHandleIcon?: IconPresentationProps;
     sortOrderTextField?: TextFieldProps;
+    editNotesModal?: ModalPresentationProps;
     paginationContainer?: GridContainerProps;
     paginationGridItem?: GridItemProps;
     pagination?: PaginationPresentationProps;
-    editNotesModal?: ModalPresentationProps;
     notesTextArea?: TextAreaProps;
     editNotesModalButtonsWrapper?: InjectableCss;
     editNotesModalDeleteButton?: ButtonPresentationProps;
@@ -163,21 +163,6 @@ export const productListStyles: MyListsDetailsProductListStyles = {
             `,
         },
     },
-    paginationGridItem: {
-        width: 12,
-        css: css`
-            justify-content: flex-end;
-        `,
-    },
-    pagination: {
-        cssOverrides: {
-            pagination: css`
-                @media print {
-                    display: none;
-                }
-            `,
-        },
-    },
     editNotesModal: { sizeVariant: "small" },
     editNotesModalButtonsWrapper: {
         css: css`
@@ -212,8 +197,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
     loadWishListLinesParameter,
     editingSortOrder,
     quantityAdjustmentModalIsOpen,
-    updateLoadWishListLinesParameter,
-    loadWishListLines,
     updateWishListLine,
     deleteWishListLine,
     setQuantityAdjustmentModalIsOpen,
@@ -233,7 +216,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
 
     const wishList = wishListDataView.value;
     const wishListLines = wishListLinesDataView.value;
-    const { pagination } = wishListLinesDataView;
 
     const [wishListLineToAction, setWishListLineToAction] = React.useState<WishListLineModel | null>(null);
     const [deleteLineModalIsOpen, setDeleteLineModalIsOpen] = React.useState(false);
@@ -263,17 +245,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
     const deleteClickHandler = (wishListLine: WishListLineModel) => {
         setWishListLineToAction(wishListLine);
         setDeleteLineModalIsOpen(true);
-    };
-
-    const changePageHandler = (newPageIndex: number) => {
-        updateLoadWishListLinesParameter({ page: newPageIndex });
-        loadWishListLines();
-    };
-
-    const changeResultsPerPageHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newPageSize = parseInt(event.currentTarget.value, 10);
-        updateLoadWishListLinesParameter({ pageSize: newPageSize });
-        loadWishListLines();
     };
 
     const [editNotesModalIsOpen, setEditNotesModalIsOpen] = React.useState(false);
@@ -396,19 +367,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
                 onSortMove={sortMove}
                 onSortEnd={({ oldIndex, newIndex }) => updateSortOrder(wishListLines[oldIndex], newIndex + 1)}
             />
-            <GridContainer {...styles.paginationContainer}>
-                <GridItem {...styles.paginationGridItem} data-test-selector="pagination">
-                    <Pagination
-                        {...styles.pagination}
-                        currentPage={pagination.currentPage}
-                        resultsPerPage={pagination.pageSize}
-                        resultsCount={pagination.totalItemCount}
-                        resultsPerPageOptions={pagination.pageSizeOptions}
-                        onChangePage={changePageHandler}
-                        onChangeResultsPerPage={changeResultsPerPageHandler}
-                    />
-                </GridItem>
-            </GridContainer>
             <TwoButtonModal
                 modalIsOpen={deleteLineModalIsOpen}
                 headlineText={translate("Delete List Item")}

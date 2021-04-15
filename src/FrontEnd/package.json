@@ -16,7 +16,8 @@
     "create-blueprint": "node ./scripts/createBlueprint",
     "eslint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "eslint:fix": "npm run eslint -- --fix",
-    "eslint:blueprint": "eslint ./modules/blueprints --ext .ts,.tsx -c ./.eslintrc-blueprint.js --no-eslintrc",
+    "@comment eslint:blueprint": "we run eslint across all folders for eslint:blueprint so that it includes all translations",
+    "eslint:blueprint": "eslint . --ext .ts,.tsx -c ./.eslintrc-blueprint.js --no-eslintrc",
     "eslint:blueprint:fix": "npm run eslint:blueprint -- --fix",
     "lint:css": "ECHO use npm run stylelint",
     "prettier": "prettier --parser typescript ./{config,modules,scripts,tools}/**/*.{ts,tsx,js} --write",
@@ -39,6 +40,7 @@
     "@babel/preset-env": "7.4.2",
     "@babel/preset-react": "7.0.0",
     "@babel/preset-typescript": "7.6.0",
+    "@matt-block/react-recaptcha-v2": "^1.0.6",
     "@react-google-maps/api": "1.9.12",
     "@types/codemirror": "0.0.84",
     "@types/color": "3.0.1",
@@ -167,6 +169,7 @@
     "webpack-merge": "4.2.2",
     "whatwg-fetch": "3.4.1",
     "winston": "3.3.3",
+    "y18n": "4.0.1",
     "xlsx": "0.15.6"
   },
   "dependencies": {}

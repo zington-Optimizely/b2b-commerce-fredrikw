@@ -53,6 +53,7 @@ export const PopulateApiParameter: HandlerType = props => {
             "tax",
             "carriers",
             "paymentOptions",
+            "costCodes",
         ];
 
         if (pageType === "CartPage") {

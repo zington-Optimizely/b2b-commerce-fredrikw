@@ -60,7 +60,6 @@ const TabGroupWrapper = styled.div`
     ${injectCss}
 `;
 
-// TODO ISC-12114 - The getProp call below depends on a (fixed) inaccuracy of the getProp return type definition.
 const TabContent = styled.div.attrs<unknown, { role: string; css?: any }>(() => ({
     role: "tabPanel",
 }))`
@@ -70,7 +69,7 @@ const TabContent = styled.div.attrs<unknown, { role: string; css?: any }>(() => 
     border-top: 2px solid ${getColor("common.border")};
     border-bottom: 2px solid ${getColor("common.border")};
     padding: 32px 16px;
-    z-index: ${(getProp("theme.zIndex.tabGroup") as any) - 1};
+    z-index: ${props => getProp("theme.zIndex.tabGroup")(props) - 1};
     ${injectCss}
 `;
 

@@ -38,3 +38,23 @@ export function getCurrentPageOrderTotal(state: ApplicationState) {
 
     return orderTotal;
 }
+
+export function getCurrentPageOrderTotalWithVat(state: ApplicationState) {
+    const jobQuoteState = getCurrentPageJobQuoteState(state);
+    if (!jobQuoteState?.value) {
+        return 0;
+    }
+
+    let orderTotalWithVat = 0;
+    const qtyOrderedByJobQuoteLineId = getQtyOrderedByJobQuoteLineId(state);
+    jobQuoteState.value.jobQuoteLineCollection?.forEach((jobQuoteLine: JobQuoteLineModel) => {
+        const qtyOrdered = qtyOrderedByJobQuoteLineId[jobQuoteLine.id];
+        if (!jobQuoteLine.pricing || !qtyOrdered) {
+            return;
+        }
+
+        orderTotalWithVat += jobQuoteLine.pricing.unitRegularPriceWithVat * qtyOrdered;
+    });
+
+    return orderTotalWithVat;
+}

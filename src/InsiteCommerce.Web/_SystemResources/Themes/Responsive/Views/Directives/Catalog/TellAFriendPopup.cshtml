@@ -48,6 +48,9 @@
                     <span class="field-validation-valid" data-valmsg-for="yourMessage" data-valmsg-replace="true"></span>
                 </div>
             </div>
+            <div class="row">
+                [% reCaptcha 'ShareProduct' %]
+            </div>
             <div class="row btns">
                 <button id="tst_productDetail_shareSubmit" ng-disabled="vm.inProgress" ng-click="vm.shareWithFriend()" class="btn primary btn-create-wishlist" type="button">[% translate 'Share' %]</button>
             </div>

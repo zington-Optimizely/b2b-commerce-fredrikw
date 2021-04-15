@@ -23,7 +23,7 @@ import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -36,6 +36,8 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 const mapDispatchToProps = {
@@ -97,11 +99,15 @@ export interface OrderLinesListStyles {
     orderLineInfoGridContainer?: GridContainerProps;
     orderLinePriceGridItem?: GridItemProps;
     priceHeadingAndText?: SmallHeadingAndTextStyles;
+    vatLabelText?: TypographyPresentationProps;
+    secondaryPriceText?: TypographyPresentationProps;
+    secondaryVatLabelText?: TypographyPresentationProps;
     productInfoQtyOrderedGridItem?: GridItemProps;
     productInfoQtyOrderedHeadingAndText?: SmallHeadingAndTextStyles;
     productInfoQtyShippedGridItem?: GridItemProps;
     productInfoQtyShippedHeadingAndText?: SmallHeadingAndTextStyles;
     productInfoSubtotalGridItem?: GridItemProps;
+    subtotalWithoutVatHeadingAndText?: SmallHeadingAndTextStyles;
     productInfoSubtotalHeadingAndText?: SmallHeadingAndTextStyles;
     orderLineNotes?: OrderLineNotesStyles;
     productInfoTotalsGridItem?: GridItemProps;
@@ -109,6 +115,9 @@ export interface OrderLinesListStyles {
 }
 
 export const orderLinesListStyles: OrderLinesListStyles = {
+    gridContainer: {
+        gap: 10,
+    },
     titleGridItem: {
         width: 12,
     },
@@ -124,6 +133,9 @@ export const orderLinesListStyles: OrderLinesListStyles = {
             padding-top: 30px;
             margin-bottom: 0.5rem;
         `,
+    },
+    orderLineCardContainer: {
+        gap: 10,
     },
     orderLineCardGridItem: {
         width: 12,
@@ -162,7 +174,7 @@ export const orderLinesListStyles: OrderLinesListStyles = {
         width: 12,
     },
     productInfoGridItem: {
-        width: [12, 12, 12, 6, 6],
+        width: [12, 12, 12, 5, 5],
         printWidth: 6,
     },
     productInfoGridContainer: {
@@ -181,13 +193,13 @@ export const orderLinesListStyles: OrderLinesListStyles = {
         width: 12,
     },
     productInfoErpNumberGridItem: {
-        width: [6, 6, 4, 6, 6],
+        width: [12, 12, 6, 6, 6],
     },
     productInfoManufacturerItemGridItem: {
-        width: [6, 6, 4, 6, 6],
+        width: [12, 12, 6, 6, 6],
     },
     productInfoCustomerProductGridItem: {
-        width: [12, 12, 4, 12, 12],
+        width: [12, 12, 12, 12, 12],
         printWidth: 12,
     },
     orderLineInfoPromotionGridItem: {
@@ -198,26 +210,38 @@ export const orderLinesListStyles: OrderLinesListStyles = {
         italic: true,
     },
     orderLineInfoGridItem: {
-        width: [12, 12, 12, 6, 6],
+        width: [12, 12, 12, 7, 7],
         printWidth: 6,
     },
     orderLineInfoGridContainer: {
         gap: 5,
     },
     orderLinePriceGridItem: {
-        width: 12,
+        width: [12, 12, 12, 4, 4],
+        css: css`
+            flex-direction: column;
+        `,
+    },
+    vatLabelText: {
+        size: 12,
+    },
+    secondaryVatLabelText: {
+        size: 12,
     },
     productInfoQtyOrderedGridItem: {
-        width: [6, 6, 4, 4, 4],
+        width: [6, 6, 4, 3, 3],
         printWidth: 4,
     },
     productInfoQtyShippedGridItem: {
-        width: [6, 6, 4, 4, 4],
+        width: [6, 6, 4, 3, 3],
         printWidth: 4,
     },
     productInfoSubtotalGridItem: {
-        width: [12, 12, 4, 4, 4],
+        width: [12, 12, 4, 6, 6],
         printWidth: 4,
+        css: css`
+            flex-direction: column;
+        `,
     },
     orderLineNotes: {
         gridItemStyles: {
@@ -225,7 +249,15 @@ export const orderLinesListStyles: OrderLinesListStyles = {
         },
     },
     productInfoTotalsGridItem: {
-        width: 12,
+        width: [12, 12, 12, 8, 8],
+    },
+    productInfoTotalsGridContainer: {
+        gap: 10,
+    },
+    productInfoSubtotalHeadingAndText: {
+        text: {
+            weight: "bold",
+        },
     },
 };
 
@@ -295,13 +327,22 @@ const OrderLineProductInfo = ({ orderLine, styles }: { orderLine: OrderLineModel
     );
 };
 
-const OrderLineInfo = ({
+const mapStateToOrderLineInfoProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+});
+
+const OrderLineInfoProto = ({
     orderLine,
     order,
+    enableVat,
+    vatPriceDisplay,
     styles,
 }: {
     orderLine: OrderLineModel;
     order: OrderModel;
+    enableVat: boolean;
+    vatPriceDisplay: string;
     styles: OrderLinesListStyles;
 }) => {
     let promotions: JSX.Element[] = [];
@@ -323,10 +364,30 @@ const OrderLineInfo = ({
                         {...styles.priceHeadingAndText}
                         heading={translate("Price")}
                         text={
-                            orderLine.unitPriceDisplay +
+                            (enableVat ? orderLine.unitPriceWithVatDisplay : orderLine.unitPriceDisplay) +
                             (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")
                         }
                     />
+                    {enableVat && (
+                        <>
+                            <Typography as="p" {...styles.vatLabelText}>
+                                {vatPriceDisplay === "DisplayWithVat" || vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                    ? `${translate("Inc. VAT")} (${orderLine.taxRate}%)`
+                                    : translate("Ex. VAT")}
+                            </Typography>
+                            {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                <>
+                                    <Typography {...styles.secondaryPriceText} as="p">
+                                        {orderLine.unitPriceDisplay +
+                                            (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")}
+                                    </Typography>
+                                    <Typography as="p" {...styles.secondaryVatLabelText}>
+                                        {translate("Ex. VAT")}
+                                    </Typography>
+                                </>
+                            )}
+                        </>
+                    )}
                 </GridItem>
                 {promotions.length > 0 && (
                     <GridItem {...styles.orderLineInfoPromotionList}>
@@ -350,10 +411,27 @@ const OrderLineInfo = ({
                             />
                         </GridItem>
                         <GridItem {...styles.productInfoSubtotalGridItem}>
+                            {enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                <SmallHeadingAndText
+                                    heading={`${translate("Subtotal")} (${translate("Ex. VAT")})`}
+                                    text={orderLine.extendedUnitNetPriceDisplay}
+                                    extendedStyles={styles.subtotalWithoutVatHeadingAndText}
+                                />
+                            )}
                             <SmallHeadingAndText
-                                {...styles.productInfoSubtotalHeadingAndText}
-                                heading={translate("Subtotal")}
-                                text={orderLine.extendedUnitNetPriceDisplay}
+                                heading={
+                                    !enableVat
+                                        ? translate("Subtotal")
+                                        : vatPriceDisplay !== "DisplayWithoutVat"
+                                        ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                        : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                }
+                                text={
+                                    enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                        ? orderLine.netPriceWithVatDisplay
+                                        : orderLine.extendedUnitNetPriceDisplay
+                                }
+                                extendedStyles={styles.productInfoSubtotalHeadingAndText}
                             />
                         </GridItem>
                     </GridContainer>
@@ -362,6 +440,8 @@ const OrderLineInfo = ({
         </GridItem>
     );
 };
+
+const OrderLineInfo = connect(mapStateToOrderLineInfoProps)(OrderLineInfoProto);
 
 const OrderLineNotes = ({
     orderLine,

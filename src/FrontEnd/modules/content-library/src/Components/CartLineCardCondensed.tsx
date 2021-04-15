@@ -1,6 +1,8 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
@@ -14,6 +16,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import React, { FC } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
@@ -23,7 +26,12 @@ interface OwnProps {
     extendedStyles?: CartLineCardCondensedStyles;
 }
 
-type Props = OwnProps & HasCartLineContext;
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+});
+
+type Props = OwnProps & HasCartLineContext & ReturnType<typeof mapStateToProps>;
 
 export interface CartLineCardCondensedStyles {
     container?: GridContainerProps;
@@ -66,7 +74,7 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
         gap: 20,
     },
     infoLeftColumn: {
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 5, 5, 5],
     },
     infoLeftColumnContainer: {
         gap: 10,
@@ -89,7 +97,7 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
         `,
     },
     productPriceAndQuantityGridItem: {
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 7, 7, 7],
     },
     productPriceAndQuantityContainer: {
         gap: 10,
@@ -97,18 +105,14 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
     priceGridItem: {
         width: 5,
     },
-    price: {
-        price: {
-            priceText: {
-                weight: "normal",
-            },
-        },
-    },
     quantityGridItem: {
         width: 3,
     },
     extendedUnitNetPriceGridItem: {
         width: 4,
+        css: css`
+            flex-direction: column;
+        `,
     },
     extendedUnitNetPrice: {
         text: {
@@ -117,7 +121,7 @@ export const cartLineCardCondensedStyles: CartLineCardCondensedStyles = {
     },
 };
 
-const CartLineCardCondensed: FC<Props> = ({ cart, cartLine, editable, extendedStyles }) => {
+const CartLineCardCondensed = ({ cart, cartLine, editable, enableVat, vatPriceDisplay, extendedStyles }: Props) => {
     const [styles] = React.useState(() => mergeToNew(cartLineCardCondensedStyles, extendedStyles));
 
     return (
@@ -156,8 +160,18 @@ const CartLineCardCondensed: FC<Props> = ({ cart, cartLine, editable, extendedSt
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
                                 {cartLine.pricing && (
                                     <SmallHeadingAndText
-                                        heading={translate("Subtotal")}
-                                        text={cartLine.pricing.extendedUnitNetPriceDisplay}
+                                        heading={
+                                            !enableVat
+                                                ? translate("Subtotal")
+                                                : vatPriceDisplay !== "DisplayWithoutVat"
+                                                ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                                : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                        }
+                                        text={
+                                            enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                ? cartLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                : cartLine.pricing.extendedUnitNetPriceDisplay
+                                        }
                                         extendedStyles={styles.extendedUnitNetPrice}
                                     />
                                 )}
@@ -170,4 +184,4 @@ const CartLineCardCondensed: FC<Props> = ({ cart, cartLine, editable, extendedSt
     );
 };
 
-export default withCartLine(CartLineCardCondensed);
+export default connect(mapStateToProps)(withCartLine(CartLineCardCondensed));

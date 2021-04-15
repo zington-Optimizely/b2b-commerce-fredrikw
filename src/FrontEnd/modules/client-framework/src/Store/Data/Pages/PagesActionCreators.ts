@@ -202,7 +202,14 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 return;
             }
 
-            const { statusCode, redirectTo, page, authorizationFailed } = retrievePageResult;
+            const { statusCode, redirectTo, page, authorizationFailed, bypassedAuthorization } = retrievePageResult;
+
+            if (bypassedAuthorization && page) {
+                dispatch({
+                    type: "Data/Pages/SetBypassedAuthorization",
+                    pageId: page.id,
+                });
+            }
 
             setStatusCode(statusCode);
             if (redirectTo) {

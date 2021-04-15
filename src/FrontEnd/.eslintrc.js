@@ -136,6 +136,7 @@ module.exports = {
         "require-await": "error", // This isn't enabled by any rule sets so we force it on here to reduce waste in the JS bundle.
         semi: "off", // handled by prettier
         "spire/avoid-dynamic-translate": "error",
+        "spire/export-chain": "error",
         "spire/export-styles": "error",
         "spire/fenced-imports": ["error", { failRelativeImports: true }],
         "spire/restrict-lodash-import": "warn",

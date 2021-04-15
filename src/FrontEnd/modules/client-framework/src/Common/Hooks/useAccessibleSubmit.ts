@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const enterKey = 13;
 
-const useAccessibleSubmit = (value: string, onSubmit: (value: string) => void) => {
+const useAccessibleSubmit = (value: string, onSubmit: (value: string) => void, cartLoadedTime?: number) => {
     const [stateValue, setValue] = useState(value);
     const changeHandler = (event: any) => {
         setValue(event.currentTarget.value);
@@ -21,7 +21,7 @@ const useAccessibleSubmit = (value: string, onSubmit: (value: string) => void) =
 
     useEffect(() => {
         setValue(value);
-    }, [value]);
+    }, [value, cartLoadedTime]);
 
     return {
         value: stateValue,

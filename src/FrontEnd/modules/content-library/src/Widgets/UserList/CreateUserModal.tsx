@@ -1,6 +1,5 @@
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import validateEmail from "@insite/client-framework/Common/Utilities/validateEmail";
-import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
@@ -32,7 +31,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const mapDispatchToProps = {
-    createUser: makeHandlerChainAwaitable(createUser),
+    createUser,
 };
 
 type Props = OwnProps &
@@ -188,7 +187,7 @@ class CreateUserModal extends PureComponent<
         }
         return isFormValid;
     };
-    formSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (!this.validateForm()) {
@@ -196,7 +195,7 @@ class CreateUserModal extends PureComponent<
             return false;
         }
 
-        await this.props.createUser({
+        this.props.createUser({
             userName: this.state.userName,
             email: this.state.email,
             firstName: this.state.firstName,
@@ -206,15 +205,16 @@ class CreateUserModal extends PureComponent<
             onError: (errorMessage: string) => {
                 this.props.toaster.addToast({ body: errorMessage, messageType: "danger" });
             },
-        });
+            onSuccess: () => {
+                this.props.toaster.addToast({
+                    body: translate("User Created. An activation email has been sent."),
+                    messageType: "success",
+                });
 
-        this.props.toaster.addToast({
-            body: translate("User Created. An activation email has been sent."),
-            messageType: "success",
+                this.props.onClose();
+                this.resetState();
+            },
         });
-
-        this.props.onClose();
-        this.resetState();
     };
     resetState = () => {
         this.setState({

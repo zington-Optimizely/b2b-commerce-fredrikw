@@ -3,8 +3,7 @@ import useRecursiveTimeout from "@insite/client-framework/Common/Hooks/useRecurs
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import { responsiveStyleRules } from "@insite/client-framework/Common/Utilities/responsive";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { useGetLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -15,12 +14,11 @@ import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
 import ChevronRight from "@insite/mobius/Icons/ChevronRight";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
-import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import { useHistory } from "@insite/mobius/utilities/HistoryContext";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import { useEmblaCarousel } from "embla-carousel/react";
 import parse from "html-react-parser";
-import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { css } from "styled-components";
 
 interface SlideModel {
@@ -90,12 +88,6 @@ interface OwnProps extends WidgetProps {
     };
     extendedStyles?: SlideshowStyles;
 }
-
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    return {
-        buttonLinks: ownProps.fields.slides.map(slide => getLink(state, slide.fields.buttonLink)),
-    };
-};
 
 export interface SlideshowStyles {
     slideshowWrapper?: InjectableCss;
@@ -226,15 +218,9 @@ export const slideshowStyles: SlideshowStyles = {
     },
 };
 
-const onClick = (history: History, link: string | undefined) => {
-    if (link) {
-        history.push(link);
-    }
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps> & HasHistory;
-
-const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
+const Slideshow: FC<OwnProps> = ({ fields, extendedStyles }) => {
+    const history = useHistory();
+    const buttonLinks = useGetLinks(fields.slides, o => o.fields.buttonLink);
     const [styles] = useState(() => mergeToNew(slideshowStyles, extendedStyles));
 
     const [emblaRef, embla] = useEmblaCarousel();
@@ -270,6 +256,12 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
             loop: true,
         });
     }, [embla, fields.slides]);
+
+    const onClick = (link: string | undefined) => {
+        if (link) {
+            history.push(link);
+        }
+    };
 
     if (!fields.slides || fields.slides.length === 0) {
         return null;
@@ -390,7 +382,7 @@ const Slideshow = ({ fields, buttonLinks, history, extendedStyles }: Props) => {
                                             <Button
                                                 {...styles.slideButton}
                                                 variant={slide.fields.buttonVariant}
-                                                onClick={() => onClick(history, buttonLink?.url)}
+                                                onClick={() => onClick(buttonLink?.url)}
                                             >
                                                 {slide.fields.buttonLabel || buttonLink?.title || buttonLink?.url}
                                             </Button>
@@ -445,7 +437,7 @@ const settingsTab = {
 };
 
 const widgetModule: WidgetModule = {
-    component: withHistory(connect(mapStateToProps)(Slideshow)),
+    component: Slideshow,
     definition: {
         group: "Basic",
         icon: "Carousel",

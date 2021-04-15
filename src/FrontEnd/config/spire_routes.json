@@ -26,6 +26,15 @@
     "userfiles",
     "afterimpersonate"
   ],
+  "comment4": "integration is a subset of commerce_routes that should go to the integration containers",
+  "integration_routes": [
+    "admin",
+    "connect",
+    "elmah",
+    "importexport",
+    "secureelmah",
+    "swagger"
+  ],
   "spire_system_uris": [
     "contentadmin",
     "creators",

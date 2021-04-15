@@ -32,6 +32,9 @@
                 <textarea id="message[[Model.ContentKey]]" name="Message" rows="5" cols="48" data-val-required="[[Model.MessageIsRequiredErrorMessage]]" data-val="true"></textarea>
                 <span data-valmsg-replace="true" data-valmsg-for="Message"></span>
             </div>
+            <div class="cf-form-captcha">
+                [% reCaptcha 'ContactUs' %]
+            </div>
             <div ng-show="!vm.submitted" class="btns">
                 <button id="tst_contactUsPage_send" type="submit" ng-click="vm.submit($event)" class="btn primary btn-send">[% translate 'Send' %]</button>
             </div>

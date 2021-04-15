@@ -272,7 +272,7 @@ const ProductCompareFlyOut = ({
     };
     const handleOpenCompare = () => {
         if (productComparePageLink) {
-            setProductCompareReturnUrl({ returnUrl: currentLocation.pathname });
+            setProductCompareReturnUrl({ returnUrl: currentLocation.pathname + currentLocation.search });
             history.push(productComparePageLink.url);
         }
     };

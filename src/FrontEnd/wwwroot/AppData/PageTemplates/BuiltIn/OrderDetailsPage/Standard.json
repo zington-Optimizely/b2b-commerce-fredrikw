@@ -291,6 +291,15 @@
         },
         {
             "parentId": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
+            "type": "OrderDetails/OrderDetailsVatNumber",
+            "zone": "Content0",
+            "id": "f58f30ee-0bdc-438c-a9c1-80ab589261a3",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
             "type": "Basic/Rows",
             "zone": "Content1",
             "id": "54ec1702-59a2-45b7-b912-b9933094c43a",

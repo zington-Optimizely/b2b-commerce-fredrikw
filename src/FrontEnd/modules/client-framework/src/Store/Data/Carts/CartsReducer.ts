@@ -22,6 +22,7 @@ const reducer = {
         draft: Draft<CartsState>,
         action: { model: Cart; isCurrent?: boolean; replaceCart?: boolean },
     ) => {
+        draft.cartLoadedTime = Date.now();
         if (action.isCurrent) {
             delete draft.isLoading[API_URL_CURRENT_FRAGMENT];
             draft.currentId = action.model.id;

@@ -26,8 +26,9 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
 import XCircle from "@insite/mobius/Icons/XCircle";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
+import Select, { SelectPresentationProps } from "@insite/mobius/Select";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import getColor from "@insite/mobius/utilities/getColor";
 import React, { FC, useContext } from "react";
@@ -49,6 +50,8 @@ interface OwnProps {
 
 const mapStateToProps = (state: ApplicationState) => ({
     wishListSettings: getSettingsCollection(state).wishListSettings,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 const mapDispatchToProps = {
@@ -83,6 +86,8 @@ export interface CartLineCardExpandedStyles {
     quantity?: CartLineQuantityStyles;
     extendedUnitNetPriceGridItem?: GridItemProps;
     extendedUnitNetPriceText?: TypographyProps;
+    vatLabelText?: TypographyPresentationProps;
+    subtotalWithoutVatText?: TypographyPresentationProps;
     cartLineErrorMessageGridItem?: GridItemProps;
     cartLineErrorMessageText?: TypographyProps;
     productPriceAndAvailabilityGridItem?: GridItemProps;
@@ -90,6 +95,10 @@ export interface CartLineCardExpandedStyles {
     promotionNameText?: TypographyProps;
     productAvailability?: ProductAvailabilityStyles;
     addToListLink?: LinkPresentationProps;
+    costCodeGridItem?: GridItemProps;
+    costCodeLabelText?: TypographyPresentationProps;
+    costCodeSelect?: SelectPresentationProps;
+    costCodeText?: TypographyPresentationProps;
     cartLineNotesGridItem?: GridItemProps;
     cartLineNotes?: CartLineNotesStyles;
     removeCartLineGridItem?: GridItemProps;
@@ -150,13 +159,21 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     extendedUnitNetPriceGridItem: {
         width: 6,
         css: css`
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
         `,
     },
     extendedUnitNetPriceText: {
         weight: "bold",
+    },
+    vatLabelText: {
+        size: 12,
+    },
+    subtotalWithoutVatText: {
+        weight: "bold",
         css: css`
-            margin-bottom: 10px;
+            margin-top: 5px;
         `,
     },
     cartLineErrorMessageGridItem: { width: 12 },
@@ -170,6 +187,17 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     addToListLink: {
         css: css`
             margin-top: 20px;
+        `,
+    },
+    costCodeGridItem: {
+        width: [12, 12, 12, 6, 6],
+        css: css`
+            flex-direction: column;
+        `,
+    },
+    costCodeLabelText: {
+        css: css`
+            margin-bottom: 10px;
         `,
     },
     cartLineNotesGridItem: { width: 12 },
@@ -197,6 +225,8 @@ const CartLineCardExpanded: FC<Props> = ({
     setAddToListModalIsOpen,
     addToWishList,
     hideAddToList,
+    enableVat,
+    vatPriceDisplay,
 }) => {
     const toasterContext = useContext(ToasterContext);
     const qtyOrderedChangeHandler = (qtyOrdered: number) => {
@@ -211,6 +241,18 @@ const CartLineCardExpanded: FC<Props> = ({
                     },
                 });
             }
+        }
+    };
+
+    const costCodeChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const costCode = event.currentTarget.value;
+        if (costCode !== cartLine.costCode) {
+            updateCartLine({
+                cartLine: {
+                    ...cartLine,
+                    costCode,
+                },
+            });
         }
     };
 
@@ -350,14 +392,36 @@ const CartLineCardExpanded: FC<Props> = ({
                                             extendedStyles={styles.quantity}
                                         />
                                     </GridItem>
-                                    {!cartLine.quoteRequired && !cart.cartNotPriced && (
+                                    {!cartLine.quoteRequired && !cart.cartNotPriced && cartLine.pricing && (
                                         <GridItem {...styles.extendedUnitNetPriceGridItem}>
                                             <Typography
                                                 {...styles.extendedUnitNetPriceText}
                                                 data-test-selector="cartline_extendedUnitNetPrice"
                                             >
-                                                {cartLine.pricing!.extendedUnitNetPriceDisplay}
+                                                {enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                    ? cartLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                    : cartLine.pricing.extendedUnitNetPriceDisplay}
                                             </Typography>
+                                            {enableVat && (
+                                                <>
+                                                    <Typography as="p" {...styles.vatLabelText}>
+                                                        {vatPriceDisplay === "DisplayWithVat" ||
+                                                        vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                                            ? `${translate("Inc. VAT")} (${cartLine.pricing.vatRate}%)`
+                                                            : translate("Ex. VAT")}
+                                                    </Typography>
+                                                    {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                                        <>
+                                                            <Typography {...styles.subtotalWithoutVatText}>
+                                                                {cartLine.pricing.extendedUnitNetPriceDisplay}
+                                                            </Typography>
+                                                            <Typography as="p" {...styles.vatLabelText}>
+                                                                {translate("Ex. VAT")}
+                                                            </Typography>
+                                                        </>
+                                                    )}
+                                                </>
+                                            )}
                                         </GridItem>
                                     )}
                                 </GridContainer>
@@ -409,7 +473,27 @@ const CartLineCardExpanded: FC<Props> = ({
                             </Link>
                         )}
                     </GridItem>
-                    {showLineNotes && cart.properties["isPunchout"] === undefined && (
+                    {cart.showCostCode && !cartLine.isPromotionItem && (
+                        <GridItem {...styles.costCodeGridItem}>
+                            <Typography {...styles.costCodeLabelText}>{cart.costCodeLabel}</Typography>
+                            {cart.canEditCostCode ? (
+                                <Select
+                                    value={cartLine.costCode}
+                                    onChange={costCodeChangeHandler}
+                                    {...styles.costCodeSelect}
+                                >
+                                    {cart.costCodes?.map(costCode => (
+                                        <option key={costCode.costCode} value={costCode.costCode}>
+                                            {costCode.description}
+                                        </option>
+                                    ))}
+                                </Select>
+                            ) : (
+                                <Typography {...styles.costCodeText}>{cartLine.costCode}</Typography>
+                            )}
+                        </GridItem>
+                    )}
+                    {showLineNotes && !cartLine.isPromotionItem && cart.properties["isPunchout"] === undefined && (
                         <GridItem {...styles.cartLineNotesGridItem}>
                             <CartLineNotes
                                 cart={cart}

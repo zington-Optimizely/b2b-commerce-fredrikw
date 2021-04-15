@@ -89,6 +89,11 @@ export const subscribeStyles: SubscribeStyles = {
             `,
         },
     },
+    emailButton: {
+        css: css`
+            width: 200px;
+        `,
+    },
     disclaimerGridItem: {
         width: 12,
     },

@@ -187,8 +187,9 @@ const formFieldOmitProps = ["domId", "onFileChange", "labelProps"] as (keyof Omi
  * An input that accepts a file type to upload. File upload must be handled via the onFileChange callback and/or form submission.
  */
 class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, FileUploadState> {
+    static defaultButtonText = "Choose file";
     static defaultProps = {
-        buttonText: "Choose file",
+        buttonText: FileUpload.defaultButtonText,
     };
 
     fileInput = this.props.inputRef || React.createRef();
@@ -365,7 +366,9 @@ class FileUpload extends React.Component<FileUploadProps & HasDisablerContext, F
                                     disabled={isDisabled}
                                     {...otherButtonProps}
                                 >
-                                    {buttonText}
+                                    {buttonText && FileUpload.defaultButtonText === buttonText
+                                        ? theme?.translate(buttonText)
+                                        : buttonText}
                                 </Button>
                             )}
                         </UploadWrapper>

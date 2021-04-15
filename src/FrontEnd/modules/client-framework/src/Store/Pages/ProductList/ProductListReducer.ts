@@ -135,6 +135,7 @@ const reducer = {
         draft.lastParameter = undefined;
         draft.parameter = undefined;
         draft.productInfosByProductId = {};
+        draft.isSearchPage = undefined;
     },
     "Pages/ProductList/SetTableColumns": (
         draft: Draft<ProductListState>,

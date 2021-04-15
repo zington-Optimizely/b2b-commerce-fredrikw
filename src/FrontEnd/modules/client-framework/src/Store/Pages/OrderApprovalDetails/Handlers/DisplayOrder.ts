@@ -2,6 +2,8 @@ import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/c
 import { GetOrderApiParameter } from "@insite/client-framework/Services/OrderService";
 import loadApprovalCart from "@insite/client-framework/Store/Data/OrderApprovals/Handlers/LoadOrderApproval";
 import { getOrderApprovalsState } from "@insite/client-framework/Store/Data/OrderApprovals/OrderApprovalsSelectors";
+import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadPromotions";
+import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 import { OrderModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<{ cartId: string }, GetOrderApiParameter, OrderModel>;
@@ -25,7 +27,14 @@ export const DispatchLoadOrderIfNeeded: HandlerType = props => {
     }
 };
 
-export const chain = [DispatchSetOrderId, DispatchLoadOrderIfNeeded];
+export const PreloadData: HandlerType = props => {
+    const state = props.getState();
+    if (!getPromotionsDataView(state, props.parameter.cartId).value) {
+        props.dispatch(loadPromotions({ cartId: props.parameter.cartId }));
+    }
+};
+
+export const chain = [DispatchSetOrderId, DispatchLoadOrderIfNeeded, PreloadData];
 
 const displayOrder = createHandlerChainRunner(chain, "DisplayOrder");
 export default displayOrder;

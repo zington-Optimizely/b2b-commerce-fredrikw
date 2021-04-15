@@ -40,6 +40,7 @@ export interface GetCartApiParameter extends ApiParameter {
         | "alsoPurchased"
         | "restrictions"
         | "hiddenproducts"
+        | "costCodes"
     )[];
     additionalExpands?: string[];
     alsoPurchasedMaxResults?: number;

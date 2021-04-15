@@ -1,7 +1,12 @@
 import getLocalizedDateTime from "@insite/client-framework/Common/Utilities/getLocalizedDateTime";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getWishListLinesDataView } from "@insite/client-framework/Store/Data/WishListLines/WishListLinesSelectors";
-import { getWishListState, getWishListTotal } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import {
+    getWishListState,
+    getWishListTotal,
+    getWishListTotalWithVat,
+} from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -14,9 +19,9 @@ import { MyListsDetailsPageContext } from "@insite/content-library/Pages/MyLists
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
-import React, { FC } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -27,6 +32,12 @@ const mapStateToProps = (state: ApplicationState) => {
         wishList: getWishListState(state, state.pages.myListDetails.wishListId).value,
         wishListTotal: getWishListTotal(wishListLinesDataView, state.pages.myListDetails.productInfosByWishListLineId),
         language: state.context.session.language,
+        enableVat: getSettingsCollection(state).productSettings.enableVat,
+        vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+        wishListTotalWithVat: getWishListTotalWithVat(
+            wishListLinesDataView,
+            state.pages.myListDetails.productInfosByWishListLineId,
+        ),
     };
 };
 
@@ -40,6 +51,9 @@ export interface MyListsDetailsHeaderStyles {
     shareText?: TypographyProps;
     lineCountText?: TypographyProps;
     totalText?: TypographyProps;
+    totalVatLabelText?: TypographyPresentationProps;
+    totalWithoutVatText?: TypographyPresentationProps;
+    totalWithoutVatLabelText?: TypographyPresentationProps;
     descriptionGridItem?: GridItemProps;
     descriptionStyles?: SmallHeadingAndTextStyles;
 }
@@ -49,6 +63,8 @@ export const headerStyles: MyListsDetailsHeaderStyles = {
     infoGridItem: {
         width: 12,
         css: css`
+            align-items: flex-end;
+
             @media print {
                 justify-content: flex-start;
                 flex-direction: row !important;
@@ -86,15 +102,41 @@ export const headerStyles: MyListsDetailsHeaderStyles = {
     totalText: {
         weight: "bold",
     },
+    totalVatLabelText: {
+        size: 12,
+        css: css`
+            margin-left: 5px;
+        `,
+    },
+    totalWithoutVatText: {
+        weight: "bold",
+        css: css`
+            margin-left: 5px;
+        `,
+    },
+    totalWithoutVatLabelText: {
+        size: 12,
+        css: css`
+            margin-left: 5px;
+        `,
+    },
     descriptionGridItem: { width: 6 },
 };
 
 const styles = headerStyles;
 
-const MyListsDetailsHeader: FC<Props> = ({ wishList, wishListTotal, language }) => {
+const MyListsDetailsHeader = ({
+    wishList,
+    wishListTotal,
+    language,
+    enableVat,
+    vatPriceDisplay,
+    wishListTotalWithVat,
+}: Props) => {
     if (!wishList) {
         return null;
     }
+
     const updatedOnDisplay = getLocalizedDateTime({
         dateTime: new Date(wishList.updatedOn),
         language,
@@ -121,9 +163,39 @@ const MyListsDetailsHeader: FC<Props> = ({ wishList, wishListTotal, language }) 
                     wishList={wishList}
                 />
                 {wishListTotal !== undefined && (
-                    <Typography {...styles.totalText}>
-                        {translate("List Total")}: <LocalizedCurrency amount={wishListTotal} />
-                    </Typography>
+                    <>
+                        <Typography {...styles.totalText}>
+                            {translate("List Total")}:{" "}
+                            <LocalizedCurrency
+                                amount={
+                                    enableVat && vatPriceDisplay !== "DisplayWithoutVat" && wishListTotalWithVat
+                                        ? wishListTotalWithVat
+                                        : wishListTotal
+                                }
+                            />
+                        </Typography>
+                        {enableVat && (
+                            <>
+                                <Typography {...styles.totalVatLabelText}>
+                                    {`(${
+                                        vatPriceDisplay === "DisplayWithoutVat"
+                                            ? translate("Ex. VAT")
+                                            : translate("Inc. VAT")
+                                    })`}
+                                </Typography>
+                                {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                    <>
+                                        <Typography {...styles.totalWithoutVatText}>
+                                            <LocalizedCurrency amount={wishListTotal} />
+                                        </Typography>
+                                        <Typography {...styles.totalWithoutVatLabelText}>
+                                            ({translate("Ex. VAT")})
+                                        </Typography>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </>
                 )}
             </GridItem>
             {wishList.description && (

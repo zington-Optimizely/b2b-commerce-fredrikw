@@ -63,6 +63,9 @@ export const addToListModalStyles: AddToListModalStyles = {
     modal: {
         size: 350,
         cssOverrides: {
+            modalBody: css`
+                overflow-y: visible;
+            `,
             modalTitle: css`
                 padding: 10px 20px;
             `,
@@ -207,7 +210,12 @@ const AddToListModal = ({
                 toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
             },
             onError: errorMessage => {
-                setNewListNameError(errorMessage);
+                if (isNewList) {
+                    setNewListNameError(errorMessage);
+                } else {
+                    modalCloseHandler();
+                    toasterContext.addToast({ body: errorMessage, messageType: "danger" });
+                }
             },
             onComplete(wishListProps) {
                 if (wishListProps?.result?.wishList) {

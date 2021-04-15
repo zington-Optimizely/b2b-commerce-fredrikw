@@ -9,6 +9,7 @@ import ManageShareListModalReducer from "@insite/client-framework/Store/Componen
 import OrderUploadReducer from "@insite/client-framework/Store/Components/OrderUpload/OrderUploadReducer";
 import ProductInfoListsReducer from "@insite/client-framework/Store/Components/ProductInfoList/ProductInfoListsReducer";
 import ProductSelectorReducer from "@insite/client-framework/Store/Components/ProductSelector/ProductSelectorReducer";
+import ReCaptchaReducer from "@insite/client-framework/Store/Components/ReCaptcha/ReCaptchaReducer";
 import ShareListModalReducer from "@insite/client-framework/Store/Components/ShareListModal/ShareListModalReducer";
 import { combineReducers } from "redux";
 
@@ -23,6 +24,7 @@ const reducers = {
     orderUpload: OrderUploadReducer,
     productInfoLists: ProductInfoListsReducer,
     productSelector: ProductSelectorReducer,
+    reCaptcha: ReCaptchaReducer,
     shareListModal: ShareListModalReducer,
     addressErrorModal: AddressErrorModalReducer,
 };

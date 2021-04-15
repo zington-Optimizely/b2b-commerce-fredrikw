@@ -8,6 +8,7 @@ import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import React, { FC } from "react";
+import { css } from "styled-components";
 
 interface OwnProps {
     quote: QuoteModel;
@@ -41,8 +42,16 @@ export interface QuoteSummaryCardStyles {
 }
 
 export const quoteSummaryCardStyles: QuoteSummaryCardStyles = {
-    quoteSummaryCardGridItem: { width: 12 },
-    container: { gap: 5 },
+    quoteSummaryCardGridItem: {
+        width: 12,
+        css: css`
+            padding: 0 20px;
+            max-width: 500px;
+        `,
+    },
+    container: {
+        gap: 5,
+    },
     quoteDetailsLinkGridItem: { width: 12 },
     typeGridItem: { width: 6 },
     statusGridItem: { width: 6 },
@@ -111,11 +120,13 @@ const QuoteSummaryCard: FC<Props> = ({ quote, session, quoteSettings, extendedSt
                     />
                 </GridItem>
                 <GridItem {...styles.expirationDateGridItem}>
-                    <SmallHeadingAndText
-                        heading={translate("Expires")}
-                        text={expirationDateDisplay}
-                        extendedStyles={styles.expirationDateHeadingAndText}
-                    />
+                    {expirationDateDisplay && (
+                        <SmallHeadingAndText
+                            heading={translate("Expires")}
+                            text={expirationDateDisplay}
+                            extendedStyles={styles.expirationDateHeadingAndText}
+                        />
+                    )}
                 </GridItem>
                 {session.isSalesPerson && (
                     <>

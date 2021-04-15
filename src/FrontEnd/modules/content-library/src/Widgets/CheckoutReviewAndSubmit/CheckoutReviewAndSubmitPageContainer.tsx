@@ -118,14 +118,24 @@ export const pageContainerStyles: CheckoutReviewAndSubmitPageContainerStyles = {
                 )}
         `,
     },
-    hiddenShippingInfoAndProductListWide: { below: "lg" },
+    hiddenShippingInfoAndProductListWide: {
+        below: "lg",
+        css: css`
+            width: 100%;
+        `,
+    },
     shippingInfoGridItemWide: {
         width: 12,
     },
     productListGridItemWide: {
         width: 12,
     },
-    hiddenShippingInfoAndProductListNarrow: { above: "md" },
+    hiddenShippingInfoAndProductListNarrow: {
+        above: "md",
+        css: css`
+            width: 100%;
+        `,
+    },
     shippingInfoGridItemNarrow: {
         width: 12,
     },

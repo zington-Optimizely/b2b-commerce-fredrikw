@@ -21,7 +21,8 @@
             "accessToken",
             "spinnerService",
             "$q",
-            "$attrs"
+            "$attrs",
+            "reCaptcha"
         ];
 
         constructor(
@@ -34,7 +35,8 @@
             protected accessToken: common.IAccessTokenService,
             protected spinnerService: core.SpinnerService,
             protected $q: ng.IQService,
-            protected $attrs: ISelectCustomerControllerAttributes) {
+            protected $attrs: ISelectCustomerControllerAttributes,
+            protected reCaptcha: common.IReCaptchaService) {
         }
 
         $onInit(): void {
@@ -50,6 +52,8 @@
             this.settingsService.getSettings().then(
                 (settingsCollection: core.SettingsCollection) => { this.getSettingsCompleted(settingsCollection); },
                 (error: any) => { this.getSettingsFailed(error); });
+
+            this.reCaptcha.render("CreateAccount");
         }
 
         protected getSessionCompleted(session: SessionModel): void {
@@ -84,6 +88,10 @@
                 }
             ).form();
             if (!valid) {
+                return;
+            }
+
+            if (!this.reCaptcha.validate("CreateAccount")) {
                 return;
             }
 

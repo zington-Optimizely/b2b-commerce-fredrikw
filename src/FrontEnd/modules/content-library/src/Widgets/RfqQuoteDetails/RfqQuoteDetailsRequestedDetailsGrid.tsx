@@ -1,5 +1,6 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getQuoteState } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
 import translate from "@insite/client-framework/Translate";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
@@ -20,6 +21,8 @@ import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     quoteState: getQuoteState(state, state.pages.rfqQuoteDetails.quoteId),
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 type Props = ReturnType<typeof mapStateToProps>;
@@ -47,9 +50,15 @@ export interface RfqQuoteDetailsRequestedDetailsGridStyles {
     quantityHeadingAndText?: SmallHeadingAndTextStyles;
     subtotalGridItem?: GridItemProps;
     subtotalText?: TypographyPresentationProps;
+    vatLabelText?: TypographyPresentationProps;
+    subtotalWithoutVatText?: TypographyPresentationProps;
+    costCodeGridItem?: GridItemProps;
+    costCodeValueText?: TypographyPresentationProps;
+    costCodeLabelText?: TypographyPresentationProps;
     footerWrapper?: InjectableCss;
     totalLabelText?: TypographyPresentationProps;
     totalValueText?: TypographyPresentationProps;
+    totalWithoutVatText?: TypographyPresentationProps;
 }
 
 export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequestedDetailsGridStyles = {
@@ -121,14 +130,36 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
     },
     subtotalGridItem: {
         width: 6,
-        align: "bottom",
+        css: css`
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+        `,
+    },
+    costCodeGridItem: { width: 12 },
+    costCodeLabelText: {
+        weight: "bold",
+        css: css`
+            margin-right: 10px;
+        `,
     },
     subtotalText: {
         weight: 700,
     },
+    vatLabelText: {
+        size: 12,
+    },
+    subtotalWithoutVatText: {
+        weight: "bold",
+        css: css`
+            margin-top: 5px;
+        `,
+    },
     footerWrapper: {
         css: css`
             display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             justify-content: flex-end;
             margin-top: 20px;
         `,
@@ -143,11 +174,17 @@ export const rfqQuoteDetailsRequestedDetailsGridStyles: RfqQuoteDetailsRequested
     totalValueText: {
         size: 20,
     },
+    totalWithoutVatText: {
+        size: 20,
+        css: css`
+            margin-top: 5px;
+        `,
+    },
 };
 
 const styles = rfqQuoteDetailsRequestedDetailsGridStyles;
 
-const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState }: Props) => {
+const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState, enableVat, vatPriceDisplay }: Props) => {
     const quote = quoteState.value;
     if (!quote || !quote.quoteLineCollection) {
         return null;
@@ -215,13 +252,45 @@ const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState }: Props) => {
                                             <>
                                                 <VisuallyHidden>{translate("Subtotal")}</VisuallyHidden>
                                                 <Typography {...styles.subtotalText}>
-                                                    {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                                    {enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                        ? quoteLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                        : quoteLine.pricing.extendedUnitNetPriceDisplay}
                                                 </Typography>
+                                                {enableVat && (
+                                                    <>
+                                                        <Typography as="p" {...styles.vatLabelText}>
+                                                            {vatPriceDisplay === "DisplayWithVat" ||
+                                                            vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                                                ? `${translate("Inc. VAT")} (${
+                                                                      quoteLine.pricing.vatRate
+                                                                  }%)`
+                                                                : translate("Ex. VAT")}
+                                                        </Typography>
+                                                        {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                                            <>
+                                                                <Typography {...styles.subtotalWithoutVatText}>
+                                                                    {quoteLine.pricing.extendedUnitNetPriceDisplay}
+                                                                </Typography>
+                                                                <Typography as="p" {...styles.vatLabelText}>
+                                                                    {translate("Ex. VAT")}
+                                                                </Typography>
+                                                            </>
+                                                        )}
+                                                    </>
+                                                )}
                                             </>
                                         )}
                                     </GridItem>
                                 </GridContainer>
                             </GridItem>
+                            {quote.showCostCode && quoteLine.costCode && (
+                                <GridItem {...styles.costCodeGridItem}>
+                                    <Typography {...styles.costCodeValueText} as="p">
+                                        <Typography {...styles.costCodeLabelText}>{quote.costCodeLabel}:</Typography>
+                                        {quoteLine.costCode}
+                                    </Typography>
+                                </GridItem>
+                            )}
                         </GridContainer>
                     </GridItem>
                 </GridContainer>
@@ -229,8 +298,27 @@ const RfqQuoteDetailsRequestedDetailsGrid = ({ quoteState }: Props) => {
             <StyledWrapper {...styles.footerWrapper}>
                 <Typography {...styles.totalValueText} as="p">
                     <Typography {...styles.totalLabelText}>{translate("Total")}:</Typography>
-                    {quote.orderSubTotalDisplay}
+                    {enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                        ? quote.orderGrandTotalDisplay
+                        : quote.orderSubTotalDisplay}
                 </Typography>
+                {enableVat && (
+                    <>
+                        <Typography as="p" {...styles.vatLabelText}>
+                            {vatPriceDisplay === "DisplayWithVat" || vatPriceDisplay === "DisplayWithAndWithoutVat"
+                                ? translate("Inc. VAT")
+                                : translate("Ex. VAT")}
+                        </Typography>
+                        {vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                            <>
+                                <Typography {...styles.totalWithoutVatText}>{quote.orderSubTotalDisplay}</Typography>
+                                <Typography as="p" {...styles.vatLabelText}>
+                                    {translate("Ex. VAT")}
+                                </Typography>
+                            </>
+                        )}
+                    </>
+                )}
             </StyledWrapper>
         </StyledWrapper>
     );

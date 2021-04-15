@@ -66,6 +66,9 @@
                         [% siteMessage 'SignIn_Sign_Up_Newsletter' %]
                     </label>
                 </div>
+                <div class="row ca-form-captcha">
+                    [% reCaptcha 'CreateAccount' %]
+                </div>
                 <div class="error">
                     <span class="field-validation-error" ng-if="vm.createError" ng-bind="vm.createError"></span>
                 </div>

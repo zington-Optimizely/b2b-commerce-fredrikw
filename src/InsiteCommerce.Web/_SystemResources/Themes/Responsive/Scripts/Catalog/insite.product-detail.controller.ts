@@ -477,6 +477,7 @@ module insite.catalog {
             this.product.trackInventory = styledProduct.trackInventory;
             this.product.minimumOrderQty = styledProduct.minimumOrderQty;
             this.product.productDetailUrl = styledProduct.productDetailUrl;
+            this.product.cantBuy = styledProduct.cantBuy;
 
             if (this.product.qtyOrdered < this.product.minimumOrderQty) {
                 this.product.qtyOrdered = this.product.minimumOrderQty;
@@ -597,7 +598,7 @@ module insite.catalog {
         }
 
         protected isAddToCartVisible() {
-            return this.product && this.product.allowedAddToCart &&
+            return this.product && this.product.allowedAddToCart && !this.product.cantBuy &&
             (this.product.canAddToCart ||
                 ((this.styleSelectionCompleted || this.configurationCompleted)
                 && (this.settings.allowBackOrder || (<any>this.product.availability) && (<any>this.product.availability).messageType !== 2))

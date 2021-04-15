@@ -12,6 +12,7 @@ const validClientImports = [
     "isomorphic-fetch",
     "js-cookie",
     "lodash",
+    "@matt-block/react-recaptcha-v2",
     "promise-polyfill",
     "react",
     "react-datetime-picker",

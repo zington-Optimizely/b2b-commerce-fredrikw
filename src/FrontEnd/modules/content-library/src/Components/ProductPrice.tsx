@@ -2,17 +2,20 @@ import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import wrapInContainerStyles from "@insite/client-framework/Common/wrapInContainerStyles";
 import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
-import { getUnitNetPrice } from "@insite/client-framework/Services/Helpers/ProductPriceService";
+import {
+    getUnitNetPrice,
+    getUnitRegularPriceWithVat,
+} from "@insite/client-framework/Services/Helpers/ProductPriceService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
-import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
+import { CartLineModel, ProductPriceDto } from "@insite/client-framework/Types/ApiModels";
 import ProductPriceSavingsMessage from "@insite/content-library/Components/ProductPriceSavingsMessage";
 import Tooltip, { TooltipPresentationProps } from "@insite/mobius/Tooltip";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
@@ -31,6 +34,8 @@ interface OwnProps {
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     currencySymbol: ownProps.currencySymbol ?? state.context.session.currency?.currencySymbol ?? "",
     canSeePrices: getSettingsCollection(state).productSettings.canSeePrices,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
 });
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps>;
@@ -42,6 +47,8 @@ export interface ProductPriceStyles {
     quoteMessage?: RequiresQuoteMessageStyle;
     priceWrapper?: InjectableCss;
     price?: PriceStyles;
+    secondaryPriceWrapper?: InjectableCss;
+    secondaryPrice?: PriceStyles;
     packWrapper?: InjectableCss;
     packLabelText?: TypographyPresentationProps;
     packDescriptionText?: TypographyPresentationProps;
@@ -60,6 +67,7 @@ interface PriceStyles {
     realTimeText?: TypographyPresentationProps;
     unitOfMeasureText?: TypographyPresentationProps;
     qtyPerBaseUnitOfMeasureText?: TypographyPresentationProps;
+    vatLabelText?: TypographyPresentationProps;
 }
 
 export const productPriceStyles: ProductPriceStyles = {
@@ -109,6 +117,54 @@ export const productPriceStyles: ProductPriceStyles = {
                 white-space: nowrap;
             `,
         },
+        vatLabelText: {
+            css: css`
+                font-size: 12px;
+            `,
+        },
+    },
+    secondaryPriceWrapper: {
+        css: css`
+            margin-top: 5px;
+            ${wrapInContainerStyles}
+        `,
+    },
+    secondaryPrice: {
+        priceText: { weight: "bold" },
+        errorText: { weight: "bold" },
+        realTimeText: {
+            weight: "bold",
+            css: css`
+                display: inline-block;
+                text-align: left;
+                min-width: 25px;
+
+                &::after {
+                    overflow: hidden;
+                    display: inline-block;
+                    vertical-align: bottom;
+                    animation: ellipsis steps(4, end) 900ms infinite 1s;
+                    content: "\\2026";
+                    width: 0;
+                }
+
+                @keyframes ellipsis {
+                    to {
+                        width: 1.25em;
+                    }
+                }
+            `,
+        },
+        unitOfMeasureText: {
+            css: css`
+                white-space: nowrap;
+            `,
+        },
+        vatLabelText: {
+            css: css`
+                font-size: 12px;
+            `,
+        },
     },
     packWrapper: {
         css: css`
@@ -129,7 +185,7 @@ export const productPriceStyles: ProductPriceStyles = {
 
 const SectionWrapper = getStyledWrapper("section");
 
-const ProductPrice: FC<Props> = ({
+const ProductPrice = ({
     product: pricingData,
     currencySymbol,
     canSeePrices,
@@ -139,8 +195,10 @@ const ProductPrice: FC<Props> = ({
     showSavings = false,
     showSavingsAmount = false,
     showSavingsPercent = false,
+    enableVat,
+    vatPriceDisplay,
     extendedStyles,
-}) => {
+}: Props) => {
     const [styles] = React.useState(() => mergeToNew(productPriceStyles, extendedStyles));
 
     const productContextModel = pricingData as ProductContextModel;
@@ -179,6 +237,7 @@ const ProductPrice: FC<Props> = ({
 
     const quoteStyles = styles.quoteMessage || {};
     const priceStyles = styles.price || {};
+    const secondaryPriceStyles = styles.secondaryPrice || {};
 
     if (!canSeePrices) {
         return (
@@ -196,62 +255,122 @@ const ProductPrice: FC<Props> = ({
         );
     }
 
-    return (
-        <SectionWrapper {...styles.wrapper}>
-            {showLabel && <Typography {...styles.priceLabelText}>{translate("Price")}</Typography>}
-            {quoteRequired && (
+    if (quoteRequired) {
+        return (
+            <SectionWrapper {...styles.wrapper}>
+                {showLabel && <Typography {...styles.priceLabelText}>{translate("Price")}</Typography>}
                 <StyledWrapper {...styles.quoteMessageWrapper}>
                     <Typography {...quoteStyles.text} data-test-selector="quoteRequiredText">
                         {translate("Requires Quote")}
                     </Typography>
                     <Tooltip {...quoteStyles.tooltip} text={siteMessage("Rfq_TooltipMessage").toString()} />
                 </StyledWrapper>
+            </SectionWrapper>
+        );
+    }
+
+    const displayVatForPrice = vatPriceDisplay === "DisplayWithVat" || vatPriceDisplay === "DisplayWithAndWithoutVat";
+    const showSecondaryPrice = enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat";
+
+    return (
+        <SectionWrapper {...styles.wrapper}>
+            {showLabel && <Typography {...styles.priceLabelText}>{translate("Price")}</Typography>}
+            <StyledWrapper {...styles.priceWrapper}>
+                <Price
+                    currencySymbol={currencySymbol}
+                    pricing={pricing}
+                    qtyOrdered={qtyOrdered}
+                    unitOfMeasure={unitOfMeasure}
+                    showUnitOfMeasure={showUnitOfMeasure}
+                    enableVat={enableVat}
+                    displayWithVat={displayVatForPrice}
+                    styles={priceStyles}
+                />
+            </StyledWrapper>
+            {showSecondaryPrice && (
+                <StyledWrapper {...styles.secondaryPriceWrapper}>
+                    <Price
+                        currencySymbol={currencySymbol}
+                        pricing={pricing}
+                        qtyOrdered={qtyOrdered}
+                        unitOfMeasure={unitOfMeasure}
+                        showUnitOfMeasure={showUnitOfMeasure}
+                        enableVat={enableVat}
+                        displayWithVat={false}
+                        styles={secondaryPriceStyles}
+                    />
+                </StyledWrapper>
             )}
-            {!quoteRequired && (
-                <>
-                    <StyledWrapper {...styles.priceWrapper}>
-                        {pricing ? (
-                            <Typography {...priceStyles.priceText} data-test-selector="productPrice_unitNetPrice">
-                                {getUnitNetPrice(pricing, qtyOrdered || 1).priceDisplay}
-                            </Typography>
-                        ) : (
-                            <Typography {...priceStyles.realTimeText} data-test-selector="productPrice_unitNetPrice">
-                                {currencySymbol}
-                            </Typography>
-                        )}
-                        {unitOfMeasure && showUnitOfMeasure && (
-                            <Typography
-                                {...priceStyles.unitOfMeasureText}
-                                data-test-selector="productPrice_unitOfMeasureLabel"
-                            >
-                                &nbsp;/&nbsp;{unitOfMeasure}
-                            </Typography>
-                        )}
-                    </StyledWrapper>
-                    {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in pricingData && (
-                        <Typography {...priceStyles.qtyPerBaseUnitOfMeasureText}>
-                            {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
-                        </Typography>
-                    )}
-                    {packDescription && showPack && (
-                        <StyledWrapper {...styles.packWrapper}>
-                            <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
-                            <Typography {...styles.packDescriptionText}>{packDescription}</Typography>
-                        </StyledWrapper>
-                    )}
-                    {pricing && showSavings && (
-                        <ProductPriceSavingsMessage
-                            pricing={pricing}
-                            qtyOrdered={qtyOrdered || 1}
-                            showSavingsAmount={showSavingsAmount}
-                            showSavingsPercent={showSavingsPercent}
-                            currencySymbol={currencySymbol}
-                            {...styles.savingsMessageText}
-                        />
-                    )}
-                </>
+            {showQtyPerBaseUnitOfMeasure && "baseUnitOfMeasure" in pricingData && (
+                <Typography {...priceStyles.qtyPerBaseUnitOfMeasureText}>
+                    {`${pricingData.qtyPerBaseUnitOfMeasure} ${pricingData.baseUnitOfMeasureDisplay} / ${unitOfMeasure}`}
+                </Typography>
+            )}
+            {packDescription && showPack && (
+                <StyledWrapper {...styles.packWrapper}>
+                    <Typography {...styles.packLabelText}>{translate("Pack")}:&nbsp;</Typography>
+                    <Typography {...styles.packDescriptionText}>{packDescription}</Typography>
+                </StyledWrapper>
+            )}
+            {pricing && showSavings && (
+                <ProductPriceSavingsMessage
+                    pricing={pricing}
+                    qtyOrdered={qtyOrdered || 1}
+                    showSavingsAmount={showSavingsAmount}
+                    showSavingsPercent={showSavingsPercent}
+                    currencySymbol={currencySymbol}
+                    {...styles.savingsMessageText}
+                />
             )}
         </SectionWrapper>
+    );
+};
+
+interface PriceProps {
+    currencySymbol: string;
+    pricing: ProductPriceDto | null | undefined;
+    qtyOrdered: number | null;
+    unitOfMeasure?: string;
+    showUnitOfMeasure?: boolean;
+    enableVat: boolean;
+    displayWithVat: boolean;
+    styles: PriceStyles;
+}
+
+const Price = ({
+    currencySymbol,
+    pricing,
+    qtyOrdered,
+    unitOfMeasure,
+    showUnitOfMeasure = true,
+    enableVat,
+    displayWithVat,
+    styles,
+}: PriceProps) => {
+    return (
+        <>
+            {pricing ? (
+                <Typography {...styles.priceText} data-test-selector="productPrice_unitNetPrice">
+                    {enableVat && displayWithVat
+                        ? getUnitRegularPriceWithVat(pricing, qtyOrdered || 1).priceDisplay
+                        : getUnitNetPrice(pricing, qtyOrdered || 1).priceDisplay}
+                </Typography>
+            ) : (
+                <Typography {...styles.realTimeText} data-test-selector="productPrice_unitNetPrice">
+                    {currencySymbol}
+                </Typography>
+            )}
+            {unitOfMeasure && showUnitOfMeasure && (
+                <Typography {...styles.unitOfMeasureText} data-test-selector="productPrice_unitOfMeasureLabel">
+                    &nbsp;/&nbsp;{unitOfMeasure}
+                </Typography>
+            )}
+            {pricing && enableVat && (
+                <Typography as="p" {...styles.vatLabelText}>
+                    {displayWithVat ? `${translate("Inc. VAT")} (${pricing.vatRate}%)` : translate("Ex. VAT")}
+                </Typography>
+            )}
+        </>
     );
 };
 

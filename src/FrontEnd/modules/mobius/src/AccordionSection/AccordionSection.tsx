@@ -34,6 +34,12 @@ export interface AccordionSectionPresentationProps {
      * Source used if `collapseIconProps` or `expandIconProps` is not provided.
      * @themable */
     toggleIconProps?: IconPresentationProps;
+    /**
+     * Indicates how the `css` property is combined with the variant `css` property from the theme.
+     * If true, the variant css is applied first and then the component css is applied after causing
+     * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
+     */
+    mergeCss?: boolean;
     /** Props that will be passed to the toggle icon when the accordion is open.
      * @themable */
     collapseIconProps?: IconPresentationProps;
@@ -112,8 +118,8 @@ class AccordionSection extends React.Component<Props, State> {
     };
 
     render() {
-        const { children, title } = this.props;
-        const { spreadProps } = applyPropBuilder(this.props, {
+        const { children, title, mergeCss } = this.props;
+        const { spreadProps, applyStyledProp } = applyPropBuilder(this.props, {
             component: "accordion",
             propKey: "sectionDefaultProps",
         });
@@ -125,6 +131,7 @@ class AccordionSection extends React.Component<Props, State> {
         const { expanded, uid } = this.state;
         const triggerId = `${uid}-trigger`;
         const panelId = `${uid}-panel`;
+        const resolvedMergeCss = mergeCss ?? this.props?.theme?.accordion?.sectionDefaultProps?.mergeCss;
 
         let titleElement: React.ReactNode = title;
         if (typeof title === "string") {
@@ -136,11 +143,12 @@ class AccordionSection extends React.Component<Props, State> {
                 {({ headingLevel = 0 }) => (
                     <>
                         <AccordionSectionHeader
+                            {...spreadProps("headerProps")}
                             headingLevel={headingLevel}
                             expanded={expanded}
                             data-test-selector="sectionHeader"
                             data-test-key={typeof title === "string" ? title : ""}
-                            {...spreadProps("headerProps")}
+                            css={applyStyledProp(["headerProps", "css"], resolvedMergeCss)}
                         >
                             <button
                                 aria-expanded={expanded}
@@ -183,11 +191,12 @@ class AccordionSection extends React.Component<Props, State> {
                             </button>
                         </AccordionSectionHeader>
                         <AccordionSectionPanel
+                            {...spreadProps("panelProps")}
                             id={panelId}
                             aria-labelledby={triggerId}
                             hidden={!expanded}
                             data-test-selector="sectionPanel"
-                            {...spreadProps("panelProps")}
+                            css={applyStyledProp(["panelProps", "css"], resolvedMergeCss)}
                         >
                             {children}
                         </AccordionSectionPanel>

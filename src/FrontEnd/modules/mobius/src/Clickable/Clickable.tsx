@@ -143,7 +143,6 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(
                     forwardProps.tabIndex = -1;
                 }
 
-                // TODO ISC-12114 - Fixing the return type of getProps revealed a typing issue with otherProps.
                 return (
                     <StyledButton
                         className={className}

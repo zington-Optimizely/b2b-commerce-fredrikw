@@ -15,6 +15,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const enum fields {
     numberOfRecords = "numberOfRecords",
@@ -82,7 +83,12 @@ class RecentOrders extends React.Component<Props> {
         const orderHistoryUrl = orderHistoryPageLink ? orderHistoryPageLink.url : undefined;
 
         return (
-            <CardList extendedStyles={styles.cardList}>
+            <CardList
+                css={css`
+                    padding-bottom: 50px;
+                `}
+                extendedStyles={styles.cardList}
+            >
                 <CardListHeading heading={translate("Recent Orders")} viewAllUrl={orderHistoryUrl} />
                 {ordersDataView.value.length === 0 && (
                     <GridItem {...styles.noOrdersFoundGridItem}>

@@ -5,7 +5,7 @@ import { PersonaModel } from "@insite/client-framework/Types/ApiModels";
 import { PageDefinition } from "@insite/client-framework/Types/ContentItemDefinitions";
 import AddWidgetModal from "@insite/shell/Components/Modals/AddWidgetModal";
 import { HasConfirmationContext, withConfirmation } from "@insite/shell/Components/Modals/ConfirmationContext";
-import { sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
+import { closeSiteHole, sendToSite, setSiteFrame } from "@insite/shell/Components/Shell/SiteHole";
 import { getPageDefinitions } from "@insite/shell/DefinitionLoader";
 import { getPageState, getPageStateFromDictionaries } from "@insite/shell/Services/ContentAdminService";
 import { moveWidgetTo, removeWidget } from "@insite/shell/Store/Data/Pages/PagesActionCreators";
@@ -88,6 +88,7 @@ class SiteFrame extends React.Component<Props, State> {
                 type: "ChangeLanguage",
                 languageId: this.props.currentLanguageId,
             });
+            closeSiteHole();
         }
 
         if (this.props.selectedProductPath !== prevProps.selectedProductPath) {

@@ -1,4 +1,5 @@
 import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMetadata";
+import BypassedAuthorizationWarning from "@insite/client-framework/Components/BypassedAuthorizationWarning";
 import {
     createPageElement,
     registerPageUpdate,
@@ -58,7 +59,10 @@ class PublicPage extends React.Component<Props> {
     componentDidUpdate(prevProps: Props) {
         const { page } = this.props;
         if (page.id !== prevProps.page?.id) {
-            this.setMetadata();
+            // product list and product details call setMetadata when they get data
+            if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
+                this.setMetadata();
+            }
         }
     }
 
@@ -103,6 +107,7 @@ class PublicPage extends React.Component<Props> {
             <>
                 {content}
                 <ErrorModal />
+                <BypassedAuthorizationWarning />
             </>
         );
 

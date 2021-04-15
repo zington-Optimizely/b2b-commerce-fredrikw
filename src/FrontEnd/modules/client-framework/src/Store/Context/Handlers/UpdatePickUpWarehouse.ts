@@ -48,7 +48,13 @@ export const ExecuteOnSuccessCallback: HandlerType = props => {
     props.parameter.onSuccess?.();
 };
 
-const chain = [PopulateApiParameter, UpdateSession, DispatchCompleteLoadSession, LoadCart, ExecuteOnSuccessCallback];
+export const chain = [
+    PopulateApiParameter,
+    UpdateSession,
+    DispatchCompleteLoadSession,
+    LoadCart,
+    ExecuteOnSuccessCallback,
+];
 
 const updatePickUpWarehouse = createHandlerChainRunner(chain, "UpdatePickUpWarehouse");
 export default updatePickUpWarehouse;

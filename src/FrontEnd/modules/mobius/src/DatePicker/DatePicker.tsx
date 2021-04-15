@@ -115,14 +115,14 @@ const DatePickerIcon = styled(Icon)<{ _sizeVariant: FormFieldSizeVariant } & The
     border-radius: 100%;
 `;
 
-const DateTimePickerStyle = styled.div<
-    {
-        _sizeVariant: FormFieldSizeVariant;
-        css?: StyledProp;
-        disabled: boolean;
-        mobilePopupDirection?: DatePickerPopupDirection;
-    } & ThemeProps<BaseTheme>
->`
+interface DateTimePickerStyleProps extends ThemeProps<BaseTheme> {
+    _sizeVariant: FormFieldSizeVariant;
+    css?: StyledProp;
+    disabled: boolean;
+    mobilePopupDirection?: DatePickerPopupDirection;
+}
+
+const DateTimePickerStyle = styled.div<DateTimePickerStyleProps>`
     button:focus {
         /* outline is added on span for border reasons */
         outline: none;

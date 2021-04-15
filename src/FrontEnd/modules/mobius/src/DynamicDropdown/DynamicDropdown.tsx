@@ -223,10 +223,11 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
     private applyStyledProp: Function;
     private sizeVariant: FormFieldSizeVariant;
 
+    static defaultPlaceholder = "Type to search";
     static defaultProps: Partial<DynamicDropdownProps> = {
         isLoading: false,
         filterOption: filter,
-        placeholder: "Type to search",
+        placeholder: DynamicDropdown.defaultPlaceholder,
     };
 
     constructor(props: DynamicDropdownProps & HasDisablerContext) {
@@ -564,7 +565,13 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 onChange={this.controlInput}
                 onKeyPress={onKeyPress}
                 value={typedInput}
-                placeholder={selected ? "" : placeholder}
+                placeholder={
+                    selected
+                        ? ""
+                        : placeholder && DynamicDropdown.defaultPlaceholder === placeholder
+                        ? theme.translate(placeholder)
+                        : placeholder
+                }
                 disabled={isDisabled}
                 data-test-selector={`${(otherProps as any)["data-test-selector"]}-input`}
                 {...inputLabelObj}

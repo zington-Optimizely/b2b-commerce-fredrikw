@@ -1,14 +1,13 @@
 /* eslint-disable spire/export-styles */
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { useGetLink } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Button from "@insite/mobius/Button";
-import { HasHistory, History, withHistory } from "@insite/mobius/utilities/HistoryContext";
+import { useHistory } from "@insite/mobius/utilities/HistoryContext";
 import * as React from "react";
-import { connect } from "react-redux";
+import { FC } from "react";
 import { css } from "styled-components";
 
 const enum fields {
@@ -27,30 +26,27 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
-    link: getLink(state, ownProps.fields.link),
-});
-
-const onClick = (history: History, url?: string) => {
-    if (url) {
-        history.push(url);
-    }
+const wrapperStyles = {
+    css: css`
+        width: 100%;
+        display: flex;
+        justify-content: ${fields.alignment ?? "left"};
+    `,
 };
 
-type Props = HasHistory & OwnProps & ReturnType<typeof mapStateToProps>;
+const CmsButton: FC<OwnProps> = ({ fields }) => {
+    const history = useHistory();
+    const link = useGetLink(fields.link);
 
-const CmsButton = ({ fields, history, link }: Props) => {
-    const wrapperStyles = {
-        css: css`
-            width: 100%;
-            display: flex;
-            justify-content: ${fields.alignment ?? "left"};
-        `,
+    const onClick = () => {
+        if (link.url) {
+            history.push(link.url);
+        }
     };
 
     return (
         <StyledWrapper {...wrapperStyles}>
-            <Button variant={fields.variant} onClick={() => onClick(history, link?.url)}>
+            <Button variant={fields.variant} onClick={onClick}>
                 {fields.label}
             </Button>
         </StyledWrapper>
@@ -58,7 +54,7 @@ const CmsButton = ({ fields, history, link }: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(withHistory(CmsButton)),
+    component: CmsButton,
     definition: {
         group: "Basic",
         icon: "Button",

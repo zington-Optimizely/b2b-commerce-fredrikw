@@ -2,7 +2,7 @@ import "jest-styled-components";
 import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
-import RadioGroup from "./RadioGroup";
+import RadioGroup, { RadioGroupStyle } from "./RadioGroup";
 import Typography from "../Typography";
 
 import { css } from "styled-components";
@@ -63,6 +63,7 @@ describe("RadioGroup", () => {
 
     beforeEach(() => {
         props = {};
+        theme = {};
         mountedWrapper = undefined;
     });
 
@@ -125,6 +126,19 @@ describe("RadioGroup", () => {
 
             expect(root).toHaveStyleRule("background-color", "tomato");
             expect(root).toHaveStyleRule("color", "green");
+        });
+    });
+
+    describe("Horizontal property", () => {
+        test("RadioGroup Element with horizontal prop true", () => {
+            props.horizontal = true;
+            const radioElement = wrapper().find(RadioGroupStyle);
+            expect(radioElement).toHaveStyleRule("display", "inline-block");
+        });
+        test("RadioGroup Element Styles", () => {
+            props.horizontal = false;
+            const radioElement = wrapper().find(RadioGroupStyle);
+            expect(radioElement).toHaveStyleRule("display", "flex");
         });
     });
 });

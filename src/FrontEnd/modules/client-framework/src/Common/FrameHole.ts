@@ -87,7 +87,8 @@ export const setupSiteHole = async function (
     window.addEventListener("message", siteHoleListener);
 
     let attempts = 0;
-    while (!completedHandshake && attempts < 30) {
+    // 150 * 200ms = 30s
+    while (!completedHandshake && attempts < 150) {
         attempts = attempts + 1;
         await sleep(200);
     }

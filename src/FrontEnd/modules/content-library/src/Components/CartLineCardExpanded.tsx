@@ -1,6 +1,9 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
+import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import { HasCartLineContext, withCartLine } from "@insite/client-framework/Components/CartLineContext";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import ProductBrand, { ProductBrandStyles } from "@insite/content-library/Components/ProductBrand";
@@ -11,11 +14,14 @@ import ProductPrice, { ProductPriceStyles } from "@insite/content-library/Compon
 import SmallHeadingAndText, { SmallHeadingAndTextStyles } from "@insite/content-library/Components/SmallHeadingAndText";
 import CartLineNotes, { CartLineNotesStyles } from "@insite/content-library/Widgets/Cart/CartLineNotes";
 import CartLineQuantity, { CartLineQuantityStyles } from "@insite/content-library/Widgets/Cart/CartLineQuantity";
+import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
-import Typography, { TypographyProps } from "@insite/mobius/Typography";
+import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
+import { breakpointMediaQueries } from "@insite/mobius/utilities";
 import getColor from "@insite/mobius/utilities/getColor";
 import React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
@@ -27,7 +33,12 @@ interface OwnProps {
     extendedStyles?: CartLineCardExpandedStyles;
 }
 
-type Props = OwnProps & HasCartLineContext;
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+    vatPriceDisplay: getSettingsCollection(state).productSettings.vatPriceDisplay,
+});
+
+type Props = OwnProps & HasCartLineContext & ReturnType<typeof mapStateToProps>;
 
 export interface CartLineCardExpandedStyles {
     cartLineNotes?: CartLineNotesStyles;
@@ -49,6 +60,9 @@ export interface CartLineCardExpandedStyles {
     productPartNumbers?: ProductPartNumbersStyles;
     orderLineNotesGridItem?: GridItemProps;
     notesHeadingAndText?: SmallHeadingAndTextStyles;
+    costCodeGridItem?: GridItemProps;
+    costCodeValueText?: TypographyPresentationProps;
+    costCodeLabelText?: TypographyPresentationProps;
     productPriceAndQuantityGridItem?: GridItemProps;
     productPriceAndQuantityContainer?: GridContainerProps;
     priceGridItem?: GridItemProps;
@@ -58,6 +72,8 @@ export interface CartLineCardExpandedStyles {
     qtyHeadingAndText?: SmallHeadingAndTextStyles;
     extendedUnitNetPriceGridItem?: GridItemProps;
     extendedUnitNetPrice?: SmallHeadingAndTextStyles;
+    subtotalWithoutVatText?: SmallHeadingAndTextStyles;
+    vatAmount?: SmallHeadingAndTextStyles;
 }
 
 export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
@@ -87,7 +103,7 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
         gap: 15,
     },
     productDescriptionAndPartNumbersGridItem: {
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 5, 5, 5],
         printWidth: 6,
     },
     productDescriptionAndPartNumbersContainer: {
@@ -116,49 +132,103 @@ export const cartLineCardExpandedStyles: CartLineCardExpandedStyles = {
     orderLineNotesGridItem: {
         width: 12,
     },
+    costCodeGridItem: { width: 12 },
+    costCodeLabelText: {
+        weight: "bold",
+        css: css`
+            margin-right: 10px;
+        `,
+    },
     productPriceAndQuantityGridItem: {
-        width: [12, 12, 6, 6, 6],
+        width: [12, 12, 7, 7, 7],
         printWidth: 6,
     },
     productPriceAndQuantityContainer: {
         gap: 15,
     },
     priceGridItem: {
-        width: [12, 5, 12, 5, 5],
+        width: [12, 12, 5, 5, 5],
         printWidth: 5,
         css: css`
             flex-direction: column;
         `,
     },
-    price: {
-        price: {
-            priceText: {
-                weight: "normal",
-            },
-        },
-    },
     quantityGridItem: {
-        width: 3,
+        width: [12, 12, 3, 3, 3],
     },
     extendedUnitNetPriceGridItem: {
-        width: 4,
+        width: [12, 12, 4, 4, 4],
+        css: css`
+            flex-direction: column;
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(
+                    theme,
+                    [
+                        null,
+                        css`
+                            flex-flow: wrap;
+                        `,
+                    ],
+                    "max",
+                )}
+        `,
     },
     extendedUnitNetPrice: {
         text: {
             weight: 700,
         },
     },
+    subtotalWithoutVatText: {
+        wrapper: {
+            css: css`
+                margin-bottom: 6px;
+                width: 100%;
+                ${({ theme }: { theme: BaseTheme }) =>
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            css`
+                                width: 50%;
+                            `,
+                        ],
+                        "max",
+                    )}
+            `,
+        },
+    },
+    vatAmount: {
+        wrapper: {
+            css: css`
+                margin-bottom: 6px;
+                width: 100%;
+                ${({ theme }: { theme: BaseTheme }) =>
+                    breakpointMediaQueries(
+                        theme,
+                        [
+                            null,
+                            css`
+                                width: 50%;
+                            `,
+                        ],
+                        "max",
+                    )}
+            `,
+        },
+    },
 };
 
-const CartLineCardExpanded: React.FC<Props> = ({
+const CartLineCardExpanded = ({
     cart,
     cartLine,
     showSavingsAmount,
     showSavingsPercent,
     promotions,
     editable,
+    enableVat,
+    vatPriceDisplay,
     extendedStyles,
-}) => {
+}: Props) => {
     const [styles] = React.useState(() => mergeToNew(cartLineCardExpandedStyles, extendedStyles));
 
     return (
@@ -223,11 +293,37 @@ const CartLineCardExpanded: React.FC<Props> = ({
                             </GridItem>
                             <GridItem {...styles.extendedUnitNetPriceGridItem}>
                                 {cartLine.pricing && (
-                                    <SmallHeadingAndText
-                                        heading={translate("Subtotal")}
-                                        text={cartLine.pricing.extendedUnitNetPriceDisplay}
-                                        extendedStyles={styles.extendedUnitNetPrice}
-                                    />
+                                    <>
+                                        {enableVat && vatPriceDisplay === "DisplayWithAndWithoutVat" && (
+                                            <>
+                                                <SmallHeadingAndText
+                                                    heading={`${translate("Subtotal")} (${translate("Ex. VAT")})`}
+                                                    text={cartLine.pricing.extendedUnitNetPriceDisplay}
+                                                    extendedStyles={styles.subtotalWithoutVatText}
+                                                />
+                                                <SmallHeadingAndText
+                                                    heading={`${translate("Total VAT")} (${cartLine.pricing.vatRate}%)`}
+                                                    text={cartLine.pricing.vatAmountDisplay}
+                                                    extendedStyles={styles.vatAmount}
+                                                />
+                                            </>
+                                        )}
+                                        <SmallHeadingAndText
+                                            heading={
+                                                !enableVat
+                                                    ? translate("Subtotal")
+                                                    : vatPriceDisplay !== "DisplayWithoutVat"
+                                                    ? `${translate("Subtotal")} (${translate("Inc. VAT")})`
+                                                    : `${translate("Subtotal")} (${translate("Ex. VAT")})`
+                                            }
+                                            text={
+                                                enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                                    ? cartLine.pricing.extendedUnitRegularPriceWithVatDisplay
+                                                    : cartLine.pricing.extendedUnitNetPriceDisplay
+                                            }
+                                            extendedStyles={styles.extendedUnitNetPrice}
+                                        />
+                                    </>
                                 )}
                             </GridItem>
                         </GridContainer>
@@ -242,10 +338,18 @@ const CartLineCardExpanded: React.FC<Props> = ({
                             />
                         </GridItem>
                     )}
+                    {cart.showCostCode && cartLine.costCode && (
+                        <GridItem {...styles.costCodeGridItem}>
+                            <Typography {...styles.costCodeValueText} as="p">
+                                <Typography {...styles.costCodeLabelText}>{cart.costCodeLabel}:</Typography>
+                                {cartLine.costCode}
+                            </Typography>
+                        </GridItem>
+                    )}
                 </GridContainer>
             </GridItem>
         </GridContainer>
     );
 };
 
-export default withCartLine(CartLineCardExpanded);
+export default connect(mapStateToProps)(withCartLine(CartLineCardExpanded));

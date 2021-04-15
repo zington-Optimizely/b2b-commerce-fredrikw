@@ -99,6 +99,9 @@
                             <span class="field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>
                         </div>
                     </div>
+                    <div class="row">
+                        [% reCaptcha 'ForgotPassword' %]
+                    </div>
                     <p class="error">
                         <span id="tst_forgotPassword_errorMessage" class="field-validation-error" ng-if="vm.resetPasswordError" ng-bind="vm.resetPasswordError"></span>
                     </p>

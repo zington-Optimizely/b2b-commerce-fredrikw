@@ -1,7 +1,11 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink, getPageLinkByNodeId, LinkModel, mapLinks } from "@insite/client-framework/Store/Links/LinksSelectors";
+import {
+    getPageLinkByNodeId,
+    LinkModel,
+    useGetLink,
+    useGetLinks,
+} from "@insite/client-framework/Store/Links/LinksSelectors";
 import { HasFields } from "@insite/client-framework/Types/ContentItemModel";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
@@ -10,7 +14,7 @@ import Link from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
-import { connect } from "react-redux";
+import { FC, useState } from "react";
 import { css } from "styled-components";
 
 const enum fields {
@@ -31,24 +35,6 @@ interface OwnProps extends WidgetProps {
     };
     extendedStyles?: LinkListStyles;
 }
-
-const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => {
-    const titleLink = getLink(state, ownProps.fields.titleLink);
-    const links = mapLinks<LinkModel, { openInNewWindow: boolean; overriddenTitle: string }>(
-        state,
-        ownProps.fields.links,
-        widgetLink => ({
-            openInNewWindow: widgetLink.fields.openInNewWindow,
-            overriddenTitle: widgetLink.fields.overriddenTitle,
-        }),
-    );
-    return {
-        titleLink,
-        links,
-    };
-};
-
-type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface LinkListStyles {
     linkListWrapper?: InjectableCss;
@@ -76,8 +62,10 @@ export const linkListStyles: LinkListStyles = {
     },
 };
 
-const LinkList: React.FC<Props> = ({ fields, titleLink, links, extendedStyles }) => {
-    const [styles] = React.useState(() => mergeToNew(linkListStyles, extendedStyles));
+const LinkList: FC<OwnProps> = ({ fields, extendedStyles }) => {
+    const links = useGetLinks(fields.links, o => o.fields.destination);
+    const titleLink = useGetLink(fields.titleLink);
+    const [styles] = useState(() => mergeToNew(linkListStyles, extendedStyles));
 
     const alignmentStyles = css`
         text-align: ${fields.alignment || "right"};
@@ -103,9 +91,9 @@ const LinkList: React.FC<Props> = ({ fields, titleLink, links, extendedStyles })
             {links.map((link, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <StyledWrapper key={index} css={directionStyles}>
-                    {link?.url && (
-                        <Link href={link.url} target={link.openInNewWindow ? "_blank" : ""}>
-                            {link.overriddenTitle || link.title}
+                    {link.url && (
+                        <Link href={link.url} target={fields.links[index].fields.openInNewWindow ? "_blank" : ""}>
+                            {fields.links[index].fields.overriddenTitle || link.title}
                         </Link>
                     )}
                 </StyledWrapper>
@@ -115,7 +103,7 @@ const LinkList: React.FC<Props> = ({ fields, titleLink, links, extendedStyles })
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(LinkList),
+    component: LinkList,
     definition: {
         group: "Basic",
         icon: "LinkList",

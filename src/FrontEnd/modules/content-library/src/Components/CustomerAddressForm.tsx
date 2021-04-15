@@ -130,6 +130,7 @@ export default class CustomerAddressForm<Address extends BillToModel | ShipToMod
             address: {
                 ...this.state.address,
                 country,
+                state: null,
             },
             countryLookup,
         });

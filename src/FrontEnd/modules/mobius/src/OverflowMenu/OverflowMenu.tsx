@@ -63,9 +63,8 @@ export type OverflowMenuComponentProps = MobiusStyledComponentProps<
 
 export type OverflowMenuProps = OverflowMenuComponentProps & OverflowMenuPresentationProps;
 
-// TODO ISC-12114 - The getProp call below depends on a (fixed) inaccuracy of the getProp return type definition.
 const OverflowButton = styled(Button)`
-    z-index: ${(getProp("theme.zIndex.menu", 0) as any) - 1};
+    z-index: ${props => getProp("theme.zIndex.menu", 0)(props) - 1};
     width: 40px;
     padding: 0;
 `;

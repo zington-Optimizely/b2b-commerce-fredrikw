@@ -1,5 +1,7 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { Cart } from "@insite/client-framework/Services/CartService";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import translate from "@insite/client-framework/Translate";
 import { PromotionModel } from "@insite/client-framework/Types/ApiModels";
 import LocalizedCurrency from "@insite/content-library/Components/LocalizedCurrency";
@@ -9,6 +11,7 @@ import LoadingSpinner, { LoadingSpinnerProps } from "@insite/mobius/LoadingSpinn
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import getColor from "@insite/mobius/utilities/getColor";
 import React, { FC, Fragment } from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
 interface OwnProps {
@@ -32,7 +35,11 @@ interface OwnProps {
     extendedStyles?: CartTotalDisplayStyles;
 }
 
-type Props = OwnProps;
+const mapStateToProps = (state: ApplicationState) => ({
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
+});
+
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface CartTotalDisplayStyles {
     container?: GridContainerProps;
@@ -112,7 +119,7 @@ export const cartTotalDisplayStyles: CartTotalDisplayStyles = {
     },
 };
 
-const CartTotalDisplay: FC<Props> = ({
+const CartTotalDisplay = ({
     isCartEmpty = false,
     showTaxAndShipping = true,
     cart,
@@ -120,8 +127,9 @@ const CartTotalDisplay: FC<Props> = ({
     shippingPromotions,
     discountTotal,
     isLoading,
+    enableVat,
     extendedStyles,
-}) => {
+}: Props) => {
     const [styles] = React.useState(() => mergeToNew(cartTotalDisplayStyles, extendedStyles));
 
     if (isLoading || !cart) {
@@ -140,7 +148,9 @@ const CartTotalDisplay: FC<Props> = ({
                 {!showTaxAndShipping && (
                     <>
                         <GridItem {...styles.labelGridItem}>
-                            <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
+                            <Typography {...styles.subtotalLabel}>
+                                {translate("Subtotal") + (enableVat ? ` (${translate("Ex. VAT")})` : "")}
+                            </Typography>
                         </GridItem>
                         <GridItem {...styles.valueGridItem}>
                             <LoadingSpinner {...styles.loadingSpinner} />
@@ -167,7 +177,9 @@ const CartTotalDisplay: FC<Props> = ({
                 {!showTaxAndShipping && (
                     <>
                         <GridItem {...styles.labelGridItem}>
-                            <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
+                            <Typography {...styles.subtotalLabel}>
+                                {translate("Subtotal") + (enableVat ? ` (${translate("Ex. VAT")})` : "")}
+                            </Typography>
                         </GridItem>
                         <GridItem {...styles.valueGridItem}>
                             <Typography {...styles.subtotalValue}>{`${cart.currencySymbol} -`}</Typography>
@@ -181,7 +193,9 @@ const CartTotalDisplay: FC<Props> = ({
     return (
         <GridContainer {...styles.container} data-test-selector={`cartTotal_${cart.id}`}>
             <GridItem {...styles.labelGridItem}>
-                <Typography {...styles.subtotalLabel}>{translate("Subtotal")}</Typography>
+                <Typography {...styles.subtotalLabel}>
+                    {translate("Subtotal") + (enableVat ? ` (${translate("Ex. VAT")})` : "")}
+                </Typography>
             </GridItem>
             <GridItem {...styles.valueGridItem}>
                 <Typography {...styles.subtotalValue} data-test-selector="cartTotal_subTotal">
@@ -236,7 +250,7 @@ const CartTotalDisplay: FC<Props> = ({
             {showTaxAndShipping && cart.totalTaxDisplay.length > 0 && cart.customerOrderTaxes!.length === 0 && (
                 <>
                     <GridItem {...styles.labelGridItem}>
-                        <Typography {...styles.taxLabel}>{translate("Tax")}</Typography>
+                        <Typography {...styles.taxLabel}>{enableVat ? translate("VAT") : translate("Tax")}</Typography>
                     </GridItem>
                     <GridItem {...styles.valueGridItem}>
                         <Typography {...styles.taxValue} data-test-selector="cartTotal_totalTaxDisplay">
@@ -288,4 +302,4 @@ const CartTotalDisplay: FC<Props> = ({
     );
 };
 
-export default CartTotalDisplay;
+export default connect(mapStateToProps)(CartTotalDisplay);

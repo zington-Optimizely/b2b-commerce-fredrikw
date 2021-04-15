@@ -102,7 +102,6 @@ const DrawerContent = styled.div<InjectableCss<any>>`
     ${injectCss}
 `;
 
-// TODO ISC-12114 - The `getProp` expression below looks like it should be fine but TypeScript doesn't like it.
 const drawerContainerStyles = (cssOverrides: any) => css`
     margin-top: 0;
     display: flex;
@@ -110,9 +109,9 @@ const drawerContainerStyles = (cssOverrides: any) => css`
     justify-content: start;
     height: 100%;
     transition: ${({ isClosing }: { isClosing: boolean }) => css`
-        ${/* sc-block */ isClosing
-            ? (getProp("transition.overlayExitKeyframes") as any)
-            : (getProp("transition.overlayEntryKeyframes") as any)} ${getProp("transition.length") as any}ms
+        ${isClosing
+            ? getProp("transition.overlayExitKeyframes")
+            : getProp("transition.overlayEntryKeyframes")} ${getProp("transition.length")}ms
     `};
     ${cssOverrides}
 `;

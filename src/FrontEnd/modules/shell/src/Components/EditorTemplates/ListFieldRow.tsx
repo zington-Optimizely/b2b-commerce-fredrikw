@@ -49,6 +49,8 @@ const mapStateToProps = (state: ShellState, ownProps: ItemProps) => {
 type Props = ItemProps & HasSideBarForm & ReturnType<typeof mapStateToProps> & { dispatch: Dispatch };
 
 class ListFieldRow extends React.Component<Props, State> {
+    // this is required because firefox doesn't set clientY in the drag event that uses this below
+    private clientY = 0;
     private readonly row: React.RefObject<HTMLDivElement>;
     private hasValidationErrors: () => boolean;
 
@@ -63,6 +65,18 @@ class ListFieldRow extends React.Component<Props, State> {
             hasValidationErrors: false,
         };
     }
+
+    componentDidMount() {
+        document.addEventListener("dragover", this.documentDragOver);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("dragover", this.documentDragOver);
+    }
+
+    documentDragOver = (event: DragEvent) => {
+        this.clientY = event.clientY;
+    };
 
     onSave = () => {
         return !this.hasValidationErrors();
@@ -98,7 +112,7 @@ class ListFieldRow extends React.Component<Props, State> {
         this.props.onDragEnd();
     };
 
-    drag = (event: React.DragEvent<HTMLElement>) => {
+    drag = () => {
         const scrollContainer = this.row.current!.closest("[data-scroll-container]");
         if (!scrollContainer) {
             return;
@@ -106,14 +120,14 @@ class ListFieldRow extends React.Component<Props, State> {
 
         const boundingClientRect = scrollContainer.getBoundingClientRect();
 
-        const top = event.clientY - boundingClientRect.top;
+        const top = this.clientY - boundingClientRect.top;
         if (top < 40) {
             this.scroll(-10, scrollContainer);
         } else if (top < 60) {
             this.scroll(-5, scrollContainer);
         }
 
-        const bottom = boundingClientRect.bottom - event.clientY;
+        const bottom = boundingClientRect.bottom - this.clientY;
         if (bottom < 40) {
             this.scroll(15, scrollContainer);
         } else if (bottom < 60) {

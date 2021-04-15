@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useContext } from "react";
 
 export type History = {
     push: (url: string, state?: unknown) => void;
@@ -17,6 +18,10 @@ const HistoryContext = React.createContext<HasHistory>({
 });
 
 export default HistoryContext;
+
+export const useHistory = () => {
+    return useContext(HistoryContext).history;
+};
 
 export function withHistory<P extends HasHistory>(Component: React.ComponentType<P>) {
     return function HistoryComponent(props: Omit<P, keyof HasHistory>) {

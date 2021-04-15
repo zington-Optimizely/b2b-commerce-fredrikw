@@ -41,9 +41,6 @@ export type RadioProps = RadioComponentProps & FieldSetPresentationProps<RadioCo
 
 const RadioStyle = styled.div<{ _sizeVariant: keyof typeof checkboxSizes; _color: string } & InjectableCss>`
     display: block;
-    & + & {
-        margin-top: 10px;
-    }
     input {
         opacity: 0;
         & + label {

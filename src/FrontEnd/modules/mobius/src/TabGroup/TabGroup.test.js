@@ -18,6 +18,9 @@ const typeText = text => <Typography as="p">{text}</Typography>;
 const themeGenerator = cssOverrides => ({
     ...baseTheme,
     tab: { defaultProps: {}, groupDefaultProps: { cssOverrides } },
+    zIndex: {
+        tabGroup: 1000,
+    },
 });
 
 const baseTabs = [tabGenerator("moose", typeText("some info")), tabGenerator("cat", typeText("some other info"))];
@@ -198,5 +201,11 @@ describe("TabGroup", () => {
 
             expect(document.activeElement).toEqual(elem);
         });
+    });
+
+    test("Test z-index from theme", () => {
+        theme = themeGenerator({});
+        tabs = baseTabs;
+        expect(wrapper().find('[data-id="tabContent"]')).toHaveStyleRule("z-index", "999");
     });
 });

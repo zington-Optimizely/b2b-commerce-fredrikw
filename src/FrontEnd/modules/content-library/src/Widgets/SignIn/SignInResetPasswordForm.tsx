@@ -1,13 +1,16 @@
+import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import validateReCaptcha from "@insite/client-framework/Store/Components/ReCaptcha/Handlers/ValidateReCaptcha";
 import forgotPassword from "@insite/client-framework/Store/Context/Handlers/ForgotPassword";
 import translate from "@insite/client-framework/Translate";
+import ReCaptcha from "@insite/content-library/Components/ReCaptcha";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import TextField, { TextFieldProps } from "@insite/mobius/TextField";
 import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import React, { FC } from "react";
+import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -17,6 +20,7 @@ interface OwnProps {
 
 const mapDispatchToProps = {
     resetPassword: forgotPassword,
+    validateReCaptcha: makeHandlerChainAwaitable<{}, boolean>(validateReCaptcha),
 };
 
 type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
@@ -27,6 +31,7 @@ export interface SignInResetPasswordFormStyles {
     descriptionText?: TypographyPresentationProps;
     userNameGridItem?: GridItemProps;
     userNameTextField?: TextFieldProps;
+    reCaptchaGridItem?: GridItemProps;
     buttonsGridItem?: GridItemProps;
     cancelButton?: ButtonPresentationProps;
     sendButton?: ButtonPresentationProps;
@@ -37,6 +42,9 @@ export const signInResetPasswordFormStyles: SignInResetPasswordFormStyles = {
         width: 12,
     },
     descriptionGridItem: {
+        width: 12,
+    },
+    reCaptchaGridItem: {
         width: 12,
     },
     buttonsGridItem: {
@@ -59,39 +67,50 @@ export const signInResetPasswordFormStyles: SignInResetPasswordFormStyles = {
 export const createListFormStyles = signInResetPasswordFormStyles;
 const styles = signInResetPasswordFormStyles;
 
-const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
-    const [userName, setUserName] = React.useState("");
-    const [errorMessage, setErrorMessage] = React.useState("");
-    const toasterContext = React.useContext(ToasterContext);
+const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha }: Props) => {
+    const [userName, setUserName] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const toasterContext = useContext(ToasterContext);
 
-    const sendEmail = (userName: string) => {
-        if (userName) {
-            resetPassword({
-                userName,
-                onSuccess: () => {
-                    toasterContext.addToast({
-                        body: siteMessage("ResetPassword_ResetPasswordEmailSent"),
-                        messageType: "success",
-                    });
-                    onClose();
-                    resetForm();
-                },
-                onError: error => {
-                    setErrorMessage(error);
-                },
-                onComplete(resultProps) {
-                    if (resultProps.apiResult?.successful) {
-                        // "this" is targeting the object being created, not the parent SFC
-                        // eslint-disable-next-line react/no-this-in-sfc
-                        this.onSuccess?.();
-                    } else if (resultProps.apiResult?.errorMessage) {
-                        // "this" is targeting the object being created, not the parent SFC
-                        // eslint-disable-next-line react/no-this-in-sfc
-                        this.onError?.(resultProps.apiResult.errorMessage);
-                    }
-                },
-            });
+    const sendEmail = async (userName: string) => {
+        if (!userName) {
+            setErrorMessage(siteMessage("Field_Required", translate("Username")) as string);
+            return;
         }
+
+        const isReCaptchaValid = await validateReCaptcha({});
+        if (!isReCaptchaValid) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        resetPassword({
+            userName,
+            onSuccess: () => {
+                toasterContext.addToast({
+                    body: siteMessage("ResetPassword_ResetPasswordEmailSent"),
+                    messageType: "success",
+                });
+                onClose();
+                resetForm();
+            },
+            onError: error => {
+                setErrorMessage(error);
+            },
+            onComplete(resultProps) {
+                setIsSubmitting(false);
+                if (resultProps.apiResult?.successful) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onSuccess?.();
+                } else if (resultProps.apiResult?.errorMessage) {
+                    // "this" is targeting the object being created, not the parent SFC
+                    // eslint-disable-next-line react/no-this-in-sfc
+                    this.onError?.(resultProps.apiResult.errorMessage);
+                }
+            },
+        });
     };
 
     const onCancelClick = () => {
@@ -101,6 +120,12 @@ const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
 
     const resetForm = () => {
         setUserName("");
+    };
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newUsername = e.currentTarget.value;
+        setUserName(newUsername);
+        setErrorMessage(newUsername ? "" : (siteMessage("Field_Required", translate("Username")) as string));
     };
 
     return (
@@ -116,14 +141,17 @@ const SignInResetPasswordForm: FC<Props> = ({ onClose, resetPassword }) => {
                     value={userName}
                     placeholder={translate("Enter username")}
                     error={errorMessage}
-                    onChange={e => setUserName(e.currentTarget.value)}
+                    onChange={handleUsernameChange}
                 ></TextField>
+            </GridItem>
+            <GridItem {...styles.reCaptchaGridItem}>
+                <ReCaptcha location="ForgotPassword" />
             </GridItem>
             <GridItem {...styles.buttonsGridItem}>
                 <Button {...styles.cancelButton} onClick={onCancelClick}>
                     {translate("Return to sign in")}
                 </Button>
-                <Button {...styles.sendButton} onClick={() => sendEmail(userName)}>
+                <Button {...styles.sendButton} disabled={isSubmitting} onClick={() => sendEmail(userName)}>
                     {translate("Send Email")}
                 </Button>
             </GridItem>

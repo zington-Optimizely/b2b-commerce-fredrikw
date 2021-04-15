@@ -48,7 +48,6 @@ export interface RfqRequestQuoteSpecificationsStyles {
 
 export const rfqRequestQuoteSpecificationsStyles: RfqRequestQuoteSpecificationsStyles = {
     quoteTypeRadioGroup: {
-        // TODO ISC-12425 set these radio buttons to horizontal and remove the  "& > div" selector
         css: css`
             display: inline-block;
             padding-bottom: 20px;

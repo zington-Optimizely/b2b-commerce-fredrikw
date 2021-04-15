@@ -34,7 +34,13 @@
         <table id="EmailOrderDetails">
             <tr>
                 <td width="130"><strong>Order Number:</strong></td>
-                <td>[[Model.OrderNumber]]</td>
+                <td>
+                    [% if Model.ErpOrderNumber != null and Model.ErpOrderNumber != "" -%]
+                    [[Model.ErpOrderNumber]]
+                    [% else -%]
+                    [[Model.OrderNumber]]
+                    [% endif -%]
+                </td>
             </tr>
             <tr>
                 <td><strong>Order Placed</strong>:</td>
