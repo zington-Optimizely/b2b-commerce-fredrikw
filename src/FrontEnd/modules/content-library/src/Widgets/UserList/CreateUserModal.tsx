@@ -353,7 +353,12 @@ class CreateUserModal extends PureComponent<
                             </GridItem>
                         )}
                         <GridItem {...styles.buttonsGridItem}>
-                            <Button {...styles.cancelButton} onClick={this.cancelFormHandler} type="button">
+                            <Button
+                                {...styles.cancelButton}
+                                data-test-selector="userAddForm_cancelButton"
+                                onClick={this.cancelFormHandler}
+                                type="button"
+                            >
                                 {translate("Cancel")}
                             </Button>
                             <Button {...styles.submitButton} data-test-selector="userAddForm_saveButton" type="submit">

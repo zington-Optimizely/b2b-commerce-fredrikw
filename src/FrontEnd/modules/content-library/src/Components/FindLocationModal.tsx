@@ -581,7 +581,10 @@ const FindLocationModal: React.FC<Props> = ({
                                     </Typography>
                                 )}
                                 {!isLoading && locationKnown && warehouses.length === 0 && (
-                                    <Typography {...styles.siteMessageResultsErrorText}>
+                                    <Typography
+                                        data-test-selector="findLocationModal_noresult"
+                                        {...styles.siteMessageResultsErrorText}
+                                    >
                                         {showSelectedWarehouse
                                             ? siteMessage("PickUpLocation_SelectedLocationIsOnlyResult")
                                             : siteMessage("PickUpLocation_NoResultsMessage")}
