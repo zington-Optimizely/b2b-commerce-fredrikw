@@ -202,7 +202,14 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 return;
             }
 
-            const { statusCode, redirectTo, page, authorizationFailed, bypassedAuthorization } = retrievePageResult;
+            const {
+                statusCode,
+                redirectTo,
+                page,
+                authorizationFailed,
+                bypassedAuthorization,
+                isAuthenticatedOnServer,
+            } = retrievePageResult;
 
             if (bypassedAuthorization && page) {
                 dispatch({
@@ -212,8 +219,10 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
             }
 
             setStatusCode(statusCode);
+
+            const session = getState().context?.session;
+
             if (redirectTo) {
-                const session = getState().context?.session;
                 const isAuthenticated = session && (session.isAuthenticated || session.rememberMe) && !session.isGuest;
                 if (IS_SERVER_SIDE) {
                     performRedirectTo(redirectTo);
@@ -225,7 +234,10 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 }
             } else if (page) {
                 const hasPageByType = getPageStateByType(currentState, page.type).value?.id === page.id;
-                if (hasPageByType) {
+                if (!IS_SERVER_SIDE && !isAuthenticatedOnServer && session?.isAuthenticated === true) {
+                    // in case user opens page that does not require authentication
+                    window.location.reload();
+                } else if (hasPageByType) {
                     dispatch({
                         type: "Data/Pages/SetPageIsLoaded",
                         pageType: page.type,

@@ -79,6 +79,7 @@ export interface RetrievePageResult {
     redirectTo?: string;
     authorizationFailed?: boolean;
     bypassedAuthorization?: boolean;
+    isAuthenticatedOnServer: boolean;
 }
 
 export interface BasicLanguageModel {
