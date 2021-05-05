@@ -53,6 +53,8 @@ logoLinksSearchStyles.logoWrapper = {
             );
         }}
         img {
+            height: 78px;
+            width: auto;
             ${({ theme }) => {
                 return breakpointMediaQueries(
                     theme,
