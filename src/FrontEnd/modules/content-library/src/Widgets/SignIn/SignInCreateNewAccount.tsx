@@ -27,7 +27,8 @@ const mapStateToProps = (state: ApplicationState) => {
     const { search } = getLocation(state);
     const accountSettings = getSettingsCollection(state).accountSettings;
     const returnUrl = getReturnUrl(state);
-    const referredFromShipping = returnUrl?.toLowerCase() === "/checkoutshipping";
+    const shippingPageUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
+    const referredFromShipping = returnUrl === shippingPageUrl;
     const createAccountPageLink = getPageLinkByPageType(state, "CreateAccountPage");
     const applicationCookie = getCookie(".AspNet.ApplicationCookie");
     return {
