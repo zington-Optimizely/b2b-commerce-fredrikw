@@ -184,7 +184,7 @@
         }
 
         canAddCartLineToCart(cartLine: CartLineModel): boolean {
-            return cartLine.canAddToCart && !cartLine.isRestricted && ((cartLine.availability as any).messageType !== 2 || cartLine.canBackOrder);
+            return cartLine.canAddToCart && !cartLine.isRestricted && !cartLine.isDiscontinued && ((cartLine.availability as any).messageType !== 2 || cartLine.canBackOrder);
         }
     }
 

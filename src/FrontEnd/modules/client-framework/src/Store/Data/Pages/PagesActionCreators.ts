@@ -141,7 +141,11 @@ export const loadPage = (location: Location, history?: History, onSuccess?: () =
                 const state = getState();
                 if (state.pages && state.context) {
                     // product list and product details call trackPageChange when they get data
-                    if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
+                    if (
+                        page.type !== "ProductListPage" &&
+                        page.type !== "ProductDetailsPage" &&
+                        page.type !== "CategoryDetailsPage"
+                    ) {
                         trackPageChange();
                     }
                 }

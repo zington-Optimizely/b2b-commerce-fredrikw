@@ -1,6 +1,7 @@
 import Zone from "@insite/client-framework/Components/Zone";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
+import CookiePrivacyPolicyPopup from "@insite/content-library/Components/CookiePrivacyPolicyPopup";
 import Page, { PageProps as MobiusPageProps } from "@insite/mobius/Page";
 import * as React from "react";
 
@@ -14,6 +15,7 @@ const styles = footerStyles;
 const Footer = ({ id }: PageProps) => (
     <Page as="footer" {...styles.page}>
         <Zone contentId={id} zoneName="Content" />
+        <CookiePrivacyPolicyPopup />
     </Page>
 );
 

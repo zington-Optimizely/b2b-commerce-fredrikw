@@ -21,6 +21,19 @@ const reducer = {
         draft: Draft<MyListDetailsState>,
         action: { parameter: Partial<GetWishListLinesApiParameter> },
     ) => {
+        let needToGoBackToFirstPage = false;
+        for (const key in action.parameter) {
+            if (key === "page" || key === "wishListId") {
+                continue;
+            }
+
+            const oldValue = (<any>draft.loadWishListLinesParameter)[key];
+            const newValue = (<any>action.parameter)[key];
+            if (oldValue !== undefined && oldValue !== newValue) {
+                needToGoBackToFirstPage = true;
+            }
+        }
+
         draft.loadWishListLinesParameter = { ...draft.loadWishListLinesParameter, ...action.parameter };
 
         for (const key in draft.loadWishListLinesParameter) {
@@ -32,16 +45,12 @@ const reducer = {
             }
         }
 
-        for (const key in action.parameter) {
-            // go back to page 1 if any other parameters changed
-            if (
-                draft.loadWishListLinesParameter.page &&
-                draft.loadWishListLinesParameter.page > 1 &&
-                key !== "page" &&
-                key !== "wishListId"
-            ) {
-                draft.loadWishListLinesParameter.page = 1;
-            }
+        if (
+            draft.loadWishListLinesParameter.page &&
+            draft.loadWishListLinesParameter.page > 1 &&
+            needToGoBackToFirstPage
+        ) {
+            draft.loadWishListLinesParameter.page = 1;
         }
     },
     "Pages/MyListDetails/SetWishListId": (draft: Draft<MyListDetailsState>, action: { wishListId: string }) => {

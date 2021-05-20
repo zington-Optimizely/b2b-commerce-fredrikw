@@ -1,14 +1,17 @@
 import waitFor from "@insite/client-framework/Common/Utilities/waitFor";
-import { createHandlerChainRunner, Handler } from "@insite/client-framework/HandlerCreator";
+import { createHandlerChainRunner, Handler, HasOnError } from "@insite/client-framework/HandlerCreator";
+import siteMessage from "@insite/client-framework/SiteMessage";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
 import loadCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCart";
 import loadPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadPromotions";
 import { getPromotionsDataView } from "@insite/client-framework/Store/Data/Promotions/PromotionsSelectors";
 
-type HandlerType = Handler<{
-    cartId: string;
-    onSuccess: () => void;
-}>;
+type HandlerType = Handler<
+    {
+        cartId: string;
+        onSuccess: () => void;
+    } & HasOnError<string>
+>;
 
 export const DispatchBeginPreloadingData: HandlerType = props => {
     props.dispatch({
@@ -42,7 +45,16 @@ export const PreloadData: HandlerType = props => {
 export const WaitForData: HandlerType = async props => {
     const checkData = () => {
         const state = props.getState();
-        if (!getCartState(state, props.parameter.cartId).value) {
+        const cartState = getCartState(state, props.parameter.cartId);
+        if (cartState.errorStatusCode === 404) {
+            props.parameter.onError?.(siteMessage("Cart_CartNotFound") as string);
+            return true;
+        }
+        if (cartState.errorStatusCode === 403) {
+            props.parameter.onError?.(siteMessage("Forbidden") as string);
+            return true;
+        }
+        if (!cartState.value) {
             return false;
         }
         const promotionsDataView = getPromotionsDataView(state, props.parameter.cartId);

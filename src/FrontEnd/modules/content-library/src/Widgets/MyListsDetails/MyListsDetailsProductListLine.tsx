@@ -547,9 +547,11 @@ const MyListsDetailsProductListLine: React.FC<Props> = ({
                                 </GridItem>
                             </GridContainer>
                         </GridItem>
-                        <GridItem {...styles.availabilityGridItem}>
-                            <ProductContextAvailability extendedStyles={styles.productAvailabilityStyles} />
-                        </GridItem>
+                        {productSettings.showInventoryAvailability && (
+                            <GridItem {...styles.availabilityGridItem}>
+                                <ProductContextAvailability extendedStyles={styles.productAvailabilityStyles} />
+                            </GridItem>
+                        )}
                     </GridContainer>
                 </GridItem>
                 {wishListLine.notes && (

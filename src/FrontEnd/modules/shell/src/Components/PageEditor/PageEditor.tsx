@@ -96,12 +96,8 @@ class PageEditor extends React.Component<Props, PageEditorState> {
         if (!page && !switchingToPage) {
             return null;
         }
-        if (!pageDefinition && !switchingToPage) {
-            // without this check we get a flash of this message while navigating between pages. NullPage doesn't have a definition.
-            if (page.type !== nullPage.type) {
-                return <MissingComponent type={page.type} isWidget={false} />;
-            }
-            return null;
+        if (!pageDefinition && !switchingToPage && page.type !== nullPage.type) {
+            return <MissingComponent type={page.type} isWidget={false} />;
         }
 
         return (

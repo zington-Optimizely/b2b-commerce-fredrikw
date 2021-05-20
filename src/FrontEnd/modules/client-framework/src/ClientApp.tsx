@@ -1,6 +1,6 @@
 import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-framework/Common/ContentMode";
 import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { getValueCaseInsensitive, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter from "@insite/client-framework/Components/SpireRouter";
@@ -43,8 +43,8 @@ type customWindow = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const theWindow = (window as any) as customWindow;
 
-setResolver(messageName => theWindow.siteMessages[messageName]);
-setTranslationResolver(keyword => theWindow.translationDictionaries[keyword]);
+setResolver(messageName => getValueCaseInsensitive(theWindow.siteMessages, messageName));
+setTranslationResolver(keyword => getValueCaseInsensitive(theWindow.translationDictionaries, keyword));
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = theWindow.initialReduxState;

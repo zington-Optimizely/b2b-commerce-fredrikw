@@ -1,4 +1,6 @@
+import { SettingsModel } from "@insite/client-framework/Services/SettingsService";
 import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { WidgetGroup } from "@insite/client-framework/Types/WidgetGroups";
 
 export interface WidgetDefinition<T = FieldDefinition> extends ContentItemDefinition<T> {
@@ -7,6 +9,7 @@ export interface WidgetDefinition<T = FieldDefinition> extends ContentItemDefini
     group: WidgetGroup;
     icon?: string;
     isSystem?: boolean;
+    canAdd?: (context: { permissions?: PermissionsModel; settings: SettingsModel }) => boolean;
 }
 
 export interface ContentItemDefinition<T = FieldDefinition> {

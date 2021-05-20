@@ -74,6 +74,7 @@ function cleanCategory(category: CategoryModel, categoriesById: SafeDictionary<C
             for (const subCategory of subCategories) {
                 subCategoryIds.push(subCategory.id);
                 cleanCategory(subCategory, categoriesById, subCategoryLevels - 1);
+                delete subCategory.htmlContent;
             }
         }
         actualCategory.subCategoryIds = subCategoryIds;
@@ -98,7 +99,7 @@ export async function getCategories(parameter: GetCategoriesApiParameter) {
     const categoryIds = [];
     for (const category of categoryCollectionModel.categories!) {
         categoryIds.push(category.id);
-        cleanCategory(category, categoriesById, parameter.maxDepth ?? 2);
+        cleanCategory(category, categoriesById, parameter.maxDepth ? parameter.maxDepth - 1 : 2);
         delete category.htmlContent;
     }
 

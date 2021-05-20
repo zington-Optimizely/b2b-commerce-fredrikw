@@ -1,4 +1,16 @@
-﻿<div ng-controller="MyListDetailController as vm" ng-init="vm.myListUrl='[% urlForPage 'MyListsPage' %]'" ng-cloak>
+﻿<div ng-controller="MyListDetailController as vm" ng-init="vm.myListUrl='[% urlForPage 'MyListsPage' %]';
+                            vm.exportHeaders = [
+                                '[% translate 'Item #' %]',
+                                '[% translate 'MFG #' %]',
+                                '[% translate 'Quantity' %]',
+                                '[% translate 'Unit of Measure' %]',
+                                '[% translate 'Brand' %]',
+                                '[% translate 'Title' %]',
+                                '[% translate 'Price' %]',
+                                '[% translate 'Notes' %]',
+                                '[% translate 'Added on' %]',
+                                '[% translate 'Added by' %]'
+                            ];" ng-cloak>
     <div ng-if="vm.listModel">
         <div class="list-title-wrapper">
             <h1 id="tst_myListDetailView_pageTitle" class="page-title [[Model.CssClass]]" ng-bind="vm.listModel.name"></h1>
@@ -7,6 +19,7 @@
                     {{vm.listModel.schedule ? '[% translate 'Update Email Reminder' %]' : '[% translate 'Schedule Email Reminder' %]'}}
                 </button>
                 <a id="tst_myListDetailView_printBtn" href="/list/getpdf?listId={{::vm.listModel.id}}&sort={{vm.sort}}" target="_blank" class="btn secondary print-button" ng-click="vm.checkPrint($event)" ng-class="{ 'disabled' : vm.orderIsSaving }">[% translate 'Print' %]</a>
+                <button id="tst_myListDetailView_exportBtn" type="button" class="btn secondary" ng-click="vm.exportList(vm.listModel)" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Export' %]</button>
                 <button id="tst_myListDetailView_copyBtn" ng-if="vm.listSettings.allowMultipleWishLists" type="button" class="btn secondary" ng-click="vm.openCopyToPopup(vm.listModel)" ng-disabled="vm.listModel.wishListLineCollection.length === 0">[% translate 'Copy' %]</button>
                 <button id="tst_myListDetailView_shareBtn" ng-if="!vm.listModel.isSharedList && vm.listSettings.allowMultipleWishLists && vm.listSettings.allowListSharing" type="button" class="btn secondary" ng-click="vm.openSharePopup()">[% translate 'Share' %]</button>
                 <button id="tst_myListDetailView_deleteBtn" ng-if="!vm.listModel.isSharedList" type="button" class="btn secondary" ng-click="vm.openDeletePopup(vm.listModel)">[% translate 'Delete' %]</button>

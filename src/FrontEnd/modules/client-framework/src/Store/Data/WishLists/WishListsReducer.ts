@@ -3,7 +3,7 @@ import {
     GetWishListLinesApiParameter,
     GetWishListsApiParameter,
 } from "@insite/client-framework/Services/WishListService";
-import { setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
+import { assignById, setDataViewLoaded, setDataViewLoading } from "@insite/client-framework/Store/Data/DataState";
 import { WishListsState } from "@insite/client-framework/Store/Data/WishLists/WishListsState";
 import {
     WishListCollectionModel,
@@ -37,7 +37,7 @@ const reducer = {
     },
     "Data/WishLists/CompleteLoadWishList": (draft: Draft<WishListsState>, action: { wishList: WishListModel }) => {
         delete draft.isLoading[action.wishList.id];
-        draft.byId[action.wishList.id] = action.wishList;
+        assignById(draft, action.wishList);
         if (draft.errorStatusCodeById) {
             delete draft.errorStatusCodeById[action.wishList.id];
         }

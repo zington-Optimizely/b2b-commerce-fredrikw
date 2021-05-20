@@ -1,4 +1,4 @@
-import { SafeDictionary } from "@insite/client-framework/Common/Types";
+import { getValueCaseInsensitive, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { PreparedMetadata } from "@insite/client-framework/Common/Utilities/setPageMetadata";
 import logger from "@insite/client-framework/Logger";
 import { RetrievePageResult } from "@insite/client-framework/Services/ContentService";
@@ -63,7 +63,11 @@ export const throwIfClientSide = () => {
 export const serverSiteMessageResolver = (messageName: string) => {
     throwIfClientSide();
 
-    return domain?.active.insiteSession.messagesByName[messageName];
+    if (!domain) {
+        return undefined;
+    }
+
+    return getValueCaseInsensitive(domain.active.insiteSession.messagesByName, messageName);
 };
 
 export const setServerSiteMessages = (messagesByName: SafeDictionary<string>) => {
@@ -79,7 +83,11 @@ export const setServerSiteMessages = (messagesByName: SafeDictionary<string>) =>
 export const serverTranslationResolver = (keyword: string) => {
     throwIfClientSide();
 
-    return domain?.active.insiteSession.translationsByKeyword[keyword];
+    if (!domain) {
+        return undefined;
+    }
+
+    return getValueCaseInsensitive(domain.active.insiteSession.translationsByKeyword, keyword);
 };
 
 export const setServerTranslations = (translationsByKeyword: SafeDictionary<string>) => {

@@ -168,6 +168,21 @@
   "translatableFields": {
     "title": {
       "a26095ef-c714-e311-ba31-d43d7e4e88b2": "Home"
+    },
+    "openGraphTitle": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
+    },
+    "openGraphUrl": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
+    },
+    "openGraphImage": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
+    },
+    "metaKeywords": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
+    },
+    "metaDescription": {
+      "a26095ef-c714-e311-ba31-d43d7e4e88b2": ""
     }
   },
   "contextualFields": {}

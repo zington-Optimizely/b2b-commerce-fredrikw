@@ -9,6 +9,7 @@ const initialState: PromotionsState = {
     isLoading: {},
     byId: {},
     dataViews: {},
+    errorStatusCodeById: {},
 };
 
 const reducer = {
@@ -24,6 +25,16 @@ const reducer = {
         action: { parameter: GetCartPromotionsApiParameter; collection: PromotionCollectionModel },
     ) => {
         setDataViewLoaded(draft, action.parameter, action.collection, collection => collection.promotions!);
+    },
+
+    "Data/Promotions/FailedToLoadPromotions": (
+        draft: Draft<PromotionsState>,
+        action: { cartId: string; status: number },
+    ) => {
+        delete draft.isLoading[action.cartId];
+        if (draft.errorStatusCodeById) {
+            draft.errorStatusCodeById[action.cartId] = action.status;
+        }
     },
 
     "Data/Promotions/Reset": () => {

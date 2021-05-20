@@ -29,6 +29,7 @@ const mobileLinkListActionTypes = [
     { displayName: "Location Finder", value: "LocationFinder" },
     { displayName: "Saved Payments", value: "SavedPayments" },
     { displayName: "Invoices", value: "Invoices" },
+    { displayName: "Request for Quote", value: "Quotes" },
     { displayName: "Change Customer", value: "ChangeCustomer" },
     { displayName: "View Account on Website", value: "ViewAccountOnWebsite" },
     { displayName: "Settings", value: "Settings" },

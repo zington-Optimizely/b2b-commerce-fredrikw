@@ -51,6 +51,9 @@
         changedSharedListLinesQtys: { [key: string]: number } = {};
         listLinesWithUpdatedQty: { [key: string]: boolean } = {};
 
+        Papa: any;
+        exportHeaders: string[];
+
         static $inject = [
             "$scope",
             "settingsService",
@@ -106,6 +109,15 @@
         }
 
         $onInit(): void {
+            if (typeof (Papa) === "undefined") {
+                $.getScript("/SystemResources/Scripts/Libraries/papaparse/4.1/papaparse.min.js", () => {
+                    this.Papa = Papa;
+                });
+            }
+            else {
+                this.Papa = Papa;
+            }
+
             this.listId = this.queryString.get("id") || this.queryString.get("wishListId");
             this.invite = this.queryString.get("invite");
 
@@ -1019,6 +1031,81 @@
                 event.preventDefault();
             }
         }
+
+        exportList(wishList: WishListModel): void {
+            this.spinnerService.show();
+            this.wishListService.getWishList(wishList, "getAllLines").then(
+                (list: WishListModel) => { this.getListForExportCompleted(list); },
+                (error: any) => { this.getListForExportFailed(error); });
+        }
+
+        protected getListForExportCompleted(list: WishListModel): void {
+            this.spinnerService.hide();
+
+            const products = this.wishListService.mapWishListLinesToProducts(list.wishListLineCollection);
+
+            this.productService.getProductRealTimePrices(products).then(
+                (pricingResult: RealTimePricingModel) => { this.getRealTimePricesForExportCompleted(pricingResult, list); },
+                (reason: any) => { this.getRealTimePricesForExportFailed(reason); });
+        }
+
+        protected getListForExportFailed(error: any): void {
+            this.spinnerService.hide();
+        }
+
+        protected getRealTimePricesForExportCompleted(result: RealTimePricingModel, list: WishListModel): void {
+            result.realTimePricingResults.forEach((productPrice: ProductPriceDto) => {
+                const wishlistLine = list.wishListLineCollection.find((p: WishListLineModel) => p.productId === productPrice.productId);
+                wishlistLine.pricing = productPrice;
+            });
+
+            this.generateCsv(list);
+        }
+
+        protected getRealTimePricesForExportFailed(reason: any): void {
+        }
+
+        protected generateCsv(list: WishListModel): void {
+            const dataForUnparse = this.createDataForUnparse(list);
+            if (!dataForUnparse) {
+                return;
+            }
+
+            const csv = this.Papa.unparse(dataForUnparse);
+            const csvBlob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8;" });
+
+            const fileName = `wishlist_${list.id}.csv`;
+            if (navigator.msSaveBlob) {
+                navigator.msSaveBlob(csvBlob, fileName);
+            } else {
+                const downloadLink = document.createElement("a");
+                downloadLink.href = window.URL.createObjectURL(csvBlob);
+                downloadLink.setAttribute("download", fileName);
+                downloadLink.click();
+            }
+        }
+
+        protected createDataForUnparse(list: WishListModel): any {
+            if (!list.wishListLineCollection?.length) {
+                return null;
+            }
+
+            return {
+                fields: this.exportHeaders,
+                data: list.wishListLineCollection.map(o => [
+                    o.erpNumber,
+                    o.manufacturerItem,
+                    o.qtyOrdered.toString(),
+                    o.unitOfMeasure,
+                    o.brand?.name || "",
+                    o.shortDescription,
+                    o.quoteRequired ? "" : o.pricing?.unitRegularPrice?.toString() || "",
+                    o.notes,
+                    o.createdOn.toString(),
+                    o.createdByDisplayName,
+                ]),
+            };
+        };
     }
 
     angular

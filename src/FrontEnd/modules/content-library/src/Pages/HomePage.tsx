@@ -1,4 +1,11 @@
 import Zone from "@insite/client-framework/Components/Zone";
+import {
+    MetaDescription,
+    MetaKeywords,
+    OpenGraphImage,
+    OpenGraphTitle,
+    OpenGraphUrl,
+} from "@insite/client-framework/Types/FieldDefinition";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Modals from "@insite/content-library/Components/Modals";
@@ -25,6 +32,7 @@ const pageModule: PageModule = {
         hasEditableTitle: true,
         hasEditableUrlSegment: false,
         pageType: "System",
+        fieldDefinitions: [MetaKeywords, MetaDescription, OpenGraphTitle, OpenGraphUrl, OpenGraphImage],
     },
 };
 

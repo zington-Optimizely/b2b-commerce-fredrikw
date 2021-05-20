@@ -340,8 +340,52 @@ export function updateCartLine(parameter: UpdateCartLineApiParameter) {
     return patch(`${cartsUrl}/${parameter.cartId}/cartlines/${parameter.cartLine.id}`, parameter.cartLine);
 }
 
+export async function updateCartLineWithResult(
+    parameter: UpdateCartLineApiParameter,
+): Promise<ServiceResult<CartLineModel>> {
+    try {
+        const cartLineModel = await updateCartLine(parameter);
+        return {
+            successful: true,
+            result: cartLineModel,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        throw error;
+    }
+}
+
 export function removeCartLine(parameter: RemoveCartLineApiParameter) {
     return del(`${cartsUrl}/${parameter.cartId}/cartlines/${parameter.cartLineId}`);
+}
+
+export async function removeCartLineWithResult(parameter: RemoveCartLineApiParameter): Promise<ServiceResult<void>> {
+    try {
+        const result = await removeCartLine(parameter);
+        return {
+            successful: true,
+            result,
+        };
+    } catch (error) {
+        if (isApiError(error) && error.status === 400) {
+            return {
+                successful: false,
+                errorMessage: error.errorJson.message,
+            };
+        }
+        if (error?.status === 404) {
+            return {
+                successful: false,
+                errorMessage: error.errorMessage,
+            };
+        }
+        throw error;
+    }
 }
 
 export async function addCartPromotion(

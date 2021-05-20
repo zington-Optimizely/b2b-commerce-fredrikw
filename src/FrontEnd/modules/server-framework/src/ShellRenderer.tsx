@@ -11,6 +11,7 @@ const renderedShell = `<!DOCTYPE html>${renderToStaticMarkup(
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
             <title>Content Administration</title>
             <base href="/" />
+            <link rel="icon" href="data:," />
             <link href="https://fonts.googleapis.com/css?family=Barlow:300,400,700&display=swap" rel="stylesheet" />
         </head>
         <body>
@@ -22,7 +23,13 @@ const renderedShell = `<!DOCTYPE html>${renderToStaticMarkup(
 )}`;
 
 export const shellRenderer = async (request: Request, response: Response) => {
-    await generateDataIfNeeded(request);
+    const { websiteIsClassic } = await generateDataIfNeeded(request);
+    if (websiteIsClassic) {
+        response.send(
+            "The current website is configured to be a Classic website and cannot return Spire CMS pages. This data is cached.",
+        );
+        return;
+    }
 
     if (request.query?.isMobileApp !== undefined) {
         response.cookie(isMobileAppCookieName, request.query?.isMobileApp);

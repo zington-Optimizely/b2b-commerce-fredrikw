@@ -18,7 +18,7 @@ import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { GoogleMap, GoogleMapProps, InfoWindow, InfoWindowProps, Marker, MarkerProps } from "@react-google-maps/api";
-import * as React from "react";
+import React, { Fragment } from "react";
 import { css } from "styled-components";
 
 interface Props {
@@ -126,13 +126,13 @@ const WarehouseGoogleMap: React.FC<Props> = ({
     return (
         <GoogleMap {...styles.googleMap} center={currentLocation} onLoad={handleLoad} onUnmount={handleUnmount}>
             {mapMarkerElements.map(marker => (
-                <>
+                <Fragment key={marker.key}>
                     {marker.type === "WAREHOUSE" && <Marker key={marker.key} {...marker} {...styles.warehouseMarker} />}
                     {marker.type === "CURRENT_LOCATION" && (
                         <Marker key={marker.key} {...marker} {...styles.currentLocationMarker} />
                     )}
                     {marker.type === "SELECTED" && <Marker key={marker.key} {...marker} {...styles.selectedMarker} />}
-                </>
+                </Fragment>
             ))}
             {warehouseInfoWindow && (
                 <InfoWindow {...styles.warehouseInfoWindow} key={newGuid()} position={warehouseInfoWindow?.position}>

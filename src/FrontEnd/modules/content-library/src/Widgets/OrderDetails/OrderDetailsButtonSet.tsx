@@ -363,7 +363,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                     ))}
             </Hidden>
             <Hidden {...styles.tabletMenuHidden}>
-                <OverflowMenu position="end" {...styles.overflowMenu}>
+                <OverflowMenu hasChildPortal position="end" {...styles.overflowMenu}>
                     {buttonsToRender
                         .filter(o => !o.showButtonOnTablet)
                         .map((button, index) => (
@@ -373,7 +373,7 @@ const OrderDetailsButtonSet: React.FC<Props> = ({
                 </OverflowMenu>
             </Hidden>
             <Hidden {...styles.menuHidden}>
-                <OverflowMenu position="end" {...styles.overflowMenu}>
+                <OverflowMenu hasChildPortal position="end" {...styles.overflowMenu}>
                     {buttonsToRender.map((button, index) => (
                         // eslint-disable-next-line react/no-array-index-key
                         <div key={index}>{button.clickable}</div>

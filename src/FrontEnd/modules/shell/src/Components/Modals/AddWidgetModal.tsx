@@ -9,7 +9,6 @@ import Modal, { ModalPresentationProps } from "@insite/mobius/Modal";
 import TextField from "@insite/mobius/TextField";
 import shellIconsObject from "@insite/shell/Components/Icons/CompatibleIcons/shellIcons";
 import Search from "@insite/shell/Components/Icons/Search";
-import { sendToSite } from "@insite/shell/Components/Shell/SiteHole";
 import { getWidgetDefinition, getWidgetDefinitions } from "@insite/shell/DefinitionLoader";
 import { LoadedWidgetDefinition } from "@insite/shell/DefinitionTypes";
 import { setupWidgetModel } from "@insite/shell/Services/WidgetCreation";
@@ -40,6 +39,10 @@ const mapStateToProps = (state: ShellState) => {
         }
 
         if (widgetDefinition.allowedContexts && widgetDefinition.allowedContexts.indexOf(pageType) < 0) {
+            continue;
+        }
+
+        if (widgetDefinition.canAdd && !widgetDefinition.canAdd(state.shellContext)) {
             continue;
         }
 
@@ -85,8 +88,8 @@ interface State {
     widgetSearch: string;
 }
 
-export interface AddWidgetModalStyles {
-    modal?: ModalPresentationProps;
+interface AddWidgetModalStyles {
+    modal: ModalPresentationProps;
 }
 
 const styles: AddWidgetModalStyles = {

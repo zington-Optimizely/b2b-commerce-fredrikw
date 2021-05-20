@@ -49,7 +49,7 @@ class ConfirmationProvider extends React.Component<{}, State> {
                     headline={this.state.options?.title}
                     isOpen={!!this.state.display}
                     handleClose={this.cancel}
-                    size={400}
+                    size={500}
                     closeOnEsc
                     data-test-selector="confirmationModal"
                 >

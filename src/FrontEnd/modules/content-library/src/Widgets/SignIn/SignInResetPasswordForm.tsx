@@ -1,6 +1,8 @@
 import { makeHandlerChainAwaitable } from "@insite/client-framework/HandlerCreator";
 import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import validateReCaptcha from "@insite/client-framework/Store/Components/ReCaptcha/Handlers/ValidateReCaptcha";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import forgotPassword from "@insite/client-framework/Store/Context/Handlers/ForgotPassword";
 import translate from "@insite/client-framework/Translate";
 import ReCaptcha from "@insite/content-library/Components/ReCaptcha";
@@ -14,6 +16,10 @@ import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
+const mapStateToProps = (state: ApplicationState) => ({
+    accountSettings: getSettingsCollection(state).accountSettings,
+});
+
 interface OwnProps {
     onClose: () => void;
 }
@@ -23,7 +29,7 @@ const mapDispatchToProps = {
     validateReCaptcha: makeHandlerChainAwaitable<{}, boolean>(validateReCaptcha),
 };
 
-type Props = OwnProps & ResolveThunks<typeof mapDispatchToProps>;
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps>;
 
 export interface SignInResetPasswordFormStyles {
     container?: GridContainerProps;
@@ -67,15 +73,21 @@ export const signInResetPasswordFormStyles: SignInResetPasswordFormStyles = {
 export const createListFormStyles = signInResetPasswordFormStyles;
 const styles = signInResetPasswordFormStyles;
 
-const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha }: Props) => {
+const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha, accountSettings }: Props) => {
     const [userName, setUserName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const toasterContext = useContext(ToasterContext);
+    const { useEmailAsUserName } = accountSettings;
 
     const sendEmail = async (userName: string) => {
         if (!userName) {
-            setErrorMessage(siteMessage("Field_Required", translate("Username")) as string);
+            setErrorMessage(
+                siteMessage(
+                    "Field_Required",
+                    useEmailAsUserName ? translate("Email") : translate("Username"),
+                ) as string,
+            );
             return;
         }
 
@@ -89,7 +101,9 @@ const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha }: 
             userName,
             onSuccess: () => {
                 toasterContext.addToast({
-                    body: siteMessage("ResetPassword_ResetPasswordEmailSent"),
+                    body: useEmailAsUserName
+                        ? siteMessage("ResetPassword_EmailResetPasswordEmailSent")
+                        : siteMessage("ResetPassword_ResetPasswordEmailSent"),
                     messageType: "success",
                 });
                 onClose();
@@ -125,21 +139,33 @@ const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha }: 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUsername = e.currentTarget.value;
         setUserName(newUsername);
-        setErrorMessage(newUsername ? "" : (siteMessage("Field_Required", translate("Username")) as string));
+        setErrorMessage(
+            newUsername
+                ? ""
+                : (siteMessage(
+                      "Field_Required",
+                      useEmailAsUserName ? translate("Email") : translate("Username"),
+                  ) as string),
+        );
     };
 
     return (
         <GridContainer {...styles.container}>
             <GridItem {...styles.descriptionGridItem}>
-                <Typography {...styles.descriptionText}>{siteMessage("ResetPassword_Instructions")}</Typography>
+                <Typography {...styles.descriptionText}>
+                    {useEmailAsUserName
+                        ? siteMessage("ResetPassword_EmailInstructions")
+                        : siteMessage("ResetPassword_Instructions")}
+                </Typography>
             </GridItem>
             <GridItem {...styles.userNameGridItem}>
                 <TextField
                     {...styles.userNameTextField}
-                    label={translate("Username")}
+                    label={useEmailAsUserName ? translate("Email") : translate("Username")}
                     name="userName"
                     value={userName}
-                    placeholder={translate("Enter username")}
+                    // eslint-disable-next-line spire/avoid-dynamic-translate
+                    placeholder={useEmailAsUserName ? translate("Enter email") : translate("Enter username")}
                     error={errorMessage}
                     onChange={handleUsernameChange}
                 ></TextField>
@@ -159,4 +185,4 @@ const SignInResetPasswordForm = ({ onClose, resetPassword, validateReCaptcha }: 
     );
 };
 
-export default connect(null, mapDispatchToProps)(SignInResetPasswordForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInResetPasswordForm);

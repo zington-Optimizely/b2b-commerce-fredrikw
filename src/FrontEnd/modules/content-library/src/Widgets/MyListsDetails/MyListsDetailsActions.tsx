@@ -17,6 +17,7 @@ import addLinesToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/A
 import addWishListToCart from "@insite/client-framework/Store/Pages/Cart/Handlers/AddWishListToCart";
 import deleteWishList from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishList";
 import deleteWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/DeleteWishListLines";
+import exportWishList from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/ExportWishList";
 import loadWishListLines from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/LoadWishListLines";
 import setAllWishListLinesIsSelected from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/SetAllWishListLinesIsSelected";
 import updateLoadWishListLinesParameter from "@insite/client-framework/Store/Pages/MyListDetails/Handlers/UpdateLoadWishListLinesParameter";
@@ -77,6 +78,7 @@ const mapDispatchToProps = {
     updateLoadWishListLinesParameter,
     setShareListModalIsOpen,
     setAllWishListLinesIsSelected,
+    exportWishList,
 };
 
 type Props = WidgetProps & HasHistory & ResolveThunks<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
@@ -403,6 +405,16 @@ class MyListsDetailsActions extends React.Component<Props, State> {
         this.setState({ copyListModalIsOpen: true });
     };
 
+    exportClickHandler = () => {
+        if (!this.props.wishList) {
+            return;
+        }
+
+        this.props.exportWishList({
+            wishListId: this.props.wishList.id,
+        });
+    };
+
     copyCancelHandler = () => {
         this.setState({ copyListModalIsOpen: false });
     };
@@ -467,6 +479,7 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                             {showCopy ? (
                                 <Clickable onClick={this.copyClickHandler}>{translate("Copy")}</Clickable>
                             ) : null}
+                            <Clickable onClick={this.exportClickHandler}>{translate("Export")}</Clickable>
                             {showDelete ? (
                                 <Clickable onClick={this.deleteClickHandler}>{translate("Delete")}</Clickable>
                             ) : null}
@@ -479,6 +492,9 @@ class MyListsDetailsActions extends React.Component<Props, State> {
                                     {translate("Copy")}
                                 </Clickable>
                             ) : null}
+                            <Clickable onClick={this.exportClickHandler} data-test-selector="exportList">
+                                {translate("Export")}
+                            </Clickable>
                             {showDelete ? (
                                 <Clickable onClick={this.deleteClickHandler} data-test-selector="deleteList">
                                     {translate("Delete")}

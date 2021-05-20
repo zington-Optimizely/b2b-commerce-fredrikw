@@ -14,6 +14,7 @@ import { ProductDetailsPageContext } from "@insite/content-library/Pages/Product
 import Select, { SelectProps } from "@insite/mobius/Select";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -26,6 +27,9 @@ const mapStateToProps = (state: ApplicationState, ownProps: HasParentProductId) 
     variantTraits: getProductState(state, ownProps.parentProductId).value?.variantTraits,
     variantChildren: getVariantChildrenDataView(state, ownProps.parentProductId).value,
     variantSelection: state.pages.productDetails.variantSelection,
+    variantSelectionCompleted: state.pages.productDetails.variantSelectionCompleted,
+    variantProductState: getProductState(state, state.pages.productDetails.selectedProductId),
+    selectedProductId: state.pages.productDetails.selectedProductId,
 });
 
 const mapDispatchToProps = {
@@ -60,7 +64,16 @@ const ProductDetailsVariantOptions: React.FC<Props> = ({
     updateVariantSelection,
     variantTraits,
     parentProductId,
+    variantSelectionCompleted,
+    variantProductState,
+    selectedProductId,
 }) => {
+    useEffect(() => {
+        if (variantProductState.value) {
+            window.history.replaceState(null, "", variantProductState.value.canonicalUrl);
+        }
+    }, [selectedProductId]);
+
     const variantChangeHandler = (traitValueId: string, variantTraitId: string) => {
         updateVariantSelection({ traitValueId, variantTraitId, productId: parentProductId });
     };

@@ -50,6 +50,8 @@ const mapStateToProps = (state: ShellState, ownProps: OwnProps) => {
                     displayValue = "Products";
                 } else if (!categories) {
                     displayValue = "Loading...";
+                } else if (fieldValue.value === "") {
+                    displayValue = "";
                 } else {
                     const matchingCategories = categories.filter(o => o.id === fieldValue.value);
                     if (matchingCategories.length === 0) {
@@ -262,18 +264,6 @@ class LinkField extends ClickOutside<Props, State> {
         }
     };
 
-    positionLinkSelector = () => {
-        if (!this.wrapperRef) {
-            return;
-        }
-
-        const element = this.wrapperRef as HTMLElement;
-
-        const rect = (element.previousSibling! as Element).getBoundingClientRect();
-        element.style.left = `${rect.left}px`;
-        element.style.top = `${rect.top + rect.height}px`;
-    };
-
     clearFieldValue = () => {
         this.props.updateField(this.props.fieldDefinition.name, {
             ...this.props.fieldValue,
@@ -282,9 +272,6 @@ class LinkField extends ClickOutside<Props, State> {
     };
 
     render() {
-        setTimeout(() => {
-            this.positionLinkSelector();
-        });
         const {
             fieldValue: { type, value },
             fieldDefinition,

@@ -866,6 +866,7 @@ export interface CartLineModel extends BaseModel {
     id: string;
     isActive: boolean;
     isConfigured: boolean;
+    isDiscontinued: boolean;
     isDiscounted: boolean;
     isFixedConfiguration: boolean;
     isPromotionItem: boolean;
@@ -1840,6 +1841,7 @@ export interface JobQuoteLineModel extends BaseModel {
     id: string;
     isActive: boolean;
     isConfigured: boolean;
+    isDiscontinued: boolean;
     isDiscounted: boolean;
     isFixedConfiguration: boolean;
     isPromotionItem: boolean;
@@ -2404,6 +2406,7 @@ export interface RequisitionModel extends BaseModel {
     isActive: boolean;
     isApproved: boolean;
     isConfigured: boolean;
+    isDiscontinued: boolean;
     isDiscounted: boolean;
     isFixedConfiguration: boolean;
     isPromotionItem: boolean;
@@ -2472,6 +2475,7 @@ export interface QuoteLineModel extends BaseModel {
     id: string;
     isActive: boolean;
     isConfigured: boolean;
+    isDiscontinued: boolean;
     isDiscounted: boolean;
     isFixedConfiguration: boolean;
     isPromotionItem: boolean;
@@ -2692,6 +2696,7 @@ export interface WebsiteModel extends BaseModel {
 }
 
 export interface WebsiteSettingsModel extends BaseModel {
+    advancedSpireCmsFeatures: boolean;
     cmsType: "Classic" | "Spire" | null;
     defaultPageSize: number;
     enableCookiePrivacyPolicyPopup: boolean;

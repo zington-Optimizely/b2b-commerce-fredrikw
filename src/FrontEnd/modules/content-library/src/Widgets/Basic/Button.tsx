@@ -39,7 +39,13 @@ const CmsButton: FC<OwnProps> = ({ fields }) => {
     const link = useGetLink(fields.link);
 
     const onClick = () => {
-        if (link.url) {
+        if (!link.url) {
+            return;
+        }
+
+        if (link.url.startsWith("http")) {
+            window.location.href = link.url;
+        } else {
             history.push(link.url);
         }
     };

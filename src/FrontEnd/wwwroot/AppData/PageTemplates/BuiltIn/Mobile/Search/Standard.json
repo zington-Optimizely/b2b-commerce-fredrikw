@@ -28,15 +28,6 @@
   "widgets": [
       {
           "parentId": "5f821c70-de18-4d34-ab58-0ea3eaf6e106",
-          "type": "Basic/PageTitle",
-          "zone": "Content",
-          "id": "99a31d55-d22d-4613-824a-c7575c33eb81",
-          "generalFields": {},
-          "translatableFields": {},
-          "contextualFields": {}
-      },
-      {
-          "parentId": "5f821c70-de18-4d34-ab58-0ea3eaf6e106",
           "zone": "Content",
           "type": "Mobile/SearchHistory",
           "id": "76af2ab7-f94c-4fd7-83f0-3417b6cd6004",

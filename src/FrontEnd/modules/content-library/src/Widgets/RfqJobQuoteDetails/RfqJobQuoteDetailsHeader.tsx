@@ -51,10 +51,10 @@ export const rfqJobQuoteDetailsHeaderStyles: RfqJobQuoteDetailsHeaderStyles = {
         css: css`
             justify-content: flex-end;
         `,
-        width: [2, 2, 2, 7, 6],
+        width: [6, 2, 2, 7, 6],
     },
     titleGridItem: {
-        width: [10, 10, 10, 5, 6],
+        width: [6, 10, 10, 5, 6],
     },
     title: {
         variant: "h3",

@@ -91,6 +91,8 @@ export type PopoverProps = MobiusStyledComponentPropsWithRef<
         handleClickOutside?: (event: MouseEvent) => void;
         /** All refs that should be treated as being 'inside' the popover for key and click interaction. */
         insideRefs?: React.RefObject<any>[];
+        /** Has a modal portal as a child, which means an outside click will happen yet should not unmount the popover */
+        hasChildPortal?: boolean;
     } & PopoverPresentationProps
 >;
 
@@ -160,6 +162,7 @@ class Popover extends React.Component<PopoverProps, State> {
         shadowDepth: 2,
         insideRefs: [],
         toggle: true,
+        hasChildPortal: false,
     };
 
     element = React.createRef<HTMLUListElement>();
@@ -198,17 +201,38 @@ class Popover extends React.Component<PopoverProps, State> {
         if (event.keyCode === ESC_KEY) {
             event.stopPropagation();
             this.closePopover(event);
-        } else if (!this.isTargetInsideRef(event.target as Node)) {
+        } else if (
+            !this.isTargetInsideRef(event.target as Node) &&
+            !this.isInsideChildPortalModal(event.target as Node)
+        ) {
             this.closePopover(event);
         }
         typeof this.props.handleKeyDown === "function" && this.props.handleKeyDown(event);
     };
 
     handleClickOutside = (event: MouseEvent) => {
-        if (this.state.open && !this.isTargetInsideRef(event.target as Node)) {
+        if (
+            this.state.open &&
+            !this.isTargetInsideRef(event.target as Node) &&
+            !this.isInsideChildPortalModal(event.target as Node)
+        ) {
             this.closePopover(event);
         }
         typeof this.props.handleClickOutside === "function" && this.props.handleClickOutside(event);
+    };
+
+    isInsideChildPortalModal = (target: Node) => {
+        if (this.props.hasChildPortal) {
+            let clickInsideModal = false;
+            const modals = document.querySelectorAll('div[class^="Scrim"]');
+            modals.forEach(el => {
+                if (el.contains(target as Node)) {
+                    clickInsideModal = true;
+                }
+            });
+            return clickInsideModal;
+        }
+        return false;
     };
 
     handleScroll = () => {
@@ -225,6 +249,7 @@ class Popover extends React.Component<PopoverProps, State> {
 
     isTargetInsideRef = (target: Node) => {
         const { insideRefs } = this.props;
+
         const doesPopoverContainTarget = !!this.element.current?.contains(target);
         return (
             (insideRefs as []).length > 0 &&

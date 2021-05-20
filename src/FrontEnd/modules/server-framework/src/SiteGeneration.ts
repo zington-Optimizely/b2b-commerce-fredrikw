@@ -8,6 +8,7 @@ import { PageModel } from "@insite/client-framework/Types/PageProps";
 import { TemplateInfo } from "@insite/client-framework/Types/SiteGenerationModel";
 import { existsAsync, getAppDataPath, getBlueprintAppDataPath } from "@insite/server-framework/FileHelper";
 import { getAutoUpdateData, getSiteGenerationData, saveInitialPages } from "@insite/server-framework/InternalService";
+import { GenerateDataResponse } from "@insite/server-framework/PageRenderer";
 import { getPageCreators, PageCreator } from "@insite/server-framework/SiteGeneration/PageCreators";
 import { setupPageModel } from "@insite/shell/Services/PageCreation";
 import { createHash } from "crypto";
@@ -21,8 +22,13 @@ addWidgetsFromContext(require.context("../../client-framework/src/Internal/Widge
 
 const readFileAsync = promisify(readFile);
 
-export async function generateSiteIfNeeded() {
-    const pageGenerationSettings: PageGenerationSettings = { ...(await getSiteGenerationData()), pages: [] };
+export async function generateSiteIfNeeded(): Promise<GenerateDataResponse | undefined> {
+    const siteGenerationData = await getSiteGenerationData();
+    if (siteGenerationData.cmsType === "Classic") {
+        return { websiteIsClassic: true };
+    }
+
+    const pageGenerationSettings: PageGenerationSettings = { ...siteGenerationData, pages: [] };
     const { pageTypeToNodeId } = pageGenerationSettings;
 
     const pageCreators = await getPageCreators();

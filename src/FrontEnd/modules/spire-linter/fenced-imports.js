@@ -28,6 +28,7 @@ const validClientImports = [
     "url-search-params-polyfill",
     "whatwg-fetch",
     "xlsx",
+    "ismobilejs",
 ];
 const validMobiusImports = [...validClientImports, "enzyme", "jest-styled-components"];
 const validServerImports = [

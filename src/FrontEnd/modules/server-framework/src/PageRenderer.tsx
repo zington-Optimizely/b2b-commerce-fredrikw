@@ -53,11 +53,17 @@ let checkedForSiteGeneration = false;
 let triedToGenerateTranslations = false;
 
 export async function pageRenderer(request: Request, response: Response) {
-    await generateDataIfNeeded(request);
+    const { websiteIsClassic } = await generateDataIfNeeded(request);
+    if (websiteIsClassic) {
+        response.send(
+            "The current website is configured to be a Classic website and cannot return Spire CMS pages. This data is cached.",
+        );
+        return;
+    }
 
     const isSiteInShell =
         (request.headers.referer && request.headers.referer.toLowerCase().indexOf("/contentadmin") > 0) ||
-        (request.cookies && request.cookies[isSiteInShellCookieName] === "true");
+        (request.cookies && request.cookies[isSiteInShellCookieName] === "true" && request.query?.editor !== "off");
 
     let isEditing = false;
     if (isSiteInShell) {
@@ -68,6 +74,8 @@ export async function pageRenderer(request: Request, response: Response) {
         }
 
         response.cookie(isSiteInShellCookieName, "true");
+    } else {
+        response.clearCookie(isSiteInShellCookieName);
     }
 
     const responseCookies = await loadPageAndSetInitialCookies(request, response);
@@ -99,9 +107,13 @@ export async function pageRenderer(request: Request, response: Response) {
         })();
     };
 
-    const getThemePromise = safeRequest(async () => {
-        return merge({}, defaultTheme, preStyleGuideTheme, await getTheme(), postStyleGuideTheme);
-    }, defaultTheme);
+    const getThemePromiseOrDefault = safeRequest(
+        async () =>
+            request.originalUrl.startsWith(shareEntityRoute)
+                ? defaultTheme
+                : merge({}, defaultTheme, preStyleGuideTheme, await getTheme(), postStyleGuideTheme),
+        defaultTheme,
+    );
 
     const getSiteMessagesPromise = safeRequest(async () => {
         return processSiteMessages(
@@ -130,7 +142,7 @@ export async function pageRenderer(request: Request, response: Response) {
 
     // Call these APIs simultaneously instead of sequentially to quicken Spire's response time.
     const [theme, siteMessages, translationDictionaries] = await Promise.all([
-        getThemePromise,
+        getThemePromiseOrDefault,
         getSiteMessagesPromise,
         getTranslationDictionariesPromise,
     ]);
@@ -334,14 +346,21 @@ async function renderUntilPromisesResolved(request: Request, renderRawAndStyles:
     return redirect;
 }
 
-export async function generateDataIfNeeded(request: Request) {
+export interface GenerateDataResponse {
+    websiteIsClassic?: true;
+}
+
+export async function generateDataIfNeeded(request: Request): Promise<GenerateDataResponse> {
     if (
         !checkedForSiteGeneration ||
         !IS_PRODUCTION ||
         request.url.toLowerCase().indexOf("generateIfNeeded=true".toLowerCase()) >= 0
     ) {
         try {
-            await generateSiteIfNeeded();
+            const generateDataResponse = await generateSiteIfNeeded();
+            if (generateDataResponse?.websiteIsClassic) {
+                return generateDataResponse;
+            }
         } catch (error) {
             if (IS_PRODUCTION) {
                 logger.error(`Site generation failed: ${error}`);
@@ -360,6 +379,8 @@ export async function generateDataIfNeeded(request: Request) {
         }
         triedToGenerateTranslations = true;
     }
+
+    return {};
 }
 
 let pageByUrlResult: RetrievePageResult;
@@ -388,6 +409,10 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
 
         // getAll does exist and is needed to get more than a single set-cookie value
         const responseCookies = setCookie.parse((pageByUrlResponse.headers as any).getAll("set-cookie"));
+        const xFrameOptions = pageByUrlResponse.headers.get("X-Frame-Options");
+        if (xFrameOptions) {
+            response.header("X-Frame-Options", xFrameOptions);
+        }
         for (const cookie of responseCookies) {
             const options = {
                 path: cookie.path,

@@ -13,8 +13,9 @@ import GridContainer from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Hidden, { HiddenProps } from "@insite/mobius/Hidden";
 import OverflowMenu, { OverflowMenuPresentationProps } from "@insite/mobius/OverflowMenu";
+import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
-import React from "react";
+import React, { useContext } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -88,9 +89,14 @@ const AccountSettingsHeader = ({
         return null;
     }
 
+    const toasterContext = useContext(ToasterContext);
     const updateSettingsHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
         event.preventDefault();
-        saveCurrentAccount();
+        saveCurrentAccount({
+            onSuccess: () => {
+                toasterContext.addToast({ body: translate("Settings updated"), messageType: "success" });
+            },
+        });
     };
 
     const invalidCustomerState = useDefaultCustomer && !account.defaultCustomerId;

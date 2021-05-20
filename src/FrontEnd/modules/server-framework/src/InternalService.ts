@@ -15,6 +15,7 @@ export const getSiteGenerationData = () =>
         defaultLanguage: BasicLanguageModel;
         defaultPersonaId: string;
         websiteId: string;
+        cmsType: "Classic" | "Spire";
         pageTypeToNodeId: SafeDictionary<string>;
     }>(`${internalContentUrl}siteGenerationData`, "GET");
 

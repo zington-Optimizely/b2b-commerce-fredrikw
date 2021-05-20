@@ -282,7 +282,8 @@ const DateTimePickerStyle = styled.div<DateTimePickerStyleProps>`
                     border-radius: 50%;
                     cursor: pointer;
                     font-size: 16px;
-                    padding: 9.5px;
+                    padding: 9.5px 0;
+                    margin: 0;
 
                     &:disabled,
                     &--neighboringMonth {
@@ -462,7 +463,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                     {...spreadProps("dateTimePickerProps")}
                     {...spreadProps("placeholders")}
                     onChange={this.handleDayChange}
-                    nativeInputAriaLabel={label}
+                    nativeInputAriaLabel={typeof label === "string" ? label : undefined}
                     id={inputId}
                 />
             </DateTimePickerStyle>

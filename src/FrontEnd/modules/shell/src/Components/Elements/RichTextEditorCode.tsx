@@ -314,6 +314,7 @@ class RichTextEditor extends React.Component<Props, State> {
                 videoInsertButtons: ["videoBack", "|", "videoByURL", "videoEmbed"],
                 htmlRemoveTags: ["script"],
                 htmlExecuteScripts: false,
+                htmlUntouched: true,
             };
             const config = this.props.extendedConfig
                 ? this.extendConfig(baseConfig, this.props.extendedConfig)

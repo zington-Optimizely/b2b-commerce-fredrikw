@@ -45,6 +45,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		passwordRequiresUppercase: boolean;
 		passwordRequiresLowercase: boolean;
 		passwordRequiresDigit: boolean;
+		rememberMe: boolean;
 		daysToRetainUser: number;
 		useEmailAsUserName: boolean;
 		enableWarehousePickup: boolean;
@@ -80,6 +81,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		isAuthenticated: boolean;
 		hasRfqUpdates: boolean;
 		userName: string;
+		userProfileId: System.Guid;
 		userLabel: string;
 		userRoles: string;
 		email: string;
@@ -112,6 +114,7 @@ declare module Insite.Account.WebApi.V1.ApiModels {
 		fulfillmentMethod: string;
 		cartReminderUnsubscribeToken: string;
 		cartReminderUnsubscribeEmail: string;
+		displayMyAccountMenu: boolean;
 	}
 	interface PersonaModel extends Insite.Core.WebApi.BaseModel {
 		id: System.Guid;
@@ -213,6 +216,7 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		erpNumber: string;
 		brandName: string;
 		brandDetailPagePath: string;
+		styleParentId: System.Guid;
 	}
 	interface BrandAutocompleteModel extends Insite.Catalog.WebApi.V1.ApiModels.AutocompleteItemModel {
 		productLineName: string;
@@ -329,6 +333,7 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		unitOfMeasure: string;
 		vatRate: number;
 		vatAmount: number;
+		vatAmountDisplay: string;
 		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		regularPrice: number;
@@ -372,6 +377,8 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		displayFacetsForStockedItems: boolean;
 		imageProvider: string;
 		catalogUrlPath: string;
+		enableVat: boolean;
+		vatPriceDisplay: string;
 	}
 	interface WarehouseCollectionModel extends Insite.Core.WebApi.BaseModel {
 		warehouses: Insite.Catalog.WebApi.V1.ApiModels.WarehouseModel[];
@@ -418,6 +425,7 @@ declare module Insite.Customers.WebApi.V1.ApiModels {
 		fullAddress: string;
 		email: string;
 		fax: string;
+		isVmiLocation: boolean;
 	}
 	interface CostCodeModel {
 		id: System.Guid;
@@ -495,6 +503,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 		description: string;
 		isActive: boolean;
 		isRestricted: boolean;
+		websiteFavicon: string;
 		mobilePrimaryColor: string;
 		mobilePrivacyPolicyUrl: string;
 		mobileTermsOfUseUrl: string;
@@ -523,6 +532,17 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 		enableCookiePrivacyPolicyPopup: boolean;
 		enableDynamicRecommendations: boolean;
 		googleMapsApiKey: string;
+		googleTrackingTypeComputed: string;
+		googleTrackingAccountId: string;
+		includeSiteNameInPageTitle: boolean;
+		pageTitleDelimiter: string;
+		siteNameAfterTitle: boolean;
+		reCaptchaSiteKey: string;
+		reCaptchaEnabledForContactUs: boolean;
+		reCaptchaEnabledForCreateAccount: boolean;
+		reCaptchaEnabledForForgotPassword: boolean;
+		reCaptchaEnabledForShareProduct: boolean;
+		advancedSpireCmsFeatures: boolean;
 	}
 	interface AddressFieldCollectionModel extends Insite.Core.WebApi.BaseModel {
 		billToAddressFields: Insite.Websites.WebApi.V1.ApiModels.AddressFieldDisplayCollectionModel;
@@ -782,6 +802,7 @@ declare module Insite.Catalog.Services.Dtos {
 		userProductPrice: boolean;
 		selected: boolean;
 		sortOrder: number;
+		quantity: number;
 	}
 	interface AvailabilityDto {
 	}
@@ -958,6 +979,7 @@ declare module Insite.Core.Plugins.Pricing {
 		unitOfMeasure: string;
 		vatRate: number;
 		vatAmount: number;
+		vatAmountDisplay: string;
 		unitListBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		unitRegularBreakPrices: Insite.Core.Plugins.Pricing.BreakPriceDto[];
 		regularPrice: number;
@@ -976,6 +998,8 @@ declare module Insite.Core.Plugins.Pricing {
 		breakPrice: number;
 		breakPriceDisplay: string;
 		savingsMessage: string;
+		breakPriceWithVat: number;
+		breakPriceWithVatDisplay: string;
 	}
 }
 declare module Insite.Core.Plugins.Search.Dtos {
@@ -1162,6 +1186,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		failedToGetRealTimeInventory: boolean;
 		unassignCart: boolean;
 		customerVatNumber: string;
+		vmiLocationId: System.Guid;
 	}
 	interface CartLineModel extends Insite.Core.WebApi.BaseModel {
 		productUri: string;
@@ -1208,6 +1233,8 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		canAddToWishlist: boolean;
 		isActive: boolean;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
+		vmiBinId: System.Guid;
+		isDiscontinued: boolean;
 	}
 	interface CreditCardBillingAddressDto {
 		address1: string;
@@ -1328,6 +1355,222 @@ declare module Insite.OrderApproval.WebApi.V1.ApiModels {
 	interface OrderApprovalCollectionModel extends Insite.Core.WebApi.BaseModel {
 		cartCollection: Insite.Cart.WebApi.V1.ApiModels.CartModel[];
 		pagination: Insite.Core.WebApi.PaginationModel;
+	}
+}
+declare module Insite.Catalog.WebApi.V2.ApiModels.Product {
+	interface ProductModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		productNumber: string;
+		customerProductNumber: string;
+		productTitle: string;
+		urlSegment: string;
+		canonicalUrl: string;
+		manufacturerItem: string;
+		packDescription: string;
+		unitListPrice: number;
+		unitListPriceDisplay: string;
+		priceFacet: number;
+		smallImagePath: string;
+		mediumImagePath: string;
+		largeImagePath: string;
+		imageAltText: string;
+		isDiscontinued: boolean;
+		quoteRequired: boolean;
+		minimumOrderQty: number;
+		isSponsored: boolean;
+		trackInventory: boolean;
+		configurationType: string;
+		canConfigure: boolean;
+		canAddToCart: boolean;
+		canAddToWishlist: boolean;
+		canShowPrice: boolean;
+		canShowUnitOfMeasure: boolean;
+		isVariantParent: boolean;
+		variantTypeId: System.Guid;
+		cantBuy: boolean;
+		brand: Insite.Catalog.WebApi.V2.ApiModels.Product.BrandModel;
+		productLine: Insite.Catalog.WebApi.V2.ApiModels.Product.ProductLineModel;
+		unitOfMeasures: Insite.Catalog.WebApi.V2.ApiModels.Product.UnitOfMeasureModel[];
+		score: number;
+		scoreExplanation: Insite.Catalog.WebApi.V2.ApiModels.Product.ScoreExplanationModel;
+		detail: Insite.Catalog.WebApi.V2.ApiModels.Product.DetailModel;
+		content: Insite.Catalog.WebApi.V2.ApiModels.Product.ContentModel;
+		images: Insite.Catalog.WebApi.V2.ApiModels.Product.ImageModel[];
+		documents: Insite.Catalog.WebApi.V2.ApiModels.Product.DocumentModel[];
+		specifications: Insite.Catalog.WebApi.V2.ApiModels.Product.SpecificationModel[];
+		warehouses: Insite.Catalog.WebApi.V2.ApiModels.Product.WarehouseModel[];
+		attributeTypes: Insite.Catalog.WebApi.V2.ApiModels.Product.AttributeTypeModel[];
+		variantTraits: Insite.Catalog.WebApi.V2.ApiModels.Product.VariantTraitModel[];
+		childTraitValues: Insite.Catalog.WebApi.V2.ApiModels.Product.ChildTraitValueModel[];
+	}
+	interface BrandModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+		urlSegment: string;
+		logoSmallImagePath: string;
+		logoLargeImagePath: string;
+		logoImageAltText: string;
+		detailPagePath: string;
+	}
+	interface ProductLineModel extends Insite.Core.WebApi.BaseModel {
+		id: System.Guid;
+		name: string;
+	}
+	interface UnitOfMeasureModel {
+		id: System.Guid;
+		unitOfMeasure: string;
+		unitOfMeasureDisplay: string;
+		description: string;
+		qtyPerBaseUnitOfMeasure: number;
+		roundingRule: string;
+		isDefault: boolean;
+	}
+	interface ScoreExplanationModel {
+		totalBoost: number;
+		aggregateFieldScores: Insite.Catalog.WebApi.V2.ApiModels.Product.FieldScoreModel[];
+		detailedFieldScores: Insite.Catalog.WebApi.V2.ApiModels.Product.FieldScoreDetailedModel[];
+	}
+	interface FieldScoreModel {
+		name: string;
+		score: number;
+	}
+	interface FieldScoreDetailedModel {
+		name: string;
+		score: number;
+		boost: number;
+		matchText: string;
+		termFrequencyNormalized: number;
+		inverseDocumentFrequency: number;
+		scoreUsed: boolean;
+	}
+	interface DetailModel {
+		name: string;
+		modelNumber: string;
+		sku: string;
+		upcCode: string;
+		unspsc: string;
+		productCode: string;
+		priceCode: string;
+		sortOrder: number;
+		multipleSaleQty: number;
+		canBackOrder: boolean;
+		roundingRule: string;
+		replacementProductId: System.Guid;
+		isHazardousGood: boolean;
+		hasMsds: boolean;
+		isSpecialOrder: boolean;
+		isGiftCard: boolean;
+		allowAnyGiftCardAmount: boolean;
+		taxCode1: string;
+		taxCode2: string;
+		taxCategory: string;
+		vatCodeId: System.Guid;
+		shippingClassification: string;
+		shippingLength: number;
+		shippingWidth: number;
+		shippingHeight: number;
+		shippingWeight: number;
+		configuration: Insite.Catalog.WebApi.V2.ApiModels.Product.ConfigurationModel;
+	}
+	interface ConfigurationModel {
+		configSections: Insite.Catalog.WebApi.V2.ApiModels.Product.ConfigSectionModel[];
+		hasDefaults: boolean;
+		isKit: boolean;
+	}
+	interface ConfigSectionModel {
+		id: System.Guid;
+		sectionName: string;
+		sortOrder: number;
+		sectionOptions: Insite.Catalog.WebApi.V2.ApiModels.Product.SectionOptionModel[];
+	}
+	interface SectionOptionModel {
+		id: System.Guid;
+		productId: System.Guid;
+		name: string;
+		description: string;
+		price: number;
+		selected: boolean;
+		sortOrder: number;
+		quantity: number;
+	}
+	interface ContentModel {
+		htmlContent: string;
+		pageTitle: string;
+		metaDescription: string;
+		metaKeywords: string;
+		openGraphTitle: string;
+		openGraphUrl: string;
+		openGraphImage: string;
+	}
+	interface ImageModel {
+		id: System.Guid;
+		sortOrder: number;
+		name: string;
+		imageType: string;
+		smallImagePath: string;
+		mediumImagePath: string;
+		largeImagePath: string;
+		imageAltText: string;
+	}
+	interface DocumentModel {
+		id: System.Guid;
+		name: string;
+		description: string;
+		filePath: string;
+		documentType: string;
+	}
+	interface SpecificationModel {
+		id: System.Guid;
+		name: string;
+		nameDisplay: string;
+		description: string;
+		value: string;
+		htmlContent: string;
+		sortOrder: number;
+	}
+	interface WarehouseModel {
+		id: System.Guid;
+		name: string;
+		description: string;
+		qtyAvailable: number;
+	}
+	interface AttributeTypeModel {
+		id: System.Guid;
+		name: string;
+		label: string;
+		isFilter: boolean;
+		isComparable: boolean;
+		isSearchable: boolean;
+		includeOnProduct: boolean;
+		sortOrder: number;
+		attributeValues: Insite.Catalog.WebApi.V2.ApiModels.Product.AttributeValueModel[];
+	}
+	interface AttributeValueModel {
+		id: System.Guid;
+		value: string;
+		valueDisplay: string;
+		sortOrder: number;
+	}
+	interface VariantTraitModel {
+		id: System.Guid;
+		name: string;
+		nameDisplay: string;
+		unselectedValue: string;
+		sortOrder: number;
+		traitValues: Insite.Catalog.WebApi.V2.ApiModels.Product.TraitValueModel[];
+	}
+	interface TraitValueModel {
+		id: System.Guid;
+		value: string;
+		valueDisplay: string;
+		sortOrder: number;
+		isDefault: boolean;
+	}
+	interface ChildTraitValueModel {
+		id: System.Guid;
+		styleTraitId: System.Guid;
+		value: string;
+		valueDisplay: string;
 	}
 }
 declare module Insite.Dashboard.WebApi.V1.ApiModels {
@@ -1490,6 +1733,10 @@ declare module Insite.Invoice.WebApi.V1.ApiModels {
 		taxRate: number;
 		taxAmount: number;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
+		netPriceWithVat: number;
+		netPriceWithVatDisplay: string;
+		unitPriceWithVat: number;
+		unitPriceWithVatDisplay: string;
 	}
 	interface InvoiceCollectionModel extends Insite.Core.WebApi.BaseModel {
 		invoices: Insite.Invoice.WebApi.V1.ApiModels.InvoiceModel[];
@@ -1697,6 +1944,10 @@ declare module Insite.Order.WebApi.V1.ApiModels {
 		salePriceLabel: string;
 		canAddToWishlist: boolean;
 		brand: Insite.Catalog.Services.Dtos.BrandDto;
+		netPriceWithVat: number;
+		netPriceWithVatDisplay: string;
+		unitPriceWithVat: number;
+		unitPriceWithVatDisplay: string;
 	}
 	interface OrderPromotionModel extends Insite.Core.WebApi.BaseModel {
 		id: string;

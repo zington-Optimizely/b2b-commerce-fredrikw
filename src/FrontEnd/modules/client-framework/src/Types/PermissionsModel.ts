@@ -24,4 +24,5 @@ export default interface PermissionsModel {
 
     canEditGlobalStyleGuide: boolean;
     canUseSearchDataMode: boolean;
+    canUseAdvancedFeatures: boolean;
 }

@@ -106,6 +106,7 @@ const ButtonWrapper = styled.button<any>`
     line-height: 1;
     backface-visibility: hidden;
     transition: all ${getProp("theme.transition.duration.regular")}ms ease-in-out;
+    word-break: keep-all;
     ${({ shadow, theme }) =>
         shadow &&
         `

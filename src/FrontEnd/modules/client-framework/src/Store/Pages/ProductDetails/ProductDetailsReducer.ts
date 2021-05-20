@@ -135,6 +135,14 @@ const reducer = {
             productInfo.failedToLoadInventory = true;
         }
     },
+    "Pages/ProductDetails/ResetSelections": (draft: Draft<ProductDetailsState>) => {
+        draft.selectedImageIndex = initialState.selectedImageIndex;
+        draft.variantSelection = initialState.variantSelection;
+        draft.variantSelectionCompleted = initialState.variantSelectionCompleted;
+        draft.configurationSelection = initialState.configurationSelection;
+        draft.configurationCompleted = initialState.configurationCompleted;
+        draft.lastStyledOption = initialState.lastStyledOption;
+    },
 };
 
 const initConfigurationSelection = (draft: Draft<ProductDetailsState>, configuration?: ConfigurationModel | null) => {

@@ -15,6 +15,7 @@ import {
 import changeQtyOrdered from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/ChangeQtyOrdered";
 import changeUnitOfMeasure from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/ChangeUnitOfMeasure";
 import displayProduct from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/DisplayProduct";
+import resetSelections from "@insite/client-framework/Store/Pages/ProductDetails/Handlers/ResetSelections";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import CurrentCategory from "@insite/content-library/Components/CurrentCategory";
@@ -52,6 +53,7 @@ const mapDispatchToProps = {
     displayProduct,
     changeQtyOrdered,
     changeUnitOfMeasure,
+    resetSelections,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & PageProps;
@@ -80,6 +82,10 @@ class ProductDetailsPage extends React.Component<Props, State> {
             trackPageChange();
             this.setMetadata();
         }
+    }
+
+    componentWillUnmount() {
+        this.props.resetSelections();
     }
 
     setMetadata() {

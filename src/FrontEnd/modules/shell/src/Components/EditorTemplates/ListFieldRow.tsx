@@ -220,6 +220,7 @@ export default withSideBarForm(connect(mapStateToProps)(ListFieldRow));
 const Content = styled.div`
     flex-grow: 1;
     margin-left: 10px;
+    word-break: break-word;
 `;
 
 const buttonStyles = css`
@@ -254,6 +255,7 @@ const OverflowStyle = styled.div<{ disabled: boolean }>`
     cursor: ${props => (props.disabled ? "default" : "drag")};
     margin: -15px -10px -15px 0;
     align-items: center;
+    flex-shrink: 0;
 `;
 
 const TrashStyle = styled.div<{ disabled: boolean }>`

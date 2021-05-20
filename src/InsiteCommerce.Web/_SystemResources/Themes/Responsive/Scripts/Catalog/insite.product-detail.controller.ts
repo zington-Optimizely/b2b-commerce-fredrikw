@@ -31,6 +31,7 @@ module insite.catalog {
         session: SessionModel;
         initResolvePageCalled: boolean;
         configuration: string[] = [];
+        ignoreLocationChange: boolean;
 
         static $inject = [
             "$scope",
@@ -44,7 +45,8 @@ module insite.catalog {
             "sessionService",
             "spinnerService",
             "queryString",
-            "tellAFriendPopupService"
+            "tellAFriendPopupService",
+            "$location"
             ];
 
         constructor(
@@ -59,7 +61,8 @@ module insite.catalog {
             protected sessionService: account.ISessionService,
             protected spinnerService: core.ISpinnerService,
             protected queryString: common.IQueryStringService,
-            protected tellAFriendPopupService: catalog.ITellAFriendPopupService) {
+            protected tellAFriendPopupService: catalog.ITellAFriendPopupService,
+            protected $location: ng.ILocationService) {
         }
 
         $onInit(): void {
@@ -80,9 +83,10 @@ module insite.catalog {
             });
 
             this.$scope.$on("$locationChangeSuccess", () => {
-                if (this.product && this.product.styleTraits) {
+                if (this.product && this.product.styleTraits && !this.ignoreLocationChange) {
                     this.initStyleSelection(this.product.styleTraits);
                 }
+                this.ignoreLocationChange = false;
             });
         }
 
@@ -413,6 +417,8 @@ module insite.catalog {
                 if (selectedProduct) {
                     this.selectStyledProduct(selectedProduct);
                     this.product.isStyleProductParent = false;
+                    this.ignoreLocationChange = true;
+                    this.$location.search("option", selectedProduct.erpNumber);
                 }
             } else {
                 if (!this.product.isStyleProductParent) {
@@ -437,6 +443,11 @@ module insite.catalog {
                         this.product.unitOfMeasureDisplay = "";
                         this.setTabs();
                     }
+                }
+
+                if (this.$location.search()) {
+                    this.ignoreLocationChange = true;
+                    this.$location.search("");
                 }
             }
         }
@@ -493,12 +504,9 @@ module insite.catalog {
                     this.getRealTimePrices();
                 }
 
-                if (!this.product.selectedUnitOfMeasure) {
+                if (!this.product.selectedUnitOfMeasure || this.product.productUnitOfMeasures.every(o => o.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
                     this.product.selectedUnitOfMeasure = this.getDefaultValue(this.product.productUnitOfMeasures);
                     this.changeUnitOfMeasure(this.product);
-                } else if (this.product.productUnitOfMeasures.every(elem => elem.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
-                    this.product.unitOfMeasureDisplay = "";
-                    this.showUnitError = true;
                 }
             } else {
                 if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length === 1) {

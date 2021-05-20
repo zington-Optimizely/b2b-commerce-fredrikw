@@ -60,7 +60,11 @@ class PublicPage extends React.Component<Props> {
         const { page } = this.props;
         if (page.id !== prevProps.page?.id) {
             // product list and product details call setMetadata when they get data
-            if (page.type !== "ProductListPage" && page.type !== "ProductDetailsPage") {
+            if (
+                page.type !== "ProductListPage" &&
+                page.type !== "ProductDetailsPage" &&
+                page.type !== "CategoryDetailsPage"
+            ) {
                 this.setMetadata();
             }
         }

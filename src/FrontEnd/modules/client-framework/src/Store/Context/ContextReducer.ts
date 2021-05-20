@@ -5,13 +5,11 @@ import { Session } from "@insite/client-framework/Services/SessionService";
 import { PaymetricConfig, SettingsModel, TokenExConfig } from "@insite/client-framework/Services/SettingsService";
 import { Website } from "@insite/client-framework/Services/WebsiteService";
 import ContextState from "@insite/client-framework/Store/Context/ContextState";
-import { getContextualId } from "@insite/client-framework/Store/Data/Pages/PrepareFields";
 import { LanguageModel, PersonaModel } from "@insite/client-framework/Types/ApiModels";
 import { DeviceType } from "@insite/client-framework/Types/ContentItemModel";
 import PermissionsModel from "@insite/client-framework/Types/PermissionsModel";
 import { Draft } from "immer";
 import assign from "lodash/assign";
-import qs from "qs";
 
 const initialState: ContextState = {
     website: {} as Website,

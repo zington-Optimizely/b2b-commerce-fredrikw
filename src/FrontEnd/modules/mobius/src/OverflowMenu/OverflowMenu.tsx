@@ -42,6 +42,8 @@ export interface OverflowMenuPresentationProps {
     transitionDuration?: keyof ThemeTransitionDuration;
     /** override the default max height */
     maxHeight?: string;
+    /** Boolean value indicating that there is a portal modal inside the menu, which affects popover click outside functionality */
+    hasChildPortal?: boolean;
 }
 
 export type OverflowMenuComponentProps = MobiusStyledComponentProps<
@@ -121,6 +123,7 @@ class OverflowMenu extends React.Component<Props, State> {
             yPosition,
             mergeCss,
             maxHeight,
+            hasChildPortal,
             ...otherProps
         } = this.props;
         const { controlsId } = this.state;
@@ -184,6 +187,7 @@ class OverflowMenu extends React.Component<Props, State> {
                 xPosition={position}
                 yPosition={yPosition}
                 _height={maxHeight}
+                hasChildPortal={hasChildPortal}
             >
                 {menuItems}
             </Popover>

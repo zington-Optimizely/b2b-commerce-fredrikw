@@ -9,7 +9,7 @@ export function validateField(fieldDefinition: ChildFieldDefinition, item: HasFi
 
     const value = item.fields[fieldDefinition.name];
     let validationError: string | null = null;
-    if (fieldDefinition.isRequired && (value === "" || value === undefined || value === null)) {
+    if (fieldDefinition.isRequired && (value === "" || value === undefined || value === null || value?.value === "")) {
         validationError = "A value must be provided.";
     }
 

@@ -38,7 +38,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import parse from "html-react-parser";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -378,7 +378,7 @@ export const findLocationModalStyles: FindLocationModalStyles = {
 const StyledForm = getStyledWrapper("form");
 const StyledHr = getStyledWrapper("hr");
 
-const FindLocationModal: React.FC<Props> = ({
+const FindLocationModal = ({
     session,
     settings,
     warehousesDataView,
@@ -387,12 +387,12 @@ const FindLocationModal: React.FC<Props> = ({
     onModalClose,
     extendedStyles,
     loadWarehouses,
-}) => {
-    const [styles] = React.useState(() => mergeToNew(findLocationModalStyles, extendedStyles));
-    const [distanceUnitOfMeasure, setDistanceUnitOfMeasure] = React.useState<DistanceUnitOfMeasure>("Imperial");
-    const [warehouseHoursToDisplay, setWarehouseHoursToDisplay] = React.useState<WarehouseModel | undefined>(undefined);
-    const [warehouseHoursToDisplayModalOpen, setWarehouseHoursToDisplayModalOpen] = React.useState<boolean>(false);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+}: Props) => {
+    const [styles] = useState(() => mergeToNew(findLocationModalStyles, extendedStyles));
+    const [distanceUnitOfMeasure, setDistanceUnitOfMeasure] = useState<DistanceUnitOfMeasure>("Imperial");
+    const [warehouseHoursToDisplay, setWarehouseHoursToDisplay] = useState<WarehouseModel | undefined>(undefined);
+    const [warehouseHoursToDisplayModalOpen, setWarehouseHoursToDisplayModalOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { googleMapsApiKey } = settings.websiteSettings;
     const {
@@ -411,17 +411,17 @@ const FindLocationModal: React.FC<Props> = ({
     });
 
     // Manage Selected Warehouse
-    const [selectedWarehouse, setSelectedWarehouse] = React.useState<WarehouseModel | undefined>(undefined);
-    const [showSelectedWarehouse, setShowSelectedWarehouse] = React.useState<boolean>(false);
-    const [defaultRadius, setDefaultRadius] = React.useState<number>(0);
-    React.useEffect(() => {
+    const [selectedWarehouse, setSelectedWarehouse] = useState<WarehouseModel | undefined>(undefined);
+    const [showSelectedWarehouse, setShowSelectedWarehouse] = useState<boolean>(false);
+    const [defaultRadius, setDefaultRadius] = useState<number>(0);
+    useEffect(() => {
         setSelectedWarehouse(session.pickUpWarehouse || undefined);
     }, [session]);
 
     // Manage Local Warehouses
-    const [warehouses, setWarehouses] = React.useState<WarehouseModel[]>([]);
-    const [resultCount, setResultCount] = React.useState<number>(0);
-    const [warehousesPagination, setWarehousesPagination] = React.useState<PaginationModel | undefined>();
+    const [warehouses, setWarehouses] = useState<WarehouseModel[]>([]);
+    const [resultCount, setResultCount] = useState<number>(0);
+    const [warehousesPagination, setWarehousesPagination] = useState<PaginationModel | undefined>();
 
     // Manage Loading Warehouses on State Changes
     const {
@@ -442,7 +442,7 @@ const FindLocationModal: React.FC<Props> = ({
     });
 
     // Manage Bounds of Map
-    React.useEffect(() => {
+    useEffect(() => {
         const bounds = [];
         closeInfoWindows();
         warehouses.forEach(warehouse => {
@@ -470,7 +470,7 @@ const FindLocationModal: React.FC<Props> = ({
         showSelectedWarehouse,
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!isGoogleMapsScriptsLoaded) {
             return;
         }
@@ -532,6 +532,7 @@ const FindLocationModal: React.FC<Props> = ({
     };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        event.stopPropagation();
     };
     const textFieldSearch = (filter: string) => {
         doSearch(filter);
@@ -804,20 +805,17 @@ interface SearchLocationsTextFieldProps {
     warehouseSearchFilter: string;
 }
 
-const SearchLocationsTextField: React.FC<SearchLocationsTextFieldProps> = ({
-    styles,
-    doSearch,
-    warehouseSearchFilter,
-}) => {
-    const [searchLocationFilter, setSearchLocationFilter] = React.useState(warehouseSearchFilter);
+const SearchLocationsTextField = ({ styles, doSearch, warehouseSearchFilter }: SearchLocationsTextFieldProps) => {
+    const [searchLocationFilter, setSearchLocationFilter] = useState(warehouseSearchFilter);
 
-    const iconOnClick = () => {
+    const iconOnClick = (event: React.MouseEvent) => {
+        event.preventDefault();
         doSearch(searchLocationFilter);
     };
     const handleSearchLocationsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchLocationFilter(event.target.value);
     };
-    React.useEffect(() => {
+    useEffect(() => {
         setSearchLocationFilter(warehouseSearchFilter);
     }, [warehouseSearchFilter]);
 

@@ -1,5 +1,6 @@
 import { ButtonPresentationProps } from "@insite/mobius/Button";
 import baseTheme, { ThemeColors } from "@insite/mobius/globals/baseTheme";
+import getColor from "@insite/mobius/utilities/getColor";
 import { css, FlattenSimpleInterpolation } from "styled-components";
 
 export interface ShellThemeProps {
@@ -229,7 +230,7 @@ const shellTheme = {
         defaultProps: {
             cssOverrides: {
                 modalTitle: css`
-                    background-color: ${({ theme }) => theme.colors.common.backgroundContrast};
+                    background-color: ${getColor("common.backgroundContrast")};
                     padding: 10px 15px;
                     & button {
                         margin: -5px 0; /* makes sure modal title height does not differ if there is or is not a close button. */
@@ -237,13 +238,16 @@ const shellTheme = {
                 `,
                 headlineTypography: css`
                     margin-bottom: 0;
+                    text-transform: capitalize;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                 `,
                 modalContent: css`
                     padding: 15px;
                 `,
                 modalBody: css`
                     border-radius: 8px;
-                    background-color: ${({ theme }) => theme.colors.common.accent};
+                    background-color: ${getColor("common.accent")};
                 `,
             },
             closeButtonIconProps: {

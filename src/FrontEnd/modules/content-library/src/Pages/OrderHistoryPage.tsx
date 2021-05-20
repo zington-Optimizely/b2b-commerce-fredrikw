@@ -17,6 +17,7 @@ import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext
 import qs from "qs";
 import React, { useEffect } from "react";
 import { connect, ResolveThunks } from "react-redux";
+import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     settings: getSettingsCollection(state),
@@ -85,7 +86,13 @@ const OrderHistoryPage = ({
     });
 
     return (
-        <Page data-test-selector="orderHistory">
+        <Page
+            data-test-selector="orderHistory"
+            css={css`
+                overflow: hidden;
+                position: relative;
+            `}
+        >
             <OrdersDataViewContext.Provider value={ordersDataView}>
                 <Zone contentId={id} zoneName="Content" />
             </OrdersDataViewContext.Provider>

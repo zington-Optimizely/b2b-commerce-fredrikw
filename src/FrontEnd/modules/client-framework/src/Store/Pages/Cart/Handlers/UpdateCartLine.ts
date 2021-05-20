@@ -5,8 +5,8 @@ import {
 } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import {
-    updateCartLine as updateCartLineApi,
     UpdateCartLineApiParameter,
+    updateCartLineWithResult as updateCartLineApi,
 } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";

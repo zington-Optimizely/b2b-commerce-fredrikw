@@ -126,5 +126,6 @@ function setupSSR(request: Request, domain: Parameters<typeof setDomain>[0]) {
         delete headers["content-length"];
     }
     setHeaders(headers);
-    setUrl(`${request.protocol}://${request.get("host")}${request.originalUrl}`);
+    const protocol = headers["x-forwarded-proto"]?.toString().toLowerCase() === "https" ? "https" : request.protocol;
+    setUrl(`${protocol}://${request.get("host")}${request.originalUrl}`);
 }

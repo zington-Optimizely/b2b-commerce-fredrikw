@@ -228,7 +228,7 @@ class NewsListView extends React.Component<Props> {
                         </Link>
                     </StyledWrapper>
                 ))}
-                {totalItems > pageSize && (
+                {totalItems > defaultPageSize && (
                     <Pagination
                         resultsCount={totalItems}
                         currentPage={page}

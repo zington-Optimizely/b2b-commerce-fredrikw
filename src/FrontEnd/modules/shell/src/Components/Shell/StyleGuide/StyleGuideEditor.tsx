@@ -349,7 +349,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Hover Mode",
                                 "link.defaultProps.hoverMode",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="darken">Darken</option>
                                     <option value="lighten">Lighten</option>
                                 </>,
@@ -387,7 +387,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Border",
                                 "formField.defaultProps.border",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="underline">Underline</option>
                                     <option value="rectangle">Rectangle</option>
                                     <option value="rounded">Rounded</option>
@@ -397,7 +397,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Size Variant",
                                 "formField.defaultProps.sizeVariant",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="default">Default</option>
                                     <option value="small">Small</option>
                                 </>,
@@ -418,7 +418,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Size Variant",
                                 "fieldSet.defaultProps.sizeVariant",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="default">Default</option>
                                     <option value="small">Small</option>
                                 </>,
@@ -474,7 +474,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Calendar Type",
                                 "datePicker.defaultProps.dateTimePickerProps.calendarType",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="ISO 8601">ISO 8601</option>
                                     <option value="US">US</option>
                                     <option value="Arabic">Arabic</option>
@@ -557,7 +557,7 @@ const ConnectableStyleGuideEditor: React.FunctionComponent<Props> = props => {
                                 "Current Page Variant",
                                 "pagination.defaultProps.currentPageButtonVariant",
                                 <>
-                                    <option value=""></option>
+                                    <option value="" hidden disabled></option>
                                     <option value="primary">Primary</option>
                                     <option value="secondary">Secondary</option>
                                     <option value="tertiary">Tertiary</option>

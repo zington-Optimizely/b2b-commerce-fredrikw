@@ -43,6 +43,8 @@ export const SetEmptyData: HandlerType = props => {
         return;
     }
 
+    const { isAuthenticated } = props.getState().context.session;
+
     props.apiResult = {
         realTimeInventoryResults: props.apiParameter.productIds.map(o => {
             const uoms = getProductState(props.getState(), o).value?.unitOfMeasures?.map(p => p.unitOfMeasure) ?? [""];
@@ -51,8 +53,8 @@ export const SetEmptyData: HandlerType = props => {
                 inventoryAvailabilityDtos: uoms?.map(uom => {
                     return {
                         availability: {
-                            message: siteMessage("Inventory_SignInForAvailability"),
-                            messageType: 1,
+                            message: isAuthenticated ? "" : siteMessage("Inventory_SignInForAvailability"),
+                            messageType: isAuthenticated ? 0 : 1,
                             requiresRealTimeInventory: false,
                         },
                         unitOfMeasure: uom,

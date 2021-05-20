@@ -172,7 +172,11 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
     };
 
     private canEditWidget = () => {
-        return this.props.canChangePage && this.props.permissions?.canEditWidget;
+        return (
+            this.props.canChangePage &&
+            this.props.permissions?.canEditWidget &&
+            (!this.isAdvancedWidget() || this.canEditAdvancedWidgets())
+        );
     };
 
     private canMoveWidget = () => {
@@ -181,7 +185,8 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
             pageDefinition &&
             this.props.canChangePage &&
             ((this.props.permissions?.canMoveWidgets && pageDefinition.pageType === "Content") ||
-                (this.props.permissions?.canMoveSystemWidgets && pageDefinition.pageType === "System"))
+                (this.props.permissions?.canMoveSystemWidgets && pageDefinition.pageType === "System")) &&
+            (!this.isAdvancedWidget() || this.canEditAdvancedWidgets())
         );
     };
 
@@ -191,8 +196,17 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
             pageDefinition &&
             this.props.canChangePage &&
             ((this.props.permissions?.canDeleteWidget && pageDefinition.pageType === "Content") ||
-                (this.props.permissions?.canDeleteSystemWidget && pageDefinition.pageType === "System"))
+                (this.props.permissions?.canDeleteSystemWidget && pageDefinition.pageType === "System")) &&
+            (!this.isAdvancedWidget() || this.canEditAdvancedWidgets())
         );
+    };
+
+    private isAdvancedWidget = () => {
+        return this.props.widget.type === "Basic/CodeSnippet";
+    };
+
+    private canEditAdvancedWidgets = () => {
+        return this.props.permissions?.canUseAdvancedFeatures || false;
     };
 
     render() {
@@ -255,7 +269,7 @@ class WidgetRenderer extends React.PureComponent<Props, State> {
                                 )}
                             </HoverStyle>
                         )}
-                        <WidgetWrapper>
+                        <WidgetWrapper data-test-selector="widgetWrapper">
                             {draggingWidgetId === widget.id && <WidgetDisabler />}
                             {widgetElement}
                             <WidgetClearer></WidgetClearer>

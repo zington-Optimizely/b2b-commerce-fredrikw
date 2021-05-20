@@ -408,7 +408,7 @@ const CreateAccount = ({
                             </CheckboxGroup>
                         </GridItem>
                         {errorMessage && (
-                            <GridItem {...styles.submitErrorGridItem}>
+                            <GridItem data-test-selector="createAccount_ErrorMessage" {...styles.submitErrorGridItem}>
                                 <Typography {...styles.submitErrorTitle}>{errorMessage}</Typography>
                             </GridItem>
                         )}

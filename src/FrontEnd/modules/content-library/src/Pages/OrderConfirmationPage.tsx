@@ -8,6 +8,7 @@ import setIsPreloadingData from "@insite/client-framework/Store/Pages/OrderConfi
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import Page from "@insite/mobius/Page";
+import { HasToasterContext, withToaster } from "@insite/mobius/Toast/ToasterContext";
 import React, { Component } from "react";
 import { connect, ResolveThunks } from "react-redux";
 
@@ -22,7 +23,10 @@ const mapStateToProps = (state: ApplicationState) => ({
     location: getLocation(state),
 });
 
-type Props = ResolveThunks<typeof mapDispatchToProps> & PageProps & ReturnType<typeof mapStateToProps>;
+type Props = ResolveThunks<typeof mapDispatchToProps> &
+    PageProps &
+    ReturnType<typeof mapStateToProps> &
+    HasToasterContext;
 
 class OrderConfirmationPage extends Component<Props> {
     componentDidMount() {
@@ -33,6 +37,9 @@ class OrderConfirmationPage extends Component<Props> {
                 cartId,
                 onSuccess: () => {
                     this.props.setIsPreloadingData({ isPreloadingData: false });
+                },
+                onError: (errorMessage: string) => {
+                    this.props.toaster.addToast({ body: errorMessage, messageType: "danger", timeoutLength: 9000 });
                 },
             });
         } else {
@@ -50,7 +57,7 @@ class OrderConfirmationPage extends Component<Props> {
 }
 
 const pageModule: PageModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(OrderConfirmationPage),
+    component: connect(mapStateToProps, mapDispatchToProps)(withToaster(OrderConfirmationPage)),
     definition: {
         hasEditableUrlSegment: true,
         hasEditableTitle: true,

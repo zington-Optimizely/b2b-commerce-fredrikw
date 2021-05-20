@@ -159,7 +159,11 @@ const InventoryMessage = styled.div<{ color: string }>`
     }
 `;
 
-const getAvailabilityColor = (availability?: AvailabilityDto) => {
+const getAvailabilityColor = (productSettings: ProductSettingsModel, availability?: AvailabilityDto) => {
+    if (!productSettings.showInventoryAvailability) {
+        return "common";
+    }
+
     const availabilityType = availability?.messageType;
     if (availabilityType === AvailabilityMessageType.OutOfStock) {
         return "danger";
@@ -172,7 +176,11 @@ const getAvailabilityColor = (availability?: AvailabilityDto) => {
     return "success";
 };
 
-const getAvailabilityIcon = (availability?: AvailabilityDto) => {
+const getAvailabilityIcon = (productSettings: ProductSettingsModel, availability?: AvailabilityDto) => {
+    if (!productSettings.showInventoryAvailability) {
+        return undefined;
+    }
+
     const availabilityType = availability?.messageType;
     if (availabilityType === AvailabilityMessageType.OutOfStock) {
         return X;
@@ -241,8 +249,8 @@ const ProductAvailability = ({
         });
     };
 
-    const color = getAvailabilityColor(availability);
-    const iconSrc = getAvailabilityIcon(availability);
+    const color = getAvailabilityColor(productSettings, availability);
+    const iconSrc = getAvailabilityIcon(productSettings, availability);
 
     const [styles] = useState(() => mergeToNew(productAvailabilityStyles, extendedStyles));
 
@@ -255,7 +263,7 @@ const ProductAvailability = ({
     }
 
     let inventoryTextComponent = <Typography {...styles.realTimeText} />;
-    if (availability && availability.messageType !== AvailabilityMessageType.NoMessage) {
+    if (availability?.messageType !== AvailabilityMessageType.NoMessage && availability?.message?.length) {
         inventoryTextComponent = (
             <InventoryMessage color={color} {...styles.inventoryMessage}>
                 <Icon color={color} src={iconSrc} />

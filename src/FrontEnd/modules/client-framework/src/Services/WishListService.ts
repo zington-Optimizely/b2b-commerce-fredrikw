@@ -240,11 +240,15 @@ export function activateInvite(parameter: ActivateInviteApiParameter) {
     return patch<WishListModel>(`${wishListUrl}/activateinvite`, (parameter as unknown) as WishListModel);
 }
 
-function cleanWishList(wishList: WishListModel, parameter?: { expand?: string[] }) {
+function cleanWishList(wishList: WishListModel, parameter?: { expand?: string[]; exclude?: string[] }) {
     if (doesNotHaveExpand(parameter, "schedule")) {
         delete wishList.schedule;
     }
     if (doesNotHaveExpand(parameter, "sharedUsers")) {
         delete wishList.sharedUsers;
+    }
+    if (parameter?.exclude && parameter?.exclude.indexOf("listLines") > -1) {
+        delete wishList.wishListLineCollection;
+        delete wishList.wishListLinesCount;
     }
 }

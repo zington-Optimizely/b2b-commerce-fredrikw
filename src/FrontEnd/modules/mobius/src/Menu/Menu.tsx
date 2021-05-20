@@ -10,6 +10,7 @@ import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCs
 import injectCss from "@insite/mobius/utilities/injectCss";
 import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
+import isMobile from "ismobilejs";
 import React from "react";
 import styled, { ThemeConsumer, ThemeProps, withTheme } from "styled-components";
 
@@ -68,13 +69,13 @@ type MenuComponentProps = MobiusStyledComponentProps<
 /** MenuComponentProps with defaulted properties now listed as not-optional, plus theme. */
 export type MenuProps = MenuComponentProps & MenuPresentationProps & ThemeProps<BaseTheme>;
 
+type MenuStyleProps = ThemeProps<BaseTheme> &
+    InjectableCss & {
+        width?: number;
+    };
+
 // eslint-disable-next-line no-unexpected-multiline
-const MenuStyle = styled.ul<
-    ThemeProps<BaseTheme> &
-        InjectableCss & {
-            width?: number;
-        }
->`
+const MenuStyle = styled.ul<MenuStyleProps>`
     background: ${getColor("common.background")};
     z-index: ${getProp("theme.zIndex.menu")};
     box-shadow: ${getProp("theme.shadows.2")};
@@ -87,7 +88,9 @@ const MenuStyle = styled.ul<
     ${injectCss}
 `;
 
-const MenuWrapper = styled.nav<{ canBeOpen: boolean; isOpen?: true } & InjectableCss>`
+type MenuWrapperProps = { canBeOpen: boolean; isOpen?: true } & InjectableCss;
+
+const MenuWrapper = styled.nav<MenuWrapperProps>`
     position: relative; /* stylelint-disable */
         ${({ isOpen }) =>
             isOpen &&
@@ -110,12 +113,13 @@ const MenuWrapper = styled.nav<{ canBeOpen: boolean; isOpen?: true } & Injectabl
 `;
 
 // eslint-disable-next-line no-unexpected-multiline
-const MenuItemStyle = styled.li<
-    ThemeProps<BaseTheme> &
-        InjectableCss & {
-            width?: number;
-        }
->`
+type MenuItemStyleProps = ThemeProps<BaseTheme> &
+    InjectableCss & {
+        width?: number;
+        onClick: () => void;
+    };
+
+const MenuItemStyle = styled.li<MenuItemStyleProps>`
     position: relative;
     &:focus-within > ${MenuStyle} {
         display: block;
@@ -150,6 +154,8 @@ const trigger = React.createRef<HTMLElement>();
 
 interface MenuState {
     canBeOpen: boolean;
+    isMobile: boolean;
+    shouldRender: boolean;
 }
 
 /**
@@ -163,10 +169,44 @@ class Menu extends React.Component<MenuProps, MenuState> {
 
     state: MenuState = {
         canBeOpen: true,
+        isMobile: false,
+        shouldRender: true,
     };
 
+    componentDidMount() {
+        this.setState({
+            isMobile: isMobile().any,
+        });
+
+        window.addEventListener("resize", () => {
+            window.setTimeout(() => {
+                this.setState({
+                    isMobile: isMobile().any,
+                });
+            }, 50);
+        });
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", () => {
+            window.setTimeout(() => {
+                this.setState({
+                    isMobile: isMobile().any,
+                });
+            }, 50);
+        });
+    }
+
     closeMenu = () => {
-        this.setState({ canBeOpen: false }, () =>
+        // On Mobile, the below logic
+        // where we switch the canBeOpen state from false to true
+        // causes the mobile experience to not function well
+        // due to Mobile not doing hover functionality
+
+        // Solution:
+        // I prevent the boolean toggle when we detect mobile
+
+        this.setState({ canBeOpen: this.state.isMobile }, () =>
             setTimeout(() => {
                 // The make the all browsers act the same on item click.
                 if (document.activeElement instanceof HTMLElement) {
@@ -175,6 +215,21 @@ class Menu extends React.Component<MenuProps, MenuState> {
                 this.setState({ canBeOpen: true });
             }, 100),
         );
+    };
+
+    closeMenuWithoutChildren = (hasMenuChildren?: boolean) => {
+        // This is for high resolution mobile users.
+        // So that the menu closes on nav items without children
+        if (!hasMenuChildren) {
+            this.setState(
+                {
+                    shouldRender: false,
+                },
+                () => {
+                    this.setState({ shouldRender: true });
+                },
+            );
+        }
     };
 
     render() {
@@ -198,31 +253,37 @@ class Menu extends React.Component<MenuProps, MenuState> {
                                         const hasChildren =
                                             item.children?.some(o => !o.excludeFromNavigation) &&
                                             currentDepth < maxDepth;
-                                        return (
-                                            <MenuItemStyle
-                                                width={otherProps.width}
-                                                css={cssOverrides?.menuItem}
-                                                key={item.title}
-                                                data-test-selector="menuItem"
-                                            >
-                                                <Clickable
-                                                    href={item.url}
-                                                    onClick={this.closeMenu}
-                                                    {...applyProp("menuItemClickableProps")}
+                                        if (this.state.shouldRender) {
+                                            return (
+                                                <MenuItemStyle
+                                                    width={otherProps.width}
+                                                    css={cssOverrides?.menuItem}
+                                                    key={item.title}
+                                                    data-test-selector="menuItem"
+                                                    onClick={() => {
+                                                        this.closeMenuWithoutChildren(hasChildren);
+                                                    }}
                                                 >
-                                                    <MenuItemText
-                                                        hasChildren={hasChildren}
-                                                        {...applyProp("menuItemTypographyProps")}
+                                                    <Clickable
+                                                        href={item.url}
+                                                        onClick={this.closeMenu}
+                                                        {...applyProp("menuItemClickableProps")}
                                                     >
-                                                        {item.title}
-                                                    </MenuItemText>
-                                                    {hasChildren && <IconMemo {...applyProp("moreIconProps")} />}
-                                                </Clickable>
-                                                {hasChildren
-                                                    ? renderMenuItems(item!.children!, currentDepth + 1)
-                                                    : null}
-                                            </MenuItemStyle>
-                                        );
+                                                        <MenuItemText
+                                                            hasChildren={hasChildren}
+                                                            {...applyProp("menuItemTypographyProps")}
+                                                        >
+                                                            {item.title}
+                                                        </MenuItemText>
+                                                        {hasChildren && <IconMemo {...applyProp("moreIconProps")} />}
+                                                    </Clickable>
+                                                    {hasChildren
+                                                        ? renderMenuItems(item!.children!, currentDepth + 1)
+                                                        : null}
+                                                </MenuItemStyle>
+                                            );
+                                        }
+                                        return null;
                                     })}
                             </MenuStyle>
                         );

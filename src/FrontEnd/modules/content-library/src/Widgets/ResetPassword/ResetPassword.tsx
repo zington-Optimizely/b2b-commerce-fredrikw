@@ -265,7 +265,7 @@ const ResetPassword = ({
                     <GridItem {...styles.newPasswordGridItem}>
                         <TextField
                             id="password"
-                            type={showPassword ? "password" : "text"}
+                            type={showPassword ? "text" : "password"}
                             {...styles.newPasswordTextField}
                             label={translate("New Password")}
                             value={password}
@@ -285,7 +285,7 @@ const ResetPassword = ({
                         <TextField
                             id="confirm-password"
                             {...styles.confirmNewPasswordTextField}
-                            type={showConfirmPassword ? "password" : "text"}
+                            type={showConfirmPassword ? "text" : "password"}
                             label={translate("Confirm New Password")}
                             value={confirmPassword}
                             onChange={e => confirmPasswordChangeHandler(e.currentTarget.value)}

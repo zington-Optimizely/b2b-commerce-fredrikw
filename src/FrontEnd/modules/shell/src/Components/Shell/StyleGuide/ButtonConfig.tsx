@@ -59,7 +59,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Shape",
                 `${locationInTheme}.shape`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="rectangle">Rectangle</option>
                     <option value="pill">Pill</option>
                     <option value="rounded">Rounded</option>
@@ -70,7 +70,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Active Mode",
                 `${locationInTheme}.activeMode`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="darken">Darken</option>
                     <option value="lighten">Lighten</option>
                 </>,
@@ -79,7 +79,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Hover Mode",
                 `${locationInTheme}.hoverMode`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="darken">Darken</option>
                     <option value="lighten">Lighten</option>
                 </>,
@@ -88,7 +88,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Hover Animation",
                 `${locationInTheme}.hoverAnimation`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="grow">Grow</option>
                     <option value="shrink">Shrink</option>
                     <option value="float">Float</option>
@@ -98,7 +98,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Size Variant",
                 `${locationInTheme}.sizeVariant`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="small">Small</option>
                     <option value="medium">Medium</option>
                     <option value="large">Large</option>
@@ -108,7 +108,7 @@ const ButtonConfig: React.FunctionComponent<
                 "Button Type",
                 `${locationInTheme}.buttonType`,
                 <>
-                    <option value=""></option>
+                    <option value="" hidden disabled></option>
                     <option value="outline">Outline</option>
                     <option value="solid">Solid</option>
                 </>,

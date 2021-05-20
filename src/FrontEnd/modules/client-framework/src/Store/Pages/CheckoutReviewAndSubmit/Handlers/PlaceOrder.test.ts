@@ -32,7 +32,7 @@ describe("SetCartStatus", () => {
         expect(props.cartToUpdate.customerVatNumber).toBe("vatNumber");
     });
 
-    test("ets customerVatNumber to empty string", () => {
+    test("sets customerVatNumber to empty string", () => {
         const props = getProps();
         SetCartStatus(props);
 

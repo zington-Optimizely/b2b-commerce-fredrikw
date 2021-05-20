@@ -8,13 +8,14 @@ import LocalizedDateTime from "@insite/content-library/Components/LocalizedDateT
 import { OrderStatusPageContext } from "@insite/content-library/Pages/OrderStatusPage";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
-import React, { FC } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { css } from "styled-components";
 
 const mapStateToProps = (state: ApplicationState) => ({
     order: state.pages.orderStatus.order,
     showPoNumber: getSettingsCollection(state).orderSettings.showPoNumber,
+    enableVat: getSettingsCollection(state).productSettings.enableVat,
 });
 
 type Props = WidgetProps & ReturnType<typeof mapStateToProps>;
@@ -29,6 +30,8 @@ export interface OrderStatusInformationStyles {
     termsText?: TypographyPresentationProps;
     poNumberText?: TypographyPresentationProps;
     shippingMethodText?: TypographyPresentationProps;
+    vatNumberWrapper?: InjectableCss;
+    vatNumberText?: TypographyPresentationProps;
 }
 
 export const orderStatusInformationStyles: OrderStatusInformationStyles = {
@@ -52,71 +55,88 @@ export const orderStatusInformationStyles: OrderStatusInformationStyles = {
             margin-bottom: 5px;
         `,
     },
+    vatNumberWrapper: {
+        css: css`
+            margin-top: 10px;
+        `,
+    },
 };
 
 const styles = orderStatusInformationStyles;
 
-const OrderStatusInformation: FC<Props> = ({ order, showPoNumber }) => {
+const OrderStatusInformation = ({ order, showPoNumber, enableVat }: Props) => {
     if (!order) {
         return null;
     }
 
     return (
-        <StyledWrapper {...styles.informationWrapper} data-test-selector="orderStatusInformation">
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusOrderNumber">
-                    {translate("Order Number")}
-                </Typography>
-                <Typography {...styles.orderNumberText} aria-labelledby="orderStatusOrderNumber">
-                    {order.webOrderNumber || order.erpOrderNumber}
-                </Typography>
-            </StyledWrapper>
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusStatus">
-                    {translate("Status")}
-                </Typography>
-                <Typography {...styles.statusText} aria-labelledby="orderStatusStatus">
-                    {order.status}
-                </Typography>
-            </StyledWrapper>
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusOrderDate">
-                    {translate("Order Date")}
-                </Typography>
-                <Typography {...styles.orderDateText} aria-labelledby="orderStatusOrderDate">
-                    <LocalizedDateTime
-                        dateTime={order.orderDate}
-                        options={{ year: "numeric", month: "numeric", day: "numeric" }}
-                    />
-                </Typography>
-            </StyledWrapper>
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusTerms">
-                    {translate("Terms")}
-                </Typography>
-                <Typography {...styles.termsText} aria-labelledby="orderStatusTerms">
-                    {order.terms}
-                </Typography>
-            </StyledWrapper>
-            {showPoNumber && (
+        <>
+            <StyledWrapper {...styles.informationWrapper} data-test-selector="orderStatusInformation">
                 <StyledWrapper {...styles.wrapper}>
-                    <Typography as="h2" {...styles.titleText} id="orderStatusPO">
-                        {translate("PO")}
+                    <Typography as="h2" {...styles.titleText} id="orderStatusOrderNumber">
+                        {translate("Order Number")}
                     </Typography>
-                    <Typography {...styles.poNumberText} aria-labelledby="orderStatusPO">
-                        {order.customerPO}
+                    <Typography {...styles.orderNumberText} aria-labelledby="orderStatusOrderNumber">
+                        {order.webOrderNumber || order.erpOrderNumber}
+                    </Typography>
+                </StyledWrapper>
+                <StyledWrapper {...styles.wrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusStatus">
+                        {translate("Status")}
+                    </Typography>
+                    <Typography {...styles.statusText} aria-labelledby="orderStatusStatus">
+                        {order.status}
+                    </Typography>
+                </StyledWrapper>
+                <StyledWrapper {...styles.wrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusOrderDate">
+                        {translate("Order Date")}
+                    </Typography>
+                    <Typography {...styles.orderDateText} aria-labelledby="orderStatusOrderDate">
+                        <LocalizedDateTime
+                            dateTime={order.orderDate}
+                            options={{ year: "numeric", month: "numeric", day: "numeric" }}
+                        />
+                    </Typography>
+                </StyledWrapper>
+                <StyledWrapper {...styles.wrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusTerms">
+                        {translate("Terms")}
+                    </Typography>
+                    <Typography {...styles.termsText} aria-labelledby="orderStatusTerms">
+                        {order.terms}
+                    </Typography>
+                </StyledWrapper>
+                {showPoNumber && (
+                    <StyledWrapper {...styles.wrapper}>
+                        <Typography as="h2" {...styles.titleText} id="orderStatusPO">
+                            {translate("PO")}
+                        </Typography>
+                        <Typography {...styles.poNumberText} aria-labelledby="orderStatusPO">
+                            {order.customerPO}
+                        </Typography>
+                    </StyledWrapper>
+                )}
+                <StyledWrapper {...styles.wrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusShippingMethod">
+                        {translate("Shipping Method")}
+                    </Typography>
+                    <Typography {...styles.shippingMethodText} aria-labelledby="orderStatusShippingMethod">
+                        {order.shipViaDescription || order.shipCode}
+                    </Typography>
+                </StyledWrapper>
+            </StyledWrapper>
+            {enableVat && order.customerVatNumber && (
+                <StyledWrapper {...styles.vatNumberWrapper}>
+                    <Typography as="h2" {...styles.titleText} id="orderStatusVatNumber">
+                        {translate("VAT Number")}
+                    </Typography>
+                    <Typography {...styles.vatNumberText} aria-labelledby="orderStatusVatNumber">
+                        {order.customerVatNumber}
                     </Typography>
                 </StyledWrapper>
             )}
-            <StyledWrapper {...styles.wrapper}>
-                <Typography as="h2" {...styles.titleText} id="orderStatusShippingMethod">
-                    {translate("Shipping Method")}
-                </Typography>
-                <Typography {...styles.shippingMethodText} aria-labelledby="orderStatusShippingMethod">
-                    {order.shipViaDescription || order.shipCode}
-                </Typography>
-            </StyledWrapper>
-        </StyledWrapper>
+        </>
     );
 };
 

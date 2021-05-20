@@ -124,6 +124,7 @@ const styles: PublishModalStyles = {
     modal: {
         cssOverrides: {
             modalBody: css`
+                /* this is needed to get the datepickers visible, but it means we can't round the border of the modal */
                 overflow: visible;
             `,
             modalContent: css`

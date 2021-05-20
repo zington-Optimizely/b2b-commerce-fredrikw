@@ -1,8 +1,8 @@
 import { ApiHandlerDiscreteParameter, createHandlerChainRunner } from "@insite/client-framework/HandlerCreator";
 import { API_URL_CURRENT_FRAGMENT } from "@insite/client-framework/Services/ApiService";
 import {
-    removeCartLine as removeCartLineApi,
     RemoveCartLineApiParameter,
+    removeCartLineWithResult as removeCartLineApi,
 } from "@insite/client-framework/Services/CartService";
 import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/LoadCurrentCart";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
@@ -28,7 +28,9 @@ export const PopulateApiParameter: HandlerType = props => {
     };
 };
 
-export const RemoveCartLine: HandlerType = props => removeCartLineApi(props.apiParameter);
+export const RemoveCartLine: HandlerType = async props => {
+    await removeCartLineApi(props.apiParameter);
+};
 
 export const LoadCart: HandlerType = props => {
     props.dispatch(loadCurrentCart());

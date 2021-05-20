@@ -16,7 +16,19 @@ export const PopulateApiParameter: HandlerType = props => {
 };
 
 export const GetPromotions: HandlerType = async props => {
-    props.apiResult = await getCartPromotions(props.apiParameter);
+    try {
+        props.apiResult = await getCartPromotions(props.apiParameter);
+    } catch (error) {
+        if ("status" in error && (error.status === 404 || error.status === 403)) {
+            props.dispatch({
+                type: "Data/Promotions/FailedToLoadPromotions",
+                cartId: props.apiParameter.cartId,
+                status: error.status,
+            });
+            return false;
+        }
+        throw error;
+    }
 };
 
 export const DispatchCompleteLoadPromotions: HandlerType = props => {

@@ -67,11 +67,11 @@ export const GetCart: HandlerType = async props => {
     try {
         props.apiResult = await getCart(props.apiParameter);
     } catch (error) {
-        if ("status" in error && error.status === 404) {
+        if ("status" in error && (error.status === 404 || error.status === 403)) {
             props.dispatch({
                 type: "Data/Carts/FailedToLoadCart",
                 cartId: props.apiParameter.cartId,
-                status: 404,
+                status: error.status,
             });
             return false;
         }
