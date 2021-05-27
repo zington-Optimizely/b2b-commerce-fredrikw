@@ -1,3 +1,4 @@
+import { HasOnComplete, HasOnSuccess } from "@insite/client-framework/HandlerCreator";
 import { ApiParameter, get } from "@insite/client-framework/Services/ApiService";
 import { AutocompleteModel } from "@insite/client-framework/Types/ApiModels";
 
@@ -12,9 +13,13 @@ export interface AutocompleteApiParameter extends ApiParameter {
 
 const autocompleteUrl = "/api/v1/autocomplete";
 
-export function autocompleteSearch(parameter: AutocompleteApiParameter) {
-    parameter.spireContent = true;
-    return get<AutocompleteModel>(autocompleteUrl, parameter);
+export function autocompleteSearch(
+    parameter: AutocompleteApiParameter & HasOnSuccess<AutocompleteModel> & HasOnComplete<AutocompleteModel>,
+) {
+    const apiParameter = { ...parameter, spireContent: true };
+    delete apiParameter.onSuccess;
+    delete apiParameter.onComplete;
+    return get<AutocompleteModel>(autocompleteUrl, apiParameter);
 }
 
 const searchHistoryCacheKey = "searchHistory";

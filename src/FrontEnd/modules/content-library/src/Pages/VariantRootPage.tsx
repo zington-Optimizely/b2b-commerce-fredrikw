@@ -1,4 +1,3 @@
-import Zone from "@insite/client-framework/Components/Zone";
 import {
     ExcludeFromNavigation,
     ExcludeFromSignInRequired,

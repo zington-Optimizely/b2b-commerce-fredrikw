@@ -3,6 +3,7 @@ import setPageMetadata from "@insite/client-framework/Common/Utilities/setPageMe
 import Zone from "@insite/client-framework/Components/Zone";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
+import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { DealerStateContext, getDealerState } from "@insite/client-framework/Store/Data/Dealers/DealersSelectors";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
@@ -14,8 +15,6 @@ import { LinkProps } from "@insite/mobius/Link";
 import Page from "@insite/mobius/Page";
 import cloneDeep from "lodash/cloneDeep";
 import React from "react";
-
-import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { connect, ResolveThunks } from "react-redux";
 
 const mapStateToProps = (state: ApplicationState) => {

@@ -1,6 +1,9 @@
 import { Dictionary, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import FieldDefinition from "@insite/client-framework/Types/FieldDefinition";
+import FieldDefinition, {
+    HideFromSearchEngines,
+    HideFromSiteSearch,
+} from "@insite/client-framework/Types/FieldDefinition";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
 import Scrim from "@insite/mobius/Overlay/Scrim";
@@ -147,6 +150,31 @@ class ItemEditor extends React.Component<Props, State> {
         }
 
         const fieldDefinitions = definition.fieldDefinitions ?? [];
+
+        if ((definition as LoadedPageDefinition).pageType === "System") {
+            const skipTypes = new Set([
+                "Header",
+                "Footer",
+                "Layout",
+                "RobotsTxtPage",
+                "ProductListPage",
+                "ProductDetailsPage",
+                "CategoryListPage",
+                "CategoryDetailsPage",
+                "NotFoundErrorPage",
+                "UnhandledErrorModal",
+                "UnhandledErrorPage",
+            ]);
+            if (!skipTypes.has(item.type)) {
+                const fieldDefinitionSet = new Set(fieldDefinitions.map(o => o.name));
+                if (!fieldDefinitionSet.has(HideFromSearchEngines.name)) {
+                    fieldDefinitions.push(HideFromSearchEngines);
+                }
+                if (!fieldDefinitionSet.has(HideFromSiteSearch.name)) {
+                    fieldDefinitions.push(HideFromSiteSearch);
+                }
+            }
+        }
 
         if (item.type === "VariantRootPage") {
             const currentPageState = getPageState(
