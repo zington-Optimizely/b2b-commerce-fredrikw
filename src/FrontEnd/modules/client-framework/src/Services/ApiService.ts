@@ -118,7 +118,10 @@ export class ApiError extends Error {
 }
 
 const adminEndpoints = ["api/v1/admin", "api/internal/contentadmin", ".spire/"] as const;
-const isAdminEndpoint = (endpoint: string) => adminEndpoints.filter(a => endpoint.toLowerCase().includes(a)).length > 0;
+const excludeFromAdminEndpoints = [".spire/shareEntity"] as const;
+const isAdminEndpoint = (endpoint: string) =>
+    adminEndpoints.filter(a => endpoint.toLowerCase().includes(a)).length > 0 &&
+    excludeFromAdminEndpoints.filter(a => endpoint.toLowerCase().includes(a.toLowerCase())).length === 0;
 
 export const rawRequest = async (
     endpoint: string,

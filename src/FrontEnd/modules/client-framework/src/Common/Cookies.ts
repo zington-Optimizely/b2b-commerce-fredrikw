@@ -23,6 +23,14 @@ export function setCookie(name: string, value: string, options?: CookieAttribute
         // we would need to modify the collection that is returned from getSessionCookies, encode the value and then recall setSessionCookies
         Logger.error("setCookie is not currently supported during server side rendering.");
     }
+
+    const isSecure = window.location.protocol === "https:";
+    if (options) {
+        options.secure = isSecure;
+    } else {
+        options = { secure: isSecure };
+    }
+
     return getCookies().set(name, value, options);
 }
 

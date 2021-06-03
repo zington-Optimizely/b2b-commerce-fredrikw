@@ -417,6 +417,7 @@ async function loadPageAndSetInitialCookies(request: Request, response: Response
             const options = {
                 path: cookie.path,
                 expires: cookie.expires,
+                secure: cookie.secure,
                 encode: encodeCookie,
             };
 
