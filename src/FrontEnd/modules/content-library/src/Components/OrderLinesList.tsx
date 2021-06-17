@@ -364,7 +364,9 @@ const OrderLineInfoProto = ({
                         {...styles.priceHeadingAndText}
                         heading={translate("Price")}
                         text={
-                            (enableVat ? orderLine.unitPriceWithVatDisplay : orderLine.unitPriceDisplay) +
+                            (enableVat && vatPriceDisplay !== "DisplayWithoutVat"
+                                ? orderLine.unitPriceWithVatDisplay
+                                : orderLine.unitPriceDisplay) +
                             (orderLine.unitOfMeasure ? ` / ${orderLine.unitOfMeasure}` : "")
                         }
                     />
@@ -389,11 +391,7 @@ const OrderLineInfoProto = ({
                         </>
                     )}
                 </GridItem>
-                {promotions.length > 0 && (
-                    <GridItem {...styles.orderLineInfoPromotionList}>
-                        <ul {...styles.orderLineInfoPromotionList}>{promotions}</ul>
-                    </GridItem>
-                )}
+
                 <GridItem {...styles.productInfoTotalsGridItem}>
                     <GridContainer {...styles.productInfoTotalsGridContainer}>
                         <GridItem {...styles.productInfoQtyOrderedGridItem}>
@@ -436,6 +434,11 @@ const OrderLineInfoProto = ({
                         </GridItem>
                     </GridContainer>
                 </GridItem>
+                {promotions.length > 0 && (
+                    <GridItem {...styles.orderLineInfoPromotionGridItem}>
+                        <ul {...styles.orderLineInfoPromotionList}>{promotions}</ul>
+                    </GridItem>
+                )}
             </GridContainer>
         </GridItem>
     );

@@ -66,6 +66,7 @@ function addBrandToId(category: CategoryModel, brandId: string) {
 
 function cleanCategory(category: CategoryModel, categoriesById: SafeDictionary<Category>, subCategoryLevels: number) {
     const subCategories = category.subCategories;
+    subCategories?.sort((a, b) => a.sortOrder - b.sortOrder || a.shortDescription.localeCompare(b.shortDescription));
     delete category.subCategories;
     const actualCategory = (category as any) as Category;
     if (subCategoryLevels > 0) {

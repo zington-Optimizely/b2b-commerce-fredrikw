@@ -358,6 +358,7 @@ declare module Insite.Catalog.WebApi.V1.ApiModels {
 		thirdPartyReviews: string;
 		defaultViewType: string;
 		showSavingsAmount: boolean;
+		useUpdatedRoundingLogic: boolean;
 		showSavingsPercent: boolean;
 		realTimePricing: boolean;
 		realTimeInventory: boolean;
@@ -527,6 +528,7 @@ declare module Insite.Websites.WebApi.V1.ApiModels {
 	interface WebsiteSettingsModel extends Insite.Core.WebApi.BaseModel {
 		mobileAppEnabled: boolean;
 		useTokenExGateway: boolean;
+		useECheckTokenExGateway: boolean;
 		usePaymetricGateway: boolean;
 		defaultPageSize: number;
 		enableCookiePrivacyPolicyPopup: boolean;
@@ -828,6 +830,7 @@ declare module Insite.Catalog.Services.Dtos {
 		name: string;
 		shortDescription: string;
 		erpNumber: string;
+		customerName: string;
 		mediumImagePath: string;
 		smallImagePath: string;
 		largeImagePath: string;
@@ -1160,6 +1163,7 @@ declare module Insite.Cart.WebApi.V1.ApiModels {
 		showNewsletterSignup: boolean;
 		showPoNumber: boolean;
 		showCreditCard: boolean;
+		showECheck: boolean;
 		showPayPal: boolean;
 		isAwaitingApproval: boolean;
 		requiresApproval: boolean;
@@ -1282,6 +1286,7 @@ declare module Insite.Cart.Services.Dtos {
 		name: string;
 		description: string;
 		isCreditCard: boolean;
+		isECheck: boolean;
 		isPaymentProfile: boolean;
 		cardType: string;
 		billingAddress: string;
@@ -1294,6 +1299,7 @@ declare module Insite.Cart.Services.Dtos {
 		expirationMonths: {[key: string]:  number};
 		expirationYears: {[key: number]:  number};
 		creditCard: Insite.Core.Plugins.PaymentGateway.Dtos.CreditCardDto;
+		eCheck: Insite.Core.Plugins.PaymentGateway.Dtos.ECheckDto;
 		canStorePaymentProfile: boolean;
 		storePaymentProfile: boolean;
 		isPayPal: boolean;
@@ -1341,6 +1347,19 @@ declare module Insite.Core.Plugins.PaymentGateway.Dtos {
 		expirationMonth: number;
 		expirationYear: number;
 		securityCode: string;
+		useBillingAddress: boolean;
+		address1: string;
+		city: string;
+		state: string;
+		stateAbbreviation: string;
+		country: string;
+		countryAbbreviation: string;
+		postalCode: string;
+	}
+	interface ECheckDto {
+		accountHolder: string;
+		accountNumber: string;
+		routingNumber: string;
 		useBillingAddress: boolean;
 		address1: string;
 		city: string;

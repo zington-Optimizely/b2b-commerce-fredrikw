@@ -962,6 +962,7 @@ export interface CartModel extends BaseModel {
     shipVia: ShipViaDto | null;
     showCostCode: boolean;
     showCreditCard: boolean;
+    showECheck: boolean;
     showLineNotes: boolean;
     showNewsletterSignup: boolean;
     showPayPal: boolean;
@@ -1007,6 +1008,7 @@ export interface PaymentOptionsDto {
     canStorePaymentProfile: boolean;
     cardTypes: { key: string; value: string }[] | null;
     creditCard: CreditCardDto | null;
+    eCheck: ECheckDto | null;
     expirationMonths: { key: string; value: number }[] | null;
     expirationYears: { key: number; value: number }[] | null;
     isPayPal: boolean;
@@ -1015,6 +1017,20 @@ export interface PaymentOptionsDto {
     payPalPaymentUrl: string;
     payPalToken: string;
     storePaymentProfile: boolean;
+}
+
+export interface ECheckDto {
+    accountHolder: string;
+    accountNumber: string;
+    address1: string;
+    city: string;
+    country: string;
+    countryAbbreviation: string;
+    postalCode: string;
+    routingNumber: string;
+    state: string;
+    stateAbbreviation: string;
+    useBillingAddress: boolean;
 }
 
 export interface CreditCardDto {
@@ -1039,6 +1055,7 @@ export interface PaymentMethodDto {
     cardType: string;
     description: string;
     isCreditCard: boolean;
+    isECheck: boolean;
     isPaymentProfile: boolean;
     isPaymentProfileExpired: boolean;
     name: string;
@@ -1950,6 +1967,7 @@ export interface JobQuoteModel extends BaseModel {
     shipVia: ShipViaDto | null;
     showCostCode: boolean;
     showCreditCard: boolean;
+    showECheck: boolean;
     showLineNotes: boolean;
     showNewsletterSignup: boolean;
     showPayPal: boolean;
@@ -2585,6 +2603,7 @@ export interface QuoteModel extends BaseModel {
     shipVia: ShipViaDto | null;
     showCostCode: boolean;
     showCreditCard: boolean;
+    showECheck: boolean;
     showLineNotes: boolean;
     showNewsletterSignup: boolean;
     showPayPal: boolean;
@@ -2707,6 +2726,7 @@ export interface WebsiteSettingsModel extends BaseModel {
     includeSiteNameInPageTitle: boolean;
     mobileAppEnabled: boolean;
     pageTitleDelimiter: string;
+    previewLoginEnabled: boolean;
     reCaptchaEnabledForContactUs: boolean;
     reCaptchaEnabledForCreateAccount: boolean;
     reCaptchaEnabledForForgotPassword: boolean;
@@ -2714,6 +2734,7 @@ export interface WebsiteSettingsModel extends BaseModel {
     reCaptchaSiteKey: string;
     siteNameAfterTitle: boolean;
     tokenExTestMode: boolean;
+    useECheckTokenExGateway: boolean;
     usePaymetricGateway: boolean;
     useTokenExGateway: boolean;
 }

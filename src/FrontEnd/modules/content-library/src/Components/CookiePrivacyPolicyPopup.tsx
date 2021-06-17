@@ -87,7 +87,7 @@ const CookiePrivacyPolicyPopup = () => {
 
     const acceptHandler = () => {
         setIsOpen(false);
-        setCookie("acceptCookies", "true", { expires: 2147483647 });
+        setCookie("acceptCookies", "true", { expires: 365 });
     };
 
     const closeHandler = () => {

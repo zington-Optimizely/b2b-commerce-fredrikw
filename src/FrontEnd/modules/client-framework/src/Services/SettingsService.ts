@@ -15,6 +15,7 @@ import {
 export interface GetTokenExConfigApiParameter extends ApiParameter {
     token?: string;
     origin?: string;
+    isEcheck?: boolean;
 }
 
 export interface GetSettingsApiParameter extends ApiParameter {}

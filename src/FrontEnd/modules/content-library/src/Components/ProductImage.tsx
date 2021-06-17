@@ -1,5 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { ProductContextModel } from "@insite/client-framework/Components/ProductContext";
+import translate from "@insite/client-framework/Translate";
 import { CartLineModel } from "@insite/client-framework/Types/ApiModels";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
@@ -40,6 +41,7 @@ const ProductImage: FC<Props> = ({ product, extendedStyles }) => {
     if (!altText || altText === "") {
         altText = "product" in product ? product.product.productTitle : product.productName;
     }
+    altText += ` ${translate("redirect to product page")}`;
     const imagePath =
         "product" in product
             ? product.product.mediumImagePath || product.product.smallImagePath

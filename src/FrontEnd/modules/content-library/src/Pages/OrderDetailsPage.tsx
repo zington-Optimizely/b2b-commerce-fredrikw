@@ -1,5 +1,5 @@
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
-import parseQueryString from "@insite/client-framework/Common/Utilities/parseQueryString";
+import parseQueryStringCaseInsensitive from "@insite/client-framework/Common/Utilities/parseQueryStringCaseInsensitive";
 import Zone from "@insite/client-framework/Components/Zone";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -23,7 +23,9 @@ const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     let orderNumber;
     if (location && location.search) {
-        const parsedQuery = parseQueryString<{ orderNumber: string }>(location.search);
+        const parsedQuery = parseQueryStringCaseInsensitive(location.search, {
+            orderNumber: "",
+        });
         orderNumber = parsedQuery.orderNumber;
     }
 

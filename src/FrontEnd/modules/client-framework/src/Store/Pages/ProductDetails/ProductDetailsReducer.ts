@@ -26,6 +26,7 @@ const reducer = {
     ) => {
         draft.lastProductPath = action.path;
         draft.lastStyledOption = action.styledOption;
+        draft.selectedProductId = undefined;
     },
     "Pages/ProductDetails/CompleteLoadProduct": (
         draft: Draft<ProductDetailsState>,

@@ -41,6 +41,9 @@ interface PlaceOrderParameter {
     onSuccess?: (cartId: string) => void;
     payPalToken?: string;
     payPalPayerId?: string;
+    accountHolderName?: string;
+    accountNumber?: string;
+    routingNumber?: string;
 }
 
 type HandlerType = ApiHandlerDiscreteParameter<
@@ -147,6 +150,60 @@ export const SetCreditCard: HandlerType = props => {
     }
 };
 
+export const SetECheck: HandlerType = props => {
+    const { cartToUpdate } = props;
+
+    if (cartToUpdate.paymentMethod?.isECheck) {
+        if (!props.parameter.accountHolderName) {
+            throw new Error("Specify Account Holder Name.");
+        }
+
+        if (!props.parameter.accountNumber) {
+            throw new Error("Specify Account Number.");
+        }
+
+        if (!props.parameter.routingNumber) {
+            throw new Error("Specify Routing Number.");
+        }
+
+        const updatedECheck = {
+            ...cartToUpdate.paymentOptions!.eCheck!,
+            accountHolder: props.parameter.accountHolderName!,
+            accountNumber: props.parameter.accountNumber!,
+            routingNumber: props.parameter.routingNumber!,
+            useBillingAddress: props.parameter.useBillingAddress,
+        };
+
+        if (!props.parameter.useBillingAddress) {
+            const countries = getCurrentCountries(props.getState());
+            if (!countries) {
+                throw new Error("The active countries for the current website are not available.");
+            }
+
+            const selectedCountry = countries.find(country => country.id === props.parameter.countryId);
+            if (!selectedCountry) {
+                throw new Error("The selected country for the card billing address is not valid.");
+            }
+
+            updatedECheck.address1 = props.parameter.address1;
+            updatedECheck.country = selectedCountry.name;
+            updatedECheck.countryAbbreviation = selectedCountry.abbreviation;
+
+            const selectedState = selectedCountry.states?.find(state => state.id === props.parameter.stateId);
+            if (!selectedState) {
+                throw new Error("The selected state for the card billing address is not valid.");
+            }
+
+            updatedECheck.state = selectedState.name;
+            updatedECheck.stateAbbreviation = selectedState.abbreviation;
+            updatedECheck.city = props.parameter.city;
+            updatedECheck.postalCode = props.parameter.postalCode;
+        }
+
+        cartToUpdate.paymentOptions!.eCheck = updatedECheck;
+    }
+};
+
 export const PopulateApiParameter: HandlerType = props => {
     if (!props.cartToUpdate) {
         return;
@@ -200,6 +257,10 @@ export const ReloadCurrentCart: HandlerType = props => {
         props.dispatch(loadCart({ cartId }));
     } else {
         props.dispatch(loadCurrentCart());
+
+        if (props.cartToUpdate?.isAwaitingApproval) {
+            props.dispatch(loadCart({ cartId: props.cartToUpdate.id }));
+        }
     }
 };
 
@@ -256,6 +317,7 @@ export const chain = [
     SetCartStatus,
     SetPaymentMethod,
     SetCreditCard,
+    SetECheck,
     PopulateApiParameter,
     UpdateCart,
     ReloadCurrentCart,

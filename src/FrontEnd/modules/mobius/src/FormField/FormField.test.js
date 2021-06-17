@@ -2,7 +2,7 @@ import "jest-styled-components";
 import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
-import FormField from "./FormField";
+import FormField, { FormInputWrapper } from "./FormField";
 
 describe("FormField", () => {
     let props;
@@ -112,5 +112,31 @@ describe("FormField", () => {
         expect(hintText.getDOMNode().innerHTML).toBe(props.error);
         expect(hintText).toHaveStyleRule("color", "#E64E25");
         expect(hintText).toHaveStyleRule("font-size", "15px");
+    });
+
+    describe("backgroundColor props on formfield", () => {
+        test("backgroundColor green", () => {
+            props = {
+                error: "props.error",
+                inputId: 4,
+                descriptionId: "18-description",
+                formInput: <input />,
+                backgroundColor: "green",
+            };
+
+            const FormFieldComponent = wrapper().find(FormField);
+            expect(FormFieldComponent.props().backgroundColor).toEqual("green");
+        });
+        test("backgroundColor green style", () => {
+            props = {
+                error: "props.error",
+                inputId: 4,
+                descriptionId: "18-description",
+                formInput: <input />,
+                backgroundColor: "green",
+            };
+
+            expect(wrapper().find(FormInputWrapper).props()._backgroundColor).toEqual("green");
+        });
     });
 });

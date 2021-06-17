@@ -2,10 +2,10 @@ import { contentModeCookieName, isSiteInShellCookieName } from "@insite/client-f
 import { getCookie, setCookie } from "@insite/client-framework/Common/Cookies";
 import { getValueCaseInsensitive, SafeDictionary } from "@insite/client-framework/Common/Types";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
+import PreviewLogin from "@insite/client-framework/Components/PreviewLogin";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
-import "@insite/client-framework/polyfills";
 import { getContentByVersionPath, getTheme } from "@insite/client-framework/Services/ContentService";
 import { setResolver } from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -16,7 +16,6 @@ import translate, { setTranslationResolver } from "@insite/client-framework/Tran
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
 import merge from "lodash/merge";
-import "promise-polyfill/src/polyfill";
 import * as React from "react";
 import { hydrate, render, Renderer } from "react-dom";
 import { Provider } from "react-redux";
@@ -87,7 +86,9 @@ async function renderApp(renderer: Renderer = render) {
             <WrappingContext>
                 <ThemeProvider theme={theme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
                     <SessionLoader location={{ pathname: window.location.pathname, search: window.location.search }}>
-                        <SpireRouter />
+                        <PreviewLogin>
+                            <SpireRouter />
+                        </PreviewLogin>
                     </SessionLoader>
                 </ThemeProvider>
             </WrappingContext>

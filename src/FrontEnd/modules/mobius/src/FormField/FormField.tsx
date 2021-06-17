@@ -6,14 +6,11 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import TypographyStyle from "@insite/mobius/Typography/TypographyStyle";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import combineTypographyProps from "@insite/mobius/utilities/combineTypographyProps";
-import focusWithinImportInBrowser from "@insite/mobius/utilities/focusWithin";
 import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import * as React from "react";
 import styled, { ThemeProps, withTheme } from "styled-components";
-
-focusWithinImportInBrowser();
 
 export type FormFieldSizeVariant = "default" | "small";
 type LabelPosition = "top" | "left";
@@ -116,7 +113,7 @@ type FormInputWrapperProps = {
     _backgroundColor?: string;
 };
 
-const FormInputWrapper = styled.div<Partial<InjectableCss<any>> & FormInputWrapperProps>`
+export const FormInputWrapper = styled.div<Partial<InjectableCss<any>> & FormInputWrapperProps>`
     width: ${({ labelPosition }) => (labelPosition === "left" ? "calc(100% - 140px)" : "100%")};
     position: relative;
     ${/* sc-selector */ FormFieldIcon},

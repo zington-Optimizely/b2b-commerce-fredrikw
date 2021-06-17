@@ -230,7 +230,7 @@ const InvoiceDetailsLineCard = ({ invoiceLine, enableVat, vatPriceDisplay, exten
                                 <SmallHeadingAndText
                                     heading={translate("Price")}
                                     text={
-                                        (enableVat
+                                        (enableVat && vatPriceDisplay !== "DisplayWithoutVat"
                                             ? invoiceLine.unitPriceWithVatDisplay
                                             : invoiceLine.unitPriceDisplay) +
                                         (invoiceLine.unitOfMeasure ? ` / ${invoiceLine.unitOfMeasure}` : "")

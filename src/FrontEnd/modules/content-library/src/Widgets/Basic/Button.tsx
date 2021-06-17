@@ -26,17 +26,17 @@ interface OwnProps extends WidgetProps {
     };
 }
 
-const wrapperStyles = {
-    css: css`
-        width: 100%;
-        display: flex;
-        justify-content: ${fields.alignment ?? "left"};
-    `,
-};
-
 const CmsButton: FC<OwnProps> = ({ fields }) => {
     const history = useHistory();
     const link = useGetLink(fields.link);
+
+    const wrapperStyles = {
+        css: css`
+            width: 100%;
+            display: flex;
+            justify-content: ${fields.alignment ?? "left"};
+        `,
+    };
 
     const onClick = () => {
         if (!link.url) {

@@ -56,6 +56,8 @@ export interface DynamicDropdownPresentationProps
     /** Props to be passed into the inner LoadingSpinner component when loading.
      * @themable */
     spinnerProps?: LoadingSpinnerProps;
+    /** Background color of the form element */
+    backgroundColor?: string;
 }
 
 export interface OptionObject {
@@ -487,6 +489,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
             sizeVariant,
             theme,
             hideNoOptionsIfEmptySearch,
+            backgroundColor,
             ...otherProps
         } = this.props;
         const { isOpen, focusedOption, uid, typedInput, renderOptions, selected } = this.state;
@@ -664,6 +667,7 @@ class DynamicDropdown extends React.Component<DynamicDropdownProps & HasDisabler
                 cssOverrides={_cssOverrides}
                 sizeVariant={this.sizeVariant}
                 error={error}
+                backgroundColor={backgroundColor}
                 {...otherProps}
             />
         );

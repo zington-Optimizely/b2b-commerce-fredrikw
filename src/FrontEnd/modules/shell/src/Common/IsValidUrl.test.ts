@@ -31,4 +31,7 @@ describe("isValidUrl", () => {
         "should allow crazy google link that works in browser (just added * into query string)",
         "https://www.google.com/search?source=hp&ei=MbdSYISVF5G4sQXmiJqQDg&iflsig=AINFCbYAAAAAYFLFQepMywj-24TW3izB6ohpaid7OEpf&q=%7E%60%21%40%23%24%25%5E%26*%28%29_%2B%7C%5B%7B%5D%7D%5C%7C%3B%3A%E2%80%99%E2%80%9D%2C%3C.%3E%2F%3F1234567890&oq=%7E%60%21%40%23%24%25%5E%26*%28%29_%2B%7C%5B%7B%5D%7D%5C%7C%3B%3A%E2%80%99%E2%80%9D%2C%3C.%3E%2F%3F1234567890&gs_lcp=Cgdnd3Mtd2l6EANQpRxYpRxghydoAXAAeACAAYsCiAGLApIBAzItMZgBAKABAqABAaoBB2d3cy13aXqwAQA&sclient=gws-wiz&ved=0ahUKEwjE8bSe4rjvAhURXKwKHWaEBuIQ4dUDCAc&uact=5",
     );
+
+    expectIsValid("should allow mailto links", "mailto:test@test.com");
+    expectIsValid("should allow mailto links with additional parameters", "mailto:test@test.com?subject=test");
 });

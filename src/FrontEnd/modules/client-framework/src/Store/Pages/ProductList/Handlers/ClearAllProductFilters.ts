@@ -3,22 +3,30 @@ import setFilterQuery from "@insite/client-framework/Store/Pages/ProductList/Han
 import { ProductFilters } from "@insite/client-framework/Store/Pages/ProductList/ProductListState";
 import cloneDeep from "lodash/cloneDeep";
 
-type HandlerType = HandlerWithResult<{}, ProductFilters>;
+type HandlerType = HandlerWithResult<
+    {
+        removeAll?: true;
+    },
+    ProductFilters
+>;
 
 export const GetCurrentFilters: HandlerType = props => {
     props.result = cloneDeep(props.getState().pages.productList.productFilters);
 };
 
 export const RemoveAllFilters: HandlerType = props => {
-    props.result.searchWithinQueries = undefined;
+    if (props.parameter.removeAll) {
+        props.result.query = undefined;
+        props.result.includeSuggestions = undefined;
+    }
     props.result.stockedItemsOnly = undefined;
     props.result.previouslyPurchasedProducts = undefined;
+    props.result.searchWithinQueries = undefined;
     props.result.brandIds = undefined;
-    props.result.productLineIds = undefined;
-    props.result.categoryId = undefined;
     props.result.productLineIds = undefined;
     props.result.priceFilters = undefined;
     props.result.attributeValueIds = undefined;
+    props.result.categoryId = undefined;
     props.result.page = undefined;
 };
 

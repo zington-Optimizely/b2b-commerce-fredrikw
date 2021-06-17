@@ -22,6 +22,7 @@ import XCircle from "@insite/mobius/Icons/XCircle";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import getColor from "@insite/mobius/utilities/getColor";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC } from "react";
 import { HandleThunkActionCreator } from "react-redux";
 import { css } from "styled-components";
@@ -240,6 +241,7 @@ const CartLineCardCondensed: FC<Props> = ({
             <GridItem {...styles.removeCartLineGridItem}>
                 {showRemoveAction && (
                     <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                        <VisuallyHidden>{translate("Remove item")}</VisuallyHidden>
                         <IconMemo {...styles.removeCartLineIcon} />
                     </Clickable>
                 )}

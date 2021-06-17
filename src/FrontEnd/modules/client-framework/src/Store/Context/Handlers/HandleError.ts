@@ -25,7 +25,8 @@ export const DisplayError: HandlerType = props => {
             return;
         }
         // auth session must have timed out - do a full refresh to update the header etc
-        window.location.reload();
+        const { isAuthenticated, rememberMe } = props.getState().context.session;
+        (isAuthenticated || rememberMe) && window.location.reload();
     } else {
         props.dispatch({
             type: "Context/SetErrorModalIsOpen",

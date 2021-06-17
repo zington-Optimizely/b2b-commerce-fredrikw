@@ -98,6 +98,7 @@ export function getComputedVariantProduct(
     const computedProduct = cloneDeep(parentProductState.value);
     Object.assign(computedProduct, {
         productNumber: variantProduct.productNumber,
+        customerProductNumber: variantProduct.customerProductNumber,
         smallImagePath: variantProduct.smallImagePath,
         mediumImagePath: variantProduct.mediumImagePath,
         largeImagePath: variantProduct.largeImagePath,

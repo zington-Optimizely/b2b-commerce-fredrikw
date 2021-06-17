@@ -368,7 +368,7 @@ module insite.catalog {
             this.pageProductLineId = catalogPage.productLineId;
 
             this.getProductData(<IProductCollectionParameters>{
-                categoryId: this.category ? this.category.id : null,
+                categoryId: this.category ? this.category.id : (this.filterCategory ? this.filterCategory.categoryId : null),
                 pageSize: this.pageSize || (this.products.pagination ? this.products.pagination.pageSize : null),
                 sort: this.sort || this.$localStorage.get("productListSortType", null),
                 page: this.page,
@@ -631,6 +631,9 @@ module insite.catalog {
                         this.filterCategory.shortDescription = categoryFacet.shortDescription;
                         this.filterCategory.selected = true;
                         this.searchCategory = null;
+                    } else if (this.filterCategory.categoryId) {
+                        this.filterCategory.categoryId = "";
+                        setTimeout(() => { this.updateProductData(); }, 0);
                     }
                 }
             }

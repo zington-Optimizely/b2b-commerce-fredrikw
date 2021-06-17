@@ -13,7 +13,6 @@ import { clearCookiesAndStorage } from "@insite/shell/Store/ShellContext/ShellCo
 import ShellState from "@insite/shell/Store/ShellState";
 import { ConnectedRouter } from "connected-react-router";
 import { createBrowserHistory } from "history";
-import "promise-polyfill/src/polyfill";
 import * as React from "react";
 import { hydrate, render, Renderer } from "react-dom";
 import { Provider } from "react-redux";

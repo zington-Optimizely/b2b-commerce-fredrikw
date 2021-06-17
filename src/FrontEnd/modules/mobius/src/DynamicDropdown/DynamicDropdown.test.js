@@ -337,4 +337,15 @@ describe("DynamicDropdown", () => {
             expectOptionToHaveStyleRule("background-color", "violet");
         });
     });
+    describe("Background Color Prop", () => {
+        test("Background color present in FormField", () => {
+            props = {
+                options: colorOptions,
+                moreOption: <Link href="www.hat.com">more hats</Link>,
+                backgroundColor: "green",
+            };
+
+            expect(wrapper().find(FormField).props().backgroundColor).toEqual("green");
+        });
+    });
 });

@@ -134,9 +134,9 @@ class PublicPage extends React.Component<Props> {
         if (getDisplayErrorPage()) {
             const errorCode = getErrorStatusCode();
             if (errorCode === 403 || errorCode === 404) {
-                redirectTo("/NotFoundErrorPage");
+                this.props.page.type !== "NotFoundErrorPage" && redirectTo("/NotFoundErrorPage");
             } else if (this.props.errorPageLink) {
-                redirectTo(this.props.errorPageLink.url);
+                this.props.page.type !== this.props.errorPageLink.type && redirectTo(this.props.errorPageLink.url);
             }
         }
 

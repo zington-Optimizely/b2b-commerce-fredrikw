@@ -5,6 +5,7 @@ import loadCurrentCart from "@insite/client-framework/Store/Data/Carts/Handlers/
 import loadCurrentCountries from "@insite/client-framework/Store/Data/Countries/Handlers/LoadCurrentCountries";
 import { getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import loadCurrentPromotions from "@insite/client-framework/Store/Data/Promotions/Handlers/LoadCurrentPromotions";
+import clearMessages from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/ClearMessages";
 import loadDataIfNeeded from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/LoadDataIfNeeded";
 import setPlaceOrderErrorMessage from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/SetPlaceOrderErrorMessage";
 import PageModule from "@insite/client-framework/Types/PageModule";
@@ -20,6 +21,7 @@ const mapDispatchToProps = {
     loadCurrentCountries,
     setPlaceOrderErrorMessage,
     loadDataIfNeeded,
+    clearMessages,
 };
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -39,6 +41,7 @@ class CheckoutReviewAndSubmitPage extends Component<Props> {
 
     componentDidMount() {
         this.props.setPlaceOrderErrorMessage({});
+        this.props.clearMessages();
     }
 
     render() {

@@ -151,31 +151,6 @@ class ItemEditor extends React.Component<Props, State> {
 
         const fieldDefinitions = definition.fieldDefinitions ?? [];
 
-        if ((definition as LoadedPageDefinition).pageType === "System") {
-            const skipTypes = new Set([
-                "Header",
-                "Footer",
-                "Layout",
-                "RobotsTxtPage",
-                "ProductListPage",
-                "ProductDetailsPage",
-                "CategoryListPage",
-                "CategoryDetailsPage",
-                "NotFoundErrorPage",
-                "UnhandledErrorModal",
-                "UnhandledErrorPage",
-            ]);
-            if (!skipTypes.has(item.type)) {
-                const fieldDefinitionSet = new Set(fieldDefinitions.map(o => o.name));
-                if (!fieldDefinitionSet.has(HideFromSearchEngines.name)) {
-                    fieldDefinitions.push(HideFromSearchEngines);
-                }
-                if (!fieldDefinitionSet.has(HideFromSiteSearch.name)) {
-                    fieldDefinitions.push(HideFromSiteSearch);
-                }
-            }
-        }
-
         if (item.type === "VariantRootPage") {
             const currentPageState = getPageState(
                 item.id,
@@ -275,6 +250,42 @@ class ItemEditor extends React.Component<Props, State> {
                     fieldDefinitions.splice(i, 1);
                 } else {
                     previousNameForTab[tabName] = fieldDefinitions[i].name;
+                }
+            }
+        }
+
+        if ((definition as LoadedPageDefinition).pageType === "System" && !isVariant) {
+            let itemType = item.type;
+            if (itemType === "VariantRootPage") {
+                const currentPageState = getPageState(
+                    item.id,
+                    treeNodesByParentId[item.parentId],
+                    headerTreeNodesByParentId[item.parentId],
+                    footerTreeNodesByParentId[item.parentId],
+                );
+                itemType = currentPageState?.type || "";
+            }
+
+            const skipTypes = new Set([
+                "Header",
+                "Footer",
+                "Layout",
+                "RobotsTxtPage",
+                "ProductListPage",
+                "ProductDetailsPage",
+                "CategoryListPage",
+                "CategoryDetailsPage",
+                "NotFoundErrorPage",
+                "UnhandledErrorModal",
+                "UnhandledErrorPage",
+            ]);
+            if (!skipTypes.has(itemType)) {
+                const fieldDefinitionSet = new Set(fieldDefinitions.map(o => o.name));
+                if (!fieldDefinitionSet.has(HideFromSearchEngines.name)) {
+                    fieldDefinitions.push(HideFromSearchEngines);
+                }
+                if (!fieldDefinitionSet.has(HideFromSiteSearch.name)) {
+                    fieldDefinitions.push(HideFromSiteSearch);
                 }
             }
         }

@@ -3,9 +3,10 @@ import "jest-canvas-mock";
 import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
-import DatePicker from "./DatePicker";
+import DatePicker, { DatePickerIcon } from "./DatePicker";
 import Icon from "../Icon";
 import DisablerContext from "../utilities/DisablerContext";
+import { FormFieldStyle } from "@insite/mobius/FormField";
 
 describe("DatePicker", () => {
     let props;
@@ -136,6 +137,22 @@ describe("DatePicker", () => {
             expect(root.find("input[name='month']").prop("disabled")).toBe(false);
             expect(root.find("input[name='day']").prop("disabled")).toBe(false);
             expect(root.find("input[name='year']").prop("disabled")).toBe(false);
+        });
+    });
+    describe("Background color", () => {
+        test("On FormFieldStyle", () => {
+            props = { backgroundColor: "green" };
+            const root = wrapper();
+            expect(root.find(FormFieldStyle).prop("_backgroundColor")).toBe("green");
+        });
+        test("On DatePickerIcon", () => {
+            props = { backgroundColor: "green" };
+            const root = wrapper();
+            const datePickerIcons = root.find(DatePickerIcon);
+            const clearIcon = datePickerIcons.at(0);
+            const calendarIcon = datePickerIcons.at(1);
+            expect(clearIcon.prop("_backgroundColor")).toBe("green");
+            expect(calendarIcon.prop("_backgroundColor")).toBe("green");
         });
     });
 });

@@ -169,7 +169,7 @@ const OrderTotalDisplay: FC<Props> = ({ order, enableVat, extendedStyles }) => {
                         <Typography {...styles.discountsLabel}>{translate("Discounts")}</Typography>
                     </GridItem>
                     <GridItem {...styles.discountsValueGridItem}>
-                        <Typography {...styles.discountsValue}>{order.orderDiscountAmountDisplay}</Typography>
+                        <Typography {...styles.discountsValue}>{`-${order.orderDiscountAmountDisplay}`}</Typography>
                     </GridItem>
                 </>
             )}

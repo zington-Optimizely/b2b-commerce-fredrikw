@@ -36,12 +36,17 @@ module insite.cart {
         showQuoteRequiredProducts: boolean;
         submitSuccessUri: string;
         useTokenExGateway: boolean;
+        useECheckTokenExGateway: boolean;
         tokenExIframe: any;
+        tokenExAccountNumberIframe: any;
+        tokenExRoutingNumberIframe: any;
         usePaymetricGateway: boolean;
         paymetricIframe: any;
         paymetricDto: PaymetricDto;
         isInvalidCardNumber: boolean;
         isInvalidSecurityCode: boolean;
+        isInvalidAccountNumber: boolean;
+        isInvalidRoutingNumber: boolean;
         session: SessionModel;
         enableWarehousePickup: boolean;
         taxFailureReason: string;
@@ -194,6 +199,7 @@ module insite.cart {
             this.cartSettings = settingsCollection.cartSettings;
             this.customerSettings = settingsCollection.customerSettings;
             this.useTokenExGateway = settingsCollection.websiteSettings.useTokenExGateway;
+            this.useECheckTokenExGateway = settingsCollection.websiteSettings.useECheckTokenExGateway;
             this.usePaymetricGateway = settingsCollection.websiteSettings.usePaymetricGateway;
             this.enableWarehousePickup = settingsCollection.accountSettings.enableWarehousePickup;
 
@@ -285,6 +291,9 @@ module insite.cart {
             if (isInit) {
                 setTimeout(() => {
                     this.setUpTokenExGateway();
+                }, 0, false);
+                setTimeout(() => {
+                    this.setUpECheckTokenExGateway();
                 }, 0, false);
                 setTimeout(() => {
                     this.setUpPaymetricGateway();
@@ -473,7 +482,7 @@ module insite.cart {
         protected tokenizeCardInfoIfNeeded(submitSuccessUri: string) {
             this.submitSuccessUri = submitSuccessUri;
 
-            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && !this.cart.requiresApproval) {
+            if (this.useTokenExGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && !this.cart.paymentMethod.isECheck && !this.cart.requiresApproval) {
                 if (this.cart.paymentMethod.isCreditCard) {
                     if (typeof this.isInvalidCardNumber !== 'undefined') {
                         this.tokenExIframe.tokenize();
@@ -491,6 +500,20 @@ module insite.cart {
                     return;
                 }
             }
+
+            if (this.useECheckTokenExGateway && this.cart.showECheck && this.cart.paymentMethod.isECheck && !this.cart.requiresApproval) {
+                if (typeof this.isInvalidAccountNumber !== 'undefined' && typeof this.isInvalidRoutingNumber !== 'undefined') {
+                    this.tokenExAccountNumberIframe.tokenize();
+                } else {
+                    this.tokenExAccountNumberIframe.validate();
+                    this.tokenExRoutingNumberIframe.validate();
+                    this.spinnerService.hide();
+                    this.scrollToTopOfForm();
+                    this.submitting = false;
+                }
+                return;
+            }
+
             if (this.usePaymetricGateway && this.cart.showCreditCard && !this.cart.paymentOptions.isPayPal && !this.cart.requiresApproval) {
                 if (this.cart.paymentMethod.isCreditCard) {
                     this.submitPaymetric();
@@ -705,6 +728,80 @@ module insite.cart {
             });
         }
 
+        protected setUpECheckAccountNumberTokenExIframe(tokenExDto: TokenExDto) {
+            this.tokenExAccountNumberIframe = new TokenEx.Iframe("tokenExAccountNumber", this.getECheckAccountNumberTokenExIframeConfig(tokenExDto));
+
+            this.tokenExAccountNumberIframe.load();
+
+            this.tokenExAccountNumberIframe.on("tokenize", (data) => {
+                this.$scope.$apply(() => {
+                    this.cart.paymentOptions.eCheck.accountNumber = data.token;
+                    this.tokenExRoutingNumberIframe.tokenize();
+                });
+            });
+
+            this.tokenExAccountNumberIframe.on("validate", (data) => {
+                this.$scope.$apply(() => {
+                    if (data.isValid) {
+                        this.isInvalidAccountNumber = false;
+                    } else if (this.submitting || data.validator && data.validator !== "required") {
+                        this.isInvalidAccountNumber = true;
+                    }
+
+                    if (this.submitting && (this.isInvalidAccountNumber || this.isInvalidRoutingNumber)) {
+                        this.submitting = false;
+                        this.spinnerService.hide();
+                    }
+                });
+            });
+
+            this.tokenExAccountNumberIframe.on("error", () => {
+                this.$scope.$apply(() => {
+                    // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)
+                    // try to completely re-initialize the tokenex iframe
+                    this.setUpECheckTokenExGateway();
+                });
+            });
+        }
+
+        protected setUpECheckRoutingNumberTokenExIframe(tokenExDto: TokenExDto) {
+            this.tokenExRoutingNumberIframe = new TokenEx.Iframe("tokenExRoutingNumber", this.getECheckRoutingNumberTokenExIframeConfig(tokenExDto));
+
+            this.tokenExRoutingNumberIframe.load();
+
+            this.tokenExRoutingNumberIframe.on("tokenize", (data) => {
+                this.$scope.$apply(() => {
+                    this.cart.paymentOptions.eCheck.routingNumber = data.token;
+                    if (this.cart.paymentOptions.eCheck.accountNumber) {
+                        this.submitCart();
+                    }
+                });
+            });
+
+            this.tokenExRoutingNumberIframe.on("validate", (data) => {
+                this.$scope.$apply(() => {
+                    if (data.isValid) {
+                        this.isInvalidRoutingNumber = false;
+                    } else if (this.submitting || data.validator && data.validator !== "required") {
+                        this.isInvalidRoutingNumber = true;
+                    } 
+                    
+                    if (this.submitting && (this.isInvalidAccountNumber || this.isInvalidRoutingNumber)) {
+                        this.submitting = false;
+                        this.spinnerService.hide();
+                    }
+                });
+            });
+
+            this.tokenExRoutingNumberIframe.on("error", () => {
+                this.$scope.$apply(() => {
+                    // if there was some sort of unknown error from tokenex tokenization (the example they gave was authorization timing out)
+                    // try to completely re-initialize the tokenex iframe
+                    this.setUpECheckTokenExGateway();
+                });
+            });
+        }
+
         protected getTokenExConfigFailed(error: any): void {
         }
 
@@ -853,6 +950,59 @@ module insite.cart {
             }
         }
 
+        setUpECheckTokenExGateway(): void {
+            if (!this.useECheckTokenExGateway) {
+                return;
+            }
+
+            this.settingsService.getTokenExConfig(null, true).then(
+                (tokenExDto) => this.getECheckTokenExConfigCompleted(tokenExDto),
+                (error) => this.getECheckTokenExConfigFailed(error));
+        }
+
+        protected getECheckTokenExConfigCompleted(tokenExDto: TokenExDto) {
+            this.setUpECheckAccountNumberTokenExIframe(tokenExDto);
+            this.setUpECheckRoutingNumberTokenExIframe(tokenExDto);
+        }
+
+        protected getECheckTokenExConfigFailed(error: any): void {
+        }
+
+        protected getECheckAccountNumberTokenExIframeConfig(tokenExDto: TokenExDto): any {
+            return {
+                origin: tokenExDto.origin,
+                timestamp: tokenExDto.timestamp,
+                tokenExID: tokenExDto.tokenExId,
+                tokenScheme: tokenExDto.tokenScheme,
+                authenticationKey: tokenExDto.authenticationKey,
+                styles: {
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);"
+                },
+                pci: false,
+                enableValidateOnBlur: true,
+                inputType: "text"
+            };
+        }
+
+        protected getECheckRoutingNumberTokenExIframeConfig(tokenExDto: TokenExDto): any {
+            return {
+                origin: tokenExDto.origin,
+                timestamp: tokenExDto.timestamp,
+                tokenExID: tokenExDto.tokenExId,
+                tokenScheme: tokenExDto.tokenScheme,
+                authenticationKey: tokenExDto.authenticationKey,
+                styles: {
+                    base: "font-family: Arial, sans-serif;padding: 0 8px;border: 1px solid rgba(0, 0, 0, 0.2);margin: 0;width: 100%;font-size: 14px;line-height: 30px;height: 2.7em;box-sizing: border-box;-moz-box-sizing: border-box;",
+                    focus: "box-shadow: 0 0 6px 0 rgba(0, 132, 255, 0.5);border: 1px solid rgba(0, 132, 255, 0.5);outline: 0;",
+                    error: "box-shadow: 0 0 6px 0 rgba(224, 57, 57, 0.5);border: 1px solid rgba(224, 57, 57, 0.5);"
+                },
+                pci: false,
+                enableValidateOnBlur: true,
+                inputType: "text"
+            };
+        }
 
         /**
          * Setup Paymetric Gateway
@@ -976,22 +1126,22 @@ module insite.cart {
 
         private convertPaymetricCardType(cardType: string): string {
             switch (cardType.toLowerCase()) {
-            case "vi":
-                return "Visa";
-            case "mc":
-                return "MasterCard";
-            case "ax":
-                return "American Express";
-            case "dc":
-                return "Diner's";
-            case "di":
-                return "Discover";
-            case "jc":
-                return "JCB";
-            case "sw":
-                return "Maestro";
-            default:
-                return "unknown";
+                case "vi":
+                    return "Visa";
+                case "mc":
+                    return "MasterCard";
+                case "ax":
+                    return "American Express";
+                case "dc":
+                    return "Diner's";
+                case "di":
+                    return "Discover";
+                case "jc":
+                    return "JCB";
+                case "sw":
+                    return "Maestro";
+                default:
+                    return "unknown";
             }
         }
 

@@ -8,7 +8,11 @@ import {
     TokenExConfig,
 } from "@insite/client-framework/Services/SettingsService";
 
-type HandlerType = ApiHandlerDiscreteParameter<{ token?: string }, GetTokenExConfigApiParameter, TokenExConfig>;
+type HandlerType = ApiHandlerDiscreteParameter<
+    { token?: string; isECheck?: boolean },
+    GetTokenExConfigApiParameter,
+    TokenExConfig
+>;
 
 export const PopulateApiParameter: HandlerType = props => {
     props.apiParameter = props.parameter;

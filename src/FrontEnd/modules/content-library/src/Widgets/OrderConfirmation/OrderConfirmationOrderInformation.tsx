@@ -129,7 +129,7 @@ const OrderConfirmationOrderInformation: FC<Props> = props => {
                 <Typography {...styles.orderNumberHeading}>
                     {`${translate("Order")} #`}
                     <Typography {...styles.orderNumberText} data-test-selector="orderConfirmation_orderNumber">
-                        {props.cart.orderNumber}
+                        {props.cart.erpOrderNumber || props.cart.orderNumber}
                     </Typography>
                 </Typography>
             </GridItem>

@@ -3,7 +3,6 @@ import { BaseTheme } from "@insite/mobius/globals/baseTheme";
 import { IconMemo, IconPresentationProps } from "@insite/mobius/Icon";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
-import focusWithinImportInBrowser from "@insite/mobius/utilities/focusWithin";
 import getColor from "@insite/mobius/utilities/getColor";
 import getProp from "@insite/mobius/utilities/getProp";
 import InjectableCss, { StyledProp } from "@insite/mobius/utilities/InjectableCss";
@@ -13,8 +12,6 @@ import uniqueId from "@insite/mobius/utilities/uniqueId";
 import isMobile from "ismobilejs";
 import React from "react";
 import styled, { ThemeConsumer, ThemeProps, withTheme } from "styled-components";
-
-focusWithinImportInBrowser();
 
 export interface MappedLink {
     // expanded from content-library/src/widgets/header/MainNavigation.tsx

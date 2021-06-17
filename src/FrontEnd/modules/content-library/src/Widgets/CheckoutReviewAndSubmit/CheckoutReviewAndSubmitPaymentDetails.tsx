@@ -28,6 +28,10 @@ import CreditCardBillingAddressEntry, {
 import CreditCardDetailsEntry, {
     CreditCardDetailsEntryStyles,
 } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/CreditCardDetailsEntry";
+import ECheckDetailsEntry, {
+    ECheckDetailsEntryStyles,
+    Validatable,
+} from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/ECheckDetailsEntry";
 import PaymentProfileBillingAddress from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PaymentProfileBillingAddress";
 import PayPalButton, { PayPalButtonStyles } from "@insite/content-library/Widgets/CheckoutReviewAndSubmit/PayPalButton";
 import SavedPaymentProfileEntry, {
@@ -105,13 +109,16 @@ export interface CheckoutReviewAndSubmitPaymentDetailsStyles {
     vatNumberText?: TextFieldPresentationProps;
     poNumberGridItem?: GridItemProps;
     poNumberText?: TextFieldPresentationProps;
+    emptyGridItem?: GridItemProps;
     mainContainer?: GridContainerProps;
     savedPaymentProfile?: SavedPaymentProfileEntryStyles;
     creditCardDetailsGridItem?: GridItemProps;
+    eCheckDetailsGridItem?: GridItemProps;
     creditCardDetails?: CreditCardDetailsEntryStyles;
     creditCardAddressGridItem?: GridItemProps;
     creditCardAddress?: CreditCardBillingAddressEntryStyles;
     payPalButton?: PayPalButtonStyles;
+    eCheckDetailsEntryStyles?: ECheckDetailsEntryStyles;
 }
 
 export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmitPaymentDetailsStyles = {
@@ -149,7 +156,9 @@ export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmi
     },
     vatNumberGridItem: { width: 6 },
     poNumberGridItem: { width: 6 },
+    emptyGridItem: { width: 6 },
     creditCardDetailsGridItem: { width: [12, 12, 12, 6, 6] },
+    eCheckDetailsGridItem: { width: [12, 12, 12, 6, 6] },
     creditCardAddressGridItem: {
         width: [12, 12, 12, 6, 6],
         css: css`
@@ -160,14 +169,14 @@ export const checkoutReviewAndSubmitPaymentDetailsStyles: CheckoutReviewAndSubmi
 
 // TokenEx doesn't provide an npm package or type definitions for using the iframe solution.
 // This is just enough types to avoid the build warnings and make using TokenEx a bit easier.
-type TokenExIframeStyles = {
+export type TokenExIframeStyles = {
     base?: string;
     focus?: string;
     error?: string;
     cvv?: TokenExIframeStyles;
 };
 
-type TokenExIframeConfig = {
+export type TokenExIframeConfig = {
     tokenExID: string;
     tokenScheme: string;
     authenticationKey: string;
@@ -195,8 +204,8 @@ type TokenExCvvOnlyIframeConfig = TokenExIframeConfig & {
     cardType?: string;
 };
 
-type IFrame = {
-    new (containerId: string, config: TokenExPCIIframeConfig | TokenExCvvOnlyIframeConfig): IFrame;
+export type IFrame = {
+    new (containerId: string, config: TokenExIframeConfig): IFrame;
     load: () => void;
     on: (
         eventName: "load" | "validate" | "tokenize" | "error" | "cardTypeChange",
@@ -208,12 +217,13 @@ type IFrame = {
     reset: () => void;
 };
 
-type TokenEx = {
+export type TokenEx = {
     Iframe: IFrame;
 };
 
 declare const TokenEx: TokenEx;
 let tokenExIframe: IFrame | undefined;
+let tokenExAccountNumberIframe: IFrame | undefined;
 
 let tokenExFrameStyleConfig: TokenExIframeStyles;
 
@@ -337,6 +347,10 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const [showFormErrors, setShowFormErrors] = useState(false);
     const [isCardNumberTokenized, setIsCardNumberTokenized] = useState(false);
     const [isTokenExIframeLoaded, setIsTokenExIframeLoaded] = useState(false);
+    const [isECheckTokenized, setIsECheckTokenized] = useState(false);
+    const [accountHolderName, setAccountHolderName] = useState("");
+    const [accountNumber, setAccountNumber] = useState("");
+    const [routingNumber, setRoutingNumber] = useState("");
 
     // Used in validation of form, since some form elements will not be validated when PayPal is active.
     const [isPayPal, setIsPayPal] = useState(false);
@@ -376,7 +390,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     useEffect(() => resetForm(), [paymentMethod]);
 
     useEffect(() => {
-        if (isCardNumberTokenized) {
+        if (isCardNumberTokenized || isECheckTokenized) {
             placeOrder({
                 paymentMethod,
                 poNumber,
@@ -396,6 +410,9 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 postalCode,
                 payPalToken,
                 payPalPayerId,
+                accountHolderName,
+                accountNumber,
+                routingNumber,
                 onSuccess: (cartId: string) => {
                     if (!orderConfirmationPageLink) {
                         return;
@@ -420,7 +437,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 },
             });
         }
-    }, [isCardNumberTokenized]);
+    }, [isCardNumberTokenized, isECheckTokenized]);
 
     useEffect(() => {
         if (!cartState.isLoading && cartState.value && cartState.value.paymentMethod) {
@@ -465,7 +482,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
     const { value: cart } = cartState;
 
-    const { useTokenExGateway } = websiteSettings;
+    const { useTokenExGateway, useECheckTokenExGateway } = websiteSettings;
     const { showPayPal } = cartSettings;
     const paymentOptions = cart ? cart.paymentOptions : undefined;
     const paymentMethods = paymentOptions ? paymentOptions.paymentMethods : undefined;
@@ -473,6 +490,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const paymentMethodDto = paymentMethods?.find(method => method.name === paymentMethod);
     const selectedCountry = countries?.find(country => country.id === countryId);
     let tokenName: string | undefined;
+    const eCheckDetails = useRef<Validatable>(null);
+
     if (useTokenExGateway) {
         if (paymentMethodDto?.isPaymentProfile) {
             tokenName = paymentMethodDto.name;
@@ -481,9 +500,16 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         }
     }
 
+    if (useECheckTokenExGateway) {
+        if (paymentMethodDto?.isECheck) {
+            tokenName = "";
+        }
+    }
+
     useEffect(() => {
         if (typeof tokenName !== "undefined") {
-            loadTokenExConfig({ token: tokenName });
+            const isECheck = paymentMethodDto?.isECheck === true;
+            loadTokenExConfig({ token: tokenName, isECheck });
         }
     }, [paymentMethod]);
 
@@ -794,39 +820,51 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
     const validateAddress1 = (address1: string) => {
         const address1Valid =
-            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(address1));
+            !(paymentMethodDto?.isCreditCard || paymentMethodDto?.isECheck) ||
+            useBillingAddress ||
+            (!useBillingAddress && isNonEmptyString(address1));
         setAddress1Error(!address1Valid ? translate("Address is required.") : "");
         return address1Valid;
     };
 
     const validateCountry = (countryId: string) => {
         const countryValid =
-            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(countryId));
+            !(paymentMethodDto?.isCreditCard || paymentMethodDto?.isECheck) ||
+            useBillingAddress ||
+            (!useBillingAddress && isNonEmptyString(countryId));
         setCountryError(!countryValid ? translate("Country is required.") : "");
         return countryValid;
     };
 
     const validateState = (stateId: string) => {
         const stateValid =
-            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(stateId));
+            !(paymentMethodDto?.isCreditCard || paymentMethodDto?.isECheck) ||
+            useBillingAddress ||
+            (!useBillingAddress && isNonEmptyString(stateId));
         setStateError(!stateValid ? translate("State is required.") : "");
         return stateValid;
     };
 
     const validateCity = (city: string) => {
         const cityValid =
-            !paymentMethodDto?.isCreditCard || useBillingAddress || (!useBillingAddress && isNonEmptyString(city));
+            !(paymentMethodDto?.isCreditCard || paymentMethodDto?.isECheck) ||
+            useBillingAddress ||
+            (!useBillingAddress && isNonEmptyString(city));
         setCityError(!cityValid ? translate("City is required.") : "");
         return cityValid;
     };
 
     const validatePostalCode = (postalCode: string) => {
         const postalCodeValid =
-            !paymentMethodDto?.isCreditCard ||
+            !(paymentMethodDto?.isCreditCard || paymentMethodDto?.isECheck) ||
             useBillingAddress ||
             (!useBillingAddress && isNonEmptyString(postalCode));
         setPostalCodeError(!postalCodeValid ? translate("Postal Code is required.") : "");
         return postalCodeValid;
+    };
+
+    const handleAccountNumberIFrame = (accountNumberIFrame: IFrame) => {
+        tokenExAccountNumberIframe = accountNumberIFrame;
     };
 
     const handlePaymetricValidateSuccess = (success: boolean) => {
@@ -880,6 +918,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
         if (useTokenExGateway && (paymentMethodDto?.isPaymentProfile || paymentMethodDto?.isCreditCard)) {
             tokenExIframe?.validate();
+        } else if (useECheckTokenExGateway && paymentMethodDto?.isECheck) {
+            tokenExAccountNumberIframe?.validate();
         }
 
         if (usePaymetricGateway && cart && cart.showCreditCard && !cart.requiresApproval) {
@@ -923,7 +963,11 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
             countryValid &&
             stateValid &&
             cityValid &&
-            postalCodeValid
+            postalCodeValid &&
+            (!eCheckDetails?.current ||
+                (eCheckDetails.current.validateAccountHolderNameChange(accountHolderName) &&
+                    eCheckDetails.current.validateAccountNumberChange(accountNumber) &&
+                    eCheckDetails.current.validateRoutingNumberChange(routingNumber)))
         );
     };
 
@@ -937,6 +981,8 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
         if (useTokenExGateway && (paymentMethodDto?.isPaymentProfile || paymentMethodDto?.isCreditCard) && !isPayPal) {
             tokenExIframe?.tokenize();
+        } else if (useECheckTokenExGateway && paymentMethodDto?.isECheck) {
+            tokenExAccountNumberIframe?.tokenize();
         } else {
             placeOrder({
                 paymentMethod,
@@ -957,6 +1003,9 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                 postalCode,
                 payPalToken,
                 payPalPayerId,
+                accountHolderName,
+                accountNumber,
+                routingNumber,
                 onSuccess: (cartId: string) => {
                     preloadOrderConfirmationData({
                         cartId,
@@ -1101,7 +1150,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                 />
                             </GridItem>
                         )}
-
+                        {cart.showPoNumber && enableVat && <GridItem {...styles.emptyGridItem}></GridItem>}
                         {paymentMethodDto?.isPaymentProfile && !paymentMethodDto.isPaymentProfileExpired && (
                             <GridItem width={6}>
                                 <SavedPaymentProfileEntry
@@ -1117,71 +1166,87 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                             </GridItem>
                         )}
                         {cart.showCreditCard && paymentMethodDto?.isCreditCard && (
-                            <>
-                                <GridItem {...styles.creditCardDetailsGridItem}>
-                                    <CreditCardDetailsEntry
-                                        canSaveCard={paymentOptions.canStorePaymentProfile}
-                                        iframe={
-                                            useTokenExGateway
-                                                ? "TokenEx"
-                                                : usePaymetricGateway
-                                                ? "Paymetric"
-                                                : undefined
-                                        }
-                                        paymetricFrameRef={paymetricFrameRef}
-                                        isTokenExIframeLoaded={isTokenExIframeLoaded}
-                                        saveCard={saveCard}
-                                        onSaveCardChange={handleSaveCardChange}
-                                        cardHolderName={cardHolderName}
-                                        onCardHolderNameChange={handleCardHolderNameChange}
-                                        cardHolderNameError={showFormErrors ? cardHolderNameError : undefined}
-                                        cardNumber={cardNumber}
-                                        onCardNumberChange={handleCardNumberChange}
-                                        cardNumberError={showFormErrors ? cardNumberError : undefined}
-                                        cardType={cardType}
-                                        possibleCardType={possibleCardType}
-                                        onCardTypeChange={handleCardTypeChange}
-                                        cardTypeError={showFormErrors ? cardTypeError : undefined}
-                                        expirationMonth={expirationMonth}
-                                        onExpirationMonthChange={handleExpirationMonthChange}
-                                        expirationYear={expirationYear}
-                                        onExpirationYearChange={handleExpirationYearChange}
-                                        expirationError={showFormErrors ? expirationError : undefined}
-                                        securityCode={securityCode}
-                                        onSecurityCodeChange={handleSecurityCodeChange}
-                                        securityCodeError={showFormErrors ? securityCodeError : undefined}
-                                        availableCardTypes={paymentOptions.cardTypes ?? []}
-                                        availableMonths={paymentOptions.expirationMonths ?? []}
-                                        availableYears={paymentOptions.expirationYears ?? []}
-                                        extendedStyles={styles.creditCardDetails}
-                                    />
-                                </GridItem>
-                                <GridItem {...styles.creditCardAddressGridItem}>
-                                    <CreditCardBillingAddressEntry
-                                        useBillTo={useBillingAddress}
-                                        onUseBillToChange={handleUseBillingAddressChange}
-                                        billTo={billToState.value}
-                                        address1={address1}
-                                        onAddress1Change={handleAddressChange}
-                                        address1Error={showFormErrors ? address1Error : undefined}
-                                        country={countryId}
-                                        onCountryChange={handleCountryChange}
-                                        countryError={showFormErrors ? countryError : undefined}
-                                        state={stateId}
-                                        onStateChange={handleStateChange}
-                                        stateError={showFormErrors ? stateError : undefined}
-                                        city={city}
-                                        onCityChange={handleCityChange}
-                                        cityError={showFormErrors ? cityError : undefined}
-                                        postalCode={postalCode}
-                                        onPostalCodeChange={handlePostalCodeChange}
-                                        postalCodeError={showFormErrors ? postalCodeError : undefined}
-                                        availableCountries={countries ?? []}
-                                        availableStates={selectedCountry?.states}
-                                        extendedStyles={styles.creditCardAddress}
-                                    />
-                                </GridItem>
-                            </>
+                            <GridItem {...styles.creditCardDetailsGridItem}>
+                                <CreditCardDetailsEntry
+                                    canSaveCard={paymentOptions.canStorePaymentProfile}
+                                    iframe={
+                                        useTokenExGateway ? "TokenEx" : usePaymetricGateway ? "Paymetric" : undefined
+                                    }
+                                    paymetricFrameRef={paymetricFrameRef}
+                                    isTokenExIframeLoaded={isTokenExIframeLoaded}
+                                    saveCard={saveCard}
+                                    onSaveCardChange={handleSaveCardChange}
+                                    cardHolderName={cardHolderName}
+                                    onCardHolderNameChange={handleCardHolderNameChange}
+                                    cardHolderNameError={showFormErrors ? cardHolderNameError : undefined}
+                                    cardNumber={cardNumber}
+                                    onCardNumberChange={handleCardNumberChange}
+                                    cardNumberError={showFormErrors ? cardNumberError : undefined}
+                                    cardType={cardType}
+                                    possibleCardType={possibleCardType}
+                                    onCardTypeChange={handleCardTypeChange}
+                                    cardTypeError={showFormErrors ? cardTypeError : undefined}
+                                    expirationMonth={expirationMonth}
+                                    onExpirationMonthChange={handleExpirationMonthChange}
+                                    expirationYear={expirationYear}
+                                    onExpirationYearChange={handleExpirationYearChange}
+                                    expirationError={showFormErrors ? expirationError : undefined}
+                                    securityCode={securityCode}
+                                    onSecurityCodeChange={handleSecurityCodeChange}
+                                    securityCodeError={showFormErrors ? securityCodeError : undefined}
+                                    availableCardTypes={paymentOptions.cardTypes ?? []}
+                                    availableMonths={paymentOptions.expirationMonths ?? []}
+                                    availableYears={paymentOptions.expirationYears ?? []}
+                                    extendedStyles={styles.creditCardDetails}
+                                />
+                            </GridItem>
+                        )}
+                        {cart.showECheck && paymentMethodDto?.isECheck && (
+                            <GridItem {...styles.eCheckDetailsGridItem}>
+                                <ECheckDetailsEntry
+                                    iframe={useECheckTokenExGateway ? "TokenEx" : undefined}
+                                    paymentMethod={paymentMethod}
+                                    onAccountHolderNameChange={setAccountHolderName}
+                                    onAccountNumberChange={setAccountNumber}
+                                    onRoutingNumberChange={setRoutingNumber}
+                                    tokenExConfig={tokenExConfig}
+                                    tokenExFrameStyleConfig={tokenExFrameStyleConfig}
+                                    extendedStyles={styles.eCheckDetailsEntryStyles}
+                                    showFormErrors={showFormErrors}
+                                    updateIsECheckTokenized={setIsECheckTokenized}
+                                    updateShowFormErrors={setShowFormErrors}
+                                    setAccountNumberIFrame={handleAccountNumberIFrame}
+                                    ref={eCheckDetails}
+                                />
+                            </GridItem>
+                        )}
+                        {((cart.showECheck && paymentMethodDto?.isECheck) ||
+                            (cart.showCreditCard && paymentMethodDto?.isCreditCard)) && (
+                            <GridItem {...styles.creditCardAddressGridItem}>
+                                <CreditCardBillingAddressEntry
+                                    useBillTo={useBillingAddress}
+                                    onUseBillToChange={handleUseBillingAddressChange}
+                                    billTo={billToState.value}
+                                    address1={address1}
+                                    onAddress1Change={handleAddressChange}
+                                    address1Error={showFormErrors ? address1Error : undefined}
+                                    country={countryId}
+                                    onCountryChange={handleCountryChange}
+                                    countryError={showFormErrors ? countryError : undefined}
+                                    state={stateId}
+                                    onStateChange={handleStateChange}
+                                    stateError={showFormErrors ? stateError : undefined}
+                                    city={city}
+                                    onCityChange={handleCityChange}
+                                    cityError={showFormErrors ? cityError : undefined}
+                                    postalCode={postalCode}
+                                    onPostalCodeChange={handlePostalCodeChange}
+                                    postalCodeError={showFormErrors ? postalCodeError : undefined}
+                                    availableCountries={countries ?? []}
+                                    availableStates={selectedCountry?.states}
+                                    extendedStyles={styles.creditCardAddress}
+                                />
+                            </GridItem>
                         )}
                     </GridContainer>
                 )}

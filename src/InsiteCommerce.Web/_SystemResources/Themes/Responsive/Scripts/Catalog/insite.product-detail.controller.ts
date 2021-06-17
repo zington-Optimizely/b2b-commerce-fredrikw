@@ -474,6 +474,7 @@ module insite.catalog {
 
         protected selectStyledProduct(styledProduct: StyledProductDto): void {
             this.product.erpNumber = styledProduct.erpNumber;
+            this.product.customerName = styledProduct.customerName;
             this.product.smallImagePath = styledProduct.smallImagePath;
             this.product.mediumImagePath = styledProduct.mediumImagePath;
             this.product.largeImagePath = styledProduct.largeImagePath;

@@ -3,6 +3,7 @@ import React from "react";
 import { mount } from "enzyme";
 import ThemeProvider from "../ThemeProvider";
 import TextField, { InputStyle } from "./TextField";
+import FormField from "@insite/mobius/FormField";
 import DisablerContext from "../utilities/DisablerContext";
 import { css } from "styled-components";
 
@@ -142,6 +143,16 @@ describe("TextField", () => {
 
             expect(wrapper().find(InputStyle)).toHaveStyleRule("color", "red");
             expect(wrapper().find(InputStyle)).toHaveStyleRule("background", undefined);
+        });
+    });
+    describe("Check backgroundColor prop", () => {
+        test("Background color prop in FormField", () => {
+            props = {
+                backgroundColor: "green",
+            };
+            withTheme();
+
+            expect(wrapper().find(FormField).props().backgroundColor).toEqual("green");
         });
     });
 });

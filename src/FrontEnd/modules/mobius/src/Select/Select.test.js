@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import Select from "@insite/mobius/Select/Select";
-import { FormFieldStyle } from "@insite/mobius/FormField";
+import FormField, { FormFieldStyle } from "@insite/mobius/FormField";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
 import DisablerContext from "@insite/mobius/utilities/DisablerContext";
 import { mount } from "enzyme";
@@ -166,5 +166,13 @@ describe("Select", () => {
         props = {};
 
         expect(wrapper().find(FormFieldStyle)).toHaveStyleRule("border", "0");
+    });
+
+    describe("Background Color Prop", () => {
+        test("FormFieldStyle prop", () => {
+            withTheme();
+            props = { backgroundColor: "green" };
+            expect(wrapper().find(FormField).props().backgroundColor).toEqual("green");
+        });
     });
 });

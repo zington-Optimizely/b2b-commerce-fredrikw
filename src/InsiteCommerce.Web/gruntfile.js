@@ -2,14 +2,15 @@
 module.exports = function (grunt) {
 
     require("load-grunt-tasks")(grunt);
+    const sass = require("node-sass");
 
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
 
         sass: {
             options: {
-                style: "expanded",
-                compass: true
+                implementation: sass,
+                sourceMap: true
             },
 
             webThemes: {

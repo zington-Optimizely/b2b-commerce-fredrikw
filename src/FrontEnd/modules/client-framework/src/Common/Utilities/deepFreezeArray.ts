@@ -1,14 +1,5 @@
 import deepFreezeObject from "@insite/client-framework/Common/Utilities/deepFreezeObject";
 
-/** IE doesn't support `Object.freeze` on an array, so don't try if this is false. */
-let canFreezeArray: true | undefined;
-
-try {
-    Object.freeze([]);
-    canFreezeArray = true;
-    // eslint-disable-next-line no-empty
-} catch (e) {}
-
 /**
  * Recursively calls `Object.freeze` on the entries of an array and its contents.
  * @param object The object to freeze.
@@ -37,11 +28,7 @@ function deepFreezeArray<T>(array: T[] | null | undefined, seen?: WeakSet<object
         }
     }
 
-    if (canFreezeArray) {
-        return Object.freeze(array);
-    }
-
-    return array as readonly T[];
+    return Object.freeze(array);
 }
 
 export default deepFreezeArray;

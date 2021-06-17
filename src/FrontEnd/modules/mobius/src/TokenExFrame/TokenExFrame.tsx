@@ -17,6 +17,8 @@ export interface TokenExFramePresentationProps extends FormFieldPresentationProp
     /** The props for icon displaying on the text input field.
      * @themable */
     iconProps?: IconPresentationProps;
+    /** Background color of the form element */
+    backgroundColor?: string;
 }
 
 type TokenExFrameComponentProps = MobiusStyledComponentProps<
@@ -65,6 +67,7 @@ const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
     disabled,
     id,
     tokenExIFrameContainer,
+    backgroundColor,
     ...otherProps
 }) => {
     // Because disabled html attribute doesn't accept undefined
@@ -110,6 +113,7 @@ const TokenExFrame: React.FC<TokenExFrameProps & HasDisablerContext> = ({
             inputId={inputId}
             labelId={labelId}
             disabled={isDisabled}
+            backgroundColor={backgroundColor}
             {...(otherProps as any)}
         />
     );

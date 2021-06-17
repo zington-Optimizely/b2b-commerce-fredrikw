@@ -443,7 +443,7 @@
             <div class="f-cat" role="mobile-filters">
                 <section class="accordion">
                     <div>
-                        <input type="checkbox" id="accord-10000" class="accord-check" />
+                        <input type="checkbox" id="accord-10000" class="accord-check" ng-checked="vm.isFilterExpanded" ng-click="vm.toggleIsFilterExpanded()" />
                         <label id="tst_productList_tableView_filterButton" for="accord-10000" class="accord-head">[% translate 'Filters' %]</label>
                         <article class="accord-content">
                             <form>

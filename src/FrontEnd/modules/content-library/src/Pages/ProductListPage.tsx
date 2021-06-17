@@ -170,7 +170,9 @@ class ProductListPage extends React.Component<Props> {
 
         if (search !== prevProps.search || this.props.path !== prevProps.path) {
             if (this.props.path !== prevProps.path) {
-                this.props.clearAllProductFilters();
+                this.props.clearAllProductFilters({
+                    removeAll: true,
+                });
             }
             this.loadProducts();
         }

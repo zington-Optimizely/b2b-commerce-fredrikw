@@ -26,15 +26,17 @@ module insite.catalog {
         showProductLines: boolean;
         filterBrandId: string;
         filterProductLineId: string;
+        isFilterExpanded: boolean;
 
-        static $inject = ["$timeout", "$window", "$scope", "$rootScope", "sessionService"];
+        static $inject = ["$timeout", "$window", "$scope", "$rootScope", "sessionService", "$localStorage"];
 
         constructor(
             protected $timeout: ng.ITimeoutService,
             protected $window: ng.IWindowService,
             protected $scope: ng.IScope,
             protected $rootScope: ng.IRootScopeService,
-            protected sessionService: account.ISessionService) {
+            protected sessionService: account.ISessionService,
+            protected $localStorage: common.IWindowStorage,) {
         }
 
         $onInit(): void {
@@ -47,6 +49,8 @@ module insite.catalog {
             this.$window.addEventListener("popstate", () => { this.onPopState(); });
 
             this.$scope.$on("ProductListController-filterLoaded", () => { this.onFilterLoaded(); });
+
+            this.isFilterExpanded = this.$localStorage.get("productListIsFilterExpanded") === "true";
         }
 
         protected onGetSessionCompleted(session: SessionModel): void {
@@ -320,6 +324,15 @@ module insite.catalog {
             const attributeTypeAttributeValueLimit = this.getAttributeTypeAttributeValueLimit(attributeTypeFacet);
 
             return attributeTypeFacet.attributeValueFacets.length > attributeTypeAttributeValueLimit;
+        }
+
+        toggleIsFilterExpanded(): void {
+            this.isFilterExpanded = !this.isFilterExpanded;
+            if (this.isFilterExpanded) {
+                this.$localStorage.set("productListIsFilterExpanded", "true");
+            } else {
+                this.$localStorage.remove("productListIsFilterExpanded");
+            }
         }
     }
 

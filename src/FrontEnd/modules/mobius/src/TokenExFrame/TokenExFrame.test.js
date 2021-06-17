@@ -5,6 +5,7 @@ import ThemeProvider from "../ThemeProvider";
 import TokenExFrame from "./TokenExFrame";
 import CreditCard from "../Icons/CreditCard";
 import DisablerContext from "../utilities/DisablerContext";
+import FormField from "@insite/mobius/FormField";
 
 describe("TokenExFrame", () => {
     let props = { tokenExIFrameContainer: <iframe /> };
@@ -62,6 +63,12 @@ describe("TokenExFrame", () => {
         test("when default", () => {
             props = { sizeVariant: "default", tokenExIFrameContainer: <iframe /> };
             expect(wrapper().find('[data-id="frame-wrapper"]')).toHaveStyleRule("height", "40px");
+        });
+    });
+    describe("Background Prop passed to FormField", () => {
+        test("Green Prop showing up on FormField", () => {
+            props = { iconProps: { src: CreditCard }, tokenExIFrameContainer: <iframe />, backgroundColor: "green" };
+            expect(wrapper().find(FormField).props().backgroundColor).toEqual("green");
         });
     });
 });

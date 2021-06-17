@@ -16,6 +16,7 @@ import getContrastColor from "@insite/mobius/utilities/getContrastColor";
 import getProp from "@insite/mobius/utilities/getProp";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
+import resolveColor from "@insite/mobius/utilities/resolveColor";
 import safeColor from "@insite/mobius/utilities/safeColor";
 import uniqueId from "@insite/mobius/utilities/uniqueId";
 import VisuallyHidden from "@insite/mobius/VisuallyHidden";
@@ -63,6 +64,8 @@ export interface DatePickerPresentationProps
             "calendarType" | "showLeadingZeros" | "showFixedNumberOfWeeks" | "showNeighboringMonth"
         >
     >;
+    /** Background color of the form element */
+    backgroundColor?: string;
 }
 
 export interface DateTimePickerLibComponentProps extends DateTimePickerProps {}
@@ -107,13 +110,16 @@ enum DatePickerPopupDirection {
 
 export type DatePickerProps = DatePickerPresentationProps & DatePickerComponentProps;
 
-const DatePickerIcon = styled(Icon)<{ _sizeVariant: FormFieldSizeVariant } & ThemeProps<BaseTheme>>`
+const DatePickerIcon = styled(Icon)<
+    { _sizeVariant: FormFieldSizeVariant; _backgroundColor: string } & ThemeProps<BaseTheme>
+>`
     width: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
     height: ${({ _sizeVariant, size }) => size ?? sizeVariantValues[_sizeVariant].height - 4}px;
     padding: ${({ _sizeVariant }) => sizeVariantValues[_sizeVariant].iconPadding - 2}px;
-    background: ${getColor("common.background")};
+    background: ${({ theme, _backgroundColor }) => resolveColor(_backgroundColor, theme)};
     border-radius: 100%;
 `;
+/* background: ${getColor("common.background")}; */
 
 interface DateTimePickerStyleProps extends ThemeProps<BaseTheme> {
     _sizeVariant: FormFieldSizeVariant;
@@ -400,6 +406,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
             label,
             required,
             theme: { translate },
+            backgroundColor,
             ...otherProps
         } = this.props;
         // Because disabled html attribute doesn't accept undefined
@@ -442,6 +449,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                             <DatePickerIcon
                                 _sizeVariant={sizeVariant}
                                 {...calendarIconProps}
+                                _backgroundColor={backgroundColor}
                                 color={isDisabled ? "text.disabled" : calendarIconProps.color}
                             />
                             <VisuallyHidden>{translate("open or close calendar")}</VisuallyHidden>
@@ -452,6 +460,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                             <DatePickerIcon
                                 _sizeVariant={sizeVariant}
                                 {...clearIconProps}
+                                _backgroundColor={backgroundColor}
                                 color={isDisabled ? "text.disabled" : clearIconProps.color}
                             />
                             <VisuallyHidden>{translate("clear date")}</VisuallyHidden>
@@ -475,6 +484,7 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                     formInput={pickerInput}
                     inputId={inputId}
                     cssOverrides={_cssOverrides}
+                    backgroundColor={backgroundColor}
                     error={
                         selectedDayDisabled || (required && isEmpty)
                             ? error || translate("please choose a valid date")

@@ -1,3 +1,4 @@
+import addPhoneLinkTargetAttr from "@insite/client-framework/Common/Utilities/addPhoneLinkTargetAttr";
 import { extractStylesToArray, isSafe } from "@insite/client-framework/Common/Utilities/isSafeStyles";
 import { RichTextFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import StandardControl from "@insite/shell-public/Components/StandardControl";
@@ -27,6 +28,7 @@ export default class RichTextField extends React.Component<Props, State> {
     };
 
     onChange = (model: string) => {
+        model = addPhoneLinkTargetAttr(model);
         let hasStyleError = false;
         if (this.isSafeToSave(model)) {
             this.props.updateField(this.props.fieldDefinition.name, model);

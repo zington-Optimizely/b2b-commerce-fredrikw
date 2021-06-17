@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import isRelativeUrl from "./isRelativeUrl";
+import isRelativeUrl from "@insite/mobius/utilities/isRelativeUrl";
 
 describe("isRelativeUrl", () => {
     test("returns true when the URL is relative", () => {
@@ -18,5 +18,7 @@ describe("isRelativeUrl", () => {
         expect(isRelativeUrl("https://www.exmaple.com")).toBe(false);
         expect(isRelativeUrl("ftp://example.com/file.txt")).toBe(false);
         expect(isRelativeUrl("//cdn.example.com/lib.js")).toBe(false);
+        expect(isRelativeUrl("mailto:test@test.com")).toBe(false);
+        expect(isRelativeUrl("mailto:test@test.com?subject=test")).toBe(false);
     });
 });

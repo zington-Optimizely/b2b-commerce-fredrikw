@@ -51,6 +51,7 @@ const mapStateToProps = (state: ShellState, { page }: OwnProps) => {
         futurePublishOn:
             pageState &&
             futurePublishNodeIds[pageState.isVariant ? `${pageState.nodeId}_${pageState.pageId}` : pageState.nodeId],
+        isVariant: pageState?.isVariant,
     };
 };
 
@@ -78,7 +79,7 @@ class Header extends React.Component<Props, State> {
     }
 
     editPageOptions = () => {
-        this.props.editPageOptions(this.props.page.id);
+        this.props.editPageOptions(this.props.page.id, this.props.isVariant);
     };
 
     render() {

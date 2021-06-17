@@ -31,6 +31,7 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps, TypographyProps } from "@insite/mobius/Typography";
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import getColor from "@insite/mobius/utilities/getColor";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC, useContext } from "react";
 import { connect, HandleThunkActionCreator, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -508,6 +509,7 @@ const CartLineCardExpanded: FC<Props> = ({
             <GridItem {...styles.removeCartLineGridItem}>
                 {showRemoveAction && (
                     <Clickable onClick={removeCartLineClickHandler} data-test-selector="cartline_removeLine">
+                        <VisuallyHidden>{translate("Remove item")}</VisuallyHidden>
                         <IconMemo {...styles.removeCartLineIcon} />
                     </Clickable>
                 )}

@@ -30,6 +30,8 @@ export interface SelectPresentationProps extends FormFieldPresentationProps<Sele
      * a merge, much like normal CSS. If false, only the component css is applied, overriding the variant css in the theme.
      */
     mergeCss?: boolean;
+    /** Background color of the form element */
+    backgroundColor?: string;
 }
 
 export type SelectComponentProps = MobiusStyledComponentProps<

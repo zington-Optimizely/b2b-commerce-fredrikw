@@ -49,6 +49,10 @@ const reducer = {
     ) => {
         draft.payPalRedirectUri = action.redirectUri;
     },
+    "Pages/CheckoutReviewAndSubmit/ClearMessages": (draft: Draft<CheckoutReviewAndSubmitState>) => {
+        draft.promotionErrorMessage = undefined;
+        draft.promotionSuccessMessage = undefined;
+    },
     "Pages/CheckoutReviewAndSubmit/SetRequestedDeliveryDate": (
         draft: Draft<CheckoutReviewAndSubmitState>,
         action: { requestedDeliveryDate?: Date },

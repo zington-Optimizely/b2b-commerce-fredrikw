@@ -108,7 +108,9 @@ const RfqQuoteDetailsQuotedPricing = ({ quote, quoteLine, enableVat, vatPriceDis
                     </Typography>
                     {enableVat && (
                         <Typography {...styles.vatLabelText}>
-                            {vatPriceDisplay !== "DisplayWithoutVat" ? translate("Inc. VAT") : translate("Ex. VAT")}
+                            {vatPriceDisplay !== "DisplayWithoutVat"
+                                ? `${translate("Inc. VAT")} (${quoteLine.pricing?.vatRate}%)`
+                                : translate("Ex. VAT")}
                         </Typography>
                     )}
                 </DataTableCell>

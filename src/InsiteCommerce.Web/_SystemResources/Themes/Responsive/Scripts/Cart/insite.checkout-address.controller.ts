@@ -299,20 +299,25 @@
         }
 
         protected updateValidationRules(fieldName, rules): void {
-            const convertedRules = this.convertValidationToJQueryRules(rules);
+            const convertedRules = this.convertValidationToJQueryRules(rules, fieldName);
             this.updateValidationRulesForField(fieldName, convertedRules);
         }
 
-        protected convertValidationToJQueryRules(rules: FieldValidationDto): JQueryValidation.RulesDictionary {
+        protected convertValidationToJQueryRules(rules: FieldValidationDto, fieldName?: string): JQueryValidation.RulesDictionary {
+            let isRequired = false;
+            if (fieldName === "ststate" && this.selectedShipTo) {
+                isRequired = this.selectedShipTo.country && this.selectedShipTo.country.states.length > 0;
+            }
+
             if (rules.maxLength) {
                 return {
-                    required: rules.isRequired,
+                    required: rules.isRequired || isRequired,
                     maxlength: rules.maxLength
                 };
             }
 
             return {
-                required: rules.isRequired
+                required: rules.isRequired || isRequired
             };
         }
 

@@ -456,7 +456,7 @@ const Carousel = ({
                     aria-describedby={`carousel-${id}_attribute-label-${attribute.id}`}
                     {...styles.attributeValueText}
                 >
-                    {productAttributeValue[0].valueDisplay}
+                    {productAttributeValue.map(o => o.valueDisplay).join(", ")}
                 </Typography>
             );
         }

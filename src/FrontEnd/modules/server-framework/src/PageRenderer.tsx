@@ -3,6 +3,7 @@ import { decodeCookie, encodeCookie } from "@insite/client-framework/Common/Cook
 import { SafeDictionary } from "@insite/client-framework/Common/Types";
 import { getHeadTrackingScript, getNoscriptTrackingScript } from "@insite/client-framework/Common/Utilities/tracking";
 import { ShellContext } from "@insite/client-framework/Components/IsInShell";
+import PreviewLogin from "@insite/client-framework/Components/PreviewLogin";
 import SessionLoader from "@insite/client-framework/Components/SessionLoader";
 import SpireRouter, { convertToLocation } from "@insite/client-framework/Components/SpireRouter";
 import logger from "@insite/client-framework/Logger";
@@ -184,7 +185,9 @@ export async function pageRenderer(request: Request, response: Response) {
                             translate={translate}
                         >
                             <SessionLoader location={convertToLocation(request.url)}>
-                                <SpireRouter />
+                                <PreviewLogin>
+                                    <SpireRouter />
+                                </PreviewLogin>
                             </SessionLoader>
                         </ThemeProvider>
                     </ShellContext.Provider>
@@ -277,10 +280,10 @@ export async function pageRenderer(request: Request, response: Response) {
                 {renderStorefrontServerSide && (
                     <script
                         dangerouslySetInnerHTML={{
-                            __html: `var initialReduxState = ${JSON.stringify(state).replace(
-                                new RegExp("</", "g"),
-                                "<\\/",
-                            )}`,
+                            __html: `var initialReduxState = ${JSON.stringify(state)
+                                .replace(new RegExp("</", "g"), "<\\/")
+                                .replace(new RegExp("<", "g"), "\\u003C")
+                                .replace(new RegExp(">", "g"), "\\u003E")}`,
                         }}
                     ></script>
                 )}

@@ -37,7 +37,7 @@
 
     export interface ISettingsService {
         getSettings(): ng.IPromise<SettingsCollection>;
-        getTokenExConfig(token?: string): ng.IPromise<TokenExDto>;
+        getTokenExConfig(token?: string, isECheck?: boolean): ng.IPromise<TokenExDto>;
         getPaymetricConfig(token?: string): ng.IPromise<PaymetricDto>;
     }
 
@@ -96,8 +96,9 @@
             }
         }
 
-        getTokenExConfig(token?: string): ng.IPromise<TokenExDto> {
-            var url = token ? `${this.tokenExConfigUri}?token=${token}` : `${this.tokenExConfigUri}`;
+        getTokenExConfig(token?: string, isECheck = false): ng.IPromise<TokenExDto> {
+            var baseUrl = `${this.tokenExConfigUri}?isECheck=${isECheck}`;
+            var url = token ? `${baseUrl}&token=${token}` : `${baseUrl}`;
             return this.httpWrapperService.executeHttpRequest(
                 this,
                 this.$http.get(url),

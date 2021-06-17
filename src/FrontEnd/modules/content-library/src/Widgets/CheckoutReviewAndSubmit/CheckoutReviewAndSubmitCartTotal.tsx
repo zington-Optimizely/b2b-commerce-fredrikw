@@ -343,7 +343,12 @@ const CheckoutReviewAndSubmitCartTotal: FC<Props> = ({
             )}
             {placeOrderErrorMessage && (
                 <GridItem {...styles.placeOrderErrorMessageGridItem}>
-                    <Typography {...styles.placeOrderErrorMessageText}>{placeOrderErrorMessage}</Typography>
+                    <Typography
+                        {...styles.placeOrderErrorMessageText}
+                        data-test-selector="checkoutReviewAndSubmit_placeOrderErrorMessage"
+                    >
+                        {placeOrderErrorMessage}
+                    </Typography>
                 </GridItem>
             )}
             {cart?.taxFailureReason === "InvalidAddress" && canUpdateShipToAddress && (

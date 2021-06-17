@@ -320,19 +320,6 @@ const MyListsDetailsProductList: React.FC<Props> = ({
         window.scrollBy(0, step);
     };
 
-    React.useEffect(() => {
-        if (typeof Array.from !== "undefined") {
-            return;
-        }
-
-        // this is needed for IE
-        const script = document.createElement("script");
-        script.src = "https://polyfill.io/v3/polyfill.min.js?features=Array.from%2CSymbol";
-        script.async = true;
-
-        document.body.appendChild(script);
-    }, []);
-
     const quantityAdjustmentModalCancelHandler = () => {
         setQuantityAdjustmentModalIsOpen({ modalIsOpen: false });
     };
