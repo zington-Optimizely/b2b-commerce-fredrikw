@@ -219,8 +219,8 @@ export const GetUnfilteredProducts: HandlerType = async props => {
     if (!props.result.productFilters.pageCategoryId) {
         delete unfilteredApiParameter.categoryId;
     }
-    unfilteredApiParameter.stockedItemsOnly = false;
-    unfilteredApiParameter.previouslyPurchasedProducts = false;
+    unfilteredApiParameter.stockedItemsOnly = undefined;
+    unfilteredApiParameter.previouslyPurchasedProducts = undefined;
 
     props.result.unfilteredApiParameter = unfilteredApiParameter;
     props.result.filteredApiParameter = { ...props.apiParameter };
