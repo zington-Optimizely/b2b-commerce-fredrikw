@@ -113,7 +113,7 @@ class HeaderBar extends React.Component<Props, State> {
 
         return (
             <HeaderBarStyle data-test-selector="headerBar">
-                <Icon src="Globe" size={20} color="#ffffff87" />
+                <Icon src="Globe" size={20} color={disableSelects ? commonDisabled : "primary.contrast"} />
                 <SelectWrapper>
                     <select
                         onChange={this.onLanguageChange}
@@ -131,7 +131,7 @@ class HeaderBar extends React.Component<Props, State> {
                 </SelectWrapper>
                 {hasDeviceSpecificContent && (
                     <>
-                        <Icon src="Monitor" size={20} color="#ffffff87" />
+                        <Icon src="Monitor" size={20} color={disableSelects ? commonDisabled : "primary.contrast"} />
                         <SelectWrapper>
                             <select
                                 onChange={this.onDeviceTypeChange}
@@ -150,7 +150,7 @@ class HeaderBar extends React.Component<Props, State> {
                 )}
                 {hasPersonaSpecificContent && (
                     <>
-                        <Icon src="Users" size={20} color="#ffffff87" />
+                        <Icon src="Users" size={20} color={disableSelects ? commonDisabled : "primary.contrast"} />
                         <SelectWrapper>
                             <select
                                 onChange={this.onPersonaChange}

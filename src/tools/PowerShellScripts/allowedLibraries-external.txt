@@ -5,7 +5,9 @@ Elasticsearch.Net
 EntityFramework
 EntityFramework.SqlServer
 FluentValidation
+IdentityServer3
 Microsoft.AspNet.Identity.Core
+Microsoft.AspNet.Identity.Owin
 Microsoft.Azure.KeyVault.Core
 Microsoft.Azure.Storage.Blob
 Microsoft.Azure.Storage.Common
@@ -16,7 +18,6 @@ Microsoft.Owin
 Microsoft.Owin.Security
 Microsoft.Owin.Security.OAuth
 Microsoft.Owin.Security.WsFederation
-Microsoft.SqlServer.Types
 Microsoft.Web.Infrastructure
 mscorlib
 NEST

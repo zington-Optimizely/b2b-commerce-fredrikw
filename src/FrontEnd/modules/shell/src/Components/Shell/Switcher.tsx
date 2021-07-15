@@ -41,7 +41,7 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive, stageMode, c
                     >
                         How To Preview Changes
                     </StyledA>
-                    <Icon src={Spacer} color="#999" />
+                    <Icon src={Spacer} color={disabled ? "common.disabled" : "primary.contrast"} />
                 </>
             )}
             <div>
@@ -50,7 +50,7 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive, stageMode, c
             </div>
             {!mobileCmsModeActive && (
                 <>
-                    <Icon src={Spacer} color="#999" />
+                    <Icon src={Spacer} color={disabled ? "common.disabled" : "primary.contrast"} />
                     <div data-test-selector="preview_switcher">
                         {clicker("Phone")}
                         {clicker("Tablet")}
@@ -58,7 +58,7 @@ const Switcher: React.FC<Props> = ({ disabled, mobileCmsModeActive, stageMode, c
                     </div>
                 </>
             )}
-            <Icon src={Spacer} color="#999" />
+            <Icon src={Spacer} color="primary.contrast" />
             <HeaderGear />
         </SwitcherStyle>
     );

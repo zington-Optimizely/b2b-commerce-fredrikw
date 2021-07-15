@@ -9,6 +9,7 @@ import injectCss from "@insite/mobius/utilities/injectCss";
 import resolveColor from "../utilities/resolveColor";
 import { StyledProp } from "@insite/mobius/utilities/InjectableCss";
 import MobiusStyledComponentProps from "../utilities/MobiusStyledComponentProps";
+import qs from "qs";
 
 export type LazyImagePresentationProps = {
     /** CSS string or styled-components function to be injected into this component.
@@ -102,8 +103,26 @@ const LazyImageStyle = styled.div<Pick<State, "error" | "imageShouldFade" | "loa
  * into view.
  */
 class LazyImage extends React.Component<LazyImageProps, State> {
+    constructor(props: LazyImageProps) {
+        super(props);
+
+        const queryString = props.src && /\?.*/.exec(props.src);
+
+        if (queryString) {
+            const obj = qs.parse(queryString[0], { ignoreQueryPrefix: true });
+
+            this.width = obj.width;
+            this.height = obj.height;
+        } else {
+            this.width = "";
+            this.height = "";
+        }
+    }
+
     image?: HTMLImageElement;
     fadeInTimeout?: number;
+    width?: number | string;
+    height?: number | string;
 
     state: State = {
         loaded: false,
@@ -175,7 +194,15 @@ class LazyImage extends React.Component<LazyImageProps, State> {
             <LazyImageStyle {...{ css, error, imageShouldFade, loaded }} {...otherProps}>
                 {showPlaceholder && <span className="LazyImage-Placeholder">{placeholder}</span>}
                 {loaded && error && <IconMemo {...spreadProps("errorIconProps")} title={altText} />}
-                {!error && <img alt={altText} src={loaded && !error ? stateSrc : propSrc} {...imgProps} />}
+                {!error && (
+                    <img
+                        width={this.width}
+                        height={this.height}
+                        alt={altText}
+                        src={loaded && !error ? stateSrc : propSrc}
+                        {...imgProps}
+                    />
+                )}
                 {error && (
                     <Typography {...spreadProps("errorTypographyProps")} as="p">
                         {altText}

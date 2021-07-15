@@ -5,6 +5,7 @@ import {
 } from "@insite/client-framework/Common/Hooks/useWarehouseGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
+import withDynamicGoogleMaps from "@insite/client-framework/Common/withDynamicGoogleMaps";
 import translate from "@insite/client-framework/Translate";
 import { WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 import AddressInfoCondensedDisplay, {
@@ -17,7 +18,8 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { GoogleMap, GoogleMapProps, InfoWindow, InfoWindowProps, Marker, MarkerProps } from "@react-google-maps/api";
+
+import { GoogleMapProps, InfoWindowProps, MarkerProps } from "@react-google-maps/api";
 import React, { Fragment } from "react";
 import { css } from "styled-components";
 
@@ -31,6 +33,10 @@ interface Props {
     currentLocationInfoWindow?: CurrentLocationInfoWindow;
     handleOpenWarehouseHours: (warehouse: WarehouseModel) => void;
     setGoogleMap: (map: google.maps.Map | undefined) => void;
+    updateLastFocusableElement: () => void;
+    GoogleMap: React.ComponentType<GoogleMapProps>;
+    InfoWindow: React.ComponentType<InfoWindowProps>;
+    Marker: React.ComponentType<MarkerProps>;
 }
 
 export interface WarehouseGoogleMapStyles {
@@ -109,6 +115,9 @@ const WarehouseGoogleMap: React.FC<Props> = ({
     warehouseInfoWindow,
     currentLocationInfoWindow,
     handleOpenWarehouseHours,
+    GoogleMap,
+    InfoWindow,
+    Marker,
 }) => {
     if (!currentLocation) {
         return null;
@@ -124,7 +133,13 @@ const WarehouseGoogleMap: React.FC<Props> = ({
     };
 
     return (
-        <GoogleMap {...styles.googleMap} center={currentLocation} onLoad={handleLoad} onUnmount={handleUnmount}>
+        <GoogleMap
+            id="GoogleMap"
+            {...styles.googleMap}
+            center={currentLocation}
+            onLoad={handleLoad}
+            onUnmount={handleUnmount}
+        >
             {mapMarkerElements.map(marker => (
                 <Fragment key={marker.key}>
                     {marker.type === "WAREHOUSE" && <Marker key={marker.key} {...marker} {...styles.warehouseMarker} />}
@@ -195,4 +210,4 @@ const WarehouseGoogleMap: React.FC<Props> = ({
     );
 };
 
-export default WarehouseGoogleMap;
+export default withDynamicGoogleMaps(WarehouseGoogleMap);

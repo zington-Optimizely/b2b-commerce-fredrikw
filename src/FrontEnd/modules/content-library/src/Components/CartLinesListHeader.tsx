@@ -7,6 +7,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC } from "react";
 import { css } from "styled-components";
 
@@ -49,13 +50,14 @@ const CartLinesListHeader: FC<{
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Typography {...styles.productCountText}>
+            <Typography {...styles.productCountText} as="h3">
                 {productsCount} {translate(productsLabel)}
             </Typography>
             {!hideCondensedSelector && (
                 <CheckboxGroup {...styles.checkboxGroup}>
                     <Checkbox {...styles.condensedCheckbox} checked={isCondensed} onChange={onChangeIsCondensed}>
                         {translate("Condensed View")}
+                        <VisuallyHidden>{translate("for product list")}</VisuallyHidden>
                     </Checkbox>
                 </CheckboxGroup>
             )}

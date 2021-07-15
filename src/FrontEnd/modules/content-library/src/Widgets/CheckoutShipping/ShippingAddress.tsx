@@ -33,6 +33,7 @@ import ToasterContext from "@insite/mobius/Toast/ToasterContext";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -249,6 +250,7 @@ const ShippingAddress: FC<Props> = ({
                         data-test-selector="checkoutShipping_selectSavedAddress"
                     >
                         {translate("Select Saved Address")}
+                        <VisuallyHidden>{translate("For Shipping Address")}</VisuallyHidden>
                     </Link>
                 )}
                 <Modal

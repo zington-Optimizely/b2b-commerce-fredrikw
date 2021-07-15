@@ -246,6 +246,15 @@ const CheckoutReviewAndSubmitCarrierService: FC<Props> = ({
                                 ...styles.pickUpDatePicker?.dateTimePickerProps,
                             }}
                             onDayChange={handleRequestPickUpDateChanged}
+                            monthAriaLabel={`${translate("Request Pick Up Date optional")}. ${translate(
+                                "Enter month, format M M",
+                            )}`}
+                            dayAriaLabel={`${translate("Request Pick Up Date optional")}. ${translate(
+                                "Enter day, format D D",
+                            )}`}
+                            yearAriaLabel={`${translate("Request Pick Up Date optional")}. ${translate(
+                                "Enter year, format Y Y Y Y",
+                            )}`}
                         />
                     </GridItem>
                 </>

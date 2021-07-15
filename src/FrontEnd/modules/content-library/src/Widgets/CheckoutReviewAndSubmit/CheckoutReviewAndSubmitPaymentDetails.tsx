@@ -352,6 +352,21 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     const [accountNumber, setAccountNumber] = useState("");
     const [routingNumber, setRoutingNumber] = useState("");
 
+    // Used in deciding which form element to focus on in the case the form is submitted with errors
+    const paymentMethodRef = useRef<HTMLSelectElement>(null);
+    const poNumberRef = useRef<HTMLInputElement>(null);
+    const cardHolderNameRef = useRef<HTMLInputElement>(null);
+    const cardNumberRef = useRef<HTMLInputElement>(null);
+    const cardTypeRef = useRef<HTMLSelectElement>(null);
+    const securityCodeRef = useRef<HTMLInputElement>(null);
+    const expirationMonthRef = useRef<HTMLSelectElement>(null);
+    const expirationYearRef = useRef<HTMLSelectElement>(null);
+    const address1Ref = useRef<HTMLInputElement>(null);
+    const countryRef = useRef<HTMLSelectElement>(null);
+    const stateRef = useRef<HTMLSelectElement>(null);
+    const cityRef = useRef<HTMLInputElement>(null);
+    const postalCodeRef = useRef<HTMLInputElement>(null);
+
     // Used in validation of form, since some form elements will not be validated when PayPal is active.
     const [isPayPal, setIsPayPal] = useState(false);
     // Help to work in the flow of React to validate the form.
@@ -440,7 +455,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
     }, [isCardNumberTokenized, isECheckTokenized]);
 
     useEffect(() => {
-        if (!cartState.isLoading && cartState.value && cartState.value.paymentMethod) {
+        if (!cartState.isLoading && cartState.value && cartState.value.paymentMethod && paymentMethod === "") {
             setPaymentMethod(cartState.value.paymentMethod.name);
         }
     }, [cartState.isLoading]);
@@ -949,6 +964,37 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
         const cityValid = validateCity(city);
         const postalCodeValid = validatePostalCode(postalCode);
 
+        if (!paymentMethodValid) {
+            paymentMethodRef.current?.focus();
+        } else if (!poNumberValid) {
+            poNumberRef.current?.focus();
+        } else if (!cardHolderNameValid) {
+            cardHolderNameRef.current?.focus();
+        } else if (cardNumberResult.cardNumberEmpty || !cardNumberResult.cardNumberValid) {
+            cardNumberRef.current?.focus();
+        } else if (!cardTypeValid) {
+            cardTypeRef.current?.focus();
+        } else if (cardExpired) {
+            const today = new Date();
+            if (expirationYear < today.getFullYear()) {
+                expirationYearRef.current?.focus();
+            } else {
+                expirationMonthRef.current?.focus();
+            }
+        } else if (securityCodeResult.securityCodeEmpty || !securityCodeResult.securityCodeValid) {
+            securityCodeRef.current?.focus();
+        } else if (!address1Valid) {
+            address1Ref.current?.focus();
+        } else if (!countryValid) {
+            countryRef.current?.focus();
+        } else if (!stateValid) {
+            stateRef.current?.focus();
+        } else if (!cityValid) {
+            cityRef.current?.focus();
+        } else if (!postalCodeValid) {
+            postalCodeRef.current?.focus();
+        }
+
         return (
             paymentMethodValid &&
             poNumberValid &&
@@ -981,7 +1027,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
 
         if (useTokenExGateway && (paymentMethodDto?.isPaymentProfile || paymentMethodDto?.isCreditCard) && !isPayPal) {
             tokenExIframe?.tokenize();
-        } else if (useECheckTokenExGateway && paymentMethodDto?.isECheck) {
+        } else if (useECheckTokenExGateway && !isPayPal && paymentMethodDto?.isECheck) {
             tokenExAccountNumberIframe?.tokenize();
         } else {
             placeOrder({
@@ -1084,6 +1130,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                     required
                                     error={showFormErrors && paymentMethodError}
                                     data-test-selector="checkoutReviewAndSubmit_paymentMethod"
+                                    ref={paymentMethodRef}
                                 >
                                     <option value="">{translate("Select Payment Method")}</option>
                                     {paymentMethods.map(method => (
@@ -1147,6 +1194,7 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                     maxLength={50}
                                     error={showFormErrors && poNumberError}
                                     data-test-selector="checkoutReviewAndSubmit_poNumber"
+                                    ref={poNumberRef}
                                 />
                             </GridItem>
                         )}
@@ -1177,21 +1225,27 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                     saveCard={saveCard}
                                     onSaveCardChange={handleSaveCardChange}
                                     cardHolderName={cardHolderName}
+                                    cardHolderNameRef={cardHolderNameRef}
                                     onCardHolderNameChange={handleCardHolderNameChange}
                                     cardHolderNameError={showFormErrors ? cardHolderNameError : undefined}
                                     cardNumber={cardNumber}
+                                    cardNumberRef={cardNumberRef}
                                     onCardNumberChange={handleCardNumberChange}
                                     cardNumberError={showFormErrors ? cardNumberError : undefined}
                                     cardType={cardType}
+                                    cardTypeRef={cardTypeRef}
                                     possibleCardType={possibleCardType}
                                     onCardTypeChange={handleCardTypeChange}
                                     cardTypeError={showFormErrors ? cardTypeError : undefined}
                                     expirationMonth={expirationMonth}
+                                    expirationMonthRef={expirationMonthRef}
                                     onExpirationMonthChange={handleExpirationMonthChange}
                                     expirationYear={expirationYear}
+                                    expirationYearRef={expirationYearRef}
                                     onExpirationYearChange={handleExpirationYearChange}
                                     expirationError={showFormErrors ? expirationError : undefined}
                                     securityCode={securityCode}
+                                    securityCodeRef={securityCodeRef}
                                     onSecurityCodeChange={handleSecurityCodeChange}
                                     securityCodeError={showFormErrors ? securityCodeError : undefined}
                                     availableCardTypes={paymentOptions.cardTypes ?? []}
@@ -1228,18 +1282,23 @@ const CheckoutReviewAndSubmitPaymentDetails = ({
                                     onUseBillToChange={handleUseBillingAddressChange}
                                     billTo={billToState.value}
                                     address1={address1}
+                                    address1Ref={address1Ref}
                                     onAddress1Change={handleAddressChange}
                                     address1Error={showFormErrors ? address1Error : undefined}
                                     country={countryId}
+                                    countryRef={countryRef}
                                     onCountryChange={handleCountryChange}
                                     countryError={showFormErrors ? countryError : undefined}
                                     state={stateId}
+                                    stateRef={stateRef}
                                     onStateChange={handleStateChange}
                                     stateError={showFormErrors ? stateError : undefined}
                                     city={city}
+                                    cityRef={cityRef}
                                     onCityChange={handleCityChange}
                                     cityError={showFormErrors ? cityError : undefined}
                                     postalCode={postalCode}
+                                    postalCodeRef={postalCodeRef}
                                     onPostalCodeChange={handlePostalCodeChange}
                                     postalCodeError={showFormErrors ? postalCodeError : undefined}
                                     availableCountries={countries ?? []}

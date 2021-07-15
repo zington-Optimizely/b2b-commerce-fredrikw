@@ -196,7 +196,7 @@ const OrderStatusHeader = ({
                     </Button>
                 </Hidden>
                 <Hidden {...styles.buttonsMenuHidden}>
-                    <OverflowMenu position="end" {...styles.overflowMenu}>
+                    <OverflowMenu hasChildPortal position="end" {...styles.overflowMenu}>
                         <ShareEntityButton
                             entityId={order.webOrderNumber}
                             entityName="Order"

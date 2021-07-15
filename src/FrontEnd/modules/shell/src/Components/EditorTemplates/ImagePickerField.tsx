@@ -1,3 +1,4 @@
+import formatUrlWithWidthAndHeight from "@insite/client-framework/Common/Utilities/formatUrlWithWidthAndHeight";
 import translate from "@insite/client-framework/Translate";
 import { ImagePickerFieldDefinition } from "@insite/client-framework/Types/FieldDefinition";
 import Button from "@insite/mobius/Button";
@@ -30,13 +31,15 @@ export default class ImagePickerField extends React.Component<Props, State> {
                 const hideOverlay = () => this.setState({ imagePickerIsOpen: undefined });
 
                 document.getElementById("ckf-modal-close")?.addEventListener("click", hideOverlay);
+
                 finder.on("files:choose", (evt: any) => {
                     hideOverlay();
-                    this.props.updateField(this.props.fieldDefinition.name, evt.data.files.first().getUrl());
+                    this.updateFieldWithWidthAndHeight(evt.data.files.first().getUrl());
                 });
+
                 finder.on("file:choose:resizedImage", (evt: any) => {
                     hideOverlay();
-                    this.props.updateField(this.props.fieldDefinition.name, evt.data.resizedUrl);
+                    this.updateFieldWithWidthAndHeight(evt.data.resizedUrl);
                 });
             },
         });
@@ -47,7 +50,23 @@ export default class ImagePickerField extends React.Component<Props, State> {
     };
 
     imageUrlChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
-        this.props.updateField(this.props.fieldDefinition.name, event.currentTarget.value);
+        const url = event.currentTarget.value;
+        this.props.updateField(this.props.fieldDefinition.name, url);
+    };
+
+    updateFieldWithWidthAndHeight = (url: string) => {
+        const image = new Image();
+        image.src = url;
+        const that = this;
+        image.onload = function onLoadHandler(this: any) {
+            const { width, height } = this;
+            const urlWithQueryStrings = formatUrlWithWidthAndHeight({ url, width, height });
+            that.props.updateField(that.props.fieldDefinition.name, urlWithQueryStrings);
+        };
+    };
+
+    appendWidthAndHeightBeforeSave = () => {
+        this.updateFieldWithWidthAndHeight(this.props.fieldValue);
     };
 
     render() {
@@ -80,6 +99,7 @@ export default class ImagePickerField extends React.Component<Props, State> {
                         type="text"
                         value={this.props.fieldValue}
                         onChange={this.imageUrlChangeHandler}
+                        onBlur={this.appendWidthAndHeightBeforeSave}
                     />
                 </Wrapper>
             </StandardControl>

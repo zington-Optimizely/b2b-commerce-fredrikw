@@ -1,23 +1,20 @@
 import useGoogleMaps from "@insite/client-framework/Common/Hooks/useGoogleMaps";
 import { LocationGoogleMapMarkerType } from "@insite/client-framework/Common/Hooks/useLocationGoogleMarkers";
+import withDynamicGoogleMaps from "@insite/client-framework/Common/withDynamicGoogleMaps";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
-import {
-    DealerStateContext,
-    getDealersDataView,
-    getDealersDefaultLocation,
-} from "@insite/client-framework/Store/Data/Dealers/DealersSelectors";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { DealerStateContext } from "@insite/client-framework/Store/Data/Dealers/DealersSelectors";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import { DistanceUnitOfMeasure } from "@insite/content-library/Components/DistanceDisplay";
 import LocationGoogleMap, { LocationGoogleMapStyles } from "@insite/content-library/Components/LocationGoogleMap";
-
 import { DealerDetailsPageContext } from "@insite/content-library/Pages/DealerDetailsPage";
 import { HasHistory } from "@insite/mobius/utilities/HistoryContext";
 import React, { useContext } from "react";
 import { connect } from "react-redux";
 
-interface OwnProps {}
+interface OwnProps {
+    useLoadScript: ({ googleMapsApiKey }: { googleMapsApiKey: any }) => { isLoaded: boolean };
+}
 
 const mapStateToProps = (state: ApplicationState) => ({
     googleMapsApiKey: getSettingsCollection(state).websiteSettings.googleMapsApiKey,
@@ -33,10 +30,11 @@ export const dealerLocationMapStyles: DealerLocationMapStyles = {};
 
 const styles = dealerLocationMapStyles;
 
-const DealerLocationMap: React.FC<Props> = ({ googleMapsApiKey }) => {
+const DealerLocationMap: React.FC<Props> = ({ googleMapsApiKey, useLoadScript }) => {
     const { value: dealer } = useContext(DealerStateContext);
+    const { isLoaded } = useLoadScript({ googleMapsApiKey });
     const { setGoogleMap, isGoogleMapsScriptsLoaded } = useGoogleMaps({
-        googleMapsApiKey,
+        isLoaded,
         isShown: true,
     });
 
@@ -67,7 +65,7 @@ const DealerLocationMap: React.FC<Props> = ({ googleMapsApiKey }) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps)(DealerLocationMap),
+    component: connect(mapStateToProps)(withDynamicGoogleMaps(DealerLocationMap)),
     definition: {
         allowedContexts: [DealerDetailsPageContext],
         group: "Dealer Details",

@@ -6,7 +6,6 @@ import applyPropBuilder from "@insite/mobius/utilities/applyPropBuilder";
 import getProp from "@insite/mobius/utilities/getProp";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import injectCss from "@insite/mobius/utilities/injectCss";
-import MobiusStyledComponentProps from "@insite/mobius/utilities/MobiusStyledComponentProps";
 import omitMultiple from "@insite/mobius/utilities/omitMultiple";
 import resolveColor from "@insite/mobius/utilities/resolveColor";
 import Color from "color";

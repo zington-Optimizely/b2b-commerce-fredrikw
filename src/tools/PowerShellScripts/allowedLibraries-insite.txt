@@ -35,6 +35,7 @@ Insite.OrderApproval
 Insite.Payments
 Insite.Promotions
 Insite.Public.Core
+Insite.Public.IdentityServer
 Insite.Public.Integration
 Insite.Public.WebFramework
 Insite.PunchOut

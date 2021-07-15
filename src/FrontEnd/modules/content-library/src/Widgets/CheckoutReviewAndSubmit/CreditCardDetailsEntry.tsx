@@ -25,21 +25,27 @@ interface OwnProps {
     saveCard: boolean;
     onSaveCardChange: (_: React.SyntheticEvent<Element, Event>, value: boolean) => void;
     cardHolderName: string;
+    cardHolderNameRef?: React.Ref<HTMLInputElement>;
     onCardHolderNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     cardHolderNameError?: string;
     cardNumber: string;
+    cardNumberRef?: React.Ref<HTMLInputElement>;
     onCardNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     cardNumberError?: string;
     cardType: string;
+    cardTypeRef?: React.Ref<HTMLSelectElement>;
     possibleCardType: string;
     onCardTypeChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     cardTypeError?: string;
     expirationMonth: number;
+    expirationMonthRef?: React.Ref<HTMLSelectElement>;
     onExpirationMonthChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     expirationError?: string;
     expirationYear: number;
+    expirationYearRef?: React.Ref<HTMLSelectElement>;
     onExpirationYearChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     securityCode: string;
+    securityCodeRef?: React.Ref<HTMLInputElement>;
     onSecurityCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     securityCodeError?: string;
     availableCardTypes: { key: string; value: string }[];
@@ -151,25 +157,31 @@ const CreditCardDetailsEntry = ({
     saveCard,
     onSaveCardChange,
     cardHolderName,
+    cardHolderNameRef,
     onCardHolderNameChange,
     cardHolderNameError,
     cardNumberError,
     cardNumber,
+    cardNumberRef,
     onCardNumberChange,
     possibleCardType,
     onCardTypeChange,
     cardTypeError,
     cardType,
+    cardTypeRef,
     availableCardTypes,
     expirationMonth,
+    expirationMonthRef,
     onExpirationMonthChange,
     expirationError,
     availableMonths,
     expirationYear,
+    expirationYearRef,
     onExpirationYearChange,
     availableYears,
     securityCodeError,
     securityCode,
+    securityCodeRef,
     onSecurityCodeChange,
 }: OwnProps) => {
     const [isSecurityCodeModalOpen, setIsSecurityCodeModalOpen] = useState(false);
@@ -219,6 +231,7 @@ const CreditCardDetailsEntry = ({
                             maxLength={30}
                             error={cardHolderNameError}
                             data-test-selector="checkoutReviewAndSubmit_cardHolderName"
+                            ref={cardHolderNameRef}
                         />
                     </GridItem>
                     <GridItem {...styles.cardNumberGridItem}>
@@ -247,6 +260,7 @@ const CreditCardDetailsEntry = ({
                                 maxLength={16}
                                 error={cardNumberError}
                                 data-test-selector="checkoutReviewAndSubmit_cardNumber"
+                                ref={cardNumberRef}
                             />
                         )}
                     </GridItem>
@@ -271,6 +285,7 @@ const CreditCardDetailsEntry = ({
                                 required
                                 error={cardTypeError}
                                 data-test-selector="checkoutReviewAndSubmit_cardType"
+                                ref={cardTypeRef}
                             >
                                 <option value="">{translate("Select Card")}</option>
                                 {availableCardTypes.map(ct => (
@@ -292,6 +307,7 @@ const CreditCardDetailsEntry = ({
                                     required
                                     error={expirationError}
                                     data-test-selector="checkoutReviewAndSubmit_expirationMonth"
+                                    ref={expirationMonthRef}
                                 >
                                     {availableMonths.map(month => (
                                         <option key={month.value} value={month.value}>
@@ -308,6 +324,7 @@ const CreditCardDetailsEntry = ({
                                     onChange={onExpirationYearChange}
                                     required
                                     data-test-selector="checkoutReviewAndSubmit_expirationYear"
+                                    ref={expirationYearRef}
                                 >
                                     {availableYears.map(year => (
                                         <option key={year.value} value={year.value}>
@@ -347,6 +364,7 @@ const CreditCardDetailsEntry = ({
                                 maxLength={4}
                                 error={securityCodeError}
                                 data-test-selector="checkoutReviewAndSubmit_securityCode"
+                                ref={securityCodeRef}
                             />
                         )}
                         <Modal

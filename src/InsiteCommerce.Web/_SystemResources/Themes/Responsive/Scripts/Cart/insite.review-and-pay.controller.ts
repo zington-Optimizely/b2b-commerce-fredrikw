@@ -501,7 +501,7 @@ module insite.cart {
                 }
             }
 
-            if (this.useECheckTokenExGateway && this.cart.showECheck && this.cart.paymentMethod.isECheck && !this.cart.requiresApproval) {
+            if (this.useECheckTokenExGateway && this.cart.showECheck && !this.cart.paymentOptions.isPayPal && this.cart.paymentMethod.isECheck && !this.cart.requiresApproval) {
                 if (typeof this.isInvalidAccountNumber !== 'undefined' && typeof this.isInvalidRoutingNumber !== 'undefined') {
                     this.tokenExAccountNumberIframe.tokenize();
                 } else {

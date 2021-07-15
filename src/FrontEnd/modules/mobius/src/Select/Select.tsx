@@ -36,7 +36,7 @@ export interface SelectPresentationProps extends FormFieldPresentationProps<Sele
 
 export type SelectComponentProps = MobiusStyledComponentProps<
     "select",
-    Partial<FormFieldComponentProps> & {
+    {
         /** Disables the select box. */
         disabled?: boolean;
         /** Error message to be displayed below the select box. */
@@ -62,7 +62,9 @@ export type SelectComponentProps = MobiusStyledComponentProps<
         value?: string | number;
         /** Props to be passed into the inner `<select>` component. */
         selectProps?: object;
-    }
+        /** reference to the HTML Select element provided by the refWrapper function below */
+        selectRef?: React.Ref<HTMLSelectElement>;
+    } & Partial<FormFieldComponentProps>
 >;
 
 export type SelectProps = SelectPresentationProps & SelectComponentProps;
@@ -70,9 +72,7 @@ export type SelectProps = SelectPresentationProps & SelectComponentProps;
 const SelectStyle = styled.select<InjectableCss>`
     ${injectCss}
 `;
-/**
- * Creates a dropdown with an optional label, hint text and error message. Accepts children to render as options.
- */
+
 class Select extends React.Component<SelectProps & HasDisablerContext> {
     static defaultProps = {
         onChange: () => {},
@@ -130,6 +130,7 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
                                 data-selected-index={this.state.value || ""}
                                 css={applyStyledProp("css", resolvedMergeCss)}
                                 value={this.state.value}
+                                ref={this.props.selectRef}
                                 {...{ disabled: isDisabled, required }}
                                 {...inputLabelObj}
                                 {...omitMultiple(otherProps, [
@@ -172,4 +173,13 @@ class Select extends React.Component<SelectProps & HasDisablerContext> {
 }
 
 /** @component */
-export default withDisabler(Select);
+
+function refWrapper(Component: any) {
+    const selectForwardRef = React.forwardRef<HTMLSelectElement, SelectProps & HasDisablerContext>((props, ref) => {
+        return <Component {...props} selectRef={ref} />;
+    });
+    selectForwardRef.displayName = "forwardRef";
+    return selectForwardRef;
+}
+
+export default withDisabler(refWrapper(Select));

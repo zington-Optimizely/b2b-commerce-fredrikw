@@ -176,6 +176,7 @@ const Modal: React.FC<ModalProps> = withTheme(props => {
     if (isCloseable) {
         titleButton = (
             <Button
+                id="CloseModalButton"
                 onClick={handleClose}
                 aria-labelledby="close-modal"
                 buttonType="outline"

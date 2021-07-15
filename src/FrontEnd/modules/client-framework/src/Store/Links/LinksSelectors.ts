@@ -84,6 +84,7 @@ export const useGetLinks = <T>(list: T[], linkSelector: (item: T) => LinkFieldVa
 
         if (
             linkField.type === "Category" &&
+            linkField.value &&
             !link.url &&
             !categoryState?.isLoading &&
             !categoryState?.errorStatusCode

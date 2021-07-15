@@ -5,6 +5,7 @@ import useWarehouseGoogleMarkers from "@insite/client-framework/Common/Hooks/use
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper, { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import { getGeoCodeFromLatLng } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
+import withDynamicGoogleMaps from "@insite/client-framework/Common/withDynamicGoogleMaps";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import loadWarehouses from "@insite/client-framework/Store/Components/FindLocationModal/Handlers/LoadWarehouses";
@@ -47,6 +48,7 @@ interface OwnProps {
     onWarehouseSelected: (warehouse: WarehouseModel) => void;
     onModalClose: () => void;
     extendedStyles?: FindLocationModalStyles;
+    useLoadScript: ({ googleMapsApiKey }: { googleMapsApiKey: any }) => { isLoaded: boolean };
 }
 
 const mapStateToProps = (state: ApplicationState) => ({
@@ -378,6 +380,8 @@ export const findLocationModalStyles: FindLocationModalStyles = {
 const StyledForm = getStyledWrapper("form");
 const StyledHr = getStyledWrapper("hr");
 
+let lastFocusableElement: any = null;
+
 const FindLocationModal = ({
     session,
     settings,
@@ -387,6 +391,7 @@ const FindLocationModal = ({
     onModalClose,
     extendedStyles,
     loadWarehouses,
+    useLoadScript,
 }: Props) => {
     const [styles] = useState(() => mergeToNew(findLocationModalStyles, extendedStyles));
     const [distanceUnitOfMeasure, setDistanceUnitOfMeasure] = useState<DistanceUnitOfMeasure>("Imperial");
@@ -395,6 +400,7 @@ const FindLocationModal = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { googleMapsApiKey } = settings.websiteSettings;
+    const { isLoaded } = useLoadScript({ googleMapsApiKey });
     const {
         googleMap,
         setGoogleMap,
@@ -406,7 +412,7 @@ const FindLocationModal = ({
         locationKnown,
         setLocationKnown,
     } = useGoogleMaps({
-        googleMapsApiKey,
+        isLoaded,
         isShown: modalIsOpen,
     });
 
@@ -496,6 +502,69 @@ const FindLocationModal = ({
             setIsLoading(true);
         }
     }, [warehousesDataView, isGoogleMapsScriptsLoaded]);
+
+    // Manage modal focus when tabbing through the map insert
+    const keysPressed = {
+        shift: false,
+        tab: false,
+    };
+
+    let focusableElementInterval: any = null;
+
+    const updateLastFocusableElement = () => {
+        const focusableElements = document.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusableElements.length > 0) {
+            lastFocusableElement = focusableElements[focusableElements.length - 1];
+        }
+    };
+
+    const handleKeydownTabInModal = (event: KeyboardEvent) => {
+        // collect what keys are being pressed in the case that the user is trying to shift+tab while on the close modal button
+        if (event.key === "Tab") {
+            keysPressed.tab = true;
+        } else if (event.key === "Shift") {
+            keysPressed.shift = true;
+        }
+        // if straight tab and on the final focusable element (the terms of use html page link) refocus onto the close modal button
+        if (event.key === "Tab" && !keysPressed.shift) {
+            const currentElement = document.activeElement;
+            // using the .html here as it is the only link on the page to an html page. Cannot rely on checking "terms of use" is the inner HTML since that will not always be in English
+
+            if (currentElement === lastFocusableElement) {
+                event.preventDefault();
+                document.getElementById("CloseModalButton")?.focus();
+            }
+        } else if ((event.key === "Tab" && keysPressed.shift) || (event.key === "Shift" && keysPressed.tab)) {
+            // if pressing shift+tab and the focus is on the close modal button, send the focus to the terms of use element which is the last anchor tag on the google map
+            if (document.activeElement?.id === "CloseModalButton" && lastFocusableElement) {
+                event.preventDefault();
+                lastFocusableElement.focus();
+            }
+        }
+    };
+
+    const handleKeyupTabInModal = (event: KeyboardEvent) => {
+        if (event.key === "Tab") {
+            keysPressed.tab = false;
+        } else if (event.key === "Shift") {
+            keysPressed.shift = false;
+        }
+    };
+
+    useEffect(() => {
+        if (modalIsOpen && !warehouseHoursToDisplayModalOpen) {
+            window.addEventListener("keydown", handleKeydownTabInModal);
+            window.addEventListener("keyup", handleKeyupTabInModal);
+            focusableElementInterval = setInterval(updateLastFocusableElement, 1000);
+        }
+        return () => {
+            window.removeEventListener("keydown", handleKeydownTabInModal);
+            window.removeEventListener("keyup", handleKeyupTabInModal);
+            clearInterval(focusableElementInterval);
+        };
+    }, [modalIsOpen, warehouseHoursToDisplayModalOpen]);
 
     const modalCloseHandler = () => {
         onModalClose();
@@ -780,6 +849,7 @@ const FindLocationModal = ({
                                 warehouseInfoWindow={warehouseInfoWindow}
                                 currentLocationInfoWindow={currentLocationInfoWindow}
                                 handleOpenWarehouseHours={handleOpenHoursModal}
+                                updateLastFocusableElement={updateLastFocusableElement}
                             />
                         </GridItem>
                     </GridContainer>
@@ -833,4 +903,4 @@ const SearchLocationsTextField = ({ styles, doSearch, warehouseSearchFilter }: S
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FindLocationModal);
+export default connect(mapStateToProps, mapDispatchToProps)(withDynamicGoogleMaps(FindLocationModal));

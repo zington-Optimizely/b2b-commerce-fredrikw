@@ -126,9 +126,13 @@ export const actionsStyles: QuickOrderActionsStyles = {
                 breakpointMediaQueries(theme, [
                     css`
                         margin-top: 10px;
+                        display: block;
+                        width: 100%;
                     `,
                     css`
                         margin-top: 10px;
+                        display: block;
+                        width: 100%;
                     `,
                     css`
                         margin-left: 10px;
@@ -144,6 +148,22 @@ export const actionsStyles: QuickOrderActionsStyles = {
     },
     uploadOrderButton: {
         variant: "secondary",
+        css: css`
+            ${({ theme }: { theme: BaseTheme }) =>
+                breakpointMediaQueries(theme, [
+                    css`
+                        display: block;
+                        width: 100%;
+                    `,
+                    css`
+                        display: block;
+                        width: 100%;
+                    `,
+                    null,
+                    null,
+                    null,
+                ])}
+        `,
     },
 };
 

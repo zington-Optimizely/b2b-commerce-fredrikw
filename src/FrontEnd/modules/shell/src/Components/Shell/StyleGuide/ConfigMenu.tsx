@@ -50,7 +50,7 @@ class ConfigMenu extends React.Component<Props> {
                         style={{ width: "100%" }}
                         css={css`
                             &:hover {
-                                color: ${({ theme }) => theme.colors.primary.main};
+                                color: ${({ theme }) => theme.colors.primary.contrast};
                             }
                         `}
                     >

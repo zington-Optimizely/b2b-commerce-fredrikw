@@ -53,10 +53,10 @@
                 return;
             }
 
-            const username = this.queryString.get("username");
+            const userId = this.queryString.get("userId");
             const resetToken = this.queryString.get("resetToken");
 
-            this.sessionService.resetPasswordWithToken(username, this.confirmPassword, resetToken).then(
+            this.sessionService.resetPasswordWithToken(userId, this.confirmPassword, resetToken).then(
                 (session: SessionModel) => { this.resetPasswordWithTokenCompleted(session); },
                 (error: any) => { this.resetPasswordWithTokenFailed(error); });
         }

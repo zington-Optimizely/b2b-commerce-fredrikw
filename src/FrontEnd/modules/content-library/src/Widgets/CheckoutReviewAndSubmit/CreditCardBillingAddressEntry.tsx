@@ -17,18 +17,23 @@ interface OwnProps {
     onUseBillToChange: (event: React.SyntheticEvent<Element, Event>, value: boolean) => void;
     billTo: BillToModel | undefined;
     address1: string;
+    address1Ref?: React.Ref<HTMLInputElement>;
     onAddress1Change: (event: React.ChangeEvent<HTMLInputElement>) => void;
     address1Error?: string;
     country: string;
+    countryRef?: React.Ref<HTMLSelectElement>;
     onCountryChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     countryError?: string;
     state: string;
+    stateRef?: React.Ref<HTMLSelectElement>;
     onStateChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     stateError?: string;
     city: string;
+    cityRef?: React.Ref<HTMLInputElement>;
     onCityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     cityError?: string;
     postalCode: string;
+    postalCodeRef?: React.Ref<HTMLInputElement>;
     onPostalCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     postalCodeError?: string;
     availableCountries: CountryModel[];
@@ -83,20 +88,25 @@ const CreditCardBillingAddressEntry = ({
     extendedStyles,
     onUseBillToChange,
     address1,
+    address1Ref,
     onAddress1Change,
     address1Error,
     country,
+    countryRef,
     onCountryChange,
     countryError,
     availableCountries,
     state,
+    stateRef,
     onStateChange,
     stateError,
     availableStates,
     city,
+    cityRef,
     onCityChange,
     cityError,
     postalCode,
+    postalCodeRef,
     onPostalCodeChange,
     postalCodeError,
 }: OwnProps) => {
@@ -147,6 +157,7 @@ const CreditCardBillingAddressEntry = ({
                             maxLength={30}
                             error={address1Error}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingAddress1"
+                            ref={address1Ref}
                         />
                     </GridItem>
                     <GridItem {...styles.countryGridItem}>
@@ -158,6 +169,7 @@ const CreditCardBillingAddressEntry = ({
                             required
                             error={countryError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingCountry"
+                            ref={countryRef}
                         >
                             <option value="">{translate("Select Country")}</option>
                             {availableCountries.map(country => (
@@ -176,6 +188,7 @@ const CreditCardBillingAddressEntry = ({
                             required
                             error={stateError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingState"
+                            ref={stateRef}
                         >
                             <option value="">{translate("Select State")}</option>
                             {availableStates?.map(state => (
@@ -195,6 +208,7 @@ const CreditCardBillingAddressEntry = ({
                             maxLength={30}
                             error={cityError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingCity"
+                            ref={cityRef}
                         />
                     </GridItem>
                     <GridItem {...styles.postalCodeGridItem}>
@@ -207,6 +221,7 @@ const CreditCardBillingAddressEntry = ({
                             maxLength={30}
                             error={postalCodeError}
                             data-test-selector="checkoutReviewAndSubmit_creditCardBillingPostalCode"
+                            ref={postalCodeRef}
                         />
                     </GridItem>
                 </>

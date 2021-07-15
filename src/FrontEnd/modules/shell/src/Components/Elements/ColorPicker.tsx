@@ -14,7 +14,7 @@ const LabelWithInputAtEnd = styled.label<ThemeProps<ShellTheme> & { firstInput?:
     justify-content: space-between;
     &:hover {
         .label {
-            color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.main)};
+            color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.contrast)};
         }
     }
     > span {

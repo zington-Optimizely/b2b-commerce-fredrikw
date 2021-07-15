@@ -95,13 +95,13 @@ const HeaderGear = ({
                         border: 0;
                         border-radius: 0;
                         &:hover {
-                            background-color: ${shellTheme.colors.custom.mainHeader};
+                            background-color: ${shellTheme.colors.custom.activeBackground};
                         }
                     `,
                 }}
                 iconProps={{
                     src: "Settings",
-                    color: "text.accent",
+                    color: "primary.contrast",
                 }}
                 cssOverrides={{
                     menuItem: menuItemStyles,

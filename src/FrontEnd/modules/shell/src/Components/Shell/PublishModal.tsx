@@ -495,6 +495,9 @@ const PublishModal: React.FC<Props> = ({
                 {!nothingToPublish && (
                     <Button
                         variant="primary"
+                        css={css`
+                            border-color: ${({ theme }) => theme.colors.text.main};
+                        `}
                         data-test-selector="publishModal_publish"
                         disabled={
                             !pagePublishInfosState.value ||

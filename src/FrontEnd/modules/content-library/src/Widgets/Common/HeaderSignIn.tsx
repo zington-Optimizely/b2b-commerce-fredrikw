@@ -9,6 +9,7 @@ import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/Link
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ChangeCustomerPageContext } from "@insite/content-library/Pages/ChangeCustomerPage";
 import Clickable, { ClickablePresentationProps } from "@insite/mobius/Clickable";
 import Icon, { IconPresentationProps } from "@insite/mobius/Icon/Icon";
 import User from "@insite/mobius/Icons/User";
@@ -34,6 +35,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     currentUserIsGuest: getCurrentUserIsGuest(state),
     isPunchOutSession: getIsPunchOutSession(state),
     currentLocation: getLocation(state),
+    displayChangeCustomerLink: state.context.session?.displayChangeCustomerLink || false,
 });
 
 const mapDispatchToProps = {
@@ -103,6 +105,7 @@ const HeaderSignIn = ({
     signInUrl,
     isPunchOutSession,
     currentLocation,
+    displayChangeCustomerLink,
 }: Props) => {
     const showIcon = fields.visibilityState === "both" || fields.visibilityState === "icon";
     const showLabel = fields.visibilityState === "both" || fields.visibilityState === "label";
@@ -141,7 +144,11 @@ const HeaderSignIn = ({
             {fields.includeAccountMenu && userName && !currentUserIsGuest && (
                 <Menu
                     descriptionId="accountMenu"
-                    menuItems={myAccountPageLink?.children ?? []}
+                    menuItems={
+                        myAccountPageLink?.children?.filter(
+                            pageLink => !(pageLink.type === ChangeCustomerPageContext && !displayChangeCustomerLink),
+                        ) ?? []
+                    }
                     maxDepth={1}
                     menuTrigger={
                         <Clickable {...styles.titleClickable} data-test-selector="header_signIn">

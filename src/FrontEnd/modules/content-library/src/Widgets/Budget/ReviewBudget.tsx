@@ -95,7 +95,6 @@ export interface ReviewBudgetStyles {
 export const reviewBudgetStyles: ReviewBudgetStyles = {
     filterWrapper: {
         css: css`
-            display: inline-block;
             margin: 25px 0 15px 0;
         `,
     },
@@ -263,7 +262,7 @@ class ReviewBudget extends React.Component<Props, State> {
                                     }
                                     data-test-selector="reviewBudgetUserSelector"
                                 >
-                                    <option value="">{translate("Select User")}</option>,
+                                    <option value="">{translate("Select User")}</option>
                                     {accounts.map((account: AccountModel) => (
                                         <option key={account.id} value={account.id}>
                                             {account.userName}
@@ -282,7 +281,7 @@ class ReviewBudget extends React.Component<Props, State> {
                                     }
                                     data-test-selector="shipToSelector"
                                 >
-                                    <option value="">{translate("Select Ship To")}</option>,
+                                    <option value="">{translate("Select Ship To")}</option>
                                     {shipTos.map((shipTo: ShipToModel) => (
                                         <option key={shipTo.id.toString()} value={shipTo.id.toString()}>
                                             {shipTo.label}

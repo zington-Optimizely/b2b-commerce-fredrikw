@@ -267,7 +267,7 @@ module insite.catalog {
 
         protected getProductRealTimePricesCompleted(response: ng.IHttpPromiseCallbackArg<RealTimePricingModel>, products: ProductDto[]): void {
             response.data.realTimePricingResults.forEach((productPrice: ProductPriceDto) => {
-                const product = products.find((p: ProductDto) => p.id === productPrice.productId);
+                const product = products.find((p: ProductDto) => p.id === productPrice.productId && p.selectedUnitOfMeasure === productPrice.unitOfMeasure);
                 if (product) {
                     product.pricing = productPrice;
                 }

@@ -49,7 +49,7 @@ export function getNoscriptTrackingScript(settings: SettingsModel) {
     const { googleTrackingTypeComputed, googleTrackingAccountId } = settings.settingsCollection.websiteSettings;
 
     if (googleTrackingTypeComputed === "GoogleTagManager") {
-        return `<iframe src="//www.googletagmanager.com/ns.html?id='${googleTrackingAccountId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+        return `<iframe src="//www.googletagmanager.com/ns.html?id='${googleTrackingAccountId}'" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
     }
 
     return null;

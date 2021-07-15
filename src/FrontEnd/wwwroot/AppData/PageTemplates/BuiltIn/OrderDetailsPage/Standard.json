@@ -1,17 +1,21 @@
 {
-    "nodeId": "4d74a79e-82b6-4888-9d08-ef6dc066e4de",
+    "nodeId": "68c77dbd-1acc-4c3f-84e7-b9d3621be2a4",
     "name": "Order Details",
     "type": "OrderDetailsPage",
-    "parentId": "3aaee3eb-d0a0-4f0c-8d62-4b12475df92f",
+    "parentId": "16e47078-1b92-44c9-98f3-9ae0765f11c9",
     "sortOrder": 0,
     "websiteId": "c2c53320-98dc-4eca-8022-9efc00dea0dc",
     "variantName": null,
-    "id": "aa885152-5e50-474c-a17f-cd0f9618e738",
+    "layoutPageId": null,
+    "templateHash": "327bf46edbddbd276881a15e20f79c7f97d367fbfe82e8a2d630abd13d6095c0",
+    "requiresAuthorization": true,
+    "id": "70dbf74e-92f4-45b8-bf44-81274410f072",
     "generalFields": {
         "horizontalRule": "",
         "tags": [],
         "hideBreadcrumbs": false,
-        "variantName": ""
+        "variantName": null,
+        "layoutPage": ""
     },
     "translatableFields": {
         "title": {
@@ -24,10 +28,11 @@
     "contextualFields": {},
     "widgets": [
         {
-            "parentId": "aa885152-5e50-474c-a17f-cd0f9618e738",
+            "parentId": "70dbf74e-92f4-45b8-bf44-81274410f072",
             "type": "Basic/Row",
             "zone": "Content",
-            "id": "66b9063f-d09b-46c6-a863-4766f114ad2a",
+            "isLayout": false,
+            "id": "ae4d0ed1-13ac-4506-bf01-80b3d3072cde",
             "generalFields": {
                 "columns": [
                     [
@@ -53,10 +58,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "aa885152-5e50-474c-a17f-cd0f9618e738",
+            "parentId": "70dbf74e-92f4-45b8-bf44-81274410f072",
             "type": "Basic/Row",
             "zone": "Content",
-            "id": "e76a3020-3b57-4b6b-b657-fb9cd2678f1a",
+            "isLayout": false,
+            "id": "b46f6a68-b4ce-4d99-b3f7-8caf65c6cc91",
             "generalFields": {
                 "columns": [
                     [
@@ -82,28 +88,31 @@
             "contextualFields": {}
         },
         {
-            "parentId": "aa885152-5e50-474c-a17f-cd0f9618e738",
+            "parentId": "70dbf74e-92f4-45b8-bf44-81274410f072",
             "type": "OrderDetails/OrderDetailsSummaryTable",
             "zone": "Content",
-            "id": "1c301b8c-3ec3-4883-a29f-1ce35d68b67b",
+            "isLayout": false,
+            "id": "87d7b111-3611-488b-b9f6-f7e5ebd489f9",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "66b9063f-d09b-46c6-a863-4766f114ad2a",
+            "parentId": "ae4d0ed1-13ac-4506-bf01-80b3d3072cde",
             "type": "OrderDetails/OrderDetailsTitle",
             "zone": "Content0",
-            "id": "02d95e12-03ac-4c8a-b799-544b3d46319a",
+            "isLayout": false,
+            "id": "a1db7b89-c848-44f2-8e5b-e40d9ce90644",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "66b9063f-d09b-46c6-a863-4766f114ad2a",
+            "parentId": "ae4d0ed1-13ac-4506-bf01-80b3d3072cde",
             "type": "OrderDetails/OrderDetailsButtonSet",
             "zone": "Content1",
-            "id": "e6a659e3-7a98-4c61-9906-7ca61e26c69d",
+            "isLayout": false,
+            "id": "68bb529f-3bea-4927-85fc-4f5705a65881",
             "generalFields": {
                 "buttonsOrder": [
                     {
@@ -131,25 +140,28 @@
                             "name": "Reorder"
                         }
                     }
-                ]
+                ],
+                "generateEmailAttachmentFromWebpage": true
             },
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "e76a3020-3b57-4b6b-b657-fb9cd2678f1a",
+            "parentId": "b46f6a68-b4ce-4d99-b3f7-8caf65c6cc91",
             "type": "OrderDetails/OrderDetailsTotal",
             "zone": "Content1",
-            "id": "03a46d23-cffd-4032-ad04-769c55487bb6",
+            "isLayout": false,
+            "id": "94068718-8070-4db7-9f7d-a35b9a56b9e0",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "e76a3020-3b57-4b6b-b657-fb9cd2678f1a",
+            "parentId": "b46f6a68-b4ce-4d99-b3f7-8caf65c6cc91",
             "type": "Basic/Rows",
             "zone": "Content0",
-            "id": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "isLayout": false,
+            "id": "79c17790-2566-4958-a7ee-12f2201672ef",
             "generalFields": {
                 "rowCount": 5,
                 "gap": 15
@@ -158,10 +170,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "Basic/Row",
             "zone": "Content0",
-            "id": "fa1ca9f2-5497-4f77-bec4-bd5bcb5aacfa",
+            "isLayout": false,
+            "id": "b99646c0-aec1-4a08-a57f-e66c26baf2c5",
             "generalFields": {
                 "columns": [
                     [
@@ -187,10 +200,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "Basic/RichContent",
             "zone": "Content1",
-            "id": "c66b6984-428a-4cbb-9673-d80b89cf7b78",
+            "isLayout": false,
+            "id": "e40123a4-137e-4ae5-a107-c5621a61c1eb",
             "generalFields": {
                 "backgroundColor": "",
                 "padding": 0
@@ -203,10 +217,11 @@
             }
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "Basic/Row",
             "zone": "Content1",
-            "id": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
+            "isLayout": false,
+            "id": "f63c9d20-b12b-40c3-b8a7-5a4f01c24729",
             "generalFields": {
                 "columns": [
                     6,
@@ -220,10 +235,11 @@
             "contextualFields": {}
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "Basic/RichContent",
             "zone": "Content2",
-            "id": "a8c9633a-0177-44a1-92df-3dc732b7896e",
+            "isLayout": false,
+            "id": "46143b89-b7d6-452b-a533-6f75d1ffeff3",
             "generalFields": {
                 "backgroundColor": "",
                 "padding": 0
@@ -236,73 +252,91 @@
             }
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "OrderDetails/OrderDetailsBillingAddress",
             "zone": "Content2",
-            "id": "b7c0fbb9-9614-40b6-8096-d7619a39deec",
+            "isLayout": false,
+            "id": "b6298a38-5c56-4608-be16-7c81fd1ecf0e",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "OrderDetails/OrderDetailsNotes",
             "zone": "Content3",
-            "id": "04f54fee-de50-4d0c-a1dd-31b4102f15b6",
+            "isLayout": false,
+            "id": "6c541aa2-9404-45cf-b7f6-44479adf0dfd",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "50edd788-2491-42b1-ad74-6c62b199a45b",
+            "parentId": "79c17790-2566-4958-a7ee-12f2201672ef",
             "type": "OrderDetails/OrderDetailsShipmentPackages",
             "zone": "Content4",
-            "id": "3a533609-db32-456d-a39a-9a2848edde5c",
+            "isLayout": false,
+            "id": "82f673d3-68a9-4544-80e1-07c75eb4c430",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "fa1ca9f2-5497-4f77-bec4-bd5bcb5aacfa",
+            "parentId": "b99646c0-aec1-4a08-a57f-e66c26baf2c5",
             "type": "OrderDetails/OrderDetailsStatus",
             "zone": "Content0",
-            "id": "63909186-a117-46a2-8e76-48d7c8297adc",
+            "isLayout": false,
+            "id": "c2eadcd6-ec52-48f9-853f-b69493953226",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "fa1ca9f2-5497-4f77-bec4-bd5bcb5aacfa",
+            "parentId": "b99646c0-aec1-4a08-a57f-e66c26baf2c5",
+            "type": "OrderDetails/OrderDetailsPaymentTerms",
+            "zone": "Content0",
+            "isLayout": false,
+            "id": "a6d26ae0-928c-4592-bfa3-b35d31c6d973",
+            "generalFields": {},
+            "translatableFields": {},
+            "contextualFields": {}
+        },
+        {
+            "parentId": "b99646c0-aec1-4a08-a57f-e66c26baf2c5",
             "type": "OrderDetails/OrderDate",
             "zone": "Content1",
-            "id": "c7d705d5-c972-40bd-b904-b619fc440d4b",
+            "isLayout": false,
+            "id": "765607ae-c2d4-4696-a99e-a339f6906af1",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
+            "parentId": "f63c9d20-b12b-40c3-b8a7-5a4f01c24729",
             "type": "OrderDetails/OrderDetailsShippingAddress",
             "zone": "Content0",
-            "id": "4c8135ce-fdd4-4b35-bc4d-60cbfe119037",
+            "isLayout": false,
+            "id": "bed19382-3bf8-427c-b99d-e24ff5c864da",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
+            "parentId": "f63c9d20-b12b-40c3-b8a7-5a4f01c24729",
             "type": "OrderDetails/OrderDetailsVatNumber",
             "zone": "Content0",
-            "id": "f58f30ee-0bdc-438c-a9c1-80ab589261a3",
+            "isLayout": false,
+            "id": "06db029b-5041-4525-988d-cd5ef557b55f",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "ca9fe155-19eb-4a65-b0d3-5f713ddbc48e",
+            "parentId": "f63c9d20-b12b-40c3-b8a7-5a4f01c24729",
             "type": "Basic/Rows",
             "zone": "Content1",
-            "id": "54ec1702-59a2-45b7-b912-b9933094c43a",
+            "isLayout": false,
+            "id": "3c32b119-d579-466f-91f7-694aa0728a8e",
             "generalFields": {
                 "rowCount": 2,
                 "gap": 10
@@ -311,19 +345,21 @@
             "contextualFields": {}
         },
         {
-            "parentId": "54ec1702-59a2-45b7-b912-b9933094c43a",
+            "parentId": "3c32b119-d579-466f-91f7-694aa0728a8e",
             "type": "OrderDetails/OrderDetailsShippingMethod",
             "zone": "Content0",
-            "id": "b91a7ff8-c58e-4ab2-822d-69c498f42a3a",
+            "isLayout": false,
+            "id": "e9522244-4120-4782-a31b-ced9637839fb",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}
         },
         {
-            "parentId": "54ec1702-59a2-45b7-b912-b9933094c43a",
+            "parentId": "3c32b119-d579-466f-91f7-694aa0728a8e",
             "type": "OrderDetails/OrderDetailsRequestedDate",
             "zone": "Content1",
-            "id": "d4f8b572-4c8e-47fc-972c-2632778f0f4b",
+            "isLayout": false,
+            "id": "87d4e50b-e37b-446d-bfd5-00e02f911457",
             "generalFields": {},
             "translatableFields": {},
             "contextualFields": {}

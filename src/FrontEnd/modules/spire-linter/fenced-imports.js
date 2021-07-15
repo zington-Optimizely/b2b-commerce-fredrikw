@@ -45,8 +45,19 @@ const validServerImports = [
     "qs",
     "util",
     "winston",
+    "@optimizely/design-tokens/dist/brand-assets/brand-logo.svg",
 ];
-const validShellImports = ["codemirror", "connected-react-router", "font-awesome", "froala-editor", "history"];
+const validShellImports = [
+    "codemirror",
+    "connected-react-router",
+    "font-awesome",
+    "froala-editor",
+    "history",
+    "@optimizely/design-tokens/dist/js/colors",
+    "@optimizely/design-tokens/dist/js/typography",
+    "@optimizely/design-tokens/dist/fonts/src/Inter-italic.var.woff2",
+    "@optimizely/design-tokens/dist/fonts/src/Inter-roman.var.woff2",
+];
 const allowedModules = {
     blueprints: [validClientImports, ["@insite/content-library", "@insite/client-framework", "@insite/mobius"]],
     "blueprints-shell": [

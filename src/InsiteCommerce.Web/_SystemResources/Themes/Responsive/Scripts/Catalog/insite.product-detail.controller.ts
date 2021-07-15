@@ -496,18 +496,16 @@ module insite.catalog {
             }
 
             if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length > 1) {
-                if (!this.settings.realTimePricing) {
+                if (!this.product.selectedUnitOfMeasure || this.product.productUnitOfMeasures.every(o => o.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
+                    this.product.selectedUnitOfMeasure = this.getDefaultValue(this.product.productUnitOfMeasures);
+                    this.changeUnitOfMeasure(this.product);
+                } else if (!this.settings.realTimePricing) {
                     this.productService.getProductPrice(this.product).then(
                         (productPrice: ProductPriceModel) => { this.selectStyleProductGetProductPriceCompleted(productPrice); },
                         (error: any) => { this.selectStyleProductGetProductPriceFailed(error); }
                     );
                 } else if (this.product.selectedUnitOfMeasure) {
                     this.getRealTimePrices();
-                }
-
-                if (!this.product.selectedUnitOfMeasure || this.product.productUnitOfMeasures.every(o => o.unitOfMeasure !== this.product.selectedUnitOfMeasure)) {
-                    this.product.selectedUnitOfMeasure = this.getDefaultValue(this.product.productUnitOfMeasures);
-                    this.changeUnitOfMeasure(this.product);
                 }
             } else {
                 if (this.product.productUnitOfMeasures && this.product.productUnitOfMeasures.length === 1) {

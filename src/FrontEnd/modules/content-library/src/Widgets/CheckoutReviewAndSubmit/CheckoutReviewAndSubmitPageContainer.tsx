@@ -191,16 +191,6 @@ const CheckoutReviewAndSubmitPageContainer: FC<Props> = ({ id, isPreloadingData,
                 <GridItem {...styles.approverInfoGridItem}>
                     <Zone zoneName="Content08" contentId={id} />
                 </GridItem>
-                <GridItem {...styles.promoCodeAndCartTotalGridItem}>
-                    <GridContainer {...styles.promoCodeAndCartTotalContainer}>
-                        <GridItem {...styles.promoCodeGridItem}>
-                            <Zone zoneName="Content01" contentId={id} />
-                        </GridItem>
-                        <GridItem {...styles.cartTotalGridItem}>
-                            <Zone zoneName="Content02" contentId={id} />
-                        </GridItem>
-                    </GridContainer>
-                </GridItem>
                 <GridItem {...styles.paymentDetailsAndCreditCardDetailsAndAddressGridItem}>
                     <GridContainer>
                         <GridItem width={12}>
@@ -219,6 +209,16 @@ const CheckoutReviewAndSubmitPageContainer: FC<Props> = ({ id, isPreloadingData,
                         </Hidden>
                     </GridContainer>
                 </GridItem>
+                <GridItem {...styles.promoCodeAndCartTotalGridItem}>
+                    <GridContainer {...styles.promoCodeAndCartTotalContainer}>
+                        <GridItem {...styles.promoCodeGridItem}>
+                            <Zone zoneName="Content01" contentId={id} />
+                        </GridItem>
+                        <GridItem {...styles.cartTotalGridItem}>
+                            <Zone zoneName="Content02" contentId={id} />
+                        </GridItem>
+                    </GridContainer>
+                </GridItem>
                 <GridItem {...styles.shippingInfoAndProductListGridItem}>
                     <GridContainer {...styles.shippingInfoAndProductListContainer}>
                         <Hidden {...styles.hiddenShippingInfoAndProductListNarrow}>
@@ -228,11 +228,11 @@ const CheckoutReviewAndSubmitPageContainer: FC<Props> = ({ id, isPreloadingData,
                             <GridItem {...styles.productListGridItemNarrow}>
                                 <Zone zoneName="Content05" contentId={id} />
                             </GridItem>
+                            <GridItem {...styles.actionButtonsBottomGridItem}>
+                                <Zone zoneName="Content06" contentId={id} />
+                            </GridItem>
                         </Hidden>
                     </GridContainer>
-                </GridItem>
-                <GridItem {...styles.actionButtonsBottomGridItem}>
-                    <Zone zoneName="Content06" contentId={id} />
                 </GridItem>
             </GridContainer>
         </LoadingOverlay>

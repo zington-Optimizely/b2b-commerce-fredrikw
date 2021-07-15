@@ -31,10 +31,8 @@ class ViewPortClicker extends React.Component<Props> {
 
         if (disabled) {
             iconColor = common.disabled;
-        } else if (targetMatchesCurrentStageMode) {
-            iconColor = "white";
         } else {
-            iconColor = text.accent;
+            iconColor = text.main;
         }
 
         const icon = targetStageMode === "Phone" ? "Smartphone" : targetStageMode === "Tablet" ? "Tablet" : "Monitor";

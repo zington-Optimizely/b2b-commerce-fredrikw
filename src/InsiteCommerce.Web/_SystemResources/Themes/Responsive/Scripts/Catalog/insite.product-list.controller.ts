@@ -395,8 +395,8 @@ module insite.catalog {
 
         // params: object with query string parameters for the products REST service
         protected getProductData(params: IProductCollectionParameters, expand?: string[]): void {
-            if (this.ready) {
-                this.spinnerService.show("productlist");
+            if (!this.ready) {
+                this.spinnerService.show("mainLayout");
             }
 
             if(this.pageBrandId){
@@ -646,6 +646,7 @@ module insite.catalog {
         // updates products based on the state of this.pagination and the initial search/category query
         protected updateProductData(): void {
             this.$localStorage.set("productListSortType", this.products.pagination.sortType);
+            this.ready = false;
 
             const params: IProductCollectionParameters = {
                 categoryId: this.category ? this.category.id : (this.filterCategory ? this.filterCategory.categoryId : null),
@@ -666,7 +667,6 @@ module insite.catalog {
                 includeAttributes: "IncludeOnProduct",
                 makeBrandUrls: this.pageBrandId != null
             };
-
             this.getProductData(params, this.pageChanged ? ["pricing", "attributes", "brand"] : null);
             this.pageChanged = false;
         }

@@ -35,6 +35,12 @@ export const SendDataToApi: HandlerType = async props => {
     if (result.successful) {
         props.apiResult = result.result;
     } else {
+        if (result.statusCode === 403) {
+            const { isAuthenticated, rememberMe } = props.getState().context.session;
+            (isAuthenticated || rememberMe) && window.location.reload();
+            return false;
+        }
+
         props.parameter.onError?.(result.errorMessage);
         return false;
     }

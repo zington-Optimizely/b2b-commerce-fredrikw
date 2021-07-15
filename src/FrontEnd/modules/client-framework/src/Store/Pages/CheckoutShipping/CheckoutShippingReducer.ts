@@ -42,6 +42,8 @@ const reducer = {
             address: action.shipTo,
             formErrors: {},
         };
+
+        draft.editedCartNotes = undefined;
     },
     "Pages/CheckoutShipping/SetLastSelectedShipTo": (
         draft: Draft<CheckoutShippingState>,

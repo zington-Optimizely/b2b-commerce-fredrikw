@@ -128,8 +128,8 @@ class AutocompleteProducts extends React.Component<Props> {
                             <LazyImage {...styles.image} src={product.image} />
                         </GridItem>
                         <GridItem {...styles.infoGridItem}>
-                            <Link {...styles.titleLink}>{product.title}</Link>
-                            <Typography {...styles.erpNumberText}>{product.erpNumber}</Typography>
+                            <Link {...styles.titleLink}>{product.displayTitle}</Link>
+                            <Typography {...styles.erpNumberText}>{product.displayErpNumber}</Typography>
                         </GridItem>
                     </GridContainer>
                 ))}

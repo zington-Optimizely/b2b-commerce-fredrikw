@@ -6,6 +6,7 @@ import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksS
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
+import { ChangeCustomerPageContext } from "@insite/content-library/Pages/ChangeCustomerPage";
 import Link from "@insite/mobius/Link";
 import * as React from "react";
 import { connect, ResolveThunks } from "react-redux";
@@ -29,6 +30,7 @@ interface OwnProps extends WidgetProps {
 
 const mapStateToProps = (state: ApplicationState, ownProps: OwnProps) => ({
     rootPageLink: getPageLinkByNodeId(state, ownProps.fields.nodeId?.value || getCurrentPage(state).nodeId),
+    displayChangeCustomerLink: state.context.session?.displayChangeCustomerLink || false,
 });
 
 const mapDispatchToProps = {};
@@ -56,7 +58,12 @@ class NavigationList extends React.Component<Props> {
             const nextDepth = currentDepth + 1;
 
             return pageLinks
-                .filter(pageLink => !pageLink.excludeFromNavigation)
+                .filter(pageLink => {
+                    return (
+                        !pageLink.excludeFromNavigation &&
+                        !(pageLink.type === ChangeCustomerPageContext && !this.props.displayChangeCustomerLink)
+                    );
+                })
                 .map(pageLink => {
                     return (
                         <li key={pageLink.id}>

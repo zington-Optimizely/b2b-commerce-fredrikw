@@ -35,6 +35,7 @@ import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import { FieldSetGroupPresentationProps } from "@insite/mobius/utilities/fieldSetProps";
 import getColor from "@insite/mobius/utilities/getColor";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React, { FC, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
@@ -321,6 +322,7 @@ const CartLinesHeader: FC<CartLinesHeaderProps> = ({
                         {...headerStyles.condensedViewCheckbox}
                     >
                         {translate("Condensed View")}
+                        <VisuallyHidden>{translate("for product list")}</VisuallyHidden>
                     </Checkbox>
                 </CheckboxGroup>
                 <Hidden above="md">

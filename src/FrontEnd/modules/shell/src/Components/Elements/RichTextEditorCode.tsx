@@ -171,6 +171,65 @@ class RichTextEditor extends React.Component<Props, State> {
                 });
             },
         });
+
+        Froalaeditor.RegisterCommand("insertFile", {
+            title: "Insert File",
+            focus: false,
+            undo: false,
+            refreshAfterCallback: false,
+            // eslint-disable-next-line object-shorthand
+            callback: function () {
+                // Shorthand format doesn't work because Froala provides its own `this` parameter.
+                editorThis.setState({ imagePickerIsOpen: true });
+                const hideOverlay = () => {
+                    if (editorThis.state.editedImage) {
+                        const text = this.html.get();
+                        this.html.set(text);
+                        editorThis.setState({ imagePickerIsOpen: undefined, editedImage: undefined });
+                    } else {
+                        editorThis.setState({ imagePickerIsOpen: undefined });
+                    }
+                };
+                this.undo.saveStep();
+                (window as any).CKFinder.modal({
+                    chooseFiles: true,
+                    chooseFilesClosePopup: true,
+                    onInit: (finder: any) => {
+                        document.getElementById("ckf-modal-close")?.addEventListener("click", hideOverlay);
+                        finder.on("files:choose", (evt: any) => {
+                            const file = evt.data.files.first();
+                            this.html.insert(`<a target="_blank" href="${file.getUrl()}">${file.attributes.name}</a>`);
+                            hideOverlay();
+                            this.undo.saveStep();
+                        });
+                        finder.on("file:choose:resizedImage", (evt: any) => {
+                            this.html.insert(
+                                `<a target="_blank" href="${evt.data.resizedUrl}">${evt.data.file.attributes.name}</a>`,
+                            );
+                            hideOverlay();
+                            this.undo.saveStep();
+                        });
+                        finder.on("command:after:SaveImage", (evt: any) => {
+                            if (evt.data.response.currentFolder.url && editorThis.state.editedImage) {
+                                rawRequest(
+                                    `${evt.data.response.currentFolder.url}${editorThis.state.editedImage}`,
+                                    "GET",
+                                    {
+                                        "Cache-Control": "no-cache",
+                                        Pragma: "no-cache",
+                                    },
+                                );
+                            }
+                        });
+                        finder.on("command:before:SaveImage", (evt: any) => {
+                            if (evt.data.params.fileName) {
+                                editorThis.setState({ editedImage: evt.data.params.fileName });
+                            }
+                        });
+                    },
+                });
+            },
+        });
     }
 
     componentDidMount() {

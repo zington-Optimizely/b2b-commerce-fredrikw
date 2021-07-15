@@ -250,7 +250,7 @@
                                 <label for="expirationMonth" class="error"></label>
                             </div>
                         </div>
-                        <div ng-show="vm.cart.showECheck && vm.cart.paymentMethod.isECheck && !vm.usePaymetricGateway">
+                        <div ng-show="vm.cart.showECheck && vm.cart.paymentMethod.isECheck">
                             <div class="account-holder-name">
                                 <label for="accountHolderName">[% translate 'Account Holder Name' %]</label>
                                 <input id="accountHolderName" name="accountHolderName" type="text" maxlength="50"
@@ -266,9 +266,8 @@
                                     <label ng-if="vm.isInvalidAccountNumber" class="tokenex-error error">[% translate 'Account number is invalid.' %]</label>
                                 </span>
                                 <span ng-if="!vm.useECheckTokenExGateway">
-                                    <input id="accountNumber" name="accountNumber" maxlength="16" type="text" style="display: block;"
+                                    <input id="accountNumber" name="accountNumber" maxlength="34" type="text" style="display: block;"
                                            data-rule-required="true" data-msg-required="[% translate 'Account number is required.' %]"
-                                           data-rule-digits="true" data-msg-digits="[% translate 'Account number is invalid.' %]"
                                            ng-model="vm.cart.paymentOptions.eCheck.accountNumber">
                                     <span class="field-validation-valid" data-valmsg-for="accountNumber" data-valmsg-replace="true"></span>
                                 </span>
@@ -282,7 +281,6 @@
                                 <span ng-if="!vm.useECheckTokenExGateway">
                                     <input id="routingNumber" name="routingNumber" maxlength="9" type="text"
                                            data-rule-required="true" data-msg-required="[% translate 'Routing number is required.' %]"
-                                           data-rule-digits="true" data-msg-digits="[% translate 'Routing number is invalid.' %]"
                                            ng-model="vm.cart.paymentOptions.eCheck.routingNumber">
                                     <span class="field-validation-valid" data-valmsg-for="routingNumber" data-valmsg-replace="true"></span>
                                 </span>

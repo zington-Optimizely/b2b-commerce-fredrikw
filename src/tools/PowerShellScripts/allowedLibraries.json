@@ -81,6 +81,17 @@
                   }
     },
     {
+        "Name":  "IdentityServer3",
+        "Value":  {
+                      "PackageName":  "IdentityServer3",
+                      "PackageVersion":  "2.0.1",
+                      "PackageFramework":  "NA",
+                      "Libraries":  {
+                                        "IdentityServer3":  "2.0.0.0"
+                                    }
+                  }
+    },
+    {
         "Name":  "Insite.Commerce.Public",
         "Value":  {
                       "PackageName":  "Insite.Commerce.Public",
@@ -124,6 +135,7 @@
                                         "Insite.Payments":  null,
                                         "Insite.Promotions":  null,
                                         "Insite.Public.Core":  null,
+                                        "Insite.Public.IdentityServer":  null,
                                         "Insite.Public.Integration":  null,
                                         "Insite.Public.WebFramework":  null,
                                         "Insite.PunchOut":  null,
@@ -135,7 +147,7 @@
                                         "Insite.Search.Elasticsearch":  null,
                                         "Insite.TaxCalculator.Vertex":  null,
                                         "Insite.Websites":  null,
-                                        "Insite.WIS.Broker": null,
+                                        "Insite.WIS.Broker":  null,
                                         "Insite.WishLists":  null
                                     }
                   }
@@ -159,6 +171,17 @@
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "Microsoft.AspNet.Identity.Core":  "2.0.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.AspNet.Identity.Owin",
+        "Value":  {
+                      "PackageName":  "Microsoft.AspNet.Identity.Owin",
+                      "PackageVersion":  "2.2.1",
+                      "PackageFramework":  "NA",
+                      "Libraries":  {
+                                        "Microsoft.AspNet.Identity.Owin":  "2.0.0.0"
                                     }
                   }
     },
@@ -192,6 +215,17 @@
                       "PackageFramework":  "net40",
                       "Libraries":  {
                                         "System.Web.Optimization":  "1.1.0.0"
+                                    }
+                  }
+    },
+    {
+        "Name":  "Microsoft.AspNet.WebApi.Client",
+        "Value":  {
+                      "PackageName":  "Microsoft.AspNet.WebApi.Client",
+                      "PackageVersion":  "5.2.7",
+                      "PackageFramework":  "NA",
+                      "Libraries":  {
+                                        "System.Net.Http.Formatting":  "5.2.7.0"
                                     }
                   }
     },
@@ -349,17 +383,6 @@
                       "PackageFramework":  "net45",
                       "Libraries":  {
                                         "Microsoft.Owin.Security.WsFederation":  "3.1.0.0"
-                                    }
-                  }
-    },
-    {
-        "Name":  "Microsoft.SqlServer.Types",
-        "Value":  {
-                      "PackageName":  "Microsoft.SqlServer.Types",
-                      "PackageVersion":  "14.0.314.76",
-                      "PackageFramework":  "net40",
-                      "Libraries":  {
-                                        "Microsoft.SqlServer.Types":  "14.0.0.0"
                                     }
                   }
     },

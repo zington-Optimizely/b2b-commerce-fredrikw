@@ -1,3 +1,4 @@
+import getBoldedText from "@insite/client-framework/Common/Utilities/getPatternBolded";
 import { createHandlerChainRunnerOptionalParameter, Handler } from "@insite/client-framework/HandlerCreator";
 import { AutocompleteApiParameter, autocompleteSearch } from "@insite/client-framework/Services/AutocompleteService";
 import { ProductAutocompleteItemModel } from "@insite/client-framework/Types/ApiModels";
@@ -32,6 +33,15 @@ export const RequestDataFromApi: HandlerType = async props => {
     }
 };
 
+export const SetDisplayTitles: HandlerType = props => {
+    if (props.apiResult) {
+        props.apiResult.forEach(product => {
+            product.displayTitle = getBoldedText(product.title, props.apiParameter.query);
+            product.displayErpNumber = getBoldedText(product.erpNumber, props.apiParameter.query);
+        });
+    }
+};
+
 export const DispatchCompleteSearchProducts: HandlerType = props => {
     props.dispatch({
         type: "Components/ProductSelector/CompleteSearchProducts",
@@ -43,6 +53,7 @@ export const chain = [
     DispatchBeginSearchProducts,
     PopulateApiParameter,
     RequestDataFromApi,
+    SetDisplayTitles,
     DispatchCompleteSearchProducts,
 ];
 

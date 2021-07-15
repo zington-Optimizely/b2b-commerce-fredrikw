@@ -607,10 +607,10 @@ const ColorPickerWrapper = styled.div`
 const ResetButton = styled.button`
     height: 35px;
     display: block;
-    border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.primary.main};
+    border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.primary.contrast};
     border-radius: 4px;
     background: transparent;
-    color: ${(props: ShellThemeProps) => props.theme.colors.primary.main};
+    color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
     font-family: ${(props: ShellThemeProps) => props.theme.typography.body.fontFamily};
     font-weight: bold;
     font-size: 14px;

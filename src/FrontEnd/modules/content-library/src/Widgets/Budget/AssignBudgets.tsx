@@ -47,7 +47,7 @@ import Typography, { TypographyPresentationProps } from "@insite/mobius/Typograp
 import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQueries";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import cloneDeep from "lodash/cloneDeep";
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
@@ -89,6 +89,8 @@ export interface AssignBudgetsStyles {
     budgetYearGridItem?: GridItemProps;
     wrapper?: InjectableCss;
     budgetYearSelect?: SelectProps;
+    createBudgetGridItem?: GridItemProps;
+    createBudgetText?: TypographyPresentationProps;
     assignBudgetInstructionsGridItem?: GridItemProps;
     assignBudgetInstructionsText?: TypographyPresentationProps;
     filterGridItem?: GridItemProps;
@@ -216,6 +218,12 @@ export const assignBudgetsStyles: AssignBudgetsStyles = {
             padding: 15px;
         `,
     },
+    createBudgetGridItem: {
+        width: 12,
+        css: css`
+            padding: 15px;
+        `,
+    },
     filterGridItem: {
         width: 12,
         css: css`
@@ -290,7 +298,7 @@ function getEndDate(index: number, maintenanceInfo: BudgetModel) {
     return getYearEnd(maintenanceInfo.fiscalYear, maintenanceInfo.fiscalYearEndDate!);
 }
 
-const AssignBudgets: React.FC<Props> = ({
+const AssignBudgets = ({
     billToState,
     maintenanceUserId,
     maintenanceShipToId,
@@ -309,19 +317,15 @@ const AssignBudgets: React.FC<Props> = ({
     getMaintenanceInfoParameter,
     updateMaintenanceInfo,
     maintenanceInfo,
-}) => {
+}: Props) => {
     if (displayedWidgetName !== "AssignBudgets" || billToState.isLoading || !billToState.value) {
         return null;
     }
 
-    const toasterContext = React.useContext(ToasterContext);
+    const toasterContext = useContext(ToasterContext);
 
     if (!budgetDataView.isLoading && !budgetDataView.value) {
         loadReviews(getMaintenanceInfoParameter);
-    }
-
-    if (!budgetDataView.value) {
-        return null;
     }
 
     if (!maintenanceInfo && budgetDataView.value) {
@@ -384,7 +388,7 @@ const AssignBudgets: React.FC<Props> = ({
                 budgetAmount: budgetLine.currentFiscalYearBudget,
             };
         }) || [];
-    const [searchUserWrapperStyles] = React.useState(() => mergeToNew(styles.wrapper, styles.searchUserWrapper));
+    const [searchUserWrapperStyles] = useState(() => mergeToNew(styles.wrapper, styles.searchUserWrapper));
     const enforcementLevel = billToState.value.budgetEnforcementLevel as keyof typeof BudgetEnforcementLevel;
 
     return (
@@ -401,6 +405,7 @@ const AssignBudgets: React.FC<Props> = ({
                     </Button>
                     <Button
                         {...styles.saveButton}
+                        disabled={!maintenanceInfo?.fiscalYear}
                         onClick={handleSaveButtonClick}
                         data-test-selector="saveAssignedBudgetsButton"
                     >
@@ -430,85 +435,108 @@ const AssignBudgets: React.FC<Props> = ({
                         </Select>
                     </StyledWrapper>
                 </GridItem>
-                <GridItem {...styles.assignBudgetInstructionsGridItem}>
-                    <Typography {...styles.assignBudgetInstructionsText}>
-                        {siteMessage("Budgets_AssignBudgetsInstructions")}
-                    </Typography>
-                </GridItem>
-                <GridItem {...styles.filterGridItem}>
-                    <StyledWrapper {...searchUserWrapperStyles}>
-                        <Select
-                            label={translate("Search User")}
-                            {...styles.searchUserSelect}
-                            value={maintenanceUserId}
-                            disabled={isSearchUserSelectDisabled}
-                            onChange={(event: React.FormEvent<HTMLSelectElement>) => handleChange(event, "user")}
-                            data-test-selector="assignBudgetUserSelector"
-                        >
-                            <option value="">{translate("Select User")}</option>,
-                            {accounts.map((account: AccountModel) => (
-                                <option key={account.id} value={account.id}>
-                                    {account.userName}
-                                </option>
-                            ))}
-                        </Select>
-                    </StyledWrapper>
-                    <StyledWrapper {...styles.wrapper}>
-                        <Select
-                            label={translate("Select Ship To Address")}
-                            {...styles.shipToAddressSelect}
-                            value={maintenanceShipToId}
-                            disabled={isShipToAddressSelectDisabled}
-                            onChange={(event: React.FormEvent<HTMLSelectElement>) => handleChange(event, "shipTo")}
-                        >
-                            <option value="">{translate("Select Ship To")}</option>,
-                            {shipTos.map((shipTo: ShipToModel) => (
-                                <option key={shipTo.id.toString()} value={shipTo.id.toString()}>
-                                    {shipTo.label}
-                                </option>
-                            ))}
-                        </Select>
-                    </StyledWrapper>
-                </GridItem>
-                <GridItem {...styles.tableGridItem}>
-                    {!budgetDataView.isLoading && tableRows.length > 0 && (
-                        <DataTable {...styles.dataTable}>
-                            <DataTableHead>
-                                <DataTableHeader {...styles.periodHeader}>{translate("Period")}</DataTableHeader>
-                                <DataTableHeader {...styles.endDateHeader}>{translate("End Date")}</DataTableHeader>
-                                <DataTableHeader {...styles.budgetAmountHeader}>
-                                    {translate("Budget Amount")}
-                                </DataTableHeader>
-                            </DataTableHead>
-                            <DataTableBody>
-                                {tableRows.map(({ period, endDate, budgetAmount }, index) => (
-                                    <DataTableRow key={period} data-test-selector="assignBudgetsPeriodRow">
-                                        <DataTableCell {...styles.periodCells}>{period}</DataTableCell>
-                                        <DataTableCell {...styles.endDateCells}>{endDate}</DataTableCell>
-                                        <DataTableCell {...styles.budgetAmountCells}>
-                                            <Typography {...styles.currencySymbol}>
-                                                {billToState.value.customerCurrencySymbol}
-                                            </Typography>
-                                            <TextField
-                                                type="number"
-                                                value={budgetAmount}
-                                                {...styles.budgetAmountTextField}
-                                                data-test-selector={`budgetAmountField_${index}`}
-                                                onChange={budgetAmount => handleBudgetAmountChange(index, budgetAmount)}
-                                            />
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                ))}
-                            </DataTableBody>
-                        </DataTable>
-                    )}
-                </GridItem>
+                {!maintenanceInfo?.fiscalYear && !budgetDataView.isLoading && (
+                    <GridItem {...styles.createBudgetGridItem}>
+                        <Typography {...styles.createBudgetText}>
+                            {siteMessage("Budget_CreateBudgetForLevel")}
+                        </Typography>
+                    </GridItem>
+                )}
+                {maintenanceInfo?.fiscalYear && (
+                    <>
+                        <GridItem {...styles.assignBudgetInstructionsGridItem}>
+                            <Typography {...styles.assignBudgetInstructionsText}>
+                                {siteMessage("Budgets_AssignBudgetsInstructions")}
+                            </Typography>
+                        </GridItem>
+                        <GridItem {...styles.filterGridItem}>
+                            <StyledWrapper {...searchUserWrapperStyles}>
+                                <Select
+                                    label={translate("Search User")}
+                                    {...styles.searchUserSelect}
+                                    value={maintenanceUserId}
+                                    disabled={isSearchUserSelectDisabled}
+                                    onChange={(event: React.FormEvent<HTMLSelectElement>) =>
+                                        handleChange(event, "user")
+                                    }
+                                    data-test-selector="assignBudgetUserSelector"
+                                >
+                                    <option value="">{translate("Select User")}</option>
+                                    {accounts.map((account: AccountModel) => (
+                                        <option key={account.id} value={account.id}>
+                                            {account.userName}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </StyledWrapper>
+                            <StyledWrapper {...styles.wrapper}>
+                                <Select
+                                    label={translate("Select Ship To Address")}
+                                    {...styles.shipToAddressSelect}
+                                    value={maintenanceShipToId}
+                                    disabled={isShipToAddressSelectDisabled}
+                                    onChange={(event: React.FormEvent<HTMLSelectElement>) =>
+                                        handleChange(event, "shipTo")
+                                    }
+                                >
+                                    <option value="">{translate("Select Ship To")}</option>
+                                    {shipTos.map((shipTo: ShipToModel) => (
+                                        <option key={shipTo.id.toString()} value={shipTo.id.toString()}>
+                                            {shipTo.label}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </StyledWrapper>
+                        </GridItem>
+                        <GridItem {...styles.tableGridItem}>
+                            {!budgetDataView.isLoading && tableRows.length > 0 && (
+                                <DataTable {...styles.dataTable}>
+                                    <DataTableHead>
+                                        <DataTableHeader {...styles.periodHeader}>
+                                            {translate("Period")}
+                                        </DataTableHeader>
+                                        <DataTableHeader {...styles.endDateHeader}>
+                                            {translate("End Date")}
+                                        </DataTableHeader>
+                                        <DataTableHeader {...styles.budgetAmountHeader}>
+                                            {translate("Budget Amount")}
+                                        </DataTableHeader>
+                                    </DataTableHead>
+                                    <DataTableBody>
+                                        {tableRows.map(({ period, endDate, budgetAmount }, index) => (
+                                            <DataTableRow key={period} data-test-selector="assignBudgetsPeriodRow">
+                                                <DataTableCell {...styles.periodCells}>{period}</DataTableCell>
+                                                <DataTableCell {...styles.endDateCells}>{endDate}</DataTableCell>
+                                                <DataTableCell {...styles.budgetAmountCells}>
+                                                    <Typography {...styles.currencySymbol}>
+                                                        {billToState.value.customerCurrencySymbol}
+                                                    </Typography>
+                                                    <TextField
+                                                        type="number"
+                                                        value={budgetAmount}
+                                                        {...styles.budgetAmountTextField}
+                                                        data-test-selector={`budgetAmountField_${index}`}
+                                                        onChange={event => handleBudgetAmountChange(index, event)}
+                                                    />
+                                                </DataTableCell>
+                                            </DataTableRow>
+                                        ))}
+                                    </DataTableBody>
+                                </DataTable>
+                            )}
+                        </GridItem>
+                    </>
+                )}
                 <GridItem {...styles.buttonsGridItem}>
                     <Hidden {...styles.buttonsHidden} above="sm">
                         <Button {...styles.cancelButton} onClick={handleCancelButtonClick}>
                             {translate("Cancel")}
                         </Button>
-                        <Button {...styles.saveButton} onClick={handleSaveButtonClick}>
+                        <Button
+                            {...styles.saveButton}
+                            disabled={!maintenanceInfo?.fiscalYear}
+                            onClick={handleSaveButtonClick}
+                        >
                             {translate("Save")}
                         </Button>
                     </Hidden>

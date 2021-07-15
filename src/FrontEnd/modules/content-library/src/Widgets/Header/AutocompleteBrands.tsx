@@ -109,8 +109,8 @@ class AutocompleteBrands extends React.Component<Props> {
                                     this.props.goToUrl(brand.url);
                                 }}
                             >
-                                <Link {...styles.link}>{brand.productLineName}</Link>
-                                <>{` ${translate("in")} ${brand.title}`}</>
+                                <Link {...styles.link}>{brand.displayProductLineName}</Link>
+                                <>{` ${translate("in")}`}</> {brand.displayTitle}
                             </Typography>
                         )}
                         {!brand.productLineName && (
@@ -120,7 +120,7 @@ class AutocompleteBrands extends React.Component<Props> {
                                     this.props.goToUrl(brand.url);
                                 }}
                             >
-                                {brand.title}
+                                {brand.displayTitle}
                             </Link>
                         )}
                     </Fragment>

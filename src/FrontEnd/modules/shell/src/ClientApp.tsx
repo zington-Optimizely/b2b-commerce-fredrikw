@@ -2,6 +2,7 @@ import { addPagesFromContext, addWidgetsFromContext } from "@insite/client-frame
 import translate from "@insite/client-framework/Translate";
 import LoadingOverlay from "@insite/mobius/LoadingOverlay";
 import ThemeProvider from "@insite/mobius/ThemeProvider";
+import BrandStyles from "@insite/shell/BrandStyles";
 import * as LayoutModule from "@insite/shell/Components/Layout";
 import ConfirmationProvider from "@insite/shell/Components/Modals/ConfirmationProvider";
 import { trackUserEvents } from "@insite/shell/Services/AccessTokenService";
@@ -66,6 +67,7 @@ function renderApp(renderer: Renderer = render) {
 
     renderer(
         <ThemeProvider theme={theme} createGlobalStyle={true} createChildGlobals={false} translate={translate}>
+            <BrandStyles />
             {shell}
         </ThemeProvider>,
         document.getElementById("react-app"),

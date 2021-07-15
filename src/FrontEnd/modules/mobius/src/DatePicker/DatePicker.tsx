@@ -93,6 +93,12 @@ interface DatePickerComponentProps
     required?: boolean;
     /** Selected date provided to the input and picker. */
     selectedDay?: Date;
+    /** label for screen reader to speak when focus is on the month input field */
+    monthAriaLabel?: string;
+    /** label for screen reader to speak when focus is on the day input field */
+    dayAriaLabel?: string;
+    /** label for screen reader to speak when focus is on the year input field */
+    yearAriaLabel?: string;
 }
 
 export interface DatePickerState {
@@ -406,6 +412,9 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
             label,
             required,
             theme: { translate },
+            monthAriaLabel,
+            dayAriaLabel,
+            yearAriaLabel,
             backgroundColor,
             ...otherProps
         } = this.props;
@@ -467,6 +476,9 @@ class DatePicker extends React.Component<DatePickerProps & HasDisablerContext, D
                         </>
                     }
                     disabled={isDisabled}
+                    monthAriaLabel={monthAriaLabel}
+                    dayAriaLabel={dayAriaLabel}
+                    yearAriaLabel={yearAriaLabel}
                     {...otherProps}
                     format={applyProp("format", "MM/dd/y")}
                     {...spreadProps("dateTimePickerProps")}

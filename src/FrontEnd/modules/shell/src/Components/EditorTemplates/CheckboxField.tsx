@@ -24,6 +24,9 @@ export default class CheckboxField extends React.Component<EditorTemplateProps<b
                     css={css`
                         margin-top: 25px;
                         margin-left: 0;
+                        &&&&& span {
+                            background: ${({ theme }) => theme.colors.custom.activeBackground};
+                        }
                     `}
                     checked={value}
                     disabled={this.props.fieldDefinition.isEnabled && !this.props.fieldDefinition.isEnabled()}

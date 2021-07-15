@@ -93,6 +93,7 @@ const CustomerSelectorToolbar: FC<OwnProps> = ({
                 value={searchText}
                 iconProps={{ src: Search }}
                 onChange={onSearchTextChanged}
+                aria-label={translate("enter search term")}
             />
             <Button {...styles.searchButton} onClick={onSearch} disabled={isSearchDisabled}>
                 {translate("Search")}

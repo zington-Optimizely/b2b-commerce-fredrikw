@@ -22,7 +22,7 @@ module insite.account {
         setCustomer(billToId: System.Guid, shipToId: System.Guid, useDefaultCustomer?: boolean, customerWasUpdated?: boolean): ng.IPromise<SessionModel>;
         updateSession(session: SessionModel): ng.IPromise<SessionModel>;
         changePassword(session: SessionModel, accessToken?: string): ng.IPromise<SessionModel>;
-        resetPasswordWithToken(username: string, newPassword: string, resetToken: string): ng.IPromise<SessionModel>;
+        resetPasswordWithToken(userId: string, newPassword: string, resetToken: string): ng.IPromise<SessionModel>;
         sendResetPasswordEmail(username: string): ng.IPromise<SessionModel>;
         sendAccountActivationEmail(username: string): ng.IPromise<SessionModel>;
         redirectAfterSelectCustomer(sessionModel: SessionModel, byPassAddressPage: boolean, dashboardUrl: string,
@@ -480,9 +480,9 @@ module insite.account {
             }
         }
 
-        resetPasswordWithToken(username: string, newPassword: string, resetToken: string): ng.IPromise<SessionModel> {
+        resetPasswordWithToken(userId: string, newPassword: string, resetToken: string): ng.IPromise<SessionModel> {
             const session: SessionModel = {
-                username: username,
+                userProfileId: userId as System.Guid,
                 newPassword: newPassword,
                 resetToken: resetToken
             } as any;

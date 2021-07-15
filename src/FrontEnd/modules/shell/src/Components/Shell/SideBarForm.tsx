@@ -110,4 +110,5 @@ const Wrapper = styled.div`
 
 const SideBarName = styled(Typography)`
     font-size: 1.25rem;
+    color: ${props => props.theme.colors.text.main};
 `;

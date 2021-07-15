@@ -1,5 +1,6 @@
 import { isMobileAppCookieName } from "@insite/client-framework/Common/ContentMode";
 import { generateDataIfNeeded } from "@insite/server-framework/PageRenderer";
+import favicon from "@optimizely/design-tokens/dist/brand-assets/brand-logo.svg";
 import { Request, Response } from "express";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -13,6 +14,7 @@ const renderedShell = `<!DOCTYPE html>${renderToStaticMarkup(
             <base href="/" />
             <link rel="icon" href="data:," />
             <link href="https://fonts.googleapis.com/css?family=Barlow:300,400,700&display=swap" rel="stylesheet" />
+            <link rel="shortcut icon" href={favicon} type="image/svg" />
         </head>
         <body>
             <div id="react-app"></div>

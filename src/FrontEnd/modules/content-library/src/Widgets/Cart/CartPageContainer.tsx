@@ -175,14 +175,14 @@ const CartPageContainer = ({ id }: WidgetProps) => {
             <StyledWrapper {...styles.headerContainer}>
                 <Zone zoneName="Content0" contentId={id} />
             </StyledWrapper>
+            <StyledWrapper {...styles.cartLinesContainer}>
+                <Zone zoneName="Content2" contentId={id} />
+            </StyledWrapper>
             <StyledWrapper {...styles.fulfillmentMethodContainer}>
                 <Zone zoneName="Content3" contentId={id} />
             </StyledWrapper>
             <StyledWrapper {...styles.cartTotalContainer}>
                 <Zone zoneName="Content1" contentId={id} />
-            </StyledWrapper>
-            <StyledWrapper {...styles.cartLinesContainer}>
-                <Zone zoneName="Content2" contentId={id} />
             </StyledWrapper>
             <StyledWrapper {...styles.productCarouselContainer}>
                 <Zone zoneName="Content4" contentId={id} />

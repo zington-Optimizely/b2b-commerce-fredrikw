@@ -24,7 +24,7 @@ const defaultConfigFormFieldStyles: Partial<FormFieldProps> = {
             margin-top: 10px;
             &:hover {
                 label {
-                    color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.main)};
+                    color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.contrast)};
                 }
             }
         `,
@@ -49,7 +49,7 @@ const defaultConfigCheckboxStyles: Partial<CheckboxProps> & CheckboxPresentation
         width: 100%;
         &:hover {
             label {
-                color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.main)};
+                color: ${({ theme, disabled }) => (disabled ? "inherit" : theme.colors.primary.contrast)};
             }
         }
     ` as any,

@@ -171,7 +171,7 @@ const GridContainerStyle = styled(GridContainer)`
 `;
 
 const FillStyle = styled.div<{ selected?: boolean }>`
-    background-color: ${props => (props.selected ? props.theme.colors.primary.main : props.theme.colors.text.main)};
+    background-color: ${props => (props.selected ? props.theme.colors.custom.blueBase : props.theme.colors.text.main)};
     height: 32px;
     width: 100%;
 `;

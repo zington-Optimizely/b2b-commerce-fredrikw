@@ -132,6 +132,7 @@ const AddToListModal = ({
     const [newListName, setNewListName] = useState("");
     const [newListNameError, setNewListNameError] = useState<React.ReactNode>("");
     const [options, setOptions] = useState<OptionObject[]>([]);
+    const [inProgress, setInProgress] = useState(false);
 
     useEffect(() => {
         if (!modalIsOpen) {
@@ -163,6 +164,7 @@ const AddToListModal = ({
     const modalCloseHandler = () => {
         setNewListName("");
         setNewListNameError("");
+        setInProgress(false);
         setAddToListModalIsOpen({ modalIsOpen: false });
     };
 
@@ -198,18 +200,21 @@ const AddToListModal = ({
             return;
         }
 
+        setInProgress(true);
+
         addToWishList({
             productInfos,
             selectedWishList: isNewList ? undefined : wishListsDataView.value?.find(o => o.id === selectedWishListId),
             newListName,
             onSuccess: (wishList: WishListModel) => {
+                modalCloseHandler();
                 setCookie(LastUpdatedListIdCookieName, wishList.id);
-                setAddToListModalIsOpen({ modalIsOpen: false });
                 setSelectedWishListId(wishList.id);
-                setNewListName("");
                 toasterContext.addToast({ body: siteMessage("Lists_ProductAdded"), messageType: "success" });
             },
             onError: errorMessage => {
+                setInProgress(false);
+
                 if (isNewList) {
                     setNewListNameError(errorMessage);
                 } else {
@@ -280,6 +285,7 @@ const AddToListModal = ({
                                 {...styles.addButton}
                                 onClick={e => addToListButtonClickHandler(e)}
                                 data-test-selector="productAddToListModal_addButton"
+                                disabled={inProgress}
                             >
                                 {translate("Add to List")}
                             </Button>

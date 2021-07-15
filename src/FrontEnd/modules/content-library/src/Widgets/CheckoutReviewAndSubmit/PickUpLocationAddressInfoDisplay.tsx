@@ -6,6 +6,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React from "react";
 import { css } from "styled-components";
 
@@ -50,6 +51,7 @@ const PickUpLocationAddressInfoDisplay = ({ location, onEdit, extendedStyles }: 
                 <Typography {...styles.headingText}>{translate("Pick Up Location")}</Typography>
                 <Link {...styles.editLink} onClick={onEdit}>
                     {translate("Edit")}
+                    <VisuallyHidden>{translate("Pick Up Location")}</VisuallyHidden>
                 </Link>
             </GridItem>
             <GridItem {...styles.addressGridItem}>

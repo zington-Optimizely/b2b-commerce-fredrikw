@@ -26,6 +26,7 @@ export const viewStyles: ProductDetailsViewStyles = {
         width: [12, 12, 8, 8, 8],
         css: css`
             overflow: hidden;
+            direction: ltr;
         `,
     },
     topGridItem: { width: 12 },
@@ -34,6 +35,7 @@ export const viewStyles: ProductDetailsViewStyles = {
         above: "sm",
         css: css`
             width: 100%;
+            direction: ltr;
         `,
     },
     bottomGridItem: { width: 12 },
@@ -42,6 +44,12 @@ export const viewStyles: ProductDetailsViewStyles = {
         below: "md",
         css: css`
             width: 100%;
+            direction: ltr;
+        `,
+    },
+    container: {
+        css: css`
+            direction: rtl;
         `,
     },
 };
@@ -51,6 +59,11 @@ const styles = viewStyles;
 const ProductDetailsView: React.FC<WidgetProps> = props => {
     return (
         <GridContainer {...styles.container}>
+            <GridItem {...styles.rightColumnGridItem} data-test-selector="productDetails_rightColumn">
+                <Hidden {...styles.rightColumnGridItemHidden}>
+                    <Zone contentId={props.id} zoneName="Content3" />
+                </Hidden>
+            </GridItem>
             <GridItem {...styles.leftColumnGridItem} data-test-selector="productDetails_leftColumn">
                 <GridContainer {...styles.leftColumnInnerContainer}>
                     <GridItem {...styles.topGridItem}>
@@ -65,11 +78,6 @@ const ProductDetailsView: React.FC<WidgetProps> = props => {
                         <Zone contentId={props.id} zoneName="Content2" />
                     </GridItem>
                 </GridContainer>
-            </GridItem>
-            <GridItem {...styles.rightColumnGridItem} data-test-selector="productDetails_rightColumn">
-                <Hidden {...styles.rightColumnGridItemHidden}>
-                    <Zone contentId={props.id} zoneName="Content3" />
-                </Hidden>
             </GridItem>
         </GridContainer>
     );

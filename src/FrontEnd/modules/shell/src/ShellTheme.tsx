@@ -1,6 +1,7 @@
 import { ButtonPresentationProps } from "@insite/mobius/Button";
 import baseTheme, { ThemeColors } from "@insite/mobius/globals/baseTheme";
 import getColor from "@insite/mobius/utilities/getColor";
+import * as axiomColors from "@optimizely/design-tokens/dist/js/colors";
 import { css, FlattenSimpleInterpolation } from "styled-components";
 
 export interface ShellThemeProps {
@@ -22,6 +23,10 @@ export interface ShellColors extends ThemeColors {
         neverPublished: string;
         isWaitingForApproval: string;
         isWaitingForApprovalActive: string;
+        activeBorder: string;
+        activeBackground: string;
+        blueBase: string;
+        brandPrimaryColor: string;
     };
 }
 
@@ -35,17 +40,21 @@ const colors: ShellColors = {
         neverPublished: "#ff2300",
         isWaitingForApproval: "#f7941d",
         isWaitingForApprovalActive: "#f2d7b8",
+        activeBorder: axiomColors.brandBlueDark,
+        activeBackground: axiomColors.brandBlueLight,
+        blueBase: axiomColors.blueBase,
+        brandPrimaryColor: axiomColors.brandPrimaryColor,
     },
     primary: {
-        main: "#1456f1",
-        contrast: "#fff",
+        main: axiomColors.brandBackgroundPrimaryColor,
+        contrast: axiomColors.brandPurpleDark,
     },
     secondary: {
         main: "#6c757d",
-        contrast: "#fff",
+        contrast: axiomColors.brandBackgroundSecondaryColor,
     },
     common: {
-        background: "#FBFBFB",
+        background: axiomColors.neutralColorsWhite,
         backgroundContrast: "#4A4A4A",
         accent: "#f4f4f4",
         accentContrast: "#4A4A4A",
@@ -53,17 +62,17 @@ const colors: ShellColors = {
         disabled: "#888888",
     },
     text: {
-        main: "#000",
+        main: axiomColors.brandTextPrimaryColor,
         disabled: "#888",
         accent: "#9B9B9B",
-        link: "#275AA8",
+        link: axiomColors.linkDefaultTextColor,
     },
     success: {
         main: "#28a745",
         contrast: "#fff",
     },
     danger: {
-        main: "#dc3545",
+        main: axiomColors.brandErrorColor,
         contrast: "#fff",
     },
     warning: {
@@ -175,7 +184,7 @@ const shellTheme = {
     typography: {
         ...baseTheme.typography,
         body: {
-            fontFamily: "Barlow, sans-serif;",
+            fontFamily: "Inter, Barlow, sans-serif;",
             color: colors.text.main,
         },
         h1: {

@@ -87,7 +87,7 @@ class AutocompleteContent extends React.Component<Props> {
                             this.props.goToUrl(content.url);
                         }}
                     >
-                        {content.title}
+                        {content.displayTitle}
                     </Link>
                 ))}
             </>

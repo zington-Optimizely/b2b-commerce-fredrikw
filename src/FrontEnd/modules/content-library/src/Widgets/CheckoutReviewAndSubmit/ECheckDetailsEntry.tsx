@@ -159,7 +159,7 @@ const ECheckDetailsEntry = (
         }
 
         const accountNumberValidNumberRequiredValid = isNonEmptyString(accountNumber);
-        const accountNumberValidNumberValid = /^\d+$/.test(accountNumber);
+        const accountNumberValidNumberValid = /[a-zA-Z0-9]*/.test(accountNumber);
         setAccountNumberError(!accountNumberValidNumberRequiredValid ? translate("Account Number is required.") : "");
         setAccountNumberError(!accountNumberValidNumberValid ? translate("Account Number is invalid.") : "");
         return accountNumberValidNumberRequiredValid && accountNumberValidNumberValid;
@@ -171,7 +171,7 @@ const ECheckDetailsEntry = (
         }
 
         const routingNumberRequiredValid = isNonEmptyString(routingNumber);
-        const routingNumberValid = /^\d+$/.test(routingNumber);
+        const routingNumberValid = /[a-zA-Z0-9]*/.test(routingNumber);
         setRoutingNumberError(!routingNumberRequiredValid ? translate("Routing Number is required.") : "");
         setRoutingNumberError(!routingNumberValid ? translate("Routing Number is invalid.") : "");
         return routingNumberRequiredValid && routingNumberValid;

@@ -79,23 +79,7 @@ export async function pageRenderer(request: Request, response: Response) {
         response.clearCookie(isSiteInShellCookieName);
     }
 
-    const responseCookies = await loadPageAndSetInitialCookies(request, response);
-    const store = publicConfigureStore();
-
-    const routerContext: { url?: string } = {};
-
     let sheet: ServerStyleSheet | undefined;
-    let rawHtml = "";
-
-    // in the case of a first page load with no request cookies, we get the default language code from the first response
-    let languageCode =
-        request.cookies.SetContextLanguageCode ??
-        (responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value);
-
-    const isGetContentRequest = request.path.startsWith(getContentByVersionPath);
-    if (isGetContentRequest) {
-        languageCode = qs.parse(request.query).languageId;
-    }
 
     const safeRequest = <T extends unknown>(func: () => Promise<T>, defaultValue: T) => {
         return (async () => {
@@ -115,6 +99,18 @@ export async function pageRenderer(request: Request, response: Response) {
                 : merge({}, defaultTheme, preStyleGuideTheme, await getTheme(), postStyleGuideTheme),
         defaultTheme,
     );
+
+    const responseCookies = await loadPageAndSetInitialCookies(request, response);
+
+    // in the case of a first page load with no request cookies, we get the default language code from the first response
+    let languageCode =
+        request.cookies.SetContextLanguageCode ??
+        (responseCookies && responseCookies.find(o => o.name === "SetContextLanguageCode")?.value);
+
+    const isGetContentRequest = request.path.startsWith(getContentByVersionPath);
+    if (isGetContentRequest) {
+        languageCode = qs.parse(request.query).languageId;
+    }
 
     const getSiteMessagesPromise = safeRequest(async () => {
         return processSiteMessages(
@@ -141,7 +137,15 @@ export async function pageRenderer(request: Request, response: Response) {
         );
     }, {});
 
-    // Call these APIs simultaneously instead of sequentially to quicken Spire's response time.
+    // Do some work while the API calls above are running.
+    let rawHtml = "";
+    const store = publicConfigureStore();
+
+    const disableSSR = !!Object.keys(request.query).find(o => o.toLowerCase() === "disablessr");
+    const hasAccessToken = !!Object.keys(request.query).find(o => o.toLowerCase() === "access_token");
+    const renderStorefrontServerSide = !disableSSR && !hasAccessToken && !isGetContentRequest;
+
+    // Out of other work, wait for API results.
     const [theme, siteMessages, translationDictionaries] = await Promise.all([
         getThemePromiseOrDefault,
         getSiteMessagesPromise,
@@ -155,18 +159,6 @@ export async function pageRenderer(request: Request, response: Response) {
     if (translationDictionaries) {
         setServerTranslations(translationDictionaries);
     }
-
-    // ISC-13444 it would be nice to get this into an async method, so that we can run it + site messages + translation dictionaries concurrently
-    // this does need the theme loaded, but we could probably add a short term cache to that
-    // site messages + translation dictionaries depend on the language code from loading the initial page
-    // so I think it would be load initial page + theme at the same time
-    // then render SSR + TD + SM at the same time
-    // we could probably also cach TD & SM for a short period of time
-    // caching could be either in memory, which means it would have to be short. Or if we do use a distributed cache then we should be able to expire things as needed
-
-    const disableSSR = !!Object.keys(request.query).find(o => o.toLowerCase() === "disablessr");
-    const hasAccessToken = !!Object.keys(request.query).find(o => o.toLowerCase() === "access_token");
-    const renderStorefrontServerSide = !disableSSR && !hasAccessToken && !isGetContentRequest;
 
     if (renderStorefrontServerSide) {
         const renderRawAndStyles = () => {
@@ -205,14 +197,7 @@ export async function pageRenderer(request: Request, response: Response) {
         }
 
         if (redirect) {
-            response.redirect(redirect);
-            return;
-        }
-
-        // If there's a redirection, just send this information back to the host application
-        if (routerContext.url) {
-            response.setHeader("Content-Type", "application/json");
-            response.redirect(routerContext.url);
+            response.redirect(statusCode ?? 302, redirect);
             return;
         }
     }

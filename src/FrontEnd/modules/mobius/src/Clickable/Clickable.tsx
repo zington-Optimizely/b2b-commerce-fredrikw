@@ -125,7 +125,13 @@ const Clickable: React.FC<ClickableProps & HasDisablerContext> = withTheme(
                             !(e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) // ignore clicks with modifier keys
                         ) {
                             e.preventDefault();
-                            if (history && isRelativeLink && !spaOptOut && !href.startsWith("/RedirectTo/")) {
+                            if (
+                                history &&
+                                isRelativeLink &&
+                                !spaOptOut &&
+                                !href.startsWith("/RedirectTo/") &&
+                                !href.startsWith("/UserFiles/")
+                            ) {
                                 history.push(href);
                             } else {
                                 window.location.href = href;

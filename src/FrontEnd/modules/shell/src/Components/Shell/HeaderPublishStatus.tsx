@@ -79,15 +79,12 @@ const HeaderPublishStatus: FC<Props> = ({
         }
     }
 
-    return <StyledSpan data-test-selector="publishStatus">{value || "..."}</StyledSpan>;
+    return <StyledParagraph data-test-selector="publishStatus">{value || "..."}</StyledParagraph>;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderPublishStatus);
 
-const StyledSpan = styled.span`
-    width: 72px;
-    color: ${({ theme }) => theme.colors.text.main};
-    font-family: ${({ theme }) => theme.typography.body.fontFamily};
-    font-size: ${({ theme }) => theme.modal.defaultProps.headlineTypographyProps.size};
-    font-weight: bold;
+const StyledParagraph = styled.p`
+    margin-left: 4px;
+    width: 86px;
 `;

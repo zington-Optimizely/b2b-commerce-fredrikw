@@ -11,7 +11,7 @@ export interface HasDisablerContext {
 }
 
 export function withDisabler<P extends HasDisablerContext>(Component: React.ComponentType<P>) {
-    return function DisableableComponent(props: Pick<P, Exclude<keyof P, keyof HasDisablerContext>>) {
+    const disablerForwardRef = React.forwardRef((props: Pick<P, Exclude<keyof P, keyof HasDisablerContext>>, ref) => {
         return (
             <DisablerContext.Consumer>
                 {DisablerContextData => (
@@ -19,11 +19,14 @@ export function withDisabler<P extends HasDisablerContext>(Component: React.Comp
                         {...(props as P)}
                         // eslint-disable-next-line no-unneeded-ternary
                         disable={DisablerContextData && DisablerContextData.disable ? true : false}
+                        ref={ref}
                     />
                 )}
             </DisablerContext.Consumer>
         );
-    };
+    });
+    disablerForwardRef.displayName = "disablerForwardRef";
+    return disablerForwardRef;
 }
 
 export default DisablerContext;

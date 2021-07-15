@@ -28,7 +28,9 @@ export interface ForgotPasswordApiParameter extends ApiParameter {
 }
 
 export interface ResetPasswordApiParameter extends ApiParameter {
-    userName: string;
+    userProfileId: string;
+    /** @deprecated Use userProfileId instead to avoid the email showing as a query parameter. */
+    userName: string | undefined;
     newPassword: string;
     resetToken: string;
 }

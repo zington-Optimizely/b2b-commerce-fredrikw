@@ -1,6 +1,7 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { ProductInfo } from "@insite/client-framework/Common/ProductInfo";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import getBoldededText from "@insite/client-framework/Common/Utilities/getPatternBolded";
 import { ProductContext } from "@insite/client-framework/Components/ProductContext";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import clearProduct from "@insite/client-framework/Store/Components/ProductSelector/Handlers/ClearProduct";
@@ -200,8 +201,8 @@ const ProductSelector = ({
                         <LazyImage {...styles.productImage} src={product.image} />
                     </StyledWrapper>
                     <StyledWrapper {...styles.infoWrapper}>
-                        <Typography {...styles.autocompleteTitleText}>{product.title}</Typography>
-                        <Typography {...styles.autocompleteErpText}>{product.erpNumber}</Typography>
+                        <Typography {...styles.autocompleteTitleText}>{product.displayTitle}</Typography>
+                        <Typography {...styles.autocompleteErpText}>{product.displayErpNumber}</Typography>
                     </StyledWrapper>
                 </StyledWrapper>
             ),

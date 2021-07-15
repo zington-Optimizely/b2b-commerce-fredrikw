@@ -6,6 +6,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import Link, { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
+import VisuallyHidden from "@insite/mobius/VisuallyHidden";
 import React from "react";
 import { css } from "styled-components";
 
@@ -44,6 +45,7 @@ const ShippingAddressInfoDisplay = ({ shipTo, onEdit, extendedStyles }: OwnProps
                 <Typography {...styles.heading}>{translate("Shipping Address")}</Typography>
                 <Link {...styles.editLink} onClick={onEdit} data-test-selector="checkoutReviewAndSubmit_changeShipping">
                     {translate("Edit")}
+                    <VisuallyHidden>{translate("Shipping Address")}</VisuallyHidden>
                 </Link>
             </GridItem>
             <GridItem {...styles.addressGridItem}>

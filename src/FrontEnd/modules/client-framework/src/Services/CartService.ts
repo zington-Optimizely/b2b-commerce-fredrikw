@@ -320,6 +320,13 @@ export async function addProductWithResult(parameter: AddProductApiParameter): P
                 errorMessage: error.errorJson.message,
             };
         }
+        if (error.status === 403) {
+            return {
+                successful: false,
+                errorMessage: error.errorMessage,
+                statusCode: 403,
+            };
+        }
         throw error;
     }
 }

@@ -1,10 +1,9 @@
 import { getGeoLocation } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoLocation";
-import { useLoadScript } from "@react-google-maps/api";
 import * as React from "react";
 
 interface Props {
-    googleMapsApiKey: string;
     isShown: boolean;
+    isLoaded?: boolean;
 }
 
 /**
@@ -12,13 +11,10 @@ interface Props {
  * This will track the current location and manage a Google Map.
  * @param props
  */
-const useGoogleMaps = ({ googleMapsApiKey, isShown }: Props) => {
+const useGoogleMaps = ({ isShown, isLoaded }: Props) => {
     const [currentLocation, setCurrentLocation] = React.useState<google.maps.LatLng | undefined>(undefined);
     const [locationKnown, setLocationKnown] = React.useState<boolean>(false);
     const [googleMap, setGoogleMap] = React.useState<google.maps.Map | undefined>(undefined);
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey,
-    });
 
     const setMapCenter = (center: google.maps.LatLng) => {
         googleMap?.setCenter(center);

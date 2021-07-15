@@ -3,16 +3,25 @@ import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper"
 import logger from "@insite/client-framework/Logger";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
+import loadPaymetricConfig from "@insite/client-framework/Store/Context/Handlers/LoadPaymetricConfig";
 import loadTokenExConfig from "@insite/client-framework/Store/Context/Handlers/LoadTokenExConfig";
 import { getBillToState } from "@insite/client-framework/Store/Data/BillTos/BillTosSelectors";
 import loadBillTo from "@insite/client-framework/Store/Data/BillTos/Handlers/LoadBillTo";
 import { getCurrentCountries } from "@insite/client-framework/Store/Data/Countries/CountriesSelectors";
 import addPaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/AddPaymentProfile";
 import updatePaymentProfile from "@insite/client-framework/Store/Data/PaymentProfiles/Handlers/UpdatePaymentProfile";
+import getPaymetricResponsePacket from "@insite/client-framework/Store/Pages/CheckoutReviewAndSubmit/Handlers/GetPaymetricResponsePacket";
 import updateEditModal from "@insite/client-framework/Store/Pages/SavedPayments/Handlers/UpdateEditModal";
 import translate from "@insite/client-framework/Translate";
 import { AccountPaymentProfileModel } from "@insite/client-framework/Types/ApiModels";
 import { PaymentProfilesContext } from "@insite/content-library/Pages/SavedPaymentsPage";
+import {
+    convertPaymetricCardType,
+    convertTokenExCardType,
+} from "@insite/content-library/Widgets/SavedPayments/PaymentUtilities";
+import PaymetricDetailsEntry, {
+    PaymetricDetailsEntryStyles,
+} from "@insite/content-library/Widgets/SavedPayments/PaymetricDetailsEntry";
 import Button, { ButtonPresentationProps } from "@insite/mobius/Button";
 import Checkbox, { CheckboxPresentationProps, CheckboxProps } from "@insite/mobius/Checkbox";
 import { BaseTheme } from "@insite/mobius/globals/baseTheme";
@@ -28,18 +37,23 @@ import breakpointMediaQueries from "@insite/mobius/utilities/breakpointMediaQuer
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import range from "lodash/range";
 import * as React from "react";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import styled, { css, ThemeProps, withTheme } from "styled-components";
 
-const mapStateToProps = (state: ApplicationState) => ({
-    websiteSettings: getSettingsCollection(state).websiteSettings,
-    countries: getCurrentCountries(state),
-    editingPaymentProfile: state.pages.savedPayments.editingPaymentProfile,
-    modalIsOpen: state.pages.savedPayments.editModalIsOpen,
-    billToState: getBillToState(state, state.context.session.billToId),
-    tokenExConfig: state.context.tokenExConfigs[""],
-});
+const mapStateToProps = (state: ApplicationState) => {
+    const settingsCollection = getSettingsCollection(state);
+    return {
+        websiteSettings: settingsCollection.websiteSettings,
+        countries: getCurrentCountries(state),
+        editingPaymentProfile: state.pages.savedPayments.editingPaymentProfile,
+        modalIsOpen: state.pages.savedPayments.editModalIsOpen,
+        billToState: getBillToState(state, state.context.session.billToId),
+        tokenExConfig: state.context.tokenExConfigs[""],
+        usePaymetricGateway: settingsCollection.websiteSettings.usePaymetricGateway,
+        paymetricConfig: state.context.paymetricConfig,
+    };
+};
 
 const mapDispatchToProps = {
     updateEditModal,
@@ -47,6 +61,8 @@ const mapDispatchToProps = {
     addPaymentProfile,
     loadTokenExConfig,
     loadBillTo,
+    loadPaymetricConfig,
+    getPaymetricResponsePacket,
 };
 
 type Props = ReturnType<typeof mapStateToProps> & ResolveThunks<typeof mapDispatchToProps> & ThemeProps<BaseTheme>;
@@ -97,6 +113,7 @@ export interface SavedPaymentsEditCardModalStyles {
     cancelButton?: ButtonPresentationProps;
     saveGridItem?: GridItemProps;
     saveButton?: ButtonPresentationProps;
+    paymetricDetailsStyles?: PaymetricDetailsEntryStyles;
 }
 
 export const editCardModalStyles: SavedPaymentsEditCardModalStyles = {
@@ -200,13 +217,8 @@ declare const TokenEx: any;
 let tokenExIframe: any | undefined;
 let tokenExFrameStyleConfig: any;
 
-const convertTokenExCardType = (cardType: string) => {
-    if (cardType.indexOf("american") > -1) {
-        return "AMERICAN EXPRESS";
-    }
-
-    return cardType.toUpperCase();
-};
+declare function $XIFrame(options: any): any;
+let paymetricIframe: any;
 
 const CardNumberTokenExFrameWrapper = styled.div<InjectableCss>`
     ${({ css }) => css}
@@ -225,14 +237,36 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
     tokenExConfig,
     loadTokenExConfig,
     loadBillTo,
+    usePaymetricGateway,
+    paymetricConfig,
+    loadPaymetricConfig,
+    getPaymetricResponsePacket,
 }) => {
     const paymentProfilesDataView = useContext(PaymentProfilesContext);
+    const usePaymentGateway = websiteSettings.useTokenExGateway || websiteSettings.usePaymetricGateway;
 
-    if (!websiteSettings.useTokenExGateway || !countries || !paymentProfilesDataView.value) {
+    if (!usePaymentGateway || !countries || !paymentProfilesDataView.value) {
         return null;
     }
 
-    useTokenExFrame(websiteSettings);
+    if (websiteSettings.useTokenExGateway) {
+        useTokenExFrame(websiteSettings);
+    }
+
+    const paymetricFrameRef = useRef<HTMLIFrameElement>(null);
+    const setupPaymetricIframe = () => {
+        if (!paymetricConfig) {
+            return;
+        }
+        paymetricIframe = $XIFrame({
+            iFrameId: "paymetricIframe",
+            targetUrl: paymetricConfig?.message,
+            autosizewidth: false,
+            autosizeheight: true,
+        });
+
+        paymetricIframe.onload();
+    };
 
     React.useEffect(() => {
         if (!billToState.value && !billToState.isLoading && billToState.id) {
@@ -241,8 +275,12 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
     });
 
     React.useEffect(() => {
-        if (!tokenExConfig) {
+        if (websiteSettings.useTokenExGateway) {
             loadTokenExConfig();
+        }
+
+        if (usePaymetricGateway) {
+            loadPaymetricConfig();
         }
     }, []);
 
@@ -261,6 +299,21 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
     };
     const modalOnAfterOpenHandler = () => {
         !editingPaymentProfile && setUpTokenExIframe();
+
+        if (usePaymetricGateway && !editingPaymentProfile) {
+            if (paymetricConfig?.success && paymetricFrameRef.current) {
+                const paymetricScript = document.createElement("script");
+                paymetricScript.src = paymetricConfig.javaScriptUrl;
+                paymetricScript.onload = () => {
+                    if (paymetricFrameRef.current) {
+                        paymetricFrameRef.current.setAttribute("src", paymetricConfig.message);
+                        paymetricFrameRef.current.addEventListener("load", setupPaymetricIframe);
+                    }
+                };
+                document.body.appendChild(paymetricScript);
+            }
+            paymetricFrameRef.current?.removeEventListener("load", setupPaymetricIframe);
+        }
     };
     const modalOnAfterCloseHandler = () => {
         resetFields();
@@ -494,9 +547,61 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
         setIsCardNumberTokenized(false);
     };
 
+    const handlePaymetricValidateSuccess = (success: boolean) => {
+        if (success) {
+            paymetricIframe.submit({
+                onSuccess: (msg: string) => {
+                    // The HasPassed is case sensitive, and not standard json.
+                    const message: { data: { HasPassed: boolean } } = JSON.parse(msg);
+                    if (message.data.HasPassed) {
+                        handleSuccessSubmitPaymetricIframe();
+                    }
+                },
+                onError: (msg: string) => {
+                    const message: { data: { Code: number } } = JSON.parse(msg);
+                    // Code = 150 -> Already submitted
+                    if (message.data.Code === 150) {
+                        handleSuccessSubmitPaymetricIframe();
+                    }
+                },
+            });
+        }
+    };
+
+    const handleSuccessSubmitPaymetricIframe = () => {
+        if (!paymetricConfig?.accessToken) {
+            return;
+        }
+
+        getPaymetricResponsePacket({
+            accessToken: paymetricConfig.accessToken,
+            onComplete: result => {
+                if (result.apiResult?.success) {
+                    setCardType(convertPaymetricCardType(result.apiResult.creditCard.cardType));
+                    setExpirationMonth(result.apiResult.creditCard.expirationMonth!);
+                    setExpirationYear(result.apiResult.creditCard.expirationYear!);
+                    setCardNumber(result.apiResult.creditCard.cardNumber!);
+                    setNameOnCard(result.apiResult.creditCard.cardHolderName!);
+                    setIsCardNumberTokenized(true);
+                }
+            },
+        });
+    };
+
     const validate = () => {
-        if (!editingPaymentProfile) {
+        if (!editingPaymentProfile && websiteSettings.useTokenExGateway) {
             tokenExIframe.validate();
+        }
+
+        if (!editingPaymentProfile && usePaymetricGateway) {
+            const readyForPaymetricValidation = !(!address1.trim() || !city.trim() || !postalCode.trim());
+            if (paymetricIframe && readyForPaymetricValidation) {
+                paymetricIframe.validate({
+                    onValidate: (success: boolean) => {
+                        handlePaymetricValidateSuccess(success);
+                    },
+                });
+            }
         }
 
         setNameOnCardError(!nameOnCard.trim() ? translate("Name on card is required.") : "");
@@ -651,80 +756,89 @@ const SavedPaymentsEditCardModal: React.FC<Props> = ({
                                     data-test-selector="cardNickname"
                                 />
                             </GridItem>
-                            <GridItem {...styles.cardNumberGridItem}>
-                                {!editingPaymentProfile ? (
-                                    <TokenExFrame
-                                        label={translate("Card Number")}
-                                        tokenExIFrameContainer={
-                                            <CardNumberTokenExFrameWrapper
-                                                {...styles.cardNumberTokenExFrameWrapper}
-                                                id="tokenExCardNumber"
-                                            />
-                                        }
-                                        disabled={!isTokenExIframeLoaded}
-                                        required
-                                        error={cardNumberError}
-                                        data-test-selector="cardNumber"
-                                    />
-                                ) : (
-                                    <TextField
-                                        label={translate("Card Number")}
-                                        {...styles.cardNumberTextField}
-                                        disabled
-                                        value={editingPaymentProfile?.maskedCardNumber || ""}
-                                    />
-                                )}
-                            </GridItem>
-                            <GridItem {...styles.nameOnCardGridItem}>
-                                <TextField
-                                    label={translate("Name on Card")}
-                                    {...styles.nameOnCardTextField}
-                                    required
-                                    maxLength={50}
-                                    value={nameOnCard}
-                                    error={nameOnCardError}
-                                    onChange={nameOnCardChangeHandler}
-                                    data-test-selector="nameOnCard"
+                            {usePaymetricGateway && !editingPaymentProfile ? (
+                                <PaymetricDetailsEntry
+                                    ref={paymetricFrameRef}
+                                    extendedStyles={styles.paymetricDetailsStyles}
                                 />
-                            </GridItem>
-                            <GridItem {...styles.expirationMonthGridItem}>
-                                <Select
-                                    label={translate("Expiration")}
-                                    {...styles.expirationMonthSelect}
-                                    required
-                                    value={expirationMonth}
-                                    onChange={expirationMonthChangeHandler}
-                                    data-test-selector="expirationMonth"
-                                >
-                                    {minMonth === 1 && <option value="1">{translate("January")}</option>}
-                                    {minMonth <= 2 && <option value="2">{translate("February")}</option>}
-                                    {minMonth <= 3 && <option value="3">{translate("March")}</option>}
-                                    {minMonth <= 4 && <option value="4">{translate("April")}</option>}
-                                    {minMonth <= 5 && <option value="5">{translate("May")}</option>}
-                                    {minMonth <= 6 && <option value="6">{translate("June")}</option>}
-                                    {minMonth <= 7 && <option value="7">{translate("July")}</option>}
-                                    {minMonth <= 8 && <option value="8">{translate("August")}</option>}
-                                    {minMonth <= 9 && <option value="9">{translate("September")}</option>}
-                                    {minMonth <= 10 && <option value="10">{translate("October")}</option>}
-                                    {minMonth <= 11 && <option value="11">{translate("November")}</option>}
-                                    {minMonth <= 12 && <option value="12">{translate("December")}</option>}
-                                </Select>
-                            </GridItem>
-                            <GridItem {...styles.expirationYearGridItem}>
-                                <Select
-                                    {...styles.expirationYearSelect}
-                                    required
-                                    value={expirationYear}
-                                    onChange={expirationYearChangeHandler}
-                                    data-test-selector="expirationYear"
-                                >
-                                    {expirationYears.map(year => (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </GridItem>
+                            ) : (
+                                <>
+                                    <GridItem {...styles.cardNumberGridItem}>
+                                        {!editingPaymentProfile ? (
+                                            <TokenExFrame
+                                                label={translate("Card Number")}
+                                                tokenExIFrameContainer={
+                                                    <CardNumberTokenExFrameWrapper
+                                                        {...styles.cardNumberTokenExFrameWrapper}
+                                                        id="tokenExCardNumber"
+                                                    />
+                                                }
+                                                disabled={!isTokenExIframeLoaded}
+                                                required
+                                                error={cardNumberError}
+                                                data-test-selector="cardNumber"
+                                            />
+                                        ) : (
+                                            <TextField
+                                                label={translate("Card Number")}
+                                                {...styles.cardNumberTextField}
+                                                disabled
+                                                value={editingPaymentProfile?.maskedCardNumber || ""}
+                                            />
+                                        )}
+                                    </GridItem>
+                                    <GridItem {...styles.nameOnCardGridItem}>
+                                        <TextField
+                                            label={translate("Name on Card")}
+                                            {...styles.nameOnCardTextField}
+                                            required
+                                            maxLength={50}
+                                            value={nameOnCard}
+                                            error={nameOnCardError}
+                                            onChange={nameOnCardChangeHandler}
+                                            data-test-selector="nameOnCard"
+                                        />
+                                    </GridItem>
+                                    <GridItem {...styles.expirationMonthGridItem}>
+                                        <Select
+                                            label={translate("Expiration")}
+                                            {...styles.expirationMonthSelect}
+                                            required
+                                            value={expirationMonth}
+                                            onChange={expirationMonthChangeHandler}
+                                            data-test-selector="expirationMonth"
+                                        >
+                                            {minMonth === 1 && <option value="1">{translate("January")}</option>}
+                                            {minMonth <= 2 && <option value="2">{translate("February")}</option>}
+                                            {minMonth <= 3 && <option value="3">{translate("March")}</option>}
+                                            {minMonth <= 4 && <option value="4">{translate("April")}</option>}
+                                            {minMonth <= 5 && <option value="5">{translate("May")}</option>}
+                                            {minMonth <= 6 && <option value="6">{translate("June")}</option>}
+                                            {minMonth <= 7 && <option value="7">{translate("July")}</option>}
+                                            {minMonth <= 8 && <option value="8">{translate("August")}</option>}
+                                            {minMonth <= 9 && <option value="9">{translate("September")}</option>}
+                                            {minMonth <= 10 && <option value="10">{translate("October")}</option>}
+                                            {minMonth <= 11 && <option value="11">{translate("November")}</option>}
+                                            {minMonth <= 12 && <option value="12">{translate("December")}</option>}
+                                        </Select>
+                                    </GridItem>
+                                    <GridItem {...styles.expirationYearGridItem}>
+                                        <Select
+                                            {...styles.expirationYearSelect}
+                                            required
+                                            value={expirationYear}
+                                            onChange={expirationYearChangeHandler}
+                                            data-test-selector="expirationYear"
+                                        >
+                                            {expirationYears.map(year => (
+                                                <option key={year} value={year}>
+                                                    {year}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </GridItem>
+                                </>
+                            )}
                         </GridContainer>
                     </GridItem>
                     <GridItem {...styles.rightColumn}>

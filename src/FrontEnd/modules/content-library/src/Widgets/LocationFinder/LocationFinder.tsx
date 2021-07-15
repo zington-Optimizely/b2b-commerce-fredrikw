@@ -10,6 +10,7 @@ import {
     getGeoCodeFromAddress,
     getGeoCodeFromLatLng,
 } from "@insite/client-framework/Common/Utilities/GoogleMaps/getGeoCodeFromAddress";
+import withDynamicGoogleMaps from "@insite/client-framework/Common/withDynamicGoogleMaps";
 import { GetDealersApiParameter } from "@insite/client-framework/Services/DealerService";
 import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
@@ -46,7 +47,9 @@ import React, { FC } from "react";
 import { connect, ResolveThunks } from "react-redux";
 import { css } from "styled-components";
 
-interface OwnProps extends WidgetProps {}
+interface OwnProps extends WidgetProps {
+    useLoadScript: ({ googleMapsApiKey }: { googleMapsApiKey: any }) => { isLoaded: boolean };
+}
 
 const mapDispatchToProps = {
     loadDealers,
@@ -162,6 +165,7 @@ const LocationFinder: FC<Props> = ({
     setParameter,
     history,
     dealerDetailsUrl,
+    useLoadScript,
 }) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [distanceUnitOfMeasure, setDistanceUnitOfMeasure] = React.useState<DistanceUnitOfMeasure>("Imperial");
@@ -192,6 +196,7 @@ const LocationFinder: FC<Props> = ({
 
     // Manage Google Maps State
     const { googleMapsApiKey } = settings.websiteSettings;
+    const { isLoaded } = useLoadScript({ googleMapsApiKey });
     const {
         googleMap,
         setGoogleMap,
@@ -202,8 +207,8 @@ const LocationFinder: FC<Props> = ({
         setMapCenter,
         locationKnown,
     } = useGoogleMaps({
-        googleMapsApiKey,
         isShown: true,
+        isLoaded,
     });
 
     // Manage Selected Dealer
@@ -465,7 +470,7 @@ const LocationFinder: FC<Props> = ({
 };
 
 const widgetModule: WidgetModule = {
-    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(LocationFinder)),
+    component: connect(mapStateToProps, mapDispatchToProps)(withHistory(withDynamicGoogleMaps(LocationFinder))),
     definition: {
         allowedContexts: [CreateAccountPageContext],
         group: "Location Finder",

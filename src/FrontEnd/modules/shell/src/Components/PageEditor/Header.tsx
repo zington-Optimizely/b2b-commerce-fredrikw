@@ -89,19 +89,19 @@ class Header extends React.Component<Props, State> {
         return (
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
-                <Icon src={Spacer} color="#999" />
-                <Icon src="Calendar" size={20} color={shellTheme.colors.text.main} />
+                <Icon src={Spacer} color="primary.contrast" />
+                <Icon src="Calendar" size={20} color={shellTheme.colors.primary.contrast} />
                 <HeaderPublishStatus />
                 {contentMode === "Editing" && (
                     <>
-                        <Icon src={Spacer} color="#999" />
+                        <Icon src={Spacer} color="primary.contrast" />
                         {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
                             <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
-                                <Icon src="Edit" size={20} color={shellTheme.colors.text.main} />
+                                <Icon src="Edit" size={20} color={shellTheme.colors.primary.contrast} />
                             </PageHeaderButton>
                         )}
                         <PageHeaderButton onClick={openPageTemplateModal}>
-                            <DebugMenu color1={shellTheme.colors.text.main} size={16} />
+                            <DebugMenu color1={shellTheme.colors.primary.contrast} size={16} />
                         </PageHeaderButton>
                     </>
                 )}
@@ -141,13 +141,14 @@ const PageHeaderStyle = styled.div`
     border-bottom: 1px solid #dedede;
 `;
 
-const PageHeaderTitle = styled.h2`
-    color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
+const PageHeaderTitle = styled.p`
+    color: ${(props: ShellThemeProps) => props.theme.colors.primary.contrast};
     align-content: center;
     padding-left: 16px;
-    font-size: 18px;
-    line-height: 21px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5rem;
+    letter-spacing: -0.011rem;
 `;
 
 const PageHeaderButton = styled.button`

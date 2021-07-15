@@ -5,6 +5,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { ImageModel } from "@insite/client-framework/Types/ApiModels";
 import Button, { ButtonIcon, ButtonProps } from "@insite/mobius/Button";
+import Clickable from "@insite/mobius/Clickable";
 import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer";
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import ChevronLeft from "@insite/mobius/Icons/ChevronLeft";
@@ -214,12 +215,15 @@ const ProductImageCarousel = ({
                             {product.images.map((productImage, index) => (
                                 <StyledWrapper {...styles.carouselSlide} key={productImage.id}>
                                     <StyledWrapper {...styles.carouselSlideInner}>
-                                        <LazyImage
-                                            {...(index === selectedImageIndex ? styles.selectedImage : styles.image)}
-                                            src={getProductImageThumbPath(productImage)}
-                                            altText={productImage.imageAltText}
-                                            onClick={() => imageClickHandler(index)}
-                                        />
+                                        <Clickable onClick={() => imageClickHandler(index)}>
+                                            <LazyImage
+                                                {...(index === selectedImageIndex
+                                                    ? styles.selectedImage
+                                                    : styles.image)}
+                                                src={getProductImageThumbPath(productImage)}
+                                                altText={productImage.imageAltText}
+                                            />
+                                        </Clickable>
                                     </StyledWrapper>
                                 </StyledWrapper>
                             ))}

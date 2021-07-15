@@ -150,6 +150,7 @@ const ProductShareLink = ({
     const [yourEmailError, setYourEmailError] = React.useState("");
     const [yourMessage, setYourMessage] = React.useState("");
     const [yourMessageError, setYourMessageError] = React.useState("");
+    const [inProgress, setInProgress] = React.useState(false);
 
     const modalCloseHandler = () => {
         setModalIsOpen(false);
@@ -200,6 +201,7 @@ const ProductShareLink = ({
         setYourEmailError("");
         setYourMessage("");
         setYourMessageError("");
+        setInProgress(false);
     };
 
     const recipientNameChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,6 +234,8 @@ const ProductShareLink = ({
         if (!isReCaptchaValid) {
             return;
         }
+
+        setInProgress(true);
 
         shareProduct({
             product,
@@ -333,6 +337,7 @@ const ProductShareLink = ({
                         {...styles.shareButton}
                         onClick={shareButtonClickHandler}
                         data-test-selector="productShareSubmit"
+                        disabled={inProgress}
                     >
                         {translate("Share")}
                     </Button>

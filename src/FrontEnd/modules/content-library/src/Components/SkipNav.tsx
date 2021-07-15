@@ -16,6 +16,7 @@ export const skipNavStyles: SkipNavStyles = {
             clip: rect(0, 0, 0, 0);
             &:focus {
                 clip: unset;
+                z-index: 1;
             }
         `,
     },

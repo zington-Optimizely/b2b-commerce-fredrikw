@@ -163,7 +163,7 @@ const ResetPassword = ({
     resetPassword,
     validatePassword,
 }: Props) => {
-    const [userName, setUserName] = useState<string | undefined>("");
+    const [userProfileId, setUserProfileId] = useState<string | undefined>("");
     const [isResettingPassword, setIsResettingPassword] = useState(true);
     const [resetToken, setResetToken] = useState<string | undefined>("");
     const [password, setPassword] = useState("");
@@ -184,10 +184,8 @@ const ResetPassword = ({
     } = accountSettings;
 
     useEffect(() => {
-        const parsedQuery = parseQueryString<{ userName?: string; resetToken?: string; reset?: string }>(
-            location.search,
-        );
-        setUserName(parsedQuery.userName);
+        const parsedQuery = parseQueryString<{ userId?: string; resetToken?: string; reset?: string }>(location.search);
+        setUserProfileId(parsedQuery.userId);
         setResetToken(parsedQuery.resetToken);
         setIsResettingPassword(parsedQuery.reset?.toLowerCase() === "true");
     }, []);
@@ -228,15 +226,16 @@ const ResetPassword = ({
 
         passwordChangeHandler(password);
 
-        if (!userName || !resetToken || !validateSubmitEnabled()) {
+        if (!userProfileId || !resetToken || !validateSubmitEnabled()) {
             return;
         }
 
         await resetPassword({
-            userName,
+            userProfileId,
+            userName: undefined,
             newPassword: password,
             resetToken,
-            onError: error => {
+            onError: (error: any) => {
                 toasterContext.addToast({ body: error, messageType: "danger" });
             },
         });

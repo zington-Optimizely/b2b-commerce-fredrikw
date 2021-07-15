@@ -21,7 +21,7 @@ export default MainHeader;
 
 const MainHeaderStyle = styled.div`
     height: ${({ theme }) => theme.headerHeight};
-    background-color: #040a47;
+    background-color: #fff;
     display: flex;
     flex-wrap: wrap;
 `;

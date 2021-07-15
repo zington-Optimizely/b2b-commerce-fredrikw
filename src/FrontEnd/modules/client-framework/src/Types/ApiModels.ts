@@ -1179,7 +1179,9 @@ export interface AutocompleteItemModel extends BaseModel {
     id: string | null;
     image: string;
     subtitle: string;
+    displaySubtitle: JSX.Element;
     title: string;
+    displayTitle: JSX.Element;
     url: string;
 }
 
@@ -1195,8 +1197,11 @@ export interface BrandAutocompleteModel extends BaseModel {
     image: string;
     productLineId: string | null;
     productLineName: string;
+    displayProductLineName: JSX.Element;
     subtitle: string;
+    displaySubtitle: JSX.Element;
     title: string;
+    displayTitle: JSX.Element;
     url: string;
 }
 
@@ -1229,6 +1234,7 @@ export interface ProductAutocompleteItemModel extends BaseModel {
     brandDetailPagePath: string;
     brandName: string;
     erpNumber: string;
+    displayErpNumber: JSX.Element;
     id: string | null;
     image: string;
     isNameCustomerOverride: boolean;
@@ -1236,7 +1242,9 @@ export interface ProductAutocompleteItemModel extends BaseModel {
     name: string;
     styleParentId: string | null;
     subtitle: string;
+    displaySubtitle: JSX.Element;
     title: string;
+    displayTitle: JSX.Element;
     url: string;
 }
 

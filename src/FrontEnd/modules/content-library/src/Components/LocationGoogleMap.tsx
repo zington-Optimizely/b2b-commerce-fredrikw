@@ -7,6 +7,7 @@ import {
 } from "@insite/client-framework/Common/Hooks/useLocationGoogleMarkers";
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { newGuid } from "@insite/client-framework/Common/StringHelpers";
+import withDynamicGoogleMaps from "@insite/client-framework/Common/withDynamicGoogleMaps";
 import translate from "@insite/client-framework/Translate";
 import AddressInfoCondensedDisplay, {
     AddressInfoCondensedDisplayStyles,
@@ -18,7 +19,7 @@ import GridContainer, { GridContainerProps } from "@insite/mobius/GridContainer"
 import GridItem, { GridItemProps } from "@insite/mobius/GridItem";
 import { LinkPresentationProps } from "@insite/mobius/Link";
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
-import { GoogleMap, GoogleMapProps, InfoWindow, InfoWindowProps, Marker, MarkerProps } from "@react-google-maps/api";
+import { GoogleMapProps, InfoWindowProps, MarkerProps } from "@react-google-maps/api";
 import * as React from "react";
 import { css } from "styled-components";
 
@@ -32,6 +33,9 @@ interface Props {
     currentLocationInfoWindow?: CurrentLocationInfoWindow;
     handleOpenLocationContent: (location: LocationModel) => void;
     setGoogleMap: (map: google.maps.Map | undefined) => void;
+    GoogleMap: React.ComponentType<GoogleMapProps>;
+    InfoWindow: React.ComponentType<InfoWindowProps>;
+    Marker: React.ComponentType<MarkerProps>;
 }
 
 export interface LocationGoogleMapStyles {
@@ -110,6 +114,9 @@ const LocationGoogleMap: React.FC<Props> = ({
     locationInfoWindow,
     currentLocationInfoWindow,
     handleOpenLocationContent,
+    GoogleMap,
+    InfoWindow,
+    Marker,
 }) => {
     const [styles] = React.useState(() => mergeToNew(locationGoogleMapStyles, extendedStyles));
 
@@ -196,4 +203,4 @@ const LocationGoogleMap: React.FC<Props> = ({
     );
 };
 
-export default LocationGoogleMap;
+export default withDynamicGoogleMaps(LocationGoogleMap);

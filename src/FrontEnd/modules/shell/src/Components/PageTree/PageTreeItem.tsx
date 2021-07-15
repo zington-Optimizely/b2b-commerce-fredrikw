@@ -141,7 +141,7 @@ class PageTreeItem extends React.Component<Props> {
 export default PageTreeItem;
 
 const ExpandStyle = styled(Icon)`
-    top: 2px;
+    top: 11px;
     left: -23px;
     position: absolute;
     cursor: pointer;
@@ -152,7 +152,7 @@ const ExpandStyle = styled(Icon)`
 
 const NodeIcon = styled.span`
     top: 3px;
-    left: 0;
+    left: 5px;
     position: absolute;
     width: 12px;
     text-align: center;
@@ -165,7 +165,7 @@ const PageTreeFlyout = styled.button<{ isActivePage: boolean }>`
     width: 20px;
     text-align: center;
     right: 0;
-    top: 0;
+    top: 8px;
     background-color: transparent;
     border: none;
     padding: 0;
@@ -187,11 +187,11 @@ const PageTreeTitle = styled.h3<{
     ${props =>
         props.isActivePage
             ? `
-                  background-color: ${props.theme.colors.primary.main}40;
-                  color: ${props.theme.colors.primary.main};
+                  background-color: ${props.theme.colors.custom.activeBackground};
+                  color: ${props.theme.colors.primary.contrast};
                   &::before {
                       content: "";
-                      background-color: ${props.theme.colors.primary.main}40;
+                      background-color: ${props.theme.colors.primary.main};
                       position: absolute;
                       height: 100%;
                       width: 22px;
@@ -220,17 +220,16 @@ const PageTreeTitle = styled.h3<{
                       : props.theme.colors.custom.isWaitingForApproval};
               `
             : ""}
-    padding-left: 20px;
+    padding-left: 25px;
     position: relative;
     margin: 0;
-    line-height: 24px;
     &:hover ${PageTreeFlyout} {
         display: block;
     }
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: normal;
     &:hover {
-        background-color: #d4e0fd;
+        background-color: ${props => props.theme.colors.custom.activeBackground};
     }
 `;
 
@@ -239,7 +238,7 @@ const PageTreePage = styled.li`
         padding-left: 2px;
         h3,
         ul {
-            margin-left: 20px;
+            margin-left: 15px;
         }
         li {
             position: relative;
@@ -254,7 +253,7 @@ const PageTreePage = styled.li`
             left: -16px;
         }
         li:last-child::before {
-            height: 12px;
+            height: 20px;
         }
         li::after {
             content: "";
@@ -262,7 +261,7 @@ const PageTreePage = styled.li`
             height: 2px;
             background-color: rgb(216, 216, 216);
             position: absolute;
-            top: 11px;
+            top: 20px;
             left: -16px;
         }
     }

@@ -48,7 +48,6 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         super(props);
 
         this.state = {
-            isOpen: props.isOpen,
             afterOpen: false,
             beforeClose: false,
             closesAt: 0,
@@ -61,16 +60,11 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         }
     }
 
-    componentDidUpdate(prevProps: OverlayManagerProps, prevState: OverlayManagerState) {
+    componentDidUpdate(prevProps: OverlayManagerProps) {
         if (this.props.isOpen && !prevProps.isOpen) {
             this.open(null);
         } else if (!this.props.isOpen && prevProps.isOpen) {
             this.close(null);
-        }
-
-        // Focus only needs to be set once when the overlay is being opened
-        if (this.state.isOpen && !prevState.isOpen) {
-            this.focusContent();
         }
     }
 
@@ -129,6 +123,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
                 }
             });
         }
+        this.focusContent();
     };
 
     close = (event: React.SyntheticEvent | null) => {
@@ -228,7 +223,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         this.props.handleClose?.(event);
     };
 
-    shouldBeClosed = () => !this.state.isOpen && !this.state.beforeClose;
+    shouldBeClosed = () => !this.props.isOpen && !this.state.beforeClose;
 
     contentHasFocus = () =>
         document.activeElement === this.contentRef.current || this.contentRef.current?.contains(document.activeElement);
@@ -253,7 +248,7 @@ export default class OverlayManager extends React.Component<OverlayManagerProps,
         const renderComponent = (
             <Scrim
                 persisted={this.props.persisted}
-                persistentClosed={!this.state.isOpen || !this.isPersistentAndVisible()}
+                persistentClosed={!this.props.isOpen || !this.isPersistentAndVisible()}
                 ref={this.scrimRef}
                 onClick={this.handleScrimOnClick}
                 onMouseDown={this.handleScrimOnMouseDown}

@@ -109,8 +109,8 @@ class AutocompleteCategories extends React.Component<Props> {
                                     this.props.goToUrl(category.url);
                                 }}
                             >
-                                <Link {...styles.link}>{category.title}</Link>
-                                <>{` ${translate("in")} ${category.subtitle}`}</>
+                                <Link {...styles.link}>{category.displayTitle}</Link>
+                                <>{` ${translate("in")}`}</> {category.displaySubtitle}
                             </Typography>
                         )}
                         {!category.subtitle && (
@@ -120,7 +120,7 @@ class AutocompleteCategories extends React.Component<Props> {
                                     this.props.goToUrl(category.url);
                                 }}
                             >
-                                {category.title}
+                                {category.displayTitle}
                             </Link>
                         )}
                     </Fragment>

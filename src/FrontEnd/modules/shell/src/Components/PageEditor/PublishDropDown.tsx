@@ -125,13 +125,13 @@ const InlinePopUpInnerWrapper = styled.div`
 type HasExpanded = { expanded?: boolean };
 
 const PublishButton = styled(Button)<HasExpanded>`
-    background: ${({ theme }) => theme.colors.common.background};
+    background: ${({ theme }) => theme.colors.custom.blueBase};
     color: ${({ theme }) => theme.colors.primary.main};
     height: 100%;
     padding: 6px 10px;
 
     &:hover {
-        background-color: #1456f140;
+        background-color: ${({ theme }) => theme.colors.custom.brandPrimaryColor};
     }
 `;
 

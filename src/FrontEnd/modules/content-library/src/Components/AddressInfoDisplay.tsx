@@ -1,7 +1,6 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import { getStyledWrapper } from "@insite/client-framework/Common/StyledWrapper";
 import translate from "@insite/client-framework/Translate";
-import Link from "@insite/mobius/Link";
 import Typography, { TypographyProps } from "@insite/mobius/Typography";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
@@ -121,9 +120,9 @@ const AddressInfoDisplay: React.FunctionComponent<Props> = function Address(prop
                 </Typography>
             )}
             {props.email && (
-                <Link typographyProps={styles.emailText} data-test-selector="addressInfoDisplay_emailAddress">
+                <Typography {...styles.emailText} data-test-selector="addressInfoDisplay_emailAddress">
                     {props.email}
-                </Link>
+                </Typography>
             )}
         </StyledAddress>
     );

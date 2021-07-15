@@ -2,6 +2,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import addProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/AddProductFilters";
 import removeProductFilters from "@insite/client-framework/Store/Pages/ProductList/Handlers/RemoveProductFilters";
 import { getProductListDataViewProperty } from "@insite/client-framework/Store/Pages/ProductList/ProductListSelectors";
+import translate from "@insite/client-framework/Translate";
 import { FacetModel } from "@insite/client-framework/Types/ApiModels";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -60,7 +61,7 @@ const ProductListBrandFilters: FC<Props> = ({
 
     return (
         <ProductListFiltersAccordionSection
-            title="Brands"
+            title={translate("Brands")}
             facets={brandFacets}
             onChangeFacet={onChangeFacet}
             showMoreLimit={showMoreLimit}

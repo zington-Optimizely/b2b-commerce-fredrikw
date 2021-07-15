@@ -76,7 +76,7 @@ const UserSetupSettings = ({ editingUser, setUserFields }: Props) => {
                         value={editingUser.role}
                         onChange={userRoleChangeHandler}
                     >
-                        <option value="">{translate("Select User Role")}</option>,
+                        <option value="">{translate("Select User Role")}</option>
                         {editingUser.availableRoles?.map(role => (
                             <option key={role} value={role}>
                                 {role}
@@ -91,7 +91,7 @@ const UserSetupSettings = ({ editingUser, setUserFields }: Props) => {
                         value={editingUser.approver}
                         onChange={approverChangeHandler}
                     >
-                        <option value="">{translate("Select an Approver")}</option>,
+                        <option value="">{translate("Select an Approver")}</option>
                         {editingUser.availableApprovers?.map(approver => (
                             <option key={approver} value={approver}>
                                 {approver}
