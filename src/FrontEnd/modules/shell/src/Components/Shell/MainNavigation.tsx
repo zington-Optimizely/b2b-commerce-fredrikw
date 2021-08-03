@@ -55,7 +55,7 @@ const NavigationLink = styled(Link)`
     border-bottom: 2px solid transparent;
 
     &[data-active="true"] {
-        color: ${getColor("primary.contrast")};
+        color: ${getColor("primary.main")};
         border-bottom: 2px solid ${getColor("custom.activeBorder")};
     }
 `;

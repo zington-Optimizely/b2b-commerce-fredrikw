@@ -25,6 +25,7 @@ module insite.catalog {
         translations: Array<any>; // translations populated by ng-init in the template
         preventActions: boolean;
         autocompleteEnabled: boolean;
+        isSearchCompleted: boolean;
         autocompleteCanceled: boolean;
         searchHistoryEnabled: boolean;
         searchData: Array<any> = [];
@@ -123,6 +124,7 @@ module insite.catalog {
         }
 
         protected onAutocompleteFiltering(event: kendo.ui.AutoCompleteFilteringEvent, appliedOnce: boolean): void {
+            this.isSearchCompleted = false;
             if (!appliedOnce) {
                 const list = this.getAutocomplete().list;
                 list.addClass("search-autocomplete-list");
@@ -174,6 +176,10 @@ module insite.catalog {
         }
 
         protected autocompleteSearchCompleted(autocompleteModel: AutocompleteModel, options: kendo.data.DataSourceTransportReadOptions, data: Array<any>): void {
+            if (this.isSearchCompleted) {
+                return options.success([]);
+            }
+
             this.products = autocompleteModel.products;
             this.products.forEach((p: any) => p.type = AutocompleteTypes.product);
 
@@ -187,14 +193,15 @@ module insite.catalog {
             this.brands.forEach((p: any) => p.type = AutocompleteTypes.brand);
 
             this.searchData = data.concat(this.categories, this.brands, this.content, this.products);
+
             options.success(this.searchData);
         }
 
         protected autocompleteSearchFailed(error: any, options: kendo.data.DataSourceTransportReadOptions): void {
             options.error(error);
         }
-
         protected onAutocompleteSelect(event: kendo.ui.AutoCompleteSelectEvent): boolean {
+            this.isSearchCompleted = true;
             this.disableSearch();
 
             const dataItem = this.getAutocomplete().dataItem(event.item.index(".k-item"));

@@ -12,6 +12,7 @@ declare const BLUEPRINT_NAME: string;
 declare module "@optimizely/design-tokens/dist/fonts/src/Inter-roman.var.woff2";
 declare module "@optimizely/design-tokens/dist/fonts/src/Inter-italic.var.woff2";
 declare module "@optimizely/design-tokens/dist/brand-assets/brand-logo.svg";
+declare module "react-oui-icons";
 
 declare module "@optimizely/design-tokens/dist/js/colors" {
     export const brandPrimaryColor: string;

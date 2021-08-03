@@ -28,7 +28,7 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
                         background-color: #d4e0fd;
                         button {
                             span {
-                                ${({ expanded, theme }) => !expanded && `color: ${theme.colors.primary.contrast};`}
+                                ${({ expanded, theme }) => !expanded && `color: ${theme.colors.primary.main};`}
                             }
                         }
                     }
@@ -47,7 +47,7 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
                             padding: 7px ${paddingValue}px;
                             > span {
                                 color: ${({ expanded, theme }) =>
-                                    expanded ? theme.colors.primary.contrast : theme.colors.text.main};
+                                    expanded ? theme.colors.primary.main : theme.colors.text.main};
                             }
                         }
                     }
@@ -65,6 +65,9 @@ const SideBarAccordionSection: React.FunctionComponent<{ title: string; inPopove
                     padding: 0 ${paddingValue}px 0;
                     background-color: transparent;
                     margin: 0;
+                    label {
+                        white-space: normal;
+                    }
                 `,
             }}
         >

@@ -180,6 +180,7 @@ class LinkField extends ClickOutside<Props, State> {
                                     this.props.futurePublishNodeIds[page.id] &&
                                     this.props.futurePublishNodeIds[page.id] > new Date()
                                 }
+                                className="link-selector"
                             >
                                 {hasChildren && (
                                     <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
@@ -210,7 +211,7 @@ class LinkField extends ClickOutside<Props, State> {
                     const hasChildren = !!categoryIndexByParentId[category.id];
                     return (
                         <TreeItemStyle key={category.id}>
-                            <TitleStyle data-id={category.id}>
+                            <TitleStyle className="link-selector" data-id={category.id}>
                                 {hasChildren && (
                                     <ArrowContainer isExpanded={isExpanded} onClick={this.clickExpand}>
                                         {isExpanded ? <ArrowDown height={6} /> : <ArrowRight width={6} />}
@@ -298,7 +299,7 @@ class LinkField extends ClickOutside<Props, State> {
                     {this.props.categories && this.props.categoryIndexByParentId ? (
                         <ul>
                             <TreeItemStyle key={emptyGuid}>
-                                <TitleStyle data-id={emptyGuid}>
+                                <TitleStyle className="link-selector" data-id={emptyGuid}>
                                     <span onClick={this.clickCategory}>Root</span>
                                 </TitleStyle>
                                 {this.renderCategoryChunk(emptyGuid)}

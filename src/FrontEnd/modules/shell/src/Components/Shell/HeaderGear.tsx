@@ -101,7 +101,7 @@ const HeaderGear = ({
                 }}
                 iconProps={{
                     src: "Settings",
-                    color: "primary.contrast",
+                    color: "primary.main",
                 }}
                 cssOverrides={{
                     menuItem: menuItemStyles,

@@ -273,12 +273,14 @@ const WidgetListGroup = styled.div`
 `;
 
 const WidgetListHeader = styled.h3`
-    background-color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
-    width: 100%;
-    font-size: 14px;
-    color: white;
-    text-transform: uppercase;
-    padding: 4px 8px;
+    && {
+        background-color: ${(props: ShellThemeProps) => props.theme.colors.text.main};
+        width: 100%;
+        font-size: 14px;
+        color: white;
+        text-transform: uppercase;
+        padding: 4px 8px;
+    }
 `;
 
 const WidgetListItems = styled.div`

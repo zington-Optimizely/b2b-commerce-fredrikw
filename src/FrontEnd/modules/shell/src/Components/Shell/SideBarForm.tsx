@@ -86,10 +86,10 @@ const Buttons = styled.div`
     width: 340px;
     padding: 20px 35px;
     text-align: right;
+    background: #fff;
     button {
         margin-left: 10px;
     }
-    background-color: ${props => props.theme.colors.common.backgroundContrast};
     z-index: 5;
 `;
 

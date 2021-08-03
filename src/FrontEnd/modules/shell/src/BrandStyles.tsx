@@ -1,3 +1,4 @@
+import "@episerver/platform-navigation/dist/main.css";
 import italicInterFont from "@optimizely/design-tokens/dist/fonts/src/Inter-italic.var.woff2";
 import romanInterFont from "@optimizely/design-tokens/dist/fonts/src/Inter-roman.var.woff2";
 import * as axiomTypography from "@optimizely/design-tokens/dist/js/typography";
@@ -34,7 +35,7 @@ const BrandStyles = createGlobalStyle`
         letter-spacing: ${axiomTypography.letterSpacingHeader2};
     }
 
-    h3 {
+    h3:not(.link-selector) {
         font-size: ${axiomTypography.header3FontSize};
         font-weight: ${axiomTypography.header3FontWeight};
         line-height: ${axiomTypography.header3LineHeight};

@@ -607,7 +607,7 @@ const ColorPickerWrapper = styled.div`
 const ResetButton = styled.button`
     height: 35px;
     display: block;
-    border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.primary.contrast};
+    border: 1px solid ${(props: ShellThemeProps) => props.theme.colors.primary.main};
     border-radius: 4px;
     background: transparent;
     color: ${(props: ShellThemeProps) => props.theme.colors.text.main};

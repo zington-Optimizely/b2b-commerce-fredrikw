@@ -89,19 +89,19 @@ class Header extends React.Component<Props, State> {
         return (
             <PageHeaderStyle>
                 <PageHeaderTitle data-test-selector="shell_title">{page.name}</PageHeaderTitle>
-                <Icon src={Spacer} color="primary.contrast" />
-                <Icon src="Calendar" size={20} color={shellTheme.colors.primary.contrast} />
+                <Icon src={Spacer} color="custom.borderDividerColor" />
+                <Icon src="Calendar" size={20} color={shellTheme.colors.primary.main} />
                 <HeaderPublishStatus />
                 {contentMode === "Editing" && (
                     <>
-                        <Icon src={Spacer} color="primary.contrast" />
+                        <Icon src={Spacer} color="custom.borderDividerColor" />
                         {permissions?.canEditWidget && (!futurePublishOn || futurePublishOn < new Date()) && (
                             <PageHeaderButton onClick={this.editPageOptions} data-test-selector="shell_editPage">
-                                <Icon src="Edit" size={20} color={shellTheme.colors.primary.contrast} />
+                                <Icon src="Edit" size={20} color={shellTheme.colors.primary.main} />
                             </PageHeaderButton>
                         )}
                         <PageHeaderButton onClick={openPageTemplateModal}>
-                            <DebugMenu color1={shellTheme.colors.primary.contrast} size={16} />
+                            <DebugMenu color1={shellTheme.colors.primary.main} size={16} />
                         </PageHeaderButton>
                     </>
                 )}
@@ -142,7 +142,7 @@ const PageHeaderStyle = styled.div`
 `;
 
 const PageHeaderTitle = styled.p`
-    color: ${(props: ShellThemeProps) => props.theme.colors.primary.contrast};
+    color: ${(props: ShellThemeProps) => props.theme.colors.primary.main};
     align-content: center;
     padding-left: 16px;
     font-size: 16px;
@@ -165,6 +165,7 @@ const PageHeaderButton = styled.button`
     font-family: ${(props: ShellThemeProps) => props.theme.typography.body.fontFamily};
     &:hover {
         background-color: #f4f4f4;
+        background-color: ${({ theme }) => theme.colors.custom.activeBackground};
     }
 `;
 

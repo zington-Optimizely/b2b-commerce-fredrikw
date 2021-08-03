@@ -188,17 +188,17 @@ const PageTreeTitle = styled.h3<{
         props.isActivePage
             ? `
                   background-color: ${props.theme.colors.custom.activeBackground};
-                  color: ${props.theme.colors.primary.contrast};
+                  color: ${props.theme.colors.primary.main};
                   &::before {
                       content: "";
-                      background-color: ${props.theme.colors.primary.main};
+                      background-color: ${props.theme.colors.custom.activeBackground};
                       position: absolute;
                       height: 100%;
                       width: 22px;
                       left: -22px;
                   }
                   ${ExpandStyle} {
-                      color: white;
+                      color: ${props.theme.colors.primary.main};
                   }
               `
             : ""}
@@ -226,8 +226,10 @@ const PageTreeTitle = styled.h3<{
     &:hover ${PageTreeFlyout} {
         display: block;
     }
-    font-size: 0.9rem;
-    font-weight: normal;
+    && {
+        font-size: 0.9rem;
+        font-weight: normal;
+    }
     &:hover {
         background-color: ${props => props.theme.colors.custom.activeBackground};
     }

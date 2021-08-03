@@ -1,3 +1,4 @@
+import { Navigation, NavigationBarIcon } from "@episerver/platform-navigation";
 import { emptyGuid } from "@insite/client-framework/Common/StringHelpers";
 import Toaster from "@insite/mobius/Toast/Toaster";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
@@ -18,9 +19,12 @@ import { ShellThemeProps } from "@insite/shell/ShellTheme";
 import ShellState from "@insite/shell/Store/ShellState";
 import * as React from "react";
 import { useEffect } from "react";
+import Icon from "react-oui-icons";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import styled from "styled-components";
+
+const menuItems = [{ url: "/", name: "", children: [] }];
 
 const homePageLoader = (props: ReturnType<typeof mapStateToProps> & RouteComponentProps) => {
     useEffect(() => {
@@ -47,6 +51,7 @@ const FlexWrapper = styled.div`
 `;
 
 const SideBarArea = styled.div`
+    padding-top: 40px;
     width: ${(props: ShellThemeProps) => props.theme.sideBarWidth};
     overflow: hidden;
     position: relative;
@@ -55,11 +60,27 @@ const SideBarArea = styled.div`
 
 const MainArea = styled.div`
     width: calc(100% - ${(props: ShellThemeProps) => props.theme.sideBarWidth});
+    padding-top: 39px;
 `;
 
 const layout = (
     <FlexWrapper>
         <Toaster>
+            <Navigation
+                menuItems={menuItems}
+                levelOne={{ url: "/", name: "", children: [] }}
+                product={{ name: "B2B Commerce", url: "/" }}
+                actionItems={[
+                    <NavigationBarIcon
+                        key={1}
+                        href="https://webhelp.optimizely.com/latest/en/b2b-commerce/b2b-commerce.htm"
+                        target="_blank"
+                    >
+                        <Icon name="help" description="Help" size="medium" fill="white" />
+                    </NavigationBarIcon>,
+                ]}
+                onItemSelect={e => {}}
+            />
             <SideBarArea>
                 <MainNavigation />
                 <Switch>

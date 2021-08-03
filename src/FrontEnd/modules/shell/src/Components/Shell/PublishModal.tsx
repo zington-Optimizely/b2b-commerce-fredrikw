@@ -597,6 +597,12 @@ const PublishLaterContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
 
+    && {
+        .react-datetime-picker {
+            width: 282px;
+        }
+    }
+
     > div:first-child {
         flex-basis: 100%;
     }

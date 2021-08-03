@@ -215,6 +215,7 @@ class PublishComparer extends React.Component<Props, State> {
 }
 
 const FullScreenModal = styled.div`
+    padding-top: 40px;
     position: absolute;
     top: 0;
     left: 0;

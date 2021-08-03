@@ -15,16 +15,14 @@ const ClickerStyle = styled(Clickable)`
     text-align: center;
     cursor: ${(props: StyleProps) => (props.clickable ? "pointer" : "default")};
     background-color: ${(props: StyleProps & ShellThemeProps) =>
-        props.active ? props.theme.colors.custom.activeBackground : props.theme.colors.primary.main};
+        props.active ? props.theme.colors.custom.activeBackground : props.theme.colors.primary.contrast};
     &:disabled {
         cursor: not-allowed;
     }
     &:focus,
     &:hover:not([disabled]) {
         background-color: ${(props: StyleProps & ShellThemeProps) => props.theme.colors.custom.activeBackground};
-        svg {
-            /* color: #fff; */
-        }
+        outline-style: none;
     }
 ` as StyledComponent<typeof Clickable, {}, any, never>;
 /**

@@ -67,6 +67,7 @@ class PublishDropDown extends React.Component<Props> {
                     onClick={this.onPublish}
                     expanded={visible}
                     variant="primary"
+                    typographyProps={{ transform: "capitalize" }}
                 >
                     Publish
                 </PublishButton>
@@ -125,13 +126,16 @@ const InlinePopUpInnerWrapper = styled.div`
 type HasExpanded = { expanded?: boolean };
 
 const PublishButton = styled(Button)<HasExpanded>`
-    background: ${({ theme }) => theme.colors.custom.blueBase};
-    color: ${({ theme }) => theme.colors.primary.main};
+    background: ${({ theme }) => theme.colors.custom.buttonPrimaryActiveBackgroundColor};
+    color: ${({ theme }) => theme.colors.primary.contrast};
     height: 100%;
     padding: 6px 10px;
+    border-color: ${({ theme }) => theme.colors.custom.buttonPrimaryActiveBorderColor};
 
     &:hover {
-        background-color: ${({ theme }) => theme.colors.custom.brandPrimaryColor};
+        background-color: ${({ theme }) => theme.colors.custom.buttonPrimaryHoverBackgroundColor};
+        border-color: ${({ theme }) => theme.colors.custom.buttonPrimaryHoverBorderColor};
+        color: ${({ theme }) => theme.colors.custom.buttonPrimaryHoverLabelColor};
     }
 `;
 

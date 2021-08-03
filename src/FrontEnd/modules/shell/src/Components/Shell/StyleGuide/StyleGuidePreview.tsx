@@ -417,7 +417,7 @@ const ConnectableStyleGuidePreview: React.FunctionComponent<ReturnType<typeof ma
 
 const fontFamily = "Barlow, sans-serif;";
 const textColor = "#4a4a4a";
-const textHighlight = getColor("primary.contrast");
+const textHighlight = getColor("text.main");
 
 const PreviewH1 = styled.h1`
     font-family: ${fontFamily};

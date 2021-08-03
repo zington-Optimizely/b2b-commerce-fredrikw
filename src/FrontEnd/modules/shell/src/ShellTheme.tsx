@@ -27,6 +27,36 @@ export interface ShellColors extends ThemeColors {
         activeBackground: string;
         blueBase: string;
         brandPrimaryColor: string;
+        buttonPrimaryActiveBackgroundColor: string;
+        buttonPrimaryActiveBorderColor: string;
+        buttonPrimaryActiveLabelColor: string;
+        buttonPrimaryHoverBackgroundColor: string;
+        buttonPrimaryHoverBorderColor: string;
+        buttonPrimaryHoverLabelColor: string;
+        borderDividerColor: string;
+        buttonOutlinedActiveBackgroundColor: string;
+        buttonOutlinedActiveBorderColor: string;
+        buttonOutlinedActiveLabelColor: string;
+        buttonOutlinedDisabledBackgroundColor: string;
+        buttonOutlinedDisabledBorderColor: string;
+        buttonOutlinedDisabledLabelColor: string;
+        buttonOutlinedHoverBackgroundColor: string;
+        buttonOutlinedHoverBorderColor: string;
+        buttonOutlinedHoverLabelColor: string;
+        buttonOutlinedFocusBackgroundColor: string;
+        buttonOutlinedFocusBorderColor: string;
+        buttonOutlinedFocusLabelColor: string;
+        buttonOutlinedPressedBackgroundColor: string;
+        buttonOutlinedPressedBorderColor: string;
+        buttonPrimaryDisabledBackgroundColor: string;
+        buttonPrimaryDisabledBorderColor: string;
+        buttonPrimaryDisabledLabelColor: string;
+        buttonPrimaryFocusBackgroundColor: string;
+        buttonPrimaryFocusBorderColor: string;
+        buttonPrimaryFocusLabelColor: string;
+        buttonPrimaryPressedBackgroundColor: string;
+        buttonPrimaryPressedBorderColor: string;
+        buttonPrimaryPressedLabelColor: string;
     };
 }
 
@@ -44,10 +74,40 @@ const colors: ShellColors = {
         activeBackground: axiomColors.brandBlueLight,
         blueBase: axiomColors.blueBase,
         brandPrimaryColor: axiomColors.brandPrimaryColor,
+        buttonPrimaryActiveBackgroundColor: axiomColors.buttonPrimaryActiveBackgroundColor,
+        buttonPrimaryActiveBorderColor: axiomColors.buttonPrimaryActiveBorderColor,
+        buttonPrimaryActiveLabelColor: axiomColors.buttonPrimaryActiveLabelColor,
+        buttonPrimaryHoverBackgroundColor: axiomColors.buttonPrimaryHoverBackgroundColor,
+        buttonPrimaryHoverBorderColor: axiomColors.buttonPrimaryHoverBorderColor,
+        buttonPrimaryHoverLabelColor: axiomColors.buttonPrimaryHoverLabelColor,
+        borderDividerColor: axiomColors.borderDividerColor,
+        buttonOutlinedActiveBackgroundColor: axiomColors.buttonOutlinedActiveBackgroundColor,
+        buttonOutlinedActiveBorderColor: axiomColors.buttonOutlinedActiveBorderColor,
+        buttonOutlinedActiveLabelColor: axiomColors.buttonOutlinedActiveLabelColor,
+        buttonOutlinedDisabledBackgroundColor: axiomColors.buttonOutlinedDisabledBackgroundColor,
+        buttonOutlinedDisabledBorderColor: axiomColors.buttonOutlinedDisabledBorderColor,
+        buttonOutlinedDisabledLabelColor: axiomColors.buttonOutlinedDisabledLabelColor,
+        buttonOutlinedHoverBackgroundColor: axiomColors.buttonOutlinedHoverBackgroundColor,
+        buttonOutlinedHoverBorderColor: axiomColors.buttonOutlinedHoverBorderColor,
+        buttonOutlinedHoverLabelColor: axiomColors.buttonOutlinedHoverLabelColor,
+        buttonOutlinedFocusBackgroundColor: axiomColors.buttonOutlinedFocusBackgroundColor,
+        buttonOutlinedFocusBorderColor: axiomColors.buttonOutlinedFocusBorderColor,
+        buttonOutlinedFocusLabelColor: axiomColors.buttonOutlinedFocusLabelColor,
+        buttonOutlinedPressedBackgroundColor: axiomColors.buttonOutlinedPressedBackgroundColor,
+        buttonOutlinedPressedBorderColor: axiomColors.buttonOutlinedPressedBorderColor,
+        buttonPrimaryDisabledBackgroundColor: axiomColors.buttonPrimaryDisabledBackgroundColor,
+        buttonPrimaryDisabledBorderColor: axiomColors.buttonPrimaryDisabledBorderColor,
+        buttonPrimaryDisabledLabelColor: axiomColors.buttonPrimaryDisabledLabelColor,
+        buttonPrimaryFocusBackgroundColor: axiomColors.buttonPrimaryFocusBackgroundColor,
+        buttonPrimaryFocusBorderColor: axiomColors.buttonPrimaryFocusBorderColor,
+        buttonPrimaryFocusLabelColor: axiomColors.buttonPrimaryFocusLabelColor,
+        buttonPrimaryPressedBackgroundColor: axiomColors.buttonPrimaryPressedBackgroundColor,
+        buttonPrimaryPressedBorderColor: axiomColors.buttonPrimaryPressedBorderColor,
+        buttonPrimaryPressedLabelColor: axiomColors.buttonPrimaryPressedLabelColor,
     },
     primary: {
-        main: axiomColors.brandBackgroundPrimaryColor,
-        contrast: axiomColors.brandPurpleDark,
+        main: axiomColors.brandPurpleDark,
+        contrast: axiomColors.brandBackgroundPrimaryColor,
     },
     secondary: {
         main: "#6c757d",
@@ -139,10 +199,46 @@ const shellTheme = {
         primary: {
             ...buttonProps,
             color: "primary",
+            css: css`
+                height: 32px;
+                border-radius: 3px;
+                border-width: 1px;
+                padding: 0 16px;
+                background: ${({ theme }) => theme.colors.custom.buttonPrimaryActiveBackgroundColor};
+                border: 2px solid ${({ theme }) => theme.colors.custom.buttonPrimaryActiveBorderColor};
+                color: ${({ theme }) => theme.colors.custom.buttonPrimaryActiveLabelColor};
+
+                &:hover {
+                    background: ${({ theme }) => theme.colors.custom.buttonPrimaryHoverBackgroundColor};
+                    border: 2px solid ${({ theme }) => theme.colors.custom.buttonPrimaryActiveBorderColor};
+                    color: ${({ theme }) => theme.colors.custom.buttonPrimaryHoverLabelColor};
+                }
+                &:disabled {
+                    color: #bbb;
+                }
+            `,
         },
         secondary: {
             ...buttonProps,
             color: "secondary",
+            css: css`
+                height: 32px;
+                border-radius: 3px;
+                border-width: 1px;
+                padding: 0 16px;
+                background: ${({ theme }) => theme.colors.custom.buttonOutlinedActiveBackgroundColor};
+                border: 2px solid ${({ theme }) => theme.colors.custom.buttonOutlinedActiveBorderColor};
+                color: ${({ theme }) => theme.colors.custom.buttonOutlinedActiveLabelColor};
+
+                &:hover {
+                    background: ${({ theme }) => theme.colors.custom.buttonOutlinedHoverBackgroundColor};
+                    border: 2px solid ${({ theme }) => theme.colors.custom.buttonHoverActiveBorderColor};
+                    color: ${({ theme }) => theme.colors.custom.buttonOutlinedHoverLabelColor};
+                }
+                &:disabled {
+                    color: #bbb;
+                }
+            `,
         },
         tertiary: {
             ...buttonProps,
