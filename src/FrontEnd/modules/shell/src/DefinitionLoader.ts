@@ -167,7 +167,7 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
         sortOrder: 0,
     });
 
-    if (pageDefinition.hasEditableUrlSegment) {
+    if (pageDefinition.hasEditableUrlSegment && pageDefinition.type !== "HomePage") {
         fieldDefinitions.push({
             name: "urlSegment",
             editorTemplate: "TextField",
@@ -178,6 +178,18 @@ function cleanupPageDefinition(pageDefinition: LoadedPageDefinition) {
             sortOrder: 100,
             regularExpression: new RegExp("^[0-9a-zA-Z_\\-]+$"),
             validate: value => (systemUris.has(value?.toLowerCase()) && "Field has reserved system value") || null,
+        });
+    }
+    if (pageDefinition.hasEditableUrlSegment && pageDefinition.type === "HomePage") {
+        fieldDefinitions.push({
+            name: "urlSegment",
+            editorTemplate: "TextField",
+            defaultValue: "",
+            fieldType: "Translatable",
+            tooltip: "URL path component identifying this page.",
+            isRequired: false,
+            sortOrder: 100,
+            regularExpression: new RegExp("^[0-9a-zA-Z_\\-]*$"),
         });
     }
 

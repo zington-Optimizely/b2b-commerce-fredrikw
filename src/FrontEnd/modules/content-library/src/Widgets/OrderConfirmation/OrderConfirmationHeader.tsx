@@ -3,6 +3,7 @@ import siteMessage from "@insite/client-framework/SiteMessage";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
+import { getHomePageUrl } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -23,6 +24,7 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => ({
     cartState: getCartState(state, state.pages.orderConfirmation.cartId),
     settingsCollection: getSettingsCollection(state),
+    homePageUrl: getHomePageUrl(state),
 });
 
 export interface OrderConfirmationHeaderStyles {
@@ -82,6 +84,7 @@ const styles = headerStyles;
 const OrderConfirmationHeader: FC<Props> = props => {
     const { cartState } = props;
     const { history } = props;
+    const { homePageUrl } = props;
 
     const printOrOpenPrintAllModal = () => {
         openPrintDialog();
@@ -92,7 +95,7 @@ const OrderConfirmationHeader: FC<Props> = props => {
     }
 
     const continueClickHandler = () => {
-        history.push("/");
+        history.push(homePageUrl);
     };
 
     const printLabel = translate("Print");

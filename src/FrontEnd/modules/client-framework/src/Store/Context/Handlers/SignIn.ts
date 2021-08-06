@@ -6,7 +6,7 @@ import { getCart, GetCartApiParameter, updateCart } from "@insite/client-framewo
 import { createSession, deleteSession, Session } from "@insite/client-framework/Services/SessionService";
 import { getCurrentUserIsGuest } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { getCurrentCartState } from "@insite/client-framework/Store/Data/Carts/CartsSelector";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { Draft } from "immer";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -166,7 +166,7 @@ export const NavigateToReturnUrl: HandlerType = async props => {
             ? dashboardPageUrl
             : props.authenticatedSession?.customLandingPage
             ? props.authenticatedSession.customLandingPage
-            : "/";
+            : getHomePageUrl(state);
     const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
 
     if (returnUrl?.toLowerCase() === checkoutShippingUrl?.toLowerCase()) {
@@ -183,6 +183,21 @@ export const NavigateToReturnUrl: HandlerType = async props => {
             returnUrl = cartUrl;
         } else if (canBypassCheckoutAddress) {
             returnUrl = checkoutReviewAndSubmitUrl;
+        }
+    }
+
+    if (returnUrl?.includes("SwitchingLanguage")) {
+        returnUrl = returnUrl.split("?")[0];
+    }
+    if (returnUrl?.toLowerCase() === getHomePageUrl(state) && props.authenticatedSession?.customLandingPage) {
+        // need to send to custom landing page if the return URL is a language specific homepage
+        if (returnUrl?.endsWith("/")) {
+            returnUrl = returnUrl.substring(0, returnUrl.length - 1);
+        }
+        if (props.authenticatedSession?.customLandingPage.startsWith("/")) {
+            returnUrl = `${returnUrl}${props.authenticatedSession?.customLandingPage}`;
+        } else {
+            returnUrl = `${returnUrl}/${props.authenticatedSession?.customLandingPage}`;
         }
     }
 

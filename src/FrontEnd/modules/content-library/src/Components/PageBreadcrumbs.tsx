@@ -1,6 +1,6 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getCurrentPage } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByNodeId } from "@insite/client-framework/Store/Links/LinksSelectors";
 import LinksState from "@insite/client-framework/Store/Links/LinksState";
 import translate from "@insite/client-framework/Translate";
 import Breadcrumbs, { BreadcrumbsPresentationProps } from "@insite/mobius/Breadcrumbs";
@@ -13,6 +13,7 @@ const mapStateToProps = (state: ApplicationState) => {
         links: state.components.breadcrumbs.links,
         linksState: state.links,
         nodeId: getCurrentPage(state).nodeId,
+        homePageUrl: getHomePageUrl(state),
     };
 };
 
@@ -24,20 +25,22 @@ export const pageBreadcrumbStyles: PageBreadcrumbsStyles = {};
 
 type Props = ReturnType<typeof mapStateToProps>;
 
-const homePageLink = { children: translate("Home"), href: "/" };
-
 const PageBreadcrumbs: FC<Props> = (props: Props) => {
-    let links = props.links || generateLinksFrom(props.linksState, props.nodeId);
-    if (links.length > 0 && links[0].href !== homePageLink.href) {
-        links = [homePageLink, ...links];
+    const homePageLink = { children: translate("Home"), href: props.homePageUrl };
+    let links = props.links || generateLinksFrom(props.linksState, props.nodeId, props.homePageUrl);
+
+    if (links?.length > 0) {
+        links = [homePageLink, ...links.slice(1)];
     }
 
     return <Breadcrumbs links={links} data-test-selector="pageBreadcrumbs" {...pageBreadcrumbStyles.breadcrumbs} />;
 };
 
-export function generateLinksFrom(linksState: LinksState, nodeId: string) {
+export function generateLinksFrom(linksState: LinksState, nodeId: string, homePageUrl: string) {
     const links: LinkProps[] = [];
+    const homePageLink = { children: translate("Home"), href: homePageUrl };
     let currentLink = getPageLinkByNodeId({ links: linksState }, nodeId);
+
     while (currentLink) {
         if (currentLink.type === "HomePage") {
             links.unshift(homePageLink);

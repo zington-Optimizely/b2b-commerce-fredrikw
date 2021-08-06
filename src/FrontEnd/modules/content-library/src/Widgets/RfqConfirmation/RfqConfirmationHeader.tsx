@@ -1,7 +1,7 @@
 import openPrintDialog from "@insite/client-framework/Common/Utilities/openPrintDialog";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getQuoteState } from "@insite/client-framework/Store/Data/Quotes/QuotesSelector";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -21,6 +21,7 @@ import { css } from "styled-components";
 const mapStateToProps = (state: ApplicationState) => ({
     quoteState: getQuoteState(state, state.pages.rfqConfirmation.quoteId),
     rfqMyQuotesPageUrl: getPageLinkByPageType(state, "RfqMyQuotesPage")?.url,
+    homePageUrl: getHomePageUrl(state),
 });
 
 type Props = WidgetProps & HasHistory & ReturnType<typeof mapStateToProps>;
@@ -87,7 +88,7 @@ export const rfqConfirmationHeaderStyles: RfqConfirmationHeaderStyles = {
 
 const styles = rfqConfirmationHeaderStyles;
 
-const RfqConfirmationHeader: FC<Props> = ({ quoteState, history, rfqMyQuotesPageUrl }) => {
+const RfqConfirmationHeader: FC<Props> = ({ quoteState, history, rfqMyQuotesPageUrl, homePageUrl }) => {
     if (!quoteState.value) {
         return null;
     }
@@ -101,7 +102,7 @@ const RfqConfirmationHeader: FC<Props> = ({ quoteState, history, rfqMyQuotesPage
     };
 
     const continueClickHandler = () => {
-        history.push("/");
+        history.push(homePageUrl);
     };
 
     const printLabel = translate("Print");

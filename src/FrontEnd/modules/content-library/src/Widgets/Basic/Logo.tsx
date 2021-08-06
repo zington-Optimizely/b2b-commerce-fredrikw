@@ -1,5 +1,7 @@
 import mergeToNew from "@insite/client-framework/Common/mergeToNew";
 import StyledWrapper from "@insite/client-framework/Common/StyledWrapper";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getHomePageUrl } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -7,7 +9,12 @@ import LazyImage, { LazyImageProps } from "@insite/mobius/LazyImage";
 import Link from "@insite/mobius/Link";
 import InjectableCss from "@insite/mobius/utilities/InjectableCss";
 import * as React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
+
+const mapStateToProps = (state: ApplicationState) => ({
+    homePageLink: getHomePageUrl(state),
+});
 
 const enum fields {
     logoImage = "logoImage",
@@ -24,7 +31,7 @@ interface OwnProps extends WidgetProps {
     extendedStyles?: LogoStyles;
 }
 
-type Props = OwnProps;
+type Props = OwnProps & ReturnType<typeof mapStateToProps>;
 
 export interface LogoStyles {
     wrapper?: InjectableCss;
@@ -45,12 +52,12 @@ export const logoStyles: LogoStyles = {
     },
 };
 
-const Logo: React.FunctionComponent<Props> = ({ fields, extendedStyles }: Props) => {
+const Logo: React.FunctionComponent<Props> = ({ fields, extendedStyles, homePageLink }: Props) => {
     const [styles] = React.useState(() => mergeToNew(logoStyles, extendedStyles));
 
     return (
         <StyledWrapper {...styles.wrapper}>
-            <Link href="/">
+            <Link href={homePageLink}>
                 <LazyImage src={fields.logoImage} altText={translate("Home")} {...styles.image} />
             </Link>
         </StyledWrapper>
@@ -58,7 +65,7 @@ const Logo: React.FunctionComponent<Props> = ({ fields, extendedStyles }: Props)
 };
 
 const widgetModule: WidgetModule = {
-    component: Logo,
+    component: connect(mapStateToProps)(Logo),
     definition: {
         group: "Basic",
         icon: "Logo",

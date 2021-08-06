@@ -15,6 +15,7 @@ import loadBrandByPath from "@insite/client-framework/Store/Data/Brands/Handlers
 import loadBrandCategories from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandCategories";
 import loadBrandProductLines from "@insite/client-framework/Store/Data/Brands/Handlers/LoadBrandProductLines";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
+import { getHomePageUrl } from "@insite/client-framework/Store/Links/LinksSelectors";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
 import { generateLinksFrom } from "@insite/content-library/Components/PageBreadcrumbs";
@@ -25,6 +26,7 @@ import { connect, ResolveThunks } from "react-redux";
 const mapStateToProps = (state: ApplicationState) => {
     const { pathname } = getLocation(state);
     const brandPath = getSelectedBrandPath(state) || pathname;
+    const homePageUrl = getHomePageUrl(state);
     let shouldLoadBrandCategories;
     let shouldLoadBrandProductLine;
 
@@ -58,6 +60,7 @@ const mapStateToProps = (state: ApplicationState) => {
         brandProductLinesParameter,
         brandProductLinesDataView,
         brandPath,
+        homePageUrl,
         parentNodeId: getCurrentPage(state).parentId,
         links: state.links,
         shouldLoadBrand: !brandState.isLoading && !brandState.value,
@@ -119,7 +122,7 @@ class BrandDetailsPage extends React.Component<Props, State> {
             (brandState.value && !breadcrumbLinks) ||
             (prevProps && brandState.value?.id !== prevProps.brandState?.value?.id)
         ) {
-            const links = generateLinksFrom(this.props.links, this.props.parentNodeId);
+            const links = generateLinksFrom(this.props.links, this.props.parentNodeId, this.props.homePageUrl);
             links.push({ children: this.props.brandState.value?.name });
             setBreadcrumbs({ links });
         }

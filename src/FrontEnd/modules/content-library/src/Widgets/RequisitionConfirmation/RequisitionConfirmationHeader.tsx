@@ -1,4 +1,6 @@
 import siteMessage from "@insite/client-framework/SiteMessage";
+import ApplicationState from "@insite/client-framework/Store/ApplicationState";
+import { getHomePageUrl } from "@insite/client-framework/Store/Links/LinksSelectors";
 import translate from "@insite/client-framework/Translate";
 import WidgetModule from "@insite/client-framework/Types/WidgetModule";
 import WidgetProps from "@insite/client-framework/Types/WidgetProps";
@@ -12,9 +14,14 @@ import OverflowMenu, { OverflowMenuProps } from "@insite/mobius/OverflowMenu/Ove
 import Typography, { TypographyPresentationProps } from "@insite/mobius/Typography";
 import { HasHistory, withHistory } from "@insite/mobius/utilities/HistoryContext";
 import React from "react";
+import { connect } from "react-redux";
 import { css } from "styled-components";
 
-type Props = WidgetProps & HasHistory;
+const mapStateToProps = (state: ApplicationState) => ({
+    homePageUrl: getHomePageUrl(state),
+});
+
+type Props = WidgetProps & HasHistory & ReturnType<typeof mapStateToProps>;
 
 export interface RequisitionConfirmationHeaderStyles {
     headerGridContainer?: GridContainerProps;
@@ -72,9 +79,9 @@ export const requisitionConfirmationHeaderStyles: RequisitionConfirmationHeaderS
 
 const styles = requisitionConfirmationHeaderStyles;
 
-const RequisitionConfirmationHeader = ({ history }: Props) => {
+const RequisitionConfirmationHeader = ({ history, homePageUrl }: Props) => {
     const continueClickHandler = () => {
-        history.push("/");
+        history.push(homePageUrl);
     };
 
     const continueLabel = translate("Continue Shopping");
@@ -108,7 +115,7 @@ const RequisitionConfirmationHeader = ({ history }: Props) => {
 };
 
 const widgetModule: WidgetModule = {
-    component: withHistory(RequisitionConfirmationHeader),
+    component: connect(mapStateToProps)(withHistory(RequisitionConfirmationHeader)),
     definition: {
         displayName: "Page Header",
         allowedContexts: [RequisitionConfirmationPageContext],

@@ -9,6 +9,10 @@ import { HasLinksState } from "@insite/client-framework/Store/Links/LinksState";
 import { LinkFieldValue } from "@insite/client-framework/Types/FieldDefinition";
 import { useDispatch } from "react-redux";
 
+export const getHomePageUrl = (state: HasLinksState) => {
+    return getPageLinkByPageType(state, "HomePage")?.url ?? "/";
+};
+
 export const getPageLinkByNodeId = (state: HasLinksState, nodeId: string) => {
     const path = state.links.nodeIdToPageLinkPath[nodeId];
     if (!path) {
@@ -26,7 +30,7 @@ export const getPageLinkByNodeId = (state: HasLinksState, nodeId: string) => {
 };
 
 export const getPageLinkByPageType = (state: HasLinksState, pageType: string) => {
-    const nodeId = state.links.pageTypesToNodeId[pageType];
+    const nodeId = state.links?.pageTypesToNodeId[pageType];
     if (!nodeId) {
         return;
     }

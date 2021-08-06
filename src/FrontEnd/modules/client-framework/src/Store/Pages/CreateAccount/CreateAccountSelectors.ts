@@ -1,6 +1,6 @@
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import { getReturnUrl } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 
 export function getCreateAccountReturnUrl(state: ApplicationState) {
     const returnUrl = getReturnUrl(state);
@@ -9,7 +9,7 @@ export function getCreateAccountReturnUrl(state: ApplicationState) {
     const referredFromOrderConfirmationUrl =
         orderConfirmationPageUrl && returnUrl && returnUrl.indexOf(orderConfirmationPageUrl) > -1;
     if (returnUrl === changeCustomerPageUrl || referredFromOrderConfirmationUrl) {
-        return getPageLinkByPageType(state, "HomePage")?.url ?? "/";
+        return getHomePageUrl(state);
     }
     return returnUrl;
 }

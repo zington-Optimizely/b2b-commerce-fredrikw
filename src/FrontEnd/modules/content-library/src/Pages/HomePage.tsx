@@ -30,7 +30,7 @@ const pageModule: PageModule = {
     component: HomePage,
     definition: {
         hasEditableTitle: true,
-        hasEditableUrlSegment: false,
+        hasEditableUrlSegment: true,
         pageType: "System",
         fieldDefinitions: [MetaKeywords, MetaDescription, OpenGraphTitle, OpenGraphUrl, OpenGraphImage],
     },

@@ -6,7 +6,7 @@ import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumb
 import { getSettingsCollection } from "@insite/client-framework/Store/Context/ContextSelectors";
 import { DealerStateContext, getDealerState } from "@insite/client-framework/Store/Data/Dealers/DealersSelectors";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import displayDealer from "@insite/client-framework/Store/Pages/DealerDetails/Handlers/DisplayDealer";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
@@ -21,7 +21,9 @@ const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     const parsedQuery = parseQueryString<{ id?: string; invite?: string }>(location.search);
     const id = parsedQuery.id;
+    const homePageUrl = getHomePageUrl(state);
     return {
+        homePageUrl,
         dealerId: id,
         dealerState: getDealerState(state, id),
         links: state.links,
@@ -108,12 +110,12 @@ class DealerDetailsPage extends React.Component<Props, State> {
     }
 
     setPageBreadcrumbs() {
-        const { dealerState, links, nodeId, dealerDetailsPageLink, setBreadcrumbs } = this.props;
+        const { dealerState, links, nodeId, dealerDetailsPageLink, homePageUrl, setBreadcrumbs } = this.props;
         if (!dealerState.value) {
             return;
         }
 
-        const breadcrumbs = generateLinksFrom(links, nodeId);
+        const breadcrumbs = generateLinksFrom(links, nodeId, homePageUrl);
         const updatedBreadcrumbs = cloneDeep(breadcrumbs) as LinkProps[];
         updatedBreadcrumbs.forEach(link => {
             link.children = link.children === dealerDetailsPageLink?.title ? dealerState.value.name : link.children;

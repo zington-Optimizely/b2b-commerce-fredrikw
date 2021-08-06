@@ -18,7 +18,7 @@ import {
     UpdateSessionWithResultApiParameter,
 } from "@insite/client-framework/Services/SessionService";
 import { getSession } from "@insite/client-framework/Store/Context/ContextSelectors";
-import { getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getPageLinkByPageType } from "@insite/client-framework/Store/Links/LinksSelectors";
 import { BillToModel, ShipToModel, WarehouseModel } from "@insite/client-framework/Types/ApiModels";
 
 type HandlerType = ApiHandlerDiscreteParameter<
@@ -135,11 +135,18 @@ export const NavigateToReturnUrl: HandlerType = async props => {
 
     const state = props.getState();
     const session = getSession(state);
+    const homePageUrl = getPageLinkByPageType(state, "HomePage")?.url;
+    let languageSpecificLandingPage = session.customLandingPage;
+    if (homePageUrl && homePageUrl !== "/") {
+        if (languageSpecificLandingPage.startsWith("/")) {
+            languageSpecificLandingPage = homePageUrl.concat(session.customLandingPage);
+        } else {
+            languageSpecificLandingPage = homePageUrl.concat("/", session.customLandingPage);
+        }
+    }
     const defaultUrl = session.dashboardIsHomepage
         ? getPageLinkByPageType(state, "MyAccountPage")?.url
-        : session.customLandingPage
-        ? session.customLandingPage
-        : getPageLinkByPageType(state, "HomePage")?.url;
+        : languageSpecificLandingPage ?? homePageUrl;
     const checkoutShippingUrl = getPageLinkByPageType(state, "CheckoutShippingPage")?.url;
     let returnUrl = props.parameter.returnUrl;
 
@@ -158,7 +165,7 @@ export const NavigateToReturnUrl: HandlerType = async props => {
         }
     }
 
-    window.location.href = returnUrl || defaultUrl || "/";
+    window.location.href = returnUrl || defaultUrl || getHomePageUrl(state);
 };
 
 export const chain = [

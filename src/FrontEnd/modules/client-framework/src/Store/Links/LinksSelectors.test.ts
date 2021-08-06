@@ -1,7 +1,9 @@
 import { Dictionary } from "@insite/client-framework/Common/Types";
 import { Category } from "@insite/client-framework/Services/CategoryService";
+import { PageLinkModel } from "@insite/client-framework/Services/ContentService";
 import ApplicationState from "@insite/client-framework/Store/ApplicationState";
-import { getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import { getHomePageUrl, getLink } from "@insite/client-framework/Store/Links/LinksSelectors";
+import LinksState from "@insite/client-framework/Store/Links/LinksState";
 
 describe("getLink", () => {
     const categories: Dictionary<Category> = {};
@@ -9,6 +11,19 @@ describe("getLink", () => {
         path: "/test",
         shortDescription: "test title",
     } as Category;
+
+    const nodeIdToPageLinkPath: Dictionary<readonly number[]> = {};
+    nodeIdToPageLinkPath["test"] = [0];
+
+    const pageTypesToNodeId: Dictionary<string> = {};
+    pageTypesToNodeId["HomePage"] = "test";
+
+    const pageLinks: Readonly<PageLinkModel>[] = [
+        {
+            title: "test",
+            url: "/homepage",
+        } as PageLinkModel,
+    ];
 
     const initializeState = () => {
         return {
@@ -20,6 +35,36 @@ describe("getLink", () => {
             },
         } as ApplicationState;
     };
+
+    const initializeStateWithLinkNodes = () => {
+        return {
+            data: {
+                categories: {
+                    byId: categories,
+                    isLoading: {},
+                },
+            },
+            links: {
+                pageLinks,
+                nodeIdToPageLinkPath,
+                pageTypesToNodeId,
+            } as LinksState,
+        } as ApplicationState;
+    };
+
+    test("Should get language-specific homepage url", () => {
+        const state = initializeStateWithLinkNodes();
+        const result = getHomePageUrl(state);
+
+        expect(result).toBe("/homepage");
+    });
+
+    test("Should get default homepage url", () => {
+        const state = initializeState();
+        const result = getHomePageUrl(state);
+
+        expect(result).toBe("/");
+    });
 
     test("should return url and title for Category type", () => {
         const state = initializeState();

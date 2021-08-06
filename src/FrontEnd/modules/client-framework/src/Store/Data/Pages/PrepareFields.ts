@@ -49,6 +49,7 @@ export function prepareFields(
     contextualIds: string[],
 ) {
     let { generalFields, fields, translatableFields, contextualFields } = contentItem;
+    const isHomePage = contentItem?.type === "HomePage";
     if (!fields) {
         fields = contentItem.fields = {};
     }
@@ -72,13 +73,18 @@ export function prepareFields(
             fields[field] = value;
             continue;
         }
-        if (translatableFields[field][defaultLanguageId]) {
+        if (translatableFields[field][defaultLanguageId] && !isHomePage && field !== "urlSegment") {
             fields[field] = translatableFields[field][defaultLanguageId];
             continue;
         }
         // if we can't find anything else, just grab the first one we find
+        // look out for case of home page, where we want to respect the default value ("") if one has not been set for this language
         const keys = Object.keys(translatableFields[field]);
-        fields[field] = keys.length === 0 ? "" : translatableFields[field][keys[0]];
+        if (field === "urlSegment" && isHomePage) {
+            fields[field] = "";
+        } else {
+            fields[field] = keys.length === 0 ? "" : translatableFields[field][keys[0]];
+        }
     }
 
     for (const field in contextualFields) {

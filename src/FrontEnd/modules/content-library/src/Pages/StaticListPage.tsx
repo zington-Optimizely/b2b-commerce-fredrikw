@@ -4,6 +4,7 @@ import ApplicationState from "@insite/client-framework/Store/ApplicationState";
 import setBreadcrumbs from "@insite/client-framework/Store/Components/Breadcrumbs/Handlers/SetBreadcrumbs";
 import { getCurrentPage, getLocation } from "@insite/client-framework/Store/Data/Pages/PageSelectors";
 import { getWishListState } from "@insite/client-framework/Store/Data/WishLists/WishListsSelectors";
+import { getHomePageUrl } from "@insite/client-framework/Store/Links/LinksSelectors";
 import loadWishListIfNeeded from "@insite/client-framework/Store/Pages/StaticList/Handlers/LoadWishListIfNeeded";
 import PageModule from "@insite/client-framework/Types/PageModule";
 import PageProps from "@insite/client-framework/Types/PageProps";
@@ -16,8 +17,10 @@ import { connect, ResolveThunks } from "react-redux";
 const mapStateToProps = (state: ApplicationState) => {
     const location = getLocation(state);
     const parsedQuery = parseQueryString<{ id?: string }>(location.search);
+    const homePageUrl = getHomePageUrl(state);
     const id = parsedQuery.id;
     return {
+        homePageUrl,
         wishListId: id,
         wishListState: getWishListState(state, id),
         parentNodeId: getCurrentPage(state).parentId,
@@ -45,6 +48,7 @@ const StaticListPage = ({
     parentNodeId,
     links,
     breadcrumbLinks,
+    homePageUrl,
     setBreadcrumbs,
 }: Props) => {
     useEffect(() => {
@@ -55,7 +59,7 @@ const StaticListPage = ({
 
     useEffect(() => {
         if (!breadcrumbLinks && wishListState.value) {
-            const newLinks = generateLinksFrom(links, parentNodeId);
+            const newLinks = generateLinksFrom(links, parentNodeId, homePageUrl);
             newLinks.push({ children: wishListState.value?.name });
             setBreadcrumbs({ links: newLinks });
         }
